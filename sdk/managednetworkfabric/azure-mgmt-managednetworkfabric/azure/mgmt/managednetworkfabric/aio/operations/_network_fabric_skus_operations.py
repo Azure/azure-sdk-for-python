@@ -57,9 +57,9 @@ class NetworkFabricSkusOperations:
     async def get(self, network_fabric_sku_name: str, **kwargs: Any) -> _models.NetworkFabricSku:
         """Gets a Network Fabric Sku.
 
-        Implements Network Fabric Sku GET method.
+        Implements Network Fabric SKU GET method.
 
-        :param network_fabric_sku_name: Name of the Network Fabric Sku. Required.
+        :param network_fabric_sku_name: Name of the Network Fabric SKU. Required.
         :type network_fabric_sku_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkFabricSku or the result of cls(response)
@@ -116,9 +116,9 @@ class NetworkFabricSkusOperations:
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.NetworkFabricSku"]:
-        """List NetworkFabricSkus by subscription.
+        """List Network Fabric SKUs by subscription.
 
-        Implements NetworkFabricSkus list by subscription GET method.
+        Implements Network Fabric SKUs list by subscription GET method.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkFabricSku or the result of cls(response)

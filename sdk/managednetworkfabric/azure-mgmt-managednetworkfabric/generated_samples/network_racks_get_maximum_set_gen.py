@@ -26,16 +26,16 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     response = client.network_racks.get(
-        resource_group_name="resourceGroupName",
-        network_rack_name="networkRackName",
+        resource_group_name="example-rg",
+        network_rack_name="example-rack",
     )
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/NetworkRacks_Get_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/NetworkRacks_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

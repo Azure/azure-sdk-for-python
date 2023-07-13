@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -45,7 +45,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -55,7 +55,7 @@ def build_create_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -81,7 +81,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -90,7 +90,7 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -114,7 +114,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -124,7 +124,7 @@ def build_update_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -150,7 +150,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -159,7 +159,7 @@ def build_delete_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -181,7 +181,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -190,7 +190,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -211,7 +211,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -219,7 +219,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
         "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.ManagedNetworkFabric/networkDevices"
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
@@ -239,7 +239,8 @@ def build_reboot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -248,74 +249,7 @@ def build_reboot_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/reboot",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "networkDeviceName": _SERIALIZER.url("network_device_name", network_device_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_restore_config_request(
-    resource_group_name: str, network_device_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/restoreConfig",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "networkDeviceName": _SERIALIZER.url("network_device_name", network_device_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_update_version_request(
-    resource_group_name: str, network_device_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/updateVersion",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -335,22 +269,22 @@ def build_update_version_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_generate_support_package_request(
+def build_refresh_configuration_request(
     resource_group_name: str, network_device_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/generateSupportPackage",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/refreshConfiguration",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -368,23 +302,23 @@ def build_generate_support_package_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_update_power_cycle_request(
+def build_update_administrative_state_request(
     resource_group_name: str, network_device_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/updatePowerCycle",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/updateAdministrativeState",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -404,22 +338,23 @@ def build_update_power_cycle_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_status_request(
+def build_upgrade_request(
     resource_group_name: str, network_device_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/getStatus",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/upgrade",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -432,78 +367,14 @@ def build_get_status_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_static_interface_maps_request(
-    resource_group_name: str, network_device_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/getStaticInterfaceMaps",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "networkDeviceName": _SERIALIZER.url("network_device_name", network_device_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_get_dynamic_interface_maps_request(
-    resource_group_name: str, network_device_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/getDynamicInterfaceMaps",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "networkDeviceName": _SERIALIZER.url("network_device_name", network_device_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
+class NetworkDevicesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -751,7 +622,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
     def get(self, resource_group_name: str, network_device_name: str, **kwargs: Any) -> _models.NetworkDevice:
         """Gets a Network Device.
 
-        Get the Network Device resource details.
+        Gets the Network Device resource details.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -875,9 +746,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("NetworkDevice", pipeline_response)
 
         if response.status_code == 202:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -1086,7 +955,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -1340,9 +1209,13 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         "url": "/subscriptions/{subscriptionId}/providers/Microsoft.ManagedNetworkFabric/networkDevices"
     }
 
-    def _reboot_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, network_device_name: str, **kwargs: Any
-    ) -> None:
+    def _reboot_initial(
+        self,
+        resource_group_name: str,
+        network_device_name: str,
+        body: Union[_models.RebootProperties, IO],
+        **kwargs: Any
+    ) -> _models.CommonPostActionResponseForStateUpdate:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1351,17 +1224,29 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CommonPostActionResponseForStateUpdate] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _json = self._serialize.body(body, "RebootProperties")
 
         request = build_reboot_request(
             resource_group_name=resource_group_name,
             network_device_name=network_device_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
             template_url=self._reboot_initial.metadata["url"],
             headers=_headers,
             params=_params,
@@ -1376,23 +1261,39 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        if response.status_code == 200:
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
+
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     _reboot_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/reboot"
     }
 
-    @distributed_trace
-    def begin_reboot(self, resource_group_name: str, network_device_name: str, **kwargs: Any) -> LROPoller[None]:
+    @overload
+    def begin_reboot(
+        self,
+        resource_group_name: str,
+        network_device_name: str,
+        body: _models.RebootProperties,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
         """Implements the operation to the underlying resources.
 
         Reboot the Network Device.
@@ -1400,8 +1301,13 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param network_device_name: Name of the NetworkDevice. Required.
+        :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
+        :param body: Request payload. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.RebootProperties
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -1410,23 +1316,104 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
+
+    @overload
+    def begin_reboot(
+        self,
+        resource_group_name: str,
+        network_device_name: str,
+        body: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
+        """Implements the operation to the underlying resources.
+
+        Reboot the Network Device.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param network_device_name: Name of the Network Device. Required.
+        :type network_device_name: str
+        :param body: Request payload. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_reboot(
+        self,
+        resource_group_name: str,
+        network_device_name: str,
+        body: Union[_models.RebootProperties, IO],
+        **kwargs: Any
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
+        """Implements the operation to the underlying resources.
+
+        Reboot the Network Device.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param network_device_name: Name of the Network Device. Required.
+        :type network_device_name: str
+        :param body: Request payload. Is either a RebootProperties type or a IO type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.RebootProperties or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CommonPostActionResponseForStateUpdate] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._reboot_initial(  # type: ignore
+            raw_result = self._reboot_initial(
                 resource_group_name=resource_group_name,
                 network_device_name=network_device_name,
+                body=body,
                 api_version=api_version,
+                content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -1434,9 +1421,11 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -1459,9 +1448,9 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/reboot"
     }
 
-    def _restore_config_initial(  # pylint: disable=inconsistent-return-statements
+    def _refresh_configuration_initial(
         self, resource_group_name: str, network_device_name: str, **kwargs: Any
-    ) -> None:
+    ) -> _models.CommonPostActionResponseForStateUpdate:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1474,14 +1463,14 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CommonPostActionResponseForStateUpdate] = kwargs.pop("cls", None)
 
-        request = build_restore_config_request(
+        request = build_refresh_configuration_request(
             resource_group_name=resource_group_name,
             network_device_name=network_device_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._restore_config_initial.metadata["url"],
+            template_url=self._refresh_configuration_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1495,33 +1484,41 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        if response.status_code == 200:
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
+
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-    _restore_config_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/restoreConfig"
+        return deserialized  # type: ignore
+
+    _refresh_configuration_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/refreshConfiguration"
     }
 
     @distributed_trace
-    def begin_restore_config(
+    def begin_refresh_configuration(
         self, resource_group_name: str, network_device_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
-        """Restores the configuration to last applied good configuration from Azure.
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
+        """Implements the operation to the underlying resources.
 
-        Restore the configuration of the Network Device resource to last known good configuration.
+        Refreshes the configuration the Network Device.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param network_device_name: Name of the NetworkDevice. Required.
+        :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -1531,20 +1528,22 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CommonPostActionResponseForStateUpdate] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._restore_config_initial(  # type: ignore
+            raw_result = self._refresh_configuration_initial(
                 resource_group_name=resource_group_name,
                 network_device_name=network_device_name,
                 api_version=api_version,
@@ -1555,9 +1554,11 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -1576,17 +1577,17 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_restore_config.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/restoreConfig"
+    begin_refresh_configuration.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/refreshConfiguration"
     }
 
-    def _update_version_initial(  # pylint: disable=inconsistent-return-statements
+    def _update_administrative_state_initial(
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.UpdateVersionProperties, IO],
+        body: Union[_models.UpdateDeviceAdministrativeState, IO],
         **kwargs: Any
-    ) -> None:
+    ) -> _models.CommonPostActionResponseForStateUpdate:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1600,7 +1601,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CommonPostActionResponseForStateUpdate] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1608,9 +1609,9 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            _json = self._serialize.body(body, "UpdateVersionProperties")
+            _json = self._serialize.body(body, "UpdateDeviceAdministrativeState")
 
-        request = build_update_version_request(
+        request = build_update_administrative_state_request(
             resource_group_name=resource_group_name,
             network_device_name=network_device_name,
             subscription_id=self._config.subscription_id,
@@ -1618,7 +1619,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_version_initial.metadata["url"],
+            template_url=self._update_administrative_state_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1632,42 +1633,50 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        if response.status_code == 200:
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
+
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-    _update_version_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/updateVersion"
+        return deserialized  # type: ignore
+
+    _update_administrative_state_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/updateAdministrativeState"
     }
 
     @overload
-    def begin_update_version(
+    def begin_update_administrative_state(
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: _models.UpdateVersionProperties,
+        body: _models.UpdateDeviceAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
-        """Implements SKU version upgrade of network device.
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
+        """Implements the operation to the underlying resources.
 
-        Update the SKU version of the Network Device resource.
+        Updates the Administrative state of the Network Device.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param network_device_name: Name of the NetworkDevice. Required.
+        :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
         :param body: Request payload. Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateVersionProperties
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateDeviceAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1679,13 +1688,15 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def begin_update_version(
+    def begin_update_administrative_state(
         self,
         resource_group_name: str,
         network_device_name: str,
@@ -1693,15 +1704,15 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
-        """Implements SKU version upgrade of network device.
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
+        """Implements the operation to the underlying resources.
 
-        Update the SKU version of the Network Device resource.
+        Updates the Administrative state of the Network Device.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param network_device_name: Name of the NetworkDevice. Required.
+        :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
         :param body: Request payload. Required.
         :type body: IO
@@ -1716,30 +1727,33 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def begin_update_version(
+    def begin_update_administrative_state(
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.UpdateVersionProperties, IO],
+        body: Union[_models.UpdateDeviceAdministrativeState, IO],
         **kwargs: Any
-    ) -> LROPoller[None]:
-        """Implements SKU version upgrade of network device.
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
+        """Implements the operation to the underlying resources.
 
-        Update the SKU version of the Network Device resource.
+        Updates the Administrative state of the Network Device.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param network_device_name: Name of the NetworkDevice. Required.
+        :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
-        :param body: Request payload. Is either a UpdateVersionProperties type or a IO type. Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateVersionProperties or IO
+        :param body: Request payload. Is either a UpdateDeviceAdministrativeState type or a IO type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateDeviceAdministrativeState or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -1751,8 +1765,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1760,12 +1776,12 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CommonPostActionResponseForStateUpdate] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._update_version_initial(  # type: ignore
+            raw_result = self._update_administrative_state_initial(
                 resource_group_name=resource_group_name,
                 network_device_name=network_device_name,
                 body=body,
@@ -1778,141 +1794,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update_version.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/updateVersion"
-    }
-
-    def _generate_support_package_initial(
-        self, resource_group_name: str, network_device_name: str, **kwargs: Any
-    ) -> _models.SupportPackageProperties:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.SupportPackageProperties] = kwargs.pop("cls", None)
-
-        request = build_generate_support_package_request(
-            resource_group_name=resource_group_name,
-            network_device_name=network_device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self._generate_support_package_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = self._deserialize("SupportPackageProperties", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)
-
-        return deserialized
-
-    _generate_support_package_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/generateSupportPackage"
-    }
-
-    @distributed_trace
-    def begin_generate_support_package(
-        self, resource_group_name: str, network_device_name: str, **kwargs: Any
-    ) -> LROPoller[_models.SupportPackageProperties]:
-        """Implements the operation to the underlying resources.
-
-        Generate Support Package for the given Network Device.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param network_device_name: Name of the NetworkDevice. Required.
-        :type network_device_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either SupportPackageProperties or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.SupportPackageProperties]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.SupportPackageProperties] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._generate_support_package_initial(
-                resource_group_name=resource_group_name,
-                network_device_name=network_device_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
         def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-            deserialized = self._deserialize("SupportPackageProperties", pipeline_response)
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)
+                return cls(pipeline_response, deserialized, {})
             return deserialized
 
         if polling is True:
@@ -1932,17 +1817,13 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_generate_support_package.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/generateSupportPackage"
+    begin_update_administrative_state.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/updateAdministrativeState"
     }
 
-    def _update_power_cycle_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        network_device_name: str,
-        body: Union[_models.UpdatePowerCycleProperties, IO],
-        **kwargs: Any
-    ) -> None:
+    def _upgrade_initial(
+        self, resource_group_name: str, network_device_name: str, body: Union[_models.UpdateVersion, IO], **kwargs: Any
+    ) -> _models.CommonPostActionResponseForStateUpdate:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1956,7 +1837,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CommonPostActionResponseForStateUpdate] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1964,9 +1845,9 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            _json = self._serialize.body(body, "UpdatePowerCycleProperties")
+            _json = self._serialize.body(body, "UpdateVersion")
 
-        request = build_update_power_cycle_request(
+        request = build_upgrade_request(
             resource_group_name=resource_group_name,
             network_device_name=network_device_name,
             subscription_id=self._config.subscription_id,
@@ -1974,7 +1855,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_power_cycle_initial.metadata["url"],
+            template_url=self._upgrade_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1988,42 +1869,50 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        if response.status_code == 200:
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
+
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-    _update_power_cycle_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/updatePowerCycle"
+        return deserialized  # type: ignore
+
+    _upgrade_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/upgrade"
     }
 
     @overload
-    def begin_update_power_cycle(
+    def begin_upgrade(
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: _models.UpdatePowerCycleProperties,
+        body: _models.UpdateVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
         """Implements the operation to the underlying resources.
 
-        Update PDU power cycle of the Network Device.
+        Upgrades the version of the Network Device.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param network_device_name: Name of the NetworkDevice. Required.
+        :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
         :param body: Request payload. Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdatePowerCycleProperties
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2035,13 +1924,15 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def begin_update_power_cycle(
+    def begin_upgrade(
         self,
         resource_group_name: str,
         network_device_name: str,
@@ -2049,15 +1940,15 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
         """Implements the operation to the underlying resources.
 
-        Update PDU power cycle of the Network Device.
+        Upgrades the version of the Network Device.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param network_device_name: Name of the NetworkDevice. Required.
+        :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
         :param body: Request payload. Required.
         :type body: IO
@@ -2072,31 +1963,28 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def begin_update_power_cycle(
-        self,
-        resource_group_name: str,
-        network_device_name: str,
-        body: Union[_models.UpdatePowerCycleProperties, IO],
-        **kwargs: Any
-    ) -> LROPoller[None]:
+    def begin_upgrade(
+        self, resource_group_name: str, network_device_name: str, body: Union[_models.UpdateVersion, IO], **kwargs: Any
+    ) -> LROPoller[_models.CommonPostActionResponseForStateUpdate]:
         """Implements the operation to the underlying resources.
 
-        Update PDU power cycle of the Network Device.
+        Upgrades the version of the Network Device.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param network_device_name: Name of the NetworkDevice. Required.
+        :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
-        :param body: Request payload. Is either a UpdatePowerCycleProperties type or a IO type.
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdatePowerCycleProperties or IO
+        :param body: Request payload. Is either a UpdateVersion type or a IO type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateVersion or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -2108,8 +1996,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either CommonPostActionResponseForStateUpdate or
+         the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.CommonPostActionResponseForStateUpdate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2117,12 +2007,12 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CommonPostActionResponseForStateUpdate] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._update_power_cycle_initial(  # type: ignore
+            raw_result = self._upgrade_initial(
                 resource_group_name=resource_group_name,
                 network_device_name=network_device_name,
                 body=body,
@@ -2135,141 +2025,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update_power_cycle.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/updatePowerCycle"
-    }
-
-    def _get_status_initial(
-        self, resource_group_name: str, network_device_name: str, **kwargs: Any
-    ) -> _models.GetDeviceStatusProperties:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.GetDeviceStatusProperties] = kwargs.pop("cls", None)
-
-        request = build_get_status_request(
-            resource_group_name=resource_group_name,
-            network_device_name=network_device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self._get_status_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = self._deserialize("GetDeviceStatusProperties", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)
-
-        return deserialized
-
-    _get_status_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/getStatus"
-    }
-
-    @distributed_trace
-    def begin_get_status(
-        self, resource_group_name: str, network_device_name: str, **kwargs: Any
-    ) -> LROPoller[_models.GetDeviceStatusProperties]:
-        """Gets the running status of the network device.
-
-        Get the running status of the Network Device.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param network_device_name: Name of the NetworkDevice. Required.
-        :type network_device_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either GetDeviceStatusProperties or the result
-         of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.managednetworkfabric.models.GetDeviceStatusProperties]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.GetDeviceStatusProperties] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._get_status_initial(
-                resource_group_name=resource_group_name,
-                network_device_name=network_device_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
         def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-            deserialized = self._deserialize("GetDeviceStatusProperties", pipeline_response)
+            deserialized = self._deserialize("CommonPostActionResponseForStateUpdate", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)
+                return cls(pipeline_response, deserialized, {})
             return deserialized
 
         if polling is True:
@@ -2289,272 +2048,6 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_get_status.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/getStatus"
-    }
-
-    def _get_static_interface_maps_initial(
-        self, resource_group_name: str, network_device_name: str, **kwargs: Any
-    ) -> List[_models.GetStaticInterfaceMapsPropertiesItem]:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[List[_models.GetStaticInterfaceMapsPropertiesItem]] = kwargs.pop("cls", None)
-
-        request = build_get_static_interface_maps_request(
-            resource_group_name=resource_group_name,
-            network_device_name=network_device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self._get_static_interface_maps_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = self._deserialize("[GetStaticInterfaceMapsPropertiesItem]", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)
-
-        return deserialized
-
-    _get_static_interface_maps_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/getStaticInterfaceMaps"
-    }
-
-    @distributed_trace
-    def begin_get_static_interface_maps(
-        self, resource_group_name: str, network_device_name: str, **kwargs: Any
-    ) -> LROPoller[List[_models.GetStaticInterfaceMapsPropertiesItem]]:
-        """Show the interface maps as per the topology.
-
-        Get the static interface maps for the given Network Device.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param network_device_name: Name of the NetworkDevice. Required.
-        :type network_device_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either list of
-         GetStaticInterfaceMapsPropertiesItem or the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[list[~azure.mgmt.managednetworkfabric.models.GetStaticInterfaceMapsPropertiesItem]]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[List[_models.GetStaticInterfaceMapsPropertiesItem]] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._get_static_interface_maps_initial(
-                resource_group_name=resource_group_name,
-                network_device_name=network_device_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-            deserialized = self._deserialize("[GetStaticInterfaceMapsPropertiesItem]", pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_get_static_interface_maps.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/getStaticInterfaceMaps"
-    }
-
-    def _get_dynamic_interface_maps_initial(
-        self, resource_group_name: str, network_device_name: str, **kwargs: Any
-    ) -> List[_models.GetDynamicInterfaceMapsPropertiesItem]:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[List[_models.GetDynamicInterfaceMapsPropertiesItem]] = kwargs.pop("cls", None)
-
-        request = build_get_dynamic_interface_maps_request(
-            resource_group_name=resource_group_name,
-            network_device_name=network_device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self._get_dynamic_interface_maps_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = self._deserialize("[GetDynamicInterfaceMapsPropertiesItem]", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)
-
-        return deserialized
-
-    _get_dynamic_interface_maps_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/getDynamicInterfaceMaps"
-    }
-
-    @distributed_trace
-    def begin_get_dynamic_interface_maps(
-        self, resource_group_name: str, network_device_name: str, **kwargs: Any
-    ) -> LROPoller[List[_models.GetDynamicInterfaceMapsPropertiesItem]]:
-        """Implements the operation to the underlying resources.
-
-        Get the dynamic interface maps for the given Network Device.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param network_device_name: Name of the NetworkDevice. Required.
-        :type network_device_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either list of
-         GetDynamicInterfaceMapsPropertiesItem or the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[list[~azure.mgmt.managednetworkfabric.models.GetDynamicInterfaceMapsPropertiesItem]]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[List[_models.GetDynamicInterfaceMapsPropertiesItem]] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._get_dynamic_interface_maps_initial(
-                resource_group_name=resource_group_name,
-                network_device_name=network_device_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-            deserialized = self._deserialize("[GetDynamicInterfaceMapsPropertiesItem]", pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_get_dynamic_interface_maps.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/getDynamicInterfaceMaps"
+    begin_upgrade.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkDevices/{networkDeviceName}/upgrade"
     }

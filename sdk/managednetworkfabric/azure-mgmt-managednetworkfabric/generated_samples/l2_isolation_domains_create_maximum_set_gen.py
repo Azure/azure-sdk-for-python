@@ -26,24 +26,26 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     response = client.l2_isolation_domains.begin_create(
-        resource_group_name="resourceGroupName",
+        resource_group_name="example-rg",
         l2_isolation_domain_name="example-l2domain",
         body={
             "location": "eastus",
             "properties": {
+                "annotation": "annotation",
                 "mtu": 1500,
-                "networkFabricId": "/subscriptions/xxxxxx/resourceGroups/resourcegroupname/providers/Microsoft.ManagedNetworkFabric/networkFabrics/FabricName",
+                "networkFabricId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/networkFabrics/example-fabric",
                 "vlanId": 501,
             },
+            "tags": {"keyID": "keyValue"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/L2IsolationDomains_Create_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/L2IsolationDomains_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

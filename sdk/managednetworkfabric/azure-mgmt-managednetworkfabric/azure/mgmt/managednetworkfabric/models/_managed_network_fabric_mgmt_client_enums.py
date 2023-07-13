@@ -10,24 +10,41 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AclActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of actions that can be performed."""
+
+    DROP = "Drop"
+    COUNT = "Count"
+    LOG = "Log"
+
+
+class Action(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specify action."""
+
+    ALLOW = "Allow"
+    DENY = "Deny"
+
+
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
     INTERNAL = "Internal"
 
 
-class AddressFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """IP address family. Example: ipv4 | ipv6."""
+class AddressFamilyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AddressFamilyType. This parameter decides whether the given ipv4 or ipv6 route policy."""
 
-    IPV4 = "ipv4"
-    IPV6 = "ipv6"
+    I_PV4 = "IPv4"
+    I_PV6 = "IPv6"
 
 
 class AdministrativeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Administrative state."""
+    """State defined to represent administrative actions or post actions on a particular resource."""
 
-    ENABLE = "Enable"
-    DISABLE = "Disable"
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+    MAT = "MAT"
+    RMA = "RMA"
 
 
 class AllowASOverride(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -35,6 +52,15 @@ class AllowASOverride(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLE = "Enable"
     DISABLE = "Disable"
+
+
+class BfdAdministrativeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Administrative state of the BfdConfiguration. Example: Enabled | Disabled."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+    MAT = "MAT"
+    RMA = "RMA"
 
 
 class BooleanEnumProperty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -57,13 +83,29 @@ class Condition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EQUAL_TO = "EqualTo"
     GREATER_THAN_OR_EQUAL_TO = "GreaterThanOrEqualTo"
     LESSER_THAN_OR_EQUAL_TO = "LesserThanOrEqualTo"
+    RANGE = "Range"
 
 
-class ConditionActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """action. Example: allow | deny."""
+class ConfigurationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Configuration state for the resource."""
 
-    ALLOW = "allow"
-    DENY = "deny"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    REJECTED = "Rejected"
+    ACCEPTED = "Accepted"
+    PROVISIONED = "Provisioned"
+    ERROR_PROVISIONING = "ErrorProvisioning"
+    DEPROVISIONING = "Deprovisioning"
+    DEPROVISIONED = "Deprovisioned"
+    ERROR_DEPROVISIONING = "ErrorDeprovisioning"
+    DEFERRED_CONTROL = "DeferredControl"
+
+
+class ConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Input method to configure Access Control List."""
+
+    FILE = "File"
+    INLINE = "Inline"
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -75,26 +117,62 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
-class EnabledDisabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """EnabledDisabledState state for the resource."""
+class DestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of destination. Input can be IsolationDomain or Direct."""
 
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
-
-
-class ExpressRouteConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Express route connection state for the resource."""
-
-    CONNECTING = "Connecting"
-    CONNECTED = "Connected"
-    DISCONNECTED = "Disconnected"
+    ISOLATION_DOMAIN = "IsolationDomain"
+    DIRECT = "Direct"
 
 
-class FailedSucceededState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """FailedSucceeded state for the resource."""
+class DeviceAdministrativeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Administrative state."""
 
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
+    RMA = "RMA"
+    RESYNC = "Resync"
+    GRACEFUL_QUARANTINE = "GracefulQuarantine"
+    QUARANTINE = "Quarantine"
+
+
+class EnableDisableState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Administrative state."""
+
+    ENABLE = "Enable"
+    DISABLE = "Disable"
+
+
+class Encapsulation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of encapsulation."""
+
+    NONE = "None"
+    GRE = "GRE"
+
+
+class EncapsulationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Encapsulation Type."""
+
+    NONE = "None"
+    GT_PV1 = "GTPv1"
+
+
+class Extension(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Extension. Example: NoExtension | NPB."""
+
+    NO_EXTENSION = "NoExtension"
+    NPB = "NPB"
+
+
+class FabricSkuType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of Network Fabric SKU."""
+
+    SINGLE_RACK = "SingleRack"
+    MULTI_RACK = "MultiRack"
+
+
+class GatewayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gateway Type of the resource."""
+
+    INFRASTRUCTURE = "Infrastructure"
+    WORKLOAD = "Workload"
 
 
 class InterfaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -104,22 +182,46 @@ class InterfaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATA = "Data"
 
 
-class IsCurrentVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """If the current version is in use."""
+class IPAddressType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IP Address type."""
 
-    TRUE = "true"
-    FALSE = "false"
-
-
-class IsTestVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """If the current version is a test version."""
-
-    TRUE = "true"
-    FALSE = "false"
+    I_PV4 = "IPv4"
+    I_PV6 = "IPv6"
 
 
-class NetworkDeviceRackRoleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Role for the network device."""
+class IsManagementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Configuration to use NNI for Infrastructure Management. Example: True/False."""
+
+    TRUE = "True"
+    FALSE = "False"
+
+
+class IsMonitoringEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """To check whether monitoring of internal network is enabled or not."""
+
+    TRUE = "True"
+    FALSE = "False"
+
+
+class IsWorkloadManagementNetworkEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A workload management network is required for all the tenant (workload) traffic. This traffic
+    is only dedicated for Tenant workloads which are required to access internet or any other
+    MSFT/Public endpoints.
+    """
+
+    TRUE = "True"
+    FALSE = "False"
+
+
+class Layer4Protocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Layer4 protocol type that needs to be matched."""
+
+    TCP = "TCP"
+    UDP = "UDP"
+
+
+class NetworkDeviceRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NetworkDeviceRole is the device role: Example: CE | ToR."""
 
     CE = "CE"
     TO_R = "ToR"
@@ -138,41 +240,20 @@ class NetworkDeviceRoleName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MANAGEMENT = "Management"
 
 
-class NetworkDeviceRoleTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Available roles for the network device."""
+class NetworkRackType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Network Rack SKU name."""
 
-    CE = "CE"
-    TO_R = "ToR"
-    NPB = "NPB"
-    TS = "TS"
-    MANAGEMENT = "Management"
+    AGGREGATE = "Aggregate"
+    COMPUTE = "Compute"
+    COMBINED = "Combined"
 
 
-class NetworkFabricControllerOperationalState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operational state for the resource."""
+class NfcSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Network Fabric Controller SKU."""
 
-    CONFIGURING = "Configuring"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-
-
-class NetworkFabricOperationalState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operational state for the resource."""
-
-    PROVISIONING = "Provisioning"
-    PROVISIONED = "Provisioned"
-    ERROR_PROVISIONING = "ErrorProvisioning"
-    DEPROVISIONING = "Deprovisioning"
-    DEPROVISIONED = "Deprovisioned"
-    ERROR_DEPROVISIONING = "ErrorDeprovisioning"
-    DEFERRED_CONTROL = "DeferredControl"
-
-
-class NetworkRackRoleName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The role of the Network Rack: Aggregate or Compute."""
-
-    COMPUTE_RACK = "ComputeRack"
-    AGGREGATE_RACK = "AggregateRack"
+    BASIC = "Basic"
+    STANDARD = "Standard"
+    HIGH_PERFORMANCE = "HighPerformance"
 
 
 class NniType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -180,22 +261,6 @@ class NniType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CE = "CE"
     NPB = "NPB"
-
-
-class OperationalState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operational state for the resource."""
-
-    CONFIGURING = "Configuring"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-
-
-class OperationalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Primary or Secondary power end."""
-
-    BOOTED = "Booted"
-    BOOT_PROMPT = "BootPrompt"
-    ZTP = "Ztp"
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -215,35 +280,54 @@ class PeeringOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OPTION_B = "OptionB"
 
 
-class PowerCycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """On or Off power cycle state."""
+class PollingIntervalInSeconds(int, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Polling interval in seconds."""
 
-    ON = "On"
-    OFF = "Off"
+    THIRTY = 30
+    SIXTY = 60
+    NINETY = 90
+    ONE_HUNDRED_TWENTY = 120
 
 
-class PowerEnd(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Primary or Secondary power end."""
+class PollingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Polling type."""
 
-    PRIMARY = "Primary"
-    SECONDARY = "Secondary"
+    PULL = "Pull"
+    PUSH = "Push"
+
+
+class PortType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Port type that needs to be matched."""
+
+    SOURCE_PORT = "SourcePort"
+    DESTINATION_PORT = "DestinationPort"
+
+
+class PrefixType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IP Prefix Type."""
+
+    PREFIX = "Prefix"
+    LONGEST_PREFIX = "LongestPrefix"
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state."""
 
+    ACCEPTED = "Accepted"
     SUCCEEDED = "Succeeded"
     UPDATING = "Updating"
-    CANCELED = "Canceled"
     DELETING = "Deleting"
     FAILED = "Failed"
+    CANCELED = "Canceled"
 
 
-class ReachabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Generic network reachability state."""
+class RebootType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of reboot to be performed. Example: GracefulRebootWithZTP."""
 
-    REACHABLE = "Reachable"
-    UNREACHABLE = "Unreachable"
+    GRACEFUL_REBOOT_WITH_ZTP = "GracefulRebootWithZTP"
+    GRACEFUL_REBOOT_WITHOUT_ZTP = "GracefulRebootWithoutZTP"
+    UNGRACEFUL_REBOOT_WITH_ZTP = "UngracefulRebootWithZTP"
+    UNGRACEFUL_REBOOT_WITHOUT_ZTP = "UngracefulRebootWithoutZTP"
 
 
 class RedistributeConnectedSubnets(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -260,18 +344,49 @@ class RedistributeStaticRoutes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FALSE = "False"
 
 
-class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """On or Off toggle state."""
+class RoutePolicyActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Action type. Example: Permit | Deny | Continue."""
 
-    ON = "On"
-    OFF = "Off"
+    PERMIT = "Permit"
+    DENY = "Deny"
+    CONTINUE = "Continue"
+    CONTINUE_ENUM = "Continue"
 
 
-class TerminalServerConnectivityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TerminalServerConnectivity state for the resource."""
+class RoutePolicyConditionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the condition used."""
 
-    IPV4_REACHABLE = "Ipv4Reachable"
-    IPV4_UNREACHABLE = "Ipv4Unreachable"
+    OR = "Or"
+    AND = "And"
+    OR_ENUM = "Or"
+    AND_ENUM = "And"
+
+
+class SourceDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IP Address type."""
+
+    SOURCE_IP = "SourceIP"
+    DESTINATION_IP = "DestinationIP"
+
+
+class TapRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of actions that can be performed."""
+
+    DROP = "Drop"
+    COUNT = "Count"
+    LOG = "Log"
+    REPLICATE = "Replicate"
+    GOTO = "Goto"
+    REDIRECT = "Redirect"
+    MIRROR = "Mirror"
+
+
+class ValidateAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Validate action that to be performed."""
+
+    CABLING = "Cabling"
+    CONFIGURATION = "Configuration"
+    CONNECTIVITY = "Connectivity"
 
 
 class WellKnownCommunities(str, Enum, metaclass=CaseInsensitiveEnumMeta):

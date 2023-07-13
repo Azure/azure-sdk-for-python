@@ -26,19 +26,30 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     response = client.external_networks.begin_create(
-        resource_group_name="resourceGroupName",
+        resource_group_name="example-rg",
         l3_isolation_domain_name="example-l3domain",
         external_network_name="example-externalnetwork",
         body={
             "properties": {
-                "exportRoutePolicyId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
-                "importRoutePolicyId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
+                "annotation": "annotation",
+                "exportRoutePolicy": {
+                    "exportIpv4RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
+                    "exportIpv6RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
+                },
+                "exportRoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
+                "importRoutePolicy": {
+                    "importIpv4RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
+                    "importIpv6RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
+                },
+                "importRoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
                 "optionAProperties": {
-                    "bfdConfiguration": {},
+                    "bfdConfiguration": {"intervalInMilliSeconds": 300, "multiplier": 15},
+                    "egressAclId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/accessControlLists/example-acl",
+                    "ingressAclId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/accessControlLists/example-acl",
                     "mtu": 1500,
                     "peerASN": 65047,
                     "primaryIpv4Prefix": "10.1.1.0/30",
@@ -47,7 +58,16 @@ def main():
                     "secondaryIpv6Prefix": "3FFE:FFFF:0:CD30::a4/126",
                     "vlanId": 1001,
                 },
-                "optionBProperties": {"exportRouteTargets": ["65046:10039"], "importRouteTargets": ["65046:10039"]},
+                "optionBProperties": {
+                    "exportRouteTargets": ["65046:10039"],
+                    "importRouteTargets": ["65046:10039"],
+                    "routeTargets": {
+                        "exportIpv4RouteTargets": ["65046:10039"],
+                        "exportIpv6RouteTargets": ["65046:10039"],
+                        "importIpv4RouteTargets": ["65046:10039"],
+                        "importIpv6RouteTargets": ["65046:10039"],
+                    },
+                },
                 "peeringOption": "OptionA",
             }
         },
@@ -55,6 +75,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/ExternalNetworks_Create_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/ExternalNetworks_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

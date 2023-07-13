@@ -45,7 +45,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -55,7 +55,7 @@ def build_create_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkRacks/{networkRackName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -81,7 +81,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -90,7 +90,7 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkRacks/{networkRackName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -114,7 +114,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -124,7 +124,7 @@ def build_update_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkRacks/{networkRackName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -150,7 +150,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -159,7 +159,7 @@ def build_delete_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkRacks/{networkRackName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -181,7 +181,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -190,7 +190,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedNetworkFabric/networkRacks",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -211,7 +211,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -219,7 +219,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
         "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.ManagedNetworkFabric/networkRacks"
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
@@ -543,7 +543,7 @@ class NetworkRacksOperations:
     }
 
     def _update_initial(
-        self, resource_group_name: str, network_rack_name: str, body: Union[_models.NetworkRackPatch, IO], **kwargs: Any
+        self, resource_group_name: str, network_rack_name: str, body: Union[_models.TagsUpdate, IO], **kwargs: Any
     ) -> Optional[_models.NetworkRack]:
         error_map = {
             401: ClientAuthenticationError,
@@ -566,7 +566,7 @@ class NetworkRacksOperations:
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            _json = self._serialize.body(body, "NetworkRackPatch")
+            _json = self._serialize.body(body, "TagsUpdate")
 
         request = build_update_request(
             resource_group_name=resource_group_name,
@@ -601,9 +601,7 @@ class NetworkRacksOperations:
             deserialized = self._deserialize("NetworkRack", pipeline_response)
 
         if response.status_code == 202:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -619,7 +617,7 @@ class NetworkRacksOperations:
         self,
         resource_group_name: str,
         network_rack_name: str,
-        body: _models.NetworkRackPatch,
+        body: _models.TagsUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -634,7 +632,7 @@ class NetworkRacksOperations:
         :param network_rack_name: Name of the Network Rack. Required.
         :type network_rack_name: str
         :param body: Network Rack properties to update. Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkRackPatch
+        :type body: ~azure.mgmt.managednetworkfabric.models.TagsUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -692,7 +690,7 @@ class NetworkRacksOperations:
 
     @distributed_trace
     def begin_update(
-        self, resource_group_name: str, network_rack_name: str, body: Union[_models.NetworkRackPatch, IO], **kwargs: Any
+        self, resource_group_name: str, network_rack_name: str, body: Union[_models.TagsUpdate, IO], **kwargs: Any
     ) -> LROPoller[_models.NetworkRack]:
         """Updates a Network Rack.
 
@@ -703,9 +701,9 @@ class NetworkRacksOperations:
         :type resource_group_name: str
         :param network_rack_name: Name of the Network Rack. Required.
         :type network_rack_name: str
-        :param body: Network Rack properties to update. Is either a NetworkRackPatch type or a IO type.
+        :param body: Network Rack properties to update. Is either a TagsUpdate type or a IO type.
          Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkRackPatch or IO
+        :type body: ~azure.mgmt.managednetworkfabric.models.TagsUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -890,7 +888,7 @@ class NetworkRacksOperations:
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.NetworkRack"]:
-        """List NetworkRacks by resource group.
+        """List Network Racks by resource group.
 
         List all Network Rack resources in the given resource group.
 
@@ -979,7 +977,7 @@ class NetworkRacksOperations:
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.NetworkRack"]:
-        """List NetworkRacks by subscription.
+        """List Network Racks by subscription.
 
         List all Network Rack resources in the given subscription.
 

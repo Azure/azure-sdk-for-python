@@ -57,9 +57,9 @@ class NetworkDeviceSkusOperations:
     async def get(self, network_device_sku_name: str, **kwargs: Any) -> _models.NetworkDeviceSku:
         """Gets a Network Device Sku.
 
-        Get Network Device SKU details.
+        Get a Network Device SKU details.
 
-        :param network_device_sku_name: Name of the Network Device Sku. Required.
+        :param network_device_sku_name: Name of the Network Device SKU. Required.
         :type network_device_sku_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkDeviceSku or the result of cls(response)
@@ -116,7 +116,7 @@ class NetworkDeviceSkusOperations:
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.NetworkDeviceSku"]:
-        """List NetworkDeviceSkus by subscription.
+        """List Network Device SKUs by subscription.
 
         List Network Device SKUs for the given subscription.
 

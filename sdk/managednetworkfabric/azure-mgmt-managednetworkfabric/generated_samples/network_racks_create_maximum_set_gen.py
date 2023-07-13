@@ -26,18 +26,18 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     response = client.network_racks.begin_create(
-        resource_group_name="resourceGroupName",
-        network_rack_name="networkRackName",
+        resource_group_name="example-rg",
+        network_rack_name="example-rack",
         body={
-            "location": "eastus",
+            "location": "eastuseuap",
             "properties": {
-                "annotation": "null",
-                "networkFabricId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/networkFabrics/networkFabricName",
-                "networkRackSku": "RackSKU",
+                "annotation": "annotation",
+                "networkFabricId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourcegroups/example-rg/providers/Microsoft.ManagedNetworkFabric/networkFabrics/example-networkFabric",
+                "networkRackType": "Aggregate",
             },
             "tags": {"keyID": "keyValue"},
         },
@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/NetworkRacks_Create_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/NetworkRacks_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

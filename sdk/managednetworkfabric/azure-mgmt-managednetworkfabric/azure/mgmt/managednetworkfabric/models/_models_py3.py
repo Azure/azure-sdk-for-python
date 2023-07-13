@@ -8,20 +8,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-import sys
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class Resource(_serialization.Model):
@@ -29,8 +22,8 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -73,8 +66,8 @@ class TrackedResource(Resource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -119,15 +112,15 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class AccessControlList(TrackedResource):
-    """The AccessControlList resource definition.
+class AccessControlList(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The Access Control List resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -143,15 +136,30 @@ class AccessControlList(TrackedResource):
     :vartype location: str
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar address_family: IP address family. Example: ipv4 | ipv6. Required. Known values are:
-     "ipv4" and "ipv6".
-    :vartype address_family: str or ~azure.mgmt.managednetworkfabric.models.AddressFamily
-    :ivar conditions: Access Control List conditions. Required.
-    :vartype conditions:
-     list[~azure.mgmt.managednetworkfabric.models.AccessControlListConditionProperties]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar configuration_type: Input method to configure Access Control List. Known values are:
+     "File" and "Inline".
+    :vartype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+    :ivar acls_url: Access Control List file URL.
+    :vartype acls_url: str
+    :ivar match_configurations: List of match configurations.
+    :vartype match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.AccessControlListMatchConfiguration]
+    :ivar dynamic_match_configurations: List of dynamic match configurations.
+    :vartype dynamic_match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
+    :ivar last_synced_time: The last synced timestamp.
+    :vartype last_synced_time: ~datetime.datetime
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
@@ -160,9 +168,13 @@ class AccessControlList(TrackedResource):
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
-        "address_family": {"required": True},
-        "conditions": {"required": True},
+        "acls_url": {"min_length": 1},
+        "match_configurations": {"min_items": 1},
+        "dynamic_match_configurations": {"min_items": 1},
+        "last_synced_time": {"readonly": True},
+        "configuration_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -173,19 +185,32 @@ class AccessControlList(TrackedResource):
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "annotation": {"key": "properties.annotation", "type": "str"},
-        "address_family": {"key": "properties.addressFamily", "type": "str"},
-        "conditions": {"key": "properties.conditions", "type": "[AccessControlListConditionProperties]"},
+        "configuration_type": {"key": "properties.configurationType", "type": "str"},
+        "acls_url": {"key": "properties.aclsUrl", "type": "str"},
+        "match_configurations": {
+            "key": "properties.matchConfigurations",
+            "type": "[AccessControlListMatchConfiguration]",
+        },
+        "dynamic_match_configurations": {
+            "key": "properties.dynamicMatchConfigurations",
+            "type": "[CommonDynamicMatchConfiguration]",
+        },
+        "last_synced_time": {"key": "properties.lastSyncedTime", "type": "iso-8601"},
+        "configuration_state": {"key": "properties.configurationState", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        address_family: Union[str, "_models.AddressFamily"],
-        conditions: List["_models.AccessControlListConditionProperties"],
         tags: Optional[Dict[str, str]] = None,
         annotation: Optional[str] = None,
+        configuration_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
+        acls_url: Optional[str] = None,
+        match_configurations: Optional[List["_models.AccessControlListMatchConfiguration"]] = None,
+        dynamic_match_configurations: Optional[List["_models.CommonDynamicMatchConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -195,18 +220,423 @@ class AccessControlList(TrackedResource):
         :paramtype location: str
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword address_family: IP address family. Example: ipv4 | ipv6. Required. Known values are:
-         "ipv4" and "ipv6".
-        :paramtype address_family: str or ~azure.mgmt.managednetworkfabric.models.AddressFamily
-        :keyword conditions: Access Control List conditions. Required.
-        :paramtype conditions:
-         list[~azure.mgmt.managednetworkfabric.models.AccessControlListConditionProperties]
+        :keyword configuration_type: Input method to configure Access Control List. Known values are:
+         "File" and "Inline".
+        :paramtype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+        :keyword acls_url: Access Control List file URL.
+        :paramtype acls_url: str
+        :keyword match_configurations: List of match configurations.
+        :paramtype match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.AccessControlListMatchConfiguration]
+        :keyword dynamic_match_configurations: List of dynamic match configurations.
+        :paramtype dynamic_match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.annotation = annotation
-        self.address_family = address_family
-        self.conditions = conditions
+        self.configuration_type = configuration_type
+        self.acls_url = acls_url
+        self.match_configurations = match_configurations
+        self.dynamic_match_configurations = dynamic_match_configurations
+        self.last_synced_time = None
+        self.configuration_state = None
         self.provisioning_state = None
+        self.administrative_state = None
+
+
+class AccessControlListAction(_serialization.Model):
+    """Action that need to performed.
+
+    :ivar type: Type of actions that can be performed. Known values are: "Drop", "Count", and
+     "Log".
+    :vartype type: str or ~azure.mgmt.managednetworkfabric.models.AclActionType
+    :ivar counter_name: Name of the counter block to get match count information.
+    :vartype counter_name: str
+    """
+
+    _validation = {
+        "counter_name": {"min_length": 1},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "counter_name": {"key": "counterName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.AclActionType"]] = None,
+        counter_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Type of actions that can be performed. Known values are: "Drop", "Count", and
+         "Log".
+        :paramtype type: str or ~azure.mgmt.managednetworkfabric.models.AclActionType
+        :keyword counter_name: Name of the counter block to get match count information.
+        :paramtype counter_name: str
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.counter_name = counter_name
+
+
+class CommonMatchConditions(_serialization.Model):
+    """Defines the common match conditions of the ACL and Network Tap Rule.
+
+    :ivar protocol_types: List of the protocols that need to be matched.
+    :vartype protocol_types: list[str]
+    :ivar vlan_match_condition: Vlan match condition that needs to be matched.
+    :vartype vlan_match_condition: ~azure.mgmt.managednetworkfabric.models.VlanMatchCondition
+    :ivar ip_condition: IP condition that needs to be matched.
+    :vartype ip_condition: ~azure.mgmt.managednetworkfabric.models.IpMatchCondition
+    """
+
+    _validation = {
+        "protocol_types": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "protocol_types": {"key": "protocolTypes", "type": "[str]"},
+        "vlan_match_condition": {"key": "vlanMatchCondition", "type": "VlanMatchCondition"},
+        "ip_condition": {"key": "ipCondition", "type": "IpMatchCondition"},
+    }
+
+    def __init__(
+        self,
+        *,
+        protocol_types: Optional[List[str]] = None,
+        vlan_match_condition: Optional["_models.VlanMatchCondition"] = None,
+        ip_condition: Optional["_models.IpMatchCondition"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword protocol_types: List of the protocols that need to be matched.
+        :paramtype protocol_types: list[str]
+        :keyword vlan_match_condition: Vlan match condition that needs to be matched.
+        :paramtype vlan_match_condition: ~azure.mgmt.managednetworkfabric.models.VlanMatchCondition
+        :keyword ip_condition: IP condition that needs to be matched.
+        :paramtype ip_condition: ~azure.mgmt.managednetworkfabric.models.IpMatchCondition
+        """
+        super().__init__(**kwargs)
+        self.protocol_types = protocol_types
+        self.vlan_match_condition = vlan_match_condition
+        self.ip_condition = ip_condition
+
+
+class AccessControlListMatchCondition(CommonMatchConditions):
+    """Defines the match condition that is supported to filter the traffic.
+
+    :ivar protocol_types: List of the protocols that need to be matched.
+    :vartype protocol_types: list[str]
+    :ivar vlan_match_condition: Vlan match condition that needs to be matched.
+    :vartype vlan_match_condition: ~azure.mgmt.managednetworkfabric.models.VlanMatchCondition
+    :ivar ip_condition: IP condition that needs to be matched.
+    :vartype ip_condition: ~azure.mgmt.managednetworkfabric.models.IpMatchCondition
+    :ivar ether_types: List of ether type values that needs to be matched.
+    :vartype ether_types: list[str]
+    :ivar fragments: List of IP fragment packets that needs to be matched.
+    :vartype fragments: list[str]
+    :ivar ip_lengths: List of IP Lengths that needs to be matched.
+    :vartype ip_lengths: list[str]
+    :ivar ttl_values: List of TTL [Time To Live] values that needs to be matched.
+    :vartype ttl_values: list[str]
+    :ivar dscp_markings: List of DSCP Markings that needs to be matched.
+    :vartype dscp_markings: list[str]
+    :ivar port_condition: Defines the port condition that needs to be matched.
+    :vartype port_condition: ~azure.mgmt.managednetworkfabric.models.AccessControlListPortCondition
+    """
+
+    _validation = {
+        "protocol_types": {"min_items": 1},
+        "ether_types": {"min_items": 1},
+        "fragments": {"min_items": 1},
+        "ip_lengths": {"min_items": 1},
+        "ttl_values": {"min_items": 1},
+        "dscp_markings": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "protocol_types": {"key": "protocolTypes", "type": "[str]"},
+        "vlan_match_condition": {"key": "vlanMatchCondition", "type": "VlanMatchCondition"},
+        "ip_condition": {"key": "ipCondition", "type": "IpMatchCondition"},
+        "ether_types": {"key": "etherTypes", "type": "[str]"},
+        "fragments": {"key": "fragments", "type": "[str]"},
+        "ip_lengths": {"key": "ipLengths", "type": "[str]"},
+        "ttl_values": {"key": "ttlValues", "type": "[str]"},
+        "dscp_markings": {"key": "dscpMarkings", "type": "[str]"},
+        "port_condition": {"key": "portCondition", "type": "AccessControlListPortCondition"},
+    }
+
+    def __init__(
+        self,
+        *,
+        protocol_types: Optional[List[str]] = None,
+        vlan_match_condition: Optional["_models.VlanMatchCondition"] = None,
+        ip_condition: Optional["_models.IpMatchCondition"] = None,
+        ether_types: Optional[List[str]] = None,
+        fragments: Optional[List[str]] = None,
+        ip_lengths: Optional[List[str]] = None,
+        ttl_values: Optional[List[str]] = None,
+        dscp_markings: Optional[List[str]] = None,
+        port_condition: Optional["_models.AccessControlListPortCondition"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword protocol_types: List of the protocols that need to be matched.
+        :paramtype protocol_types: list[str]
+        :keyword vlan_match_condition: Vlan match condition that needs to be matched.
+        :paramtype vlan_match_condition: ~azure.mgmt.managednetworkfabric.models.VlanMatchCondition
+        :keyword ip_condition: IP condition that needs to be matched.
+        :paramtype ip_condition: ~azure.mgmt.managednetworkfabric.models.IpMatchCondition
+        :keyword ether_types: List of ether type values that needs to be matched.
+        :paramtype ether_types: list[str]
+        :keyword fragments: List of IP fragment packets that needs to be matched.
+        :paramtype fragments: list[str]
+        :keyword ip_lengths: List of IP Lengths that needs to be matched.
+        :paramtype ip_lengths: list[str]
+        :keyword ttl_values: List of TTL [Time To Live] values that needs to be matched.
+        :paramtype ttl_values: list[str]
+        :keyword dscp_markings: List of DSCP Markings that needs to be matched.
+        :paramtype dscp_markings: list[str]
+        :keyword port_condition: Defines the port condition that needs to be matched.
+        :paramtype port_condition:
+         ~azure.mgmt.managednetworkfabric.models.AccessControlListPortCondition
+        """
+        super().__init__(
+            protocol_types=protocol_types,
+            vlan_match_condition=vlan_match_condition,
+            ip_condition=ip_condition,
+            **kwargs
+        )
+        self.ether_types = ether_types
+        self.fragments = fragments
+        self.ip_lengths = ip_lengths
+        self.ttl_values = ttl_values
+        self.dscp_markings = dscp_markings
+        self.port_condition = port_condition
+
+
+class AccessControlListMatchConfiguration(_serialization.Model):
+    """Defines the match configuration that are supported to filter the traffic.
+
+    :ivar match_configuration_name: The name of the match configuration.
+    :vartype match_configuration_name: str
+    :ivar sequence_number: Sequence Number of the match configuration.
+    :vartype sequence_number: int
+    :ivar ip_address_type: Type of IP Address. IPv4 or IPv6. Known values are: "IPv4" and "IPv6".
+    :vartype ip_address_type: str or ~azure.mgmt.managednetworkfabric.models.IPAddressType
+    :ivar match_conditions: List of the match conditions.
+    :vartype match_conditions:
+     list[~azure.mgmt.managednetworkfabric.models.AccessControlListMatchCondition]
+    :ivar actions: List of actions that need to be performed for the matched conditions.
+    :vartype actions: list[~azure.mgmt.managednetworkfabric.models.AccessControlListAction]
+    """
+
+    _validation = {
+        "match_configuration_name": {"min_length": 1},
+        "sequence_number": {"maximum": 4294967295, "minimum": 1},
+        "match_conditions": {"min_items": 1},
+        "actions": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "match_configuration_name": {"key": "matchConfigurationName", "type": "str"},
+        "sequence_number": {"key": "sequenceNumber", "type": "int"},
+        "ip_address_type": {"key": "ipAddressType", "type": "str"},
+        "match_conditions": {"key": "matchConditions", "type": "[AccessControlListMatchCondition]"},
+        "actions": {"key": "actions", "type": "[AccessControlListAction]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        match_configuration_name: Optional[str] = None,
+        sequence_number: Optional[int] = None,
+        ip_address_type: Optional[Union[str, "_models.IPAddressType"]] = None,
+        match_conditions: Optional[List["_models.AccessControlListMatchCondition"]] = None,
+        actions: Optional[List["_models.AccessControlListAction"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword match_configuration_name: The name of the match configuration.
+        :paramtype match_configuration_name: str
+        :keyword sequence_number: Sequence Number of the match configuration.
+        :paramtype sequence_number: int
+        :keyword ip_address_type: Type of IP Address. IPv4 or IPv6. Known values are: "IPv4" and
+         "IPv6".
+        :paramtype ip_address_type: str or ~azure.mgmt.managednetworkfabric.models.IPAddressType
+        :keyword match_conditions: List of the match conditions.
+        :paramtype match_conditions:
+         list[~azure.mgmt.managednetworkfabric.models.AccessControlListMatchCondition]
+        :keyword actions: List of actions that need to be performed for the matched conditions.
+        :paramtype actions: list[~azure.mgmt.managednetworkfabric.models.AccessControlListAction]
+        """
+        super().__init__(**kwargs)
+        self.match_configuration_name = match_configuration_name
+        self.sequence_number = sequence_number
+        self.ip_address_type = ip_address_type
+        self.match_conditions = match_conditions
+        self.actions = actions
+
+
+class TagsUpdate(_serialization.Model):
+    """Base tracked resource type for PATCH updates.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+
+
+class AccessControlListPatch(TagsUpdate):
+    """The Access Control Lists patch resource definition.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar configuration_type: Input method to configure Access Control List. Known values are:
+     "File" and "Inline".
+    :vartype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+    :ivar acls_url: Access Control List file URL.
+    :vartype acls_url: str
+    :ivar match_configurations: List of match configurations.
+    :vartype match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.AccessControlListMatchConfiguration]
+    :ivar dynamic_match_configurations: List of dynamic match configurations.
+    :vartype dynamic_match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    """
+
+    _validation = {
+        "acls_url": {"min_length": 1},
+        "match_configurations": {"min_items": 1},
+        "dynamic_match_configurations": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "configuration_type": {"key": "properties.configurationType", "type": "str"},
+        "acls_url": {"key": "properties.aclsUrl", "type": "str"},
+        "match_configurations": {
+            "key": "properties.matchConfigurations",
+            "type": "[AccessControlListMatchConfiguration]",
+        },
+        "dynamic_match_configurations": {
+            "key": "properties.dynamicMatchConfigurations",
+            "type": "[CommonDynamicMatchConfiguration]",
+        },
+        "annotation": {"key": "properties.annotation", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        configuration_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
+        acls_url: Optional[str] = None,
+        match_configurations: Optional[List["_models.AccessControlListMatchConfiguration"]] = None,
+        dynamic_match_configurations: Optional[List["_models.CommonDynamicMatchConfiguration"]] = None,
+        annotation: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword configuration_type: Input method to configure Access Control List. Known values are:
+         "File" and "Inline".
+        :paramtype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+        :keyword acls_url: Access Control List file URL.
+        :paramtype acls_url: str
+        :keyword match_configurations: List of match configurations.
+        :paramtype match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.AccessControlListMatchConfiguration]
+        :keyword dynamic_match_configurations: List of dynamic match configurations.
+        :paramtype dynamic_match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        """
+        super().__init__(tags=tags, **kwargs)
+        self.configuration_type = configuration_type
+        self.acls_url = acls_url
+        self.match_configurations = match_configurations
+        self.dynamic_match_configurations = dynamic_match_configurations
+        self.annotation = annotation
+
+
+class AccessControlListPatchableProperties(_serialization.Model):
+    """Access Control List Patch Properties defines the patchable resource properties.
+
+    :ivar configuration_type: Input method to configure Access Control List. Known values are:
+     "File" and "Inline".
+    :vartype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+    :ivar acls_url: Access Control List file URL.
+    :vartype acls_url: str
+    :ivar match_configurations: List of match configurations.
+    :vartype match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.AccessControlListMatchConfiguration]
+    :ivar dynamic_match_configurations: List of dynamic match configurations.
+    :vartype dynamic_match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
+    """
+
+    _validation = {
+        "acls_url": {"min_length": 1},
+        "match_configurations": {"min_items": 1},
+        "dynamic_match_configurations": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "configuration_type": {"key": "configurationType", "type": "str"},
+        "acls_url": {"key": "aclsUrl", "type": "str"},
+        "match_configurations": {"key": "matchConfigurations", "type": "[AccessControlListMatchConfiguration]"},
+        "dynamic_match_configurations": {
+            "key": "dynamicMatchConfigurations",
+            "type": "[CommonDynamicMatchConfiguration]",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        configuration_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
+        acls_url: Optional[str] = None,
+        match_configurations: Optional[List["_models.AccessControlListMatchConfiguration"]] = None,
+        dynamic_match_configurations: Optional[List["_models.CommonDynamicMatchConfiguration"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword configuration_type: Input method to configure Access Control List. Known values are:
+         "File" and "Inline".
+        :paramtype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+        :keyword acls_url: Access Control List file URL.
+        :paramtype acls_url: str
+        :keyword match_configurations: List of match configurations.
+        :paramtype match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.AccessControlListMatchConfiguration]
+        :keyword dynamic_match_configurations: List of dynamic match configurations.
+        :paramtype dynamic_match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
+        """
+        super().__init__(**kwargs)
+        self.configuration_type = configuration_type
+        self.acls_url = acls_url
+        self.match_configurations = match_configurations
+        self.dynamic_match_configurations = dynamic_match_configurations
 
 
 class AnnotationResource(_serialization.Model):
@@ -229,247 +659,312 @@ class AnnotationResource(_serialization.Model):
         self.annotation = annotation
 
 
-class AccessControlListConditionProperties(AnnotationResource):
-    """Access Control List condition model.
-
-    All required parameters must be populated in order to send to Azure.
+class AccessControlListPatchProperties(AccessControlListPatchableProperties, AnnotationResource):
+    """Access Control Lists patch properties.
 
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar sequence_number: sequenceNumber of the Access Control List. Required.
-    :vartype sequence_number: int
-    :ivar action: action. Example: allow | deny. Required. Known values are: "allow" and "deny".
-    :vartype action: str or ~azure.mgmt.managednetworkfabric.models.ConditionActionType
-    :ivar destination_address: destinationAddress. Example: any | 1.1.1.0/24 | 1.1.10.10. Required.
-    :vartype destination_address: str
-    :ivar destination_port: destinationPort. Example: any | 1253. Required.
-    :vartype destination_port: str
-    :ivar source_address: sourceAddress. Example: any | 1.1.1.0/24 | 1.1.10.10. Required.
-    :vartype source_address: str
-    :ivar source_port: sourcePort. Example: any | 1253. Required.
-    :vartype source_port: str
-    :ivar protocol: TCP/IP protocol as defined in the list of IP protocol numbers. Example: 255
-     (any) | 0 | 1. Required.
-    :vartype protocol: int
+    :ivar configuration_type: Input method to configure Access Control List. Known values are:
+     "File" and "Inline".
+    :vartype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+    :ivar acls_url: Access Control List file URL.
+    :vartype acls_url: str
+    :ivar match_configurations: List of match configurations.
+    :vartype match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.AccessControlListMatchConfiguration]
+    :ivar dynamic_match_configurations: List of dynamic match configurations.
+    :vartype dynamic_match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
     """
 
     _validation = {
-        "sequence_number": {"required": True},
-        "action": {"required": True},
-        "destination_address": {"required": True},
-        "destination_port": {"required": True},
-        "source_address": {"required": True},
-        "source_port": {"required": True},
-        "protocol": {"required": True},
+        "acls_url": {"min_length": 1},
+        "match_configurations": {"min_items": 1},
+        "dynamic_match_configurations": {"min_items": 1},
     }
 
     _attribute_map = {
         "annotation": {"key": "annotation", "type": "str"},
-        "sequence_number": {"key": "sequenceNumber", "type": "int"},
-        "action": {"key": "action", "type": "str"},
-        "destination_address": {"key": "destinationAddress", "type": "str"},
-        "destination_port": {"key": "destinationPort", "type": "str"},
-        "source_address": {"key": "sourceAddress", "type": "str"},
-        "source_port": {"key": "sourcePort", "type": "str"},
-        "protocol": {"key": "protocol", "type": "int"},
+        "configuration_type": {"key": "configurationType", "type": "str"},
+        "acls_url": {"key": "aclsUrl", "type": "str"},
+        "match_configurations": {"key": "matchConfigurations", "type": "[AccessControlListMatchConfiguration]"},
+        "dynamic_match_configurations": {
+            "key": "dynamicMatchConfigurations",
+            "type": "[CommonDynamicMatchConfiguration]",
+        },
     }
 
     def __init__(
         self,
         *,
-        sequence_number: int,
-        action: Union[str, "_models.ConditionActionType"],
-        destination_address: str,
-        destination_port: str,
-        source_address: str,
-        source_port: str,
-        protocol: int,
         annotation: Optional[str] = None,
+        configuration_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
+        acls_url: Optional[str] = None,
+        match_configurations: Optional[List["_models.AccessControlListMatchConfiguration"]] = None,
+        dynamic_match_configurations: Optional[List["_models.CommonDynamicMatchConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword sequence_number: sequenceNumber of the Access Control List. Required.
-        :paramtype sequence_number: int
-        :keyword action: action. Example: allow | deny. Required. Known values are: "allow" and "deny".
-        :paramtype action: str or ~azure.mgmt.managednetworkfabric.models.ConditionActionType
-        :keyword destination_address: destinationAddress. Example: any | 1.1.1.0/24 | 1.1.10.10.
-         Required.
-        :paramtype destination_address: str
-        :keyword destination_port: destinationPort. Example: any | 1253. Required.
-        :paramtype destination_port: str
-        :keyword source_address: sourceAddress. Example: any | 1.1.1.0/24 | 1.1.10.10. Required.
-        :paramtype source_address: str
-        :keyword source_port: sourcePort. Example: any | 1253. Required.
-        :paramtype source_port: str
-        :keyword protocol: TCP/IP protocol as defined in the list of IP protocol numbers. Example: 255
-         (any) | 0 | 1. Required.
-        :paramtype protocol: int
+        :keyword configuration_type: Input method to configure Access Control List. Known values are:
+         "File" and "Inline".
+        :paramtype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+        :keyword acls_url: Access Control List file URL.
+        :paramtype acls_url: str
+        :keyword match_configurations: List of match configurations.
+        :paramtype match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.AccessControlListMatchConfiguration]
+        :keyword dynamic_match_configurations: List of dynamic match configurations.
+        :paramtype dynamic_match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
         """
-        super().__init__(annotation=annotation, **kwargs)
-        self.sequence_number = sequence_number
-        self.action = action
-        self.destination_address = destination_address
-        self.destination_port = destination_port
-        self.source_address = source_address
-        self.source_port = source_port
-        self.protocol = protocol
+        super().__init__(
+            configuration_type=configuration_type,
+            acls_url=acls_url,
+            match_configurations=match_configurations,
+            dynamic_match_configurations=dynamic_match_configurations,
+            annotation=annotation,
+            **kwargs
+        )
+        self.annotation = annotation
+        self.configuration_type = configuration_type
+        self.acls_url = acls_url
+        self.match_configurations = match_configurations
+        self.dynamic_match_configurations = dynamic_match_configurations
 
 
-class AccessControlListPatch(_serialization.Model):
-    """The AccessControlList patch resource definition.
+class PortCondition(_serialization.Model):
+    """Port condition that needs to be matched.
 
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar annotation: Switch configuration description.
-    :vartype annotation: str
-    :ivar address_family: IP address family. Example: ipv4 | ipv6. Known values are: "ipv4" and
-     "ipv6".
-    :vartype address_family: str or ~azure.mgmt.managednetworkfabric.models.AddressFamily
-    :ivar conditions: Access Control List conditions.
-    :vartype conditions:
-     list[~azure.mgmt.managednetworkfabric.models.AccessControlListConditionProperties]
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar port_type: Port type that needs to be matched. Known values are: "SourcePort" and
+     "DestinationPort".
+    :vartype port_type: str or ~azure.mgmt.managednetworkfabric.models.PortType
+    :ivar layer4_protocol: Layer4 protocol type that needs to be matched. Required. Known values
+     are: "TCP" and "UDP".
+    :vartype layer4_protocol: str or ~azure.mgmt.managednetworkfabric.models.Layer4Protocol
+    :ivar ports: List of the Ports that need to be matched.
+    :vartype ports: list[str]
+    :ivar port_group_names: List of the port Group Names that to be matched.
+    :vartype port_group_names: list[str]
     """
 
+    _validation = {
+        "layer4_protocol": {"required": True},
+        "ports": {"min_items": 1},
+        "port_group_names": {"min_items": 1},
+    }
+
     _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-        "annotation": {"key": "properties.annotation", "type": "str"},
-        "address_family": {"key": "properties.addressFamily", "type": "str"},
-        "conditions": {"key": "properties.conditions", "type": "[AccessControlListConditionProperties]"},
+        "port_type": {"key": "portType", "type": "str"},
+        "layer4_protocol": {"key": "layer4Protocol", "type": "str"},
+        "ports": {"key": "ports", "type": "[str]"},
+        "port_group_names": {"key": "portGroupNames", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
-        annotation: Optional[str] = None,
-        address_family: Optional[Union[str, "_models.AddressFamily"]] = None,
-        conditions: Optional[List["_models.AccessControlListConditionProperties"]] = None,
+        layer4_protocol: Union[str, "_models.Layer4Protocol"],
+        port_type: Optional[Union[str, "_models.PortType"]] = None,
+        ports: Optional[List[str]] = None,
+        port_group_names: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword annotation: Switch configuration description.
-        :paramtype annotation: str
-        :keyword address_family: IP address family. Example: ipv4 | ipv6. Known values are: "ipv4" and
-         "ipv6".
-        :paramtype address_family: str or ~azure.mgmt.managednetworkfabric.models.AddressFamily
-        :keyword conditions: Access Control List conditions.
-        :paramtype conditions:
-         list[~azure.mgmt.managednetworkfabric.models.AccessControlListConditionProperties]
+        :keyword port_type: Port type that needs to be matched. Known values are: "SourcePort" and
+         "DestinationPort".
+        :paramtype port_type: str or ~azure.mgmt.managednetworkfabric.models.PortType
+        :keyword layer4_protocol: Layer4 protocol type that needs to be matched. Required. Known values
+         are: "TCP" and "UDP".
+        :paramtype layer4_protocol: str or ~azure.mgmt.managednetworkfabric.models.Layer4Protocol
+        :keyword ports: List of the Ports that need to be matched.
+        :paramtype ports: list[str]
+        :keyword port_group_names: List of the port Group Names that to be matched.
+        :paramtype port_group_names: list[str]
         """
         super().__init__(**kwargs)
-        self.tags = tags
-        self.annotation = annotation
-        self.address_family = address_family
-        self.conditions = conditions
+        self.port_type = port_type
+        self.layer4_protocol = layer4_protocol
+        self.ports = ports
+        self.port_group_names = port_group_names
 
 
-class AccessControlListPatchProperties(AnnotationResource):
-    """AccessControlListPatchProperties define the patchable resource properties.
+class AccessControlListPortCondition(PortCondition):
+    """Defines the port condition that needs to be matched.
 
-    :ivar annotation: Switch configuration description.
-    :vartype annotation: str
-    :ivar address_family: IP address family. Example: ipv4 | ipv6. Known values are: "ipv4" and
-     "ipv6".
-    :vartype address_family: str or ~azure.mgmt.managednetworkfabric.models.AddressFamily
-    :ivar conditions: Access Control List conditions.
-    :vartype conditions:
-     list[~azure.mgmt.managednetworkfabric.models.AccessControlListConditionProperties]
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar port_type: Port type that needs to be matched. Known values are: "SourcePort" and
+     "DestinationPort".
+    :vartype port_type: str or ~azure.mgmt.managednetworkfabric.models.PortType
+    :ivar layer4_protocol: Layer4 protocol type that needs to be matched. Required. Known values
+     are: "TCP" and "UDP".
+    :vartype layer4_protocol: str or ~azure.mgmt.managednetworkfabric.models.Layer4Protocol
+    :ivar ports: List of the Ports that need to be matched.
+    :vartype ports: list[str]
+    :ivar port_group_names: List of the port Group Names that to be matched.
+    :vartype port_group_names: list[str]
+    :ivar flags: List of protocol flags that needs to be matched.
+    :vartype flags: list[str]
     """
 
+    _validation = {
+        "layer4_protocol": {"required": True},
+        "ports": {"min_items": 1},
+        "port_group_names": {"min_items": 1},
+    }
+
     _attribute_map = {
-        "annotation": {"key": "annotation", "type": "str"},
-        "address_family": {"key": "addressFamily", "type": "str"},
-        "conditions": {"key": "conditions", "type": "[AccessControlListConditionProperties]"},
+        "port_type": {"key": "portType", "type": "str"},
+        "layer4_protocol": {"key": "layer4Protocol", "type": "str"},
+        "ports": {"key": "ports", "type": "[str]"},
+        "port_group_names": {"key": "portGroupNames", "type": "[str]"},
+        "flags": {"key": "flags", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        annotation: Optional[str] = None,
-        address_family: Optional[Union[str, "_models.AddressFamily"]] = None,
-        conditions: Optional[List["_models.AccessControlListConditionProperties"]] = None,
+        layer4_protocol: Union[str, "_models.Layer4Protocol"],
+        port_type: Optional[Union[str, "_models.PortType"]] = None,
+        ports: Optional[List[str]] = None,
+        port_group_names: Optional[List[str]] = None,
+        flags: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword annotation: Switch configuration description.
-        :paramtype annotation: str
-        :keyword address_family: IP address family. Example: ipv4 | ipv6. Known values are: "ipv4" and
-         "ipv6".
-        :paramtype address_family: str or ~azure.mgmt.managednetworkfabric.models.AddressFamily
-        :keyword conditions: Access Control List conditions.
-        :paramtype conditions:
-         list[~azure.mgmt.managednetworkfabric.models.AccessControlListConditionProperties]
+        :keyword port_type: Port type that needs to be matched. Known values are: "SourcePort" and
+         "DestinationPort".
+        :paramtype port_type: str or ~azure.mgmt.managednetworkfabric.models.PortType
+        :keyword layer4_protocol: Layer4 protocol type that needs to be matched. Required. Known values
+         are: "TCP" and "UDP".
+        :paramtype layer4_protocol: str or ~azure.mgmt.managednetworkfabric.models.Layer4Protocol
+        :keyword ports: List of the Ports that need to be matched.
+        :paramtype ports: list[str]
+        :keyword port_group_names: List of the port Group Names that to be matched.
+        :paramtype port_group_names: list[str]
+        :keyword flags: List of protocol flags that needs to be matched.
+        :paramtype flags: list[str]
         """
-        super().__init__(annotation=annotation, **kwargs)
-        self.address_family = address_family
-        self.conditions = conditions
+        super().__init__(
+            port_type=port_type,
+            layer4_protocol=layer4_protocol,
+            ports=ports,
+            port_group_names=port_group_names,
+            **kwargs
+        )
+        self.flags = flags
 
 
-class AccessControlListProperties(AnnotationResource):
-    """AccessControlListProperties define the resource properties.
+class AccessControlListProperties(AnnotationResource, AccessControlListPatchableProperties):
+    """Access Control List Properties defines the resource properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
+    :ivar configuration_type: Input method to configure Access Control List. Known values are:
+     "File" and "Inline".
+    :vartype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+    :ivar acls_url: Access Control List file URL.
+    :vartype acls_url: str
+    :ivar match_configurations: List of match configurations.
+    :vartype match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.AccessControlListMatchConfiguration]
+    :ivar dynamic_match_configurations: List of dynamic match configurations.
+    :vartype dynamic_match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar address_family: IP address family. Example: ipv4 | ipv6. Required. Known values are:
-     "ipv4" and "ipv6".
-    :vartype address_family: str or ~azure.mgmt.managednetworkfabric.models.AddressFamily
-    :ivar conditions: Access Control List conditions. Required.
-    :vartype conditions:
-     list[~azure.mgmt.managednetworkfabric.models.AccessControlListConditionProperties]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar last_synced_time: The last synced timestamp.
+    :vartype last_synced_time: ~datetime.datetime
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
-        "address_family": {"required": True},
-        "conditions": {"required": True},
+        "acls_url": {"min_length": 1},
+        "match_configurations": {"min_items": 1},
+        "dynamic_match_configurations": {"min_items": 1},
+        "last_synced_time": {"readonly": True},
+        "configuration_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
+        "configuration_type": {"key": "configurationType", "type": "str"},
+        "acls_url": {"key": "aclsUrl", "type": "str"},
+        "match_configurations": {"key": "matchConfigurations", "type": "[AccessControlListMatchConfiguration]"},
+        "dynamic_match_configurations": {
+            "key": "dynamicMatchConfigurations",
+            "type": "[CommonDynamicMatchConfiguration]",
+        },
         "annotation": {"key": "annotation", "type": "str"},
-        "address_family": {"key": "addressFamily", "type": "str"},
-        "conditions": {"key": "conditions", "type": "[AccessControlListConditionProperties]"},
+        "last_synced_time": {"key": "lastSyncedTime", "type": "iso-8601"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "administrative_state": {"key": "administrativeState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        address_family: Union[str, "_models.AddressFamily"],
-        conditions: List["_models.AccessControlListConditionProperties"],
+        configuration_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
+        acls_url: Optional[str] = None,
+        match_configurations: Optional[List["_models.AccessControlListMatchConfiguration"]] = None,
+        dynamic_match_configurations: Optional[List["_models.CommonDynamicMatchConfiguration"]] = None,
         annotation: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword configuration_type: Input method to configure Access Control List. Known values are:
+         "File" and "Inline".
+        :paramtype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+        :keyword acls_url: Access Control List file URL.
+        :paramtype acls_url: str
+        :keyword match_configurations: List of match configurations.
+        :paramtype match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.AccessControlListMatchConfiguration]
+        :keyword dynamic_match_configurations: List of dynamic match configurations.
+        :paramtype dynamic_match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword address_family: IP address family. Example: ipv4 | ipv6. Required. Known values are:
-         "ipv4" and "ipv6".
-        :paramtype address_family: str or ~azure.mgmt.managednetworkfabric.models.AddressFamily
-        :keyword conditions: Access Control List conditions. Required.
-        :paramtype conditions:
-         list[~azure.mgmt.managednetworkfabric.models.AccessControlListConditionProperties]
         """
-        super().__init__(annotation=annotation, **kwargs)
-        self.address_family = address_family
-        self.conditions = conditions
+        super().__init__(
+            annotation=annotation,
+            configuration_type=configuration_type,
+            acls_url=acls_url,
+            match_configurations=match_configurations,
+            dynamic_match_configurations=dynamic_match_configurations,
+            **kwargs
+        )
+        self.configuration_type = configuration_type
+        self.acls_url = acls_url
+        self.match_configurations = match_configurations
+        self.dynamic_match_configurations = dynamic_match_configurations
+        self.last_synced_time = None
+        self.configuration_state = None
         self.provisioning_state = None
+        self.administrative_state = None
+        self.annotation = annotation
 
 
 class AccessControlListsListResult(_serialization.Model):
-    """List of AccessControlLists.
+    """List of Access Control Lists.
 
-    :ivar value: List of AccessControlList resources.
+    :ivar value: List of Access Control List resources.
     :vartype value: list[~azure.mgmt.managednetworkfabric.models.AccessControlList]
     :ivar next_link: Url to follow for getting next page of resources.
     :vartype next_link: str
@@ -488,7 +983,7 @@ class AccessControlListsListResult(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword value: List of AccessControlList resources.
+        :keyword value: List of Access Control List resources.
         :paramtype value: list[~azure.mgmt.managednetworkfabric.models.AccessControlList]
         :keyword next_link: Url to follow for getting next page of resources.
         :paramtype next_link: str
@@ -501,7 +996,7 @@ class AccessControlListsListResult(_serialization.Model):
 class IpCommunitySetOperationProperties(_serialization.Model):
     """IP Community set operation properties.
 
-    :ivar set: IP Community ID list properties.
+    :ivar set: List of IP Community IDs.
     :vartype set: ~azure.mgmt.managednetworkfabric.models.IpCommunityIdList
     """
 
@@ -511,7 +1006,7 @@ class IpCommunitySetOperationProperties(_serialization.Model):
 
     def __init__(self, *, set: Optional["_models.IpCommunityIdList"] = None, **kwargs: Any) -> None:
         """
-        :keyword set: IP Community ID list properties.
+        :keyword set: List of IP Community IDs.
         :paramtype set: ~azure.mgmt.managednetworkfabric.models.IpCommunityIdList
         """
         super().__init__(**kwargs)
@@ -521,7 +1016,7 @@ class IpCommunitySetOperationProperties(_serialization.Model):
 class IpCommunityDeleteOperationProperties(_serialization.Model):
     """IP Community delete operation properties.
 
-    :ivar delete: IP Community ID list properties.
+    :ivar delete: List of IP Community IDs.
     :vartype delete: ~azure.mgmt.managednetworkfabric.models.IpCommunityIdList
     """
 
@@ -531,7 +1026,7 @@ class IpCommunityDeleteOperationProperties(_serialization.Model):
 
     def __init__(self, *, delete: Optional["_models.IpCommunityIdList"] = None, **kwargs: Any) -> None:
         """
-        :keyword delete: IP Community ID list properties.
+        :keyword delete: List of IP Community IDs.
         :paramtype delete: ~azure.mgmt.managednetworkfabric.models.IpCommunityIdList
         """
         super().__init__(**kwargs)
@@ -541,7 +1036,7 @@ class IpCommunityDeleteOperationProperties(_serialization.Model):
 class IpCommunityAddOperationProperties(_serialization.Model):
     """IP Community add operation properties.
 
-    :ivar add: IP Community ID list properties.
+    :ivar add: List of IP Community IDs.
     :vartype add: ~azure.mgmt.managednetworkfabric.models.IpCommunityIdList
     """
 
@@ -551,7 +1046,7 @@ class IpCommunityAddOperationProperties(_serialization.Model):
 
     def __init__(self, *, add: Optional["_models.IpCommunityIdList"] = None, **kwargs: Any) -> None:
         """
-        :keyword add: IP Community ID list properties.
+        :keyword add: List of IP Community IDs.
         :paramtype add: ~azure.mgmt.managednetworkfabric.models.IpCommunityIdList
         """
         super().__init__(**kwargs)
@@ -563,11 +1058,11 @@ class ActionIpCommunityProperties(
 ):
     """IP Community Properties.
 
-    :ivar set: IP Community ID list properties.
+    :ivar set: List of IP Community IDs.
     :vartype set: ~azure.mgmt.managednetworkfabric.models.IpCommunityIdList
-    :ivar delete: IP Community ID list properties.
+    :ivar delete: List of IP Community IDs.
     :vartype delete: ~azure.mgmt.managednetworkfabric.models.IpCommunityIdList
-    :ivar add: IP Community ID list properties.
+    :ivar add: List of IP Community IDs.
     :vartype add: ~azure.mgmt.managednetworkfabric.models.IpCommunityIdList
     """
 
@@ -586,11 +1081,11 @@ class ActionIpCommunityProperties(
         **kwargs: Any
     ) -> None:
         """
-        :keyword set: IP Community ID list properties.
+        :keyword set: List of IP Community IDs.
         :paramtype set: ~azure.mgmt.managednetworkfabric.models.IpCommunityIdList
-        :keyword delete: IP Community ID list properties.
+        :keyword delete: List of IP Community IDs.
         :paramtype delete: ~azure.mgmt.managednetworkfabric.models.IpCommunityIdList
-        :keyword add: IP Community ID list properties.
+        :keyword add: List of IP Community IDs.
         :paramtype add: ~azure.mgmt.managednetworkfabric.models.IpCommunityIdList
         """
         super().__init__(add=add, delete=delete, set=set, **kwargs)
@@ -602,7 +1097,7 @@ class ActionIpCommunityProperties(
 class IpExtendedCommunitySetOperationProperties(_serialization.Model):
     """IP Extended Community set operation properties.
 
-    :ivar set: IP Extended Community Id list properties.
+    :ivar set: List of IP Extended Community IDs.
     :vartype set: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityIdList
     """
 
@@ -612,7 +1107,7 @@ class IpExtendedCommunitySetOperationProperties(_serialization.Model):
 
     def __init__(self, *, set: Optional["_models.IpExtendedCommunityIdList"] = None, **kwargs: Any) -> None:
         """
-        :keyword set: IP Extended Community Id list properties.
+        :keyword set: List of IP Extended Community IDs.
         :paramtype set: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityIdList
         """
         super().__init__(**kwargs)
@@ -622,7 +1117,7 @@ class IpExtendedCommunitySetOperationProperties(_serialization.Model):
 class IpExtendedCommunityDeleteOperationProperties(_serialization.Model):
     """IP Extended Community delete operation properties.
 
-    :ivar delete: IP Extended Community Id list properties.
+    :ivar delete: List of IP Extended Community IDs.
     :vartype delete: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityIdList
     """
 
@@ -632,7 +1127,7 @@ class IpExtendedCommunityDeleteOperationProperties(_serialization.Model):
 
     def __init__(self, *, delete: Optional["_models.IpExtendedCommunityIdList"] = None, **kwargs: Any) -> None:
         """
-        :keyword delete: IP Extended Community Id list properties.
+        :keyword delete: List of IP Extended Community IDs.
         :paramtype delete: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityIdList
         """
         super().__init__(**kwargs)
@@ -642,7 +1137,7 @@ class IpExtendedCommunityDeleteOperationProperties(_serialization.Model):
 class IpExtendedCommunityAddOperationProperties(_serialization.Model):
     """IP Extended Community add operation properties.
 
-    :ivar add: IP Extended Community Id list properties.
+    :ivar add: List of IP Extended Community IDs.
     :vartype add: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityIdList
     """
 
@@ -652,7 +1147,7 @@ class IpExtendedCommunityAddOperationProperties(_serialization.Model):
 
     def __init__(self, *, add: Optional["_models.IpExtendedCommunityIdList"] = None, **kwargs: Any) -> None:
         """
-        :keyword add: IP Extended Community Id list properties.
+        :keyword add: List of IP Extended Community IDs.
         :paramtype add: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityIdList
         """
         super().__init__(**kwargs)
@@ -666,11 +1161,11 @@ class ActionIpExtendedCommunityProperties(
 ):
     """IP Extended Community Properties.
 
-    :ivar set: IP Extended Community Id list properties.
+    :ivar set: List of IP Extended Community IDs.
     :vartype set: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityIdList
-    :ivar delete: IP Extended Community Id list properties.
+    :ivar delete: List of IP Extended Community IDs.
     :vartype delete: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityIdList
-    :ivar add: IP Extended Community Id list properties.
+    :ivar add: List of IP Extended Community IDs.
     :vartype add: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityIdList
     """
 
@@ -689,11 +1184,11 @@ class ActionIpExtendedCommunityProperties(
         **kwargs: Any
     ) -> None:
         """
-        :keyword set: IP Extended Community Id list properties.
+        :keyword set: List of IP Extended Community IDs.
         :paramtype set: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityIdList
-        :keyword delete: IP Extended Community Id list properties.
+        :keyword delete: List of IP Extended Community IDs.
         :paramtype delete: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityIdList
-        :keyword add: IP Extended Community Id list properties.
+        :keyword add: List of IP Extended Community IDs.
         :paramtype add: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityIdList
         """
         super().__init__(add=add, delete=delete, set=set, **kwargs)
@@ -703,19 +1198,25 @@ class ActionIpExtendedCommunityProperties(
 
 
 class AggregateRoute(_serialization.Model):
-    """Aggregate Route properties.
+    """aggregateIpv4Route model.
 
-    :ivar prefix: Prefix of the aggregate Route.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar prefix: IPv4 Prefix of the aggregate Ipv4Route. Required.
     :vartype prefix: str
     """
+
+    _validation = {
+        "prefix": {"required": True, "min_length": 1},
+    }
 
     _attribute_map = {
         "prefix": {"key": "prefix", "type": "str"},
     }
 
-    def __init__(self, *, prefix: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, prefix: str, **kwargs: Any) -> None:
         """
-        :keyword prefix: Prefix of the aggregate Route.
+        :keyword prefix: IPv4 Prefix of the aggregate Ipv4Route. Required.
         :paramtype prefix: str
         """
         super().__init__(**kwargs)
@@ -723,13 +1224,18 @@ class AggregateRoute(_serialization.Model):
 
 
 class AggregateRouteConfiguration(_serialization.Model):
-    """List of IPv4 and IPv6 route configurations.
+    """List of IPv4 and IPv6 aggregate routes.
 
     :ivar ipv4_routes: List of IPv4 Route prefixes.
     :vartype ipv4_routes: list[~azure.mgmt.managednetworkfabric.models.AggregateRoute]
-    :ivar ipv6_routes: List of IPv6 Routes prefixes.
+    :ivar ipv6_routes: List of Ipv6Routes prefixes.
     :vartype ipv6_routes: list[~azure.mgmt.managednetworkfabric.models.AggregateRoute]
     """
+
+    _validation = {
+        "ipv4_routes": {"min_items": 1},
+        "ipv6_routes": {"min_items": 1},
+    }
 
     _attribute_map = {
         "ipv4_routes": {"key": "ipv4Routes", "type": "[AggregateRoute]"},
@@ -746,67 +1252,12 @@ class AggregateRouteConfiguration(_serialization.Model):
         """
         :keyword ipv4_routes: List of IPv4 Route prefixes.
         :paramtype ipv4_routes: list[~azure.mgmt.managednetworkfabric.models.AggregateRoute]
-        :keyword ipv6_routes: List of IPv6 Routes prefixes.
+        :keyword ipv6_routes: List of Ipv6Routes prefixes.
         :paramtype ipv6_routes: list[~azure.mgmt.managednetworkfabric.models.AggregateRoute]
         """
         super().__init__(**kwargs)
         self.ipv4_routes = ipv4_routes
         self.ipv6_routes = ipv6_routes
-
-
-class ARPProperties(_serialization.Model):
-    """Show ARP table entry properties.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar address: Ipv4 or Ipv6 address. Required.
-    :vartype address: str
-    :ivar age: Duration in seconds. Required.
-    :vartype age: str
-    :ivar mac_address: Hardware address. Required.
-    :vartype mac_address: str
-    :ivar interface: Layer 2 interface name. Required.
-    :vartype interface: str
-    :ivar state: ARP status.
-    :vartype state: str
-    """
-
-    _validation = {
-        "address": {"required": True},
-        "age": {"required": True},
-        "mac_address": {"required": True},
-        "interface": {"required": True},
-    }
-
-    _attribute_map = {
-        "address": {"key": "address", "type": "str"},
-        "age": {"key": "age", "type": "str"},
-        "mac_address": {"key": "macAddress", "type": "str"},
-        "interface": {"key": "interface", "type": "str"},
-        "state": {"key": "state", "type": "str"},
-    }
-
-    def __init__(
-        self, *, address: str, age: str, mac_address: str, interface: str, state: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword address: Ipv4 or Ipv6 address. Required.
-        :paramtype address: str
-        :keyword age: Duration in seconds. Required.
-        :paramtype age: str
-        :keyword mac_address: Hardware address. Required.
-        :paramtype mac_address: str
-        :keyword interface: Layer 2 interface name. Required.
-        :paramtype interface: str
-        :keyword state: ARP status.
-        :paramtype state: str
-        """
-        super().__init__(**kwargs)
-        self.address = address
-        self.age = age
-        self.mac_address = mac_address
-        self.interface = interface
-        self.state = state
 
 
 class BfdConfiguration(_serialization.Model):
@@ -815,41 +1266,42 @@ class BfdConfiguration(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar administrative_state: Administrative state of the BfdConfiguration. Example: Enabled |
-     Disabled. Known values are: "Enabled" and "Disabled".
+     Disabled. Known values are: "Enabled", "Disabled", "MAT", and "RMA".
     :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
-    :ivar interval: interval in milliseconds. Example: 300.
-    :vartype interval: int
-    :ivar multiplier: Multiplier for the Bfd Configuration. Example: 3.
+     ~azure.mgmt.managednetworkfabric.models.BfdAdministrativeState
+    :ivar interval_in_milli_seconds: Interval in milliseconds. Example: 300.
+    :vartype interval_in_milli_seconds: int
+    :ivar multiplier: Multiplier for the Bfd Configuration. Example: 5.
     :vartype multiplier: int
     """
 
     _validation = {
         "administrative_state": {"readonly": True},
-        "interval": {"readonly": True},
-        "multiplier": {"readonly": True},
     }
 
     _attribute_map = {
         "administrative_state": {"key": "administrativeState", "type": "str"},
-        "interval": {"key": "interval", "type": "int"},
+        "interval_in_milli_seconds": {"key": "intervalInMilliSeconds", "type": "int"},
         "multiplier": {"key": "multiplier", "type": "int"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, interval_in_milli_seconds: int = 300, multiplier: int = 5, **kwargs: Any) -> None:
+        """
+        :keyword interval_in_milli_seconds: Interval in milliseconds. Example: 300.
+        :paramtype interval_in_milli_seconds: int
+        :keyword multiplier: Multiplier for the Bfd Configuration. Example: 5.
+        :paramtype multiplier: int
+        """
         super().__init__(**kwargs)
         self.administrative_state = None
-        self.interval = None
-        self.multiplier = None
+        self.interval_in_milli_seconds = interval_in_milli_seconds
+        self.multiplier = multiplier
 
 
 class BgpConfiguration(AnnotationResource):  # pylint: disable=too-many-instance-attributes
     """BGP configuration properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
@@ -866,13 +1318,13 @@ class BgpConfiguration(AnnotationResource):  # pylint: disable=too-many-instance
     :vartype allow_as_override: str or ~azure.mgmt.managednetworkfabric.models.AllowASOverride
     :ivar fabric_asn: ASN of Network Fabric. Example: 65048.
     :vartype fabric_asn: int
-    :ivar peer_asn: Peer ASN. Example: 65047. Required.
+    :ivar peer_asn: Peer ASN. Example: 65047.
     :vartype peer_asn: int
-    :ivar ipv4_listen_range_prefixes: BGP Ipv4 ListenRange.
+    :ivar ipv4_listen_range_prefixes: List of BGP IPv4 Listen Range prefixes.
     :vartype ipv4_listen_range_prefixes: list[str]
-    :ivar ipv6_listen_range_prefixes: BGP Ipv6 ListenRange.
+    :ivar ipv6_listen_range_prefixes: List of BGP IPv6 Listen Ranges prefixes.
     :vartype ipv6_listen_range_prefixes: list[str]
-    :ivar ipv4_neighbor_address: List with stringified ipv4NeighborAddresses.
+    :ivar ipv4_neighbor_address: List with stringified IPv4 Neighbor Addresses.
     :vartype ipv4_neighbor_address: list[~azure.mgmt.managednetworkfabric.models.NeighborAddress]
     :ivar ipv6_neighbor_address: List with stringified IPv6 Neighbor Address.
     :vartype ipv6_neighbor_address: list[~azure.mgmt.managednetworkfabric.models.NeighborAddress]
@@ -881,7 +1333,11 @@ class BgpConfiguration(AnnotationResource):  # pylint: disable=too-many-instance
     _validation = {
         "allow_as": {"maximum": 10, "minimum": 0},
         "fabric_asn": {"readonly": True},
-        "peer_asn": {"required": True, "maximum": 65535, "minimum": 1},
+        "peer_asn": {"maximum": 4294967295, "minimum": 1},
+        "ipv4_listen_range_prefixes": {"min_items": 1},
+        "ipv6_listen_range_prefixes": {"min_items": 1},
+        "ipv4_neighbor_address": {"min_items": 1},
+        "ipv6_neighbor_address": {"min_items": 1},
     }
 
     _attribute_map = {
@@ -901,12 +1357,12 @@ class BgpConfiguration(AnnotationResource):  # pylint: disable=too-many-instance
     def __init__(
         self,
         *,
-        peer_asn: int,
         annotation: Optional[str] = None,
         bfd_configuration: Optional["_models.BfdConfiguration"] = None,
         default_route_originate: Optional[Union[str, "_models.BooleanEnumProperty"]] = None,
         allow_as: int = 2,
         allow_as_override: Optional[Union[str, "_models.AllowASOverride"]] = None,
+        peer_asn: Optional[int] = None,
         ipv4_listen_range_prefixes: Optional[List[str]] = None,
         ipv6_listen_range_prefixes: Optional[List[str]] = None,
         ipv4_neighbor_address: Optional[List["_models.NeighborAddress"]] = None,
@@ -927,13 +1383,13 @@ class BgpConfiguration(AnnotationResource):  # pylint: disable=too-many-instance
         :paramtype allow_as: int
         :keyword allow_as_override: Enable Or Disable state. Known values are: "Enable" and "Disable".
         :paramtype allow_as_override: str or ~azure.mgmt.managednetworkfabric.models.AllowASOverride
-        :keyword peer_asn: Peer ASN. Example: 65047. Required.
+        :keyword peer_asn: Peer ASN. Example: 65047.
         :paramtype peer_asn: int
-        :keyword ipv4_listen_range_prefixes: BGP Ipv4 ListenRange.
+        :keyword ipv4_listen_range_prefixes: List of BGP IPv4 Listen Range prefixes.
         :paramtype ipv4_listen_range_prefixes: list[str]
-        :keyword ipv6_listen_range_prefixes: BGP Ipv6 ListenRange.
+        :keyword ipv6_listen_range_prefixes: List of BGP IPv6 Listen Ranges prefixes.
         :paramtype ipv6_listen_range_prefixes: list[str]
-        :keyword ipv4_neighbor_address: List with stringified ipv4NeighborAddresses.
+        :keyword ipv4_neighbor_address: List with stringified IPv4 Neighbor Addresses.
         :paramtype ipv4_neighbor_address: list[~azure.mgmt.managednetworkfabric.models.NeighborAddress]
         :keyword ipv6_neighbor_address: List with stringified IPv6 Neighbor Address.
         :paramtype ipv6_neighbor_address: list[~azure.mgmt.managednetworkfabric.models.NeighborAddress]
@@ -951,29 +1407,318 @@ class BgpConfiguration(AnnotationResource):  # pylint: disable=too-many-instance
         self.ipv6_neighbor_address = ipv6_neighbor_address
 
 
+class CommonDynamicMatchConfiguration(_serialization.Model):
+    """Dynamic match configuration object.
+
+    :ivar ip_groups: List of IP Groups.
+    :vartype ip_groups: list[~azure.mgmt.managednetworkfabric.models.IpGroupProperties]
+    :ivar vlan_groups: List of vlan groups.
+    :vartype vlan_groups: list[~azure.mgmt.managednetworkfabric.models.VlanGroupProperties]
+    :ivar port_groups: List of the port group.
+    :vartype port_groups: list[~azure.mgmt.managednetworkfabric.models.PortGroupProperties]
+    """
+
+    _validation = {
+        "ip_groups": {"min_items": 1},
+        "vlan_groups": {"min_items": 1},
+        "port_groups": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "ip_groups": {"key": "ipGroups", "type": "[IpGroupProperties]"},
+        "vlan_groups": {"key": "vlanGroups", "type": "[VlanGroupProperties]"},
+        "port_groups": {"key": "portGroups", "type": "[PortGroupProperties]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        ip_groups: Optional[List["_models.IpGroupProperties"]] = None,
+        vlan_groups: Optional[List["_models.VlanGroupProperties"]] = None,
+        port_groups: Optional[List["_models.PortGroupProperties"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword ip_groups: List of IP Groups.
+        :paramtype ip_groups: list[~azure.mgmt.managednetworkfabric.models.IpGroupProperties]
+        :keyword vlan_groups: List of vlan groups.
+        :paramtype vlan_groups: list[~azure.mgmt.managednetworkfabric.models.VlanGroupProperties]
+        :keyword port_groups: List of the port group.
+        :paramtype port_groups: list[~azure.mgmt.managednetworkfabric.models.PortGroupProperties]
+        """
+        super().__init__(**kwargs)
+        self.ip_groups = ip_groups
+        self.vlan_groups = vlan_groups
+        self.port_groups = port_groups
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.managednetworkfabric.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.managednetworkfabric.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class CommonPostActionResponseForDeviceUpdate(ErrorResponse):
+    """Common response for device updates.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.managednetworkfabric.models.ErrorDetail
+    :ivar configuration_state: Gets the configuration state. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar successful_devices: List of ARM Resource IDs for which the given action applied
+     successfully.
+    :vartype successful_devices: list[str]
+    :ivar failed_devices: List of ARM Resource IDs for which the given action failed to apply.
+    :vartype failed_devices: list[str]
+    """
+
+    _validation = {
+        "configuration_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
+        "successful_devices": {"key": "successfulDevices", "type": "[str]"},
+        "failed_devices": {"key": "failedDevices", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        error: Optional["_models.ErrorDetail"] = None,
+        successful_devices: Optional[List[str]] = None,
+        failed_devices: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.managednetworkfabric.models.ErrorDetail
+        :keyword successful_devices: List of ARM Resource IDs for which the given action applied
+         successfully.
+        :paramtype successful_devices: list[str]
+        :keyword failed_devices: List of ARM Resource IDs for which the given action failed to apply.
+        :paramtype failed_devices: list[str]
+        """
+        super().__init__(error=error, **kwargs)
+        self.configuration_state = None
+        self.successful_devices = successful_devices
+        self.failed_devices = failed_devices
+
+
+class CommonPostActionResponseForStateUpdate(ErrorResponse):
+    """Common response for the state updates.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.managednetworkfabric.models.ErrorDetail
+    :ivar configuration_state: Gets the configuration state. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    """
+
+    _validation = {
+        "configuration_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.managednetworkfabric.models.ErrorDetail
+        """
+        super().__init__(error=error, **kwargs)
+        self.configuration_state = None
+
+
 class ConnectedSubnet(AnnotationResource):
     """Connected Subnet properties.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar prefix: Prefix of the connected Subnet.
+    :ivar prefix: Prefix of the Connected Subnet. Required.
     :vartype prefix: str
     """
+
+    _validation = {
+        "prefix": {"required": True, "min_length": 1},
+    }
 
     _attribute_map = {
         "annotation": {"key": "annotation", "type": "str"},
         "prefix": {"key": "prefix", "type": "str"},
     }
 
-    def __init__(self, *, annotation: Optional[str] = None, prefix: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, prefix: str, annotation: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword prefix: Prefix of the connected Subnet.
+        :keyword prefix: Prefix of the Connected Subnet. Required.
         :paramtype prefix: str
         """
         super().__init__(annotation=annotation, **kwargs)
         self.prefix = prefix
+
+
+class ConnectedSubnetRoutePolicy(_serialization.Model):
+    """Connected Subnet Route Policy properties.
+
+    :ivar export_route_policy_id: ARM Resource ID of the Route Policy. This is used for the
+     backward compatibility.
+    :vartype export_route_policy_id: str
+    :ivar export_route_policy: Array of ARM Resource ID of the RoutePolicies.
+    :vartype export_route_policy: ~azure.mgmt.managednetworkfabric.models.L3ExportRoutePolicy
+    """
+
+    _attribute_map = {
+        "export_route_policy_id": {"key": "exportRoutePolicyId", "type": "str"},
+        "export_route_policy": {"key": "exportRoutePolicy", "type": "L3ExportRoutePolicy"},
+    }
+
+    def __init__(
+        self,
+        *,
+        export_route_policy_id: Optional[str] = None,
+        export_route_policy: Optional["_models.L3ExportRoutePolicy"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword export_route_policy_id: ARM Resource ID of the Route Policy. This is used for the
+         backward compatibility.
+        :paramtype export_route_policy_id: str
+        :keyword export_route_policy: Array of ARM Resource ID of the RoutePolicies.
+        :paramtype export_route_policy: ~azure.mgmt.managednetworkfabric.models.L3ExportRoutePolicy
+        """
+        super().__init__(**kwargs)
+        self.export_route_policy_id = export_route_policy_id
+        self.export_route_policy = export_route_policy
+
+
+class ControllerServices(_serialization.Model):
+    """Network Fabric Controller services.
+
+    :ivar ipv4_address_spaces: The IPv4 Address space is optional, if the value is not defined at
+     the time of NFC creation, then the default value 10.0.0.0/19 is considered. The IPV4 address
+     subnet is an optional attribute.
+    :vartype ipv4_address_spaces: list[str]
+    :ivar ipv6_address_spaces: The IPv6 is not supported right now.
+    :vartype ipv6_address_spaces: list[str]
+    """
+
+    _attribute_map = {
+        "ipv4_address_spaces": {"key": "ipv4AddressSpaces", "type": "[str]"},
+        "ipv6_address_spaces": {"key": "ipv6AddressSpaces", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        ipv4_address_spaces: Optional[List[str]] = None,
+        ipv6_address_spaces: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword ipv4_address_spaces: The IPv4 Address space is optional, if the value is not defined
+         at the time of NFC creation, then the default value 10.0.0.0/19 is considered. The IPV4 address
+         subnet is an optional attribute.
+        :paramtype ipv4_address_spaces: list[str]
+        :keyword ipv6_address_spaces: The IPv6 is not supported right now.
+        :paramtype ipv6_address_spaces: list[str]
+        """
+        super().__init__(**kwargs)
+        self.ipv4_address_spaces = ipv4_address_spaces
+        self.ipv6_address_spaces = ipv6_address_spaces
+
+
+class DestinationProperties(_serialization.Model):
+    """The network tap destination properties.
+
+    :ivar name: Destination name.
+    :vartype name: str
+    :ivar destination_type: Type of destination. Input can be IsolationDomain or Direct. Known
+     values are: "IsolationDomain" and "Direct".
+    :vartype destination_type: str or ~azure.mgmt.managednetworkfabric.models.DestinationType
+    :ivar destination_id: The destination Id. ARM Resource ID of either NNI or Internal Networks.
+    :vartype destination_id: str
+    :ivar isolation_domain_properties: Isolation Domain Properties.
+    :vartype isolation_domain_properties:
+     ~azure.mgmt.managednetworkfabric.models.IsolationDomainProperties
+    :ivar destination_tap_rule_id: ARM Resource ID of destination Tap Rule that contains match
+     configurations.
+    :vartype destination_tap_rule_id: str
+    """
+
+    _validation = {
+        "name": {"min_length": 1},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "destination_type": {"key": "destinationType", "type": "str"},
+        "destination_id": {"key": "destinationId", "type": "str"},
+        "isolation_domain_properties": {"key": "isolationDomainProperties", "type": "IsolationDomainProperties"},
+        "destination_tap_rule_id": {"key": "destinationTapRuleId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        destination_type: Optional[Union[str, "_models.DestinationType"]] = None,
+        destination_id: Optional[str] = None,
+        isolation_domain_properties: Optional["_models.IsolationDomainProperties"] = None,
+        destination_tap_rule_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Destination name.
+        :paramtype name: str
+        :keyword destination_type: Type of destination. Input can be IsolationDomain or Direct. Known
+         values are: "IsolationDomain" and "Direct".
+        :paramtype destination_type: str or ~azure.mgmt.managednetworkfabric.models.DestinationType
+        :keyword destination_id: The destination Id. ARM Resource ID of either NNI or Internal
+         Networks.
+        :paramtype destination_id: str
+        :keyword isolation_domain_properties: Isolation Domain Properties.
+        :paramtype isolation_domain_properties:
+         ~azure.mgmt.managednetworkfabric.models.IsolationDomainProperties
+        :keyword destination_tap_rule_id: ARM Resource ID of destination Tap Rule that contains match
+         configurations.
+        :paramtype destination_tap_rule_id: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.destination_type = destination_type
+        self.destination_id = destination_id
+        self.isolation_domain_properties = isolation_domain_properties
+        self.destination_tap_rule_id = destination_tap_rule_id
 
 
 class DeviceInterfaceProperties(_serialization.Model):
@@ -1015,72 +1760,6 @@ class DeviceInterfaceProperties(_serialization.Model):
         self.identifier = identifier
         self.interface_type = interface_type
         self.supported_connector_types = supported_connector_types
-
-
-class DeviceLimits(_serialization.Model):
-    """Network device limits.
-
-    :ivar physical_interface_count: Maximum number of physical interfaces.
-    :vartype physical_interface_count: int
-    :ivar max_sub_interfaces: Maximum number of sub-interfaces.
-    :vartype max_sub_interfaces: int
-    :ivar max_tunnel_interfaces: Maximum number of tunnel interfaces.
-    :vartype max_tunnel_interfaces: int
-    :ivar max_virtual_router_functions: Maximum number of virtual router functions.
-    :vartype max_virtual_router_functions: int
-    :ivar max_border_gateway_protocol_peers: Maximum number of Border Gateway Protocol (BGP) peers.
-    :vartype max_border_gateway_protocol_peers: int
-    :ivar max_bidirectional_forwarding_detection_peers: Maximum number of Bidirectional Forwarding
-     Detection (BFD) peers.
-    :vartype max_bidirectional_forwarding_detection_peers: int
-    """
-
-    _attribute_map = {
-        "physical_interface_count": {"key": "physicalInterfaceCount", "type": "int"},
-        "max_sub_interfaces": {"key": "maxSubInterfaces", "type": "int"},
-        "max_tunnel_interfaces": {"key": "maxTunnelInterfaces", "type": "int"},
-        "max_virtual_router_functions": {"key": "maxVirtualRouterFunctions", "type": "int"},
-        "max_border_gateway_protocol_peers": {"key": "maxBorderGatewayProtocolPeers", "type": "int"},
-        "max_bidirectional_forwarding_detection_peers": {
-            "key": "maxBidirectionalForwardingDetectionPeers",
-            "type": "int",
-        },
-    }
-
-    def __init__(
-        self,
-        *,
-        physical_interface_count: Optional[int] = None,
-        max_sub_interfaces: Optional[int] = None,
-        max_tunnel_interfaces: Optional[int] = None,
-        max_virtual_router_functions: Optional[int] = None,
-        max_border_gateway_protocol_peers: Optional[int] = None,
-        max_bidirectional_forwarding_detection_peers: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword physical_interface_count: Maximum number of physical interfaces.
-        :paramtype physical_interface_count: int
-        :keyword max_sub_interfaces: Maximum number of sub-interfaces.
-        :paramtype max_sub_interfaces: int
-        :keyword max_tunnel_interfaces: Maximum number of tunnel interfaces.
-        :paramtype max_tunnel_interfaces: int
-        :keyword max_virtual_router_functions: Maximum number of virtual router functions.
-        :paramtype max_virtual_router_functions: int
-        :keyword max_border_gateway_protocol_peers: Maximum number of Border Gateway Protocol (BGP)
-         peers.
-        :paramtype max_border_gateway_protocol_peers: int
-        :keyword max_bidirectional_forwarding_detection_peers: Maximum number of Bidirectional
-         Forwarding Detection (BFD) peers.
-        :paramtype max_bidirectional_forwarding_detection_peers: int
-        """
-        super().__init__(**kwargs)
-        self.physical_interface_count = physical_interface_count
-        self.max_sub_interfaces = max_sub_interfaces
-        self.max_tunnel_interfaces = max_tunnel_interfaces
-        self.max_virtual_router_functions = max_virtual_router_functions
-        self.max_border_gateway_protocol_peers = max_border_gateway_protocol_peers
-        self.max_bidirectional_forwarding_detection_peers = max_bidirectional_forwarding_detection_peers
 
 
 class EnableDisableOnResources(_serialization.Model):
@@ -1174,25 +1853,68 @@ class ErrorDetail(_serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations. (This also follows the OData error response format.).
+class ExportRoutePolicy(_serialization.Model):
+    """Export Route Policy either IPv4 or IPv6.
 
-    :ivar error: The error object.
-    :vartype error: ~azure.mgmt.managednetworkfabric.models.ErrorDetail
+    :ivar export_ipv4_route_policy_id: ARM resource ID of RoutePolicy.
+    :vartype export_ipv4_route_policy_id: str
+    :ivar export_ipv6_route_policy_id: ARM resource ID of RoutePolicy.
+    :vartype export_ipv6_route_policy_id: str
     """
 
     _attribute_map = {
-        "error": {"key": "error", "type": "ErrorDetail"},
+        "export_ipv4_route_policy_id": {"key": "exportIpv4RoutePolicyId", "type": "str"},
+        "export_ipv6_route_policy_id": {"key": "exportIpv6RoutePolicyId", "type": "str"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        export_ipv4_route_policy_id: Optional[str] = None,
+        export_ipv6_route_policy_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword error: The error object.
-        :paramtype error: ~azure.mgmt.managednetworkfabric.models.ErrorDetail
+        :keyword export_ipv4_route_policy_id: ARM resource ID of RoutePolicy.
+        :paramtype export_ipv4_route_policy_id: str
+        :keyword export_ipv6_route_policy_id: ARM resource ID of RoutePolicy.
+        :paramtype export_ipv6_route_policy_id: str
         """
         super().__init__(**kwargs)
-        self.error = error
+        self.export_ipv4_route_policy_id = export_ipv4_route_policy_id
+        self.export_ipv6_route_policy_id = export_ipv6_route_policy_id
+
+
+class ExportRoutePolicyInformation(_serialization.Model):
+    """Export Route Policy Configuration.
+
+    :ivar export_ipv4_route_policy_id: Export IPv4 Route Policy Id.
+    :vartype export_ipv4_route_policy_id: str
+    :ivar export_ipv6_route_policy_id: Export IPv6 Route Policy Id.
+    :vartype export_ipv6_route_policy_id: str
+    """
+
+    _attribute_map = {
+        "export_ipv4_route_policy_id": {"key": "exportIpv4RoutePolicyId", "type": "str"},
+        "export_ipv6_route_policy_id": {"key": "exportIpv6RoutePolicyId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        export_ipv4_route_policy_id: Optional[str] = None,
+        export_ipv6_route_policy_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword export_ipv4_route_policy_id: Export IPv4 Route Policy Id.
+        :paramtype export_ipv4_route_policy_id: str
+        :keyword export_ipv6_route_policy_id: Export IPv6 Route Policy Id.
+        :paramtype export_ipv6_route_policy_id: str
+        """
+        super().__init__(**kwargs)
+        self.export_ipv4_route_policy_id = export_ipv4_route_policy_id
+        self.export_ipv6_route_policy_id = export_ipv6_route_policy_id
 
 
 class ExpressRouteConnectionInformation(_serialization.Model):
@@ -1237,44 +1959,6 @@ class ExpressRouteConnectionInformation(_serialization.Model):
         self.express_route_authorization_key = express_route_authorization_key
 
 
-class ExpressRouteStatusDef(_serialization.Model):
-    """ExpressRouteStatus defines the resource properties.
-
-    :ivar express_route_circuit_id: The express route circuit Azure resource ID, must be of type
-     Microsoft.Network/expressRouteCircuits/circuitName.
-    :vartype express_route_circuit_id: str
-    :ivar express_route_status: Express route connection state for the resource. Known values are:
-     "Connecting", "Connected", and "Disconnected".
-    :vartype express_route_status: str or
-     ~azure.mgmt.managednetworkfabric.models.ExpressRouteConnectionState
-    """
-
-    _attribute_map = {
-        "express_route_circuit_id": {"key": "expressRouteCircuitId", "type": "str"},
-        "express_route_status": {"key": "expressRouteStatus", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        express_route_circuit_id: Optional[str] = None,
-        express_route_status: Optional[Union[str, "_models.ExpressRouteConnectionState"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword express_route_circuit_id: The express route circuit Azure resource ID, must be of type
-         Microsoft.Network/expressRouteCircuits/circuitName.
-        :paramtype express_route_circuit_id: str
-        :keyword express_route_status: Express route connection state for the resource. Known values
-         are: "Connecting", "Connected", and "Disconnected".
-        :paramtype express_route_status: str or
-         ~azure.mgmt.managednetworkfabric.models.ExpressRouteConnectionState
-        """
-        super().__init__(**kwargs)
-        self.express_route_circuit_id = express_route_circuit_id
-        self.express_route_status = express_route_status
-
-
 class ExtendedLocation(_serialization.Model):
     """The extended location.
 
@@ -1301,14 +1985,36 @@ class ExtendedLocation(_serialization.Model):
         self.name = name
 
 
+class ExtensionEnumProperty(_serialization.Model):
+    """Extension property.
+
+    :ivar extension: Extension. Example: NoExtension | NPB. Known values are: "NoExtension" and
+     "NPB".
+    :vartype extension: str or ~azure.mgmt.managednetworkfabric.models.Extension
+    """
+
+    _attribute_map = {
+        "extension": {"key": "extension", "type": "str"},
+    }
+
+    def __init__(self, *, extension: Union[str, "_models.Extension"] = "NoExtension", **kwargs: Any) -> None:
+        """
+        :keyword extension: Extension. Example: NoExtension | NPB. Known values are: "NoExtension" and
+         "NPB".
+        :paramtype extension: str or ~azure.mgmt.managednetworkfabric.models.Extension
+        """
+        super().__init__(**kwargs)
+        self.extension = extension
+
+
 class ProxyResource(Resource):
     """The resource model definition for a Azure Resource Manager proxy resource. It will not have
     tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1340,14 +2046,14 @@ class ProxyResource(Resource):
 
 
 class ExternalNetwork(ProxyResource):  # pylint: disable=too-many-instance-attributes
-    """Defines the ExternalNetwork item.
+    """Defines the External Network resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1359,30 +2065,37 @@ class ExternalNetwork(ProxyResource):  # pylint: disable=too-many-instance-attri
     :vartype system_data: ~azure.mgmt.managednetworkfabric.models.SystemData
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
+    :ivar import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
+    :vartype import_route_policy_id: str
+    :ivar export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
+    :vartype export_route_policy_id: str
+    :ivar import_route_policy: Import Route Policy either IPv4 or IPv6.
+    :vartype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+    :ivar export_route_policy: Export Route Policy either IPv4 or IPv6.
+    :vartype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
     :ivar network_to_network_interconnect_id: Gets the networkToNetworkInterconnectId of the
      resource.
     :vartype network_to_network_interconnect_id: str
-    :ivar disabled_on_resources: List of resources the externalNetwork is disabled on. Can be
-     either entire NetworkFabric or NetworkRack.
-    :vartype disabled_on_resources: list[str]
-    :ivar administrative_state: AdministrativeState of the externalNetwork. Example: Enabled |
-     Disabled. Known values are: "Enabled" and "Disabled".
-    :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
     :ivar peering_option: Peering option list. Required. Known values are: "OptionA" and "OptionB".
     :vartype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
     :ivar option_b_properties: option B properties object.
-    :vartype option_b_properties: ~azure.mgmt.managednetworkfabric.models.OptionBProperties
+    :vartype option_b_properties: ~azure.mgmt.managednetworkfabric.models.L3OptionBProperties
     :ivar option_a_properties: option A properties object.
     :vartype option_a_properties:
      ~azure.mgmt.managednetworkfabric.models.ExternalNetworkPropertiesOptionAProperties
-    :ivar import_route_policy_id: ARM resource ID of importRoutePolicy.
-    :vartype import_route_policy_id: str
-    :ivar export_route_policy_id: ARM resource ID of exportRoutePolicy.
-    :vartype export_route_policy_id: str
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
@@ -1391,10 +2104,10 @@ class ExternalNetwork(ProxyResource):  # pylint: disable=too-many-instance-attri
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "network_to_network_interconnect_id": {"readonly": True},
-        "disabled_on_resources": {"readonly": True},
-        "administrative_state": {"readonly": True},
-        "provisioning_state": {"readonly": True},
         "peering_option": {"required": True},
+        "configuration_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1403,18 +2116,20 @@ class ExternalNetwork(ProxyResource):  # pylint: disable=too-many-instance-attri
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
         "annotation": {"key": "properties.annotation", "type": "str"},
+        "import_route_policy_id": {"key": "properties.importRoutePolicyId", "type": "str"},
+        "export_route_policy_id": {"key": "properties.exportRoutePolicyId", "type": "str"},
+        "import_route_policy": {"key": "properties.importRoutePolicy", "type": "ImportRoutePolicy"},
+        "export_route_policy": {"key": "properties.exportRoutePolicy", "type": "ExportRoutePolicy"},
         "network_to_network_interconnect_id": {"key": "properties.networkToNetworkInterconnectId", "type": "str"},
-        "disabled_on_resources": {"key": "properties.disabledOnResources", "type": "[str]"},
-        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "peering_option": {"key": "properties.peeringOption", "type": "str"},
-        "option_b_properties": {"key": "properties.optionBProperties", "type": "OptionBProperties"},
+        "option_b_properties": {"key": "properties.optionBProperties", "type": "L3OptionBProperties"},
         "option_a_properties": {
             "key": "properties.optionAProperties",
             "type": "ExternalNetworkPropertiesOptionAProperties",
         },
-        "import_route_policy_id": {"key": "properties.importRoutePolicyId", "type": "str"},
-        "export_route_policy_id": {"key": "properties.exportRoutePolicyId", "type": "str"},
+        "configuration_state": {"key": "properties.configurationState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
     }
 
     def __init__(
@@ -1422,39 +2137,49 @@ class ExternalNetwork(ProxyResource):  # pylint: disable=too-many-instance-attri
         *,
         peering_option: Union[str, "_models.PeeringOption"],
         annotation: Optional[str] = None,
-        option_b_properties: Optional["_models.OptionBProperties"] = None,
-        option_a_properties: Optional["_models.ExternalNetworkPropertiesOptionAProperties"] = None,
         import_route_policy_id: Optional[str] = None,
         export_route_policy_id: Optional[str] = None,
+        import_route_policy: Optional["_models.ImportRoutePolicy"] = None,
+        export_route_policy: Optional["_models.ExportRoutePolicy"] = None,
+        option_b_properties: Optional["_models.L3OptionBProperties"] = None,
+        option_a_properties: Optional["_models.ExternalNetworkPropertiesOptionAProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
+        :keyword import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
+        :paramtype import_route_policy_id: str
+        :keyword export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
+        :paramtype export_route_policy_id: str
+        :keyword import_route_policy: Import Route Policy either IPv4 or IPv6.
+        :paramtype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+        :keyword export_route_policy: Export Route Policy either IPv4 or IPv6.
+        :paramtype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
         :keyword peering_option: Peering option list. Required. Known values are: "OptionA" and
          "OptionB".
         :paramtype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
         :keyword option_b_properties: option B properties object.
-        :paramtype option_b_properties: ~azure.mgmt.managednetworkfabric.models.OptionBProperties
+        :paramtype option_b_properties: ~azure.mgmt.managednetworkfabric.models.L3OptionBProperties
         :keyword option_a_properties: option A properties object.
         :paramtype option_a_properties:
          ~azure.mgmt.managednetworkfabric.models.ExternalNetworkPropertiesOptionAProperties
-        :keyword import_route_policy_id: ARM resource ID of importRoutePolicy.
-        :paramtype import_route_policy_id: str
-        :keyword export_route_policy_id: ARM resource ID of exportRoutePolicy.
-        :paramtype export_route_policy_id: str
         """
         super().__init__(**kwargs)
         self.annotation = annotation
+        self.import_route_policy_id = import_route_policy_id
+        self.export_route_policy_id = export_route_policy_id
+        self.import_route_policy = import_route_policy
+        self.export_route_policy = export_route_policy
         self.network_to_network_interconnect_id = None
-        self.disabled_on_resources = None
-        self.administrative_state = None
-        self.provisioning_state = None
         self.peering_option = peering_option
         self.option_b_properties = option_b_properties
         self.option_a_properties = option_a_properties
-        self.import_route_policy_id = import_route_policy_id
-        self.export_route_policy_id = export_route_policy_id
+        self.configuration_state = None
+        self.provisioning_state = None
+        self.administrative_state = None
 
 
 class ExternalNetworkPatch(_serialization.Model):
@@ -1462,303 +2187,304 @@ class ExternalNetworkPatch(_serialization.Model):
 
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
+    :ivar import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
+    :vartype import_route_policy_id: str
+    :ivar export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
+    :vartype export_route_policy_id: str
+    :ivar import_route_policy: Import Route Policy either IPv4 or IPv6.
+    :vartype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+    :ivar export_route_policy: Export Route Policy either IPv4 or IPv6.
+    :vartype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
     :ivar peering_option: Peering option list. Known values are: "OptionA" and "OptionB".
     :vartype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
     :ivar option_b_properties: option B properties object.
-    :vartype option_b_properties: ~azure.mgmt.managednetworkfabric.models.OptionBProperties
+    :vartype option_b_properties: ~azure.mgmt.managednetworkfabric.models.L3OptionBProperties
     :ivar option_a_properties: option A properties object.
-    :vartype option_a_properties: ~azure.mgmt.managednetworkfabric.models.Layer3OptionAProperties
-    :ivar import_route_policy_id: ARM resource ID of importRoutePolicy.
-    :vartype import_route_policy_id: str
-    :ivar export_route_policy_id: ARM resource ID of exportRoutePolicy.
-    :vartype export_route_policy_id: str
+    :vartype option_a_properties:
+     ~azure.mgmt.managednetworkfabric.models.ExternalNetworkPatchPropertiesOptionAProperties
     """
 
     _attribute_map = {
         "annotation": {"key": "properties.annotation", "type": "str"},
-        "peering_option": {"key": "properties.peeringOption", "type": "str"},
-        "option_b_properties": {"key": "properties.optionBProperties", "type": "OptionBProperties"},
-        "option_a_properties": {"key": "properties.optionAProperties", "type": "Layer3OptionAProperties"},
         "import_route_policy_id": {"key": "properties.importRoutePolicyId", "type": "str"},
         "export_route_policy_id": {"key": "properties.exportRoutePolicyId", "type": "str"},
+        "import_route_policy": {"key": "properties.importRoutePolicy", "type": "ImportRoutePolicy"},
+        "export_route_policy": {"key": "properties.exportRoutePolicy", "type": "ExportRoutePolicy"},
+        "peering_option": {"key": "properties.peeringOption", "type": "str"},
+        "option_b_properties": {"key": "properties.optionBProperties", "type": "L3OptionBProperties"},
+        "option_a_properties": {
+            "key": "properties.optionAProperties",
+            "type": "ExternalNetworkPatchPropertiesOptionAProperties",
+        },
     }
 
     def __init__(
         self,
         *,
         annotation: Optional[str] = None,
-        peering_option: Optional[Union[str, "_models.PeeringOption"]] = None,
-        option_b_properties: Optional["_models.OptionBProperties"] = None,
-        option_a_properties: Optional["_models.Layer3OptionAProperties"] = None,
         import_route_policy_id: Optional[str] = None,
         export_route_policy_id: Optional[str] = None,
+        import_route_policy: Optional["_models.ImportRoutePolicy"] = None,
+        export_route_policy: Optional["_models.ExportRoutePolicy"] = None,
+        peering_option: Optional[Union[str, "_models.PeeringOption"]] = None,
+        option_b_properties: Optional["_models.L3OptionBProperties"] = None,
+        option_a_properties: Optional["_models.ExternalNetworkPatchPropertiesOptionAProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
+        :keyword import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
+        :paramtype import_route_policy_id: str
+        :keyword export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
+        :paramtype export_route_policy_id: str
+        :keyword import_route_policy: Import Route Policy either IPv4 or IPv6.
+        :paramtype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+        :keyword export_route_policy: Export Route Policy either IPv4 or IPv6.
+        :paramtype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
         :keyword peering_option: Peering option list. Known values are: "OptionA" and "OptionB".
         :paramtype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
         :keyword option_b_properties: option B properties object.
-        :paramtype option_b_properties: ~azure.mgmt.managednetworkfabric.models.OptionBProperties
+        :paramtype option_b_properties: ~azure.mgmt.managednetworkfabric.models.L3OptionBProperties
         :keyword option_a_properties: option A properties object.
-        :paramtype option_a_properties: ~azure.mgmt.managednetworkfabric.models.Layer3OptionAProperties
-        :keyword import_route_policy_id: ARM resource ID of importRoutePolicy.
-        :paramtype import_route_policy_id: str
-        :keyword export_route_policy_id: ARM resource ID of exportRoutePolicy.
-        :paramtype export_route_policy_id: str
+        :paramtype option_a_properties:
+         ~azure.mgmt.managednetworkfabric.models.ExternalNetworkPatchPropertiesOptionAProperties
         """
         super().__init__(**kwargs)
         self.annotation = annotation
+        self.import_route_policy_id = import_route_policy_id
+        self.export_route_policy_id = export_route_policy_id
+        self.import_route_policy = import_route_policy
+        self.export_route_policy = export_route_policy
         self.peering_option = peering_option
         self.option_b_properties = option_b_properties
         self.option_a_properties = option_a_properties
-        self.import_route_policy_id = import_route_policy_id
-        self.export_route_policy_id = export_route_policy_id
 
 
 class ExternalNetworkPatchableProperties(_serialization.Model):
     """The ExternalNetwork patchable properties.
 
-    :ivar peering_option: Peering option list. Known values are: "OptionA" and "OptionB".
-    :vartype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
-    :ivar option_b_properties: option B properties object.
-    :vartype option_b_properties: ~azure.mgmt.managednetworkfabric.models.OptionBProperties
-    :ivar option_a_properties: option A properties object.
-    :vartype option_a_properties: ~azure.mgmt.managednetworkfabric.models.Layer3OptionAProperties
-    :ivar import_route_policy_id: ARM resource ID of importRoutePolicy.
+    :ivar import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
     :vartype import_route_policy_id: str
-    :ivar export_route_policy_id: ARM resource ID of exportRoutePolicy.
+    :ivar export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
     :vartype export_route_policy_id: str
+    :ivar import_route_policy: Import Route Policy either IPv4 or IPv6.
+    :vartype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+    :ivar export_route_policy: Export Route Policy either IPv4 or IPv6.
+    :vartype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
     """
 
     _attribute_map = {
-        "peering_option": {"key": "peeringOption", "type": "str"},
-        "option_b_properties": {"key": "optionBProperties", "type": "OptionBProperties"},
-        "option_a_properties": {"key": "optionAProperties", "type": "Layer3OptionAProperties"},
         "import_route_policy_id": {"key": "importRoutePolicyId", "type": "str"},
         "export_route_policy_id": {"key": "exportRoutePolicyId", "type": "str"},
+        "import_route_policy": {"key": "importRoutePolicy", "type": "ImportRoutePolicy"},
+        "export_route_policy": {"key": "exportRoutePolicy", "type": "ExportRoutePolicy"},
     }
 
     def __init__(
         self,
         *,
-        peering_option: Optional[Union[str, "_models.PeeringOption"]] = None,
-        option_b_properties: Optional["_models.OptionBProperties"] = None,
-        option_a_properties: Optional["_models.Layer3OptionAProperties"] = None,
         import_route_policy_id: Optional[str] = None,
         export_route_policy_id: Optional[str] = None,
+        import_route_policy: Optional["_models.ImportRoutePolicy"] = None,
+        export_route_policy: Optional["_models.ExportRoutePolicy"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword peering_option: Peering option list. Known values are: "OptionA" and "OptionB".
-        :paramtype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
-        :keyword option_b_properties: option B properties object.
-        :paramtype option_b_properties: ~azure.mgmt.managednetworkfabric.models.OptionBProperties
-        :keyword option_a_properties: option A properties object.
-        :paramtype option_a_properties: ~azure.mgmt.managednetworkfabric.models.Layer3OptionAProperties
-        :keyword import_route_policy_id: ARM resource ID of importRoutePolicy.
+        :keyword import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
         :paramtype import_route_policy_id: str
-        :keyword export_route_policy_id: ARM resource ID of exportRoutePolicy.
+        :keyword export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
         :paramtype export_route_policy_id: str
+        :keyword import_route_policy: Import Route Policy either IPv4 or IPv6.
+        :paramtype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+        :keyword export_route_policy: Export Route Policy either IPv4 or IPv6.
+        :paramtype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
         """
         super().__init__(**kwargs)
-        self.peering_option = peering_option
-        self.option_b_properties = option_b_properties
-        self.option_a_properties = option_a_properties
         self.import_route_policy_id = import_route_policy_id
         self.export_route_policy_id = export_route_policy_id
+        self.import_route_policy = import_route_policy
+        self.export_route_policy = export_route_policy
 
 
 class ExternalNetworkPatchProperties(AnnotationResource, ExternalNetworkPatchableProperties):
     """External Network Patch properties.
 
+    :ivar import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
+    :vartype import_route_policy_id: str
+    :ivar export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
+    :vartype export_route_policy_id: str
+    :ivar import_route_policy: Import Route Policy either IPv4 or IPv6.
+    :vartype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+    :ivar export_route_policy: Export Route Policy either IPv4 or IPv6.
+    :vartype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
     :ivar peering_option: Peering option list. Known values are: "OptionA" and "OptionB".
     :vartype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
     :ivar option_b_properties: option B properties object.
-    :vartype option_b_properties: ~azure.mgmt.managednetworkfabric.models.OptionBProperties
+    :vartype option_b_properties: ~azure.mgmt.managednetworkfabric.models.L3OptionBProperties
     :ivar option_a_properties: option A properties object.
-    :vartype option_a_properties: ~azure.mgmt.managednetworkfabric.models.Layer3OptionAProperties
-    :ivar import_route_policy_id: ARM resource ID of importRoutePolicy.
-    :vartype import_route_policy_id: str
-    :ivar export_route_policy_id: ARM resource ID of exportRoutePolicy.
-    :vartype export_route_policy_id: str
-    :ivar annotation: Switch configuration description.
-    :vartype annotation: str
+    :vartype option_a_properties:
+     ~azure.mgmt.managednetworkfabric.models.ExternalNetworkPatchPropertiesOptionAProperties
     """
 
     _attribute_map = {
-        "peering_option": {"key": "peeringOption", "type": "str"},
-        "option_b_properties": {"key": "optionBProperties", "type": "OptionBProperties"},
-        "option_a_properties": {"key": "optionAProperties", "type": "Layer3OptionAProperties"},
         "import_route_policy_id": {"key": "importRoutePolicyId", "type": "str"},
         "export_route_policy_id": {"key": "exportRoutePolicyId", "type": "str"},
+        "import_route_policy": {"key": "importRoutePolicy", "type": "ImportRoutePolicy"},
+        "export_route_policy": {"key": "exportRoutePolicy", "type": "ExportRoutePolicy"},
         "annotation": {"key": "annotation", "type": "str"},
+        "peering_option": {"key": "peeringOption", "type": "str"},
+        "option_b_properties": {"key": "optionBProperties", "type": "L3OptionBProperties"},
+        "option_a_properties": {"key": "optionAProperties", "type": "ExternalNetworkPatchPropertiesOptionAProperties"},
     }
 
     def __init__(
         self,
         *,
-        peering_option: Optional[Union[str, "_models.PeeringOption"]] = None,
-        option_b_properties: Optional["_models.OptionBProperties"] = None,
-        option_a_properties: Optional["_models.Layer3OptionAProperties"] = None,
         import_route_policy_id: Optional[str] = None,
         export_route_policy_id: Optional[str] = None,
+        import_route_policy: Optional["_models.ImportRoutePolicy"] = None,
+        export_route_policy: Optional["_models.ExportRoutePolicy"] = None,
         annotation: Optional[str] = None,
+        peering_option: Optional[Union[str, "_models.PeeringOption"]] = None,
+        option_b_properties: Optional["_models.L3OptionBProperties"] = None,
+        option_a_properties: Optional["_models.ExternalNetworkPatchPropertiesOptionAProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
+        :paramtype import_route_policy_id: str
+        :keyword export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
+        :paramtype export_route_policy_id: str
+        :keyword import_route_policy: Import Route Policy either IPv4 or IPv6.
+        :paramtype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+        :keyword export_route_policy: Export Route Policy either IPv4 or IPv6.
+        :paramtype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
         :keyword peering_option: Peering option list. Known values are: "OptionA" and "OptionB".
         :paramtype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
         :keyword option_b_properties: option B properties object.
-        :paramtype option_b_properties: ~azure.mgmt.managednetworkfabric.models.OptionBProperties
+        :paramtype option_b_properties: ~azure.mgmt.managednetworkfabric.models.L3OptionBProperties
         :keyword option_a_properties: option A properties object.
-        :paramtype option_a_properties: ~azure.mgmt.managednetworkfabric.models.Layer3OptionAProperties
-        :keyword import_route_policy_id: ARM resource ID of importRoutePolicy.
-        :paramtype import_route_policy_id: str
-        :keyword export_route_policy_id: ARM resource ID of exportRoutePolicy.
-        :paramtype export_route_policy_id: str
-        :keyword annotation: Switch configuration description.
-        :paramtype annotation: str
+        :paramtype option_a_properties:
+         ~azure.mgmt.managednetworkfabric.models.ExternalNetworkPatchPropertiesOptionAProperties
         """
         super().__init__(
             annotation=annotation,
-            peering_option=peering_option,
-            option_b_properties=option_b_properties,
-            option_a_properties=option_a_properties,
             import_route_policy_id=import_route_policy_id,
             export_route_policy_id=export_route_policy_id,
+            import_route_policy=import_route_policy,
+            export_route_policy=export_route_policy,
             **kwargs
         )
+        self.import_route_policy_id = import_route_policy_id
+        self.export_route_policy_id = export_route_policy_id
+        self.import_route_policy = import_route_policy
+        self.export_route_policy = export_route_policy
         self.peering_option = peering_option
         self.option_b_properties = option_b_properties
         self.option_a_properties = option_a_properties
-        self.import_route_policy_id = import_route_policy_id
-        self.export_route_policy_id = export_route_policy_id
         self.annotation = annotation
 
 
-class ExternalNetworkProperties(AnnotationResource):
-    """External Network Properties.
+class L3OptionAProperties(_serialization.Model):
+    """Peering optionA properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar annotation: Switch configuration description.
-    :vartype annotation: str
-    :ivar network_to_network_interconnect_id: Gets the networkToNetworkInterconnectId of the
-     resource.
-    :vartype network_to_network_interconnect_id: str
-    :ivar disabled_on_resources: List of resources the externalNetwork is disabled on. Can be
-     either entire NetworkFabric or NetworkRack.
-    :vartype disabled_on_resources: list[str]
-    :ivar administrative_state: AdministrativeState of the externalNetwork. Example: Enabled |
-     Disabled. Known values are: "Enabled" and "Disabled".
-    :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
-    :ivar peering_option: Peering option list. Required. Known values are: "OptionA" and "OptionB".
-    :vartype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
-    :ivar option_b_properties: option B properties object.
-    :vartype option_b_properties: ~azure.mgmt.managednetworkfabric.models.OptionBProperties
-    :ivar option_a_properties: option A properties object.
-    :vartype option_a_properties:
-     ~azure.mgmt.managednetworkfabric.models.ExternalNetworkPropertiesOptionAProperties
-    :ivar import_route_policy_id: ARM resource ID of importRoutePolicy.
-    :vartype import_route_policy_id: str
-    :ivar export_route_policy_id: ARM resource ID of exportRoutePolicy.
-    :vartype export_route_policy_id: str
+    :ivar mtu: MTU to use for option A peering.
+    :vartype mtu: int
+    :ivar vlan_id: Vlan identifier. Example : 501.
+    :vartype vlan_id: int
+    :ivar fabric_asn: Fabric ASN number. Example 65001.
+    :vartype fabric_asn: int
+    :ivar peer_asn: Peer ASN number.Example : 28.
+    :vartype peer_asn: int
+    :ivar bfd_configuration: BFD configuration properties.
+    :vartype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+    :ivar ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+    :vartype ingress_acl_id: str
+    :ivar egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+    :vartype egress_acl_id: str
     """
 
     _validation = {
-        "network_to_network_interconnect_id": {"readonly": True},
-        "disabled_on_resources": {"readonly": True},
-        "administrative_state": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "peering_option": {"required": True},
+        "mtu": {"maximum": 9200, "minimum": 64},
+        "vlan_id": {"maximum": 4094, "minimum": 501},
+        "fabric_asn": {"readonly": True, "maximum": 4294967295, "minimum": 1},
+        "peer_asn": {"maximum": 4294967295, "minimum": 1},
     }
 
     _attribute_map = {
-        "annotation": {"key": "annotation", "type": "str"},
-        "network_to_network_interconnect_id": {"key": "networkToNetworkInterconnectId", "type": "str"},
-        "disabled_on_resources": {"key": "disabledOnResources", "type": "[str]"},
-        "administrative_state": {"key": "administrativeState", "type": "str"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-        "peering_option": {"key": "peeringOption", "type": "str"},
-        "option_b_properties": {"key": "optionBProperties", "type": "OptionBProperties"},
-        "option_a_properties": {"key": "optionAProperties", "type": "ExternalNetworkPropertiesOptionAProperties"},
-        "import_route_policy_id": {"key": "importRoutePolicyId", "type": "str"},
-        "export_route_policy_id": {"key": "exportRoutePolicyId", "type": "str"},
+        "mtu": {"key": "mtu", "type": "int"},
+        "vlan_id": {"key": "vlanId", "type": "int"},
+        "fabric_asn": {"key": "fabricASN", "type": "int"},
+        "peer_asn": {"key": "peerASN", "type": "int"},
+        "bfd_configuration": {"key": "bfdConfiguration", "type": "BfdConfiguration"},
+        "ingress_acl_id": {"key": "ingressAclId", "type": "str"},
+        "egress_acl_id": {"key": "egressAclId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        peering_option: Union[str, "_models.PeeringOption"],
-        annotation: Optional[str] = None,
-        option_b_properties: Optional["_models.OptionBProperties"] = None,
-        option_a_properties: Optional["_models.ExternalNetworkPropertiesOptionAProperties"] = None,
-        import_route_policy_id: Optional[str] = None,
-        export_route_policy_id: Optional[str] = None,
+        mtu: int = 1500,
+        vlan_id: Optional[int] = None,
+        peer_asn: Optional[int] = None,
+        bfd_configuration: Optional["_models.BfdConfiguration"] = None,
+        ingress_acl_id: Optional[str] = None,
+        egress_acl_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword annotation: Switch configuration description.
-        :paramtype annotation: str
-        :keyword peering_option: Peering option list. Required. Known values are: "OptionA" and
-         "OptionB".
-        :paramtype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
-        :keyword option_b_properties: option B properties object.
-        :paramtype option_b_properties: ~azure.mgmt.managednetworkfabric.models.OptionBProperties
-        :keyword option_a_properties: option A properties object.
-        :paramtype option_a_properties:
-         ~azure.mgmt.managednetworkfabric.models.ExternalNetworkPropertiesOptionAProperties
-        :keyword import_route_policy_id: ARM resource ID of importRoutePolicy.
-        :paramtype import_route_policy_id: str
-        :keyword export_route_policy_id: ARM resource ID of exportRoutePolicy.
-        :paramtype export_route_policy_id: str
+        :keyword mtu: MTU to use for option A peering.
+        :paramtype mtu: int
+        :keyword vlan_id: Vlan identifier. Example : 501.
+        :paramtype vlan_id: int
+        :keyword peer_asn: Peer ASN number.Example : 28.
+        :paramtype peer_asn: int
+        :keyword bfd_configuration: BFD configuration properties.
+        :paramtype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+        :keyword ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+        :paramtype ingress_acl_id: str
+        :keyword egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+        :paramtype egress_acl_id: str
         """
-        super().__init__(annotation=annotation, **kwargs)
-        self.network_to_network_interconnect_id = None
-        self.disabled_on_resources = None
-        self.administrative_state = None
-        self.provisioning_state = None
-        self.peering_option = peering_option
-        self.option_b_properties = option_b_properties
-        self.option_a_properties = option_a_properties
-        self.import_route_policy_id = import_route_policy_id
-        self.export_route_policy_id = export_route_policy_id
+        super().__init__(**kwargs)
+        self.mtu = mtu
+        self.vlan_id = vlan_id
+        self.fabric_asn = None
+        self.peer_asn = peer_asn
+        self.bfd_configuration = bfd_configuration
+        self.ingress_acl_id = ingress_acl_id
+        self.egress_acl_id = egress_acl_id
 
 
 class Layer3IpPrefixProperties(_serialization.Model):
-    """Layer 3 primary and secondary ip address prefixes.
+    """Layer 3 primary and secondary IP Address prefixes.
 
-    :ivar primary_ipv4_prefix: IPv4 Address Prefix of CE-PE interconnect links. Example:
-     172.31.0.0/31. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
+    :ivar primary_ipv4_prefix: IPv4 Address Prefix.
     :vartype primary_ipv4_prefix: str
-    :ivar primary_ipv6_prefix: IPv6 Address Prefix of CE-PE interconnect links. Example:
-     3FFE:FFFF:0:CD30::a0/126. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
+    :ivar primary_ipv6_prefix: IPv6 Address Prefix.
     :vartype primary_ipv6_prefix: str
-    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix of CE-PE interconnect links.
-     Example: 172.31.0.20/31. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
+    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
     :vartype secondary_ipv4_prefix: str
-    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix of CE-PE interconnect links.
-     Example: 3FFE:FFFF:0:CD30::a4/126. The values can be specified at the time of creation or can
-     be updated afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st
-     and 3rd IPs are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs
-     are to be configured on PE1 and PE2 for Option B interfaces.
+    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
     :vartype secondary_ipv6_prefix: str
     """
 
@@ -1779,29 +2505,13 @@ class Layer3IpPrefixProperties(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword primary_ipv4_prefix: IPv4 Address Prefix of CE-PE interconnect links. Example:
-         172.31.0.0/31. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
+        :keyword primary_ipv4_prefix: IPv4 Address Prefix.
         :paramtype primary_ipv4_prefix: str
-        :keyword primary_ipv6_prefix: IPv6 Address Prefix of CE-PE interconnect links. Example:
-         3FFE:FFFF:0:CD30::a0/126. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
+        :keyword primary_ipv6_prefix: IPv6 Address Prefix.
         :paramtype primary_ipv6_prefix: str
-        :keyword secondary_ipv4_prefix: Secondary IPv4 Address Prefix of CE-PE interconnect links.
-         Example: 172.31.0.20/31. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
+        :keyword secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
         :paramtype secondary_ipv4_prefix: str
-        :keyword secondary_ipv6_prefix: Secondary IPv6 Address Prefix of CE-PE interconnect links.
-         Example: 3FFE:FFFF:0:CD30::a4/126. The values can be specified at the time of creation or can
-         be updated afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st
-         and 3rd IPs are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs
-         are to be configured on PE1 and PE2 for Option B interfaces.
+        :keyword secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
         :paramtype secondary_ipv6_prefix: str
         """
         super().__init__(**kwargs)
@@ -1811,156 +2521,13 @@ class Layer3IpPrefixProperties(_serialization.Model):
         self.secondary_ipv6_prefix = secondary_ipv6_prefix
 
 
-class Layer3OptionAProperties(Layer3IpPrefixProperties):
-    """Peering optionA properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar primary_ipv4_prefix: IPv4 Address Prefix of CE-PE interconnect links. Example:
-     172.31.0.0/31. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
-    :vartype primary_ipv4_prefix: str
-    :ivar primary_ipv6_prefix: IPv6 Address Prefix of CE-PE interconnect links. Example:
-     3FFE:FFFF:0:CD30::a0/126. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
-    :vartype primary_ipv6_prefix: str
-    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix of CE-PE interconnect links.
-     Example: 172.31.0.20/31. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
-    :vartype secondary_ipv4_prefix: str
-    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix of CE-PE interconnect links.
-     Example: 3FFE:FFFF:0:CD30::a4/126. The values can be specified at the time of creation or can
-     be updated afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st
-     and 3rd IPs are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs
-     are to be configured on PE1 and PE2 for Option B interfaces.
-    :vartype secondary_ipv6_prefix: str
-    :ivar mtu: MTU to use for option A peering.
-    :vartype mtu: int
-    :ivar vlan_id: Vlan identifier. Example : 501.
-    :vartype vlan_id: int
-    :ivar fabric_asn: Fabric ASN number. Example 65001.
-    :vartype fabric_asn: int
-    :ivar peer_asn: Peer ASN number.Example : 28.
-    :vartype peer_asn: int
-    :ivar bfd_configuration: BFD configuration properties.
-    :vartype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
-    """
-
-    _validation = {
-        "mtu": {"maximum": 9000, "minimum": 1500},
-        "vlan_id": {"maximum": 4095, "minimum": 501},
-        "fabric_asn": {"readonly": True, "maximum": 65535, "minimum": 1},
-        "peer_asn": {"maximum": 65535, "minimum": 1},
-    }
-
-    _attribute_map = {
-        "primary_ipv4_prefix": {"key": "primaryIpv4Prefix", "type": "str"},
-        "primary_ipv6_prefix": {"key": "primaryIpv6Prefix", "type": "str"},
-        "secondary_ipv4_prefix": {"key": "secondaryIpv4Prefix", "type": "str"},
-        "secondary_ipv6_prefix": {"key": "secondaryIpv6Prefix", "type": "str"},
-        "mtu": {"key": "mtu", "type": "int"},
-        "vlan_id": {"key": "vlanId", "type": "int"},
-        "fabric_asn": {"key": "fabricASN", "type": "int"},
-        "peer_asn": {"key": "peerASN", "type": "int"},
-        "bfd_configuration": {"key": "bfdConfiguration", "type": "BfdConfiguration"},
-    }
-
-    def __init__(
-        self,
-        *,
-        primary_ipv4_prefix: Optional[str] = None,
-        primary_ipv6_prefix: Optional[str] = None,
-        secondary_ipv4_prefix: Optional[str] = None,
-        secondary_ipv6_prefix: Optional[str] = None,
-        mtu: int = 1500,
-        vlan_id: Optional[int] = None,
-        peer_asn: Optional[int] = None,
-        bfd_configuration: Optional["_models.BfdConfiguration"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword primary_ipv4_prefix: IPv4 Address Prefix of CE-PE interconnect links. Example:
-         172.31.0.0/31. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
-        :paramtype primary_ipv4_prefix: str
-        :keyword primary_ipv6_prefix: IPv6 Address Prefix of CE-PE interconnect links. Example:
-         3FFE:FFFF:0:CD30::a0/126. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
-        :paramtype primary_ipv6_prefix: str
-        :keyword secondary_ipv4_prefix: Secondary IPv4 Address Prefix of CE-PE interconnect links.
-         Example: 172.31.0.20/31. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
-        :paramtype secondary_ipv4_prefix: str
-        :keyword secondary_ipv6_prefix: Secondary IPv6 Address Prefix of CE-PE interconnect links.
-         Example: 3FFE:FFFF:0:CD30::a4/126. The values can be specified at the time of creation or can
-         be updated afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st
-         and 3rd IPs are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs
-         are to be configured on PE1 and PE2 for Option B interfaces.
-        :paramtype secondary_ipv6_prefix: str
-        :keyword mtu: MTU to use for option A peering.
-        :paramtype mtu: int
-        :keyword vlan_id: Vlan identifier. Example : 501.
-        :paramtype vlan_id: int
-        :keyword peer_asn: Peer ASN number.Example : 28.
-        :paramtype peer_asn: int
-        :keyword bfd_configuration: BFD configuration properties.
-        :paramtype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
-        """
-        super().__init__(
-            primary_ipv4_prefix=primary_ipv4_prefix,
-            primary_ipv6_prefix=primary_ipv6_prefix,
-            secondary_ipv4_prefix=secondary_ipv4_prefix,
-            secondary_ipv6_prefix=secondary_ipv6_prefix,
-            **kwargs
-        )
-        self.mtu = mtu
-        self.vlan_id = vlan_id
-        self.fabric_asn = None
-        self.peer_asn = peer_asn
-        self.bfd_configuration = bfd_configuration
-
-
-class ExternalNetworkPropertiesOptionAProperties(Layer3OptionAProperties):
+class ExternalNetworkPatchPropertiesOptionAProperties(
+    Layer3IpPrefixProperties, L3OptionAProperties
+):  # pylint: disable=too-many-instance-attributes
     """option A properties object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar primary_ipv4_prefix: IPv4 Address Prefix of CE-PE interconnect links. Example:
-     172.31.0.0/31. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
-    :vartype primary_ipv4_prefix: str
-    :ivar primary_ipv6_prefix: IPv6 Address Prefix of CE-PE interconnect links. Example:
-     3FFE:FFFF:0:CD30::a0/126. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
-    :vartype primary_ipv6_prefix: str
-    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix of CE-PE interconnect links.
-     Example: 172.31.0.20/31. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
-    :vartype secondary_ipv4_prefix: str
-    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix of CE-PE interconnect links.
-     Example: 3FFE:FFFF:0:CD30::a4/126. The values can be specified at the time of creation or can
-     be updated afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st
-     and 3rd IPs are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs
-     are to be configured on PE1 and PE2 for Option B interfaces.
-    :vartype secondary_ipv6_prefix: str
     :ivar mtu: MTU to use for option A peering.
     :vartype mtu: int
     :ivar vlan_id: Vlan identifier. Example : 501.
@@ -1971,65 +2538,57 @@ class ExternalNetworkPropertiesOptionAProperties(Layer3OptionAProperties):
     :vartype peer_asn: int
     :ivar bfd_configuration: BFD configuration properties.
     :vartype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+    :ivar ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+    :vartype ingress_acl_id: str
+    :ivar egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+    :vartype egress_acl_id: str
+    :ivar primary_ipv4_prefix: IPv4 Address Prefix.
+    :vartype primary_ipv4_prefix: str
+    :ivar primary_ipv6_prefix: IPv6 Address Prefix.
+    :vartype primary_ipv6_prefix: str
+    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+    :vartype secondary_ipv4_prefix: str
+    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+    :vartype secondary_ipv6_prefix: str
     """
 
     _validation = {
-        "mtu": {"maximum": 9000, "minimum": 1500},
-        "vlan_id": {"maximum": 4095, "minimum": 501},
-        "fabric_asn": {"readonly": True, "maximum": 65535, "minimum": 1},
-        "peer_asn": {"maximum": 65535, "minimum": 1},
+        "mtu": {"maximum": 9200, "minimum": 64},
+        "vlan_id": {"maximum": 4094, "minimum": 501},
+        "fabric_asn": {"readonly": True, "maximum": 4294967295, "minimum": 1},
+        "peer_asn": {"maximum": 4294967295, "minimum": 1},
     }
 
     _attribute_map = {
-        "primary_ipv4_prefix": {"key": "primaryIpv4Prefix", "type": "str"},
-        "primary_ipv6_prefix": {"key": "primaryIpv6Prefix", "type": "str"},
-        "secondary_ipv4_prefix": {"key": "secondaryIpv4Prefix", "type": "str"},
-        "secondary_ipv6_prefix": {"key": "secondaryIpv6Prefix", "type": "str"},
         "mtu": {"key": "mtu", "type": "int"},
         "vlan_id": {"key": "vlanId", "type": "int"},
         "fabric_asn": {"key": "fabricASN", "type": "int"},
         "peer_asn": {"key": "peerASN", "type": "int"},
         "bfd_configuration": {"key": "bfdConfiguration", "type": "BfdConfiguration"},
+        "ingress_acl_id": {"key": "ingressAclId", "type": "str"},
+        "egress_acl_id": {"key": "egressAclId", "type": "str"},
+        "primary_ipv4_prefix": {"key": "primaryIpv4Prefix", "type": "str"},
+        "primary_ipv6_prefix": {"key": "primaryIpv6Prefix", "type": "str"},
+        "secondary_ipv4_prefix": {"key": "secondaryIpv4Prefix", "type": "str"},
+        "secondary_ipv6_prefix": {"key": "secondaryIpv6Prefix", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        primary_ipv4_prefix: Optional[str] = None,
-        primary_ipv6_prefix: Optional[str] = None,
-        secondary_ipv4_prefix: Optional[str] = None,
-        secondary_ipv6_prefix: Optional[str] = None,
         mtu: int = 1500,
         vlan_id: Optional[int] = None,
         peer_asn: Optional[int] = None,
         bfd_configuration: Optional["_models.BfdConfiguration"] = None,
+        ingress_acl_id: Optional[str] = None,
+        egress_acl_id: Optional[str] = None,
+        primary_ipv4_prefix: Optional[str] = None,
+        primary_ipv6_prefix: Optional[str] = None,
+        secondary_ipv4_prefix: Optional[str] = None,
+        secondary_ipv6_prefix: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword primary_ipv4_prefix: IPv4 Address Prefix of CE-PE interconnect links. Example:
-         172.31.0.0/31. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
-        :paramtype primary_ipv4_prefix: str
-        :keyword primary_ipv6_prefix: IPv6 Address Prefix of CE-PE interconnect links. Example:
-         3FFE:FFFF:0:CD30::a0/126. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
-        :paramtype primary_ipv6_prefix: str
-        :keyword secondary_ipv4_prefix: Secondary IPv4 Address Prefix of CE-PE interconnect links.
-         Example: 172.31.0.20/31. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
-        :paramtype secondary_ipv4_prefix: str
-        :keyword secondary_ipv6_prefix: Secondary IPv6 Address Prefix of CE-PE interconnect links.
-         Example: 3FFE:FFFF:0:CD30::a4/126. The values can be specified at the time of creation or can
-         be updated afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st
-         and 3rd IPs are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs
-         are to be configured on PE1 and PE2 for Option B interfaces.
-        :paramtype secondary_ipv6_prefix: str
         :keyword mtu: MTU to use for option A peering.
         :paramtype mtu: int
         :keyword vlan_id: Vlan identifier. Example : 501.
@@ -2038,6 +2597,18 @@ class ExternalNetworkPropertiesOptionAProperties(Layer3OptionAProperties):
         :paramtype peer_asn: int
         :keyword bfd_configuration: BFD configuration properties.
         :paramtype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+        :keyword ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+        :paramtype ingress_acl_id: str
+        :keyword egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+        :paramtype egress_acl_id: str
+        :keyword primary_ipv4_prefix: IPv4 Address Prefix.
+        :paramtype primary_ipv4_prefix: str
+        :keyword primary_ipv6_prefix: IPv6 Address Prefix.
+        :paramtype primary_ipv6_prefix: str
+        :keyword secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+        :paramtype secondary_ipv4_prefix: str
+        :keyword secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+        :paramtype secondary_ipv6_prefix: str
         """
         super().__init__(
             primary_ipv4_prefix=primary_ipv4_prefix,
@@ -2048,14 +2619,266 @@ class ExternalNetworkPropertiesOptionAProperties(Layer3OptionAProperties):
             vlan_id=vlan_id,
             peer_asn=peer_asn,
             bfd_configuration=bfd_configuration,
+            ingress_acl_id=ingress_acl_id,
+            egress_acl_id=egress_acl_id,
             **kwargs
         )
+        self.mtu = mtu
+        self.vlan_id = vlan_id
+        self.fabric_asn = None
+        self.peer_asn = peer_asn
+        self.bfd_configuration = bfd_configuration
+        self.ingress_acl_id = ingress_acl_id
+        self.egress_acl_id = egress_acl_id
+        self.primary_ipv4_prefix = primary_ipv4_prefix
+        self.primary_ipv6_prefix = primary_ipv6_prefix
+        self.secondary_ipv4_prefix = secondary_ipv4_prefix
+        self.secondary_ipv6_prefix = secondary_ipv6_prefix
+
+
+class ExternalNetworkProperties(
+    AnnotationResource, ExternalNetworkPatchableProperties
+):  # pylint: disable=too-many-instance-attributes
+    """External Network Properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
+    :vartype import_route_policy_id: str
+    :ivar export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
+    :vartype export_route_policy_id: str
+    :ivar import_route_policy: Import Route Policy either IPv4 or IPv6.
+    :vartype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+    :ivar export_route_policy: Export Route Policy either IPv4 or IPv6.
+    :vartype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar network_to_network_interconnect_id: Gets the networkToNetworkInterconnectId of the
+     resource.
+    :vartype network_to_network_interconnect_id: str
+    :ivar peering_option: Peering option list. Required. Known values are: "OptionA" and "OptionB".
+    :vartype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
+    :ivar option_b_properties: option B properties object.
+    :vartype option_b_properties: ~azure.mgmt.managednetworkfabric.models.L3OptionBProperties
+    :ivar option_a_properties: option A properties object.
+    :vartype option_a_properties:
+     ~azure.mgmt.managednetworkfabric.models.ExternalNetworkPropertiesOptionAProperties
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
+    """
+
+    _validation = {
+        "network_to_network_interconnect_id": {"readonly": True},
+        "peering_option": {"required": True},
+        "configuration_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "import_route_policy_id": {"key": "importRoutePolicyId", "type": "str"},
+        "export_route_policy_id": {"key": "exportRoutePolicyId", "type": "str"},
+        "import_route_policy": {"key": "importRoutePolicy", "type": "ImportRoutePolicy"},
+        "export_route_policy": {"key": "exportRoutePolicy", "type": "ExportRoutePolicy"},
+        "annotation": {"key": "annotation", "type": "str"},
+        "network_to_network_interconnect_id": {"key": "networkToNetworkInterconnectId", "type": "str"},
+        "peering_option": {"key": "peeringOption", "type": "str"},
+        "option_b_properties": {"key": "optionBProperties", "type": "L3OptionBProperties"},
+        "option_a_properties": {"key": "optionAProperties", "type": "ExternalNetworkPropertiesOptionAProperties"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "administrative_state": {"key": "administrativeState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        peering_option: Union[str, "_models.PeeringOption"],
+        import_route_policy_id: Optional[str] = None,
+        export_route_policy_id: Optional[str] = None,
+        import_route_policy: Optional["_models.ImportRoutePolicy"] = None,
+        export_route_policy: Optional["_models.ExportRoutePolicy"] = None,
+        annotation: Optional[str] = None,
+        option_b_properties: Optional["_models.L3OptionBProperties"] = None,
+        option_a_properties: Optional["_models.ExternalNetworkPropertiesOptionAProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
+        :paramtype import_route_policy_id: str
+        :keyword export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
+        :paramtype export_route_policy_id: str
+        :keyword import_route_policy: Import Route Policy either IPv4 or IPv6.
+        :paramtype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+        :keyword export_route_policy: Export Route Policy either IPv4 or IPv6.
+        :paramtype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword peering_option: Peering option list. Required. Known values are: "OptionA" and
+         "OptionB".
+        :paramtype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
+        :keyword option_b_properties: option B properties object.
+        :paramtype option_b_properties: ~azure.mgmt.managednetworkfabric.models.L3OptionBProperties
+        :keyword option_a_properties: option A properties object.
+        :paramtype option_a_properties:
+         ~azure.mgmt.managednetworkfabric.models.ExternalNetworkPropertiesOptionAProperties
+        """
+        super().__init__(
+            annotation=annotation,
+            import_route_policy_id=import_route_policy_id,
+            export_route_policy_id=export_route_policy_id,
+            import_route_policy=import_route_policy,
+            export_route_policy=export_route_policy,
+            **kwargs
+        )
+        self.import_route_policy_id = import_route_policy_id
+        self.export_route_policy_id = export_route_policy_id
+        self.import_route_policy = import_route_policy
+        self.export_route_policy = export_route_policy
+        self.network_to_network_interconnect_id = None
+        self.peering_option = peering_option
+        self.option_b_properties = option_b_properties
+        self.option_a_properties = option_a_properties
+        self.configuration_state = None
+        self.provisioning_state = None
+        self.administrative_state = None
+        self.annotation = annotation
+
+
+class ExternalNetworkPropertiesOptionAProperties(
+    Layer3IpPrefixProperties, L3OptionAProperties
+):  # pylint: disable=too-many-instance-attributes
+    """option A properties object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar mtu: MTU to use for option A peering.
+    :vartype mtu: int
+    :ivar vlan_id: Vlan identifier. Example : 501.
+    :vartype vlan_id: int
+    :ivar fabric_asn: Fabric ASN number. Example 65001.
+    :vartype fabric_asn: int
+    :ivar peer_asn: Peer ASN number.Example : 28.
+    :vartype peer_asn: int
+    :ivar bfd_configuration: BFD configuration properties.
+    :vartype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+    :ivar ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+    :vartype ingress_acl_id: str
+    :ivar egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+    :vartype egress_acl_id: str
+    :ivar primary_ipv4_prefix: IPv4 Address Prefix.
+    :vartype primary_ipv4_prefix: str
+    :ivar primary_ipv6_prefix: IPv6 Address Prefix.
+    :vartype primary_ipv6_prefix: str
+    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+    :vartype secondary_ipv4_prefix: str
+    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+    :vartype secondary_ipv6_prefix: str
+    """
+
+    _validation = {
+        "mtu": {"maximum": 9200, "minimum": 64},
+        "vlan_id": {"maximum": 4094, "minimum": 501},
+        "fabric_asn": {"readonly": True, "maximum": 4294967295, "minimum": 1},
+        "peer_asn": {"maximum": 4294967295, "minimum": 1},
+    }
+
+    _attribute_map = {
+        "mtu": {"key": "mtu", "type": "int"},
+        "vlan_id": {"key": "vlanId", "type": "int"},
+        "fabric_asn": {"key": "fabricASN", "type": "int"},
+        "peer_asn": {"key": "peerASN", "type": "int"},
+        "bfd_configuration": {"key": "bfdConfiguration", "type": "BfdConfiguration"},
+        "ingress_acl_id": {"key": "ingressAclId", "type": "str"},
+        "egress_acl_id": {"key": "egressAclId", "type": "str"},
+        "primary_ipv4_prefix": {"key": "primaryIpv4Prefix", "type": "str"},
+        "primary_ipv6_prefix": {"key": "primaryIpv6Prefix", "type": "str"},
+        "secondary_ipv4_prefix": {"key": "secondaryIpv4Prefix", "type": "str"},
+        "secondary_ipv6_prefix": {"key": "secondaryIpv6Prefix", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        mtu: int = 1500,
+        vlan_id: Optional[int] = None,
+        peer_asn: Optional[int] = None,
+        bfd_configuration: Optional["_models.BfdConfiguration"] = None,
+        ingress_acl_id: Optional[str] = None,
+        egress_acl_id: Optional[str] = None,
+        primary_ipv4_prefix: Optional[str] = None,
+        primary_ipv6_prefix: Optional[str] = None,
+        secondary_ipv4_prefix: Optional[str] = None,
+        secondary_ipv6_prefix: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword mtu: MTU to use for option A peering.
+        :paramtype mtu: int
+        :keyword vlan_id: Vlan identifier. Example : 501.
+        :paramtype vlan_id: int
+        :keyword peer_asn: Peer ASN number.Example : 28.
+        :paramtype peer_asn: int
+        :keyword bfd_configuration: BFD configuration properties.
+        :paramtype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+        :keyword ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+        :paramtype ingress_acl_id: str
+        :keyword egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+        :paramtype egress_acl_id: str
+        :keyword primary_ipv4_prefix: IPv4 Address Prefix.
+        :paramtype primary_ipv4_prefix: str
+        :keyword primary_ipv6_prefix: IPv6 Address Prefix.
+        :paramtype primary_ipv6_prefix: str
+        :keyword secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+        :paramtype secondary_ipv4_prefix: str
+        :keyword secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+        :paramtype secondary_ipv6_prefix: str
+        """
+        super().__init__(
+            primary_ipv4_prefix=primary_ipv4_prefix,
+            primary_ipv6_prefix=primary_ipv6_prefix,
+            secondary_ipv4_prefix=secondary_ipv4_prefix,
+            secondary_ipv6_prefix=secondary_ipv6_prefix,
+            mtu=mtu,
+            vlan_id=vlan_id,
+            peer_asn=peer_asn,
+            bfd_configuration=bfd_configuration,
+            ingress_acl_id=ingress_acl_id,
+            egress_acl_id=egress_acl_id,
+            **kwargs
+        )
+        self.mtu = mtu
+        self.vlan_id = vlan_id
+        self.fabric_asn = None
+        self.peer_asn = peer_asn
+        self.bfd_configuration = bfd_configuration
+        self.ingress_acl_id = ingress_acl_id
+        self.egress_acl_id = egress_acl_id
+        self.primary_ipv4_prefix = primary_ipv4_prefix
+        self.primary_ipv6_prefix = primary_ipv6_prefix
+        self.secondary_ipv4_prefix = secondary_ipv4_prefix
+        self.secondary_ipv6_prefix = secondary_ipv6_prefix
 
 
 class ExternalNetworksList(_serialization.Model):
-    """List of ExternalNetworks.
+    """List of External Networks.
 
-    :ivar value: List of ExternalNetworks resources.
+    :ivar value: List of External Network resources.
     :vartype value: list[~azure.mgmt.managednetworkfabric.models.ExternalNetwork]
     :ivar next_link: Url to follow for getting next page of resources.
     :vartype next_link: str
@@ -2070,7 +2893,7 @@ class ExternalNetworksList(_serialization.Model):
         self, *, value: Optional[List["_models.ExternalNetwork"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: List of ExternalNetworks resources.
+        :keyword value: List of External Network resources.
         :paramtype value: list[~azure.mgmt.managednetworkfabric.models.ExternalNetwork]
         :keyword next_link: Url to follow for getting next page of resources.
         :paramtype next_link: str
@@ -2080,328 +2903,79 @@ class ExternalNetworksList(_serialization.Model):
         self.next_link = next_link
 
 
-class FabricBfdConfiguration(_serialization.Model):
-    """BFD Configuration properties.
+class ImportRoutePolicy(_serialization.Model):
+    """Import Route Policy either IPv4 or IPv6.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar interval: interval in seconds. Example: 300.
-    :vartype interval: int
-    :ivar multiplier: multiplier. Example: 3.
-    :vartype multiplier: int
+    :ivar import_ipv4_route_policy_id: ARM resource ID of RoutePolicy.
+    :vartype import_ipv4_route_policy_id: str
+    :ivar import_ipv6_route_policy_id: ARM resource ID of RoutePolicy.
+    :vartype import_ipv6_route_policy_id: str
     """
 
-    _validation = {
-        "interval": {"readonly": True},
-        "multiplier": {"readonly": True},
-    }
-
     _attribute_map = {
-        "interval": {"key": "interval", "type": "int"},
-        "multiplier": {"key": "multiplier", "type": "int"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.interval = None
-        self.multiplier = None
-
-
-class GetDeviceStatusProperties(_serialization.Model):
-    """Get Device status response properties.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar operational_status: Primary or Secondary power end. Required. Known values are: "Booted",
-     "BootPrompt", and "Ztp".
-    :vartype operational_status: str or ~azure.mgmt.managednetworkfabric.models.OperationalStatus
-    :ivar power_cycle_state: On or Off power cycle state. Required. Known values are: "On" and
-     "Off".
-    :vartype power_cycle_state: str or ~azure.mgmt.managednetworkfabric.models.PowerCycleState
-    :ivar serial_number: The serial number of the device. Required.
-    :vartype serial_number: str
-    """
-
-    _validation = {
-        "operational_status": {"required": True},
-        "power_cycle_state": {"required": True},
-        "serial_number": {"required": True},
-    }
-
-    _attribute_map = {
-        "operational_status": {"key": "operationalStatus", "type": "str"},
-        "power_cycle_state": {"key": "powerCycleState", "type": "str"},
-        "serial_number": {"key": "serialNumber", "type": "str"},
+        "import_ipv4_route_policy_id": {"key": "importIpv4RoutePolicyId", "type": "str"},
+        "import_ipv6_route_policy_id": {"key": "importIpv6RoutePolicyId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        operational_status: Union[str, "_models.OperationalStatus"],
-        power_cycle_state: Union[str, "_models.PowerCycleState"],
-        serial_number: str,
+        import_ipv4_route_policy_id: Optional[str] = None,
+        import_ipv6_route_policy_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword operational_status: Primary or Secondary power end. Required. Known values are:
-         "Booted", "BootPrompt", and "Ztp".
-        :paramtype operational_status: str or ~azure.mgmt.managednetworkfabric.models.OperationalStatus
-        :keyword power_cycle_state: On or Off power cycle state. Required. Known values are: "On" and
-         "Off".
-        :paramtype power_cycle_state: str or ~azure.mgmt.managednetworkfabric.models.PowerCycleState
-        :keyword serial_number: The serial number of the device. Required.
-        :paramtype serial_number: str
+        :keyword import_ipv4_route_policy_id: ARM resource ID of RoutePolicy.
+        :paramtype import_ipv4_route_policy_id: str
+        :keyword import_ipv6_route_policy_id: ARM resource ID of RoutePolicy.
+        :paramtype import_ipv6_route_policy_id: str
         """
         super().__init__(**kwargs)
-        self.operational_status = operational_status
-        self.power_cycle_state = power_cycle_state
-        self.serial_number = serial_number
+        self.import_ipv4_route_policy_id = import_ipv4_route_policy_id
+        self.import_ipv6_route_policy_id = import_ipv6_route_policy_id
 
 
-class InterfaceStatus(_serialization.Model):
-    """Interface running status properties.
+class ImportRoutePolicyInformation(_serialization.Model):
+    """Import Route Policy Configuration.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar administrative_state: The interface administrative state. Known values are: "Enabled" and
-     "Disabled".
-    :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
-    :ivar operational_status: The interface operational status.
-    :vartype operational_status: str
-    :ivar phy_status: The physical status.
-    :vartype phy_status: str
-    :ivar transceiver_status: The interface transceiver type. Example: up or down.
-    :vartype transceiver_status: str
-    :ivar connected_to: Connected to ARM resource or external interface.
-    :vartype connected_to: str
+    :ivar import_ipv4_route_policy_id: Import IPv4 Route Policy Id.
+    :vartype import_ipv4_route_policy_id: str
+    :ivar import_ipv6_route_policy_id: Import IPv6 Route Policy Id.
+    :vartype import_ipv6_route_policy_id: str
     """
 
-    _validation = {
-        "administrative_state": {"readonly": True},
-    }
-
     _attribute_map = {
-        "administrative_state": {"key": "administrativeState", "type": "str"},
-        "operational_status": {"key": "operationalStatus", "type": "str"},
-        "phy_status": {"key": "phyStatus", "type": "str"},
-        "transceiver_status": {"key": "transceiverStatus", "type": "str"},
-        "connected_to": {"key": "connectedTo", "type": "str"},
+        "import_ipv4_route_policy_id": {"key": "importIpv4RoutePolicyId", "type": "str"},
+        "import_ipv6_route_policy_id": {"key": "importIpv6RoutePolicyId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        operational_status: Optional[str] = None,
-        phy_status: Optional[str] = None,
-        transceiver_status: Optional[str] = None,
-        connected_to: Optional[str] = None,
+        import_ipv4_route_policy_id: Optional[str] = None,
+        import_ipv6_route_policy_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword operational_status: The interface operational status.
-        :paramtype operational_status: str
-        :keyword phy_status: The physical status.
-        :paramtype phy_status: str
-        :keyword transceiver_status: The interface transceiver type. Example: up or down.
-        :paramtype transceiver_status: str
-        :keyword connected_to: Connected to ARM resource or external interface.
-        :paramtype connected_to: str
+        :keyword import_ipv4_route_policy_id: Import IPv4 Route Policy Id.
+        :paramtype import_ipv4_route_policy_id: str
+        :keyword import_ipv6_route_policy_id: Import IPv6 Route Policy Id.
+        :paramtype import_ipv6_route_policy_id: str
         """
         super().__init__(**kwargs)
-        self.administrative_state = None
-        self.operational_status = operational_status
-        self.phy_status = phy_status
-        self.transceiver_status = transceiver_status
-        self.connected_to = connected_to
-
-
-class GetDynamicInterfaceMapsPropertiesItem(InterfaceStatus):
-    """Get Device static interface maps as per topology.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar administrative_state: The interface administrative state. Known values are: "Enabled" and
-     "Disabled".
-    :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
-    :ivar operational_status: The interface operational status.
-    :vartype operational_status: str
-    :ivar phy_status: The physical status.
-    :vartype phy_status: str
-    :ivar transceiver_status: The interface transceiver type. Example: up or down.
-    :vartype transceiver_status: str
-    :ivar connected_to: Connected to ARM resource or external interface.
-    :vartype connected_to: str
-    :ivar name: The interface name.
-    :vartype name: str
-    """
-
-    _validation = {
-        "administrative_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "administrative_state": {"key": "administrativeState", "type": "str"},
-        "operational_status": {"key": "operationalStatus", "type": "str"},
-        "phy_status": {"key": "phyStatus", "type": "str"},
-        "transceiver_status": {"key": "transceiverStatus", "type": "str"},
-        "connected_to": {"key": "connectedTo", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        operational_status: Optional[str] = None,
-        phy_status: Optional[str] = None,
-        transceiver_status: Optional[str] = None,
-        connected_to: Optional[str] = None,
-        name: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword operational_status: The interface operational status.
-        :paramtype operational_status: str
-        :keyword phy_status: The physical status.
-        :paramtype phy_status: str
-        :keyword transceiver_status: The interface transceiver type. Example: up or down.
-        :paramtype transceiver_status: str
-        :keyword connected_to: Connected to ARM resource or external interface.
-        :paramtype connected_to: str
-        :keyword name: The interface name.
-        :paramtype name: str
-        """
-        super().__init__(
-            operational_status=operational_status,
-            phy_status=phy_status,
-            transceiver_status=transceiver_status,
-            connected_to=connected_to,
-            **kwargs
-        )
-        self.name = name
-
-
-class GetStaticInterfaceMapsPropertiesItem(_serialization.Model):
-    """Get Device static interface maps as per topology.
-
-    :ivar name: The interface name.
-    :vartype name: str
-    :ivar description: The interface description.
-    :vartype description: str
-    :ivar identifier: The interface identifier.
-    :vartype identifier: str
-    :ivar interface_type: The interface type. Example: Ethernet.
-    :vartype interface_type: str
-    :ivar connector_type: The physical cable connector type. Example: Optical.
-    :vartype connector_type: str
-    :ivar connected_to: Connected to ARM resource or external interface.
-    :vartype connected_to: str
-    :ivar speed: The interface speed. Example: 100.
-    :vartype speed: float
-    :ivar channel_group_id: The port channel group id.
-    :vartype channel_group_id: float
-    """
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "identifier": {"key": "identifier", "type": "str"},
-        "interface_type": {"key": "interfaceType", "type": "str"},
-        "connector_type": {"key": "connectorType", "type": "str"},
-        "connected_to": {"key": "connectedTo", "type": "str"},
-        "speed": {"key": "speed", "type": "float"},
-        "channel_group_id": {"key": "channelGroupId", "type": "float"},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        identifier: Optional[str] = None,
-        interface_type: Optional[str] = None,
-        connector_type: Optional[str] = None,
-        connected_to: Optional[str] = None,
-        speed: Optional[float] = None,
-        channel_group_id: Optional[float] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: The interface name.
-        :paramtype name: str
-        :keyword description: The interface description.
-        :paramtype description: str
-        :keyword identifier: The interface identifier.
-        :paramtype identifier: str
-        :keyword interface_type: The interface type. Example: Ethernet.
-        :paramtype interface_type: str
-        :keyword connector_type: The physical cable connector type. Example: Optical.
-        :paramtype connector_type: str
-        :keyword connected_to: Connected to ARM resource or external interface.
-        :paramtype connected_to: str
-        :keyword speed: The interface speed. Example: 100.
-        :paramtype speed: float
-        :keyword channel_group_id: The port channel group id.
-        :paramtype channel_group_id: float
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.description = description
-        self.identifier = identifier
-        self.interface_type = interface_type
-        self.connector_type = connector_type
-        self.connected_to = connected_to
-        self.speed = speed
-        self.channel_group_id = channel_group_id
-
-
-class InfrastructureServices(_serialization.Model):
-    """InfrastructureServices IP ranges.
-
-    :ivar ipv4_address_spaces: The IPv4 Address space is optional, if the value is not defined at
-     the time of NFC creation, then the default value 10.0.0.0/19 is considered. The IPV4 address
-     subnet is an optional attribute.
-    :vartype ipv4_address_spaces: list[str]
-    :ivar ipv6_address_spaces: The IPv6 is not supported right now.
-    :vartype ipv6_address_spaces: list[str]
-    """
-
-    _attribute_map = {
-        "ipv4_address_spaces": {"key": "ipv4AddressSpaces", "type": "[str]"},
-        "ipv6_address_spaces": {"key": "ipv6AddressSpaces", "type": "[str]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        ipv4_address_spaces: Optional[List[str]] = None,
-        ipv6_address_spaces: Optional[List[str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword ipv4_address_spaces: The IPv4 Address space is optional, if the value is not defined
-         at the time of NFC creation, then the default value 10.0.0.0/19 is considered. The IPV4 address
-         subnet is an optional attribute.
-        :paramtype ipv4_address_spaces: list[str]
-        :keyword ipv6_address_spaces: The IPv6 is not supported right now.
-        :paramtype ipv6_address_spaces: list[str]
-        """
-        super().__init__(**kwargs)
-        self.ipv4_address_spaces = ipv4_address_spaces
-        self.ipv6_address_spaces = ipv6_address_spaces
+        self.import_ipv4_route_policy_id = import_ipv4_route_policy_id
+        self.import_ipv6_route_policy_id = import_ipv6_route_policy_id
 
 
 class InternalNetwork(ProxyResource):  # pylint: disable=too-many-instance-attributes
-    """Defines the InternalNetwork item.
+    """Defines the Internal Network resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2415,40 +2989,50 @@ class InternalNetwork(ProxyResource):  # pylint: disable=too-many-instance-attri
     :vartype annotation: str
     :ivar mtu: Maximum transmission unit. Default value is 1500.
     :vartype mtu: int
-    :ivar connected_i_pv4_subnets: List with object connected IPv4 Subnets.
+    :ivar connected_i_pv4_subnets: List of Connected IPv4 Subnets.
     :vartype connected_i_pv4_subnets: list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-    :ivar connected_i_pv6_subnets: List with object connected IPv6 Subnets.
+    :ivar connected_i_pv6_subnets: List of connected IPv6 Subnets.
     :vartype connected_i_pv6_subnets: list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-    :ivar static_route_configuration: Static Route Configuration properties.
-    :vartype static_route_configuration:
-     ~azure.mgmt.managednetworkfabric.models.StaticRouteConfiguration
-    :ivar bgp_configuration: BGP configuration properties.
-    :vartype bgp_configuration: ~azure.mgmt.managednetworkfabric.models.BgpConfiguration
-    :ivar import_route_policy_id: ARM resource ID of importRoutePolicy.
+    :ivar import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
     :vartype import_route_policy_id: str
-    :ivar export_route_policy_id: ARM resource ID of importRoutePolicy.
+    :ivar export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
     :vartype export_route_policy_id: str
-    :ivar disabled_on_resources: List of resources the InternalNetwork is disabled on. Can be
-     either entire NetworkFabric or NetworkRack.
-    :vartype disabled_on_resources: list[str]
-    :ivar administrative_state: Administrative state of the InternalNetwork. Example: Enabled |
-     Disabled. Known values are: "Enabled" and "Disabled".
-    :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
-    :ivar bgp_disabled_on_resources: List of resources the BGP is disabled on. Can be either entire
-     NetworkFabric or NetworkRack.
-    :vartype bgp_disabled_on_resources: list[str]
-    :ivar bfd_disabled_on_resources: List of resources the BFD for BGP is disabled on. Can be
-     either entire NetworkFabric or NetworkRack.
-    :vartype bfd_disabled_on_resources: list[str]
-    :ivar bfd_for_static_routes_disabled_on_resources: List of resources the BFD of StaticRoutes is
-     disabled on. Can be either entire NetworkFabric or NetworkRack.
-    :vartype bfd_for_static_routes_disabled_on_resources: list[str]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar import_route_policy: Import Route Policy either IPv4 or IPv6.
+    :vartype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+    :ivar export_route_policy: Export Route Policy either IPv4 or IPv6.
+    :vartype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
+    :ivar ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+    :vartype ingress_acl_id: str
+    :ivar egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+    :vartype egress_acl_id: str
+    :ivar is_monitoring_enabled: To check whether monitoring of internal network is enabled or not.
+     Known values are: "True" and "False".
+    :vartype is_monitoring_enabled: str or
+     ~azure.mgmt.managednetworkfabric.models.IsMonitoringEnabled
+    :ivar extension: Extension. Example: NoExtension | NPB. Known values are: "NoExtension" and
+     "NPB".
+    :vartype extension: str or ~azure.mgmt.managednetworkfabric.models.Extension
     :ivar vlan_id: Vlan identifier. Example: 1001. Required.
     :vartype vlan_id: int
+    :ivar bgp_configuration: BGP configuration properties.
+    :vartype bgp_configuration:
+     ~azure.mgmt.managednetworkfabric.models.InternalNetworkPropertiesBgpConfiguration
+    :ivar static_route_configuration: Static Route Configuration properties.
+    :vartype static_route_configuration:
+     ~azure.mgmt.managednetworkfabric.models.InternalNetworkPropertiesStaticRouteConfiguration
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
@@ -2456,14 +3040,13 @@ class InternalNetwork(ProxyResource):  # pylint: disable=too-many-instance-attri
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
-        "mtu": {"maximum": 9000, "minimum": 1500},
-        "disabled_on_resources": {"readonly": True},
-        "administrative_state": {"readonly": True},
-        "bgp_disabled_on_resources": {"readonly": True},
-        "bfd_disabled_on_resources": {"readonly": True},
-        "bfd_for_static_routes_disabled_on_resources": {"readonly": True},
+        "mtu": {"maximum": 9200, "minimum": 64},
+        "connected_i_pv4_subnets": {"min_items": 1},
+        "connected_i_pv6_subnets": {"min_items": 1},
+        "vlan_id": {"required": True, "maximum": 4094, "minimum": 100},
+        "configuration_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
-        "vlan_id": {"required": True, "maximum": 4095, "minimum": 100},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2475,23 +3058,26 @@ class InternalNetwork(ProxyResource):  # pylint: disable=too-many-instance-attri
         "mtu": {"key": "properties.mtu", "type": "int"},
         "connected_i_pv4_subnets": {"key": "properties.connectedIPv4Subnets", "type": "[ConnectedSubnet]"},
         "connected_i_pv6_subnets": {"key": "properties.connectedIPv6Subnets", "type": "[ConnectedSubnet]"},
-        "static_route_configuration": {
-            "key": "properties.staticRouteConfiguration",
-            "type": "StaticRouteConfiguration",
-        },
-        "bgp_configuration": {"key": "properties.bgpConfiguration", "type": "BgpConfiguration"},
         "import_route_policy_id": {"key": "properties.importRoutePolicyId", "type": "str"},
         "export_route_policy_id": {"key": "properties.exportRoutePolicyId", "type": "str"},
-        "disabled_on_resources": {"key": "properties.disabledOnResources", "type": "[str]"},
-        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
-        "bgp_disabled_on_resources": {"key": "properties.bgpDisabledOnResources", "type": "[str]"},
-        "bfd_disabled_on_resources": {"key": "properties.bfdDisabledOnResources", "type": "[str]"},
-        "bfd_for_static_routes_disabled_on_resources": {
-            "key": "properties.bfdForStaticRoutesDisabledOnResources",
-            "type": "[str]",
-        },
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "import_route_policy": {"key": "properties.importRoutePolicy", "type": "ImportRoutePolicy"},
+        "export_route_policy": {"key": "properties.exportRoutePolicy", "type": "ExportRoutePolicy"},
+        "ingress_acl_id": {"key": "properties.ingressAclId", "type": "str"},
+        "egress_acl_id": {"key": "properties.egressAclId", "type": "str"},
+        "is_monitoring_enabled": {"key": "properties.isMonitoringEnabled", "type": "str"},
+        "extension": {"key": "properties.extension", "type": "str"},
         "vlan_id": {"key": "properties.vlanId", "type": "int"},
+        "bgp_configuration": {
+            "key": "properties.bgpConfiguration",
+            "type": "InternalNetworkPropertiesBgpConfiguration",
+        },
+        "static_route_configuration": {
+            "key": "properties.staticRouteConfiguration",
+            "type": "InternalNetworkPropertiesStaticRouteConfiguration",
+        },
+        "configuration_state": {"key": "properties.configurationState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
     }
 
     def __init__(
@@ -2502,10 +3088,16 @@ class InternalNetwork(ProxyResource):  # pylint: disable=too-many-instance-attri
         mtu: int = 1500,
         connected_i_pv4_subnets: Optional[List["_models.ConnectedSubnet"]] = None,
         connected_i_pv6_subnets: Optional[List["_models.ConnectedSubnet"]] = None,
-        static_route_configuration: Optional["_models.StaticRouteConfiguration"] = None,
-        bgp_configuration: Optional["_models.BgpConfiguration"] = None,
         import_route_policy_id: Optional[str] = None,
         export_route_policy_id: Optional[str] = None,
+        import_route_policy: Optional["_models.ImportRoutePolicy"] = None,
+        export_route_policy: Optional["_models.ExportRoutePolicy"] = None,
+        ingress_acl_id: Optional[str] = None,
+        egress_acl_id: Optional[str] = None,
+        is_monitoring_enabled: Union[str, "_models.IsMonitoringEnabled"] = "False",
+        extension: Union[str, "_models.Extension"] = "NoExtension",
+        bgp_configuration: Optional["_models.InternalNetworkPropertiesBgpConfiguration"] = None,
+        static_route_configuration: Optional["_models.InternalNetworkPropertiesStaticRouteConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2513,66 +3105,103 @@ class InternalNetwork(ProxyResource):  # pylint: disable=too-many-instance-attri
         :paramtype annotation: str
         :keyword mtu: Maximum transmission unit. Default value is 1500.
         :paramtype mtu: int
-        :keyword connected_i_pv4_subnets: List with object connected IPv4 Subnets.
+        :keyword connected_i_pv4_subnets: List of Connected IPv4 Subnets.
         :paramtype connected_i_pv4_subnets:
          list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-        :keyword connected_i_pv6_subnets: List with object connected IPv6 Subnets.
+        :keyword connected_i_pv6_subnets: List of connected IPv6 Subnets.
         :paramtype connected_i_pv6_subnets:
          list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-        :keyword static_route_configuration: Static Route Configuration properties.
-        :paramtype static_route_configuration:
-         ~azure.mgmt.managednetworkfabric.models.StaticRouteConfiguration
-        :keyword bgp_configuration: BGP configuration properties.
-        :paramtype bgp_configuration: ~azure.mgmt.managednetworkfabric.models.BgpConfiguration
-        :keyword import_route_policy_id: ARM resource ID of importRoutePolicy.
+        :keyword import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
         :paramtype import_route_policy_id: str
-        :keyword export_route_policy_id: ARM resource ID of importRoutePolicy.
+        :keyword export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
         :paramtype export_route_policy_id: str
+        :keyword import_route_policy: Import Route Policy either IPv4 or IPv6.
+        :paramtype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+        :keyword export_route_policy: Export Route Policy either IPv4 or IPv6.
+        :paramtype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
+        :keyword ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+        :paramtype ingress_acl_id: str
+        :keyword egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+        :paramtype egress_acl_id: str
+        :keyword is_monitoring_enabled: To check whether monitoring of internal network is enabled or
+         not. Known values are: "True" and "False".
+        :paramtype is_monitoring_enabled: str or
+         ~azure.mgmt.managednetworkfabric.models.IsMonitoringEnabled
+        :keyword extension: Extension. Example: NoExtension | NPB. Known values are: "NoExtension" and
+         "NPB".
+        :paramtype extension: str or ~azure.mgmt.managednetworkfabric.models.Extension
         :keyword vlan_id: Vlan identifier. Example: 1001. Required.
         :paramtype vlan_id: int
+        :keyword bgp_configuration: BGP configuration properties.
+        :paramtype bgp_configuration:
+         ~azure.mgmt.managednetworkfabric.models.InternalNetworkPropertiesBgpConfiguration
+        :keyword static_route_configuration: Static Route Configuration properties.
+        :paramtype static_route_configuration:
+         ~azure.mgmt.managednetworkfabric.models.InternalNetworkPropertiesStaticRouteConfiguration
         """
         super().__init__(**kwargs)
         self.annotation = annotation
         self.mtu = mtu
         self.connected_i_pv4_subnets = connected_i_pv4_subnets
         self.connected_i_pv6_subnets = connected_i_pv6_subnets
-        self.static_route_configuration = static_route_configuration
-        self.bgp_configuration = bgp_configuration
         self.import_route_policy_id = import_route_policy_id
         self.export_route_policy_id = export_route_policy_id
-        self.disabled_on_resources = None
-        self.administrative_state = None
-        self.bgp_disabled_on_resources = None
-        self.bfd_disabled_on_resources = None
-        self.bfd_for_static_routes_disabled_on_resources = None
-        self.provisioning_state = None
+        self.import_route_policy = import_route_policy
+        self.export_route_policy = export_route_policy
+        self.ingress_acl_id = ingress_acl_id
+        self.egress_acl_id = egress_acl_id
+        self.is_monitoring_enabled = is_monitoring_enabled
+        self.extension = extension
         self.vlan_id = vlan_id
+        self.bgp_configuration = bgp_configuration
+        self.static_route_configuration = static_route_configuration
+        self.configuration_state = None
+        self.provisioning_state = None
+        self.administrative_state = None
 
 
-class InternalNetworkPatch(_serialization.Model):
+class InternalNetworkPatch(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The InternalNetwork patch resource definition.
 
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
     :ivar mtu: Maximum transmission unit. Default value is 1500.
     :vartype mtu: int
-    :ivar connected_i_pv4_subnets: List with object connected IPv4 Subnets.
+    :ivar connected_i_pv4_subnets: List of Connected IPv4 Subnets.
     :vartype connected_i_pv4_subnets: list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-    :ivar connected_i_pv6_subnets: List with object connected IPv6 Subnets.
+    :ivar connected_i_pv6_subnets: List of connected IPv6 Subnets.
     :vartype connected_i_pv6_subnets: list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
+    :ivar import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
+    :vartype import_route_policy_id: str
+    :ivar export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
+    :vartype export_route_policy_id: str
+    :ivar import_route_policy: Import Route Policy either IPv4 or IPv6.
+    :vartype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+    :ivar export_route_policy: Export Route Policy either IPv4 or IPv6.
+    :vartype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
+    :ivar ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+    :vartype ingress_acl_id: str
+    :ivar egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+    :vartype egress_acl_id: str
+    :ivar is_monitoring_enabled: To check whether monitoring of internal network is enabled or not.
+     Known values are: "True" and "False".
+    :vartype is_monitoring_enabled: str or
+     ~azure.mgmt.managednetworkfabric.models.IsMonitoringEnabled
+    :ivar bgp_configuration: BGP configuration properties.
+    :vartype bgp_configuration: ~azure.mgmt.managednetworkfabric.models.BgpConfiguration
     :ivar static_route_configuration: Static Route Configuration properties.
     :vartype static_route_configuration:
      ~azure.mgmt.managednetworkfabric.models.StaticRouteConfiguration
-    :ivar bgp_configuration: BGP configuration properties.
-    :vartype bgp_configuration: ~azure.mgmt.managednetworkfabric.models.BgpConfiguration
-    :ivar import_route_policy_id: ARM resource ID of importRoutePolicy.
-    :vartype import_route_policy_id: str
-    :ivar export_route_policy_id: ARM resource ID of importRoutePolicy.
-    :vartype export_route_policy_id: str
     """
 
     _validation = {
-        "mtu": {"maximum": 9000, "minimum": 1500},
+        "mtu": {"maximum": 9200, "minimum": 64},
+        "connected_i_pv4_subnets": {"min_items": 1},
+        "connected_i_pv6_subnets": {"min_items": 1},
     }
 
     _attribute_map = {
@@ -2580,13 +3209,18 @@ class InternalNetworkPatch(_serialization.Model):
         "mtu": {"key": "properties.mtu", "type": "int"},
         "connected_i_pv4_subnets": {"key": "properties.connectedIPv4Subnets", "type": "[ConnectedSubnet]"},
         "connected_i_pv6_subnets": {"key": "properties.connectedIPv6Subnets", "type": "[ConnectedSubnet]"},
+        "import_route_policy_id": {"key": "properties.importRoutePolicyId", "type": "str"},
+        "export_route_policy_id": {"key": "properties.exportRoutePolicyId", "type": "str"},
+        "import_route_policy": {"key": "properties.importRoutePolicy", "type": "ImportRoutePolicy"},
+        "export_route_policy": {"key": "properties.exportRoutePolicy", "type": "ExportRoutePolicy"},
+        "ingress_acl_id": {"key": "properties.ingressAclId", "type": "str"},
+        "egress_acl_id": {"key": "properties.egressAclId", "type": "str"},
+        "is_monitoring_enabled": {"key": "properties.isMonitoringEnabled", "type": "str"},
+        "bgp_configuration": {"key": "properties.bgpConfiguration", "type": "BgpConfiguration"},
         "static_route_configuration": {
             "key": "properties.staticRouteConfiguration",
             "type": "StaticRouteConfiguration",
         },
-        "bgp_configuration": {"key": "properties.bgpConfiguration", "type": "BgpConfiguration"},
-        "import_route_policy_id": {"key": "properties.importRoutePolicyId", "type": "str"},
-        "export_route_policy_id": {"key": "properties.exportRoutePolicyId", "type": "str"},
     }
 
     def __init__(
@@ -2596,10 +3230,15 @@ class InternalNetworkPatch(_serialization.Model):
         mtu: int = 1500,
         connected_i_pv4_subnets: Optional[List["_models.ConnectedSubnet"]] = None,
         connected_i_pv6_subnets: Optional[List["_models.ConnectedSubnet"]] = None,
-        static_route_configuration: Optional["_models.StaticRouteConfiguration"] = None,
-        bgp_configuration: Optional["_models.BgpConfiguration"] = None,
         import_route_policy_id: Optional[str] = None,
         export_route_policy_id: Optional[str] = None,
+        import_route_policy: Optional["_models.ImportRoutePolicy"] = None,
+        export_route_policy: Optional["_models.ExportRoutePolicy"] = None,
+        ingress_acl_id: Optional[str] = None,
+        egress_acl_id: Optional[str] = None,
+        is_monitoring_enabled: Union[str, "_models.IsMonitoringEnabled"] = "False",
+        bgp_configuration: Optional["_models.BgpConfiguration"] = None,
+        static_route_configuration: Optional["_models.StaticRouteConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2607,65 +3246,98 @@ class InternalNetworkPatch(_serialization.Model):
         :paramtype annotation: str
         :keyword mtu: Maximum transmission unit. Default value is 1500.
         :paramtype mtu: int
-        :keyword connected_i_pv4_subnets: List with object connected IPv4 Subnets.
+        :keyword connected_i_pv4_subnets: List of Connected IPv4 Subnets.
         :paramtype connected_i_pv4_subnets:
          list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-        :keyword connected_i_pv6_subnets: List with object connected IPv6 Subnets.
+        :keyword connected_i_pv6_subnets: List of connected IPv6 Subnets.
         :paramtype connected_i_pv6_subnets:
          list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
+        :keyword import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
+        :paramtype import_route_policy_id: str
+        :keyword export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
+        :paramtype export_route_policy_id: str
+        :keyword import_route_policy: Import Route Policy either IPv4 or IPv6.
+        :paramtype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+        :keyword export_route_policy: Export Route Policy either IPv4 or IPv6.
+        :paramtype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
+        :keyword ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+        :paramtype ingress_acl_id: str
+        :keyword egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+        :paramtype egress_acl_id: str
+        :keyword is_monitoring_enabled: To check whether monitoring of internal network is enabled or
+         not. Known values are: "True" and "False".
+        :paramtype is_monitoring_enabled: str or
+         ~azure.mgmt.managednetworkfabric.models.IsMonitoringEnabled
+        :keyword bgp_configuration: BGP configuration properties.
+        :paramtype bgp_configuration: ~azure.mgmt.managednetworkfabric.models.BgpConfiguration
         :keyword static_route_configuration: Static Route Configuration properties.
         :paramtype static_route_configuration:
          ~azure.mgmt.managednetworkfabric.models.StaticRouteConfiguration
-        :keyword bgp_configuration: BGP configuration properties.
-        :paramtype bgp_configuration: ~azure.mgmt.managednetworkfabric.models.BgpConfiguration
-        :keyword import_route_policy_id: ARM resource ID of importRoutePolicy.
-        :paramtype import_route_policy_id: str
-        :keyword export_route_policy_id: ARM resource ID of importRoutePolicy.
-        :paramtype export_route_policy_id: str
         """
         super().__init__(**kwargs)
         self.annotation = annotation
         self.mtu = mtu
         self.connected_i_pv4_subnets = connected_i_pv4_subnets
         self.connected_i_pv6_subnets = connected_i_pv6_subnets
-        self.static_route_configuration = static_route_configuration
-        self.bgp_configuration = bgp_configuration
         self.import_route_policy_id = import_route_policy_id
         self.export_route_policy_id = export_route_policy_id
+        self.import_route_policy = import_route_policy
+        self.export_route_policy = export_route_policy
+        self.ingress_acl_id = ingress_acl_id
+        self.egress_acl_id = egress_acl_id
+        self.is_monitoring_enabled = is_monitoring_enabled
+        self.bgp_configuration = bgp_configuration
+        self.static_route_configuration = static_route_configuration
 
 
 class InternalNetworkPatchableProperties(_serialization.Model):
-    """The ExternalNetwork patchable properties.
+    """The InternalNetwork patchable properties.
 
     :ivar mtu: Maximum transmission unit. Default value is 1500.
     :vartype mtu: int
-    :ivar connected_i_pv4_subnets: List with object connected IPv4 Subnets.
+    :ivar connected_i_pv4_subnets: List of Connected IPv4 Subnets.
     :vartype connected_i_pv4_subnets: list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-    :ivar connected_i_pv6_subnets: List with object connected IPv6 Subnets.
+    :ivar connected_i_pv6_subnets: List of connected IPv6 Subnets.
     :vartype connected_i_pv6_subnets: list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-    :ivar static_route_configuration: Static Route Configuration properties.
-    :vartype static_route_configuration:
-     ~azure.mgmt.managednetworkfabric.models.StaticRouteConfiguration
-    :ivar bgp_configuration: BGP configuration properties.
-    :vartype bgp_configuration: ~azure.mgmt.managednetworkfabric.models.BgpConfiguration
-    :ivar import_route_policy_id: ARM resource ID of importRoutePolicy.
+    :ivar import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
     :vartype import_route_policy_id: str
-    :ivar export_route_policy_id: ARM resource ID of importRoutePolicy.
+    :ivar export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
     :vartype export_route_policy_id: str
+    :ivar import_route_policy: Import Route Policy either IPv4 or IPv6.
+    :vartype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+    :ivar export_route_policy: Export Route Policy either IPv4 or IPv6.
+    :vartype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
+    :ivar ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+    :vartype ingress_acl_id: str
+    :ivar egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+    :vartype egress_acl_id: str
+    :ivar is_monitoring_enabled: To check whether monitoring of internal network is enabled or not.
+     Known values are: "True" and "False".
+    :vartype is_monitoring_enabled: str or
+     ~azure.mgmt.managednetworkfabric.models.IsMonitoringEnabled
     """
 
     _validation = {
-        "mtu": {"maximum": 9000, "minimum": 1500},
+        "mtu": {"maximum": 9200, "minimum": 64},
+        "connected_i_pv4_subnets": {"min_items": 1},
+        "connected_i_pv6_subnets": {"min_items": 1},
     }
 
     _attribute_map = {
         "mtu": {"key": "mtu", "type": "int"},
         "connected_i_pv4_subnets": {"key": "connectedIPv4Subnets", "type": "[ConnectedSubnet]"},
         "connected_i_pv6_subnets": {"key": "connectedIPv6Subnets", "type": "[ConnectedSubnet]"},
-        "static_route_configuration": {"key": "staticRouteConfiguration", "type": "StaticRouteConfiguration"},
-        "bgp_configuration": {"key": "bgpConfiguration", "type": "BgpConfiguration"},
         "import_route_policy_id": {"key": "importRoutePolicyId", "type": "str"},
         "export_route_policy_id": {"key": "exportRoutePolicyId", "type": "str"},
+        "import_route_policy": {"key": "importRoutePolicy", "type": "ImportRoutePolicy"},
+        "export_route_policy": {"key": "exportRoutePolicy", "type": "ExportRoutePolicy"},
+        "ingress_acl_id": {"key": "ingressAclId", "type": "str"},
+        "egress_acl_id": {"key": "egressAclId", "type": "str"},
+        "is_monitoring_enabled": {"key": "isMonitoringEnabled", "type": "str"},
     }
 
     def __init__(
@@ -2674,76 +3346,114 @@ class InternalNetworkPatchableProperties(_serialization.Model):
         mtu: int = 1500,
         connected_i_pv4_subnets: Optional[List["_models.ConnectedSubnet"]] = None,
         connected_i_pv6_subnets: Optional[List["_models.ConnectedSubnet"]] = None,
-        static_route_configuration: Optional["_models.StaticRouteConfiguration"] = None,
-        bgp_configuration: Optional["_models.BgpConfiguration"] = None,
         import_route_policy_id: Optional[str] = None,
         export_route_policy_id: Optional[str] = None,
+        import_route_policy: Optional["_models.ImportRoutePolicy"] = None,
+        export_route_policy: Optional["_models.ExportRoutePolicy"] = None,
+        ingress_acl_id: Optional[str] = None,
+        egress_acl_id: Optional[str] = None,
+        is_monitoring_enabled: Union[str, "_models.IsMonitoringEnabled"] = "False",
         **kwargs: Any
     ) -> None:
         """
         :keyword mtu: Maximum transmission unit. Default value is 1500.
         :paramtype mtu: int
-        :keyword connected_i_pv4_subnets: List with object connected IPv4 Subnets.
+        :keyword connected_i_pv4_subnets: List of Connected IPv4 Subnets.
         :paramtype connected_i_pv4_subnets:
          list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-        :keyword connected_i_pv6_subnets: List with object connected IPv6 Subnets.
+        :keyword connected_i_pv6_subnets: List of connected IPv6 Subnets.
         :paramtype connected_i_pv6_subnets:
          list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-        :keyword static_route_configuration: Static Route Configuration properties.
-        :paramtype static_route_configuration:
-         ~azure.mgmt.managednetworkfabric.models.StaticRouteConfiguration
-        :keyword bgp_configuration: BGP configuration properties.
-        :paramtype bgp_configuration: ~azure.mgmt.managednetworkfabric.models.BgpConfiguration
-        :keyword import_route_policy_id: ARM resource ID of importRoutePolicy.
+        :keyword import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
         :paramtype import_route_policy_id: str
-        :keyword export_route_policy_id: ARM resource ID of importRoutePolicy.
+        :keyword export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
         :paramtype export_route_policy_id: str
+        :keyword import_route_policy: Import Route Policy either IPv4 or IPv6.
+        :paramtype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+        :keyword export_route_policy: Export Route Policy either IPv4 or IPv6.
+        :paramtype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
+        :keyword ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+        :paramtype ingress_acl_id: str
+        :keyword egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+        :paramtype egress_acl_id: str
+        :keyword is_monitoring_enabled: To check whether monitoring of internal network is enabled or
+         not. Known values are: "True" and "False".
+        :paramtype is_monitoring_enabled: str or
+         ~azure.mgmt.managednetworkfabric.models.IsMonitoringEnabled
         """
         super().__init__(**kwargs)
         self.mtu = mtu
         self.connected_i_pv4_subnets = connected_i_pv4_subnets
         self.connected_i_pv6_subnets = connected_i_pv6_subnets
-        self.static_route_configuration = static_route_configuration
-        self.bgp_configuration = bgp_configuration
         self.import_route_policy_id = import_route_policy_id
         self.export_route_policy_id = export_route_policy_id
+        self.import_route_policy = import_route_policy
+        self.export_route_policy = export_route_policy
+        self.ingress_acl_id = ingress_acl_id
+        self.egress_acl_id = egress_acl_id
+        self.is_monitoring_enabled = is_monitoring_enabled
 
 
-class InternalNetworkPatchProperties(AnnotationResource, InternalNetworkPatchableProperties):
+class InternalNetworkPatchProperties(
+    AnnotationResource, InternalNetworkPatchableProperties
+):  # pylint: disable=too-many-instance-attributes
     """InternalNetwork Patch properties.
 
     :ivar mtu: Maximum transmission unit. Default value is 1500.
     :vartype mtu: int
-    :ivar connected_i_pv4_subnets: List with object connected IPv4 Subnets.
+    :ivar connected_i_pv4_subnets: List of Connected IPv4 Subnets.
     :vartype connected_i_pv4_subnets: list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-    :ivar connected_i_pv6_subnets: List with object connected IPv6 Subnets.
+    :ivar connected_i_pv6_subnets: List of connected IPv6 Subnets.
     :vartype connected_i_pv6_subnets: list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
+    :ivar import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
+    :vartype import_route_policy_id: str
+    :ivar export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
+    :vartype export_route_policy_id: str
+    :ivar import_route_policy: Import Route Policy either IPv4 or IPv6.
+    :vartype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+    :ivar export_route_policy: Export Route Policy either IPv4 or IPv6.
+    :vartype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
+    :ivar ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+    :vartype ingress_acl_id: str
+    :ivar egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+    :vartype egress_acl_id: str
+    :ivar is_monitoring_enabled: To check whether monitoring of internal network is enabled or not.
+     Known values are: "True" and "False".
+    :vartype is_monitoring_enabled: str or
+     ~azure.mgmt.managednetworkfabric.models.IsMonitoringEnabled
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar bgp_configuration: BGP configuration properties.
+    :vartype bgp_configuration: ~azure.mgmt.managednetworkfabric.models.BgpConfiguration
     :ivar static_route_configuration: Static Route Configuration properties.
     :vartype static_route_configuration:
      ~azure.mgmt.managednetworkfabric.models.StaticRouteConfiguration
-    :ivar bgp_configuration: BGP configuration properties.
-    :vartype bgp_configuration: ~azure.mgmt.managednetworkfabric.models.BgpConfiguration
-    :ivar import_route_policy_id: ARM resource ID of importRoutePolicy.
-    :vartype import_route_policy_id: str
-    :ivar export_route_policy_id: ARM resource ID of importRoutePolicy.
-    :vartype export_route_policy_id: str
-    :ivar annotation: Switch configuration description.
-    :vartype annotation: str
     """
 
     _validation = {
-        "mtu": {"maximum": 9000, "minimum": 1500},
+        "mtu": {"maximum": 9200, "minimum": 64},
+        "connected_i_pv4_subnets": {"min_items": 1},
+        "connected_i_pv6_subnets": {"min_items": 1},
     }
 
     _attribute_map = {
         "mtu": {"key": "mtu", "type": "int"},
         "connected_i_pv4_subnets": {"key": "connectedIPv4Subnets", "type": "[ConnectedSubnet]"},
         "connected_i_pv6_subnets": {"key": "connectedIPv6Subnets", "type": "[ConnectedSubnet]"},
-        "static_route_configuration": {"key": "staticRouteConfiguration", "type": "StaticRouteConfiguration"},
-        "bgp_configuration": {"key": "bgpConfiguration", "type": "BgpConfiguration"},
         "import_route_policy_id": {"key": "importRoutePolicyId", "type": "str"},
         "export_route_policy_id": {"key": "exportRoutePolicyId", "type": "str"},
+        "import_route_policy": {"key": "importRoutePolicy", "type": "ImportRoutePolicy"},
+        "export_route_policy": {"key": "exportRoutePolicy", "type": "ExportRoutePolicy"},
+        "ingress_acl_id": {"key": "ingressAclId", "type": "str"},
+        "egress_acl_id": {"key": "egressAclId", "type": "str"},
+        "is_monitoring_enabled": {"key": "isMonitoringEnabled", "type": "str"},
         "annotation": {"key": "annotation", "type": "str"},
+        "bgp_configuration": {"key": "bgpConfiguration", "type": "BgpConfiguration"},
+        "static_route_configuration": {"key": "staticRouteConfiguration", "type": "StaticRouteConfiguration"},
     }
 
     def __init__(
@@ -2752,205 +3462,489 @@ class InternalNetworkPatchProperties(AnnotationResource, InternalNetworkPatchabl
         mtu: int = 1500,
         connected_i_pv4_subnets: Optional[List["_models.ConnectedSubnet"]] = None,
         connected_i_pv6_subnets: Optional[List["_models.ConnectedSubnet"]] = None,
-        static_route_configuration: Optional["_models.StaticRouteConfiguration"] = None,
-        bgp_configuration: Optional["_models.BgpConfiguration"] = None,
         import_route_policy_id: Optional[str] = None,
         export_route_policy_id: Optional[str] = None,
+        import_route_policy: Optional["_models.ImportRoutePolicy"] = None,
+        export_route_policy: Optional["_models.ExportRoutePolicy"] = None,
+        ingress_acl_id: Optional[str] = None,
+        egress_acl_id: Optional[str] = None,
+        is_monitoring_enabled: Union[str, "_models.IsMonitoringEnabled"] = "False",
         annotation: Optional[str] = None,
+        bgp_configuration: Optional["_models.BgpConfiguration"] = None,
+        static_route_configuration: Optional["_models.StaticRouteConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword mtu: Maximum transmission unit. Default value is 1500.
         :paramtype mtu: int
-        :keyword connected_i_pv4_subnets: List with object connected IPv4 Subnets.
+        :keyword connected_i_pv4_subnets: List of Connected IPv4 Subnets.
         :paramtype connected_i_pv4_subnets:
          list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-        :keyword connected_i_pv6_subnets: List with object connected IPv6 Subnets.
+        :keyword connected_i_pv6_subnets: List of connected IPv6 Subnets.
         :paramtype connected_i_pv6_subnets:
          list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
+        :keyword import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
+        :paramtype import_route_policy_id: str
+        :keyword export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
+        :paramtype export_route_policy_id: str
+        :keyword import_route_policy: Import Route Policy either IPv4 or IPv6.
+        :paramtype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+        :keyword export_route_policy: Export Route Policy either IPv4 or IPv6.
+        :paramtype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
+        :keyword ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+        :paramtype ingress_acl_id: str
+        :keyword egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+        :paramtype egress_acl_id: str
+        :keyword is_monitoring_enabled: To check whether monitoring of internal network is enabled or
+         not. Known values are: "True" and "False".
+        :paramtype is_monitoring_enabled: str or
+         ~azure.mgmt.managednetworkfabric.models.IsMonitoringEnabled
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword bgp_configuration: BGP configuration properties.
+        :paramtype bgp_configuration: ~azure.mgmt.managednetworkfabric.models.BgpConfiguration
         :keyword static_route_configuration: Static Route Configuration properties.
         :paramtype static_route_configuration:
          ~azure.mgmt.managednetworkfabric.models.StaticRouteConfiguration
-        :keyword bgp_configuration: BGP configuration properties.
-        :paramtype bgp_configuration: ~azure.mgmt.managednetworkfabric.models.BgpConfiguration
-        :keyword import_route_policy_id: ARM resource ID of importRoutePolicy.
-        :paramtype import_route_policy_id: str
-        :keyword export_route_policy_id: ARM resource ID of importRoutePolicy.
-        :paramtype export_route_policy_id: str
-        :keyword annotation: Switch configuration description.
-        :paramtype annotation: str
         """
         super().__init__(
             annotation=annotation,
             mtu=mtu,
             connected_i_pv4_subnets=connected_i_pv4_subnets,
             connected_i_pv6_subnets=connected_i_pv6_subnets,
-            static_route_configuration=static_route_configuration,
-            bgp_configuration=bgp_configuration,
             import_route_policy_id=import_route_policy_id,
             export_route_policy_id=export_route_policy_id,
+            import_route_policy=import_route_policy,
+            export_route_policy=export_route_policy,
+            ingress_acl_id=ingress_acl_id,
+            egress_acl_id=egress_acl_id,
+            is_monitoring_enabled=is_monitoring_enabled,
             **kwargs
         )
         self.mtu = mtu
         self.connected_i_pv4_subnets = connected_i_pv4_subnets
         self.connected_i_pv6_subnets = connected_i_pv6_subnets
-        self.static_route_configuration = static_route_configuration
-        self.bgp_configuration = bgp_configuration
         self.import_route_policy_id = import_route_policy_id
         self.export_route_policy_id = export_route_policy_id
+        self.import_route_policy = import_route_policy
+        self.export_route_policy = export_route_policy
+        self.ingress_acl_id = ingress_acl_id
+        self.egress_acl_id = egress_acl_id
+        self.is_monitoring_enabled = is_monitoring_enabled
+        self.bgp_configuration = bgp_configuration
+        self.static_route_configuration = static_route_configuration
         self.annotation = annotation
 
 
 class InternalNetworkProperties(
-    AnnotationResource, InternalNetworkPatchableProperties
+    AnnotationResource, InternalNetworkPatchableProperties, ExtensionEnumProperty
 ):  # pylint: disable=too-many-instance-attributes
-    """Internal Network Properties.
+    """Internal Network Properties defines the properties of the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar extension: Extension. Example: NoExtension | NPB. Known values are: "NoExtension" and
+     "NPB".
+    :vartype extension: str or ~azure.mgmt.managednetworkfabric.models.Extension
     :ivar mtu: Maximum transmission unit. Default value is 1500.
     :vartype mtu: int
-    :ivar connected_i_pv4_subnets: List with object connected IPv4 Subnets.
+    :ivar connected_i_pv4_subnets: List of Connected IPv4 Subnets.
     :vartype connected_i_pv4_subnets: list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-    :ivar connected_i_pv6_subnets: List with object connected IPv6 Subnets.
+    :ivar connected_i_pv6_subnets: List of connected IPv6 Subnets.
     :vartype connected_i_pv6_subnets: list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-    :ivar static_route_configuration: Static Route Configuration properties.
-    :vartype static_route_configuration:
-     ~azure.mgmt.managednetworkfabric.models.StaticRouteConfiguration
-    :ivar bgp_configuration: BGP configuration properties.
-    :vartype bgp_configuration: ~azure.mgmt.managednetworkfabric.models.BgpConfiguration
-    :ivar import_route_policy_id: ARM resource ID of importRoutePolicy.
+    :ivar import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
     :vartype import_route_policy_id: str
-    :ivar export_route_policy_id: ARM resource ID of importRoutePolicy.
+    :ivar export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the backward
+     compatibility.
     :vartype export_route_policy_id: str
+    :ivar import_route_policy: Import Route Policy either IPv4 or IPv6.
+    :vartype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+    :ivar export_route_policy: Export Route Policy either IPv4 or IPv6.
+    :vartype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
+    :ivar ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+    :vartype ingress_acl_id: str
+    :ivar egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+    :vartype egress_acl_id: str
+    :ivar is_monitoring_enabled: To check whether monitoring of internal network is enabled or not.
+     Known values are: "True" and "False".
+    :vartype is_monitoring_enabled: str or
+     ~azure.mgmt.managednetworkfabric.models.IsMonitoringEnabled
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar disabled_on_resources: List of resources the InternalNetwork is disabled on. Can be
-     either entire NetworkFabric or NetworkRack.
-    :vartype disabled_on_resources: list[str]
-    :ivar administrative_state: Administrative state of the InternalNetwork. Example: Enabled |
-     Disabled. Known values are: "Enabled" and "Disabled".
-    :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
-    :ivar bgp_disabled_on_resources: List of resources the BGP is disabled on. Can be either entire
-     NetworkFabric or NetworkRack.
-    :vartype bgp_disabled_on_resources: list[str]
-    :ivar bfd_disabled_on_resources: List of resources the BFD for BGP is disabled on. Can be
-     either entire NetworkFabric or NetworkRack.
-    :vartype bfd_disabled_on_resources: list[str]
-    :ivar bfd_for_static_routes_disabled_on_resources: List of resources the BFD of StaticRoutes is
-     disabled on. Can be either entire NetworkFabric or NetworkRack.
-    :vartype bfd_for_static_routes_disabled_on_resources: list[str]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
     :ivar vlan_id: Vlan identifier. Example: 1001. Required.
     :vartype vlan_id: int
+    :ivar bgp_configuration: BGP configuration properties.
+    :vartype bgp_configuration:
+     ~azure.mgmt.managednetworkfabric.models.InternalNetworkPropertiesBgpConfiguration
+    :ivar static_route_configuration: Static Route Configuration properties.
+    :vartype static_route_configuration:
+     ~azure.mgmt.managednetworkfabric.models.InternalNetworkPropertiesStaticRouteConfiguration
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
-        "mtu": {"maximum": 9000, "minimum": 1500},
-        "disabled_on_resources": {"readonly": True},
-        "administrative_state": {"readonly": True},
-        "bgp_disabled_on_resources": {"readonly": True},
-        "bfd_disabled_on_resources": {"readonly": True},
-        "bfd_for_static_routes_disabled_on_resources": {"readonly": True},
+        "mtu": {"maximum": 9200, "minimum": 64},
+        "connected_i_pv4_subnets": {"min_items": 1},
+        "connected_i_pv6_subnets": {"min_items": 1},
+        "vlan_id": {"required": True, "maximum": 4094, "minimum": 100},
+        "configuration_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
-        "vlan_id": {"required": True, "maximum": 4095, "minimum": 100},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
+        "extension": {"key": "extension", "type": "str"},
         "mtu": {"key": "mtu", "type": "int"},
         "connected_i_pv4_subnets": {"key": "connectedIPv4Subnets", "type": "[ConnectedSubnet]"},
         "connected_i_pv6_subnets": {"key": "connectedIPv6Subnets", "type": "[ConnectedSubnet]"},
-        "static_route_configuration": {"key": "staticRouteConfiguration", "type": "StaticRouteConfiguration"},
-        "bgp_configuration": {"key": "bgpConfiguration", "type": "BgpConfiguration"},
         "import_route_policy_id": {"key": "importRoutePolicyId", "type": "str"},
         "export_route_policy_id": {"key": "exportRoutePolicyId", "type": "str"},
+        "import_route_policy": {"key": "importRoutePolicy", "type": "ImportRoutePolicy"},
+        "export_route_policy": {"key": "exportRoutePolicy", "type": "ExportRoutePolicy"},
+        "ingress_acl_id": {"key": "ingressAclId", "type": "str"},
+        "egress_acl_id": {"key": "egressAclId", "type": "str"},
+        "is_monitoring_enabled": {"key": "isMonitoringEnabled", "type": "str"},
         "annotation": {"key": "annotation", "type": "str"},
-        "disabled_on_resources": {"key": "disabledOnResources", "type": "[str]"},
-        "administrative_state": {"key": "administrativeState", "type": "str"},
-        "bgp_disabled_on_resources": {"key": "bgpDisabledOnResources", "type": "[str]"},
-        "bfd_disabled_on_resources": {"key": "bfdDisabledOnResources", "type": "[str]"},
-        "bfd_for_static_routes_disabled_on_resources": {
-            "key": "bfdForStaticRoutesDisabledOnResources",
-            "type": "[str]",
-        },
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
         "vlan_id": {"key": "vlanId", "type": "int"},
+        "bgp_configuration": {"key": "bgpConfiguration", "type": "InternalNetworkPropertiesBgpConfiguration"},
+        "static_route_configuration": {
+            "key": "staticRouteConfiguration",
+            "type": "InternalNetworkPropertiesStaticRouteConfiguration",
+        },
+        "configuration_state": {"key": "configurationState", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "administrative_state": {"key": "administrativeState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         vlan_id: int,
+        extension: Union[str, "_models.Extension"] = "NoExtension",
         mtu: int = 1500,
         connected_i_pv4_subnets: Optional[List["_models.ConnectedSubnet"]] = None,
         connected_i_pv6_subnets: Optional[List["_models.ConnectedSubnet"]] = None,
-        static_route_configuration: Optional["_models.StaticRouteConfiguration"] = None,
-        bgp_configuration: Optional["_models.BgpConfiguration"] = None,
         import_route_policy_id: Optional[str] = None,
         export_route_policy_id: Optional[str] = None,
+        import_route_policy: Optional["_models.ImportRoutePolicy"] = None,
+        export_route_policy: Optional["_models.ExportRoutePolicy"] = None,
+        ingress_acl_id: Optional[str] = None,
+        egress_acl_id: Optional[str] = None,
+        is_monitoring_enabled: Union[str, "_models.IsMonitoringEnabled"] = "False",
         annotation: Optional[str] = None,
+        bgp_configuration: Optional["_models.InternalNetworkPropertiesBgpConfiguration"] = None,
+        static_route_configuration: Optional["_models.InternalNetworkPropertiesStaticRouteConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword extension: Extension. Example: NoExtension | NPB. Known values are: "NoExtension" and
+         "NPB".
+        :paramtype extension: str or ~azure.mgmt.managednetworkfabric.models.Extension
         :keyword mtu: Maximum transmission unit. Default value is 1500.
         :paramtype mtu: int
-        :keyword connected_i_pv4_subnets: List with object connected IPv4 Subnets.
+        :keyword connected_i_pv4_subnets: List of Connected IPv4 Subnets.
         :paramtype connected_i_pv4_subnets:
          list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-        :keyword connected_i_pv6_subnets: List with object connected IPv6 Subnets.
+        :keyword connected_i_pv6_subnets: List of connected IPv6 Subnets.
         :paramtype connected_i_pv6_subnets:
          list[~azure.mgmt.managednetworkfabric.models.ConnectedSubnet]
-        :keyword static_route_configuration: Static Route Configuration properties.
-        :paramtype static_route_configuration:
-         ~azure.mgmt.managednetworkfabric.models.StaticRouteConfiguration
-        :keyword bgp_configuration: BGP configuration properties.
-        :paramtype bgp_configuration: ~azure.mgmt.managednetworkfabric.models.BgpConfiguration
-        :keyword import_route_policy_id: ARM resource ID of importRoutePolicy.
+        :keyword import_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
         :paramtype import_route_policy_id: str
-        :keyword export_route_policy_id: ARM resource ID of importRoutePolicy.
+        :keyword export_route_policy_id: ARM Resource ID of the RoutePolicy. This is used for the
+         backward compatibility.
         :paramtype export_route_policy_id: str
+        :keyword import_route_policy: Import Route Policy either IPv4 or IPv6.
+        :paramtype import_route_policy: ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicy
+        :keyword export_route_policy: Export Route Policy either IPv4 or IPv6.
+        :paramtype export_route_policy: ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicy
+        :keyword ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+        :paramtype ingress_acl_id: str
+        :keyword egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+        :paramtype egress_acl_id: str
+        :keyword is_monitoring_enabled: To check whether monitoring of internal network is enabled or
+         not. Known values are: "True" and "False".
+        :paramtype is_monitoring_enabled: str or
+         ~azure.mgmt.managednetworkfabric.models.IsMonitoringEnabled
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
         :keyword vlan_id: Vlan identifier. Example: 1001. Required.
         :paramtype vlan_id: int
+        :keyword bgp_configuration: BGP configuration properties.
+        :paramtype bgp_configuration:
+         ~azure.mgmt.managednetworkfabric.models.InternalNetworkPropertiesBgpConfiguration
+        :keyword static_route_configuration: Static Route Configuration properties.
+        :paramtype static_route_configuration:
+         ~azure.mgmt.managednetworkfabric.models.InternalNetworkPropertiesStaticRouteConfiguration
         """
         super().__init__(
             annotation=annotation,
             mtu=mtu,
             connected_i_pv4_subnets=connected_i_pv4_subnets,
             connected_i_pv6_subnets=connected_i_pv6_subnets,
-            static_route_configuration=static_route_configuration,
-            bgp_configuration=bgp_configuration,
             import_route_policy_id=import_route_policy_id,
             export_route_policy_id=export_route_policy_id,
+            import_route_policy=import_route_policy,
+            export_route_policy=export_route_policy,
+            ingress_acl_id=ingress_acl_id,
+            egress_acl_id=egress_acl_id,
+            is_monitoring_enabled=is_monitoring_enabled,
+            extension=extension,
             **kwargs
         )
+        self.extension = extension
         self.mtu = mtu
         self.connected_i_pv4_subnets = connected_i_pv4_subnets
         self.connected_i_pv6_subnets = connected_i_pv6_subnets
-        self.static_route_configuration = static_route_configuration
-        self.bgp_configuration = bgp_configuration
         self.import_route_policy_id = import_route_policy_id
         self.export_route_policy_id = export_route_policy_id
-        self.disabled_on_resources = None
-        self.administrative_state = None
-        self.bgp_disabled_on_resources = None
-        self.bfd_disabled_on_resources = None
-        self.bfd_for_static_routes_disabled_on_resources = None
-        self.provisioning_state = None
+        self.import_route_policy = import_route_policy
+        self.export_route_policy = export_route_policy
+        self.ingress_acl_id = ingress_acl_id
+        self.egress_acl_id = egress_acl_id
+        self.is_monitoring_enabled = is_monitoring_enabled
         self.vlan_id = vlan_id
+        self.bgp_configuration = bgp_configuration
+        self.static_route_configuration = static_route_configuration
+        self.configuration_state = None
+        self.provisioning_state = None
+        self.administrative_state = None
         self.annotation = annotation
 
 
-class InternalNetworksList(_serialization.Model):
-    """List of InternalNetworks.
+class InternalNetworkPropertiesBgpConfiguration(BgpConfiguration):  # pylint: disable=too-many-instance-attributes
+    """BGP configuration properties.
 
-    :ivar value: List of InternalNetworks resources.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar bfd_configuration: BFD configuration properties.
+    :vartype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+    :ivar default_route_originate: Originate a defaultRoute. Ex: "True" | "False". Known values
+     are: "True" and "False".
+    :vartype default_route_originate: str or
+     ~azure.mgmt.managednetworkfabric.models.BooleanEnumProperty
+    :ivar allow_as: Allows for routes to be received and processed even if the router detects its
+     own ASN in the AS-Path. 0 is disable, Possible values are 1-10, default is 2.
+    :vartype allow_as: int
+    :ivar allow_as_override: Enable Or Disable state. Known values are: "Enable" and "Disable".
+    :vartype allow_as_override: str or ~azure.mgmt.managednetworkfabric.models.AllowASOverride
+    :ivar fabric_asn: ASN of Network Fabric. Example: 65048.
+    :vartype fabric_asn: int
+    :ivar peer_asn: Peer ASN. Example: 65047.
+    :vartype peer_asn: int
+    :ivar ipv4_listen_range_prefixes: List of BGP IPv4 Listen Range prefixes.
+    :vartype ipv4_listen_range_prefixes: list[str]
+    :ivar ipv6_listen_range_prefixes: List of BGP IPv6 Listen Ranges prefixes.
+    :vartype ipv6_listen_range_prefixes: list[str]
+    :ivar ipv4_neighbor_address: List with stringified IPv4 Neighbor Addresses.
+    :vartype ipv4_neighbor_address: list[~azure.mgmt.managednetworkfabric.models.NeighborAddress]
+    :ivar ipv6_neighbor_address: List with stringified IPv6 Neighbor Address.
+    :vartype ipv6_neighbor_address: list[~azure.mgmt.managednetworkfabric.models.NeighborAddress]
+    """
+
+    _validation = {
+        "allow_as": {"maximum": 10, "minimum": 0},
+        "fabric_asn": {"readonly": True},
+        "peer_asn": {"maximum": 4294967295, "minimum": 1},
+        "ipv4_listen_range_prefixes": {"min_items": 1},
+        "ipv6_listen_range_prefixes": {"min_items": 1},
+        "ipv4_neighbor_address": {"min_items": 1},
+        "ipv6_neighbor_address": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "annotation": {"key": "annotation", "type": "str"},
+        "bfd_configuration": {"key": "bfdConfiguration", "type": "BfdConfiguration"},
+        "default_route_originate": {"key": "defaultRouteOriginate", "type": "str"},
+        "allow_as": {"key": "allowAS", "type": "int"},
+        "allow_as_override": {"key": "allowASOverride", "type": "str"},
+        "fabric_asn": {"key": "fabricASN", "type": "int"},
+        "peer_asn": {"key": "peerASN", "type": "int"},
+        "ipv4_listen_range_prefixes": {"key": "ipv4ListenRangePrefixes", "type": "[str]"},
+        "ipv6_listen_range_prefixes": {"key": "ipv6ListenRangePrefixes", "type": "[str]"},
+        "ipv4_neighbor_address": {"key": "ipv4NeighborAddress", "type": "[NeighborAddress]"},
+        "ipv6_neighbor_address": {"key": "ipv6NeighborAddress", "type": "[NeighborAddress]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        annotation: Optional[str] = None,
+        bfd_configuration: Optional["_models.BfdConfiguration"] = None,
+        default_route_originate: Optional[Union[str, "_models.BooleanEnumProperty"]] = None,
+        allow_as: int = 2,
+        allow_as_override: Optional[Union[str, "_models.AllowASOverride"]] = None,
+        peer_asn: Optional[int] = None,
+        ipv4_listen_range_prefixes: Optional[List[str]] = None,
+        ipv6_listen_range_prefixes: Optional[List[str]] = None,
+        ipv4_neighbor_address: Optional[List["_models.NeighborAddress"]] = None,
+        ipv6_neighbor_address: Optional[List["_models.NeighborAddress"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword bfd_configuration: BFD configuration properties.
+        :paramtype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+        :keyword default_route_originate: Originate a defaultRoute. Ex: "True" | "False". Known values
+         are: "True" and "False".
+        :paramtype default_route_originate: str or
+         ~azure.mgmt.managednetworkfabric.models.BooleanEnumProperty
+        :keyword allow_as: Allows for routes to be received and processed even if the router detects
+         its own ASN in the AS-Path. 0 is disable, Possible values are 1-10, default is 2.
+        :paramtype allow_as: int
+        :keyword allow_as_override: Enable Or Disable state. Known values are: "Enable" and "Disable".
+        :paramtype allow_as_override: str or ~azure.mgmt.managednetworkfabric.models.AllowASOverride
+        :keyword peer_asn: Peer ASN. Example: 65047.
+        :paramtype peer_asn: int
+        :keyword ipv4_listen_range_prefixes: List of BGP IPv4 Listen Range prefixes.
+        :paramtype ipv4_listen_range_prefixes: list[str]
+        :keyword ipv6_listen_range_prefixes: List of BGP IPv6 Listen Ranges prefixes.
+        :paramtype ipv6_listen_range_prefixes: list[str]
+        :keyword ipv4_neighbor_address: List with stringified IPv4 Neighbor Addresses.
+        :paramtype ipv4_neighbor_address: list[~azure.mgmt.managednetworkfabric.models.NeighborAddress]
+        :keyword ipv6_neighbor_address: List with stringified IPv6 Neighbor Address.
+        :paramtype ipv6_neighbor_address: list[~azure.mgmt.managednetworkfabric.models.NeighborAddress]
+        """
+        super().__init__(
+            annotation=annotation,
+            bfd_configuration=bfd_configuration,
+            default_route_originate=default_route_originate,
+            allow_as=allow_as,
+            allow_as_override=allow_as_override,
+            peer_asn=peer_asn,
+            ipv4_listen_range_prefixes=ipv4_listen_range_prefixes,
+            ipv6_listen_range_prefixes=ipv6_listen_range_prefixes,
+            ipv4_neighbor_address=ipv4_neighbor_address,
+            ipv6_neighbor_address=ipv6_neighbor_address,
+            **kwargs
+        )
+
+
+class StaticRouteConfiguration(_serialization.Model):
+    """Static Route Configuration properties.
+
+    :ivar bfd_configuration: BFD configuration properties.
+    :vartype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+    :ivar ipv4_routes: List of IPv4 Routes.
+    :vartype ipv4_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
+    :ivar ipv6_routes: List of IPv6 Routes.
+    :vartype ipv6_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
+    """
+
+    _validation = {
+        "ipv4_routes": {"min_items": 1},
+        "ipv6_routes": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "bfd_configuration": {"key": "bfdConfiguration", "type": "BfdConfiguration"},
+        "ipv4_routes": {"key": "ipv4Routes", "type": "[StaticRouteProperties]"},
+        "ipv6_routes": {"key": "ipv6Routes", "type": "[StaticRouteProperties]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        bfd_configuration: Optional["_models.BfdConfiguration"] = None,
+        ipv4_routes: Optional[List["_models.StaticRouteProperties"]] = None,
+        ipv6_routes: Optional[List["_models.StaticRouteProperties"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword bfd_configuration: BFD configuration properties.
+        :paramtype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+        :keyword ipv4_routes: List of IPv4 Routes.
+        :paramtype ipv4_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
+        :keyword ipv6_routes: List of IPv6 Routes.
+        :paramtype ipv6_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
+        """
+        super().__init__(**kwargs)
+        self.bfd_configuration = bfd_configuration
+        self.ipv4_routes = ipv4_routes
+        self.ipv6_routes = ipv6_routes
+
+
+class InternalNetworkPropertiesStaticRouteConfiguration(StaticRouteConfiguration, ExtensionEnumProperty):
+    """Static Route Configuration properties.
+
+    :ivar extension: Extension. Example: NoExtension | NPB. Known values are: "NoExtension" and
+     "NPB".
+    :vartype extension: str or ~azure.mgmt.managednetworkfabric.models.Extension
+    :ivar bfd_configuration: BFD configuration properties.
+    :vartype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+    :ivar ipv4_routes: List of IPv4 Routes.
+    :vartype ipv4_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
+    :ivar ipv6_routes: List of IPv6 Routes.
+    :vartype ipv6_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
+    """
+
+    _validation = {
+        "ipv4_routes": {"min_items": 1},
+        "ipv6_routes": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "extension": {"key": "extension", "type": "str"},
+        "bfd_configuration": {"key": "bfdConfiguration", "type": "BfdConfiguration"},
+        "ipv4_routes": {"key": "ipv4Routes", "type": "[StaticRouteProperties]"},
+        "ipv6_routes": {"key": "ipv6Routes", "type": "[StaticRouteProperties]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        extension: Union[str, "_models.Extension"] = "NoExtension",
+        bfd_configuration: Optional["_models.BfdConfiguration"] = None,
+        ipv4_routes: Optional[List["_models.StaticRouteProperties"]] = None,
+        ipv6_routes: Optional[List["_models.StaticRouteProperties"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword extension: Extension. Example: NoExtension | NPB. Known values are: "NoExtension" and
+         "NPB".
+        :paramtype extension: str or ~azure.mgmt.managednetworkfabric.models.Extension
+        :keyword bfd_configuration: BFD configuration properties.
+        :paramtype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+        :keyword ipv4_routes: List of IPv4 Routes.
+        :paramtype ipv4_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
+        :keyword ipv6_routes: List of IPv6 Routes.
+        :paramtype ipv6_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
+        """
+        super().__init__(
+            bfd_configuration=bfd_configuration,
+            ipv4_routes=ipv4_routes,
+            ipv6_routes=ipv6_routes,
+            extension=extension,
+            **kwargs
+        )
+        self.extension = extension
+        self.bfd_configuration = bfd_configuration
+        self.ipv4_routes = ipv4_routes
+        self.ipv6_routes = ipv6_routes
+
+
+class InternalNetworksList(_serialization.Model):
+    """List of Internal Networks.
+
+    :ivar value: List of Internal Network resources.
     :vartype value: list[~azure.mgmt.managednetworkfabric.models.InternalNetwork]
     :ivar next_link: Url to follow for getting next page of resources.
     :vartype next_link: str
@@ -2965,7 +3959,7 @@ class InternalNetworksList(_serialization.Model):
         self, *, value: Optional[List["_models.InternalNetwork"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: List of InternalNetworks resources.
+        :keyword value: List of Internal Network resources.
         :paramtype value: list[~azure.mgmt.managednetworkfabric.models.InternalNetwork]
         :keyword next_link: Url to follow for getting next page of resources.
         :paramtype next_link: str
@@ -2975,43 +3969,15 @@ class InternalNetworksList(_serialization.Model):
         self.next_link = next_link
 
 
-class IpCommunitiesListResult(_serialization.Model):
-    """List of IPCommunities.
-
-    :ivar value: List of IpCommunity resources.
-    :vartype value: list[~azure.mgmt.managednetworkfabric.models.IpCommunity]
-    :ivar next_link: Url to follow for getting next page of resources.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[IpCommunity]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.IpCommunity"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: List of IpCommunity resources.
-        :paramtype value: list[~azure.mgmt.managednetworkfabric.models.IpCommunity]
-        :keyword next_link: Url to follow for getting next page of resources.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class IpCommunity(TrackedResource):  # pylint: disable=too-many-instance-attributes
-    """The IpCommunity resource definition.
+class InternetGateway(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The Internet Gateway resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3027,16 +3993,19 @@ class IpCommunity(TrackedResource):  # pylint: disable=too-many-instance-attribu
     :vartype location: str
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar action: Action to be taken on the configuration. Example: Permit | Deny. Known values
-     are: "Permit" and "Deny".
-    :vartype action: str or ~azure.mgmt.managednetworkfabric.models.CommunityActionTypes
-    :ivar well_known_communities: Supported well known Community List.
-    :vartype well_known_communities: list[str or
-     ~azure.mgmt.managednetworkfabric.models.WellKnownCommunities]
-    :ivar community_members: List the communityMembers of IP Community .
-    :vartype community_members: list[str]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar internet_gateway_rule_id: ARM Resource ID of the Internet Gateway Rule.
+    :vartype internet_gateway_rule_id: str
+    :ivar ipv4_address: IPv4 Address of Internet Gateway.
+    :vartype ipv4_address: str
+    :ivar port: Port number of Internet Gateway.
+    :vartype port: int
+    :ivar type_properties_type: Gateway Type of the resource. Required. Known values are:
+     "Infrastructure" and "Workload".
+    :vartype type_properties_type: str or ~azure.mgmt.managednetworkfabric.models.GatewayType
+    :ivar network_fabric_controller_id: ARM Resource ID of the Network Fabric Controller. Required.
+    :vartype network_fabric_controller_id: str
+    :ivar provisioning_state: Provisioning state of resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
     """
 
@@ -3046,7 +4015,10 @@ class IpCommunity(TrackedResource):  # pylint: disable=too-many-instance-attribu
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
-        "well_known_communities": {"unique": True},
+        "ipv4_address": {"readonly": True},
+        "port": {"readonly": True},
+        "type_properties_type": {"required": True},
+        "network_fabric_controller_id": {"required": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -3058,9 +4030,11 @@ class IpCommunity(TrackedResource):  # pylint: disable=too-many-instance-attribu
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "annotation": {"key": "properties.annotation", "type": "str"},
-        "action": {"key": "properties.action", "type": "str"},
-        "well_known_communities": {"key": "properties.wellKnownCommunities", "type": "[str]"},
-        "community_members": {"key": "properties.communityMembers", "type": "[str]"},
+        "internet_gateway_rule_id": {"key": "properties.internetGatewayRuleId", "type": "str"},
+        "ipv4_address": {"key": "properties.ipv4Address", "type": "str"},
+        "port": {"key": "properties.port", "type": "int"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "network_fabric_controller_id": {"key": "properties.networkFabricControllerId", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
@@ -3068,11 +4042,11 @@ class IpCommunity(TrackedResource):  # pylint: disable=too-many-instance-attribu
         self,
         *,
         location: str,
+        type_properties_type: Union[str, "_models.GatewayType"],
+        network_fabric_controller_id: str,
         tags: Optional[Dict[str, str]] = None,
         annotation: Optional[str] = None,
-        action: Optional[Union[str, "_models.CommunityActionTypes"]] = None,
-        well_known_communities: Optional[List[Union[str, "_models.WellKnownCommunities"]]] = None,
-        community_members: Optional[List[str]] = None,
+        internet_gateway_rule_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3082,21 +4056,471 @@ class IpCommunity(TrackedResource):  # pylint: disable=too-many-instance-attribu
         :paramtype location: str
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword action: Action to be taken on the configuration. Example: Permit | Deny. Known values
-         are: "Permit" and "Deny".
-        :paramtype action: str or ~azure.mgmt.managednetworkfabric.models.CommunityActionTypes
-        :keyword well_known_communities: Supported well known Community List.
-        :paramtype well_known_communities: list[str or
-         ~azure.mgmt.managednetworkfabric.models.WellKnownCommunities]
-        :keyword community_members: List the communityMembers of IP Community .
-        :paramtype community_members: list[str]
+        :keyword internet_gateway_rule_id: ARM Resource ID of the Internet Gateway Rule.
+        :paramtype internet_gateway_rule_id: str
+        :keyword type_properties_type: Gateway Type of the resource. Required. Known values are:
+         "Infrastructure" and "Workload".
+        :paramtype type_properties_type: str or ~azure.mgmt.managednetworkfabric.models.GatewayType
+        :keyword network_fabric_controller_id: ARM Resource ID of the Network Fabric Controller.
+         Required.
+        :paramtype network_fabric_controller_id: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.annotation = annotation
-        self.action = action
-        self.well_known_communities = well_known_communities
-        self.community_members = community_members
+        self.internet_gateway_rule_id = internet_gateway_rule_id
+        self.ipv4_address = None
+        self.port = None
+        self.type_properties_type = type_properties_type
+        self.network_fabric_controller_id = network_fabric_controller_id
         self.provisioning_state = None
+
+
+class InternetGatewayPatch(TagsUpdate):
+    """The Internet Gateway patch resource definition.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar internet_gateway_rule_id: ARM Resource ID of the Internet Gateway Rule.
+    :vartype internet_gateway_rule_id: str
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "internet_gateway_rule_id": {"key": "properties.internetGatewayRuleId", "type": "str"},
+    }
+
+    def __init__(
+        self, *, tags: Optional[Dict[str, str]] = None, internet_gateway_rule_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword internet_gateway_rule_id: ARM Resource ID of the Internet Gateway Rule.
+        :paramtype internet_gateway_rule_id: str
+        """
+        super().__init__(tags=tags, **kwargs)
+        self.internet_gateway_rule_id = internet_gateway_rule_id
+
+
+class InternetGatewayPatchableProperties(_serialization.Model):
+    """Internet Gateway Patchable Properties defines the patchable properties of the resource.
+
+    :ivar internet_gateway_rule_id: ARM Resource ID of the Internet Gateway Rule.
+    :vartype internet_gateway_rule_id: str
+    """
+
+    _attribute_map = {
+        "internet_gateway_rule_id": {"key": "internetGatewayRuleId", "type": "str"},
+    }
+
+    def __init__(self, *, internet_gateway_rule_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword internet_gateway_rule_id: ARM Resource ID of the Internet Gateway Rule.
+        :paramtype internet_gateway_rule_id: str
+        """
+        super().__init__(**kwargs)
+        self.internet_gateway_rule_id = internet_gateway_rule_id
+
+
+class InternetGatewayProperties(AnnotationResource, InternetGatewayPatchableProperties):
+    """Internet Gateway Properties defines the properties of the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar internet_gateway_rule_id: ARM Resource ID of the Internet Gateway Rule.
+    :vartype internet_gateway_rule_id: str
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar ipv4_address: IPv4 Address of Internet Gateway.
+    :vartype ipv4_address: str
+    :ivar port: Port number of Internet Gateway.
+    :vartype port: int
+    :ivar type: Gateway Type of the resource. Required. Known values are: "Infrastructure" and
+     "Workload".
+    :vartype type: str or ~azure.mgmt.managednetworkfabric.models.GatewayType
+    :ivar network_fabric_controller_id: ARM Resource ID of the Network Fabric Controller. Required.
+    :vartype network_fabric_controller_id: str
+    :ivar provisioning_state: Provisioning state of resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    """
+
+    _validation = {
+        "ipv4_address": {"readonly": True},
+        "port": {"readonly": True},
+        "type": {"required": True},
+        "network_fabric_controller_id": {"required": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "internet_gateway_rule_id": {"key": "internetGatewayRuleId", "type": "str"},
+        "annotation": {"key": "annotation", "type": "str"},
+        "ipv4_address": {"key": "ipv4Address", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "type": {"key": "type", "type": "str"},
+        "network_fabric_controller_id": {"key": "networkFabricControllerId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.GatewayType"],
+        network_fabric_controller_id: str,
+        internet_gateway_rule_id: Optional[str] = None,
+        annotation: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword internet_gateway_rule_id: ARM Resource ID of the Internet Gateway Rule.
+        :paramtype internet_gateway_rule_id: str
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword type: Gateway Type of the resource. Required. Known values are: "Infrastructure" and
+         "Workload".
+        :paramtype type: str or ~azure.mgmt.managednetworkfabric.models.GatewayType
+        :keyword network_fabric_controller_id: ARM Resource ID of the Network Fabric Controller.
+         Required.
+        :paramtype network_fabric_controller_id: str
+        """
+        super().__init__(annotation=annotation, internet_gateway_rule_id=internet_gateway_rule_id, **kwargs)
+        self.internet_gateway_rule_id = internet_gateway_rule_id
+        self.ipv4_address = None
+        self.port = None
+        self.type = type
+        self.network_fabric_controller_id = network_fabric_controller_id
+        self.provisioning_state = None
+        self.annotation = annotation
+
+
+class InternetGatewayRule(TrackedResource):
+    """The Internet Gateway Rule resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.managednetworkfabric.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar rule_properties: Rules for the InternetGateways. Required.
+    :vartype rule_properties: ~azure.mgmt.managednetworkfabric.models.RuleProperties
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar internet_gateway_ids: List of Internet Gateway resource Id.
+    :vartype internet_gateway_ids: list[str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "rule_properties": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "internet_gateway_ids": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "annotation": {"key": "properties.annotation", "type": "str"},
+        "rule_properties": {"key": "properties.ruleProperties", "type": "RuleProperties"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "internet_gateway_ids": {"key": "properties.internetGatewayIds", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        rule_properties: "_models.RuleProperties",
+        tags: Optional[Dict[str, str]] = None,
+        annotation: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword rule_properties: Rules for the InternetGateways. Required.
+        :paramtype rule_properties: ~azure.mgmt.managednetworkfabric.models.RuleProperties
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.annotation = annotation
+        self.rule_properties = rule_properties
+        self.provisioning_state = None
+        self.internet_gateway_ids = None
+
+
+class InternetGatewayRulePatch(TagsUpdate):
+    """The Internet Gateway Rules patch resource definition.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
+
+
+class InternetGatewayRuleProperties(AnnotationResource):
+    """Internet Gateway Rule Properties defines the resource properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar rule_properties: Rules for the InternetGateways. Required.
+    :vartype rule_properties: ~azure.mgmt.managednetworkfabric.models.RuleProperties
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar internet_gateway_ids: List of Internet Gateway resource Id.
+    :vartype internet_gateway_ids: list[str]
+    """
+
+    _validation = {
+        "rule_properties": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "internet_gateway_ids": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "annotation": {"key": "annotation", "type": "str"},
+        "rule_properties": {"key": "ruleProperties", "type": "RuleProperties"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "internet_gateway_ids": {"key": "internetGatewayIds", "type": "[str]"},
+    }
+
+    def __init__(
+        self, *, rule_properties: "_models.RuleProperties", annotation: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword rule_properties: Rules for the InternetGateways. Required.
+        :paramtype rule_properties: ~azure.mgmt.managednetworkfabric.models.RuleProperties
+        """
+        super().__init__(annotation=annotation, **kwargs)
+        self.rule_properties = rule_properties
+        self.provisioning_state = None
+        self.internet_gateway_ids = None
+
+
+class InternetGatewayRulesListResult(_serialization.Model):
+    """List of Internet Gateway Rules.
+
+    :ivar value: List of Internet Gateway Rule resources.
+    :vartype value: list[~azure.mgmt.managednetworkfabric.models.InternetGatewayRule]
+    :ivar next_link: Url to follow for getting next page of resources.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[InternetGatewayRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.InternetGatewayRule"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of Internet Gateway Rule resources.
+        :paramtype value: list[~azure.mgmt.managednetworkfabric.models.InternetGatewayRule]
+        :keyword next_link: Url to follow for getting next page of resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class InternetGatewaysListResult(_serialization.Model):
+    """List of InternetGateways.
+
+    :ivar value: Displays list of Internet Gateway resources.
+    :vartype value: list[~azure.mgmt.managednetworkfabric.models.InternetGateway]
+    :ivar next_link: Url to follow for getting next page of resources.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[InternetGateway]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.InternetGateway"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Displays list of Internet Gateway resources.
+        :paramtype value: list[~azure.mgmt.managednetworkfabric.models.InternetGateway]
+        :keyword next_link: Url to follow for getting next page of resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class IpCommunitiesListResult(_serialization.Model):
+    """List of IP Communities.
+
+    :ivar value: List of IP Community resources.
+    :vartype value: list[~azure.mgmt.managednetworkfabric.models.IpCommunity]
+    :ivar next_link: Url to follow for getting next page of resources.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[IpCommunity]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.IpCommunity"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of IP Community resources.
+        :paramtype value: list[~azure.mgmt.managednetworkfabric.models.IpCommunity]
+        :keyword next_link: Url to follow for getting next page of resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class IpCommunity(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The IP Community resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.managednetworkfabric.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar ip_community_rules: List of IP Community Rules.
+    :vartype ip_community_rules: list[~azure.mgmt.managednetworkfabric.models.IpCommunityRule]
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "configuration_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "annotation": {"key": "properties.annotation", "type": "str"},
+        "ip_community_rules": {"key": "properties.ipCommunityRules", "type": "[IpCommunityRule]"},
+        "configuration_state": {"key": "properties.configurationState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        annotation: Optional[str] = None,
+        ip_community_rules: Optional[List["_models.IpCommunityRule"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword ip_community_rules: List of IP Community Rules.
+        :paramtype ip_community_rules: list[~azure.mgmt.managednetworkfabric.models.IpCommunityRule]
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.annotation = annotation
+        self.ip_community_rules = ip_community_rules
+        self.configuration_state = None
+        self.provisioning_state = None
+        self.administrative_state = None
 
 
 class IpCommunityIdList(_serialization.Model):
@@ -3119,100 +4543,188 @@ class IpCommunityIdList(_serialization.Model):
         self.ip_community_ids = ip_community_ids
 
 
-class IpCommunityPatch(_serialization.Model):
-    """The IPCommunity patch resource definition.
+class IpCommunityPatch(TagsUpdate):
+    """The IP Community patch resource definition.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar ip_community_rules: List of IP Community Rules.
+    :vartype ip_community_rules: list[~azure.mgmt.managednetworkfabric.models.IpCommunityRule]
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
+        "ip_community_rules": {"key": "properties.ipCommunityRules", "type": "[IpCommunityRule]"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        ip_community_rules: Optional[List["_models.IpCommunityRule"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword ip_community_rules: List of IP Community Rules.
+        :paramtype ip_community_rules: list[~azure.mgmt.managednetworkfabric.models.IpCommunityRule]
+        """
+        super().__init__(tags=tags, **kwargs)
+        self.ip_community_rules = ip_community_rules
+
+
+class IpCommunityPatchableProperties(_serialization.Model):
+    """IP Community patchable properties.
+
+    :ivar ip_community_rules: List of IP Community Rules.
+    :vartype ip_community_rules: list[~azure.mgmt.managednetworkfabric.models.IpCommunityRule]
+    """
+
+    _attribute_map = {
+        "ip_community_rules": {"key": "ipCommunityRules", "type": "[IpCommunityRule]"},
+    }
+
+    def __init__(self, *, ip_community_rules: Optional[List["_models.IpCommunityRule"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword ip_community_rules: List of IP Community Rules.
+        :paramtype ip_community_rules: list[~azure.mgmt.managednetworkfabric.models.IpCommunityRule]
         """
         super().__init__(**kwargs)
-        self.tags = tags
+        self.ip_community_rules = ip_community_rules
 
 
-class IpCommunityProperties(AnnotationResource):
-    """IpCommunityProperties define the resource properties.
+class IpCommunityProperties(AnnotationResource, IpCommunityPatchableProperties):
+    """IP Community Properties defines the resource properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
+    :ivar ip_community_rules: List of IP Community Rules.
+    :vartype ip_community_rules: list[~azure.mgmt.managednetworkfabric.models.IpCommunityRule]
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
+    """
+
+    _validation = {
+        "configuration_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "ip_community_rules": {"key": "ipCommunityRules", "type": "[IpCommunityRule]"},
+        "annotation": {"key": "annotation", "type": "str"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "administrative_state": {"key": "administrativeState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        ip_community_rules: Optional[List["_models.IpCommunityRule"]] = None,
+        annotation: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword ip_community_rules: List of IP Community Rules.
+        :paramtype ip_community_rules: list[~azure.mgmt.managednetworkfabric.models.IpCommunityRule]
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        """
+        super().__init__(annotation=annotation, ip_community_rules=ip_community_rules, **kwargs)
+        self.ip_community_rules = ip_community_rules
+        self.configuration_state = None
+        self.provisioning_state = None
+        self.administrative_state = None
+        self.annotation = annotation
+
+
+class IpCommunityRule(_serialization.Model):
+    """IP Community patchable properties.
+
+    All required parameters must be populated in order to send to Azure.
+
     :ivar action: Action to be taken on the configuration. Example: Permit | Deny. Required. Known
      values are: "Permit" and "Deny".
     :vartype action: str or ~azure.mgmt.managednetworkfabric.models.CommunityActionTypes
+    :ivar sequence_number: Sequence to insert to/delete from existing route. Prefix lists are
+     evaluated starting with the lowest sequence number and continue down the list until a match is
+     made. Once a match is made, the permit or deny statement is applied to that network and the
+     rest of the list is ignored. Required.
+    :vartype sequence_number: int
     :ivar well_known_communities: Supported well known Community List.
     :vartype well_known_communities: list[str or
      ~azure.mgmt.managednetworkfabric.models.WellKnownCommunities]
-    :ivar community_members: List the communityMembers of IP Community . Required.
+    :ivar community_members: List the community members of IP Community. Required.
     :vartype community_members: list[str]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
     """
 
     _validation = {
         "action": {"required": True},
+        "sequence_number": {"required": True, "maximum": 4294967295, "minimum": 1},
         "well_known_communities": {"unique": True},
-        "community_members": {"required": True},
-        "provisioning_state": {"readonly": True},
+        "community_members": {"required": True, "min_items": 1},
     }
 
     _attribute_map = {
-        "annotation": {"key": "annotation", "type": "str"},
         "action": {"key": "action", "type": "str"},
+        "sequence_number": {"key": "sequenceNumber", "type": "int"},
         "well_known_communities": {"key": "wellKnownCommunities", "type": "[str]"},
         "community_members": {"key": "communityMembers", "type": "[str]"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         action: Union[str, "_models.CommunityActionTypes"],
+        sequence_number: int,
         community_members: List[str],
-        annotation: Optional[str] = None,
         well_known_communities: Optional[List[Union[str, "_models.WellKnownCommunities"]]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword annotation: Switch configuration description.
-        :paramtype annotation: str
         :keyword action: Action to be taken on the configuration. Example: Permit | Deny. Required.
          Known values are: "Permit" and "Deny".
         :paramtype action: str or ~azure.mgmt.managednetworkfabric.models.CommunityActionTypes
+        :keyword sequence_number: Sequence to insert to/delete from existing route. Prefix lists are
+         evaluated starting with the lowest sequence number and continue down the list until a match is
+         made. Once a match is made, the permit or deny statement is applied to that network and the
+         rest of the list is ignored. Required.
+        :paramtype sequence_number: int
         :keyword well_known_communities: Supported well known Community List.
         :paramtype well_known_communities: list[str or
          ~azure.mgmt.managednetworkfabric.models.WellKnownCommunities]
-        :keyword community_members: List the communityMembers of IP Community . Required.
+        :keyword community_members: List the community members of IP Community. Required.
         :paramtype community_members: list[str]
         """
-        super().__init__(annotation=annotation, **kwargs)
+        super().__init__(**kwargs)
         self.action = action
+        self.sequence_number = sequence_number
         self.well_known_communities = well_known_communities
         self.community_members = community_members
-        self.provisioning_state = None
 
 
-class IpExtendedCommunity(TrackedResource):
-    """The IpExtendedCommunity resource definition.
+class IpExtendedCommunity(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The IP Extended Community resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3228,17 +4740,20 @@ class IpExtendedCommunity(TrackedResource):
     :vartype location: str
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar action: Action to be taken on the configuration. Example: Permit | Deny. Known values
-     are: "Permit" and "Deny".
-    :vartype action: str or ~azure.mgmt.managednetworkfabric.models.CommunityActionTypes
-    :ivar route_targets: Route Target List.The expected formats are ASN(plain):NN >> example
-     4294967294:50, ASN.ASN:NN >> example 65533.65333:40, IP-address:NN >> example
-     10.10.10.10:65535. The possible values of ASN,NN are in range of 0-65535, ASN(plain) is in
-     range of 0-4294967295.
-    :vartype route_targets: list[str]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar ip_extended_community_rules: List of IP Extended Community Rules. Required.
+    :vartype ip_extended_community_rules:
+     list[~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityRule]
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
@@ -3247,7 +4762,10 @@ class IpExtendedCommunity(TrackedResource):
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
+        "ip_extended_community_rules": {"required": True},
+        "configuration_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3258,19 +4776,22 @@ class IpExtendedCommunity(TrackedResource):
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "annotation": {"key": "properties.annotation", "type": "str"},
-        "action": {"key": "properties.action", "type": "str"},
-        "route_targets": {"key": "properties.routeTargets", "type": "[str]"},
+        "ip_extended_community_rules": {
+            "key": "properties.ipExtendedCommunityRules",
+            "type": "[IpExtendedCommunityRule]",
+        },
+        "configuration_state": {"key": "properties.configurationState", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
+        ip_extended_community_rules: List["_models.IpExtendedCommunityRule"],
         tags: Optional[Dict[str, str]] = None,
         annotation: Optional[str] = None,
-        action: Optional[Union[str, "_models.CommunityActionTypes"]] = None,
-        route_targets: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3280,20 +4801,16 @@ class IpExtendedCommunity(TrackedResource):
         :paramtype location: str
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword action: Action to be taken on the configuration. Example: Permit | Deny. Known values
-         are: "Permit" and "Deny".
-        :paramtype action: str or ~azure.mgmt.managednetworkfabric.models.CommunityActionTypes
-        :keyword route_targets: Route Target List.The expected formats are ASN(plain):NN >> example
-         4294967294:50, ASN.ASN:NN >> example 65533.65333:40, IP-address:NN >> example
-         10.10.10.10:65535. The possible values of ASN,NN are in range of 0-65535, ASN(plain) is in
-         range of 0-4294967295.
-        :paramtype route_targets: list[str]
+        :keyword ip_extended_community_rules: List of IP Extended Community Rules. Required.
+        :paramtype ip_extended_community_rules:
+         list[~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityRule]
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.annotation = annotation
-        self.action = action
-        self.route_targets = route_targets
+        self.ip_extended_community_rules = ip_extended_community_rules
+        self.configuration_state = None
         self.provisioning_state = None
+        self.administrative_state = None
 
 
 class IpExtendedCommunityIdList(_serialization.Model):
@@ -3317,9 +4834,9 @@ class IpExtendedCommunityIdList(_serialization.Model):
 
 
 class IpExtendedCommunityListResult(_serialization.Model):
-    """List of IpExtendedCommunities.
+    """List of IP Extended Communities.
 
-    :ivar value: List of IpExtendedCommunities resources.
+    :ivar value: List of IP Extended Communities resources.
     :vartype value: list[~azure.mgmt.managednetworkfabric.models.IpExtendedCommunity]
     :ivar next_link: Url to follow for getting next page of resources.
     :vartype next_link: str
@@ -3338,7 +4855,7 @@ class IpExtendedCommunityListResult(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword value: List of IpExtendedCommunities resources.
+        :keyword value: List of IP Extended Communities resources.
         :paramtype value: list[~azure.mgmt.managednetworkfabric.models.IpExtendedCommunity]
         :keyword next_link: Url to follow for getting next page of resources.
         :paramtype next_link: str
@@ -3348,96 +4865,344 @@ class IpExtendedCommunityListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class IpExtendedCommunityPatch(_serialization.Model):
-    """The IpExtendedCommunities patch resource definition.
+class IpExtendedCommunityPatch(TagsUpdate):
+    """The IP Extended Communities patch resource definition.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar ip_extended_community_rules: List of IP Extended Community Rules.
+    :vartype ip_extended_community_rules:
+     list[~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityRule]
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-
-
-class IpExtendedCommunityProperties(AnnotationResource):
-    """IpExtendedCommunityProperties define the resource properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar annotation: Switch configuration description.
-    :vartype annotation: str
-    :ivar action: Action to be taken on the configuration. Example: Permit | Deny. Required. Known
-     values are: "Permit" and "Deny".
-    :vartype action: str or ~azure.mgmt.managednetworkfabric.models.CommunityActionTypes
-    :ivar route_targets: Route Target List.The expected formats are ASN(plain):NN >> example
-     4294967294:50, ASN.ASN:NN >> example 65533.65333:40, IP-address:NN >> example
-     10.10.10.10:65535. The possible values of ASN,NN are in range of 0-65535, ASN(plain) is in
-     range of 0-4294967295. Required.
-    :vartype route_targets: list[str]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
-    """
-
-    _validation = {
-        "action": {"required": True},
-        "route_targets": {"required": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "annotation": {"key": "annotation", "type": "str"},
-        "action": {"key": "action", "type": "str"},
-        "route_targets": {"key": "routeTargets", "type": "[str]"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "ip_extended_community_rules": {
+            "key": "properties.ipExtendedCommunityRules",
+            "type": "[IpExtendedCommunityRule]",
+        },
+        "annotation": {"key": "properties.annotation", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        action: Union[str, "_models.CommunityActionTypes"],
-        route_targets: List[str],
+        tags: Optional[Dict[str, str]] = None,
+        ip_extended_community_rules: Optional[List["_models.IpExtendedCommunityRule"]] = None,
+        annotation: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword ip_extended_community_rules: List of IP Extended Community Rules.
+        :paramtype ip_extended_community_rules:
+         list[~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityRule]
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        """
+        super().__init__(tags=tags, **kwargs)
+        self.ip_extended_community_rules = ip_extended_community_rules
+        self.annotation = annotation
+
+
+class IpExtendedCommunityPatchableProperties(_serialization.Model):
+    """IP Extended Community patchable properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar ip_extended_community_rules: List of IP Extended Community Rules. Required.
+    :vartype ip_extended_community_rules:
+     list[~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityRule]
+    """
+
+    _validation = {
+        "ip_extended_community_rules": {"required": True},
+    }
+
+    _attribute_map = {
+        "ip_extended_community_rules": {"key": "ipExtendedCommunityRules", "type": "[IpExtendedCommunityRule]"},
+    }
+
+    def __init__(self, *, ip_extended_community_rules: List["_models.IpExtendedCommunityRule"], **kwargs: Any) -> None:
+        """
+        :keyword ip_extended_community_rules: List of IP Extended Community Rules. Required.
+        :paramtype ip_extended_community_rules:
+         list[~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityRule]
+        """
+        super().__init__(**kwargs)
+        self.ip_extended_community_rules = ip_extended_community_rules
+
+
+class IpExtendedCommunityPatchProperties(IpExtendedCommunityPatchableProperties, AnnotationResource):
+    """IP Extended Community patchable properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar ip_extended_community_rules: List of IP Extended Community Rules. Required.
+    :vartype ip_extended_community_rules:
+     list[~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityRule]
+    """
+
+    _validation = {
+        "ip_extended_community_rules": {"required": True},
+    }
+
+    _attribute_map = {
+        "annotation": {"key": "annotation", "type": "str"},
+        "ip_extended_community_rules": {"key": "ipExtendedCommunityRules", "type": "[IpExtendedCommunityRule]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        ip_extended_community_rules: List["_models.IpExtendedCommunityRule"],
         annotation: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
+        :keyword ip_extended_community_rules: List of IP Extended Community Rules. Required.
+        :paramtype ip_extended_community_rules:
+         list[~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityRule]
+        """
+        super().__init__(ip_extended_community_rules=ip_extended_community_rules, annotation=annotation, **kwargs)
+        self.annotation = annotation
+        self.ip_extended_community_rules = ip_extended_community_rules
+
+
+class IpExtendedCommunityProperties(AnnotationResource, IpExtendedCommunityPatchableProperties):
+    """IP Extended Community Properties defines the resource properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar ip_extended_community_rules: List of IP Extended Community Rules. Required.
+    :vartype ip_extended_community_rules:
+     list[~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityRule]
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
+    """
+
+    _validation = {
+        "ip_extended_community_rules": {"required": True},
+        "configuration_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "ip_extended_community_rules": {"key": "ipExtendedCommunityRules", "type": "[IpExtendedCommunityRule]"},
+        "annotation": {"key": "annotation", "type": "str"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "administrative_state": {"key": "administrativeState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        ip_extended_community_rules: List["_models.IpExtendedCommunityRule"],
+        annotation: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword ip_extended_community_rules: List of IP Extended Community Rules. Required.
+        :paramtype ip_extended_community_rules:
+         list[~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityRule]
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        """
+        super().__init__(annotation=annotation, ip_extended_community_rules=ip_extended_community_rules, **kwargs)
+        self.ip_extended_community_rules = ip_extended_community_rules
+        self.configuration_state = None
+        self.provisioning_state = None
+        self.administrative_state = None
+        self.annotation = annotation
+
+
+class IpExtendedCommunityRule(_serialization.Model):
+    """List of IP Extended Community Rules.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar action: Action to be taken on the configuration. Example: Permit | Deny. Required. Known
+     values are: "Permit" and "Deny".
+    :vartype action: str or ~azure.mgmt.managednetworkfabric.models.CommunityActionTypes
+    :ivar sequence_number: Sequence to insert to/delete from existing route. Prefix lists are
+     evaluated starting with the lowest sequence number and continue down the list until a match is
+     made. Once a match is made, the permit or deny statement is applied to that network and the
+     rest of the list is ignored. Required.
+    :vartype sequence_number: int
+    :ivar route_targets: Route Target List.The expected formats are ASN(plain):NN >> example
+     4294967294:50, ASN.ASN:NN >> example 65533.65333:40, IP-address:NN >> example
+     10.10.10.10:65535. The possible values of ASN,NN are in range of 0-65535, ASN(plain) is in
+     range of 0-4294967295. Required.
+    :vartype route_targets: list[str]
+    """
+
+    _validation = {
+        "action": {"required": True},
+        "sequence_number": {"required": True, "maximum": 4294967295, "minimum": 1},
+        "route_targets": {"required": True, "min_items": 1},
+    }
+
+    _attribute_map = {
+        "action": {"key": "action", "type": "str"},
+        "sequence_number": {"key": "sequenceNumber", "type": "int"},
+        "route_targets": {"key": "routeTargets", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        action: Union[str, "_models.CommunityActionTypes"],
+        sequence_number: int,
+        route_targets: List[str],
+        **kwargs: Any
+    ) -> None:
+        """
         :keyword action: Action to be taken on the configuration. Example: Permit | Deny. Required.
          Known values are: "Permit" and "Deny".
         :paramtype action: str or ~azure.mgmt.managednetworkfabric.models.CommunityActionTypes
+        :keyword sequence_number: Sequence to insert to/delete from existing route. Prefix lists are
+         evaluated starting with the lowest sequence number and continue down the list until a match is
+         made. Once a match is made, the permit or deny statement is applied to that network and the
+         rest of the list is ignored. Required.
+        :paramtype sequence_number: int
         :keyword route_targets: Route Target List.The expected formats are ASN(plain):NN >> example
          4294967294:50, ASN.ASN:NN >> example 65533.65333:40, IP-address:NN >> example
          10.10.10.10:65535. The possible values of ASN,NN are in range of 0-65535, ASN(plain) is in
          range of 0-4294967295. Required.
         :paramtype route_targets: list[str]
         """
-        super().__init__(annotation=annotation, **kwargs)
+        super().__init__(**kwargs)
         self.action = action
+        self.sequence_number = sequence_number
         self.route_targets = route_targets
-        self.provisioning_state = None
 
 
-class IpPrefix(TrackedResource):
-    """The IPPrefix resource definition.
+class IpGroupProperties(_serialization.Model):
+    """IP Group properties.
+
+    :ivar name: IP Group name.
+    :vartype name: str
+    :ivar ip_address_type: IP Address type. Known values are: "IPv4" and "IPv6".
+    :vartype ip_address_type: str or ~azure.mgmt.managednetworkfabric.models.IPAddressType
+    :ivar ip_prefixes: List of IP Prefixes.
+    :vartype ip_prefixes: list[str]
+    """
+
+    _validation = {
+        "name": {"min_length": 1},
+        "ip_prefixes": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "ip_address_type": {"key": "ipAddressType", "type": "str"},
+        "ip_prefixes": {"key": "ipPrefixes", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        ip_address_type: Optional[Union[str, "_models.IPAddressType"]] = None,
+        ip_prefixes: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: IP Group name.
+        :paramtype name: str
+        :keyword ip_address_type: IP Address type. Known values are: "IPv4" and "IPv6".
+        :paramtype ip_address_type: str or ~azure.mgmt.managednetworkfabric.models.IPAddressType
+        :keyword ip_prefixes: List of IP Prefixes.
+        :paramtype ip_prefixes: list[str]
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.ip_address_type = ip_address_type
+        self.ip_prefixes = ip_prefixes
+
+
+class IpMatchCondition(_serialization.Model):
+    """Defines the condition that can be filtered using the selected IPs.
+
+    :ivar type: IP Address type. Known values are: "SourceIP" and "DestinationIP".
+    :vartype type: str or ~azure.mgmt.managednetworkfabric.models.SourceDestinationType
+    :ivar prefix_type: IP Prefix Type. Known values are: "Prefix" and "LongestPrefix".
+    :vartype prefix_type: str or ~azure.mgmt.managednetworkfabric.models.PrefixType
+    :ivar ip_prefix_values: The list of IP Prefixes.
+    :vartype ip_prefix_values: list[str]
+    :ivar ip_group_names: The List of IP Group Names that need to be matched.
+    :vartype ip_group_names: list[str]
+    """
+
+    _validation = {
+        "ip_prefix_values": {"min_items": 1},
+        "ip_group_names": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "prefix_type": {"key": "prefixType", "type": "str"},
+        "ip_prefix_values": {"key": "ipPrefixValues", "type": "[str]"},
+        "ip_group_names": {"key": "ipGroupNames", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.SourceDestinationType"]] = None,
+        prefix_type: Optional[Union[str, "_models.PrefixType"]] = None,
+        ip_prefix_values: Optional[List[str]] = None,
+        ip_group_names: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: IP Address type. Known values are: "SourceIP" and "DestinationIP".
+        :paramtype type: str or ~azure.mgmt.managednetworkfabric.models.SourceDestinationType
+        :keyword prefix_type: IP Prefix Type. Known values are: "Prefix" and "LongestPrefix".
+        :paramtype prefix_type: str or ~azure.mgmt.managednetworkfabric.models.PrefixType
+        :keyword ip_prefix_values: The list of IP Prefixes.
+        :paramtype ip_prefix_values: list[str]
+        :keyword ip_group_names: The List of IP Group Names that need to be matched.
+        :paramtype ip_group_names: list[str]
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.prefix_type = prefix_type
+        self.ip_prefix_values = ip_prefix_values
+        self.ip_group_names = ip_group_names
+
+
+class IpPrefix(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The IP Prefix resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3453,12 +5218,19 @@ class IpPrefix(TrackedResource):
     :vartype location: str
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar ip_prefix_rules: IpPrefix contains the list of IP PrefixRules objects. Required.
-    :vartype ip_prefix_rules:
-     list[~azure.mgmt.managednetworkfabric.models.IpPrefixPropertiesIpPrefixRulesItem]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar ip_prefix_rules: The list of IP Prefix Rules.
+    :vartype ip_prefix_rules: list[~azure.mgmt.managednetworkfabric.models.IpPrefixRule]
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
@@ -3467,8 +5239,9 @@ class IpPrefix(TrackedResource):
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
-        "ip_prefix_rules": {"required": True},
+        "configuration_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3479,17 +5252,19 @@ class IpPrefix(TrackedResource):
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "annotation": {"key": "properties.annotation", "type": "str"},
-        "ip_prefix_rules": {"key": "properties.ipPrefixRules", "type": "[IpPrefixPropertiesIpPrefixRulesItem]"},
+        "ip_prefix_rules": {"key": "properties.ipPrefixRules", "type": "[IpPrefixRule]"},
+        "configuration_state": {"key": "properties.configurationState", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        ip_prefix_rules: List["_models.IpPrefixPropertiesIpPrefixRulesItem"],
         tags: Optional[Dict[str, str]] = None,
         annotation: Optional[str] = None,
+        ip_prefix_rules: Optional[List["_models.IpPrefixRule"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3499,20 +5274,21 @@ class IpPrefix(TrackedResource):
         :paramtype location: str
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword ip_prefix_rules: IpPrefix contains the list of IP PrefixRules objects. Required.
-        :paramtype ip_prefix_rules:
-         list[~azure.mgmt.managednetworkfabric.models.IpPrefixPropertiesIpPrefixRulesItem]
+        :keyword ip_prefix_rules: The list of IP Prefix Rules.
+        :paramtype ip_prefix_rules: list[~azure.mgmt.managednetworkfabric.models.IpPrefixRule]
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.annotation = annotation
         self.ip_prefix_rules = ip_prefix_rules
+        self.configuration_state = None
         self.provisioning_state = None
+        self.administrative_state = None
 
 
 class IpPrefixesListResult(_serialization.Model):
-    """List of IpPrefixes.
+    """List of IP Prefixes.
 
-    :ivar value: List of IPPrefix resources.
+    :ivar value: List of IP Prefix resources.
     :vartype value: list[~azure.mgmt.managednetworkfabric.models.IpPrefix]
     :ivar next_link: Url to follow for getting next page of resources.
     :vartype next_link: str
@@ -3527,7 +5303,7 @@ class IpPrefixesListResult(_serialization.Model):
         self, *, value: Optional[List["_models.IpPrefix"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: List of IPPrefix resources.
+        :keyword value: List of IP Prefix resources.
         :paramtype value: list[~azure.mgmt.managednetworkfabric.models.IpPrefix]
         :keyword next_link: Url to follow for getting next page of resources.
         :paramtype next_link: str
@@ -3537,75 +5313,155 @@ class IpPrefixesListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class IpPrefixPatch(_serialization.Model):
-    """The IPPrefix patch resource definition.
+class IpPrefixPatch(TagsUpdate):
+    """The IP Prefix patch resource definition.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar ip_prefix_rules: The list of IP Prefix Rules.
+    :vartype ip_prefix_rules: list[~azure.mgmt.managednetworkfabric.models.IpPrefixRule]
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-
-
-class IpPrefixProperties(AnnotationResource):
-    """IpPrefixProperties define the resource properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar annotation: Switch configuration description.
-    :vartype annotation: str
-    :ivar ip_prefix_rules: IpPrefix contains the list of IP PrefixRules objects. Required.
-    :vartype ip_prefix_rules:
-     list[~azure.mgmt.managednetworkfabric.models.IpPrefixPropertiesIpPrefixRulesItem]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
-    """
-
-    _validation = {
-        "ip_prefix_rules": {"required": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "annotation": {"key": "annotation", "type": "str"},
-        "ip_prefix_rules": {"key": "ipPrefixRules", "type": "[IpPrefixPropertiesIpPrefixRulesItem]"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "annotation": {"key": "properties.annotation", "type": "str"},
+        "ip_prefix_rules": {"key": "properties.ipPrefixRules", "type": "[IpPrefixRule]"},
     }
 
     def __init__(
         self,
         *,
-        ip_prefix_rules: List["_models.IpPrefixPropertiesIpPrefixRulesItem"],
+        tags: Optional[Dict[str, str]] = None,
+        annotation: Optional[str] = None,
+        ip_prefix_rules: Optional[List["_models.IpPrefixRule"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword ip_prefix_rules: The list of IP Prefix Rules.
+        :paramtype ip_prefix_rules: list[~azure.mgmt.managednetworkfabric.models.IpPrefixRule]
+        """
+        super().__init__(tags=tags, **kwargs)
+        self.annotation = annotation
+        self.ip_prefix_rules = ip_prefix_rules
+
+
+class IpPrefixPatchableProperties(_serialization.Model):
+    """IP Prefix patchable properties.
+
+    :ivar ip_prefix_rules: The list of IP Prefix Rules.
+    :vartype ip_prefix_rules: list[~azure.mgmt.managednetworkfabric.models.IpPrefixRule]
+    """
+
+    _attribute_map = {
+        "ip_prefix_rules": {"key": "ipPrefixRules", "type": "[IpPrefixRule]"},
+    }
+
+    def __init__(self, *, ip_prefix_rules: Optional[List["_models.IpPrefixRule"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword ip_prefix_rules: The list of IP Prefix Rules.
+        :paramtype ip_prefix_rules: list[~azure.mgmt.managednetworkfabric.models.IpPrefixRule]
+        """
+        super().__init__(**kwargs)
+        self.ip_prefix_rules = ip_prefix_rules
+
+
+class IpPrefixPatchProperties(AnnotationResource, IpPrefixPatchableProperties):
+    """IP Prefix patchable properties.
+
+    :ivar ip_prefix_rules: The list of IP Prefix Rules.
+    :vartype ip_prefix_rules: list[~azure.mgmt.managednetworkfabric.models.IpPrefixRule]
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    """
+
+    _attribute_map = {
+        "ip_prefix_rules": {"key": "ipPrefixRules", "type": "[IpPrefixRule]"},
+        "annotation": {"key": "annotation", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        ip_prefix_rules: Optional[List["_models.IpPrefixRule"]] = None,
         annotation: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword ip_prefix_rules: The list of IP Prefix Rules.
+        :paramtype ip_prefix_rules: list[~azure.mgmt.managednetworkfabric.models.IpPrefixRule]
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword ip_prefix_rules: IpPrefix contains the list of IP PrefixRules objects. Required.
-        :paramtype ip_prefix_rules:
-         list[~azure.mgmt.managednetworkfabric.models.IpPrefixPropertiesIpPrefixRulesItem]
         """
-        super().__init__(annotation=annotation, **kwargs)
+        super().__init__(annotation=annotation, ip_prefix_rules=ip_prefix_rules, **kwargs)
         self.ip_prefix_rules = ip_prefix_rules
+        self.annotation = annotation
+
+
+class IpPrefixProperties(AnnotationResource, IpPrefixPatchableProperties):
+    """IP Prefix Properties defines the properties of the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar ip_prefix_rules: The list of IP Prefix Rules.
+    :vartype ip_prefix_rules: list[~azure.mgmt.managednetworkfabric.models.IpPrefixRule]
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
+    """
+
+    _validation = {
+        "configuration_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "ip_prefix_rules": {"key": "ipPrefixRules", "type": "[IpPrefixRule]"},
+        "annotation": {"key": "annotation", "type": "str"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "administrative_state": {"key": "administrativeState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        ip_prefix_rules: Optional[List["_models.IpPrefixRule"]] = None,
+        annotation: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword ip_prefix_rules: The list of IP Prefix Rules.
+        :paramtype ip_prefix_rules: list[~azure.mgmt.managednetworkfabric.models.IpPrefixRule]
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        """
+        super().__init__(annotation=annotation, ip_prefix_rules=ip_prefix_rules, **kwargs)
+        self.ip_prefix_rules = ip_prefix_rules
+        self.configuration_state = None
         self.provisioning_state = None
+        self.administrative_state = None
+        self.annotation = annotation
 
 
-class IpPrefixPropertiesIpPrefixRulesItem(_serialization.Model):
-    """IpPrefixPropertiesIpPrefixRulesItem.
+class IpPrefixRule(_serialization.Model):
+    """IP Prefix Rule properties.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3621,18 +5477,17 @@ class IpPrefixPropertiesIpPrefixRulesItem(_serialization.Model):
      Example: 1.1.1.0/24 | 3FFE:FFFF:0:CD30::/126. Required.
     :vartype network_prefix: str
     :ivar condition: Specify prefix-list bounds. Known values are: "EqualTo",
-     "GreaterThanOrEqualTo", and "LesserThanOrEqualTo".
+     "GreaterThanOrEqualTo", "LesserThanOrEqualTo", and "Range".
     :vartype condition: str or ~azure.mgmt.managednetworkfabric.models.Condition
     :ivar subnet_mask_length: SubnetMaskLength gives the minimum NetworkPrefix length to be
-     matched.Possible values for IPv4 are 1 - 32. Possible values of IPv6 are 1 - 128.
-    :vartype subnet_mask_length: int
+     matched. Possible values for IPv4 are 1 - 32 . Possible values of IPv6 are 1 - 128.
+    :vartype subnet_mask_length: str
     """
 
     _validation = {
         "action": {"required": True},
         "sequence_number": {"required": True, "maximum": 4294967295, "minimum": 1},
         "network_prefix": {"required": True},
-        "subnet_mask_length": {"maximum": 128, "minimum": 1},
     }
 
     _attribute_map = {
@@ -3640,7 +5495,7 @@ class IpPrefixPropertiesIpPrefixRulesItem(_serialization.Model):
         "sequence_number": {"key": "sequenceNumber", "type": "int"},
         "network_prefix": {"key": "networkPrefix", "type": "str"},
         "condition": {"key": "condition", "type": "str"},
-        "subnet_mask_length": {"key": "subnetMaskLength", "type": "int"},
+        "subnet_mask_length": {"key": "subnetMaskLength", "type": "str"},
     }
 
     def __init__(
@@ -3650,7 +5505,7 @@ class IpPrefixPropertiesIpPrefixRulesItem(_serialization.Model):
         sequence_number: int,
         network_prefix: str,
         condition: Optional[Union[str, "_models.Condition"]] = None,
-        subnet_mask_length: Optional[int] = None,
+        subnet_mask_length: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3666,11 +5521,11 @@ class IpPrefixPropertiesIpPrefixRulesItem(_serialization.Model):
          Example: 1.1.1.0/24 | 3FFE:FFFF:0:CD30::/126. Required.
         :paramtype network_prefix: str
         :keyword condition: Specify prefix-list bounds. Known values are: "EqualTo",
-         "GreaterThanOrEqualTo", and "LesserThanOrEqualTo".
+         "GreaterThanOrEqualTo", "LesserThanOrEqualTo", and "Range".
         :paramtype condition: str or ~azure.mgmt.managednetworkfabric.models.Condition
         :keyword subnet_mask_length: SubnetMaskLength gives the minimum NetworkPrefix length to be
-         matched.Possible values for IPv4 are 1 - 32. Possible values of IPv6 are 1 - 128.
-        :paramtype subnet_mask_length: int
+         matched. Possible values for IPv4 are 1 - 32 . Possible values of IPv6 are 1 - 128.
+        :paramtype subnet_mask_length: str
         """
         super().__init__(**kwargs)
         self.action = action
@@ -3680,15 +5535,47 @@ class IpPrefixPropertiesIpPrefixRulesItem(_serialization.Model):
         self.subnet_mask_length = subnet_mask_length
 
 
+class IsolationDomainProperties(_serialization.Model):
+    """Isolation Domain Properties.
+
+    :ivar encapsulation: Type of encapsulation. Known values are: "None" and "GRE".
+    :vartype encapsulation: str or ~azure.mgmt.managednetworkfabric.models.Encapsulation
+    :ivar neighbor_group_ids: List of Neighbor Group IDs.
+    :vartype neighbor_group_ids: list[str]
+    """
+
+    _attribute_map = {
+        "encapsulation": {"key": "encapsulation", "type": "str"},
+        "neighbor_group_ids": {"key": "neighborGroupIds", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        encapsulation: Optional[Union[str, "_models.Encapsulation"]] = None,
+        neighbor_group_ids: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword encapsulation: Type of encapsulation. Known values are: "None" and "GRE".
+        :paramtype encapsulation: str or ~azure.mgmt.managednetworkfabric.models.Encapsulation
+        :keyword neighbor_group_ids: List of Neighbor Group IDs.
+        :paramtype neighbor_group_ids: list[str]
+        """
+        super().__init__(**kwargs)
+        self.encapsulation = encapsulation
+        self.neighbor_group_ids = neighbor_group_ids
+
+
 class L2IsolationDomain(TrackedResource):  # pylint: disable=too-many-instance-attributes
-    """The L2IsolationDomain resource definition.
+    """The L2 Isolation Domain resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3704,24 +5591,23 @@ class L2IsolationDomain(TrackedResource):  # pylint: disable=too-many-instance-a
     :vartype location: str
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar network_fabric_id: Network Fabric ARM resource id.
+    :ivar network_fabric_id: ARM Resource ID of the Network Fabric. Required.
     :vartype network_fabric_id: str
-    :ivar vlan_id: vlanId. Example: 501.
+    :ivar vlan_id: Vlan Identifier of the Network Fabric. Example: 501. Required.
     :vartype vlan_id: int
-    :ivar mtu: maximum transmission unit. Default value is 1500.
+    :ivar mtu: Maximum transmission unit. Default value is 1500.
     :vartype mtu: int
-    :ivar disabled_on_resources: List of resources the L2 Isolation Domain is disabled on. Can be
-     either entire NetworkFabric or NetworkRack.
-    :vartype disabled_on_resources: list[str]
-    :ivar administrative_state: state. Example: Enabled | Disabled. It indicates administrative
-     state of the isolationDomain, whether it is enabled or disabled. If enabled, the configuration
-     is applied on the devices. If disabled, the configuration is removed from the devices. Known
-     values are: "Enabled" and "Disabled".
-    :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
@@ -3730,9 +5616,12 @@ class L2IsolationDomain(TrackedResource):  # pylint: disable=too-many-instance-a
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
-        "disabled_on_resources": {"readonly": True},
-        "administrative_state": {"readonly": True},
+        "network_fabric_id": {"required": True},
+        "vlan_id": {"required": True, "maximum": 4094, "minimum": 100},
+        "mtu": {"maximum": 9200, "minimum": 64},
+        "configuration_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3746,20 +5635,20 @@ class L2IsolationDomain(TrackedResource):  # pylint: disable=too-many-instance-a
         "network_fabric_id": {"key": "properties.networkFabricId", "type": "str"},
         "vlan_id": {"key": "properties.vlanId", "type": "int"},
         "mtu": {"key": "properties.mtu", "type": "int"},
-        "disabled_on_resources": {"key": "properties.disabledOnResources", "type": "[str]"},
-        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
+        "configuration_state": {"key": "properties.configurationState", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
+        network_fabric_id: str,
+        vlan_id: int,
         tags: Optional[Dict[str, str]] = None,
         annotation: Optional[str] = None,
-        network_fabric_id: Optional[str] = None,
-        vlan_id: Optional[int] = None,
-        mtu: Optional[int] = None,
+        mtu: int = 1500,
         **kwargs: Any
     ) -> None:
         """
@@ -3769,11 +5658,11 @@ class L2IsolationDomain(TrackedResource):  # pylint: disable=too-many-instance-a
         :paramtype location: str
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword network_fabric_id: Network Fabric ARM resource id.
+        :keyword network_fabric_id: ARM Resource ID of the Network Fabric. Required.
         :paramtype network_fabric_id: str
-        :keyword vlan_id: vlanId. Example: 501.
+        :keyword vlan_id: Vlan Identifier of the Network Fabric. Example: 501. Required.
         :paramtype vlan_id: int
-        :keyword mtu: maximum transmission unit. Default value is 1500.
+        :keyword mtu: Maximum transmission unit. Default value is 1500.
         :paramtype mtu: int
         """
         super().__init__(tags=tags, location=location, **kwargs)
@@ -3781,21 +5670,25 @@ class L2IsolationDomain(TrackedResource):  # pylint: disable=too-many-instance-a
         self.network_fabric_id = network_fabric_id
         self.vlan_id = vlan_id
         self.mtu = mtu
-        self.disabled_on_resources = None
-        self.administrative_state = None
+        self.configuration_state = None
         self.provisioning_state = None
+        self.administrative_state = None
 
 
-class L2IsolationDomainPatch(_serialization.Model):
-    """The L2IsolationDomain patch resource definition.
+class L2IsolationDomainPatch(TagsUpdate):
+    """The L2 Isolation Domain patch resource definition.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar mtu: maximum transmission unit. Default value is 1500.
+    :ivar mtu: Maximum transmission unit. Default value is 1500.
     :vartype mtu: int
     """
+
+    _validation = {
+        "mtu": {"maximum": 9200, "minimum": 64},
+    }
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
@@ -3804,46 +5697,44 @@ class L2IsolationDomainPatch(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        annotation: Optional[str] = None,
-        mtu: Optional[int] = None,
-        **kwargs: Any
+        self, *, tags: Optional[Dict[str, str]] = None, annotation: Optional[str] = None, mtu: int = 1500, **kwargs: Any
     ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword mtu: maximum transmission unit. Default value is 1500.
+        :keyword mtu: Maximum transmission unit. Default value is 1500.
         :paramtype mtu: int
         """
-        super().__init__(**kwargs)
-        self.tags = tags
+        super().__init__(tags=tags, **kwargs)
         self.annotation = annotation
         self.mtu = mtu
 
 
 class L2IsolationDomainPatchProperties(AnnotationResource):
-    """L2IsolationDomainPatchProperties define the patchable resource properties.
+    """L2 Isolation Domain Patch Properties defines the patchable properties of the resource.
 
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar mtu: maximum transmission unit. Default value is 1500.
+    :ivar mtu: Maximum transmission unit. Default value is 1500.
     :vartype mtu: int
     """
+
+    _validation = {
+        "mtu": {"maximum": 9200, "minimum": 64},
+    }
 
     _attribute_map = {
         "annotation": {"key": "annotation", "type": "str"},
         "mtu": {"key": "mtu", "type": "int"},
     }
 
-    def __init__(self, *, annotation: Optional[str] = None, mtu: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(self, *, annotation: Optional[str] = None, mtu: int = 1500, **kwargs: Any) -> None:
         """
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword mtu: maximum transmission unit. Default value is 1500.
+        :keyword mtu: Maximum transmission unit. Default value is 1500.
         :paramtype mtu: int
         """
         super().__init__(annotation=annotation, **kwargs)
@@ -3851,7 +5742,7 @@ class L2IsolationDomainPatchProperties(AnnotationResource):
 
 
 class L2IsolationDomainProperties(AnnotationResource):
-    """L2IsolationDomainProperties define the resource properties.
+    """L2Isolation Domain Properties defines the properties of the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3859,32 +5750,32 @@ class L2IsolationDomainProperties(AnnotationResource):
 
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar network_fabric_id: Network Fabric ARM resource id. Required.
+    :ivar network_fabric_id: ARM Resource ID of the Network Fabric. Required.
     :vartype network_fabric_id: str
-    :ivar vlan_id: vlanId. Example: 501. Required.
+    :ivar vlan_id: Vlan Identifier of the Network Fabric. Example: 501. Required.
     :vartype vlan_id: int
-    :ivar mtu: maximum transmission unit. Default value is 1500.
+    :ivar mtu: Maximum transmission unit. Default value is 1500.
     :vartype mtu: int
-    :ivar disabled_on_resources: List of resources the L2 Isolation Domain is disabled on. Can be
-     either entire NetworkFabric or NetworkRack.
-    :vartype disabled_on_resources: list[str]
-    :ivar administrative_state: state. Example: Enabled | Disabled. It indicates administrative
-     state of the isolationDomain, whether it is enabled or disabled. If enabled, the configuration
-     is applied on the devices. If disabled, the configuration is removed from the devices. Known
-     values are: "Enabled" and "Disabled".
-    :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
         "network_fabric_id": {"required": True},
-        "vlan_id": {"required": True},
-        "disabled_on_resources": {"readonly": True},
-        "administrative_state": {"readonly": True},
+        "vlan_id": {"required": True, "maximum": 4094, "minimum": 100},
+        "mtu": {"maximum": 9200, "minimum": 64},
+        "configuration_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3892,43 +5783,37 @@ class L2IsolationDomainProperties(AnnotationResource):
         "network_fabric_id": {"key": "networkFabricId", "type": "str"},
         "vlan_id": {"key": "vlanId", "type": "int"},
         "mtu": {"key": "mtu", "type": "int"},
-        "disabled_on_resources": {"key": "disabledOnResources", "type": "[str]"},
-        "administrative_state": {"key": "administrativeState", "type": "str"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "administrative_state": {"key": "administrativeState", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        network_fabric_id: str,
-        vlan_id: int,
-        annotation: Optional[str] = None,
-        mtu: Optional[int] = None,
-        **kwargs: Any
+        self, *, network_fabric_id: str, vlan_id: int, annotation: Optional[str] = None, mtu: int = 1500, **kwargs: Any
     ) -> None:
         """
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword network_fabric_id: Network Fabric ARM resource id. Required.
+        :keyword network_fabric_id: ARM Resource ID of the Network Fabric. Required.
         :paramtype network_fabric_id: str
-        :keyword vlan_id: vlanId. Example: 501. Required.
+        :keyword vlan_id: Vlan Identifier of the Network Fabric. Example: 501. Required.
         :paramtype vlan_id: int
-        :keyword mtu: maximum transmission unit. Default value is 1500.
+        :keyword mtu: Maximum transmission unit. Default value is 1500.
         :paramtype mtu: int
         """
         super().__init__(annotation=annotation, **kwargs)
         self.network_fabric_id = network_fabric_id
         self.vlan_id = vlan_id
         self.mtu = mtu
-        self.disabled_on_resources = None
-        self.administrative_state = None
+        self.configuration_state = None
         self.provisioning_state = None
+        self.administrative_state = None
 
 
 class L2IsolationDomainsListResult(_serialization.Model):
-    """List of L2IsolationDomains.
+    """List of L2 Isolation Domains.
 
-    :ivar value: Displays list of L2IsolationDomain resources.
+    :ivar value: Displays list of L2 Isolation Domain resources.
     :vartype value: list[~azure.mgmt.managednetworkfabric.models.L2IsolationDomain]
     :ivar next_link: Url to follow for getting next page of resources.
     :vartype next_link: str
@@ -3947,7 +5832,7 @@ class L2IsolationDomainsListResult(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword value: Displays list of L2IsolationDomain resources.
+        :keyword value: Displays list of L2 Isolation Domain resources.
         :paramtype value: list[~azure.mgmt.managednetworkfabric.models.L2IsolationDomain]
         :keyword next_link: Url to follow for getting next page of resources.
         :paramtype next_link: str
@@ -3957,15 +5842,47 @@ class L2IsolationDomainsListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class L3ExportRoutePolicy(_serialization.Model):
+    """Array of ARM Resource ID of the RoutePolicies.
+
+    :ivar export_ipv4_route_policy_id: ARM Resource ID of the RoutePolicy.
+    :vartype export_ipv4_route_policy_id: str
+    :ivar export_ipv6_route_policy_id: ARM Resource ID of the RoutePolicy.
+    :vartype export_ipv6_route_policy_id: str
+    """
+
+    _attribute_map = {
+        "export_ipv4_route_policy_id": {"key": "exportIpv4RoutePolicyId", "type": "str"},
+        "export_ipv6_route_policy_id": {"key": "exportIpv6RoutePolicyId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        export_ipv4_route_policy_id: Optional[str] = None,
+        export_ipv6_route_policy_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword export_ipv4_route_policy_id: ARM Resource ID of the RoutePolicy.
+        :paramtype export_ipv4_route_policy_id: str
+        :keyword export_ipv6_route_policy_id: ARM Resource ID of the RoutePolicy.
+        :paramtype export_ipv6_route_policy_id: str
+        """
+        super().__init__(**kwargs)
+        self.export_ipv4_route_policy_id = export_ipv4_route_policy_id
+        self.export_ipv6_route_policy_id = export_ipv6_route_policy_id
+
+
 class L3IsolationDomain(TrackedResource):  # pylint: disable=too-many-instance-attributes
-    """The L3IsolationDomain resource definition.
+    """The L3 Isolation Domain resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3989,29 +5906,25 @@ class L3IsolationDomain(TrackedResource):  # pylint: disable=too-many-instance-a
      are: "True" and "False".
     :vartype redistribute_static_routes: str or
      ~azure.mgmt.managednetworkfabric.models.RedistributeStaticRoutes
-    :ivar aggregate_route_configuration: List of Ipv4 and Ipv6 route configurations.
+    :ivar aggregate_route_configuration: Aggregate route configurations.
     :vartype aggregate_route_configuration:
      ~azure.mgmt.managednetworkfabric.models.AggregateRouteConfiguration
-    :ivar description: L3 Isolation Domain description.
-    :vartype description: str
     :ivar connected_subnet_route_policy: Connected Subnet RoutePolicy.
     :vartype connected_subnet_route_policy:
-     ~azure.mgmt.managednetworkfabric.models.L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy
-    :ivar network_fabric_id: Network Fabric ARM resource id.
+     ~azure.mgmt.managednetworkfabric.models.ConnectedSubnetRoutePolicy
+    :ivar network_fabric_id: ARM Resource ID of the Network Fabric. Required.
     :vartype network_fabric_id: str
-    :ivar disabled_on_resources: List of resources the L3 Isolation Domain is disabled on. Can be
-     either entire NetworkFabric or NetworkRack.
-    :vartype disabled_on_resources: list[str]
-    :ivar administrative_state: Administrative state of the IsolationDomain. Example: Enabled |
-     Disabled. Known values are: "Enabled" and "Disabled".
-    :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
-    :ivar option_b_disabled_on_resources: List of resources the OptionB is disabled on. Can be
-     either entire NetworkFabric or NetworkRack.
-    :vartype option_b_disabled_on_resources: list[str]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
@@ -4020,10 +5933,10 @@ class L3IsolationDomain(TrackedResource):  # pylint: disable=too-many-instance-a
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
-        "disabled_on_resources": {"readonly": True},
-        "administrative_state": {"readonly": True},
-        "option_b_disabled_on_resources": {"readonly": True},
+        "network_fabric_id": {"required": True},
+        "configuration_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4040,32 +5953,27 @@ class L3IsolationDomain(TrackedResource):  # pylint: disable=too-many-instance-a
             "key": "properties.aggregateRouteConfiguration",
             "type": "AggregateRouteConfiguration",
         },
-        "description": {"key": "properties.description", "type": "str"},
         "connected_subnet_route_policy": {
             "key": "properties.connectedSubnetRoutePolicy",
-            "type": "L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy",
+            "type": "ConnectedSubnetRoutePolicy",
         },
         "network_fabric_id": {"key": "properties.networkFabricId", "type": "str"},
-        "disabled_on_resources": {"key": "properties.disabledOnResources", "type": "[str]"},
-        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
-        "option_b_disabled_on_resources": {"key": "properties.optionBDisabledOnResources", "type": "[str]"},
+        "configuration_state": {"key": "properties.configurationState", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
+        network_fabric_id: str,
         tags: Optional[Dict[str, str]] = None,
         annotation: Optional[str] = None,
         redistribute_connected_subnets: Union[str, "_models.RedistributeConnectedSubnets"] = "True",
         redistribute_static_routes: Union[str, "_models.RedistributeStaticRoutes"] = "False",
         aggregate_route_configuration: Optional["_models.AggregateRouteConfiguration"] = None,
-        description: Optional[str] = None,
-        connected_subnet_route_policy: Optional[
-            "_models.L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy"
-        ] = None,
-        network_fabric_id: Optional[str] = None,
+        connected_subnet_route_policy: Optional["_models.ConnectedSubnetRoutePolicy"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4083,15 +5991,13 @@ class L3IsolationDomain(TrackedResource):  # pylint: disable=too-many-instance-a
          values are: "True" and "False".
         :paramtype redistribute_static_routes: str or
          ~azure.mgmt.managednetworkfabric.models.RedistributeStaticRoutes
-        :keyword aggregate_route_configuration: List of Ipv4 and Ipv6 route configurations.
+        :keyword aggregate_route_configuration: Aggregate route configurations.
         :paramtype aggregate_route_configuration:
          ~azure.mgmt.managednetworkfabric.models.AggregateRouteConfiguration
-        :keyword description: L3 Isolation Domain description.
-        :paramtype description: str
         :keyword connected_subnet_route_policy: Connected Subnet RoutePolicy.
         :paramtype connected_subnet_route_policy:
-         ~azure.mgmt.managednetworkfabric.models.L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy
-        :keyword network_fabric_id: Network Fabric ARM resource id.
+         ~azure.mgmt.managednetworkfabric.models.ConnectedSubnetRoutePolicy
+        :keyword network_fabric_id: ARM Resource ID of the Network Fabric. Required.
         :paramtype network_fabric_id: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
@@ -4099,20 +6005,20 @@ class L3IsolationDomain(TrackedResource):  # pylint: disable=too-many-instance-a
         self.redistribute_connected_subnets = redistribute_connected_subnets
         self.redistribute_static_routes = redistribute_static_routes
         self.aggregate_route_configuration = aggregate_route_configuration
-        self.description = description
         self.connected_subnet_route_policy = connected_subnet_route_policy
         self.network_fabric_id = network_fabric_id
-        self.disabled_on_resources = None
-        self.administrative_state = None
-        self.option_b_disabled_on_resources = None
+        self.configuration_state = None
         self.provisioning_state = None
+        self.administrative_state = None
 
 
-class L3IsolationDomainPatch(_serialization.Model):
-    """The L3IsolationDomain patch resource definition.
+class L3IsolationDomainPatch(TagsUpdate):
+    """The L3 Isolation Domain patch resource definition.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
     :ivar redistribute_connected_subnets: Advertise Connected Subnets. Ex: "True" | "False". Known
      values are: "True" and "False".
     :vartype redistribute_connected_subnets: str or
@@ -4121,28 +6027,26 @@ class L3IsolationDomainPatch(_serialization.Model):
      are: "True" and "False".
     :vartype redistribute_static_routes: str or
      ~azure.mgmt.managednetworkfabric.models.RedistributeStaticRoutes
-    :ivar aggregate_route_configuration: List of Ipv4 and Ipv6 route configurations.
+    :ivar aggregate_route_configuration: Aggregate route configurations.
     :vartype aggregate_route_configuration:
      ~azure.mgmt.managednetworkfabric.models.AggregateRouteConfiguration
-    :ivar description: L3 Isolation Domain description.
-    :vartype description: str
     :ivar connected_subnet_route_policy: Connected Subnet RoutePolicy.
     :vartype connected_subnet_route_policy:
-     ~azure.mgmt.managednetworkfabric.models.L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy
+     ~azure.mgmt.managednetworkfabric.models.ConnectedSubnetRoutePolicy
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
+        "annotation": {"key": "properties.annotation", "type": "str"},
         "redistribute_connected_subnets": {"key": "properties.redistributeConnectedSubnets", "type": "str"},
         "redistribute_static_routes": {"key": "properties.redistributeStaticRoutes", "type": "str"},
         "aggregate_route_configuration": {
             "key": "properties.aggregateRouteConfiguration",
             "type": "AggregateRouteConfiguration",
         },
-        "description": {"key": "properties.description", "type": "str"},
         "connected_subnet_route_policy": {
             "key": "properties.connectedSubnetRoutePolicy",
-            "type": "L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy",
+            "type": "ConnectedSubnetRoutePolicy",
         },
     }
 
@@ -4150,18 +6054,18 @@ class L3IsolationDomainPatch(_serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
+        annotation: Optional[str] = None,
         redistribute_connected_subnets: Union[str, "_models.RedistributeConnectedSubnets"] = "True",
         redistribute_static_routes: Union[str, "_models.RedistributeStaticRoutes"] = "False",
         aggregate_route_configuration: Optional["_models.AggregateRouteConfiguration"] = None,
-        description: Optional[str] = None,
-        connected_subnet_route_policy: Optional[
-            "_models.L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy"
-        ] = None,
+        connected_subnet_route_policy: Optional["_models.ConnectedSubnetRoutePolicy"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
         :keyword redistribute_connected_subnets: Advertise Connected Subnets. Ex: "True" | "False".
          Known values are: "True" and "False".
         :paramtype redistribute_connected_subnets: str or
@@ -4170,26 +6074,23 @@ class L3IsolationDomainPatch(_serialization.Model):
          values are: "True" and "False".
         :paramtype redistribute_static_routes: str or
          ~azure.mgmt.managednetworkfabric.models.RedistributeStaticRoutes
-        :keyword aggregate_route_configuration: List of Ipv4 and Ipv6 route configurations.
+        :keyword aggregate_route_configuration: Aggregate route configurations.
         :paramtype aggregate_route_configuration:
          ~azure.mgmt.managednetworkfabric.models.AggregateRouteConfiguration
-        :keyword description: L3 Isolation Domain description.
-        :paramtype description: str
         :keyword connected_subnet_route_policy: Connected Subnet RoutePolicy.
         :paramtype connected_subnet_route_policy:
-         ~azure.mgmt.managednetworkfabric.models.L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy
+         ~azure.mgmt.managednetworkfabric.models.ConnectedSubnetRoutePolicy
         """
-        super().__init__(**kwargs)
-        self.tags = tags
+        super().__init__(tags=tags, **kwargs)
+        self.annotation = annotation
         self.redistribute_connected_subnets = redistribute_connected_subnets
         self.redistribute_static_routes = redistribute_static_routes
         self.aggregate_route_configuration = aggregate_route_configuration
-        self.description = description
         self.connected_subnet_route_policy = connected_subnet_route_policy
 
 
-class L3IsolationDomainPatchProperties(_serialization.Model):
-    """L3IsolationDomainPatchProperties define the patch resource properties.
+class L3IsolationDomainPatchableProperties(_serialization.Model):
+    """L3 Isolation Domain Patch Properties defines the patchable properties of the resource.
 
     :ivar redistribute_connected_subnets: Advertise Connected Subnets. Ex: "True" | "False". Known
      values are: "True" and "False".
@@ -4199,25 +6100,19 @@ class L3IsolationDomainPatchProperties(_serialization.Model):
      are: "True" and "False".
     :vartype redistribute_static_routes: str or
      ~azure.mgmt.managednetworkfabric.models.RedistributeStaticRoutes
-    :ivar aggregate_route_configuration: List of Ipv4 and Ipv6 route configurations.
+    :ivar aggregate_route_configuration: Aggregate route configurations.
     :vartype aggregate_route_configuration:
      ~azure.mgmt.managednetworkfabric.models.AggregateRouteConfiguration
-    :ivar description: L3 Isolation Domain description.
-    :vartype description: str
     :ivar connected_subnet_route_policy: Connected Subnet RoutePolicy.
     :vartype connected_subnet_route_policy:
-     ~azure.mgmt.managednetworkfabric.models.L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy
+     ~azure.mgmt.managednetworkfabric.models.ConnectedSubnetRoutePolicy
     """
 
     _attribute_map = {
         "redistribute_connected_subnets": {"key": "redistributeConnectedSubnets", "type": "str"},
         "redistribute_static_routes": {"key": "redistributeStaticRoutes", "type": "str"},
         "aggregate_route_configuration": {"key": "aggregateRouteConfiguration", "type": "AggregateRouteConfiguration"},
-        "description": {"key": "description", "type": "str"},
-        "connected_subnet_route_policy": {
-            "key": "connectedSubnetRoutePolicy",
-            "type": "L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy",
-        },
+        "connected_subnet_route_policy": {"key": "connectedSubnetRoutePolicy", "type": "ConnectedSubnetRoutePolicy"},
     }
 
     def __init__(
@@ -4226,10 +6121,7 @@ class L3IsolationDomainPatchProperties(_serialization.Model):
         redistribute_connected_subnets: Union[str, "_models.RedistributeConnectedSubnets"] = "True",
         redistribute_static_routes: Union[str, "_models.RedistributeStaticRoutes"] = "False",
         aggregate_route_configuration: Optional["_models.AggregateRouteConfiguration"] = None,
-        description: Optional[str] = None,
-        connected_subnet_route_policy: Optional[
-            "_models.L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy"
-        ] = None,
+        connected_subnet_route_policy: Optional["_models.ConnectedSubnetRoutePolicy"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4241,59 +6133,94 @@ class L3IsolationDomainPatchProperties(_serialization.Model):
          values are: "True" and "False".
         :paramtype redistribute_static_routes: str or
          ~azure.mgmt.managednetworkfabric.models.RedistributeStaticRoutes
-        :keyword aggregate_route_configuration: List of Ipv4 and Ipv6 route configurations.
+        :keyword aggregate_route_configuration: Aggregate route configurations.
         :paramtype aggregate_route_configuration:
          ~azure.mgmt.managednetworkfabric.models.AggregateRouteConfiguration
-        :keyword description: L3 Isolation Domain description.
-        :paramtype description: str
         :keyword connected_subnet_route_policy: Connected Subnet RoutePolicy.
         :paramtype connected_subnet_route_policy:
-         ~azure.mgmt.managednetworkfabric.models.L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy
+         ~azure.mgmt.managednetworkfabric.models.ConnectedSubnetRoutePolicy
         """
         super().__init__(**kwargs)
         self.redistribute_connected_subnets = redistribute_connected_subnets
         self.redistribute_static_routes = redistribute_static_routes
         self.aggregate_route_configuration = aggregate_route_configuration
-        self.description = description
         self.connected_subnet_route_policy = connected_subnet_route_policy
 
 
-class L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy(_serialization.Model):
-    """Connected Subnet RoutePolicy.
+class L3IsolationDomainPatchProperties(AnnotationResource, L3IsolationDomainPatchableProperties):
+    """Resource properties.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar export_route_policy_id: exportRoutePolicyId value.
-    :vartype export_route_policy_id: str
-    :ivar administrative_state: Enabled/Disabled connected subnet route policy. Ex: Enabled |
-     Disabled. Known values are: "Enabled" and "Disabled".
-    :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
+    :ivar redistribute_connected_subnets: Advertise Connected Subnets. Ex: "True" | "False". Known
+     values are: "True" and "False".
+    :vartype redistribute_connected_subnets: str or
+     ~azure.mgmt.managednetworkfabric.models.RedistributeConnectedSubnets
+    :ivar redistribute_static_routes: Advertise Static Routes. Ex: "True" | "False". Known values
+     are: "True" and "False".
+    :vartype redistribute_static_routes: str or
+     ~azure.mgmt.managednetworkfabric.models.RedistributeStaticRoutes
+    :ivar aggregate_route_configuration: Aggregate route configurations.
+    :vartype aggregate_route_configuration:
+     ~azure.mgmt.managednetworkfabric.models.AggregateRouteConfiguration
+    :ivar connected_subnet_route_policy: Connected Subnet RoutePolicy.
+    :vartype connected_subnet_route_policy:
+     ~azure.mgmt.managednetworkfabric.models.ConnectedSubnetRoutePolicy
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
     """
 
-    _validation = {
-        "administrative_state": {"readonly": True},
-    }
-
     _attribute_map = {
-        "export_route_policy_id": {"key": "exportRoutePolicyId", "type": "str"},
-        "administrative_state": {"key": "administrativeState", "type": "str"},
+        "redistribute_connected_subnets": {"key": "redistributeConnectedSubnets", "type": "str"},
+        "redistribute_static_routes": {"key": "redistributeStaticRoutes", "type": "str"},
+        "aggregate_route_configuration": {"key": "aggregateRouteConfiguration", "type": "AggregateRouteConfiguration"},
+        "connected_subnet_route_policy": {"key": "connectedSubnetRoutePolicy", "type": "ConnectedSubnetRoutePolicy"},
+        "annotation": {"key": "annotation", "type": "str"},
     }
 
-    def __init__(self, *, export_route_policy_id: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        redistribute_connected_subnets: Union[str, "_models.RedistributeConnectedSubnets"] = "True",
+        redistribute_static_routes: Union[str, "_models.RedistributeStaticRoutes"] = "False",
+        aggregate_route_configuration: Optional["_models.AggregateRouteConfiguration"] = None,
+        connected_subnet_route_policy: Optional["_models.ConnectedSubnetRoutePolicy"] = None,
+        annotation: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword export_route_policy_id: exportRoutePolicyId value.
-        :paramtype export_route_policy_id: str
+        :keyword redistribute_connected_subnets: Advertise Connected Subnets. Ex: "True" | "False".
+         Known values are: "True" and "False".
+        :paramtype redistribute_connected_subnets: str or
+         ~azure.mgmt.managednetworkfabric.models.RedistributeConnectedSubnets
+        :keyword redistribute_static_routes: Advertise Static Routes. Ex: "True" | "False". Known
+         values are: "True" and "False".
+        :paramtype redistribute_static_routes: str or
+         ~azure.mgmt.managednetworkfabric.models.RedistributeStaticRoutes
+        :keyword aggregate_route_configuration: Aggregate route configurations.
+        :paramtype aggregate_route_configuration:
+         ~azure.mgmt.managednetworkfabric.models.AggregateRouteConfiguration
+        :keyword connected_subnet_route_policy: Connected Subnet RoutePolicy.
+        :paramtype connected_subnet_route_policy:
+         ~azure.mgmt.managednetworkfabric.models.ConnectedSubnetRoutePolicy
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
         """
-        super().__init__(**kwargs)
-        self.export_route_policy_id = export_route_policy_id
-        self.administrative_state = None
+        super().__init__(
+            annotation=annotation,
+            redistribute_connected_subnets=redistribute_connected_subnets,
+            redistribute_static_routes=redistribute_static_routes,
+            aggregate_route_configuration=aggregate_route_configuration,
+            connected_subnet_route_policy=connected_subnet_route_policy,
+            **kwargs
+        )
+        self.redistribute_connected_subnets = redistribute_connected_subnets
+        self.redistribute_static_routes = redistribute_static_routes
+        self.aggregate_route_configuration = aggregate_route_configuration
+        self.connected_subnet_route_policy = connected_subnet_route_policy
+        self.annotation = annotation
 
 
-class L3IsolationDomainProperties(
-    AnnotationResource, L3IsolationDomainPatchProperties
-):  # pylint: disable=too-many-instance-attributes
-    """L3IsolationDomainProperties define the resource properties.
+class L3IsolationDomainProperties(AnnotationResource, L3IsolationDomainPatchableProperties):
+    """L3 Isolation Domain Properties defines the properties of the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4307,56 +6234,46 @@ class L3IsolationDomainProperties(
      are: "True" and "False".
     :vartype redistribute_static_routes: str or
      ~azure.mgmt.managednetworkfabric.models.RedistributeStaticRoutes
-    :ivar aggregate_route_configuration: List of Ipv4 and Ipv6 route configurations.
+    :ivar aggregate_route_configuration: Aggregate route configurations.
     :vartype aggregate_route_configuration:
      ~azure.mgmt.managednetworkfabric.models.AggregateRouteConfiguration
-    :ivar description: L3 Isolation Domain description.
-    :vartype description: str
     :ivar connected_subnet_route_policy: Connected Subnet RoutePolicy.
     :vartype connected_subnet_route_policy:
-     ~azure.mgmt.managednetworkfabric.models.L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy
+     ~azure.mgmt.managednetworkfabric.models.ConnectedSubnetRoutePolicy
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar network_fabric_id: Network Fabric ARM resource id. Required.
+    :ivar network_fabric_id: ARM Resource ID of the Network Fabric. Required.
     :vartype network_fabric_id: str
-    :ivar disabled_on_resources: List of resources the L3 Isolation Domain is disabled on. Can be
-     either entire NetworkFabric or NetworkRack.
-    :vartype disabled_on_resources: list[str]
-    :ivar administrative_state: Administrative state of the IsolationDomain. Example: Enabled |
-     Disabled. Known values are: "Enabled" and "Disabled".
-    :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
-    :ivar option_b_disabled_on_resources: List of resources the OptionB is disabled on. Can be
-     either entire NetworkFabric or NetworkRack.
-    :vartype option_b_disabled_on_resources: list[str]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
         "network_fabric_id": {"required": True},
-        "disabled_on_resources": {"readonly": True},
-        "administrative_state": {"readonly": True},
-        "option_b_disabled_on_resources": {"readonly": True},
+        "configuration_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
         "redistribute_connected_subnets": {"key": "redistributeConnectedSubnets", "type": "str"},
         "redistribute_static_routes": {"key": "redistributeStaticRoutes", "type": "str"},
         "aggregate_route_configuration": {"key": "aggregateRouteConfiguration", "type": "AggregateRouteConfiguration"},
-        "description": {"key": "description", "type": "str"},
-        "connected_subnet_route_policy": {
-            "key": "connectedSubnetRoutePolicy",
-            "type": "L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy",
-        },
+        "connected_subnet_route_policy": {"key": "connectedSubnetRoutePolicy", "type": "ConnectedSubnetRoutePolicy"},
         "annotation": {"key": "annotation", "type": "str"},
         "network_fabric_id": {"key": "networkFabricId", "type": "str"},
-        "disabled_on_resources": {"key": "disabledOnResources", "type": "[str]"},
-        "administrative_state": {"key": "administrativeState", "type": "str"},
-        "option_b_disabled_on_resources": {"key": "optionBDisabledOnResources", "type": "[str]"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "administrative_state": {"key": "administrativeState", "type": "str"},
     }
 
     def __init__(
@@ -4366,10 +6283,7 @@ class L3IsolationDomainProperties(
         redistribute_connected_subnets: Union[str, "_models.RedistributeConnectedSubnets"] = "True",
         redistribute_static_routes: Union[str, "_models.RedistributeStaticRoutes"] = "False",
         aggregate_route_configuration: Optional["_models.AggregateRouteConfiguration"] = None,
-        description: Optional[str] = None,
-        connected_subnet_route_policy: Optional[
-            "_models.L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy"
-        ] = None,
+        connected_subnet_route_policy: Optional["_models.ConnectedSubnetRoutePolicy"] = None,
         annotation: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -4382,17 +6296,15 @@ class L3IsolationDomainProperties(
          values are: "True" and "False".
         :paramtype redistribute_static_routes: str or
          ~azure.mgmt.managednetworkfabric.models.RedistributeStaticRoutes
-        :keyword aggregate_route_configuration: List of Ipv4 and Ipv6 route configurations.
+        :keyword aggregate_route_configuration: Aggregate route configurations.
         :paramtype aggregate_route_configuration:
          ~azure.mgmt.managednetworkfabric.models.AggregateRouteConfiguration
-        :keyword description: L3 Isolation Domain description.
-        :paramtype description: str
         :keyword connected_subnet_route_policy: Connected Subnet RoutePolicy.
         :paramtype connected_subnet_route_policy:
-         ~azure.mgmt.managednetworkfabric.models.L3IsolationDomainPatchPropertiesConnectedSubnetRoutePolicy
+         ~azure.mgmt.managednetworkfabric.models.ConnectedSubnetRoutePolicy
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword network_fabric_id: Network Fabric ARM resource id. Required.
+        :keyword network_fabric_id: ARM Resource ID of the Network Fabric. Required.
         :paramtype network_fabric_id: str
         """
         super().__init__(
@@ -4400,27 +6312,24 @@ class L3IsolationDomainProperties(
             redistribute_connected_subnets=redistribute_connected_subnets,
             redistribute_static_routes=redistribute_static_routes,
             aggregate_route_configuration=aggregate_route_configuration,
-            description=description,
             connected_subnet_route_policy=connected_subnet_route_policy,
             **kwargs
         )
         self.redistribute_connected_subnets = redistribute_connected_subnets
         self.redistribute_static_routes = redistribute_static_routes
         self.aggregate_route_configuration = aggregate_route_configuration
-        self.description = description
         self.connected_subnet_route_policy = connected_subnet_route_policy
         self.network_fabric_id = network_fabric_id
-        self.disabled_on_resources = None
-        self.administrative_state = None
-        self.option_b_disabled_on_resources = None
+        self.configuration_state = None
         self.provisioning_state = None
+        self.administrative_state = None
         self.annotation = annotation
 
 
 class L3IsolationDomainsListResult(_serialization.Model):
-    """List of L3IsolationDomains.
+    """List of L3 Isolation Domains.
 
-    :ivar value: List of L3IsolationDomain resources.
+    :ivar value: List of L3 Isolation Domain resources.
     :vartype value: list[~azure.mgmt.managednetworkfabric.models.L3IsolationDomain]
     :ivar next_link: Url to follow for getting next page of resources.
     :vartype next_link: str
@@ -4439,7 +6348,7 @@ class L3IsolationDomainsListResult(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword value: List of L3IsolationDomain resources.
+        :keyword value: List of L3 Isolation Domain resources.
         :paramtype value: list[~azure.mgmt.managednetworkfabric.models.L3IsolationDomain]
         :keyword next_link: Url to follow for getting next page of resources.
         :paramtype next_link: str
@@ -4449,15 +6358,52 @@ class L3IsolationDomainsListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class L3OptionBProperties(_serialization.Model):
+    """Option B configuration.
+
+    :ivar import_route_targets: RouteTargets to be applied. This is used for the backward
+     compatibility.
+    :vartype import_route_targets: list[str]
+    :ivar export_route_targets: RouteTargets to be applied. This is used for the backward
+     compatibility.
+    :vartype export_route_targets: list[str]
+    :ivar route_targets: RouteTargets to be applied.
+    :vartype route_targets: ~azure.mgmt.managednetworkfabric.models.RouteTargetInformation
+    """
+
+    _attribute_map = {
+        "import_route_targets": {"key": "importRouteTargets", "type": "[str]"},
+        "export_route_targets": {"key": "exportRouteTargets", "type": "[str]"},
+        "route_targets": {"key": "routeTargets", "type": "RouteTargetInformation"},
+    }
+
+    def __init__(
+        self,
+        *,
+        import_route_targets: Optional[List[str]] = None,
+        export_route_targets: Optional[List[str]] = None,
+        route_targets: Optional["_models.RouteTargetInformation"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword import_route_targets: RouteTargets to be applied. This is used for the backward
+         compatibility.
+        :paramtype import_route_targets: list[str]
+        :keyword export_route_targets: RouteTargets to be applied. This is used for the backward
+         compatibility.
+        :paramtype export_route_targets: list[str]
+        :keyword route_targets: RouteTargets to be applied.
+        :paramtype route_targets: ~azure.mgmt.managednetworkfabric.models.RouteTargetInformation
+        """
+        super().__init__(**kwargs)
+        self.import_route_targets = import_route_targets
+        self.export_route_targets = export_route_targets
+        self.route_targets = route_targets
+
+
 class Layer2Configuration(_serialization.Model):
-    """layer2Configuration.
+    """Common properties for Layer2 Configuration.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar port_count: Number of ports connected between PE/CE. Maximum value depends on FabricSKU.
-    :vartype port_count: int
     :ivar mtu: MTU of the packets between PE & CE.
     :vartype mtu: int
     :ivar interfaces: List of network device interfaces resource IDs.
@@ -4465,148 +6411,25 @@ class Layer2Configuration(_serialization.Model):
     """
 
     _validation = {
-        "mtu": {"required": True, "maximum": 9000, "minimum": 1500},
-        "interfaces": {"readonly": True},
+        "mtu": {"maximum": 9200, "minimum": 64},
+        "interfaces": {"min_items": 1},
     }
 
     _attribute_map = {
-        "port_count": {"key": "portCount", "type": "int"},
         "mtu": {"key": "mtu", "type": "int"},
         "interfaces": {"key": "interfaces", "type": "[str]"},
     }
 
-    def __init__(self, *, mtu: int = 1500, port_count: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(self, *, mtu: int = 1500, interfaces: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
-        :keyword port_count: Number of ports connected between PE/CE. Maximum value depends on
-         FabricSKU.
-        :paramtype port_count: int
         :keyword mtu: MTU of the packets between PE & CE.
         :paramtype mtu: int
+        :keyword interfaces: List of network device interfaces resource IDs.
+        :paramtype interfaces: list[str]
         """
         super().__init__(**kwargs)
-        self.port_count = port_count
         self.mtu = mtu
-        self.interfaces = None
-
-
-class Layer3Configuration(Layer3IpPrefixProperties):
-    """layer3Configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar primary_ipv4_prefix: IPv4 Address Prefix of CE-PE interconnect links. Example:
-     172.31.0.0/31. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
-    :vartype primary_ipv4_prefix: str
-    :ivar primary_ipv6_prefix: IPv6 Address Prefix of CE-PE interconnect links. Example:
-     3FFE:FFFF:0:CD30::a0/126. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
-    :vartype primary_ipv6_prefix: str
-    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix of CE-PE interconnect links.
-     Example: 172.31.0.20/31. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
-    :vartype secondary_ipv4_prefix: str
-    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix of CE-PE interconnect links.
-     Example: 3FFE:FFFF:0:CD30::a4/126. The values can be specified at the time of creation or can
-     be updated afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st
-     and 3rd IPs are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs
-     are to be configured on PE1 and PE2 for Option B interfaces.
-    :vartype secondary_ipv6_prefix: str
-    :ivar import_route_policy_id: importRoutePolicyId.
-    :vartype import_route_policy_id: str
-    :ivar export_route_policy_id: exportRoutePolicyId.
-    :vartype export_route_policy_id: str
-    :ivar peer_asn: ASN of PE devices for CE/PE connectivity.Example : 28.
-    :vartype peer_asn: int
-    :ivar vlan_id: VLAN for CE/PE Layer 3 connectivity.Example : 501.
-    :vartype vlan_id: int
-    :ivar fabric_asn: ASN of CE devices for CE/PE connectivity.
-    :vartype fabric_asn: int
-    """
-
-    _validation = {
-        "peer_asn": {"maximum": 65535, "minimum": 1},
-        "vlan_id": {"maximum": 4095, "minimum": 501},
-        "fabric_asn": {"readonly": True, "maximum": 65535, "minimum": 1},
-    }
-
-    _attribute_map = {
-        "primary_ipv4_prefix": {"key": "primaryIpv4Prefix", "type": "str"},
-        "primary_ipv6_prefix": {"key": "primaryIpv6Prefix", "type": "str"},
-        "secondary_ipv4_prefix": {"key": "secondaryIpv4Prefix", "type": "str"},
-        "secondary_ipv6_prefix": {"key": "secondaryIpv6Prefix", "type": "str"},
-        "import_route_policy_id": {"key": "importRoutePolicyId", "type": "str"},
-        "export_route_policy_id": {"key": "exportRoutePolicyId", "type": "str"},
-        "peer_asn": {"key": "peerASN", "type": "int"},
-        "vlan_id": {"key": "vlanId", "type": "int"},
-        "fabric_asn": {"key": "fabricASN", "type": "int"},
-    }
-
-    def __init__(
-        self,
-        *,
-        primary_ipv4_prefix: Optional[str] = None,
-        primary_ipv6_prefix: Optional[str] = None,
-        secondary_ipv4_prefix: Optional[str] = None,
-        secondary_ipv6_prefix: Optional[str] = None,
-        import_route_policy_id: Optional[str] = None,
-        export_route_policy_id: Optional[str] = None,
-        peer_asn: Optional[int] = None,
-        vlan_id: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword primary_ipv4_prefix: IPv4 Address Prefix of CE-PE interconnect links. Example:
-         172.31.0.0/31. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
-        :paramtype primary_ipv4_prefix: str
-        :keyword primary_ipv6_prefix: IPv6 Address Prefix of CE-PE interconnect links. Example:
-         3FFE:FFFF:0:CD30::a0/126. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
-        :paramtype primary_ipv6_prefix: str
-        :keyword secondary_ipv4_prefix: Secondary IPv4 Address Prefix of CE-PE interconnect links.
-         Example: 172.31.0.20/31. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
-        :paramtype secondary_ipv4_prefix: str
-        :keyword secondary_ipv6_prefix: Secondary IPv6 Address Prefix of CE-PE interconnect links.
-         Example: 3FFE:FFFF:0:CD30::a4/126. The values can be specified at the time of creation or can
-         be updated afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st
-         and 3rd IPs are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs
-         are to be configured on PE1 and PE2 for Option B interfaces.
-        :paramtype secondary_ipv6_prefix: str
-        :keyword import_route_policy_id: importRoutePolicyId.
-        :paramtype import_route_policy_id: str
-        :keyword export_route_policy_id: exportRoutePolicyId.
-        :paramtype export_route_policy_id: str
-        :keyword peer_asn: ASN of PE devices for CE/PE connectivity.Example : 28.
-        :paramtype peer_asn: int
-        :keyword vlan_id: VLAN for CE/PE Layer 3 connectivity.Example : 501.
-        :paramtype vlan_id: int
-        """
-        super().__init__(
-            primary_ipv4_prefix=primary_ipv4_prefix,
-            primary_ipv6_prefix=primary_ipv6_prefix,
-            secondary_ipv4_prefix=secondary_ipv4_prefix,
-            secondary_ipv6_prefix=secondary_ipv6_prefix,
-            **kwargs
-        )
-        self.import_route_policy_id = import_route_policy_id
-        self.export_route_policy_id = export_route_policy_id
-        self.peer_asn = peer_asn
-        self.vlan_id = vlan_id
-        self.fabric_asn = None
+        self.interfaces = interfaces
 
 
 class ManagedResourceGroupConfiguration(_serialization.Model):
@@ -4635,15 +6458,57 @@ class ManagedResourceGroupConfiguration(_serialization.Model):
         self.location = location
 
 
-class ManagementNetworkConfiguration(_serialization.Model):
+class ManagementNetworkConfigurationPatchableProperties(_serialization.Model):
+    """Configuration to be used to setup the management network.
+
+    :ivar infrastructure_vpn_configuration: VPN Configuration properties.
+    :vartype infrastructure_vpn_configuration:
+     ~azure.mgmt.managednetworkfabric.models.VpnConfigurationPatchableProperties
+    :ivar workload_vpn_configuration: VPN Configuration properties.
+    :vartype workload_vpn_configuration:
+     ~azure.mgmt.managednetworkfabric.models.VpnConfigurationPatchableProperties
+    """
+
+    _attribute_map = {
+        "infrastructure_vpn_configuration": {
+            "key": "infrastructureVpnConfiguration",
+            "type": "VpnConfigurationPatchableProperties",
+        },
+        "workload_vpn_configuration": {
+            "key": "workloadVpnConfiguration",
+            "type": "VpnConfigurationPatchableProperties",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        infrastructure_vpn_configuration: Optional["_models.VpnConfigurationPatchableProperties"] = None,
+        workload_vpn_configuration: Optional["_models.VpnConfigurationPatchableProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword infrastructure_vpn_configuration: VPN Configuration properties.
+        :paramtype infrastructure_vpn_configuration:
+         ~azure.mgmt.managednetworkfabric.models.VpnConfigurationPatchableProperties
+        :keyword workload_vpn_configuration: VPN Configuration properties.
+        :paramtype workload_vpn_configuration:
+         ~azure.mgmt.managednetworkfabric.models.VpnConfigurationPatchableProperties
+        """
+        super().__init__(**kwargs)
+        self.infrastructure_vpn_configuration = infrastructure_vpn_configuration
+        self.workload_vpn_configuration = workload_vpn_configuration
+
+
+class ManagementNetworkConfigurationProperties(_serialization.Model):
     """Configuration to be used to setup the management network.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar infrastructure_vpn_configuration: Configuration for infrastructure vpn. Required.
+    :ivar infrastructure_vpn_configuration: VPN Configuration properties. Required.
     :vartype infrastructure_vpn_configuration:
      ~azure.mgmt.managednetworkfabric.models.VpnConfigurationProperties
-    :ivar workload_vpn_configuration: Configuration for workload vpn. Required.
+    :ivar workload_vpn_configuration: VPN Configuration properties. Required.
     :vartype workload_vpn_configuration:
      ~azure.mgmt.managednetworkfabric.models.VpnConfigurationProperties
     """
@@ -4669,10 +6534,10 @@ class ManagementNetworkConfiguration(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword infrastructure_vpn_configuration: Configuration for infrastructure vpn. Required.
+        :keyword infrastructure_vpn_configuration: VPN Configuration properties. Required.
         :paramtype infrastructure_vpn_configuration:
          ~azure.mgmt.managednetworkfabric.models.VpnConfigurationProperties
-        :keyword workload_vpn_configuration: Configuration for workload vpn. Required.
+        :keyword workload_vpn_configuration: VPN Configuration properties. Required.
         :paramtype workload_vpn_configuration:
          ~azure.mgmt.managednetworkfabric.models.VpnConfigurationProperties
         """
@@ -4688,17 +6553,20 @@ class NeighborAddress(_serialization.Model):
 
     :ivar address: IP Address.
     :vartype address: str
-    :ivar operational_state: OperationalState of the NeighborAddress.
-    :vartype operational_state: str
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     """
 
     _validation = {
-        "operational_state": {"readonly": True},
+        "address": {"min_length": 1},
+        "configuration_state": {"readonly": True},
     }
 
     _attribute_map = {
         "address": {"key": "address", "type": "str"},
-        "operational_state": {"key": "operationalState", "type": "str"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
     }
 
     def __init__(self, *, address: Optional[str] = None, **kwargs: Any) -> None:
@@ -4708,18 +6576,18 @@ class NeighborAddress(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.address = address
-        self.operational_state = None
+        self.configuration_state = None
 
 
-class NetworkDevice(TrackedResource):  # pylint: disable=too-many-instance-attributes
-    """The NetworkDevice resource definition.
+class NeighborGroup(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """Defines the Neighbor Group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4735,24 +6603,15 @@ class NetworkDevice(TrackedResource):  # pylint: disable=too-many-instance-attri
     :vartype location: str
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar host_name: The host Name of the device.
-    :vartype host_name: str
-    :ivar serial_number: serialNumber of the format Make;Model;HardwareRevisionId;SerialNumber.
-     Example: Arista;DCS-7280DR3-24;12.05;JPE21116969.
-    :vartype serial_number: str
-    :ivar version: Current version of the device as defined in SKU.
-    :vartype version: str
-    :ivar network_device_sku: Network Device SKU name.
-    :vartype network_device_sku: str
-    :ivar network_device_role: networkDeviceRole is the device role: Example: CE | ToR. Known
-     values are: "CE", "ToR", "NPB", "TS", and "Management".
-    :vartype network_device_role: str or
-     ~azure.mgmt.managednetworkfabric.models.NetworkDeviceRoleTypes
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar destination: An array of destination IPv4 Addresses or IPv6 Addresses.
+    :vartype destination: ~azure.mgmt.managednetworkfabric.models.NeighborGroupDestination
+    :ivar network_tap_ids: List of NetworkTap IDs where neighbor group is associated.
+    :vartype network_tap_ids: list[str]
+    :ivar network_tap_rule_ids: List of Network Tap Rule IDs where neighbor group is associated.
+    :vartype network_tap_rule_ids: list[str]
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
-    :ivar network_rack_id: Reference to network rack resource id.
-    :vartype network_rack_id: str
     """
 
     _validation = {
@@ -4761,9 +6620,327 @@ class NetworkDevice(TrackedResource):  # pylint: disable=too-many-instance-attri
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
-        "version": {"readonly": True},
+        "network_tap_ids": {"readonly": True},
+        "network_tap_rule_ids": {"readonly": True},
         "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "annotation": {"key": "properties.annotation", "type": "str"},
+        "destination": {"key": "properties.destination", "type": "NeighborGroupDestination"},
+        "network_tap_ids": {"key": "properties.networkTapIds", "type": "[str]"},
+        "network_tap_rule_ids": {"key": "properties.networkTapRuleIds", "type": "[str]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        annotation: Optional[str] = None,
+        destination: Optional["_models.NeighborGroupDestination"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword destination: An array of destination IPv4 Addresses or IPv6 Addresses.
+        :paramtype destination: ~azure.mgmt.managednetworkfabric.models.NeighborGroupDestination
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.annotation = annotation
+        self.destination = destination
+        self.network_tap_ids = None
+        self.network_tap_rule_ids = None
+        self.provisioning_state = None
+
+
+class NeighborGroupDestination(_serialization.Model):
+    """An array of destination IPv4 Addresses or IPv6 Addresses.
+
+    :ivar ipv4_addresses: Array of IPv4 Addresses.
+    :vartype ipv4_addresses: list[str]
+    :ivar ipv6_addresses: Array of IPv6 Addresses.
+    :vartype ipv6_addresses: list[str]
+    """
+
+    _validation = {
+        "ipv4_addresses": {"max_items": 16, "min_items": 0},
+        "ipv6_addresses": {"max_items": 16, "min_items": 0},
+    }
+
+    _attribute_map = {
+        "ipv4_addresses": {"key": "ipv4Addresses", "type": "[str]"},
+        "ipv6_addresses": {"key": "ipv6Addresses", "type": "[str]"},
+    }
+
+    def __init__(
+        self, *, ipv4_addresses: Optional[List[str]] = None, ipv6_addresses: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword ipv4_addresses: Array of IPv4 Addresses.
+        :paramtype ipv4_addresses: list[str]
+        :keyword ipv6_addresses: Array of IPv6 Addresses.
+        :paramtype ipv6_addresses: list[str]
+        """
+        super().__init__(**kwargs)
+        self.ipv4_addresses = ipv4_addresses
+        self.ipv6_addresses = ipv6_addresses
+
+
+class NeighborGroupPatch(TagsUpdate):
+    """The Neighbor Group Patch definition.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar destination: An array of destination IPv4 Addresses or IPv6 Addresses.
+    :vartype destination: ~azure.mgmt.managednetworkfabric.models.NeighborGroupDestination
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "annotation": {"key": "properties.annotation", "type": "str"},
+        "destination": {"key": "properties.destination", "type": "NeighborGroupDestination"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        annotation: Optional[str] = None,
+        destination: Optional["_models.NeighborGroupDestination"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword destination: An array of destination IPv4 Addresses or IPv6 Addresses.
+        :paramtype destination: ~azure.mgmt.managednetworkfabric.models.NeighborGroupDestination
+        """
+        super().__init__(tags=tags, **kwargs)
+        self.annotation = annotation
+        self.destination = destination
+
+
+class NeighborGroupPatchableProperties(_serialization.Model):
+    """Neighbor Group Patchable Properties defines the patchable properties of the resource.
+
+    :ivar destination: An array of destination IPv4 Addresses or IPv6 Addresses.
+    :vartype destination: ~azure.mgmt.managednetworkfabric.models.NeighborGroupDestination
+    """
+
+    _attribute_map = {
+        "destination": {"key": "destination", "type": "NeighborGroupDestination"},
+    }
+
+    def __init__(self, *, destination: Optional["_models.NeighborGroupDestination"] = None, **kwargs: Any) -> None:
+        """
+        :keyword destination: An array of destination IPv4 Addresses or IPv6 Addresses.
+        :paramtype destination: ~azure.mgmt.managednetworkfabric.models.NeighborGroupDestination
+        """
+        super().__init__(**kwargs)
+        self.destination = destination
+
+
+class NeighborGroupPatchProperties(AnnotationResource, NeighborGroupPatchableProperties):
+    """Neighbor Group Patch properties.
+
+    :ivar destination: An array of destination IPv4 Addresses or IPv6 Addresses.
+    :vartype destination: ~azure.mgmt.managednetworkfabric.models.NeighborGroupDestination
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    """
+
+    _attribute_map = {
+        "destination": {"key": "destination", "type": "NeighborGroupDestination"},
+        "annotation": {"key": "annotation", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        destination: Optional["_models.NeighborGroupDestination"] = None,
+        annotation: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword destination: An array of destination IPv4 Addresses or IPv6 Addresses.
+        :paramtype destination: ~azure.mgmt.managednetworkfabric.models.NeighborGroupDestination
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        """
+        super().__init__(annotation=annotation, destination=destination, **kwargs)
+        self.destination = destination
+        self.annotation = annotation
+
+
+class NeighborGroupProperties(AnnotationResource, NeighborGroupPatchableProperties):
+    """Neighbor Group Properties defines the properties of the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar destination: An array of destination IPv4 Addresses or IPv6 Addresses.
+    :vartype destination: ~azure.mgmt.managednetworkfabric.models.NeighborGroupDestination
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar network_tap_ids: List of NetworkTap IDs where neighbor group is associated.
+    :vartype network_tap_ids: list[str]
+    :ivar network_tap_rule_ids: List of Network Tap Rule IDs where neighbor group is associated.
+    :vartype network_tap_rule_ids: list[str]
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    """
+
+    _validation = {
+        "network_tap_ids": {"readonly": True},
+        "network_tap_rule_ids": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "destination": {"key": "destination", "type": "NeighborGroupDestination"},
+        "annotation": {"key": "annotation", "type": "str"},
+        "network_tap_ids": {"key": "networkTapIds", "type": "[str]"},
+        "network_tap_rule_ids": {"key": "networkTapRuleIds", "type": "[str]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        destination: Optional["_models.NeighborGroupDestination"] = None,
+        annotation: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword destination: An array of destination IPv4 Addresses or IPv6 Addresses.
+        :paramtype destination: ~azure.mgmt.managednetworkfabric.models.NeighborGroupDestination
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        """
+        super().__init__(annotation=annotation, destination=destination, **kwargs)
+        self.destination = destination
+        self.network_tap_ids = None
+        self.network_tap_rule_ids = None
+        self.provisioning_state = None
+        self.annotation = annotation
+
+
+class NeighborGroupsListResult(_serialization.Model):
+    """List of Neighbor Group.
+
+    :ivar value: List of Neighbor Group resources.
+    :vartype value: list[~azure.mgmt.managednetworkfabric.models.NeighborGroup]
+    :ivar next_link: Url to follow for getting next page of resources.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[NeighborGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.NeighborGroup"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of Neighbor Group resources.
+        :paramtype value: list[~azure.mgmt.managednetworkfabric.models.NeighborGroup]
+        :keyword next_link: Url to follow for getting next page of resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class NetworkDevice(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The Network Device resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.managednetworkfabric.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar host_name: The host name of the device.
+    :vartype host_name: str
+    :ivar serial_number: Serial number of the device. Format of serial Number -
+     Make;Model;HardwareRevisionId;SerialNumber.
+    :vartype serial_number: str
+    :ivar version: Current version of the device as defined in SKU.
+    :vartype version: str
+    :ivar network_device_sku: Network Device SKU name.
+    :vartype network_device_sku: str
+    :ivar network_device_role: NetworkDeviceRole is the device role: Example: CE | ToR. Known
+     values are: "CE", "ToR", "NPB", "TS", and "Management".
+    :vartype network_device_role: str or ~azure.mgmt.managednetworkfabric.models.NetworkDeviceRole
+    :ivar network_rack_id: Reference to network rack resource id.
+    :vartype network_rack_id: str
+    :ivar management_ipv4_address: Management IPv4 Address.
+    :vartype management_ipv4_address: str
+    :ivar management_ipv6_address: Management IPv6 Address.
+    :vartype management_ipv6_address: str
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "host_name": {"min_length": 1},
+        "serial_number": {"min_length": 1},
+        "version": {"readonly": True},
+        "network_device_role": {"readonly": True},
         "network_rack_id": {"readonly": True},
+        "management_ipv4_address": {"readonly": True},
+        "management_ipv6_address": {"readonly": True},
+        "configuration_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4779,8 +6956,12 @@ class NetworkDevice(TrackedResource):  # pylint: disable=too-many-instance-attri
         "version": {"key": "properties.version", "type": "str"},
         "network_device_sku": {"key": "properties.networkDeviceSku", "type": "str"},
         "network_device_role": {"key": "properties.networkDeviceRole", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "network_rack_id": {"key": "properties.networkRackId", "type": "str"},
+        "management_ipv4_address": {"key": "properties.managementIpv4Address", "type": "str"},
+        "management_ipv6_address": {"key": "properties.managementIpv6Address", "type": "str"},
+        "configuration_state": {"key": "properties.configurationState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
     }
 
     def __init__(
@@ -4792,7 +6973,6 @@ class NetworkDevice(TrackedResource):  # pylint: disable=too-many-instance-attri
         host_name: Optional[str] = None,
         serial_number: Optional[str] = None,
         network_device_sku: Optional[str] = None,
-        network_device_role: Optional[Union[str, "_models.NetworkDeviceRoleTypes"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4802,17 +6982,13 @@ class NetworkDevice(TrackedResource):  # pylint: disable=too-many-instance-attri
         :paramtype location: str
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword host_name: The host Name of the device.
+        :keyword host_name: The host name of the device.
         :paramtype host_name: str
-        :keyword serial_number: serialNumber of the format Make;Model;HardwareRevisionId;SerialNumber.
-         Example: Arista;DCS-7280DR3-24;12.05;JPE21116969.
+        :keyword serial_number: Serial number of the device. Format of serial Number -
+         Make;Model;HardwareRevisionId;SerialNumber.
         :paramtype serial_number: str
         :keyword network_device_sku: Network Device SKU name.
         :paramtype network_device_sku: str
-        :keyword network_device_role: networkDeviceRole is the device role: Example: CE | ToR. Known
-         values are: "CE", "ToR", "NPB", "TS", and "Management".
-        :paramtype network_device_role: str or
-         ~azure.mgmt.managednetworkfabric.models.NetworkDeviceRoleTypes
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.annotation = annotation
@@ -4820,20 +6996,29 @@ class NetworkDevice(TrackedResource):  # pylint: disable=too-many-instance-attri
         self.serial_number = serial_number
         self.version = None
         self.network_device_sku = network_device_sku
-        self.network_device_role = network_device_role
-        self.provisioning_state = None
+        self.network_device_role = None
         self.network_rack_id = None
+        self.management_ipv4_address = None
+        self.management_ipv6_address = None
+        self.configuration_state = None
+        self.provisioning_state = None
+        self.administrative_state = None
 
 
 class NetworkDevicePatchableProperties(_serialization.Model):
     """Network Device updatable properties.
 
-    :ivar host_name: The host Name of the device.
+    :ivar host_name: The host name of the device.
     :vartype host_name: str
-    :ivar serial_number: serialNumber of the format Make;Model;HardwareRevisionId;SerialNumber.
-     Example: Arista;DCS-7280DR3-24;12.05;JPE21116969.
+    :ivar serial_number: Serial number of the device. Format of serial Number -
+     Make;Model;HardwareRevisionId;SerialNumber.
     :vartype serial_number: str
     """
+
+    _validation = {
+        "host_name": {"min_length": 1},
+        "serial_number": {"min_length": 1},
+    }
 
     _attribute_map = {
         "host_name": {"key": "hostName", "type": "str"},
@@ -4842,10 +7027,10 @@ class NetworkDevicePatchableProperties(_serialization.Model):
 
     def __init__(self, *, host_name: Optional[str] = None, serial_number: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword host_name: The host Name of the device.
+        :keyword host_name: The host name of the device.
         :paramtype host_name: str
-        :keyword serial_number: serialNumber of the format Make;Model;HardwareRevisionId;SerialNumber.
-         Example: Arista;DCS-7280DR3-24;12.05;JPE21116969.
+        :keyword serial_number: Serial number of the device. Format of serial Number -
+         Make;Model;HardwareRevisionId;SerialNumber.
         :paramtype serial_number: str
         """
         super().__init__(**kwargs)
@@ -4853,19 +7038,24 @@ class NetworkDevicePatchableProperties(_serialization.Model):
         self.serial_number = serial_number
 
 
-class NetworkDevicePatchParameters(_serialization.Model):
-    """The NetworkDevicePatchParameters resource definition.
+class NetworkDevicePatchParameters(TagsUpdate):
+    """The Network Device Patch Parameters defines the patch parameters of the resource.
 
-    :ivar tags: Azure resource tags that will replace the existing ones.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar host_name: The host Name of the device.
+    :ivar host_name: The host name of the device.
     :vartype host_name: str
-    :ivar serial_number: serialNumber of the format Make;Model;HardwareRevisionId;SerialNumber.
-     Example: Arista;DCS-7280DR3-24;12.05;JPE21116969.
+    :ivar serial_number: Serial number of the device. Format of serial Number -
+     Make;Model;HardwareRevisionId;SerialNumber.
     :vartype serial_number: str
     """
+
+    _validation = {
+        "host_name": {"min_length": 1},
+        "serial_number": {"min_length": 1},
+    }
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
@@ -4884,18 +7074,17 @@ class NetworkDevicePatchParameters(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword tags: Azure resource tags that will replace the existing ones.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword host_name: The host Name of the device.
+        :keyword host_name: The host name of the device.
         :paramtype host_name: str
-        :keyword serial_number: serialNumber of the format Make;Model;HardwareRevisionId;SerialNumber.
-         Example: Arista;DCS-7280DR3-24;12.05;JPE21116969.
+        :keyword serial_number: Serial number of the device. Format of serial Number -
+         Make;Model;HardwareRevisionId;SerialNumber.
         :paramtype serial_number: str
         """
-        super().__init__(**kwargs)
-        self.tags = tags
+        super().__init__(tags=tags, **kwargs)
         self.annotation = annotation
         self.host_name = host_name
         self.serial_number = serial_number
@@ -4904,14 +7093,19 @@ class NetworkDevicePatchParameters(_serialization.Model):
 class NetworkDevicePatchParametersProperties(AnnotationResource, NetworkDevicePatchableProperties):
     """Network Device Patch properties.
 
-    :ivar host_name: The host Name of the device.
+    :ivar host_name: The host name of the device.
     :vartype host_name: str
-    :ivar serial_number: serialNumber of the format Make;Model;HardwareRevisionId;SerialNumber.
-     Example: Arista;DCS-7280DR3-24;12.05;JPE21116969.
+    :ivar serial_number: Serial number of the device. Format of serial Number -
+     Make;Model;HardwareRevisionId;SerialNumber.
     :vartype serial_number: str
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
     """
+
+    _validation = {
+        "host_name": {"min_length": 1},
+        "serial_number": {"min_length": 1},
+    }
 
     _attribute_map = {
         "host_name": {"key": "hostName", "type": "str"},
@@ -4928,10 +7122,10 @@ class NetworkDevicePatchParametersProperties(AnnotationResource, NetworkDevicePa
         **kwargs: Any
     ) -> None:
         """
-        :keyword host_name: The host Name of the device.
+        :keyword host_name: The host name of the device.
         :paramtype host_name: str
-        :keyword serial_number: serialNumber of the format Make;Model;HardwareRevisionId;SerialNumber.
-         Example: Arista;DCS-7280DR3-24;12.05;JPE21116969.
+        :keyword serial_number: Serial number of the device. Format of serial Number -
+         Make;Model;HardwareRevisionId;SerialNumber.
         :paramtype serial_number: str
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
@@ -4942,41 +7136,57 @@ class NetworkDevicePatchParametersProperties(AnnotationResource, NetworkDevicePa
         self.annotation = annotation
 
 
-class NetworkDeviceProperties(AnnotationResource, NetworkDevicePatchableProperties):
-    """NetworkDeviceProperties define the resource properties.
+class NetworkDeviceProperties(
+    AnnotationResource, NetworkDevicePatchableProperties
+):  # pylint: disable=too-many-instance-attributes
+    """Network Device Properties defines the properties of the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar host_name: The host Name of the device.
+    :ivar host_name: The host name of the device.
     :vartype host_name: str
-    :ivar serial_number: serialNumber of the format Make;Model;HardwareRevisionId;SerialNumber.
-     Example: Arista;DCS-7280DR3-24;12.05;JPE21116969.
+    :ivar serial_number: Serial number of the device. Format of serial Number -
+     Make;Model;HardwareRevisionId;SerialNumber.
     :vartype serial_number: str
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
     :ivar version: Current version of the device as defined in SKU.
     :vartype version: str
-    :ivar network_device_sku: Network Device SKU name. Required.
+    :ivar network_device_sku: Network Device SKU name.
     :vartype network_device_sku: str
-    :ivar network_device_role: networkDeviceRole is the device role: Example: CE | ToR. Required.
-     Known values are: "CE", "ToR", "NPB", "TS", and "Management".
-    :vartype network_device_role: str or
-     ~azure.mgmt.managednetworkfabric.models.NetworkDeviceRoleTypes
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar network_device_role: NetworkDeviceRole is the device role: Example: CE | ToR. Known
+     values are: "CE", "ToR", "NPB", "TS", and "Management".
+    :vartype network_device_role: str or ~azure.mgmt.managednetworkfabric.models.NetworkDeviceRole
     :ivar network_rack_id: Reference to network rack resource id.
     :vartype network_rack_id: str
+    :ivar management_ipv4_address: Management IPv4 Address.
+    :vartype management_ipv4_address: str
+    :ivar management_ipv6_address: Management IPv6 Address.
+    :vartype management_ipv6_address: str
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
+        "host_name": {"min_length": 1},
+        "serial_number": {"min_length": 1},
         "version": {"readonly": True},
-        "network_device_sku": {"required": True},
-        "network_device_role": {"required": True},
-        "provisioning_state": {"readonly": True},
+        "network_device_role": {"readonly": True},
         "network_rack_id": {"readonly": True},
+        "management_ipv4_address": {"readonly": True},
+        "management_ipv6_address": {"readonly": True},
+        "configuration_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4986,96 +7196,58 @@ class NetworkDeviceProperties(AnnotationResource, NetworkDevicePatchableProperti
         "version": {"key": "version", "type": "str"},
         "network_device_sku": {"key": "networkDeviceSku", "type": "str"},
         "network_device_role": {"key": "networkDeviceRole", "type": "str"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
         "network_rack_id": {"key": "networkRackId", "type": "str"},
+        "management_ipv4_address": {"key": "managementIpv4Address", "type": "str"},
+        "management_ipv6_address": {"key": "managementIpv6Address", "type": "str"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "administrative_state": {"key": "administrativeState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        network_device_sku: str,
-        network_device_role: Union[str, "_models.NetworkDeviceRoleTypes"],
         host_name: Optional[str] = None,
         serial_number: Optional[str] = None,
         annotation: Optional[str] = None,
+        network_device_sku: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword host_name: The host Name of the device.
+        :keyword host_name: The host name of the device.
         :paramtype host_name: str
-        :keyword serial_number: serialNumber of the format Make;Model;HardwareRevisionId;SerialNumber.
-         Example: Arista;DCS-7280DR3-24;12.05;JPE21116969.
+        :keyword serial_number: Serial number of the device. Format of serial Number -
+         Make;Model;HardwareRevisionId;SerialNumber.
         :paramtype serial_number: str
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword network_device_sku: Network Device SKU name. Required.
+        :keyword network_device_sku: Network Device SKU name.
         :paramtype network_device_sku: str
-        :keyword network_device_role: networkDeviceRole is the device role: Example: CE | ToR.
-         Required. Known values are: "CE", "ToR", "NPB", "TS", and "Management".
-        :paramtype network_device_role: str or
-         ~azure.mgmt.managednetworkfabric.models.NetworkDeviceRoleTypes
         """
         super().__init__(annotation=annotation, host_name=host_name, serial_number=serial_number, **kwargs)
         self.host_name = host_name
         self.serial_number = serial_number
         self.version = None
         self.network_device_sku = network_device_sku
-        self.network_device_role = network_device_role
-        self.provisioning_state = None
+        self.network_device_role = None
         self.network_rack_id = None
+        self.management_ipv4_address = None
+        self.management_ipv6_address = None
+        self.configuration_state = None
+        self.provisioning_state = None
+        self.administrative_state = None
         self.annotation = annotation
 
 
-class NetworkDeviceRoleProperties(_serialization.Model):
-    """Network device properties / role for the Network Rack.
-
-    :ivar network_device_sku_name: Name of the associated Network Device SKU.
-    :vartype network_device_sku_name: str
-    :ivar role_type: Role for the network device. Known values are: "CE", "ToR", "NPB", "TS", and
-     "Management".
-    :vartype role_type: str or ~azure.mgmt.managednetworkfabric.models.NetworkDeviceRackRoleType
-    :ivar rack_slot: Rack slot for the network device.
-    :vartype rack_slot: int
-    """
-
-    _attribute_map = {
-        "network_device_sku_name": {"key": "networkDeviceSkuName", "type": "str"},
-        "role_type": {"key": "roleType", "type": "str"},
-        "rack_slot": {"key": "rackSlot", "type": "int"},
-    }
-
-    def __init__(
-        self,
-        *,
-        network_device_sku_name: Optional[str] = None,
-        role_type: Optional[Union[str, "_models.NetworkDeviceRackRoleType"]] = None,
-        rack_slot: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword network_device_sku_name: Name of the associated Network Device SKU.
-        :paramtype network_device_sku_name: str
-        :keyword role_type: Role for the network device. Known values are: "CE", "ToR", "NPB", "TS",
-         and "Management".
-        :paramtype role_type: str or ~azure.mgmt.managednetworkfabric.models.NetworkDeviceRackRoleType
-        :keyword rack_slot: Rack slot for the network device.
-        :paramtype rack_slot: int
-        """
-        super().__init__(**kwargs)
-        self.network_device_sku_name = network_device_sku_name
-        self.role_type = role_type
-        self.rack_slot = rack_slot
-
-
-class NetworkDeviceSku(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class NetworkDeviceSku(ProxyResource):
     """The NetworkDeviceSku resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5089,18 +7261,16 @@ class NetworkDeviceSku(ProxyResource):  # pylint: disable=too-many-instance-attr
     :vartype model: str
     :ivar manufacturer: Manufacturer of the network device.
     :vartype manufacturer: str
-    :ivar supported_versions: List of network device interfaces.
+    :ivar supported_versions: List of supported version details of network device.
     :vartype supported_versions:
      list[~azure.mgmt.managednetworkfabric.models.SupportedVersionProperties]
-    :ivar limits: Network device limits.
-    :vartype limits: ~azure.mgmt.managednetworkfabric.models.DeviceLimits
     :ivar supported_role_types: Available roles for the network device.
     :vartype supported_role_types: list[str or
      ~azure.mgmt.managednetworkfabric.models.NetworkDeviceRoleName]
     :ivar interfaces: List of network device interfaces.
     :vartype interfaces: list[~azure.mgmt.managednetworkfabric.models.DeviceInterfaceProperties]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
     """
 
@@ -5121,7 +7291,6 @@ class NetworkDeviceSku(ProxyResource):  # pylint: disable=too-many-instance-attr
         "model": {"key": "properties.model", "type": "str"},
         "manufacturer": {"key": "properties.manufacturer", "type": "str"},
         "supported_versions": {"key": "properties.supportedVersions", "type": "[SupportedVersionProperties]"},
-        "limits": {"key": "properties.limits", "type": "DeviceLimits"},
         "supported_role_types": {"key": "properties.supportedRoleTypes", "type": "[str]"},
         "interfaces": {"key": "properties.interfaces", "type": "[DeviceInterfaceProperties]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
@@ -5133,7 +7302,6 @@ class NetworkDeviceSku(ProxyResource):  # pylint: disable=too-many-instance-attr
         model: str,
         manufacturer: Optional[str] = None,
         supported_versions: Optional[List["_models.SupportedVersionProperties"]] = None,
-        limits: Optional["_models.DeviceLimits"] = None,
         supported_role_types: Optional[List[Union[str, "_models.NetworkDeviceRoleName"]]] = None,
         interfaces: Optional[List["_models.DeviceInterfaceProperties"]] = None,
         **kwargs: Any
@@ -5143,11 +7311,9 @@ class NetworkDeviceSku(ProxyResource):  # pylint: disable=too-many-instance-attr
         :paramtype model: str
         :keyword manufacturer: Manufacturer of the network device.
         :paramtype manufacturer: str
-        :keyword supported_versions: List of network device interfaces.
+        :keyword supported_versions: List of supported version details of network device.
         :paramtype supported_versions:
          list[~azure.mgmt.managednetworkfabric.models.SupportedVersionProperties]
-        :keyword limits: Network device limits.
-        :paramtype limits: ~azure.mgmt.managednetworkfabric.models.DeviceLimits
         :keyword supported_role_types: Available roles for the network device.
         :paramtype supported_role_types: list[str or
          ~azure.mgmt.managednetworkfabric.models.NetworkDeviceRoleName]
@@ -5158,16 +7324,15 @@ class NetworkDeviceSku(ProxyResource):  # pylint: disable=too-many-instance-attr
         self.model = model
         self.manufacturer = manufacturer
         self.supported_versions = supported_versions
-        self.limits = limits
         self.supported_role_types = supported_role_types
         self.interfaces = interfaces
         self.provisioning_state = None
 
 
 class NetworkDeviceSkusListResult(_serialization.Model):
-    """List of NetworkDeviceSkus.
+    """List of Network Device SKUs.
 
-    :ivar value: List of NetworkDeviceSku resources.
+    :ivar value: List of Network Device SKU resources.
     :vartype value: list[~azure.mgmt.managednetworkfabric.models.NetworkDeviceSku]
     :ivar next_link: Url to follow for getting next page of resources.
     :vartype next_link: str
@@ -5186,7 +7351,7 @@ class NetworkDeviceSkusListResult(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword value: List of NetworkDeviceSku resources.
+        :keyword value: List of Network Device SKU resources.
         :paramtype value: list[~azure.mgmt.managednetworkfabric.models.NetworkDeviceSku]
         :keyword next_link: Url to follow for getting next page of resources.
         :paramtype next_link: str
@@ -5225,14 +7390,14 @@ class NetworkDevicesListResult(_serialization.Model):
 
 
 class NetworkFabric(TrackedResource):  # pylint: disable=too-many-instance-attributes
-    """The NetworkFabric resource definition.
+    """The Network Fabric resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5248,48 +7413,55 @@ class NetworkFabric(TrackedResource):  # pylint: disable=too-many-instance-attri
     :vartype location: str
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar racks: List of NetworkRack resource IDs under the Network Fabric. The number of racks
-     allowed depends on the Network Fabric SKU.
-    :vartype racks: list[str]
-    :ivar l2_isolation_domains: List of L2IsolationDomain resource IDs under the Network Fabric.
-    :vartype l2_isolation_domains: list[str]
-    :ivar l3_isolation_domains: List of L3IsolationDomain resource IDs under the Network Fabric.
-    :vartype l3_isolation_domains: list[str]
     :ivar network_fabric_sku: Supported Network Fabric SKU.Example: Compute / Aggregate racks. Once
      the user chooses a particular SKU, only supported racks can be added to the Network Fabric. The
-     SKU determines whether it is a single / multi rack Network Fabric.
+     SKU determines whether it is a single / multi rack Network Fabric. Required.
     :vartype network_fabric_sku: str
-    :ivar rack_count: Number of racks associated to Network Fabric.Possible values are from 2-8.
+    :ivar fabric_version: The version of Network Fabric.
+    :vartype fabric_version: str
+    :ivar router_ids: Array of router IDs.
+    :vartype router_ids: list[str]
+    :ivar network_fabric_controller_id: Azure resource ID for the NetworkFabricController the
+     NetworkFabric belongs. Required.
+    :vartype network_fabric_controller_id: str
+    :ivar rack_count: Number of compute racks associated to Network Fabric.
     :vartype rack_count: int
-    :ivar server_count_per_rack: Number of servers.Possible values are from 1-16.
+    :ivar server_count_per_rack: Number of servers.Possible values are from 1-16. Required.
     :vartype server_count_per_rack: int
-    :ivar ipv4_prefix: IPv4Prefix for Management Network. Example: 10.1.0.0/19.
+    :ivar ipv4_prefix: IPv4Prefix for Management Network. Example: 10.1.0.0/19. Required.
     :vartype ipv4_prefix: str
     :ivar ipv6_prefix: IPv6Prefix for Management Network. Example: 3FFE:FFFF:0:CD40::/59.
     :vartype ipv6_prefix: str
-    :ivar router_id: Router Id of CE to be used for MP-BGP between PE and CE.
-    :vartype router_id: str
-    :ivar fabric_asn: ASN of CE devices for CE/PE connectivity.
+    :ivar fabric_asn: ASN of CE devices for CE/PE connectivity. Required.
     :vartype fabric_asn: int
-    :ivar network_fabric_controller_id: Azure resource ID for the NetworkFabricController the
-     NetworkFabric belongs.
-    :vartype network_fabric_controller_id: str
     :ivar terminal_server_configuration: Network and credentials configuration currently applied to
-     terminal server.
+     terminal server. Required.
     :vartype terminal_server_configuration:
      ~azure.mgmt.managednetworkfabric.models.TerminalServerConfiguration
     :ivar management_network_configuration: Configuration to be used to setup the management
-     network.
+     network. Required.
     :vartype management_network_configuration:
-     ~azure.mgmt.managednetworkfabric.models.ManagementNetworkConfiguration
-    :ivar operational_state: Gets the operational state of the resource. Known values are:
-     "Provisioning", "Provisioned", "ErrorProvisioning", "Deprovisioning", "Deprovisioned",
-     "ErrorDeprovisioning", and "DeferredControl".
-    :vartype operational_state: str or
-     ~azure.mgmt.managednetworkfabric.models.NetworkFabricOperationalState
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+     ~azure.mgmt.managednetworkfabric.models.ManagementNetworkConfigurationProperties
+    :ivar racks: List of NetworkRack resource IDs under the Network Fabric. The number of racks
+     allowed depends on the Network Fabric SKU.
+    :vartype racks: list[str]
+    :ivar l2_isolation_domains: List of L2 Isolation Domain resource IDs under the Network Fabric.
+    :vartype l2_isolation_domains: list[str]
+    :ivar l3_isolation_domains: List of L3 Isolation Domain resource IDs under the Network Fabric.
+    :vartype l3_isolation_domains: list[str]
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provides you the latest status of the NFC service, whether it is
+     Accepted, updating, Succeeded or Failed. During this process, the states keep changing based on
+     the status of NFC provisioning. Known values are: "Accepted", "Succeeded", "Updating",
+     "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
@@ -5298,15 +7470,23 @@ class NetworkFabric(TrackedResource):  # pylint: disable=too-many-instance-attri
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
+        "network_fabric_sku": {"required": True, "min_length": 1},
+        "fabric_version": {"readonly": True},
+        "router_ids": {"readonly": True},
+        "network_fabric_controller_id": {"required": True},
+        "rack_count": {"maximum": 8, "minimum": 1},
+        "server_count_per_rack": {"required": True, "maximum": 16, "minimum": 1},
+        "ipv4_prefix": {"required": True, "min_length": 1},
+        "ipv6_prefix": {"min_length": 1},
+        "fabric_asn": {"required": True, "maximum": 4294967295, "minimum": 1},
+        "terminal_server_configuration": {"required": True},
+        "management_network_configuration": {"required": True},
         "racks": {"readonly": True},
         "l2_isolation_domains": {"readonly": True},
         "l3_isolation_domains": {"readonly": True},
-        "rack_count": {"maximum": 8, "minimum": 2},
-        "server_count_per_rack": {"maximum": 16, "minimum": 1},
-        "router_id": {"readonly": True},
-        "fabric_asn": {"maximum": 65535, "minimum": 1},
-        "operational_state": {"readonly": True},
+        "configuration_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -5317,44 +7497,46 @@ class NetworkFabric(TrackedResource):  # pylint: disable=too-many-instance-attri
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "annotation": {"key": "properties.annotation", "type": "str"},
-        "racks": {"key": "properties.racks", "type": "[str]"},
-        "l2_isolation_domains": {"key": "properties.l2IsolationDomains", "type": "[str]"},
-        "l3_isolation_domains": {"key": "properties.l3IsolationDomains", "type": "[str]"},
         "network_fabric_sku": {"key": "properties.networkFabricSku", "type": "str"},
+        "fabric_version": {"key": "properties.fabricVersion", "type": "str"},
+        "router_ids": {"key": "properties.routerIds", "type": "[str]"},
+        "network_fabric_controller_id": {"key": "properties.networkFabricControllerId", "type": "str"},
         "rack_count": {"key": "properties.rackCount", "type": "int"},
         "server_count_per_rack": {"key": "properties.serverCountPerRack", "type": "int"},
         "ipv4_prefix": {"key": "properties.ipv4Prefix", "type": "str"},
         "ipv6_prefix": {"key": "properties.ipv6Prefix", "type": "str"},
-        "router_id": {"key": "properties.routerId", "type": "str"},
         "fabric_asn": {"key": "properties.fabricASN", "type": "int"},
-        "network_fabric_controller_id": {"key": "properties.networkFabricControllerId", "type": "str"},
         "terminal_server_configuration": {
             "key": "properties.terminalServerConfiguration",
             "type": "TerminalServerConfiguration",
         },
         "management_network_configuration": {
             "key": "properties.managementNetworkConfiguration",
-            "type": "ManagementNetworkConfiguration",
+            "type": "ManagementNetworkConfigurationProperties",
         },
-        "operational_state": {"key": "properties.operationalState", "type": "str"},
+        "racks": {"key": "properties.racks", "type": "[str]"},
+        "l2_isolation_domains": {"key": "properties.l2IsolationDomains", "type": "[str]"},
+        "l3_isolation_domains": {"key": "properties.l3IsolationDomains", "type": "[str]"},
+        "configuration_state": {"key": "properties.configurationState", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
+        network_fabric_sku: str,
+        network_fabric_controller_id: str,
+        server_count_per_rack: int,
+        ipv4_prefix: str,
+        fabric_asn: int,
+        terminal_server_configuration: "_models.TerminalServerConfiguration",
+        management_network_configuration: "_models.ManagementNetworkConfigurationProperties",
         tags: Optional[Dict[str, str]] = None,
         annotation: Optional[str] = None,
-        network_fabric_sku: Optional[str] = None,
         rack_count: Optional[int] = None,
-        server_count_per_rack: Optional[int] = None,
-        ipv4_prefix: Optional[str] = None,
         ipv6_prefix: Optional[str] = None,
-        fabric_asn: Optional[int] = None,
-        network_fabric_controller_id: Optional[str] = None,
-        terminal_server_configuration: Optional["_models.TerminalServerConfiguration"] = None,
-        management_network_configuration: Optional["_models.ManagementNetworkConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5366,58 +7548,60 @@ class NetworkFabric(TrackedResource):  # pylint: disable=too-many-instance-attri
         :paramtype annotation: str
         :keyword network_fabric_sku: Supported Network Fabric SKU.Example: Compute / Aggregate racks.
          Once the user chooses a particular SKU, only supported racks can be added to the Network
-         Fabric. The SKU determines whether it is a single / multi rack Network Fabric.
+         Fabric. The SKU determines whether it is a single / multi rack Network Fabric. Required.
         :paramtype network_fabric_sku: str
-        :keyword rack_count: Number of racks associated to Network Fabric.Possible values are from 2-8.
+        :keyword network_fabric_controller_id: Azure resource ID for the NetworkFabricController the
+         NetworkFabric belongs. Required.
+        :paramtype network_fabric_controller_id: str
+        :keyword rack_count: Number of compute racks associated to Network Fabric.
         :paramtype rack_count: int
-        :keyword server_count_per_rack: Number of servers.Possible values are from 1-16.
+        :keyword server_count_per_rack: Number of servers.Possible values are from 1-16. Required.
         :paramtype server_count_per_rack: int
-        :keyword ipv4_prefix: IPv4Prefix for Management Network. Example: 10.1.0.0/19.
+        :keyword ipv4_prefix: IPv4Prefix for Management Network. Example: 10.1.0.0/19. Required.
         :paramtype ipv4_prefix: str
         :keyword ipv6_prefix: IPv6Prefix for Management Network. Example: 3FFE:FFFF:0:CD40::/59.
         :paramtype ipv6_prefix: str
-        :keyword fabric_asn: ASN of CE devices for CE/PE connectivity.
+        :keyword fabric_asn: ASN of CE devices for CE/PE connectivity. Required.
         :paramtype fabric_asn: int
-        :keyword network_fabric_controller_id: Azure resource ID for the NetworkFabricController the
-         NetworkFabric belongs.
-        :paramtype network_fabric_controller_id: str
         :keyword terminal_server_configuration: Network and credentials configuration currently applied
-         to terminal server.
+         to terminal server. Required.
         :paramtype terminal_server_configuration:
          ~azure.mgmt.managednetworkfabric.models.TerminalServerConfiguration
         :keyword management_network_configuration: Configuration to be used to setup the management
-         network.
+         network. Required.
         :paramtype management_network_configuration:
-         ~azure.mgmt.managednetworkfabric.models.ManagementNetworkConfiguration
+         ~azure.mgmt.managednetworkfabric.models.ManagementNetworkConfigurationProperties
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.annotation = annotation
-        self.racks = None
-        self.l2_isolation_domains = None
-        self.l3_isolation_domains = None
         self.network_fabric_sku = network_fabric_sku
+        self.fabric_version = None
+        self.router_ids = None
+        self.network_fabric_controller_id = network_fabric_controller_id
         self.rack_count = rack_count
         self.server_count_per_rack = server_count_per_rack
         self.ipv4_prefix = ipv4_prefix
         self.ipv6_prefix = ipv6_prefix
-        self.router_id = None
         self.fabric_asn = fabric_asn
-        self.network_fabric_controller_id = network_fabric_controller_id
         self.terminal_server_configuration = terminal_server_configuration
         self.management_network_configuration = management_network_configuration
-        self.operational_state = None
+        self.racks = None
+        self.l2_isolation_domains = None
+        self.l3_isolation_domains = None
+        self.configuration_state = None
         self.provisioning_state = None
+        self.administrative_state = None
 
 
 class NetworkFabricController(TrackedResource):  # pylint: disable=too-many-instance-attributes
-    """The NetworkFabricController resource definition.
+    """The Network Fabric Controller resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5444,10 +7628,9 @@ class NetworkFabricController(TrackedResource):  # pylint: disable=too-many-inst
     :vartype workload_express_route_connections:
      list[~azure.mgmt.managednetworkfabric.models.ExpressRouteConnectionInformation]
     :ivar infrastructure_services: InfrastructureServices IP ranges.
-    :vartype infrastructure_services:
-     ~azure.mgmt.managednetworkfabric.models.InfrastructureServices
+    :vartype infrastructure_services: ~azure.mgmt.managednetworkfabric.models.ControllerServices
     :ivar workload_services: WorkloadServices IP ranges.
-    :vartype workload_services: ~azure.mgmt.managednetworkfabric.models.WorkloadServices
+    :vartype workload_services: ~azure.mgmt.managednetworkfabric.models.ControllerServices
     :ivar managed_resource_group_configuration: Managed Resource Group configuration properties.
     :vartype managed_resource_group_configuration:
      ~azure.mgmt.managednetworkfabric.models.ManagedResourceGroupConfiguration
@@ -5456,21 +7639,28 @@ class NetworkFabricController(TrackedResource):  # pylint: disable=too-many-inst
     :vartype network_fabric_ids: list[str]
     :ivar workload_management_network: A workload management network is required for all the tenant
      (workload) traffic. This traffic is only dedicated for Tenant workloads which are required to
-     access internet or any other MSFT/Public endpoints.
+     access internet or any other MSFT/Public endpoints. This is used for the backward
+     compatibility.
     :vartype workload_management_network: bool
+    :ivar is_workload_management_network_enabled: A workload management network is required for all
+     the tenant (workload) traffic. This traffic is only dedicated for Tenant workloads which are
+     required to access internet or any other MSFT/Public endpoints. Known values are: "True" and
+     "False".
+    :vartype is_workload_management_network_enabled: str or
+     ~azure.mgmt.managednetworkfabric.models.IsWorkloadManagementNetworkEnabled
+    :ivar tenant_internet_gateway_ids: List of tenant InternetGateway resource IDs.
+    :vartype tenant_internet_gateway_ids: list[str]
     :ivar ipv4_address_space: IPv4 Network Fabric Controller Address Space.
     :vartype ipv4_address_space: str
     :ivar ipv6_address_space: IPv6 Network Fabric Controller Address Space.
     :vartype ipv6_address_space: str
-    :ivar operational_state: The Operational Status would always be NULL. Look only in to the
-     Provisioning state for the latest status. Known values are: "Configuring", "Succeeded", and
-     "Failed".
-    :vartype operational_state: str or
-     ~azure.mgmt.managednetworkfabric.models.NetworkFabricControllerOperationalState
+    :ivar nfc_sku: Network Fabric Controller SKU. Known values are: "Basic", "Standard", and
+     "HighPerformance".
+    :vartype nfc_sku: str or ~azure.mgmt.managednetworkfabric.models.NfcSku
     :ivar provisioning_state: Provides you the latest status of the NFC service, whether it is
      Accepted, updating, Succeeded or Failed. During this process, the states keep changing based on
-     the status of NFC provisioning. Known values are: "Succeeded", "Updating", "Canceled",
-     "Deleting", and "Failed".
+     the status of NFC provisioning. Known values are: "Accepted", "Succeeded", "Updating",
+     "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
     """
 
@@ -5484,7 +7674,9 @@ class NetworkFabricController(TrackedResource):  # pylint: disable=too-many-inst
         "workload_services": {"readonly": True},
         "network_fabric_ids": {"readonly": True},
         "workload_management_network": {"readonly": True},
-        "operational_state": {"readonly": True},
+        "tenant_internet_gateway_ids": {"readonly": True},
+        "ipv4_address_space": {"min_length": 1},
+        "ipv6_address_space": {"min_length": 1},
         "provisioning_state": {"readonly": True},
     }
 
@@ -5504,17 +7696,22 @@ class NetworkFabricController(TrackedResource):  # pylint: disable=too-many-inst
             "key": "properties.workloadExpressRouteConnections",
             "type": "[ExpressRouteConnectionInformation]",
         },
-        "infrastructure_services": {"key": "properties.infrastructureServices", "type": "InfrastructureServices"},
-        "workload_services": {"key": "properties.workloadServices", "type": "WorkloadServices"},
+        "infrastructure_services": {"key": "properties.infrastructureServices", "type": "ControllerServices"},
+        "workload_services": {"key": "properties.workloadServices", "type": "ControllerServices"},
         "managed_resource_group_configuration": {
             "key": "properties.managedResourceGroupConfiguration",
             "type": "ManagedResourceGroupConfiguration",
         },
         "network_fabric_ids": {"key": "properties.networkFabricIds", "type": "[str]"},
         "workload_management_network": {"key": "properties.workloadManagementNetwork", "type": "bool"},
+        "is_workload_management_network_enabled": {
+            "key": "properties.isWorkloadManagementNetworkEnabled",
+            "type": "str",
+        },
+        "tenant_internet_gateway_ids": {"key": "properties.tenantInternetGatewayIds", "type": "[str]"},
         "ipv4_address_space": {"key": "properties.ipv4AddressSpace", "type": "str"},
         "ipv6_address_space": {"key": "properties.ipv6AddressSpace", "type": "str"},
-        "operational_state": {"key": "properties.operationalState", "type": "str"},
+        "nfc_sku": {"key": "properties.nfcSku", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
@@ -5527,8 +7724,10 @@ class NetworkFabricController(TrackedResource):  # pylint: disable=too-many-inst
         infrastructure_express_route_connections: Optional[List["_models.ExpressRouteConnectionInformation"]] = None,
         workload_express_route_connections: Optional[List["_models.ExpressRouteConnectionInformation"]] = None,
         managed_resource_group_configuration: Optional["_models.ManagedResourceGroupConfiguration"] = None,
-        ipv4_address_space: Optional[str] = None,
-        ipv6_address_space: Optional[str] = None,
+        is_workload_management_network_enabled: Union[str, "_models.IsWorkloadManagementNetworkEnabled"] = "True",
+        ipv4_address_space: str = "10.0.0.0/19",
+        ipv6_address_space: str = "FC00::/59",
+        nfc_sku: Union[str, "_models.NfcSku"] = "Standard",
         **kwargs: Any
     ) -> None:
         """
@@ -5551,10 +7750,19 @@ class NetworkFabricController(TrackedResource):  # pylint: disable=too-many-inst
         :keyword managed_resource_group_configuration: Managed Resource Group configuration properties.
         :paramtype managed_resource_group_configuration:
          ~azure.mgmt.managednetworkfabric.models.ManagedResourceGroupConfiguration
+        :keyword is_workload_management_network_enabled: A workload management network is required for
+         all the tenant (workload) traffic. This traffic is only dedicated for Tenant workloads which
+         are required to access internet or any other MSFT/Public endpoints. Known values are: "True"
+         and "False".
+        :paramtype is_workload_management_network_enabled: str or
+         ~azure.mgmt.managednetworkfabric.models.IsWorkloadManagementNetworkEnabled
         :keyword ipv4_address_space: IPv4 Network Fabric Controller Address Space.
         :paramtype ipv4_address_space: str
         :keyword ipv6_address_space: IPv6 Network Fabric Controller Address Space.
         :paramtype ipv6_address_space: str
+        :keyword nfc_sku: Network Fabric Controller SKU. Known values are: "Basic", "Standard", and
+         "HighPerformance".
+        :paramtype nfc_sku: str or ~azure.mgmt.managednetworkfabric.models.NfcSku
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.annotation = annotation
@@ -5565,16 +7773,18 @@ class NetworkFabricController(TrackedResource):  # pylint: disable=too-many-inst
         self.managed_resource_group_configuration = managed_resource_group_configuration
         self.network_fabric_ids = None
         self.workload_management_network = None
+        self.is_workload_management_network_enabled = is_workload_management_network_enabled
+        self.tenant_internet_gateway_ids = None
         self.ipv4_address_space = ipv4_address_space
         self.ipv6_address_space = ipv6_address_space
-        self.operational_state = None
+        self.nfc_sku = nfc_sku
         self.provisioning_state = None
 
 
-class NetworkFabricControllerPatch(_serialization.Model):
-    """The NetworkFabricControllerPatch payload definition.
+class NetworkFabricControllerPatch(TagsUpdate):
+    """The Network Fabric Controller Patch payload definition.
 
-    :ivar tags: Azure resource tags that will replace the existing ones.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar infrastructure_express_route_connections: As part of an update, the Infrastructure
      ExpressRoute CircuitID should be provided to create and Provision a NFC. This Express route is
@@ -5609,7 +7819,7 @@ class NetworkFabricControllerPatch(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword tags: Azure resource tags that will replace the existing ones.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword infrastructure_express_route_connections: As part of an update, the Infrastructure
          ExpressRoute CircuitID should be provided to create and Provision a NFC. This Express route is
@@ -5622,8 +7832,7 @@ class NetworkFabricControllerPatch(_serialization.Model):
         :paramtype workload_express_route_connections:
          list[~azure.mgmt.managednetworkfabric.models.ExpressRouteConnectionInformation]
         """
-        super().__init__(**kwargs)
-        self.tags = tags
+        super().__init__(tags=tags, **kwargs)
         self.infrastructure_express_route_connections = infrastructure_express_route_connections
         self.workload_express_route_connections = workload_express_route_connections
 
@@ -5681,7 +7890,7 @@ class NetworkFabricControllerPatchableProperties(_serialization.Model):
 class NetworkFabricControllerProperties(
     AnnotationResource, NetworkFabricControllerPatchableProperties
 ):  # pylint: disable=too-many-instance-attributes
-    """NetworkFabricControllerProperties define the resource properties.
+    """NetworkFabricControllerProperties defines the resource properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5698,10 +7907,9 @@ class NetworkFabricControllerProperties(
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
     :ivar infrastructure_services: InfrastructureServices IP ranges.
-    :vartype infrastructure_services:
-     ~azure.mgmt.managednetworkfabric.models.InfrastructureServices
+    :vartype infrastructure_services: ~azure.mgmt.managednetworkfabric.models.ControllerServices
     :ivar workload_services: WorkloadServices IP ranges.
-    :vartype workload_services: ~azure.mgmt.managednetworkfabric.models.WorkloadServices
+    :vartype workload_services: ~azure.mgmt.managednetworkfabric.models.ControllerServices
     :ivar managed_resource_group_configuration: Managed Resource Group configuration properties.
     :vartype managed_resource_group_configuration:
      ~azure.mgmt.managednetworkfabric.models.ManagedResourceGroupConfiguration
@@ -5710,21 +7918,28 @@ class NetworkFabricControllerProperties(
     :vartype network_fabric_ids: list[str]
     :ivar workload_management_network: A workload management network is required for all the tenant
      (workload) traffic. This traffic is only dedicated for Tenant workloads which are required to
-     access internet or any other MSFT/Public endpoints.
+     access internet or any other MSFT/Public endpoints. This is used for the backward
+     compatibility.
     :vartype workload_management_network: bool
+    :ivar is_workload_management_network_enabled: A workload management network is required for all
+     the tenant (workload) traffic. This traffic is only dedicated for Tenant workloads which are
+     required to access internet or any other MSFT/Public endpoints. Known values are: "True" and
+     "False".
+    :vartype is_workload_management_network_enabled: str or
+     ~azure.mgmt.managednetworkfabric.models.IsWorkloadManagementNetworkEnabled
+    :ivar tenant_internet_gateway_ids: List of tenant InternetGateway resource IDs.
+    :vartype tenant_internet_gateway_ids: list[str]
     :ivar ipv4_address_space: IPv4 Network Fabric Controller Address Space.
     :vartype ipv4_address_space: str
     :ivar ipv6_address_space: IPv6 Network Fabric Controller Address Space.
     :vartype ipv6_address_space: str
-    :ivar operational_state: The Operational Status would always be NULL. Look only in to the
-     Provisioning state for the latest status. Known values are: "Configuring", "Succeeded", and
-     "Failed".
-    :vartype operational_state: str or
-     ~azure.mgmt.managednetworkfabric.models.NetworkFabricControllerOperationalState
+    :ivar nfc_sku: Network Fabric Controller SKU. Known values are: "Basic", "Standard", and
+     "HighPerformance".
+    :vartype nfc_sku: str or ~azure.mgmt.managednetworkfabric.models.NfcSku
     :ivar provisioning_state: Provides you the latest status of the NFC service, whether it is
      Accepted, updating, Succeeded or Failed. During this process, the states keep changing based on
-     the status of NFC provisioning. Known values are: "Succeeded", "Updating", "Canceled",
-     "Deleting", and "Failed".
+     the status of NFC provisioning. Known values are: "Accepted", "Succeeded", "Updating",
+     "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
     """
 
@@ -5733,7 +7948,9 @@ class NetworkFabricControllerProperties(
         "workload_services": {"readonly": True},
         "network_fabric_ids": {"readonly": True},
         "workload_management_network": {"readonly": True},
-        "operational_state": {"readonly": True},
+        "tenant_internet_gateway_ids": {"readonly": True},
+        "ipv4_address_space": {"min_length": 1},
+        "ipv6_address_space": {"min_length": 1},
         "provisioning_state": {"readonly": True},
     }
 
@@ -5747,17 +7964,19 @@ class NetworkFabricControllerProperties(
             "type": "[ExpressRouteConnectionInformation]",
         },
         "annotation": {"key": "annotation", "type": "str"},
-        "infrastructure_services": {"key": "infrastructureServices", "type": "InfrastructureServices"},
-        "workload_services": {"key": "workloadServices", "type": "WorkloadServices"},
+        "infrastructure_services": {"key": "infrastructureServices", "type": "ControllerServices"},
+        "workload_services": {"key": "workloadServices", "type": "ControllerServices"},
         "managed_resource_group_configuration": {
             "key": "managedResourceGroupConfiguration",
             "type": "ManagedResourceGroupConfiguration",
         },
         "network_fabric_ids": {"key": "networkFabricIds", "type": "[str]"},
         "workload_management_network": {"key": "workloadManagementNetwork", "type": "bool"},
+        "is_workload_management_network_enabled": {"key": "isWorkloadManagementNetworkEnabled", "type": "str"},
+        "tenant_internet_gateway_ids": {"key": "tenantInternetGatewayIds", "type": "[str]"},
         "ipv4_address_space": {"key": "ipv4AddressSpace", "type": "str"},
         "ipv6_address_space": {"key": "ipv6AddressSpace", "type": "str"},
-        "operational_state": {"key": "operationalState", "type": "str"},
+        "nfc_sku": {"key": "nfcSku", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
@@ -5768,8 +7987,10 @@ class NetworkFabricControllerProperties(
         workload_express_route_connections: Optional[List["_models.ExpressRouteConnectionInformation"]] = None,
         annotation: Optional[str] = None,
         managed_resource_group_configuration: Optional["_models.ManagedResourceGroupConfiguration"] = None,
-        ipv4_address_space: Optional[str] = None,
-        ipv6_address_space: Optional[str] = None,
+        is_workload_management_network_enabled: Union[str, "_models.IsWorkloadManagementNetworkEnabled"] = "True",
+        ipv4_address_space: str = "10.0.0.0/19",
+        ipv6_address_space: str = "FC00::/59",
+        nfc_sku: Union[str, "_models.NfcSku"] = "Standard",
         **kwargs: Any
     ) -> None:
         """
@@ -5788,10 +8009,19 @@ class NetworkFabricControllerProperties(
         :keyword managed_resource_group_configuration: Managed Resource Group configuration properties.
         :paramtype managed_resource_group_configuration:
          ~azure.mgmt.managednetworkfabric.models.ManagedResourceGroupConfiguration
+        :keyword is_workload_management_network_enabled: A workload management network is required for
+         all the tenant (workload) traffic. This traffic is only dedicated for Tenant workloads which
+         are required to access internet or any other MSFT/Public endpoints. Known values are: "True"
+         and "False".
+        :paramtype is_workload_management_network_enabled: str or
+         ~azure.mgmt.managednetworkfabric.models.IsWorkloadManagementNetworkEnabled
         :keyword ipv4_address_space: IPv4 Network Fabric Controller Address Space.
         :paramtype ipv4_address_space: str
         :keyword ipv6_address_space: IPv6 Network Fabric Controller Address Space.
         :paramtype ipv6_address_space: str
+        :keyword nfc_sku: Network Fabric Controller SKU. Known values are: "Basic", "Standard", and
+         "HighPerformance".
+        :paramtype nfc_sku: str or ~azure.mgmt.managednetworkfabric.models.NfcSku
         """
         super().__init__(
             annotation=annotation,
@@ -5806,17 +8036,19 @@ class NetworkFabricControllerProperties(
         self.managed_resource_group_configuration = managed_resource_group_configuration
         self.network_fabric_ids = None
         self.workload_management_network = None
+        self.is_workload_management_network_enabled = is_workload_management_network_enabled
+        self.tenant_internet_gateway_ids = None
         self.ipv4_address_space = ipv4_address_space
         self.ipv6_address_space = ipv6_address_space
-        self.operational_state = None
+        self.nfc_sku = nfc_sku
         self.provisioning_state = None
         self.annotation = annotation
 
 
 class NetworkFabricControllersListResult(_serialization.Model):
-    """List of NetworkFabricControllers.
+    """List of Network Fabric Controllers.
 
-    :ivar value: List of NetworkFabricController resources.
+    :ivar value: List of Network Fabric Controller resources.
     :vartype value: list[~azure.mgmt.managednetworkfabric.models.NetworkFabricController]
     :ivar next_link: Url to follow for getting next page of resources.
     :vartype next_link: str
@@ -5835,7 +8067,7 @@ class NetworkFabricControllersListResult(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword value: List of NetworkFabricController resources.
+        :keyword value: List of Network Fabric Controller resources.
         :paramtype value: list[~azure.mgmt.managednetworkfabric.models.NetworkFabricController]
         :keyword next_link: Url to follow for getting next page of resources.
         :paramtype next_link: str
@@ -5845,78 +8077,57 @@ class NetworkFabricControllersListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class NetworkFabricPatchableProperties(_serialization.Model):
-    """Network Fabric updatable properties.
+class NetworkFabricPatch(TagsUpdate):
+    """The Network Fabric resource definition.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar racks: List of NetworkRack resource IDs under the Network Fabric. The number of racks
-     allowed depends on the Network Fabric SKU.
-    :vartype racks: list[str]
-    :ivar l2_isolation_domains: List of L2IsolationDomain resource IDs under the Network Fabric.
-    :vartype l2_isolation_domains: list[str]
-    :ivar l3_isolation_domains: List of L3IsolationDomain resource IDs under the Network Fabric.
-    :vartype l3_isolation_domains: list[str]
-    """
-
-    _validation = {
-        "racks": {"readonly": True},
-        "l2_isolation_domains": {"readonly": True},
-        "l3_isolation_domains": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "racks": {"key": "racks", "type": "[str]"},
-        "l2_isolation_domains": {"key": "l2IsolationDomains", "type": "[str]"},
-        "l3_isolation_domains": {"key": "l3IsolationDomains", "type": "[str]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.racks = None
-        self.l2_isolation_domains = None
-        self.l3_isolation_domains = None
-
-
-class NetworkFabricPatchParameters(_serialization.Model):
-    """The NetworkFabric resource definition.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar tags: Azure resource tags that will replace the existing ones.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
+    :ivar rack_count: Number of compute racks associated to Network Fabric.
+    :vartype rack_count: int
+    :ivar server_count_per_rack: Number of servers.Possible values are from 1-16.
+    :vartype server_count_per_rack: int
+    :ivar ipv4_prefix: IPv4Prefix for Management Network. Example: 10.1.0.0/19.
+    :vartype ipv4_prefix: str
+    :ivar ipv6_prefix: IPv6Prefix for Management Network. Example: 3FFE:FFFF:0:CD40::/59.
+    :vartype ipv6_prefix: str
+    :ivar fabric_asn: ASN of CE devices for CE/PE connectivity.
+    :vartype fabric_asn: int
     :ivar terminal_server_configuration: Network and credentials configuration already applied to
      terminal server.
     :vartype terminal_server_configuration:
-     ~azure.mgmt.managednetworkfabric.models.TerminalServerPatchableProperties
-    :ivar racks: List of NetworkRack resource IDs under the Network Fabric. The number of racks
-     allowed depends on the Network Fabric SKU.
-    :vartype racks: list[str]
-    :ivar l2_isolation_domains: List of L2IsolationDomain resource IDs under the Network Fabric.
-    :vartype l2_isolation_domains: list[str]
-    :ivar l3_isolation_domains: List of L3IsolationDomain resource IDs under the Network Fabric.
-    :vartype l3_isolation_domains: list[str]
+     ~azure.mgmt.managednetworkfabric.models.NetworkFabricPatchablePropertiesTerminalServerConfiguration
+    :ivar management_network_configuration: Configuration to be used to setup the management
+     network.
+    :vartype management_network_configuration:
+     ~azure.mgmt.managednetworkfabric.models.ManagementNetworkConfigurationPatchableProperties
     """
 
     _validation = {
-        "racks": {"readonly": True},
-        "l2_isolation_domains": {"readonly": True},
-        "l3_isolation_domains": {"readonly": True},
+        "rack_count": {"maximum": 8, "minimum": 1},
+        "server_count_per_rack": {"maximum": 16, "minimum": 1},
+        "ipv4_prefix": {"min_length": 1},
+        "ipv6_prefix": {"min_length": 1},
+        "fabric_asn": {"maximum": 4294967295, "minimum": 1},
     }
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
         "annotation": {"key": "properties.annotation", "type": "str"},
+        "rack_count": {"key": "properties.rackCount", "type": "int"},
+        "server_count_per_rack": {"key": "properties.serverCountPerRack", "type": "int"},
+        "ipv4_prefix": {"key": "properties.ipv4Prefix", "type": "str"},
+        "ipv6_prefix": {"key": "properties.ipv6Prefix", "type": "str"},
+        "fabric_asn": {"key": "properties.fabricASN", "type": "int"},
         "terminal_server_configuration": {
             "key": "properties.terminalServerConfiguration",
-            "type": "TerminalServerPatchableProperties",
+            "type": "NetworkFabricPatchablePropertiesTerminalServerConfiguration",
         },
-        "racks": {"key": "properties.racks", "type": "[str]"},
-        "l2_isolation_domains": {"key": "properties.l2IsolationDomains", "type": "[str]"},
-        "l3_isolation_domains": {"key": "properties.l3IsolationDomains", "type": "[str]"},
+        "management_network_configuration": {
+            "key": "properties.managementNetworkConfiguration",
+            "type": "ManagementNetworkConfigurationPatchableProperties",
+        },
     }
 
     def __init__(
@@ -5924,95 +8135,318 @@ class NetworkFabricPatchParameters(_serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         annotation: Optional[str] = None,
-        terminal_server_configuration: Optional["_models.TerminalServerPatchableProperties"] = None,
+        rack_count: Optional[int] = None,
+        server_count_per_rack: Optional[int] = None,
+        ipv4_prefix: Optional[str] = None,
+        ipv6_prefix: Optional[str] = None,
+        fabric_asn: Optional[int] = None,
+        terminal_server_configuration: Optional[
+            "_models.NetworkFabricPatchablePropertiesTerminalServerConfiguration"
+        ] = None,
+        management_network_configuration: Optional["_models.ManagementNetworkConfigurationPatchableProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword tags: Azure resource tags that will replace the existing ones.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
+        :keyword rack_count: Number of compute racks associated to Network Fabric.
+        :paramtype rack_count: int
+        :keyword server_count_per_rack: Number of servers.Possible values are from 1-16.
+        :paramtype server_count_per_rack: int
+        :keyword ipv4_prefix: IPv4Prefix for Management Network. Example: 10.1.0.0/19.
+        :paramtype ipv4_prefix: str
+        :keyword ipv6_prefix: IPv6Prefix for Management Network. Example: 3FFE:FFFF:0:CD40::/59.
+        :paramtype ipv6_prefix: str
+        :keyword fabric_asn: ASN of CE devices for CE/PE connectivity.
+        :paramtype fabric_asn: int
         :keyword terminal_server_configuration: Network and credentials configuration already applied
          to terminal server.
         :paramtype terminal_server_configuration:
-         ~azure.mgmt.managednetworkfabric.models.TerminalServerPatchableProperties
+         ~azure.mgmt.managednetworkfabric.models.NetworkFabricPatchablePropertiesTerminalServerConfiguration
+        :keyword management_network_configuration: Configuration to be used to setup the management
+         network.
+        :paramtype management_network_configuration:
+         ~azure.mgmt.managednetworkfabric.models.ManagementNetworkConfigurationPatchableProperties
         """
-        super().__init__(**kwargs)
-        self.tags = tags
+        super().__init__(tags=tags, **kwargs)
         self.annotation = annotation
+        self.rack_count = rack_count
+        self.server_count_per_rack = server_count_per_rack
+        self.ipv4_prefix = ipv4_prefix
+        self.ipv6_prefix = ipv6_prefix
+        self.fabric_asn = fabric_asn
         self.terminal_server_configuration = terminal_server_configuration
-        self.racks = None
-        self.l2_isolation_domains = None
-        self.l3_isolation_domains = None
+        self.management_network_configuration = management_network_configuration
 
 
-class TerminalServerPatchParameters(_serialization.Model):
-    """Terminal server patch parameters.
+class NetworkFabricPatchableProperties(_serialization.Model):
+    """Network Fabric updatable properties.
 
+    :ivar rack_count: Number of compute racks associated to Network Fabric.
+    :vartype rack_count: int
+    :ivar server_count_per_rack: Number of servers.Possible values are from 1-16.
+    :vartype server_count_per_rack: int
+    :ivar ipv4_prefix: IPv4Prefix for Management Network. Example: 10.1.0.0/19.
+    :vartype ipv4_prefix: str
+    :ivar ipv6_prefix: IPv6Prefix for Management Network. Example: 3FFE:FFFF:0:CD40::/59.
+    :vartype ipv6_prefix: str
+    :ivar fabric_asn: ASN of CE devices for CE/PE connectivity.
+    :vartype fabric_asn: int
     :ivar terminal_server_configuration: Network and credentials configuration already applied to
      terminal server.
     :vartype terminal_server_configuration:
-     ~azure.mgmt.managednetworkfabric.models.TerminalServerPatchableProperties
+     ~azure.mgmt.managednetworkfabric.models.NetworkFabricPatchablePropertiesTerminalServerConfiguration
+    :ivar management_network_configuration: Configuration to be used to setup the management
+     network.
+    :vartype management_network_configuration:
+     ~azure.mgmt.managednetworkfabric.models.ManagementNetworkConfigurationPatchableProperties
     """
 
+    _validation = {
+        "rack_count": {"maximum": 8, "minimum": 1},
+        "server_count_per_rack": {"maximum": 16, "minimum": 1},
+        "ipv4_prefix": {"min_length": 1},
+        "ipv6_prefix": {"min_length": 1},
+        "fabric_asn": {"maximum": 4294967295, "minimum": 1},
+    }
+
     _attribute_map = {
+        "rack_count": {"key": "rackCount", "type": "int"},
+        "server_count_per_rack": {"key": "serverCountPerRack", "type": "int"},
+        "ipv4_prefix": {"key": "ipv4Prefix", "type": "str"},
+        "ipv6_prefix": {"key": "ipv6Prefix", "type": "str"},
+        "fabric_asn": {"key": "fabricASN", "type": "int"},
         "terminal_server_configuration": {
             "key": "terminalServerConfiguration",
-            "type": "TerminalServerPatchableProperties",
+            "type": "NetworkFabricPatchablePropertiesTerminalServerConfiguration",
+        },
+        "management_network_configuration": {
+            "key": "managementNetworkConfiguration",
+            "type": "ManagementNetworkConfigurationPatchableProperties",
         },
     }
 
     def __init__(
         self,
         *,
-        terminal_server_configuration: Optional["_models.TerminalServerPatchableProperties"] = None,
+        rack_count: Optional[int] = None,
+        server_count_per_rack: Optional[int] = None,
+        ipv4_prefix: Optional[str] = None,
+        ipv6_prefix: Optional[str] = None,
+        fabric_asn: Optional[int] = None,
+        terminal_server_configuration: Optional[
+            "_models.NetworkFabricPatchablePropertiesTerminalServerConfiguration"
+        ] = None,
+        management_network_configuration: Optional["_models.ManagementNetworkConfigurationPatchableProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword rack_count: Number of compute racks associated to Network Fabric.
+        :paramtype rack_count: int
+        :keyword server_count_per_rack: Number of servers.Possible values are from 1-16.
+        :paramtype server_count_per_rack: int
+        :keyword ipv4_prefix: IPv4Prefix for Management Network. Example: 10.1.0.0/19.
+        :paramtype ipv4_prefix: str
+        :keyword ipv6_prefix: IPv6Prefix for Management Network. Example: 3FFE:FFFF:0:CD40::/59.
+        :paramtype ipv6_prefix: str
+        :keyword fabric_asn: ASN of CE devices for CE/PE connectivity.
+        :paramtype fabric_asn: int
         :keyword terminal_server_configuration: Network and credentials configuration already applied
          to terminal server.
         :paramtype terminal_server_configuration:
-         ~azure.mgmt.managednetworkfabric.models.TerminalServerPatchableProperties
+         ~azure.mgmt.managednetworkfabric.models.NetworkFabricPatchablePropertiesTerminalServerConfiguration
+        :keyword management_network_configuration: Configuration to be used to setup the management
+         network.
+        :paramtype management_network_configuration:
+         ~azure.mgmt.managednetworkfabric.models.ManagementNetworkConfigurationPatchableProperties
         """
         super().__init__(**kwargs)
+        self.rack_count = rack_count
+        self.server_count_per_rack = server_count_per_rack
+        self.ipv4_prefix = ipv4_prefix
+        self.ipv6_prefix = ipv6_prefix
+        self.fabric_asn = fabric_asn
         self.terminal_server_configuration = terminal_server_configuration
+        self.management_network_configuration = management_network_configuration
 
 
-class NetworkFabricPatchParametersProperties(
-    AnnotationResource, TerminalServerPatchParameters, NetworkFabricPatchableProperties
+class TerminalServerPatchableProperties(_serialization.Model):
+    """Network and credential configuration currently applied on terminal server.
+
+    :ivar username: Username for the terminal server connection.
+    :vartype username: str
+    :ivar password: Password for the terminal server connection.
+    :vartype password: str
+    :ivar serial_number: Serial Number of Terminal server.
+    :vartype serial_number: str
+    """
+
+    _validation = {
+        "username": {"min_length": 1},
+        "password": {"min_length": 1},
+        "serial_number": {"min_length": 1},
+    }
+
+    _attribute_map = {
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "serial_number": {"key": "serialNumber", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        serial_number: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword username: Username for the terminal server connection.
+        :paramtype username: str
+        :keyword password: Password for the terminal server connection.
+        :paramtype password: str
+        :keyword serial_number: Serial Number of Terminal server.
+        :paramtype serial_number: str
+        """
+        super().__init__(**kwargs)
+        self.username = username
+        self.password = password
+        self.serial_number = serial_number
+
+
+class NetworkFabricPatchablePropertiesTerminalServerConfiguration(
+    TerminalServerPatchableProperties, Layer3IpPrefixProperties
 ):
+    """Network and credentials configuration already applied to terminal server.
+
+    :ivar primary_ipv4_prefix: IPv4 Address Prefix.
+    :vartype primary_ipv4_prefix: str
+    :ivar primary_ipv6_prefix: IPv6 Address Prefix.
+    :vartype primary_ipv6_prefix: str
+    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+    :vartype secondary_ipv4_prefix: str
+    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+    :vartype secondary_ipv6_prefix: str
+    :ivar username: Username for the terminal server connection.
+    :vartype username: str
+    :ivar password: Password for the terminal server connection.
+    :vartype password: str
+    :ivar serial_number: Serial Number of Terminal server.
+    :vartype serial_number: str
+    """
+
+    _validation = {
+        "username": {"min_length": 1},
+        "password": {"min_length": 1},
+        "serial_number": {"min_length": 1},
+    }
+
+    _attribute_map = {
+        "primary_ipv4_prefix": {"key": "primaryIpv4Prefix", "type": "str"},
+        "primary_ipv6_prefix": {"key": "primaryIpv6Prefix", "type": "str"},
+        "secondary_ipv4_prefix": {"key": "secondaryIpv4Prefix", "type": "str"},
+        "secondary_ipv6_prefix": {"key": "secondaryIpv6Prefix", "type": "str"},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "serial_number": {"key": "serialNumber", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        primary_ipv4_prefix: Optional[str] = None,
+        primary_ipv6_prefix: Optional[str] = None,
+        secondary_ipv4_prefix: Optional[str] = None,
+        secondary_ipv6_prefix: Optional[str] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        serial_number: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword primary_ipv4_prefix: IPv4 Address Prefix.
+        :paramtype primary_ipv4_prefix: str
+        :keyword primary_ipv6_prefix: IPv6 Address Prefix.
+        :paramtype primary_ipv6_prefix: str
+        :keyword secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+        :paramtype secondary_ipv4_prefix: str
+        :keyword secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+        :paramtype secondary_ipv6_prefix: str
+        :keyword username: Username for the terminal server connection.
+        :paramtype username: str
+        :keyword password: Password for the terminal server connection.
+        :paramtype password: str
+        :keyword serial_number: Serial Number of Terminal server.
+        :paramtype serial_number: str
+        """
+        super().__init__(
+            username=username,
+            password=password,
+            serial_number=serial_number,
+            primary_ipv4_prefix=primary_ipv4_prefix,
+            primary_ipv6_prefix=primary_ipv6_prefix,
+            secondary_ipv4_prefix=secondary_ipv4_prefix,
+            secondary_ipv6_prefix=secondary_ipv6_prefix,
+            **kwargs
+        )
+        self.primary_ipv4_prefix = primary_ipv4_prefix
+        self.primary_ipv6_prefix = primary_ipv6_prefix
+        self.secondary_ipv4_prefix = secondary_ipv4_prefix
+        self.secondary_ipv6_prefix = secondary_ipv6_prefix
+        self.username = username
+        self.password = password
+        self.serial_number = serial_number
+
+
+class NetworkFabricPatchProperties(AnnotationResource, NetworkFabricPatchableProperties):
     """Network Fabric Patch properties.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar racks: List of NetworkRack resource IDs under the Network Fabric. The number of racks
-     allowed depends on the Network Fabric SKU.
-    :vartype racks: list[str]
-    :ivar l2_isolation_domains: List of L2IsolationDomain resource IDs under the Network Fabric.
-    :vartype l2_isolation_domains: list[str]
-    :ivar l3_isolation_domains: List of L3IsolationDomain resource IDs under the Network Fabric.
-    :vartype l3_isolation_domains: list[str]
+    :ivar rack_count: Number of compute racks associated to Network Fabric.
+    :vartype rack_count: int
+    :ivar server_count_per_rack: Number of servers.Possible values are from 1-16.
+    :vartype server_count_per_rack: int
+    :ivar ipv4_prefix: IPv4Prefix for Management Network. Example: 10.1.0.0/19.
+    :vartype ipv4_prefix: str
+    :ivar ipv6_prefix: IPv6Prefix for Management Network. Example: 3FFE:FFFF:0:CD40::/59.
+    :vartype ipv6_prefix: str
+    :ivar fabric_asn: ASN of CE devices for CE/PE connectivity.
+    :vartype fabric_asn: int
     :ivar terminal_server_configuration: Network and credentials configuration already applied to
      terminal server.
     :vartype terminal_server_configuration:
-     ~azure.mgmt.managednetworkfabric.models.TerminalServerPatchableProperties
+     ~azure.mgmt.managednetworkfabric.models.NetworkFabricPatchablePropertiesTerminalServerConfiguration
+    :ivar management_network_configuration: Configuration to be used to setup the management
+     network.
+    :vartype management_network_configuration:
+     ~azure.mgmt.managednetworkfabric.models.ManagementNetworkConfigurationPatchableProperties
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
     """
 
     _validation = {
-        "racks": {"readonly": True},
-        "l2_isolation_domains": {"readonly": True},
-        "l3_isolation_domains": {"readonly": True},
+        "rack_count": {"maximum": 8, "minimum": 1},
+        "server_count_per_rack": {"maximum": 16, "minimum": 1},
+        "ipv4_prefix": {"min_length": 1},
+        "ipv6_prefix": {"min_length": 1},
+        "fabric_asn": {"maximum": 4294967295, "minimum": 1},
     }
 
     _attribute_map = {
-        "racks": {"key": "racks", "type": "[str]"},
-        "l2_isolation_domains": {"key": "l2IsolationDomains", "type": "[str]"},
-        "l3_isolation_domains": {"key": "l3IsolationDomains", "type": "[str]"},
+        "rack_count": {"key": "rackCount", "type": "int"},
+        "server_count_per_rack": {"key": "serverCountPerRack", "type": "int"},
+        "ipv4_prefix": {"key": "ipv4Prefix", "type": "str"},
+        "ipv6_prefix": {"key": "ipv6Prefix", "type": "str"},
+        "fabric_asn": {"key": "fabricASN", "type": "int"},
         "terminal_server_configuration": {
             "key": "terminalServerConfiguration",
-            "type": "TerminalServerPatchableProperties",
+            "type": "NetworkFabricPatchablePropertiesTerminalServerConfiguration",
+        },
+        "management_network_configuration": {
+            "key": "managementNetworkConfiguration",
+            "type": "ManagementNetworkConfigurationPatchableProperties",
         },
         "annotation": {"key": "annotation", "type": "str"},
     }
@@ -6020,64 +8454,91 @@ class NetworkFabricPatchParametersProperties(
     def __init__(
         self,
         *,
-        terminal_server_configuration: Optional["_models.TerminalServerPatchableProperties"] = None,
+        rack_count: Optional[int] = None,
+        server_count_per_rack: Optional[int] = None,
+        ipv4_prefix: Optional[str] = None,
+        ipv6_prefix: Optional[str] = None,
+        fabric_asn: Optional[int] = None,
+        terminal_server_configuration: Optional[
+            "_models.NetworkFabricPatchablePropertiesTerminalServerConfiguration"
+        ] = None,
+        management_network_configuration: Optional["_models.ManagementNetworkConfigurationPatchableProperties"] = None,
         annotation: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword rack_count: Number of compute racks associated to Network Fabric.
+        :paramtype rack_count: int
+        :keyword server_count_per_rack: Number of servers.Possible values are from 1-16.
+        :paramtype server_count_per_rack: int
+        :keyword ipv4_prefix: IPv4Prefix for Management Network. Example: 10.1.0.0/19.
+        :paramtype ipv4_prefix: str
+        :keyword ipv6_prefix: IPv6Prefix for Management Network. Example: 3FFE:FFFF:0:CD40::/59.
+        :paramtype ipv6_prefix: str
+        :keyword fabric_asn: ASN of CE devices for CE/PE connectivity.
+        :paramtype fabric_asn: int
         :keyword terminal_server_configuration: Network and credentials configuration already applied
          to terminal server.
         :paramtype terminal_server_configuration:
-         ~azure.mgmt.managednetworkfabric.models.TerminalServerPatchableProperties
+         ~azure.mgmt.managednetworkfabric.models.NetworkFabricPatchablePropertiesTerminalServerConfiguration
+        :keyword management_network_configuration: Configuration to be used to setup the management
+         network.
+        :paramtype management_network_configuration:
+         ~azure.mgmt.managednetworkfabric.models.ManagementNetworkConfigurationPatchableProperties
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
         """
-        super().__init__(annotation=annotation, terminal_server_configuration=terminal_server_configuration, **kwargs)
-        self.racks = None
-        self.l2_isolation_domains = None
-        self.l3_isolation_domains = None
+        super().__init__(
+            annotation=annotation,
+            rack_count=rack_count,
+            server_count_per_rack=server_count_per_rack,
+            ipv4_prefix=ipv4_prefix,
+            ipv6_prefix=ipv6_prefix,
+            fabric_asn=fabric_asn,
+            terminal_server_configuration=terminal_server_configuration,
+            management_network_configuration=management_network_configuration,
+            **kwargs
+        )
+        self.rack_count = rack_count
+        self.server_count_per_rack = server_count_per_rack
+        self.ipv4_prefix = ipv4_prefix
+        self.ipv6_prefix = ipv6_prefix
+        self.fabric_asn = fabric_asn
         self.terminal_server_configuration = terminal_server_configuration
+        self.management_network_configuration = management_network_configuration
         self.annotation = annotation
 
 
-class NetworkFabricProperties(
-    AnnotationResource, NetworkFabricPatchableProperties
-):  # pylint: disable=too-many-instance-attributes
-    """NetworkFabricProperties - define the resource properties.
+class NetworkFabricProperties(AnnotationResource):  # pylint: disable=too-many-instance-attributes
+    """Network Fabric Properties defines the properties of the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar racks: List of NetworkRack resource IDs under the Network Fabric. The number of racks
-     allowed depends on the Network Fabric SKU.
-    :vartype racks: list[str]
-    :ivar l2_isolation_domains: List of L2IsolationDomain resource IDs under the Network Fabric.
-    :vartype l2_isolation_domains: list[str]
-    :ivar l3_isolation_domains: List of L3IsolationDomain resource IDs under the Network Fabric.
-    :vartype l3_isolation_domains: list[str]
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
     :ivar network_fabric_sku: Supported Network Fabric SKU.Example: Compute / Aggregate racks. Once
      the user chooses a particular SKU, only supported racks can be added to the Network Fabric. The
      SKU determines whether it is a single / multi rack Network Fabric. Required.
     :vartype network_fabric_sku: str
-    :ivar rack_count: Number of racks associated to Network Fabric.Possible values are from 2-8.
-     Required.
-    :vartype rack_count: int
-    :ivar server_count_per_rack: Number of servers.Possible values are from 1-16. Required.
-    :vartype server_count_per_rack: int
-    :ivar ipv4_prefix: IPv4Prefix for Management Network. Example: 10.1.0.0/19.
-    :vartype ipv4_prefix: str
-    :ivar ipv6_prefix: IPv6Prefix for Management Network. Example: 3FFE:FFFF:0:CD40::/59.
-    :vartype ipv6_prefix: str
-    :ivar router_id: Router Id of CE to be used for MP-BGP between PE and CE.
-    :vartype router_id: str
-    :ivar fabric_asn: ASN of CE devices for CE/PE connectivity. Required.
-    :vartype fabric_asn: int
+    :ivar fabric_version: The version of Network Fabric.
+    :vartype fabric_version: str
+    :ivar router_ids: Array of router IDs.
+    :vartype router_ids: list[str]
     :ivar network_fabric_controller_id: Azure resource ID for the NetworkFabricController the
      NetworkFabric belongs. Required.
     :vartype network_fabric_controller_id: str
+    :ivar rack_count: Number of compute racks associated to Network Fabric.
+    :vartype rack_count: int
+    :ivar server_count_per_rack: Number of servers.Possible values are from 1-16. Required.
+    :vartype server_count_per_rack: int
+    :ivar ipv4_prefix: IPv4Prefix for Management Network. Example: 10.1.0.0/19. Required.
+    :vartype ipv4_prefix: str
+    :ivar ipv6_prefix: IPv6Prefix for Management Network. Example: 3FFE:FFFF:0:CD40::/59.
+    :vartype ipv6_prefix: str
+    :ivar fabric_asn: ASN of CE devices for CE/PE connectivity. Required.
+    :vartype fabric_asn: int
     :ivar terminal_server_configuration: Network and credentials configuration currently applied to
      terminal server. Required.
     :vartype terminal_server_configuration:
@@ -6085,67 +8546,85 @@ class NetworkFabricProperties(
     :ivar management_network_configuration: Configuration to be used to setup the management
      network. Required.
     :vartype management_network_configuration:
-     ~azure.mgmt.managednetworkfabric.models.ManagementNetworkConfiguration
-    :ivar operational_state: Gets the operational state of the resource. Known values are:
-     "Provisioning", "Provisioned", "ErrorProvisioning", "Deprovisioning", "Deprovisioned",
-     "ErrorDeprovisioning", and "DeferredControl".
-    :vartype operational_state: str or
-     ~azure.mgmt.managednetworkfabric.models.NetworkFabricOperationalState
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+     ~azure.mgmt.managednetworkfabric.models.ManagementNetworkConfigurationProperties
+    :ivar racks: List of NetworkRack resource IDs under the Network Fabric. The number of racks
+     allowed depends on the Network Fabric SKU.
+    :vartype racks: list[str]
+    :ivar l2_isolation_domains: List of L2 Isolation Domain resource IDs under the Network Fabric.
+    :vartype l2_isolation_domains: list[str]
+    :ivar l3_isolation_domains: List of L3 Isolation Domain resource IDs under the Network Fabric.
+    :vartype l3_isolation_domains: list[str]
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provides you the latest status of the NFC service, whether it is
+     Accepted, updating, Succeeded or Failed. During this process, the states keep changing based on
+     the status of NFC provisioning. Known values are: "Accepted", "Succeeded", "Updating",
+     "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
+        "network_fabric_sku": {"required": True, "min_length": 1},
+        "fabric_version": {"readonly": True},
+        "router_ids": {"readonly": True},
+        "network_fabric_controller_id": {"required": True},
+        "rack_count": {"maximum": 8, "minimum": 1},
+        "server_count_per_rack": {"required": True, "maximum": 16, "minimum": 1},
+        "ipv4_prefix": {"required": True, "min_length": 1},
+        "ipv6_prefix": {"min_length": 1},
+        "fabric_asn": {"required": True, "maximum": 4294967295, "minimum": 1},
+        "terminal_server_configuration": {"required": True},
+        "management_network_configuration": {"required": True},
         "racks": {"readonly": True},
         "l2_isolation_domains": {"readonly": True},
         "l3_isolation_domains": {"readonly": True},
-        "network_fabric_sku": {"required": True},
-        "rack_count": {"required": True, "maximum": 8, "minimum": 2},
-        "server_count_per_rack": {"required": True, "maximum": 16, "minimum": 1},
-        "router_id": {"readonly": True},
-        "fabric_asn": {"required": True, "maximum": 65535, "minimum": 1},
-        "network_fabric_controller_id": {"required": True},
-        "terminal_server_configuration": {"required": True},
-        "management_network_configuration": {"required": True},
-        "operational_state": {"readonly": True},
+        "configuration_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
-        "racks": {"key": "racks", "type": "[str]"},
-        "l2_isolation_domains": {"key": "l2IsolationDomains", "type": "[str]"},
-        "l3_isolation_domains": {"key": "l3IsolationDomains", "type": "[str]"},
         "annotation": {"key": "annotation", "type": "str"},
         "network_fabric_sku": {"key": "networkFabricSku", "type": "str"},
+        "fabric_version": {"key": "fabricVersion", "type": "str"},
+        "router_ids": {"key": "routerIds", "type": "[str]"},
+        "network_fabric_controller_id": {"key": "networkFabricControllerId", "type": "str"},
         "rack_count": {"key": "rackCount", "type": "int"},
         "server_count_per_rack": {"key": "serverCountPerRack", "type": "int"},
         "ipv4_prefix": {"key": "ipv4Prefix", "type": "str"},
         "ipv6_prefix": {"key": "ipv6Prefix", "type": "str"},
-        "router_id": {"key": "routerId", "type": "str"},
         "fabric_asn": {"key": "fabricASN", "type": "int"},
-        "network_fabric_controller_id": {"key": "networkFabricControllerId", "type": "str"},
         "terminal_server_configuration": {"key": "terminalServerConfiguration", "type": "TerminalServerConfiguration"},
         "management_network_configuration": {
             "key": "managementNetworkConfiguration",
-            "type": "ManagementNetworkConfiguration",
+            "type": "ManagementNetworkConfigurationProperties",
         },
-        "operational_state": {"key": "operationalState", "type": "str"},
+        "racks": {"key": "racks", "type": "[str]"},
+        "l2_isolation_domains": {"key": "l2IsolationDomains", "type": "[str]"},
+        "l3_isolation_domains": {"key": "l3IsolationDomains", "type": "[str]"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "administrative_state": {"key": "administrativeState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         network_fabric_sku: str,
-        rack_count: int,
-        server_count_per_rack: int,
-        fabric_asn: int,
         network_fabric_controller_id: str,
+        server_count_per_rack: int,
+        ipv4_prefix: str,
+        fabric_asn: int,
         terminal_server_configuration: "_models.TerminalServerConfiguration",
-        management_network_configuration: "_models.ManagementNetworkConfiguration",
+        management_network_configuration: "_models.ManagementNetworkConfigurationProperties",
         annotation: Optional[str] = None,
-        ipv4_prefix: Optional[str] = None,
+        rack_count: Optional[int] = None,
         ipv6_prefix: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -6156,20 +8635,19 @@ class NetworkFabricProperties(
          Once the user chooses a particular SKU, only supported racks can be added to the Network
          Fabric. The SKU determines whether it is a single / multi rack Network Fabric. Required.
         :paramtype network_fabric_sku: str
-        :keyword rack_count: Number of racks associated to Network Fabric.Possible values are from 2-8.
-         Required.
+        :keyword network_fabric_controller_id: Azure resource ID for the NetworkFabricController the
+         NetworkFabric belongs. Required.
+        :paramtype network_fabric_controller_id: str
+        :keyword rack_count: Number of compute racks associated to Network Fabric.
         :paramtype rack_count: int
         :keyword server_count_per_rack: Number of servers.Possible values are from 1-16. Required.
         :paramtype server_count_per_rack: int
-        :keyword ipv4_prefix: IPv4Prefix for Management Network. Example: 10.1.0.0/19.
+        :keyword ipv4_prefix: IPv4Prefix for Management Network. Example: 10.1.0.0/19. Required.
         :paramtype ipv4_prefix: str
         :keyword ipv6_prefix: IPv6Prefix for Management Network. Example: 3FFE:FFFF:0:CD40::/59.
         :paramtype ipv6_prefix: str
         :keyword fabric_asn: ASN of CE devices for CE/PE connectivity. Required.
         :paramtype fabric_asn: int
-        :keyword network_fabric_controller_id: Azure resource ID for the NetworkFabricController the
-         NetworkFabric belongs. Required.
-        :paramtype network_fabric_controller_id: str
         :keyword terminal_server_configuration: Network and credentials configuration currently applied
          to terminal server. Required.
         :paramtype terminal_server_configuration:
@@ -6177,34 +8655,35 @@ class NetworkFabricProperties(
         :keyword management_network_configuration: Configuration to be used to setup the management
          network. Required.
         :paramtype management_network_configuration:
-         ~azure.mgmt.managednetworkfabric.models.ManagementNetworkConfiguration
+         ~azure.mgmt.managednetworkfabric.models.ManagementNetworkConfigurationProperties
         """
         super().__init__(annotation=annotation, **kwargs)
-        self.racks = None
-        self.l2_isolation_domains = None
-        self.l3_isolation_domains = None
         self.network_fabric_sku = network_fabric_sku
+        self.fabric_version = None
+        self.router_ids = None
+        self.network_fabric_controller_id = network_fabric_controller_id
         self.rack_count = rack_count
         self.server_count_per_rack = server_count_per_rack
         self.ipv4_prefix = ipv4_prefix
         self.ipv6_prefix = ipv6_prefix
-        self.router_id = None
         self.fabric_asn = fabric_asn
-        self.network_fabric_controller_id = network_fabric_controller_id
         self.terminal_server_configuration = terminal_server_configuration
         self.management_network_configuration = management_network_configuration
-        self.operational_state = None
+        self.racks = None
+        self.l2_isolation_domains = None
+        self.l3_isolation_domains = None
+        self.configuration_state = None
         self.provisioning_state = None
-        self.annotation = annotation
+        self.administrative_state = None
 
 
 class NetworkFabricSku(ProxyResource):
-    """The NetworkFabricSku resource definition.
+    """The Network Fabric SKU resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -6214,18 +8693,20 @@ class NetworkFabricSku(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.managednetworkfabric.models.SystemData
-    :ivar type_properties_type: Type of Network Fabric Sku.
-    :vartype type_properties_type: str
+    :ivar type_properties_type: Type of Network Fabric SKU. Known values are: "SingleRack" and
+     "MultiRack".
+    :vartype type_properties_type: str or ~azure.mgmt.managednetworkfabric.models.FabricSkuType
     :ivar max_compute_racks: Maximum number of compute racks available for this Network Fabric SKU.
+     The value of max count racks is 4 for 4 rack SKU and 8 for 8 rack SKU.
     :vartype max_compute_racks: int
-    :ivar min_supported_ver: Minimum supported version.
-    :vartype min_supported_ver: str
-    :ivar max_supported_ver: Maximum supported version.
-    :vartype max_supported_ver: str
-    :ivar details_uri: The URI gives full details of sku.
-    :vartype details_uri: str
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar maximum_server_count: Maximum number of servers available for this Network Fabric SKU.
+    :vartype maximum_server_count: int
+    :ivar supported_versions: List of supported Network Fabric SKU versions.
+    :vartype supported_versions: list[str]
+    :ivar details: URL providing detailed configuration of the fabric SKU.
+    :vartype details: str
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
     """
 
@@ -6235,9 +8716,8 @@ class NetworkFabricSku(ProxyResource):
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "type_properties_type": {"readonly": True},
-        "min_supported_ver": {"readonly": True},
-        "max_supported_ver": {"readonly": True},
-        "details_uri": {"readonly": True},
+        "supported_versions": {"readonly": True},
+        "details": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -6248,31 +8728,35 @@ class NetworkFabricSku(ProxyResource):
         "system_data": {"key": "systemData", "type": "SystemData"},
         "type_properties_type": {"key": "properties.type", "type": "str"},
         "max_compute_racks": {"key": "properties.maxComputeRacks", "type": "int"},
-        "min_supported_ver": {"key": "properties.minSupportedVer", "type": "str"},
-        "max_supported_ver": {"key": "properties.maxSupportedVer", "type": "str"},
-        "details_uri": {"key": "properties.detailsUri", "type": "str"},
+        "maximum_server_count": {"key": "properties.maximumServerCount", "type": "int"},
+        "supported_versions": {"key": "properties.supportedVersions", "type": "[str]"},
+        "details": {"key": "properties.details", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, max_compute_racks: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, max_compute_racks: Optional[int] = None, maximum_server_count: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword max_compute_racks: Maximum number of compute racks available for this Network Fabric
-         SKU.
+         SKU. The value of max count racks is 4 for 4 rack SKU and 8 for 8 rack SKU.
         :paramtype max_compute_racks: int
+        :keyword maximum_server_count: Maximum number of servers available for this Network Fabric SKU.
+        :paramtype maximum_server_count: int
         """
         super().__init__(**kwargs)
         self.type_properties_type = None
         self.max_compute_racks = max_compute_racks
-        self.min_supported_ver = None
-        self.max_supported_ver = None
-        self.details_uri = None
+        self.maximum_server_count = maximum_server_count
+        self.supported_versions = None
+        self.details = None
         self.provisioning_state = None
 
 
 class NetworkFabricSkusListResult(_serialization.Model):
-    """List of NetworkFabricSkus.
+    """List of Network Fabric SKUs.
 
-    :ivar value: List of NetworkFabricSku resources.
+    :ivar value: List of Network Fabric SKU resources.
     :vartype value: list[~azure.mgmt.managednetworkfabric.models.NetworkFabricSku]
     :ivar next_link: Url to follow for getting next page of resources.
     :vartype next_link: str
@@ -6291,7 +8775,7 @@ class NetworkFabricSkusListResult(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword value: List of NetworkFabricSku resources.
+        :keyword value: List of Network Fabric SKU resources.
         :paramtype value: list[~azure.mgmt.managednetworkfabric.models.NetworkFabricSku]
         :keyword next_link: Url to follow for getting next page of resources.
         :paramtype next_link: str
@@ -6302,9 +8786,9 @@ class NetworkFabricSkusListResult(_serialization.Model):
 
 
 class NetworkFabricsListResult(_serialization.Model):
-    """List of NetworkFabrics.
+    """List of Network Fabrics.
 
-    :ivar value: List of NetworkFabric resources.
+    :ivar value: List of Network Fabric resources.
     :vartype value: list[~azure.mgmt.managednetworkfabric.models.NetworkFabric]
     :ivar next_link: Url to follow for getting next page of resources.
     :vartype next_link: str
@@ -6319,7 +8803,7 @@ class NetworkFabricsListResult(_serialization.Model):
         self, *, value: Optional[List["_models.NetworkFabric"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: List of NetworkFabric resources.
+        :keyword value: List of Network Fabric resources.
         :paramtype value: list[~azure.mgmt.managednetworkfabric.models.NetworkFabric]
         :keyword next_link: Url to follow for getting next page of resources.
         :paramtype next_link: str
@@ -6334,8 +8818,8 @@ class NetworkInterface(ProxyResource):  # pylint: disable=too-many-instance-attr
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -6347,24 +8831,24 @@ class NetworkInterface(ProxyResource):  # pylint: disable=too-many-instance-attr
     :vartype system_data: ~azure.mgmt.managednetworkfabric.models.SystemData
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar physical_identifier: physicalIdentifier of the network interface.
+    :ivar physical_identifier: Physical Identifier of the network interface.
     :vartype physical_identifier: str
-    :ivar administrative_state: administrativeState of the network interface. Example: Enabled |
-     Disabled. Known values are: "Enabled" and "Disabled".
-    :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
-    :ivar connected_to: The arm resource id of the interface or compute server its connected to.
+    :ivar connected_to: The ARM resource id of the interface or compute server its connected to.
     :vartype connected_to: str
     :ivar interface_type: The Interface Type. Example: Management/Data. Known values are:
      "Management" and "Data".
     :vartype interface_type: str or ~azure.mgmt.managednetworkfabric.models.InterfaceType
-    :ivar ipv4_address: ipv4Address.
+    :ivar ipv4_address: IPv4Address of the interface.
     :vartype ipv4_address: str
-    :ivar ipv6_address: ipv6Address.
+    :ivar ipv6_address: IPv6Address of the interface.
     :vartype ipv6_address: str
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
@@ -6373,12 +8857,12 @@ class NetworkInterface(ProxyResource):  # pylint: disable=too-many-instance-attr
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "physical_identifier": {"readonly": True},
-        "administrative_state": {"readonly": True},
-        "provisioning_state": {"readonly": True},
         "connected_to": {"readonly": True},
         "interface_type": {"readonly": True},
         "ipv4_address": {"readonly": True},
         "ipv6_address": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -6388,12 +8872,12 @@ class NetworkInterface(ProxyResource):  # pylint: disable=too-many-instance-attr
         "system_data": {"key": "systemData", "type": "SystemData"},
         "annotation": {"key": "properties.annotation", "type": "str"},
         "physical_identifier": {"key": "properties.physicalIdentifier", "type": "str"},
-        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "connected_to": {"key": "properties.connectedTo", "type": "str"},
         "interface_type": {"key": "properties.interfaceType", "type": "str"},
         "ipv4_address": {"key": "properties.ipv4Address", "type": "str"},
         "ipv6_address": {"key": "properties.ipv6Address", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
     }
 
     def __init__(self, *, annotation: Optional[str] = None, **kwargs: Any) -> None:
@@ -6404,12 +8888,12 @@ class NetworkInterface(ProxyResource):  # pylint: disable=too-many-instance-attr
         super().__init__(**kwargs)
         self.annotation = annotation
         self.physical_identifier = None
-        self.administrative_state = None
-        self.provisioning_state = None
         self.connected_to = None
         self.interface_type = None
         self.ipv4_address = None
         self.ipv6_address = None
+        self.provisioning_state = None
+        self.administrative_state = None
 
 
 class NetworkInterfacePatch(_serialization.Model):
@@ -6452,51 +8936,51 @@ class NetworkInterfacePatchProperties(AnnotationResource):
 
 
 class NetworkInterfaceProperties(AnnotationResource):
-    """NetworkInterfaceProperties define the resource properties.
+    """Network Interface Properties defines the properties of the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar physical_identifier: physicalIdentifier of the network interface.
+    :ivar physical_identifier: Physical Identifier of the network interface.
     :vartype physical_identifier: str
-    :ivar administrative_state: administrativeState of the network interface. Example: Enabled |
-     Disabled. Known values are: "Enabled" and "Disabled".
-    :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
-    :ivar connected_to: The arm resource id of the interface or compute server its connected to.
+    :ivar connected_to: The ARM resource id of the interface or compute server its connected to.
     :vartype connected_to: str
     :ivar interface_type: The Interface Type. Example: Management/Data. Known values are:
      "Management" and "Data".
     :vartype interface_type: str or ~azure.mgmt.managednetworkfabric.models.InterfaceType
-    :ivar ipv4_address: ipv4Address.
+    :ivar ipv4_address: IPv4Address of the interface.
     :vartype ipv4_address: str
-    :ivar ipv6_address: ipv6Address.
+    :ivar ipv6_address: IPv6Address of the interface.
     :vartype ipv6_address: str
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
         "physical_identifier": {"readonly": True},
-        "administrative_state": {"readonly": True},
-        "provisioning_state": {"readonly": True},
         "connected_to": {"readonly": True},
         "interface_type": {"readonly": True},
         "ipv4_address": {"readonly": True},
         "ipv6_address": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
         "annotation": {"key": "annotation", "type": "str"},
         "physical_identifier": {"key": "physicalIdentifier", "type": "str"},
-        "administrative_state": {"key": "administrativeState", "type": "str"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
         "connected_to": {"key": "connectedTo", "type": "str"},
         "interface_type": {"key": "interfaceType", "type": "str"},
         "ipv4_address": {"key": "ipv4Address", "type": "str"},
         "ipv6_address": {"key": "ipv6Address", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "administrative_state": {"key": "administrativeState", "type": "str"},
     }
 
     def __init__(self, *, annotation: Optional[str] = None, **kwargs: Any) -> None:
@@ -6506,12 +8990,12 @@ class NetworkInterfaceProperties(AnnotationResource):
         """
         super().__init__(annotation=annotation, **kwargs)
         self.physical_identifier = None
-        self.administrative_state = None
-        self.provisioning_state = None
         self.connected_to = None
         self.interface_type = None
         self.ipv4_address = None
         self.ipv6_address = None
+        self.provisioning_state = None
+        self.administrative_state = None
 
 
 class NetworkInterfacesList(_serialization.Model):
@@ -6546,15 +9030,153 @@ class NetworkInterfacesList(_serialization.Model):
         self.next_link = next_link
 
 
-class NetworkRack(TrackedResource):  # pylint: disable=too-many-instance-attributes
-    """The NetworkRack resource definition.
+class NetworkPacketBroker(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The NetworkPacketBroker resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.managednetworkfabric.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar network_fabric_id: ARM resource ID of the Network Fabric. Required.
+    :vartype network_fabric_id: str
+    :ivar network_device_ids: List of ARM resource IDs of Network Devices [NPB].
+    :vartype network_device_ids: list[str]
+    :ivar source_interface_ids: List of network interfaces across NPB devices that are used to
+     mirror source traffic.
+    :vartype source_interface_ids: list[str]
+    :ivar network_tap_ids: List of network Tap IDs configured on NPB.
+    :vartype network_tap_ids: list[str]
+    :ivar neighbor_group_ids: List of neighbor group IDs configured on NPB.
+    :vartype neighbor_group_ids: list[str]
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "network_fabric_id": {"required": True},
+        "network_device_ids": {"readonly": True},
+        "source_interface_ids": {"readonly": True},
+        "network_tap_ids": {"readonly": True},
+        "neighbor_group_ids": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "network_fabric_id": {"key": "properties.networkFabricId", "type": "str"},
+        "network_device_ids": {"key": "properties.networkDeviceIds", "type": "[str]"},
+        "source_interface_ids": {"key": "properties.sourceInterfaceIds", "type": "[str]"},
+        "network_tap_ids": {"key": "properties.networkTapIds", "type": "[str]"},
+        "neighbor_group_ids": {"key": "properties.neighborGroupIds", "type": "[str]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self, *, location: str, network_fabric_id: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword network_fabric_id: ARM resource ID of the Network Fabric. Required.
+        :paramtype network_fabric_id: str
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.network_fabric_id = network_fabric_id
+        self.network_device_ids = None
+        self.source_interface_ids = None
+        self.network_tap_ids = None
+        self.neighbor_group_ids = None
+        self.provisioning_state = None
+
+
+class NetworkPacketBrokerPatch(TagsUpdate):
+    """The NetworkPacketBroker patch resource definition.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
+
+
+class NetworkPacketBrokersListResult(_serialization.Model):
+    """List of NetworkPacketBrokers.
+
+    :ivar value: List of NetworkPacketBroker resources.
+    :vartype value: list[~azure.mgmt.managednetworkfabric.models.NetworkPacketBroker]
+    :ivar next_link: Url to follow for getting next page of resources.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[NetworkPacketBroker]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.NetworkPacketBroker"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of NetworkPacketBroker resources.
+        :paramtype value: list[~azure.mgmt.managednetworkfabric.models.NetworkPacketBroker]
+        :keyword next_link: Url to follow for getting next page of resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class NetworkRack(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The Network Rack resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -6570,14 +9192,15 @@ class NetworkRack(TrackedResource):  # pylint: disable=too-many-instance-attribu
     :vartype location: str
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar network_rack_sku: Network Rack SKU name. Required.
-    :vartype network_rack_sku: str
-    :ivar network_fabric_id: Network Fabric ARM resource id. Required.
+    :ivar network_rack_type: Network Rack SKU name. Known values are: "Aggregate", "Compute", and
+     "Combined".
+    :vartype network_rack_type: str or ~azure.mgmt.managednetworkfabric.models.NetworkRackType
+    :ivar network_fabric_id: ARM resource ID of the Network Fabric. Required.
     :vartype network_fabric_id: str
-    :ivar network_devices: List of network device ARM resource ids.
+    :ivar network_devices: List of network device ARM resource IDs.
     :vartype network_devices: list[str]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
     """
 
@@ -6587,7 +9210,6 @@ class NetworkRack(TrackedResource):  # pylint: disable=too-many-instance-attribu
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
-        "network_rack_sku": {"required": True},
         "network_fabric_id": {"required": True},
         "network_devices": {"readonly": True},
         "provisioning_state": {"readonly": True},
@@ -6601,7 +9223,7 @@ class NetworkRack(TrackedResource):  # pylint: disable=too-many-instance-attribu
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "annotation": {"key": "properties.annotation", "type": "str"},
-        "network_rack_sku": {"key": "properties.networkRackSku", "type": "str"},
+        "network_rack_type": {"key": "properties.networkRackType", "type": "str"},
         "network_fabric_id": {"key": "properties.networkFabricId", "type": "str"},
         "network_devices": {"key": "properties.networkDevices", "type": "[str]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
@@ -6611,10 +9233,10 @@ class NetworkRack(TrackedResource):  # pylint: disable=too-many-instance-attribu
         self,
         *,
         location: str,
-        network_rack_sku: str,
         network_fabric_id: str,
         tags: Optional[Dict[str, str]] = None,
         annotation: Optional[str] = None,
+        network_rack_type: Optional[Union[str, "_models.NetworkRackType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6624,49 +9246,22 @@ class NetworkRack(TrackedResource):  # pylint: disable=too-many-instance-attribu
         :paramtype location: str
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword network_rack_sku: Network Rack SKU name. Required.
-        :paramtype network_rack_sku: str
-        :keyword network_fabric_id: Network Fabric ARM resource id. Required.
+        :keyword network_rack_type: Network Rack SKU name. Known values are: "Aggregate", "Compute",
+         and "Combined".
+        :paramtype network_rack_type: str or ~azure.mgmt.managednetworkfabric.models.NetworkRackType
+        :keyword network_fabric_id: ARM resource ID of the Network Fabric. Required.
         :paramtype network_fabric_id: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.annotation = annotation
-        self.network_rack_sku = network_rack_sku
+        self.network_rack_type = network_rack_type
         self.network_fabric_id = network_fabric_id
         self.network_devices = None
         self.provisioning_state = None
 
 
-class NetworkRackPatch(_serialization.Model):
-    """The NetworkRack patch resource definition.
-
-    :ivar properties: Resource properties.
-    :vartype properties: JSON
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        "properties": {"key": "properties", "type": "object"},
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(
-        self, *, properties: Optional[JSON] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword properties: Resource properties.
-        :paramtype properties: JSON
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.properties = properties
-        self.tags = tags
-
-
 class NetworkRackProperties(AnnotationResource):
-    """NetworkRackProperties define the resource properties.
+    """Network Rack Properties defines the properties of the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -6674,19 +9269,19 @@ class NetworkRackProperties(AnnotationResource):
 
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar network_rack_sku: Network Rack SKU name. Required.
-    :vartype network_rack_sku: str
-    :ivar network_fabric_id: Network Fabric ARM resource id. Required.
+    :ivar network_rack_type: Network Rack SKU name. Known values are: "Aggregate", "Compute", and
+     "Combined".
+    :vartype network_rack_type: str or ~azure.mgmt.managednetworkfabric.models.NetworkRackType
+    :ivar network_fabric_id: ARM resource ID of the Network Fabric. Required.
     :vartype network_fabric_id: str
-    :ivar network_devices: List of network device ARM resource ids.
+    :ivar network_devices: List of network device ARM resource IDs.
     :vartype network_devices: list[str]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
     """
 
     _validation = {
-        "network_rack_sku": {"required": True},
         "network_fabric_id": {"required": True},
         "network_devices": {"readonly": True},
         "provisioning_state": {"readonly": True},
@@ -6694,152 +9289,40 @@ class NetworkRackProperties(AnnotationResource):
 
     _attribute_map = {
         "annotation": {"key": "annotation", "type": "str"},
-        "network_rack_sku": {"key": "networkRackSku", "type": "str"},
+        "network_rack_type": {"key": "networkRackType", "type": "str"},
         "network_fabric_id": {"key": "networkFabricId", "type": "str"},
         "network_devices": {"key": "networkDevices", "type": "[str]"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
-        self, *, network_rack_sku: str, network_fabric_id: str, annotation: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        network_fabric_id: str,
+        annotation: Optional[str] = None,
+        network_rack_type: Optional[Union[str, "_models.NetworkRackType"]] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword network_rack_sku: Network Rack SKU name. Required.
-        :paramtype network_rack_sku: str
-        :keyword network_fabric_id: Network Fabric ARM resource id. Required.
+        :keyword network_rack_type: Network Rack SKU name. Known values are: "Aggregate", "Compute",
+         and "Combined".
+        :paramtype network_rack_type: str or ~azure.mgmt.managednetworkfabric.models.NetworkRackType
+        :keyword network_fabric_id: ARM resource ID of the Network Fabric. Required.
         :paramtype network_fabric_id: str
         """
         super().__init__(annotation=annotation, **kwargs)
-        self.network_rack_sku = network_rack_sku
+        self.network_rack_type = network_rack_type
         self.network_fabric_id = network_fabric_id
         self.network_devices = None
         self.provisioning_state = None
 
 
-class NetworkRackSku(ProxyResource):
-    """The NetworkRackSku resource definition.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.managednetworkfabric.models.SystemData
-    :ivar role_name: The role of the Network Rack: Aggregate or Compute. Required. Known values
-     are: "ComputeRack" and "AggregateRack".
-    :vartype role_name: str or ~azure.mgmt.managednetworkfabric.models.NetworkRackRoleName
-    :ivar maximum_server_count: Maximum number of servers available for this SKU.
-    :vartype maximum_server_count: int
-    :ivar maximum_storage_count: Maximum number of storage devices available for this SKU.
-    :vartype maximum_storage_count: int
-    :ivar maximum_uplinks: Maximum number of network uplinks available for this SKU.
-    :vartype maximum_uplinks: int
-    :ivar network_devices: List of network device properties / role for the Network Rack.
-    :vartype network_devices:
-     list[~azure.mgmt.managednetworkfabric.models.NetworkDeviceRoleProperties]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "role_name": {"required": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "role_name": {"key": "properties.roleName", "type": "str"},
-        "maximum_server_count": {"key": "properties.maximumServerCount", "type": "int"},
-        "maximum_storage_count": {"key": "properties.maximumStorageCount", "type": "int"},
-        "maximum_uplinks": {"key": "properties.maximumUplinks", "type": "int"},
-        "network_devices": {"key": "properties.networkDevices", "type": "[NetworkDeviceRoleProperties]"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        role_name: Union[str, "_models.NetworkRackRoleName"],
-        maximum_server_count: Optional[int] = None,
-        maximum_storage_count: Optional[int] = None,
-        maximum_uplinks: Optional[int] = None,
-        network_devices: Optional[List["_models.NetworkDeviceRoleProperties"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword role_name: The role of the Network Rack: Aggregate or Compute. Required. Known values
-         are: "ComputeRack" and "AggregateRack".
-        :paramtype role_name: str or ~azure.mgmt.managednetworkfabric.models.NetworkRackRoleName
-        :keyword maximum_server_count: Maximum number of servers available for this SKU.
-        :paramtype maximum_server_count: int
-        :keyword maximum_storage_count: Maximum number of storage devices available for this SKU.
-        :paramtype maximum_storage_count: int
-        :keyword maximum_uplinks: Maximum number of network uplinks available for this SKU.
-        :paramtype maximum_uplinks: int
-        :keyword network_devices: List of network device properties / role for the Network Rack.
-        :paramtype network_devices:
-         list[~azure.mgmt.managednetworkfabric.models.NetworkDeviceRoleProperties]
-        """
-        super().__init__(**kwargs)
-        self.role_name = role_name
-        self.maximum_server_count = maximum_server_count
-        self.maximum_storage_count = maximum_storage_count
-        self.maximum_uplinks = maximum_uplinks
-        self.network_devices = network_devices
-        self.provisioning_state = None
-
-
-class NetworkRackSkusListResult(_serialization.Model):
-    """List of NetworkRackSkus.
-
-    :ivar value: List of NetworkRackSku resources.
-    :vartype value: list[~azure.mgmt.managednetworkfabric.models.NetworkRackSku]
-    :ivar next_link: Url to follow for getting next page of resources.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[NetworkRackSku]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.NetworkRackSku"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: List of NetworkRackSku resources.
-        :paramtype value: list[~azure.mgmt.managednetworkfabric.models.NetworkRackSku]
-        :keyword next_link: Url to follow for getting next page of resources.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
 class NetworkRacksListResult(_serialization.Model):
-    """List of NetworkRacks.
+    """List of Network Racks.
 
-    :ivar value: List of NetworkRack resources.
+    :ivar value: List of Network Rack resources.
     :vartype value: list[~azure.mgmt.managednetworkfabric.models.NetworkRack]
     :ivar next_link: Url to follow for getting next page of resources.
     :vartype next_link: str
@@ -6854,7 +9337,7 @@ class NetworkRacksListResult(_serialization.Model):
         self, *, value: Optional[List["_models.NetworkRack"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: List of NetworkRack resources.
+        :keyword value: List of Network Rack resources.
         :paramtype value: list[~azure.mgmt.managednetworkfabric.models.NetworkRack]
         :keyword next_link: Url to follow for getting next page of resources.
         :paramtype next_link: str
@@ -6864,13 +9347,1156 @@ class NetworkRacksListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class NetworkToNetworkInterconnect(ProxyResource):  # pylint: disable=too-many-instance-attributes
-    """The NetworkToNetworkInterconnect resource definition.
+class NetworkTap(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The Network Tap resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.managednetworkfabric.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar network_packet_broker_id: ARM resource ID of the Network Packet Broker. Required.
+    :vartype network_packet_broker_id: str
+    :ivar source_tap_rule_id: Source Tap Rule Id. ARM Resource ID of the Network Tap Rule.
+    :vartype source_tap_rule_id: str
+    :ivar destinations: List of destinations to send the filter traffic. Required.
+    :vartype destinations:
+     list[~azure.mgmt.managednetworkfabric.models.NetworkTapPropertiesDestinationsItem]
+    :ivar polling_type: Polling type. Known values are: "Pull" and "Push".
+    :vartype polling_type: str or ~azure.mgmt.managednetworkfabric.models.PollingType
+    :ivar configuration_state: Gets the configurations state of the resource. Known values are:
+     "Succeeded", "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning",
+     "Deprovisioning", "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provides you the latest status of the NFC service, whether it is
+     Accepted, updating, Succeeded or Failed. During this process, the states keep changing based on
+     the status of Network Tap provisioning. Known values are: "Accepted", "Succeeded", "Updating",
+     "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Example -Enabled/Disabled.
+     Known values are: "Enabled", "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "network_packet_broker_id": {"required": True},
+        "source_tap_rule_id": {"readonly": True},
+        "destinations": {"required": True, "min_items": 1},
+        "configuration_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "annotation": {"key": "properties.annotation", "type": "str"},
+        "network_packet_broker_id": {"key": "properties.networkPacketBrokerId", "type": "str"},
+        "source_tap_rule_id": {"key": "properties.sourceTapRuleId", "type": "str"},
+        "destinations": {"key": "properties.destinations", "type": "[NetworkTapPropertiesDestinationsItem]"},
+        "polling_type": {"key": "properties.pollingType", "type": "str"},
+        "configuration_state": {"key": "properties.configurationState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        network_packet_broker_id: str,
+        destinations: List["_models.NetworkTapPropertiesDestinationsItem"],
+        tags: Optional[Dict[str, str]] = None,
+        annotation: Optional[str] = None,
+        polling_type: Optional[Union[str, "_models.PollingType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword network_packet_broker_id: ARM resource ID of the Network Packet Broker. Required.
+        :paramtype network_packet_broker_id: str
+        :keyword destinations: List of destinations to send the filter traffic. Required.
+        :paramtype destinations:
+         list[~azure.mgmt.managednetworkfabric.models.NetworkTapPropertiesDestinationsItem]
+        :keyword polling_type: Polling type. Known values are: "Pull" and "Push".
+        :paramtype polling_type: str or ~azure.mgmt.managednetworkfabric.models.PollingType
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.annotation = annotation
+        self.network_packet_broker_id = network_packet_broker_id
+        self.source_tap_rule_id = None
+        self.destinations = destinations
+        self.polling_type = polling_type
+        self.configuration_state = None
+        self.provisioning_state = None
+        self.administrative_state = None
+
+
+class NetworkTapPatch(TagsUpdate):
+    """The NetworkFabric resource definition.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar polling_type: Polling type. Known values are: "Pull" and "Push".
+    :vartype polling_type: str or ~azure.mgmt.managednetworkfabric.models.PollingType
+    :ivar destinations: List of destination properties to send the filter traffic.
+    :vartype destinations:
+     list[~azure.mgmt.managednetworkfabric.models.NetworkTapPatchableParametersDestinationsItem]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "annotation": {"key": "properties.annotation", "type": "str"},
+        "polling_type": {"key": "properties.pollingType", "type": "str"},
+        "destinations": {"key": "properties.destinations", "type": "[NetworkTapPatchableParametersDestinationsItem]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        annotation: Optional[str] = None,
+        polling_type: Optional[Union[str, "_models.PollingType"]] = None,
+        destinations: Optional[List["_models.NetworkTapPatchableParametersDestinationsItem"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword polling_type: Polling type. Known values are: "Pull" and "Push".
+        :paramtype polling_type: str or ~azure.mgmt.managednetworkfabric.models.PollingType
+        :keyword destinations: List of destination properties to send the filter traffic.
+        :paramtype destinations:
+         list[~azure.mgmt.managednetworkfabric.models.NetworkTapPatchableParametersDestinationsItem]
+        """
+        super().__init__(tags=tags, **kwargs)
+        self.annotation = annotation
+        self.polling_type = polling_type
+        self.destinations = destinations
+
+
+class NetworkTapPatchableParameters(AnnotationResource):
+    """The Network Tap resource patch definition.
+
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar polling_type: Polling type. Known values are: "Pull" and "Push".
+    :vartype polling_type: str or ~azure.mgmt.managednetworkfabric.models.PollingType
+    :ivar destinations: List of destination properties to send the filter traffic.
+    :vartype destinations:
+     list[~azure.mgmt.managednetworkfabric.models.NetworkTapPatchableParametersDestinationsItem]
+    """
+
+    _attribute_map = {
+        "annotation": {"key": "annotation", "type": "str"},
+        "polling_type": {"key": "pollingType", "type": "str"},
+        "destinations": {"key": "destinations", "type": "[NetworkTapPatchableParametersDestinationsItem]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        annotation: Optional[str] = None,
+        polling_type: Optional[Union[str, "_models.PollingType"]] = None,
+        destinations: Optional[List["_models.NetworkTapPatchableParametersDestinationsItem"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword polling_type: Polling type. Known values are: "Pull" and "Push".
+        :paramtype polling_type: str or ~azure.mgmt.managednetworkfabric.models.PollingType
+        :keyword destinations: List of destination properties to send the filter traffic.
+        :paramtype destinations:
+         list[~azure.mgmt.managednetworkfabric.models.NetworkTapPatchableParametersDestinationsItem]
+        """
+        super().__init__(annotation=annotation, **kwargs)
+        self.polling_type = polling_type
+        self.destinations = destinations
+
+
+class NetworkTapPatchableParametersDestinationsItem(DestinationProperties):
+    """Destination.
+
+    :ivar name: Destination name.
+    :vartype name: str
+    :ivar destination_type: Type of destination. Input can be IsolationDomain or Direct. Known
+     values are: "IsolationDomain" and "Direct".
+    :vartype destination_type: str or ~azure.mgmt.managednetworkfabric.models.DestinationType
+    :ivar destination_id: The destination Id. ARM Resource ID of either NNI or Internal Networks.
+    :vartype destination_id: str
+    :ivar isolation_domain_properties: Isolation Domain Properties.
+    :vartype isolation_domain_properties:
+     ~azure.mgmt.managednetworkfabric.models.IsolationDomainProperties
+    :ivar destination_tap_rule_id: ARM Resource ID of destination Tap Rule that contains match
+     configurations.
+    :vartype destination_tap_rule_id: str
+    """
+
+    _validation = {
+        "name": {"min_length": 1},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "destination_type": {"key": "destinationType", "type": "str"},
+        "destination_id": {"key": "destinationId", "type": "str"},
+        "isolation_domain_properties": {"key": "isolationDomainProperties", "type": "IsolationDomainProperties"},
+        "destination_tap_rule_id": {"key": "destinationTapRuleId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        destination_type: Optional[Union[str, "_models.DestinationType"]] = None,
+        destination_id: Optional[str] = None,
+        isolation_domain_properties: Optional["_models.IsolationDomainProperties"] = None,
+        destination_tap_rule_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Destination name.
+        :paramtype name: str
+        :keyword destination_type: Type of destination. Input can be IsolationDomain or Direct. Known
+         values are: "IsolationDomain" and "Direct".
+        :paramtype destination_type: str or ~azure.mgmt.managednetworkfabric.models.DestinationType
+        :keyword destination_id: The destination Id. ARM Resource ID of either NNI or Internal
+         Networks.
+        :paramtype destination_id: str
+        :keyword isolation_domain_properties: Isolation Domain Properties.
+        :paramtype isolation_domain_properties:
+         ~azure.mgmt.managednetworkfabric.models.IsolationDomainProperties
+        :keyword destination_tap_rule_id: ARM Resource ID of destination Tap Rule that contains match
+         configurations.
+        :paramtype destination_tap_rule_id: str
+        """
+        super().__init__(
+            name=name,
+            destination_type=destination_type,
+            destination_id=destination_id,
+            isolation_domain_properties=isolation_domain_properties,
+            destination_tap_rule_id=destination_tap_rule_id,
+            **kwargs
+        )
+
+
+class NetworkTapProperties(AnnotationResource):
+    """Network Tap Properties defines the properties of the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar network_packet_broker_id: ARM resource ID of the Network Packet Broker. Required.
+    :vartype network_packet_broker_id: str
+    :ivar source_tap_rule_id: Source Tap Rule Id. ARM Resource ID of the Network Tap Rule.
+    :vartype source_tap_rule_id: str
+    :ivar destinations: List of destinations to send the filter traffic. Required.
+    :vartype destinations:
+     list[~azure.mgmt.managednetworkfabric.models.NetworkTapPropertiesDestinationsItem]
+    :ivar polling_type: Polling type. Known values are: "Pull" and "Push".
+    :vartype polling_type: str or ~azure.mgmt.managednetworkfabric.models.PollingType
+    :ivar configuration_state: Gets the configurations state of the resource. Known values are:
+     "Succeeded", "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning",
+     "Deprovisioning", "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provides you the latest status of the NFC service, whether it is
+     Accepted, updating, Succeeded or Failed. During this process, the states keep changing based on
+     the status of Network Tap provisioning. Known values are: "Accepted", "Succeeded", "Updating",
+     "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Example -Enabled/Disabled.
+     Known values are: "Enabled", "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
+    """
+
+    _validation = {
+        "network_packet_broker_id": {"required": True},
+        "source_tap_rule_id": {"readonly": True},
+        "destinations": {"required": True, "min_items": 1},
+        "configuration_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "annotation": {"key": "annotation", "type": "str"},
+        "network_packet_broker_id": {"key": "networkPacketBrokerId", "type": "str"},
+        "source_tap_rule_id": {"key": "sourceTapRuleId", "type": "str"},
+        "destinations": {"key": "destinations", "type": "[NetworkTapPropertiesDestinationsItem]"},
+        "polling_type": {"key": "pollingType", "type": "str"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "administrative_state": {"key": "administrativeState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        network_packet_broker_id: str,
+        destinations: List["_models.NetworkTapPropertiesDestinationsItem"],
+        annotation: Optional[str] = None,
+        polling_type: Optional[Union[str, "_models.PollingType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword network_packet_broker_id: ARM resource ID of the Network Packet Broker. Required.
+        :paramtype network_packet_broker_id: str
+        :keyword destinations: List of destinations to send the filter traffic. Required.
+        :paramtype destinations:
+         list[~azure.mgmt.managednetworkfabric.models.NetworkTapPropertiesDestinationsItem]
+        :keyword polling_type: Polling type. Known values are: "Pull" and "Push".
+        :paramtype polling_type: str or ~azure.mgmt.managednetworkfabric.models.PollingType
+        """
+        super().__init__(annotation=annotation, **kwargs)
+        self.network_packet_broker_id = network_packet_broker_id
+        self.source_tap_rule_id = None
+        self.destinations = destinations
+        self.polling_type = polling_type
+        self.configuration_state = None
+        self.provisioning_state = None
+        self.administrative_state = None
+
+
+class NetworkTapPropertiesDestinationsItem(DestinationProperties):
+    """Destination.
+
+    :ivar name: Destination name.
+    :vartype name: str
+    :ivar destination_type: Type of destination. Input can be IsolationDomain or Direct. Known
+     values are: "IsolationDomain" and "Direct".
+    :vartype destination_type: str or ~azure.mgmt.managednetworkfabric.models.DestinationType
+    :ivar destination_id: The destination Id. ARM Resource ID of either NNI or Internal Networks.
+    :vartype destination_id: str
+    :ivar isolation_domain_properties: Isolation Domain Properties.
+    :vartype isolation_domain_properties:
+     ~azure.mgmt.managednetworkfabric.models.IsolationDomainProperties
+    :ivar destination_tap_rule_id: ARM Resource ID of destination Tap Rule that contains match
+     configurations.
+    :vartype destination_tap_rule_id: str
+    """
+
+    _validation = {
+        "name": {"min_length": 1},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "destination_type": {"key": "destinationType", "type": "str"},
+        "destination_id": {"key": "destinationId", "type": "str"},
+        "isolation_domain_properties": {"key": "isolationDomainProperties", "type": "IsolationDomainProperties"},
+        "destination_tap_rule_id": {"key": "destinationTapRuleId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        destination_type: Optional[Union[str, "_models.DestinationType"]] = None,
+        destination_id: Optional[str] = None,
+        isolation_domain_properties: Optional["_models.IsolationDomainProperties"] = None,
+        destination_tap_rule_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Destination name.
+        :paramtype name: str
+        :keyword destination_type: Type of destination. Input can be IsolationDomain or Direct. Known
+         values are: "IsolationDomain" and "Direct".
+        :paramtype destination_type: str or ~azure.mgmt.managednetworkfabric.models.DestinationType
+        :keyword destination_id: The destination Id. ARM Resource ID of either NNI or Internal
+         Networks.
+        :paramtype destination_id: str
+        :keyword isolation_domain_properties: Isolation Domain Properties.
+        :paramtype isolation_domain_properties:
+         ~azure.mgmt.managednetworkfabric.models.IsolationDomainProperties
+        :keyword destination_tap_rule_id: ARM Resource ID of destination Tap Rule that contains match
+         configurations.
+        :paramtype destination_tap_rule_id: str
+        """
+        super().__init__(
+            name=name,
+            destination_type=destination_type,
+            destination_id=destination_id,
+            isolation_domain_properties=isolation_domain_properties,
+            destination_tap_rule_id=destination_tap_rule_id,
+            **kwargs
+        )
+
+
+class NetworkTapRule(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """The NetworkTapRule resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.managednetworkfabric.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar configuration_type: Input method to configure Network Tap Rule. Known values are: "File"
+     and "Inline".
+    :vartype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+    :ivar tap_rules_url: Network Tap Rules file URL.
+    :vartype tap_rules_url: str
+    :ivar match_configurations: List of match configurations.
+    :vartype match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.NetworkTapRuleMatchConfiguration]
+    :ivar dynamic_match_configurations: List of dynamic match configurations.
+    :vartype dynamic_match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
+    :ivar network_tap_id: The ARM resource Id of the NetworkTap.
+    :vartype network_tap_id: str
+    :ivar polling_interval_in_seconds: Polling interval in seconds. Known values are: 30, 60, 90,
+     and 120.
+    :vartype polling_interval_in_seconds: int or
+     ~azure.mgmt.managednetworkfabric.models.PollingIntervalInSeconds
+    :ivar last_synced_time: The last sync timestamp.
+    :vartype last_synced_time: ~datetime.datetime
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "tap_rules_url": {"min_length": 1},
+        "match_configurations": {"min_items": 1},
+        "dynamic_match_configurations": {"min_items": 1},
+        "network_tap_id": {"readonly": True},
+        "last_synced_time": {"readonly": True},
+        "configuration_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "annotation": {"key": "properties.annotation", "type": "str"},
+        "configuration_type": {"key": "properties.configurationType", "type": "str"},
+        "tap_rules_url": {"key": "properties.tapRulesUrl", "type": "str"},
+        "match_configurations": {"key": "properties.matchConfigurations", "type": "[NetworkTapRuleMatchConfiguration]"},
+        "dynamic_match_configurations": {
+            "key": "properties.dynamicMatchConfigurations",
+            "type": "[CommonDynamicMatchConfiguration]",
+        },
+        "network_tap_id": {"key": "properties.networkTapId", "type": "str"},
+        "polling_interval_in_seconds": {"key": "properties.pollingIntervalInSeconds", "type": "int"},
+        "last_synced_time": {"key": "properties.lastSyncedTime", "type": "iso-8601"},
+        "configuration_state": {"key": "properties.configurationState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        annotation: Optional[str] = None,
+        configuration_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
+        tap_rules_url: Optional[str] = None,
+        match_configurations: Optional[List["_models.NetworkTapRuleMatchConfiguration"]] = None,
+        dynamic_match_configurations: Optional[List["_models.CommonDynamicMatchConfiguration"]] = None,
+        polling_interval_in_seconds: Union[int, "_models.PollingIntervalInSeconds"] = 30,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword configuration_type: Input method to configure Network Tap Rule. Known values are:
+         "File" and "Inline".
+        :paramtype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+        :keyword tap_rules_url: Network Tap Rules file URL.
+        :paramtype tap_rules_url: str
+        :keyword match_configurations: List of match configurations.
+        :paramtype match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.NetworkTapRuleMatchConfiguration]
+        :keyword dynamic_match_configurations: List of dynamic match configurations.
+        :paramtype dynamic_match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
+        :keyword polling_interval_in_seconds: Polling interval in seconds. Known values are: 30, 60,
+         90, and 120.
+        :paramtype polling_interval_in_seconds: int or
+         ~azure.mgmt.managednetworkfabric.models.PollingIntervalInSeconds
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.annotation = annotation
+        self.configuration_type = configuration_type
+        self.tap_rules_url = tap_rules_url
+        self.match_configurations = match_configurations
+        self.dynamic_match_configurations = dynamic_match_configurations
+        self.network_tap_id = None
+        self.polling_interval_in_seconds = polling_interval_in_seconds
+        self.last_synced_time = None
+        self.configuration_state = None
+        self.provisioning_state = None
+        self.administrative_state = None
+
+
+class NetworkTapRuleAction(_serialization.Model):
+    """Action that need to performed.
+
+    :ivar type: Type of actions that can be performed. Known values are: "Drop", "Count", "Log",
+     "Replicate", "Goto", "Redirect", and "Mirror".
+    :vartype type: str or ~azure.mgmt.managednetworkfabric.models.TapRuleActionType
+    :ivar truncate: Truncate. 0 indicates do not truncate.
+    :vartype truncate: str
+    :ivar is_timestamp_enabled: The parameter to enable or disable the timestamp. Known values are:
+     "True" and "False".
+    :vartype is_timestamp_enabled: str or
+     ~azure.mgmt.managednetworkfabric.models.BooleanEnumProperty
+    :ivar destination_id: Destination Id. The ARM resource Id may be either Network To Network
+     Interconnect or NeighborGroup.
+    :vartype destination_id: str
+    :ivar match_configuration_name: The name of the match configuration. This is used when Goto
+     type is provided. If Goto type is selected and no match configuration name is provided. It goes
+     to next configuration.
+    :vartype match_configuration_name: str
+    """
+
+    _validation = {
+        "truncate": {"min_length": 1},
+        "match_configuration_name": {"min_length": 1},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "truncate": {"key": "truncate", "type": "str"},
+        "is_timestamp_enabled": {"key": "isTimestampEnabled", "type": "str"},
+        "destination_id": {"key": "destinationId", "type": "str"},
+        "match_configuration_name": {"key": "matchConfigurationName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.TapRuleActionType"]] = None,
+        truncate: Optional[str] = None,
+        is_timestamp_enabled: Optional[Union[str, "_models.BooleanEnumProperty"]] = None,
+        destination_id: Optional[str] = None,
+        match_configuration_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Type of actions that can be performed. Known values are: "Drop", "Count", "Log",
+         "Replicate", "Goto", "Redirect", and "Mirror".
+        :paramtype type: str or ~azure.mgmt.managednetworkfabric.models.TapRuleActionType
+        :keyword truncate: Truncate. 0 indicates do not truncate.
+        :paramtype truncate: str
+        :keyword is_timestamp_enabled: The parameter to enable or disable the timestamp. Known values
+         are: "True" and "False".
+        :paramtype is_timestamp_enabled: str or
+         ~azure.mgmt.managednetworkfabric.models.BooleanEnumProperty
+        :keyword destination_id: Destination Id. The ARM resource Id may be either Network To Network
+         Interconnect or NeighborGroup.
+        :paramtype destination_id: str
+        :keyword match_configuration_name: The name of the match configuration. This is used when Goto
+         type is provided. If Goto type is selected and no match configuration name is provided. It goes
+         to next configuration.
+        :paramtype match_configuration_name: str
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.truncate = truncate
+        self.is_timestamp_enabled = is_timestamp_enabled
+        self.destination_id = destination_id
+        self.match_configuration_name = match_configuration_name
+
+
+class NetworkTapRuleMatchCondition(CommonMatchConditions):
+    """Defines the match condition that is supported to filter the traffic.
+
+    :ivar protocol_types: List of the protocols that need to be matched.
+    :vartype protocol_types: list[str]
+    :ivar vlan_match_condition: Vlan match condition that needs to be matched.
+    :vartype vlan_match_condition: ~azure.mgmt.managednetworkfabric.models.VlanMatchCondition
+    :ivar ip_condition: IP condition that needs to be matched.
+    :vartype ip_condition: ~azure.mgmt.managednetworkfabric.models.IpMatchCondition
+    :ivar encapsulation_type: Encapsulation Type. Known values are: "None" and "GTPv1".
+    :vartype encapsulation_type: str or ~azure.mgmt.managednetworkfabric.models.EncapsulationType
+    :ivar port_condition: Defines the port condition that needs to be matched.
+    :vartype port_condition: ~azure.mgmt.managednetworkfabric.models.PortCondition
+    """
+
+    _validation = {
+        "protocol_types": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "protocol_types": {"key": "protocolTypes", "type": "[str]"},
+        "vlan_match_condition": {"key": "vlanMatchCondition", "type": "VlanMatchCondition"},
+        "ip_condition": {"key": "ipCondition", "type": "IpMatchCondition"},
+        "encapsulation_type": {"key": "encapsulationType", "type": "str"},
+        "port_condition": {"key": "portCondition", "type": "PortCondition"},
+    }
+
+    def __init__(
+        self,
+        *,
+        protocol_types: Optional[List[str]] = None,
+        vlan_match_condition: Optional["_models.VlanMatchCondition"] = None,
+        ip_condition: Optional["_models.IpMatchCondition"] = None,
+        encapsulation_type: Union[str, "_models.EncapsulationType"] = "None",
+        port_condition: Optional["_models.PortCondition"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword protocol_types: List of the protocols that need to be matched.
+        :paramtype protocol_types: list[str]
+        :keyword vlan_match_condition: Vlan match condition that needs to be matched.
+        :paramtype vlan_match_condition: ~azure.mgmt.managednetworkfabric.models.VlanMatchCondition
+        :keyword ip_condition: IP condition that needs to be matched.
+        :paramtype ip_condition: ~azure.mgmt.managednetworkfabric.models.IpMatchCondition
+        :keyword encapsulation_type: Encapsulation Type. Known values are: "None" and "GTPv1".
+        :paramtype encapsulation_type: str or ~azure.mgmt.managednetworkfabric.models.EncapsulationType
+        :keyword port_condition: Defines the port condition that needs to be matched.
+        :paramtype port_condition: ~azure.mgmt.managednetworkfabric.models.PortCondition
+        """
+        super().__init__(
+            protocol_types=protocol_types,
+            vlan_match_condition=vlan_match_condition,
+            ip_condition=ip_condition,
+            **kwargs
+        )
+        self.encapsulation_type = encapsulation_type
+        self.port_condition = port_condition
+
+
+class NetworkTapRuleMatchConfiguration(_serialization.Model):
+    """Defines the match configuration that are supported to filter the traffic.
+
+    :ivar match_configuration_name: The name of the match configuration.
+    :vartype match_configuration_name: str
+    :ivar sequence_number: Sequence Number of the match configuration..
+    :vartype sequence_number: int
+    :ivar ip_address_type: Type of IP Address. IPv4 or IPv6. Known values are: "IPv4" and "IPv6".
+    :vartype ip_address_type: str or ~azure.mgmt.managednetworkfabric.models.IPAddressType
+    :ivar match_conditions: List of the match conditions.
+    :vartype match_conditions:
+     list[~azure.mgmt.managednetworkfabric.models.NetworkTapRuleMatchCondition]
+    :ivar actions: List of actions that need to be performed for the matched conditions.
+    :vartype actions: list[~azure.mgmt.managednetworkfabric.models.NetworkTapRuleAction]
+    """
+
+    _validation = {
+        "match_configuration_name": {"min_length": 1},
+        "sequence_number": {"maximum": 4294967295, "minimum": 1},
+        "match_conditions": {"min_items": 1},
+        "actions": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "match_configuration_name": {"key": "matchConfigurationName", "type": "str"},
+        "sequence_number": {"key": "sequenceNumber", "type": "int"},
+        "ip_address_type": {"key": "ipAddressType", "type": "str"},
+        "match_conditions": {"key": "matchConditions", "type": "[NetworkTapRuleMatchCondition]"},
+        "actions": {"key": "actions", "type": "[NetworkTapRuleAction]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        match_configuration_name: Optional[str] = None,
+        sequence_number: Optional[int] = None,
+        ip_address_type: Optional[Union[str, "_models.IPAddressType"]] = None,
+        match_conditions: Optional[List["_models.NetworkTapRuleMatchCondition"]] = None,
+        actions: Optional[List["_models.NetworkTapRuleAction"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword match_configuration_name: The name of the match configuration.
+        :paramtype match_configuration_name: str
+        :keyword sequence_number: Sequence Number of the match configuration..
+        :paramtype sequence_number: int
+        :keyword ip_address_type: Type of IP Address. IPv4 or IPv6. Known values are: "IPv4" and
+         "IPv6".
+        :paramtype ip_address_type: str or ~azure.mgmt.managednetworkfabric.models.IPAddressType
+        :keyword match_conditions: List of the match conditions.
+        :paramtype match_conditions:
+         list[~azure.mgmt.managednetworkfabric.models.NetworkTapRuleMatchCondition]
+        :keyword actions: List of actions that need to be performed for the matched conditions.
+        :paramtype actions: list[~azure.mgmt.managednetworkfabric.models.NetworkTapRuleAction]
+        """
+        super().__init__(**kwargs)
+        self.match_configuration_name = match_configuration_name
+        self.sequence_number = sequence_number
+        self.ip_address_type = ip_address_type
+        self.match_conditions = match_conditions
+        self.actions = actions
+
+
+class NetworkTapRulePatch(TagsUpdate):
+    """The NetworkTapRule resource definition.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar configuration_type: Input method to configure Network Tap Rule. Known values are: "File"
+     and "Inline".
+    :vartype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+    :ivar tap_rules_url: Network Tap Rules file URL.
+    :vartype tap_rules_url: str
+    :ivar match_configurations: List of match configurations.
+    :vartype match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.NetworkTapRuleMatchConfiguration]
+    :ivar dynamic_match_configurations: List of dynamic match configurations.
+    :vartype dynamic_match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
+    """
+
+    _validation = {
+        "tap_rules_url": {"min_length": 1},
+        "match_configurations": {"min_items": 1},
+        "dynamic_match_configurations": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "annotation": {"key": "properties.annotation", "type": "str"},
+        "configuration_type": {"key": "properties.configurationType", "type": "str"},
+        "tap_rules_url": {"key": "properties.tapRulesUrl", "type": "str"},
+        "match_configurations": {"key": "properties.matchConfigurations", "type": "[NetworkTapRuleMatchConfiguration]"},
+        "dynamic_match_configurations": {
+            "key": "properties.dynamicMatchConfigurations",
+            "type": "[CommonDynamicMatchConfiguration]",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        annotation: Optional[str] = None,
+        configuration_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
+        tap_rules_url: Optional[str] = None,
+        match_configurations: Optional[List["_models.NetworkTapRuleMatchConfiguration"]] = None,
+        dynamic_match_configurations: Optional[List["_models.CommonDynamicMatchConfiguration"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword configuration_type: Input method to configure Network Tap Rule. Known values are:
+         "File" and "Inline".
+        :paramtype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+        :keyword tap_rules_url: Network Tap Rules file URL.
+        :paramtype tap_rules_url: str
+        :keyword match_configurations: List of match configurations.
+        :paramtype match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.NetworkTapRuleMatchConfiguration]
+        :keyword dynamic_match_configurations: List of dynamic match configurations.
+        :paramtype dynamic_match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
+        """
+        super().__init__(tags=tags, **kwargs)
+        self.annotation = annotation
+        self.configuration_type = configuration_type
+        self.tap_rules_url = tap_rules_url
+        self.match_configurations = match_configurations
+        self.dynamic_match_configurations = dynamic_match_configurations
+
+
+class NetworkTapRulePatchableProperties(_serialization.Model):
+    """Network Tap Rule updatable properties.
+
+    :ivar configuration_type: Input method to configure Network Tap Rule. Known values are: "File"
+     and "Inline".
+    :vartype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+    :ivar tap_rules_url: Network Tap Rules file URL.
+    :vartype tap_rules_url: str
+    :ivar match_configurations: List of match configurations.
+    :vartype match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.NetworkTapRuleMatchConfiguration]
+    :ivar dynamic_match_configurations: List of dynamic match configurations.
+    :vartype dynamic_match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
+    """
+
+    _validation = {
+        "tap_rules_url": {"min_length": 1},
+        "match_configurations": {"min_items": 1},
+        "dynamic_match_configurations": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "configuration_type": {"key": "configurationType", "type": "str"},
+        "tap_rules_url": {"key": "tapRulesUrl", "type": "str"},
+        "match_configurations": {"key": "matchConfigurations", "type": "[NetworkTapRuleMatchConfiguration]"},
+        "dynamic_match_configurations": {
+            "key": "dynamicMatchConfigurations",
+            "type": "[CommonDynamicMatchConfiguration]",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        configuration_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
+        tap_rules_url: Optional[str] = None,
+        match_configurations: Optional[List["_models.NetworkTapRuleMatchConfiguration"]] = None,
+        dynamic_match_configurations: Optional[List["_models.CommonDynamicMatchConfiguration"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword configuration_type: Input method to configure Network Tap Rule. Known values are:
+         "File" and "Inline".
+        :paramtype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+        :keyword tap_rules_url: Network Tap Rules file URL.
+        :paramtype tap_rules_url: str
+        :keyword match_configurations: List of match configurations.
+        :paramtype match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.NetworkTapRuleMatchConfiguration]
+        :keyword dynamic_match_configurations: List of dynamic match configurations.
+        :paramtype dynamic_match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
+        """
+        super().__init__(**kwargs)
+        self.configuration_type = configuration_type
+        self.tap_rules_url = tap_rules_url
+        self.match_configurations = match_configurations
+        self.dynamic_match_configurations = dynamic_match_configurations
+
+
+class NetworkTapRulePatchProperties(AnnotationResource, NetworkTapRulePatchableProperties):
+    """Network Tap Rule Patch properties.
+
+    :ivar configuration_type: Input method to configure Network Tap Rule. Known values are: "File"
+     and "Inline".
+    :vartype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+    :ivar tap_rules_url: Network Tap Rules file URL.
+    :vartype tap_rules_url: str
+    :ivar match_configurations: List of match configurations.
+    :vartype match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.NetworkTapRuleMatchConfiguration]
+    :ivar dynamic_match_configurations: List of dynamic match configurations.
+    :vartype dynamic_match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    """
+
+    _validation = {
+        "tap_rules_url": {"min_length": 1},
+        "match_configurations": {"min_items": 1},
+        "dynamic_match_configurations": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "configuration_type": {"key": "configurationType", "type": "str"},
+        "tap_rules_url": {"key": "tapRulesUrl", "type": "str"},
+        "match_configurations": {"key": "matchConfigurations", "type": "[NetworkTapRuleMatchConfiguration]"},
+        "dynamic_match_configurations": {
+            "key": "dynamicMatchConfigurations",
+            "type": "[CommonDynamicMatchConfiguration]",
+        },
+        "annotation": {"key": "annotation", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        configuration_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
+        tap_rules_url: Optional[str] = None,
+        match_configurations: Optional[List["_models.NetworkTapRuleMatchConfiguration"]] = None,
+        dynamic_match_configurations: Optional[List["_models.CommonDynamicMatchConfiguration"]] = None,
+        annotation: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword configuration_type: Input method to configure Network Tap Rule. Known values are:
+         "File" and "Inline".
+        :paramtype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+        :keyword tap_rules_url: Network Tap Rules file URL.
+        :paramtype tap_rules_url: str
+        :keyword match_configurations: List of match configurations.
+        :paramtype match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.NetworkTapRuleMatchConfiguration]
+        :keyword dynamic_match_configurations: List of dynamic match configurations.
+        :paramtype dynamic_match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        """
+        super().__init__(
+            annotation=annotation,
+            configuration_type=configuration_type,
+            tap_rules_url=tap_rules_url,
+            match_configurations=match_configurations,
+            dynamic_match_configurations=dynamic_match_configurations,
+            **kwargs
+        )
+        self.configuration_type = configuration_type
+        self.tap_rules_url = tap_rules_url
+        self.match_configurations = match_configurations
+        self.dynamic_match_configurations = dynamic_match_configurations
+        self.annotation = annotation
+
+
+class NetworkTapRuleProperties(
+    AnnotationResource, NetworkTapRulePatchableProperties
+):  # pylint: disable=too-many-instance-attributes
+    """Network Tap Rule Properties defines the resource properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar configuration_type: Input method to configure Network Tap Rule. Known values are: "File"
+     and "Inline".
+    :vartype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+    :ivar tap_rules_url: Network Tap Rules file URL.
+    :vartype tap_rules_url: str
+    :ivar match_configurations: List of match configurations.
+    :vartype match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.NetworkTapRuleMatchConfiguration]
+    :ivar dynamic_match_configurations: List of dynamic match configurations.
+    :vartype dynamic_match_configurations:
+     list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar network_tap_id: The ARM resource Id of the NetworkTap.
+    :vartype network_tap_id: str
+    :ivar polling_interval_in_seconds: Polling interval in seconds. Known values are: 30, 60, 90,
+     and 120.
+    :vartype polling_interval_in_seconds: int or
+     ~azure.mgmt.managednetworkfabric.models.PollingIntervalInSeconds
+    :ivar last_synced_time: The last sync timestamp.
+    :vartype last_synced_time: ~datetime.datetime
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
+    """
+
+    _validation = {
+        "tap_rules_url": {"min_length": 1},
+        "match_configurations": {"min_items": 1},
+        "dynamic_match_configurations": {"min_items": 1},
+        "network_tap_id": {"readonly": True},
+        "last_synced_time": {"readonly": True},
+        "configuration_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "configuration_type": {"key": "configurationType", "type": "str"},
+        "tap_rules_url": {"key": "tapRulesUrl", "type": "str"},
+        "match_configurations": {"key": "matchConfigurations", "type": "[NetworkTapRuleMatchConfiguration]"},
+        "dynamic_match_configurations": {
+            "key": "dynamicMatchConfigurations",
+            "type": "[CommonDynamicMatchConfiguration]",
+        },
+        "annotation": {"key": "annotation", "type": "str"},
+        "network_tap_id": {"key": "networkTapId", "type": "str"},
+        "polling_interval_in_seconds": {"key": "pollingIntervalInSeconds", "type": "int"},
+        "last_synced_time": {"key": "lastSyncedTime", "type": "iso-8601"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "administrative_state": {"key": "administrativeState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        configuration_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
+        tap_rules_url: Optional[str] = None,
+        match_configurations: Optional[List["_models.NetworkTapRuleMatchConfiguration"]] = None,
+        dynamic_match_configurations: Optional[List["_models.CommonDynamicMatchConfiguration"]] = None,
+        annotation: Optional[str] = None,
+        polling_interval_in_seconds: Union[int, "_models.PollingIntervalInSeconds"] = 30,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword configuration_type: Input method to configure Network Tap Rule. Known values are:
+         "File" and "Inline".
+        :paramtype configuration_type: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationType
+        :keyword tap_rules_url: Network Tap Rules file URL.
+        :paramtype tap_rules_url: str
+        :keyword match_configurations: List of match configurations.
+        :paramtype match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.NetworkTapRuleMatchConfiguration]
+        :keyword dynamic_match_configurations: List of dynamic match configurations.
+        :paramtype dynamic_match_configurations:
+         list[~azure.mgmt.managednetworkfabric.models.CommonDynamicMatchConfiguration]
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword polling_interval_in_seconds: Polling interval in seconds. Known values are: 30, 60,
+         90, and 120.
+        :paramtype polling_interval_in_seconds: int or
+         ~azure.mgmt.managednetworkfabric.models.PollingIntervalInSeconds
+        """
+        super().__init__(
+            annotation=annotation,
+            configuration_type=configuration_type,
+            tap_rules_url=tap_rules_url,
+            match_configurations=match_configurations,
+            dynamic_match_configurations=dynamic_match_configurations,
+            **kwargs
+        )
+        self.configuration_type = configuration_type
+        self.tap_rules_url = tap_rules_url
+        self.match_configurations = match_configurations
+        self.dynamic_match_configurations = dynamic_match_configurations
+        self.network_tap_id = None
+        self.polling_interval_in_seconds = polling_interval_in_seconds
+        self.last_synced_time = None
+        self.configuration_state = None
+        self.provisioning_state = None
+        self.administrative_state = None
+        self.annotation = annotation
+
+
+class NetworkTapRulesListResult(_serialization.Model):
+    """List of NetworkTapRules.
+
+    :ivar value: List of NetworkTapRule resources.
+    :vartype value: list[~azure.mgmt.managednetworkfabric.models.NetworkTapRule]
+    :ivar next_link: Url to follow for getting next page of resources.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[NetworkTapRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.NetworkTapRule"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of NetworkTapRule resources.
+        :paramtype value: list[~azure.mgmt.managednetworkfabric.models.NetworkTapRule]
+        :keyword next_link: Url to follow for getting next page of resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class NetworkTapsListResult(_serialization.Model):
+    """List of NetworkTaps.
+
+    :ivar value: List of NetworkTap resources.
+    :vartype value: list[~azure.mgmt.managednetworkfabric.models.NetworkTap]
+    :ivar next_link: Url to follow for getting next page of resources.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[NetworkTap]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.NetworkTap"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of NetworkTap resources.
+        :paramtype value: list[~azure.mgmt.managednetworkfabric.models.NetworkTap]
+        :keyword next_link: Url to follow for getting next page of resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class NetworkToNetworkInterconnect(ProxyResource):  # pylint: disable=too-many-instance-attributes
+    """The Network To Network Interconnect resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -6882,23 +10508,41 @@ class NetworkToNetworkInterconnect(ProxyResource):  # pylint: disable=too-many-i
     :vartype system_data: ~azure.mgmt.managednetworkfabric.models.SystemData
     :ivar nni_type: Type of NNI used. Example: CE | NPB. Known values are: "CE" and "NPB".
     :vartype nni_type: str or ~azure.mgmt.managednetworkfabric.models.NniType
-    :ivar administrative_state: Gets the administrativeState of the resource. Example
-     -Enabled/Disabled. Known values are: "Enabled" and "Disabled".
-    :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
     :ivar is_management_type: Configuration to use NNI for Infrastructure Management. Example:
      True/False. Known values are: "True" and "False".
-    :vartype is_management_type: str or ~azure.mgmt.managednetworkfabric.models.BooleanEnumProperty
-    :ivar use_option_b: Based on this parameter the layer2/layer3 is made as mandatory. Example:
-     True/False. Known values are: "True" and "False".
+    :vartype is_management_type: str or ~azure.mgmt.managednetworkfabric.models.IsManagementType
+    :ivar use_option_b: Based on this option layer3 parameters are mandatory. Example: True/False.
+     Required. Known values are: "True" and "False".
     :vartype use_option_b: str or ~azure.mgmt.managednetworkfabric.models.BooleanEnumProperty
-    :ivar layer2_configuration: Common properties for Layer2Configuration.
+    :ivar layer2_configuration: Common properties for Layer2 Configuration.
     :vartype layer2_configuration: ~azure.mgmt.managednetworkfabric.models.Layer2Configuration
-    :ivar layer3_configuration: Common properties for Layer3Configuration.
-    :vartype layer3_configuration: ~azure.mgmt.managednetworkfabric.models.Layer3Configuration
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar option_b_layer3_configuration: Common properties for Layer3Configuration.
+    :vartype option_b_layer3_configuration:
+     ~azure.mgmt.managednetworkfabric.models.NetworkToNetworkInterconnectPropertiesOptionBLayer3Configuration
+    :ivar npb_static_route_configuration: NPB Static Route Configuration properties.
+    :vartype npb_static_route_configuration:
+     ~azure.mgmt.managednetworkfabric.models.NpbStaticRouteConfiguration
+    :ivar import_route_policy: Import Route Policy configuration.
+    :vartype import_route_policy:
+     ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicyInformation
+    :ivar export_route_policy: Export Route Policy configuration.
+    :vartype export_route_policy:
+     ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicyInformation
+    :ivar egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+    :vartype egress_acl_id: str
+    :ivar ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+    :vartype ingress_acl_id: str
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
@@ -6906,8 +10550,10 @@ class NetworkToNetworkInterconnect(ProxyResource):  # pylint: disable=too-many-i
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
-        "administrative_state": {"readonly": True},
+        "use_option_b": {"required": True},
+        "configuration_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -6916,22 +10562,41 @@ class NetworkToNetworkInterconnect(ProxyResource):  # pylint: disable=too-many-i
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
         "nni_type": {"key": "properties.nniType", "type": "str"},
-        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
         "is_management_type": {"key": "properties.isManagementType", "type": "str"},
         "use_option_b": {"key": "properties.useOptionB", "type": "str"},
         "layer2_configuration": {"key": "properties.layer2Configuration", "type": "Layer2Configuration"},
-        "layer3_configuration": {"key": "properties.layer3Configuration", "type": "Layer3Configuration"},
+        "option_b_layer3_configuration": {
+            "key": "properties.optionBLayer3Configuration",
+            "type": "NetworkToNetworkInterconnectPropertiesOptionBLayer3Configuration",
+        },
+        "npb_static_route_configuration": {
+            "key": "properties.npbStaticRouteConfiguration",
+            "type": "NpbStaticRouteConfiguration",
+        },
+        "import_route_policy": {"key": "properties.importRoutePolicy", "type": "ImportRoutePolicyInformation"},
+        "export_route_policy": {"key": "properties.exportRoutePolicy", "type": "ExportRoutePolicyInformation"},
+        "egress_acl_id": {"key": "properties.egressAclId", "type": "str"},
+        "ingress_acl_id": {"key": "properties.ingressAclId", "type": "str"},
+        "configuration_state": {"key": "properties.configurationState", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
+        use_option_b: Union[str, "_models.BooleanEnumProperty"],
         nni_type: Union[str, "_models.NniType"] = "CE",
-        is_management_type: Optional[Union[str, "_models.BooleanEnumProperty"]] = None,
-        use_option_b: Optional[Union[str, "_models.BooleanEnumProperty"]] = None,
+        is_management_type: Union[str, "_models.IsManagementType"] = "True",
         layer2_configuration: Optional["_models.Layer2Configuration"] = None,
-        layer3_configuration: Optional["_models.Layer3Configuration"] = None,
+        option_b_layer3_configuration: Optional[
+            "_models.NetworkToNetworkInterconnectPropertiesOptionBLayer3Configuration"
+        ] = None,
+        npb_static_route_configuration: Optional["_models.NpbStaticRouteConfiguration"] = None,
+        import_route_policy: Optional["_models.ImportRoutePolicyInformation"] = None,
+        export_route_policy: Optional["_models.ExportRoutePolicyInformation"] = None,
+        egress_acl_id: Optional[str] = None,
+        ingress_acl_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6939,28 +10604,299 @@ class NetworkToNetworkInterconnect(ProxyResource):  # pylint: disable=too-many-i
         :paramtype nni_type: str or ~azure.mgmt.managednetworkfabric.models.NniType
         :keyword is_management_type: Configuration to use NNI for Infrastructure Management. Example:
          True/False. Known values are: "True" and "False".
-        :paramtype is_management_type: str or
-         ~azure.mgmt.managednetworkfabric.models.BooleanEnumProperty
-        :keyword use_option_b: Based on this parameter the layer2/layer3 is made as mandatory. Example:
-         True/False. Known values are: "True" and "False".
+        :paramtype is_management_type: str or ~azure.mgmt.managednetworkfabric.models.IsManagementType
+        :keyword use_option_b: Based on this option layer3 parameters are mandatory. Example:
+         True/False. Required. Known values are: "True" and "False".
         :paramtype use_option_b: str or ~azure.mgmt.managednetworkfabric.models.BooleanEnumProperty
-        :keyword layer2_configuration: Common properties for Layer2Configuration.
+        :keyword layer2_configuration: Common properties for Layer2 Configuration.
         :paramtype layer2_configuration: ~azure.mgmt.managednetworkfabric.models.Layer2Configuration
-        :keyword layer3_configuration: Common properties for Layer3Configuration.
-        :paramtype layer3_configuration: ~azure.mgmt.managednetworkfabric.models.Layer3Configuration
+        :keyword option_b_layer3_configuration: Common properties for Layer3Configuration.
+        :paramtype option_b_layer3_configuration:
+         ~azure.mgmt.managednetworkfabric.models.NetworkToNetworkInterconnectPropertiesOptionBLayer3Configuration
+        :keyword npb_static_route_configuration: NPB Static Route Configuration properties.
+        :paramtype npb_static_route_configuration:
+         ~azure.mgmt.managednetworkfabric.models.NpbStaticRouteConfiguration
+        :keyword import_route_policy: Import Route Policy configuration.
+        :paramtype import_route_policy:
+         ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicyInformation
+        :keyword export_route_policy: Export Route Policy configuration.
+        :paramtype export_route_policy:
+         ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicyInformation
+        :keyword egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+        :paramtype egress_acl_id: str
+        :keyword ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+        :paramtype ingress_acl_id: str
         """
         super().__init__(**kwargs)
         self.nni_type = nni_type
-        self.administrative_state = None
         self.is_management_type = is_management_type
         self.use_option_b = use_option_b
         self.layer2_configuration = layer2_configuration
-        self.layer3_configuration = layer3_configuration
+        self.option_b_layer3_configuration = option_b_layer3_configuration
+        self.npb_static_route_configuration = npb_static_route_configuration
+        self.import_route_policy = import_route_policy
+        self.export_route_policy = export_route_policy
+        self.egress_acl_id = egress_acl_id
+        self.ingress_acl_id = ingress_acl_id
+        self.configuration_state = None
         self.provisioning_state = None
+        self.administrative_state = None
+
+
+class NetworkToNetworkInterconnectPatch(ProxyResource):  # pylint: disable=too-many-instance-attributes
+    """The Network To Network Interconnect resource patch definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.managednetworkfabric.models.SystemData
+    :ivar layer2_configuration: Common properties for Layer2Configuration.
+    :vartype layer2_configuration: ~azure.mgmt.managednetworkfabric.models.Layer2Configuration
+    :ivar option_b_layer3_configuration: Common properties for Layer3Configuration.
+    :vartype option_b_layer3_configuration:
+     ~azure.mgmt.managednetworkfabric.models.OptionBLayer3Configuration
+    :ivar npb_static_route_configuration: NPB Static Route Configuration properties.
+    :vartype npb_static_route_configuration:
+     ~azure.mgmt.managednetworkfabric.models.NpbStaticRouteConfiguration
+    :ivar import_route_policy: Import Route Policy information.
+    :vartype import_route_policy:
+     ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicyInformation
+    :ivar export_route_policy: Export Route Policy information.
+    :vartype export_route_policy:
+     ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicyInformation
+    :ivar egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+    :vartype egress_acl_id: str
+    :ivar ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+    :vartype ingress_acl_id: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "layer2_configuration": {"key": "properties.layer2Configuration", "type": "Layer2Configuration"},
+        "option_b_layer3_configuration": {
+            "key": "properties.optionBLayer3Configuration",
+            "type": "OptionBLayer3Configuration",
+        },
+        "npb_static_route_configuration": {
+            "key": "properties.npbStaticRouteConfiguration",
+            "type": "NpbStaticRouteConfiguration",
+        },
+        "import_route_policy": {"key": "properties.importRoutePolicy", "type": "ImportRoutePolicyInformation"},
+        "export_route_policy": {"key": "properties.exportRoutePolicy", "type": "ExportRoutePolicyInformation"},
+        "egress_acl_id": {"key": "properties.egressAclId", "type": "str"},
+        "ingress_acl_id": {"key": "properties.ingressAclId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        layer2_configuration: Optional["_models.Layer2Configuration"] = None,
+        option_b_layer3_configuration: Optional["_models.OptionBLayer3Configuration"] = None,
+        npb_static_route_configuration: Optional["_models.NpbStaticRouteConfiguration"] = None,
+        import_route_policy: Optional["_models.ImportRoutePolicyInformation"] = None,
+        export_route_policy: Optional["_models.ExportRoutePolicyInformation"] = None,
+        egress_acl_id: Optional[str] = None,
+        ingress_acl_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword layer2_configuration: Common properties for Layer2Configuration.
+        :paramtype layer2_configuration: ~azure.mgmt.managednetworkfabric.models.Layer2Configuration
+        :keyword option_b_layer3_configuration: Common properties for Layer3Configuration.
+        :paramtype option_b_layer3_configuration:
+         ~azure.mgmt.managednetworkfabric.models.OptionBLayer3Configuration
+        :keyword npb_static_route_configuration: NPB Static Route Configuration properties.
+        :paramtype npb_static_route_configuration:
+         ~azure.mgmt.managednetworkfabric.models.NpbStaticRouteConfiguration
+        :keyword import_route_policy: Import Route Policy information.
+        :paramtype import_route_policy:
+         ~azure.mgmt.managednetworkfabric.models.ImportRoutePolicyInformation
+        :keyword export_route_policy: Export Route Policy information.
+        :paramtype export_route_policy:
+         ~azure.mgmt.managednetworkfabric.models.ExportRoutePolicyInformation
+        :keyword egress_acl_id: Egress Acl. ARM resource ID of Access Control Lists.
+        :paramtype egress_acl_id: str
+        :keyword ingress_acl_id: Ingress Acl. ARM resource ID of Access Control Lists.
+        :paramtype ingress_acl_id: str
+        """
+        super().__init__(**kwargs)
+        self.layer2_configuration = layer2_configuration
+        self.option_b_layer3_configuration = option_b_layer3_configuration
+        self.npb_static_route_configuration = npb_static_route_configuration
+        self.import_route_policy = import_route_policy
+        self.export_route_policy = export_route_policy
+        self.egress_acl_id = egress_acl_id
+        self.ingress_acl_id = ingress_acl_id
+
+
+class OptionBLayer3Configuration(Layer3IpPrefixProperties):
+    """OptionB Layer3 Configuration properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar primary_ipv4_prefix: IPv4 Address Prefix.
+    :vartype primary_ipv4_prefix: str
+    :ivar primary_ipv6_prefix: IPv6 Address Prefix.
+    :vartype primary_ipv6_prefix: str
+    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+    :vartype secondary_ipv4_prefix: str
+    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+    :vartype secondary_ipv6_prefix: str
+    :ivar peer_asn: ASN of PE devices for CE/PE connectivity.Example : 28.
+    :vartype peer_asn: int
+    :ivar vlan_id: VLAN for CE/PE Layer 3 connectivity.Example : 501.
+    :vartype vlan_id: int
+    :ivar fabric_asn: ASN of CE devices for CE/PE connectivity.
+    :vartype fabric_asn: int
+    """
+
+    _validation = {
+        "peer_asn": {"maximum": 4294967295, "minimum": 1},
+        "vlan_id": {"maximum": 4094, "minimum": 100},
+        "fabric_asn": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "primary_ipv4_prefix": {"key": "primaryIpv4Prefix", "type": "str"},
+        "primary_ipv6_prefix": {"key": "primaryIpv6Prefix", "type": "str"},
+        "secondary_ipv4_prefix": {"key": "secondaryIpv4Prefix", "type": "str"},
+        "secondary_ipv6_prefix": {"key": "secondaryIpv6Prefix", "type": "str"},
+        "peer_asn": {"key": "peerASN", "type": "int"},
+        "vlan_id": {"key": "vlanId", "type": "int"},
+        "fabric_asn": {"key": "fabricASN", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        primary_ipv4_prefix: Optional[str] = None,
+        primary_ipv6_prefix: Optional[str] = None,
+        secondary_ipv4_prefix: Optional[str] = None,
+        secondary_ipv6_prefix: Optional[str] = None,
+        peer_asn: Optional[int] = None,
+        vlan_id: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword primary_ipv4_prefix: IPv4 Address Prefix.
+        :paramtype primary_ipv4_prefix: str
+        :keyword primary_ipv6_prefix: IPv6 Address Prefix.
+        :paramtype primary_ipv6_prefix: str
+        :keyword secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+        :paramtype secondary_ipv4_prefix: str
+        :keyword secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+        :paramtype secondary_ipv6_prefix: str
+        :keyword peer_asn: ASN of PE devices for CE/PE connectivity.Example : 28.
+        :paramtype peer_asn: int
+        :keyword vlan_id: VLAN for CE/PE Layer 3 connectivity.Example : 501.
+        :paramtype vlan_id: int
+        """
+        super().__init__(
+            primary_ipv4_prefix=primary_ipv4_prefix,
+            primary_ipv6_prefix=primary_ipv6_prefix,
+            secondary_ipv4_prefix=secondary_ipv4_prefix,
+            secondary_ipv6_prefix=secondary_ipv6_prefix,
+            **kwargs
+        )
+        self.peer_asn = peer_asn
+        self.vlan_id = vlan_id
+        self.fabric_asn = None
+
+
+class NetworkToNetworkInterconnectPropertiesOptionBLayer3Configuration(OptionBLayer3Configuration):
+    """Common properties for Layer3Configuration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar primary_ipv4_prefix: IPv4 Address Prefix.
+    :vartype primary_ipv4_prefix: str
+    :ivar primary_ipv6_prefix: IPv6 Address Prefix.
+    :vartype primary_ipv6_prefix: str
+    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+    :vartype secondary_ipv4_prefix: str
+    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+    :vartype secondary_ipv6_prefix: str
+    :ivar peer_asn: ASN of PE devices for CE/PE connectivity.Example : 28.
+    :vartype peer_asn: int
+    :ivar vlan_id: VLAN for CE/PE Layer 3 connectivity.Example : 501.
+    :vartype vlan_id: int
+    :ivar fabric_asn: ASN of CE devices for CE/PE connectivity.
+    :vartype fabric_asn: int
+    """
+
+    _validation = {
+        "peer_asn": {"maximum": 4294967295, "minimum": 1},
+        "vlan_id": {"maximum": 4094, "minimum": 100},
+        "fabric_asn": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "primary_ipv4_prefix": {"key": "primaryIpv4Prefix", "type": "str"},
+        "primary_ipv6_prefix": {"key": "primaryIpv6Prefix", "type": "str"},
+        "secondary_ipv4_prefix": {"key": "secondaryIpv4Prefix", "type": "str"},
+        "secondary_ipv6_prefix": {"key": "secondaryIpv6Prefix", "type": "str"},
+        "peer_asn": {"key": "peerASN", "type": "int"},
+        "vlan_id": {"key": "vlanId", "type": "int"},
+        "fabric_asn": {"key": "fabricASN", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        primary_ipv4_prefix: Optional[str] = None,
+        primary_ipv6_prefix: Optional[str] = None,
+        secondary_ipv4_prefix: Optional[str] = None,
+        secondary_ipv6_prefix: Optional[str] = None,
+        peer_asn: Optional[int] = None,
+        vlan_id: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword primary_ipv4_prefix: IPv4 Address Prefix.
+        :paramtype primary_ipv4_prefix: str
+        :keyword primary_ipv6_prefix: IPv6 Address Prefix.
+        :paramtype primary_ipv6_prefix: str
+        :keyword secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+        :paramtype secondary_ipv4_prefix: str
+        :keyword secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+        :paramtype secondary_ipv6_prefix: str
+        :keyword peer_asn: ASN of PE devices for CE/PE connectivity.Example : 28.
+        :paramtype peer_asn: int
+        :keyword vlan_id: VLAN for CE/PE Layer 3 connectivity.Example : 501.
+        :paramtype vlan_id: int
+        """
+        super().__init__(
+            primary_ipv4_prefix=primary_ipv4_prefix,
+            primary_ipv6_prefix=primary_ipv6_prefix,
+            secondary_ipv4_prefix=secondary_ipv4_prefix,
+            secondary_ipv6_prefix=secondary_ipv6_prefix,
+            peer_asn=peer_asn,
+            vlan_id=vlan_id,
+            **kwargs
+        )
 
 
 class NetworkToNetworkInterconnectsList(_serialization.Model):
-    """List of NetworkToNetworkInterconnects.
+    """List of Network To Network Interconnects.
 
     :ivar value: List of NetworkToNetworkInterconnects resources.
     :vartype value: list[~azure.mgmt.managednetworkfabric.models.NetworkToNetworkInterconnect]
@@ -6989,6 +10925,50 @@ class NetworkToNetworkInterconnectsList(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class NpbStaticRouteConfiguration(_serialization.Model):
+    """NPB Static Route Configuration properties.
+
+    :ivar bfd_configuration: BFD Configuration properties.
+    :vartype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+    :ivar ipv4_routes: List of IPv4 Routes.
+    :vartype ipv4_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
+    :ivar ipv6_routes: List of IPv6 Routes.
+    :vartype ipv6_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
+    """
+
+    _validation = {
+        "ipv4_routes": {"min_items": 1},
+        "ipv6_routes": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "bfd_configuration": {"key": "bfdConfiguration", "type": "BfdConfiguration"},
+        "ipv4_routes": {"key": "ipv4Routes", "type": "[StaticRouteProperties]"},
+        "ipv6_routes": {"key": "ipv6Routes", "type": "[StaticRouteProperties]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        bfd_configuration: Optional["_models.BfdConfiguration"] = None,
+        ipv4_routes: Optional[List["_models.StaticRouteProperties"]] = None,
+        ipv6_routes: Optional[List["_models.StaticRouteProperties"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword bfd_configuration: BFD Configuration properties.
+        :paramtype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+        :keyword ipv4_routes: List of IPv4 Routes.
+        :paramtype ipv4_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
+        :keyword ipv6_routes: List of IPv6 Routes.
+        :paramtype ipv6_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
+        """
+        super().__init__(**kwargs)
+        self.bfd_configuration = bfd_configuration
+        self.ipv4_routes = ipv4_routes
+        self.ipv6_routes = ipv6_routes
 
 
 class Operation(_serialization.Model):
@@ -7112,114 +11092,52 @@ class OperationListResult(_serialization.Model):
         self.next_link = None
 
 
-class OptionAProperties(Layer3IpPrefixProperties):
+class OptionAProperties(_serialization.Model):
     """Peering optionA properties.
 
-    :ivar primary_ipv4_prefix: IPv4 Address Prefix of CE-PE interconnect links. Example:
-     172.31.0.0/31. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
-    :vartype primary_ipv4_prefix: str
-    :ivar primary_ipv6_prefix: IPv6 Address Prefix of CE-PE interconnect links. Example:
-     3FFE:FFFF:0:CD30::a0/126. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
-    :vartype primary_ipv6_prefix: str
-    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix of CE-PE interconnect links.
-     Example: 172.31.0.20/31. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
-    :vartype secondary_ipv4_prefix: str
-    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix of CE-PE interconnect links.
-     Example: 3FFE:FFFF:0:CD30::a4/126. The values can be specified at the time of creation or can
-     be updated afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st
-     and 3rd IPs are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs
-     are to be configured on PE1 and PE2 for Option B interfaces.
-    :vartype secondary_ipv6_prefix: str
     :ivar mtu: MTU to use for option A peering.
     :vartype mtu: int
-    :ivar vlan_id: Vlan identifier. Example : 501.
+    :ivar vlan_id: Vlan Id.Example : 501.
     :vartype vlan_id: int
     :ivar peer_asn: Peer ASN number.Example : 28.
     :vartype peer_asn: int
     :ivar bfd_configuration: BFD Configuration properties.
-    :vartype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.FabricBfdConfiguration
+    :vartype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
     """
 
     _validation = {
-        "mtu": {"maximum": 9000, "minimum": 1500},
-        "vlan_id": {"maximum": 4095, "minimum": 501},
-        "peer_asn": {"maximum": 65535, "minimum": 1},
+        "mtu": {"maximum": 9200, "minimum": 64},
+        "vlan_id": {"maximum": 4094, "minimum": 501},
+        "peer_asn": {"maximum": 4294967295, "minimum": 1},
     }
 
     _attribute_map = {
-        "primary_ipv4_prefix": {"key": "primaryIpv4Prefix", "type": "str"},
-        "primary_ipv6_prefix": {"key": "primaryIpv6Prefix", "type": "str"},
-        "secondary_ipv4_prefix": {"key": "secondaryIpv4Prefix", "type": "str"},
-        "secondary_ipv6_prefix": {"key": "secondaryIpv6Prefix", "type": "str"},
         "mtu": {"key": "mtu", "type": "int"},
         "vlan_id": {"key": "vlanId", "type": "int"},
         "peer_asn": {"key": "peerASN", "type": "int"},
-        "bfd_configuration": {"key": "bfdConfiguration", "type": "FabricBfdConfiguration"},
+        "bfd_configuration": {"key": "bfdConfiguration", "type": "BfdConfiguration"},
     }
 
     def __init__(
         self,
         *,
-        primary_ipv4_prefix: Optional[str] = None,
-        primary_ipv6_prefix: Optional[str] = None,
-        secondary_ipv4_prefix: Optional[str] = None,
-        secondary_ipv6_prefix: Optional[str] = None,
         mtu: int = 1500,
         vlan_id: Optional[int] = None,
         peer_asn: Optional[int] = None,
-        bfd_configuration: Optional["_models.FabricBfdConfiguration"] = None,
+        bfd_configuration: Optional["_models.BfdConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword primary_ipv4_prefix: IPv4 Address Prefix of CE-PE interconnect links. Example:
-         172.31.0.0/31. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
-        :paramtype primary_ipv4_prefix: str
-        :keyword primary_ipv6_prefix: IPv6 Address Prefix of CE-PE interconnect links. Example:
-         3FFE:FFFF:0:CD30::a0/126. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
-        :paramtype primary_ipv6_prefix: str
-        :keyword secondary_ipv4_prefix: Secondary IPv4 Address Prefix of CE-PE interconnect links.
-         Example: 172.31.0.20/31. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
-        :paramtype secondary_ipv4_prefix: str
-        :keyword secondary_ipv6_prefix: Secondary IPv6 Address Prefix of CE-PE interconnect links.
-         Example: 3FFE:FFFF:0:CD30::a4/126. The values can be specified at the time of creation or can
-         be updated afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st
-         and 3rd IPs are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs
-         are to be configured on PE1 and PE2 for Option B interfaces.
-        :paramtype secondary_ipv6_prefix: str
         :keyword mtu: MTU to use for option A peering.
         :paramtype mtu: int
-        :keyword vlan_id: Vlan identifier. Example : 501.
+        :keyword vlan_id: Vlan Id.Example : 501.
         :paramtype vlan_id: int
         :keyword peer_asn: Peer ASN number.Example : 28.
         :paramtype peer_asn: int
         :keyword bfd_configuration: BFD Configuration properties.
-        :paramtype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.FabricBfdConfiguration
+        :paramtype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
         """
-        super().__init__(
-            primary_ipv4_prefix=primary_ipv4_prefix,
-            primary_ipv6_prefix=primary_ipv6_prefix,
-            secondary_ipv4_prefix=secondary_ipv4_prefix,
-            secondary_ipv6_prefix=secondary_ipv6_prefix,
-            **kwargs
-        )
+        super().__init__(**kwargs)
         self.mtu = mtu
         self.vlan_id = vlan_id
         self.peer_asn = peer_asn
@@ -7227,17 +11145,22 @@ class OptionAProperties(Layer3IpPrefixProperties):
 
 
 class OptionBProperties(_serialization.Model):
-    """Option B configuration.
+    """Option B configuration to be used for Management VPN.
 
-    :ivar import_route_targets: Route Targets to be applied for incoming routes into CE.
+    :ivar import_route_targets: Route Targets to be applied for incoming routes into CE. This is
+     for backward compatibility.
     :vartype import_route_targets: list[str]
-    :ivar export_route_targets: Route Targets to be applied for outgoing routes from CE.
+    :ivar export_route_targets: Route Targets to be applied for outgoing routes from CE. This is
+     for backward compatibility.
     :vartype export_route_targets: list[str]
+    :ivar route_targets: Route Targets to be applied.
+    :vartype route_targets: ~azure.mgmt.managednetworkfabric.models.RouteTargetInformation
     """
 
     _attribute_map = {
         "import_route_targets": {"key": "importRouteTargets", "type": "[str]"},
         "export_route_targets": {"key": "exportRouteTargets", "type": "[str]"},
+        "route_targets": {"key": "routeTargets", "type": "RouteTargetInformation"},
     }
 
     def __init__(
@@ -7245,52 +11168,78 @@ class OptionBProperties(_serialization.Model):
         *,
         import_route_targets: Optional[List[str]] = None,
         export_route_targets: Optional[List[str]] = None,
+        route_targets: Optional["_models.RouteTargetInformation"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword import_route_targets: Route Targets to be applied for incoming routes into CE.
+        :keyword import_route_targets: Route Targets to be applied for incoming routes into CE. This is
+         for backward compatibility.
         :paramtype import_route_targets: list[str]
-        :keyword export_route_targets: Route Targets to be applied for outgoing routes from CE.
+        :keyword export_route_targets: Route Targets to be applied for outgoing routes from CE. This is
+         for backward compatibility.
         :paramtype export_route_targets: list[str]
+        :keyword route_targets: Route Targets to be applied.
+        :paramtype route_targets: ~azure.mgmt.managednetworkfabric.models.RouteTargetInformation
         """
         super().__init__(**kwargs)
         self.import_route_targets = import_route_targets
         self.export_route_targets = export_route_targets
+        self.route_targets = route_targets
 
 
-class OptionBPropertiesAutoGenerated(_serialization.Model):
-    """Option B configuration.
+class PortGroupProperties(_serialization.Model):
+    """Port Group properties.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar import_route_targets: Route Targets to be applied for incoming routes into CE. Required.
-    :vartype import_route_targets: list[str]
-    :ivar export_route_targets: Route Targets to be applied for outgoing routes from CE. Required.
-    :vartype export_route_targets: list[str]
+    :ivar name: The name of the port group.
+    :vartype name: str
+    :ivar ports: List of the ports that needs to be matched.
+    :vartype ports: list[str]
     """
 
     _validation = {
-        "import_route_targets": {"required": True},
-        "export_route_targets": {"required": True},
+        "name": {"min_length": 1},
+        "ports": {"min_items": 1},
     }
 
     _attribute_map = {
-        "import_route_targets": {"key": "importRouteTargets", "type": "[str]"},
-        "export_route_targets": {"key": "exportRouteTargets", "type": "[str]"},
+        "name": {"key": "name", "type": "str"},
+        "ports": {"key": "ports", "type": "[str]"},
     }
 
-    def __init__(self, *, import_route_targets: List[str], export_route_targets: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, name: Optional[str] = None, ports: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
-        :keyword import_route_targets: Route Targets to be applied for incoming routes into CE.
-         Required.
-        :paramtype import_route_targets: list[str]
-        :keyword export_route_targets: Route Targets to be applied for outgoing routes from CE.
-         Required.
-        :paramtype export_route_targets: list[str]
+        :keyword name: The name of the port group.
+        :paramtype name: str
+        :keyword ports: List of the ports that needs to be matched.
+        :paramtype ports: list[str]
         """
         super().__init__(**kwargs)
-        self.import_route_targets = import_route_targets
-        self.export_route_targets = export_route_targets
+        self.name = name
+        self.ports = ports
+
+
+class RebootProperties(_serialization.Model):
+    """Reboot properties.
+
+    :ivar reboot_type: Type of reboot to be performed. Example: GracefulRebootWithZTP. Known values
+     are: "GracefulRebootWithZTP", "GracefulRebootWithoutZTP", "UngracefulRebootWithZTP", and
+     "UngracefulRebootWithoutZTP".
+    :vartype reboot_type: str or ~azure.mgmt.managednetworkfabric.models.RebootType
+    """
+
+    _attribute_map = {
+        "reboot_type": {"key": "rebootType", "type": "str"},
+    }
+
+    def __init__(self, *, reboot_type: Optional[Union[str, "_models.RebootType"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword reboot_type: Type of reboot to be performed. Example: GracefulRebootWithZTP. Known
+         values are: "GracefulRebootWithZTP", "GracefulRebootWithoutZTP", "UngracefulRebootWithZTP", and
+         "UngracefulRebootWithoutZTP".
+        :paramtype reboot_type: str or ~azure.mgmt.managednetworkfabric.models.RebootType
+        """
+        super().__init__(**kwargs)
+        self.reboot_type = reboot_type
 
 
 class RoutePoliciesListResult(_serialization.Model):
@@ -7321,15 +11270,15 @@ class RoutePoliciesListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class RoutePolicy(TrackedResource):
+class RoutePolicy(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """The RoutePolicy resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -7345,12 +11294,25 @@ class RoutePolicy(TrackedResource):
     :vartype location: str
     :ivar annotation: Switch configuration description.
     :vartype annotation: str
-    :ivar statements: Route Policy statements. Required.
+    :ivar statements: Route Policy statements.
     :vartype statements:
      list[~azure.mgmt.managednetworkfabric.models.RoutePolicyStatementProperties]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
+    :ivar network_fabric_id: Arm Resource ID of Network Fabric. Required.
+    :vartype network_fabric_id: str
+    :ivar address_family_type: AddressFamilyType. This parameter decides whether the given ipv4 or
+     ipv6 route policy. Known values are: "IPv4" and "IPv6".
+    :vartype address_family_type: str or ~azure.mgmt.managednetworkfabric.models.AddressFamilyType
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     _validation = {
@@ -7359,8 +11321,10 @@ class RoutePolicy(TrackedResource):
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
-        "statements": {"required": True},
+        "network_fabric_id": {"required": True},
+        "configuration_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -7372,16 +11336,22 @@ class RoutePolicy(TrackedResource):
         "location": {"key": "location", "type": "str"},
         "annotation": {"key": "properties.annotation", "type": "str"},
         "statements": {"key": "properties.statements", "type": "[RoutePolicyStatementProperties]"},
+        "network_fabric_id": {"key": "properties.networkFabricId", "type": "str"},
+        "address_family_type": {"key": "properties.addressFamilyType", "type": "str"},
+        "configuration_state": {"key": "properties.configurationState", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "administrative_state": {"key": "properties.administrativeState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        statements: List["_models.RoutePolicyStatementProperties"],
+        network_fabric_id: str,
         tags: Optional[Dict[str, str]] = None,
         annotation: Optional[str] = None,
+        statements: Optional[List["_models.RoutePolicyStatementProperties"]] = None,
+        address_family_type: Union[str, "_models.AddressFamilyType"] = "IPv4",
         **kwargs: Any
     ) -> None:
         """
@@ -7391,85 +11361,164 @@ class RoutePolicy(TrackedResource):
         :paramtype location: str
         :keyword annotation: Switch configuration description.
         :paramtype annotation: str
-        :keyword statements: Route Policy statements. Required.
+        :keyword statements: Route Policy statements.
         :paramtype statements:
          list[~azure.mgmt.managednetworkfabric.models.RoutePolicyStatementProperties]
+        :keyword network_fabric_id: Arm Resource ID of Network Fabric. Required.
+        :paramtype network_fabric_id: str
+        :keyword address_family_type: AddressFamilyType. This parameter decides whether the given ipv4
+         or ipv6 route policy. Known values are: "IPv4" and "IPv6".
+        :paramtype address_family_type: str or
+         ~azure.mgmt.managednetworkfabric.models.AddressFamilyType
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.annotation = annotation
         self.statements = statements
+        self.network_fabric_id = network_fabric_id
+        self.address_family_type = address_family_type
+        self.configuration_state = None
         self.provisioning_state = None
+        self.administrative_state = None
 
 
-class RoutePolicyPatch(_serialization.Model):
-    """The RoutePolicy patch resource definition.
+class RoutePolicyPatch(TagsUpdate):
+    """The Route Policy patch resource definition.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar statements: Route Policy statements.
+    :vartype statements:
+     list[~azure.mgmt.managednetworkfabric.models.RoutePolicyStatementProperties]
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-
-
-class RoutePolicyProperties(AnnotationResource):
-    """RoutePolicy Properties define the resource properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar annotation: Switch configuration description.
-    :vartype annotation: str
-    :ivar statements: Route Policy statements. Required.
-    :vartype statements:
-     list[~azure.mgmt.managednetworkfabric.models.RoutePolicyStatementProperties]
-    :ivar provisioning_state: Gets the provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Canceled", "Deleting", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
-    """
-
-    _validation = {
-        "statements": {"required": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "annotation": {"key": "annotation", "type": "str"},
-        "statements": {"key": "statements", "type": "[RoutePolicyStatementProperties]"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "statements": {"key": "properties.statements", "type": "[RoutePolicyStatementProperties]"},
     }
 
     def __init__(
         self,
         *,
-        statements: List["_models.RoutePolicyStatementProperties"],
-        annotation: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        statements: Optional[List["_models.RoutePolicyStatementProperties"]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword annotation: Switch configuration description.
-        :paramtype annotation: str
-        :keyword statements: Route Policy statements. Required.
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword statements: Route Policy statements.
         :paramtype statements:
          list[~azure.mgmt.managednetworkfabric.models.RoutePolicyStatementProperties]
         """
-        super().__init__(annotation=annotation, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.statements = statements
+
+
+class RoutePolicyPatchableProperties(_serialization.Model):
+    """Route Policy patchable properties.
+
+    :ivar statements: Route Policy statements.
+    :vartype statements:
+     list[~azure.mgmt.managednetworkfabric.models.RoutePolicyStatementProperties]
+    """
+
+    _attribute_map = {
+        "statements": {"key": "statements", "type": "[RoutePolicyStatementProperties]"},
+    }
+
+    def __init__(
+        self, *, statements: Optional[List["_models.RoutePolicyStatementProperties"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword statements: Route Policy statements.
+        :paramtype statements:
+         list[~azure.mgmt.managednetworkfabric.models.RoutePolicyStatementProperties]
+        """
+        super().__init__(**kwargs)
+        self.statements = statements
+
+
+class RoutePolicyProperties(AnnotationResource, RoutePolicyPatchableProperties):
+    """RoutePolicyProperties defines the resource properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar statements: Route Policy statements.
+    :vartype statements:
+     list[~azure.mgmt.managednetworkfabric.models.RoutePolicyStatementProperties]
+    :ivar annotation: Switch configuration description.
+    :vartype annotation: str
+    :ivar network_fabric_id: Arm Resource ID of Network Fabric. Required.
+    :vartype network_fabric_id: str
+    :ivar address_family_type: AddressFamilyType. This parameter decides whether the given ipv4 or
+     ipv6 route policy. Known values are: "IPv4" and "IPv6".
+    :vartype address_family_type: str or ~azure.mgmt.managednetworkfabric.models.AddressFamilyType
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
+    """
+
+    _validation = {
+        "network_fabric_id": {"required": True},
+        "configuration_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "administrative_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "statements": {"key": "statements", "type": "[RoutePolicyStatementProperties]"},
+        "annotation": {"key": "annotation", "type": "str"},
+        "network_fabric_id": {"key": "networkFabricId", "type": "str"},
+        "address_family_type": {"key": "addressFamilyType", "type": "str"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "administrative_state": {"key": "administrativeState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        network_fabric_id: str,
+        statements: Optional[List["_models.RoutePolicyStatementProperties"]] = None,
+        annotation: Optional[str] = None,
+        address_family_type: Union[str, "_models.AddressFamilyType"] = "IPv4",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword statements: Route Policy statements.
+        :paramtype statements:
+         list[~azure.mgmt.managednetworkfabric.models.RoutePolicyStatementProperties]
+        :keyword annotation: Switch configuration description.
+        :paramtype annotation: str
+        :keyword network_fabric_id: Arm Resource ID of Network Fabric. Required.
+        :paramtype network_fabric_id: str
+        :keyword address_family_type: AddressFamilyType. This parameter decides whether the given ipv4
+         or ipv6 route policy. Known values are: "IPv4" and "IPv6".
+        :paramtype address_family_type: str or
+         ~azure.mgmt.managednetworkfabric.models.AddressFamilyType
+        """
+        super().__init__(annotation=annotation, statements=statements, **kwargs)
+        self.statements = statements
+        self.network_fabric_id = network_fabric_id
+        self.address_family_type = address_family_type
+        self.configuration_state = None
         self.provisioning_state = None
+        self.administrative_state = None
+        self.annotation = annotation
 
 
 class RoutePolicyStatementProperties(AnnotationResource):
-    """Route Policy Statement properties..
+    """Route Policy Statement properties.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -7521,16 +11570,102 @@ class RoutePolicyStatementProperties(AnnotationResource):
         self.action = action
 
 
+class RouteTargetInformation(_serialization.Model):
+    """Route Target Configuration.
+
+    :ivar import_ipv4_route_targets: Route Targets to be applied for incoming routes into CE.
+    :vartype import_ipv4_route_targets: list[str]
+    :ivar import_ipv6_route_targets: Route Targets to be applied for incoming routes from CE.
+    :vartype import_ipv6_route_targets: list[str]
+    :ivar export_ipv4_route_targets: Route Targets to be applied for outgoing routes into CE.
+    :vartype export_ipv4_route_targets: list[str]
+    :ivar export_ipv6_route_targets: Route Targets to be applied for outgoing routes from CE.
+    :vartype export_ipv6_route_targets: list[str]
+    """
+
+    _validation = {
+        "import_ipv4_route_targets": {"min_items": 1},
+        "import_ipv6_route_targets": {"min_items": 1},
+        "export_ipv4_route_targets": {"min_items": 1},
+        "export_ipv6_route_targets": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "import_ipv4_route_targets": {"key": "importIpv4RouteTargets", "type": "[str]"},
+        "import_ipv6_route_targets": {"key": "importIpv6RouteTargets", "type": "[str]"},
+        "export_ipv4_route_targets": {"key": "exportIpv4RouteTargets", "type": "[str]"},
+        "export_ipv6_route_targets": {"key": "exportIpv6RouteTargets", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        import_ipv4_route_targets: Optional[List[str]] = None,
+        import_ipv6_route_targets: Optional[List[str]] = None,
+        export_ipv4_route_targets: Optional[List[str]] = None,
+        export_ipv6_route_targets: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword import_ipv4_route_targets: Route Targets to be applied for incoming routes into CE.
+        :paramtype import_ipv4_route_targets: list[str]
+        :keyword import_ipv6_route_targets: Route Targets to be applied for incoming routes from CE.
+        :paramtype import_ipv6_route_targets: list[str]
+        :keyword export_ipv4_route_targets: Route Targets to be applied for outgoing routes into CE.
+        :paramtype export_ipv4_route_targets: list[str]
+        :keyword export_ipv6_route_targets: Route Targets to be applied for outgoing routes from CE.
+        :paramtype export_ipv6_route_targets: list[str]
+        """
+        super().__init__(**kwargs)
+        self.import_ipv4_route_targets = import_ipv4_route_targets
+        self.import_ipv6_route_targets = import_ipv6_route_targets
+        self.export_ipv4_route_targets = export_ipv4_route_targets
+        self.export_ipv6_route_targets = export_ipv6_route_targets
+
+
+class RuleProperties(_serialization.Model):
+    """Rules for the InternetGateways.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar action: Specify action. Required. Known values are: "Allow" and "Deny".
+    :vartype action: str or ~azure.mgmt.managednetworkfabric.models.Action
+    :ivar address_list: List of Addresses to be allowed or denied. Required.
+    :vartype address_list: list[str]
+    """
+
+    _validation = {
+        "action": {"required": True},
+        "address_list": {"required": True, "min_items": 1},
+    }
+
+    _attribute_map = {
+        "action": {"key": "action", "type": "str"},
+        "address_list": {"key": "addressList", "type": "[str]"},
+    }
+
+    def __init__(self, *, action: Union[str, "_models.Action"], address_list: List[str], **kwargs: Any) -> None:
+        """
+        :keyword action: Specify action. Required. Known values are: "Allow" and "Deny".
+        :paramtype action: str or ~azure.mgmt.managednetworkfabric.models.Action
+        :keyword address_list: List of Addresses to be allowed or denied. Required.
+        :paramtype address_list: list[str]
+        """
+        super().__init__(**kwargs)
+        self.action = action
+        self.address_list = address_list
+
+
 class StatementActionProperties(_serialization.Model):
     """Route policy action properties.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar local_preference: localPreference of the route policy.
+    :ivar local_preference: Local Preference of the route policy.
     :vartype local_preference: int
-    :ivar action_type: action. Example: Permit | Deny. Required. Known values are: "Permit" and
-     "Deny".
-    :vartype action_type: str or ~azure.mgmt.managednetworkfabric.models.CommunityActionTypes
+    :ivar action_type: Action type. Example: Permit | Deny | Continue. Required. Known values are:
+     "Permit", "Deny", "Continue", and "Continue".
+    :vartype action_type: str or ~azure.mgmt.managednetworkfabric.models.RoutePolicyActionType
     :ivar ip_community_properties: IP Community Properties.
     :vartype ip_community_properties:
      ~azure.mgmt.managednetworkfabric.models.ActionIpCommunityProperties
@@ -7557,18 +11692,18 @@ class StatementActionProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        action_type: Union[str, "_models.CommunityActionTypes"],
+        action_type: Union[str, "_models.RoutePolicyActionType"],
         local_preference: Optional[int] = None,
         ip_community_properties: Optional["_models.ActionIpCommunityProperties"] = None,
         ip_extended_community_properties: Optional["_models.ActionIpExtendedCommunityProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword local_preference: localPreference of the route policy.
+        :keyword local_preference: Local Preference of the route policy.
         :paramtype local_preference: int
-        :keyword action_type: action. Example: Permit | Deny. Required. Known values are: "Permit" and
-         "Deny".
-        :paramtype action_type: str or ~azure.mgmt.managednetworkfabric.models.CommunityActionTypes
+        :keyword action_type: Action type. Example: Permit | Deny | Continue. Required. Known values
+         are: "Permit", "Deny", "Continue", and "Continue".
+        :paramtype action_type: str or ~azure.mgmt.managednetworkfabric.models.RoutePolicyActionType
         :keyword ip_community_properties: IP Community Properties.
         :paramtype ip_community_properties:
          ~azure.mgmt.managednetworkfabric.models.ActionIpCommunityProperties
@@ -7590,6 +11725,8 @@ class StatementConditionProperties(IpCommunityIdList, IpExtendedCommunityIdList)
     :vartype ip_extended_community_ids: list[str]
     :ivar ip_community_ids: List of IP Community resource IDs.
     :vartype ip_community_ids: list[str]
+    :ivar type: Type of the condition used. Known values are: "Or", "And", "Or", and "And".
+    :vartype type: str or ~azure.mgmt.managednetworkfabric.models.RoutePolicyConditionType
     :ivar ip_prefix_id: Arm Resource Id of IpPrefix.
     :vartype ip_prefix_id: str
     """
@@ -7597,6 +11734,7 @@ class StatementConditionProperties(IpCommunityIdList, IpExtendedCommunityIdList)
     _attribute_map = {
         "ip_extended_community_ids": {"key": "ipExtendedCommunityIds", "type": "[str]"},
         "ip_community_ids": {"key": "ipCommunityIds", "type": "[str]"},
+        "type": {"key": "type", "type": "str"},
         "ip_prefix_id": {"key": "ipPrefixId", "type": "str"},
     }
 
@@ -7605,6 +11743,7 @@ class StatementConditionProperties(IpCommunityIdList, IpExtendedCommunityIdList)
         *,
         ip_extended_community_ids: Optional[List[str]] = None,
         ip_community_ids: Optional[List[str]] = None,
+        type: Union[str, "_models.RoutePolicyConditionType"] = "Or",
         ip_prefix_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -7613,6 +11752,8 @@ class StatementConditionProperties(IpCommunityIdList, IpExtendedCommunityIdList)
         :paramtype ip_extended_community_ids: list[str]
         :keyword ip_community_ids: List of IP Community resource IDs.
         :paramtype ip_community_ids: list[str]
+        :keyword type: Type of the condition used. Known values are: "Or", "And", "Or", and "And".
+        :paramtype type: str or ~azure.mgmt.managednetworkfabric.models.RoutePolicyConditionType
         :keyword ip_prefix_id: Arm Resource Id of IpPrefix.
         :paramtype ip_prefix_id: str
         """
@@ -7620,63 +11761,25 @@ class StatementConditionProperties(IpCommunityIdList, IpExtendedCommunityIdList)
             ip_community_ids=ip_community_ids, ip_extended_community_ids=ip_extended_community_ids, **kwargs
         )
         self.ip_extended_community_ids = ip_extended_community_ids
+        self.type = type
         self.ip_prefix_id = ip_prefix_id
         self.ip_community_ids = ip_community_ids
 
 
-class StaticRouteConfiguration(_serialization.Model):
-    """staticRouteConfiguration model.
-
-    :ivar bfd_configuration: BFD configuration properties.
-    :vartype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
-    :ivar ipv4_routes: List with object IPv4Routes.
-    :vartype ipv4_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
-    :ivar ipv6_routes: List with object IPv6Routes.
-    :vartype ipv6_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
-    """
-
-    _attribute_map = {
-        "bfd_configuration": {"key": "bfdConfiguration", "type": "BfdConfiguration"},
-        "ipv4_routes": {"key": "ipv4Routes", "type": "[StaticRouteProperties]"},
-        "ipv6_routes": {"key": "ipv6Routes", "type": "[StaticRouteProperties]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        bfd_configuration: Optional["_models.BfdConfiguration"] = None,
-        ipv4_routes: Optional[List["_models.StaticRouteProperties"]] = None,
-        ipv6_routes: Optional[List["_models.StaticRouteProperties"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword bfd_configuration: BFD configuration properties.
-        :paramtype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
-        :keyword ipv4_routes: List with object IPv4Routes.
-        :paramtype ipv4_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
-        :keyword ipv6_routes: List with object IPv6Routes.
-        :paramtype ipv6_routes: list[~azure.mgmt.managednetworkfabric.models.StaticRouteProperties]
-        """
-        super().__init__(**kwargs)
-        self.bfd_configuration = bfd_configuration
-        self.ipv4_routes = ipv4_routes
-        self.ipv6_routes = ipv6_routes
-
-
 class StaticRouteProperties(_serialization.Model):
-    """Static Route properties.
+    """Route Properties.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar prefix: IPv4 | IPv6 Prefix. Required.
+    :ivar prefix: Prefix of the route. Required.
     :vartype prefix: str
-    :ivar next_hop: List of next hop IPv4 | IPv6 addresses. Required.
+    :ivar next_hop: List of next hop addresses. Required.
     :vartype next_hop: list[str]
     """
 
     _validation = {
-        "prefix": {"required": True},
-        "next_hop": {"required": True},
+        "prefix": {"required": True, "min_length": 1},
+        "next_hop": {"required": True, "min_items": 1},
     }
 
     _attribute_map = {
@@ -7686,9 +11789,9 @@ class StaticRouteProperties(_serialization.Model):
 
     def __init__(self, *, prefix: str, next_hop: List[str], **kwargs: Any) -> None:
         """
-        :keyword prefix: IPv4 | IPv6 Prefix. Required.
+        :keyword prefix: Prefix of the route. Required.
         :paramtype prefix: str
-        :keyword next_hop: List of next hop IPv4 | IPv6 addresses. Required.
+        :keyword next_hop: List of next hop addresses. Required.
         :paramtype next_hop: list[str]
         """
         super().__init__(**kwargs)
@@ -7699,7 +11802,7 @@ class StaticRouteProperties(_serialization.Model):
 class SupportedConnectorProperties(_serialization.Model):
     """Supported connector properties.
 
-    :ivar connector_type: Connector type. Example: Optical.
+    :ivar connector_type: Type of connector used. Example: Optical.
     :vartype connector_type: str
     :ivar max_speed_in_mbps: Maximum speed of the connector in Mbps.
     :vartype max_speed_in_mbps: int
@@ -7714,7 +11817,7 @@ class SupportedConnectorProperties(_serialization.Model):
         self, *, connector_type: Optional[str] = None, max_speed_in_mbps: Optional[int] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword connector_type: Connector type. Example: Optical.
+        :keyword connector_type: Type of connector used. Example: Optical.
         :paramtype connector_type: str
         :keyword max_speed_in_mbps: Maximum speed of the connector in Mbps.
         :paramtype max_speed_in_mbps: int
@@ -7725,7 +11828,7 @@ class SupportedConnectorProperties(_serialization.Model):
 
 
 class SupportedVersionProperties(_serialization.Model):
-    """Network device supported version properties.
+    """Supported version details of the network device.
 
     :ivar version: Operating system and firmware combined versions.
     :vartype version: str
@@ -7733,18 +11836,16 @@ class SupportedVersionProperties(_serialization.Model):
     :vartype vendor_os_version: str
     :ivar vendor_firmware_version: Firmware version.
     :vartype vendor_firmware_version: str
-    :ivar is_current: If the current version is in use. Known values are: "true" and "false".
-    :vartype is_current: str or ~azure.mgmt.managednetworkfabric.models.IsCurrentVersion
-    :ivar is_test: If the current version is a test version. Known values are: "true" and "false".
-    :vartype is_test: str or ~azure.mgmt.managednetworkfabric.models.IsTestVersion
+    :ivar is_default: If true newly provisioned Fabric will use this device version by default to
+     bootstrap the network devices for the first time. Known values are: "True" and "False".
+    :vartype is_default: str or ~azure.mgmt.managednetworkfabric.models.BooleanEnumProperty
     """
 
     _attribute_map = {
         "version": {"key": "version", "type": "str"},
         "vendor_os_version": {"key": "vendorOsVersion", "type": "str"},
         "vendor_firmware_version": {"key": "vendorFirmwareVersion", "type": "str"},
-        "is_current": {"key": "isCurrent", "type": "str"},
-        "is_test": {"key": "isTest", "type": "str"},
+        "is_default": {"key": "isDefault", "type": "str"},
     }
 
     def __init__(
@@ -7753,8 +11854,7 @@ class SupportedVersionProperties(_serialization.Model):
         version: Optional[str] = None,
         vendor_os_version: Optional[str] = None,
         vendor_firmware_version: Optional[str] = None,
-        is_current: Optional[Union[str, "_models.IsCurrentVersion"]] = None,
-        is_test: Optional[Union[str, "_models.IsTestVersion"]] = None,
+        is_default: Optional[Union[str, "_models.BooleanEnumProperty"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7764,44 +11864,15 @@ class SupportedVersionProperties(_serialization.Model):
         :paramtype vendor_os_version: str
         :keyword vendor_firmware_version: Firmware version.
         :paramtype vendor_firmware_version: str
-        :keyword is_current: If the current version is in use. Known values are: "true" and "false".
-        :paramtype is_current: str or ~azure.mgmt.managednetworkfabric.models.IsCurrentVersion
-        :keyword is_test: If the current version is a test version. Known values are: "true" and
-         "false".
-        :paramtype is_test: str or ~azure.mgmt.managednetworkfabric.models.IsTestVersion
+        :keyword is_default: If true newly provisioned Fabric will use this device version by default
+         to bootstrap the network devices for the first time. Known values are: "True" and "False".
+        :paramtype is_default: str or ~azure.mgmt.managednetworkfabric.models.BooleanEnumProperty
         """
         super().__init__(**kwargs)
         self.version = version
         self.vendor_os_version = vendor_os_version
         self.vendor_firmware_version = vendor_firmware_version
-        self.is_current = is_current
-        self.is_test = is_test
-
-
-class SupportPackageProperties(_serialization.Model):
-    """Generate support package post action properties.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar support_package_url: The URL to fetch the generated support package from. Required.
-    :vartype support_package_url: str
-    """
-
-    _validation = {
-        "support_package_url": {"required": True},
-    }
-
-    _attribute_map = {
-        "support_package_url": {"key": "supportPackageURL", "type": "str"},
-    }
-
-    def __init__(self, *, support_package_url: str, **kwargs: Any) -> None:
-        """
-        :keyword support_package_url: The URL to fetch the generated support package from. Required.
-        :paramtype support_package_url: str
-        """
-        super().__init__(**kwargs)
-        self.support_package_url = support_package_url
+        self.is_default = is_default
 
 
 class SystemData(_serialization.Model):
@@ -7868,161 +11939,93 @@ class SystemData(_serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class TerminalServerPatchableProperties(_serialization.Model):
-    """Network and credential configuration currently applied on terminal server.
-
-    :ivar username: Username for the terminal server connection.
-    :vartype username: str
-    :ivar password: Password for the terminal server connection.
-    :vartype password: str
-    :ivar serial_number: Serial Number of Terminal server.
-    :vartype serial_number: str
-    """
-
-    _attribute_map = {
-        "username": {"key": "username", "type": "str"},
-        "password": {"key": "password", "type": "str"},
-        "serial_number": {"key": "serialNumber", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        serial_number: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword username: Username for the terminal server connection.
-        :paramtype username: str
-        :keyword password: Password for the terminal server connection.
-        :paramtype password: str
-        :keyword serial_number: Serial Number of Terminal server.
-        :paramtype serial_number: str
-        """
-        super().__init__(**kwargs)
-        self.username = username
-        self.password = password
-        self.serial_number = serial_number
-
-
-class TerminalServerConfiguration(Layer3IpPrefixProperties, TerminalServerPatchableProperties):
+class TerminalServerConfiguration(TerminalServerPatchableProperties, Layer3IpPrefixProperties):
     """Network and credentials configuration currently applied to terminal server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar primary_ipv4_prefix: IPv4 Address Prefix.
+    :vartype primary_ipv4_prefix: str
+    :ivar primary_ipv6_prefix: IPv6 Address Prefix.
+    :vartype primary_ipv6_prefix: str
+    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+    :vartype secondary_ipv4_prefix: str
+    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+    :vartype secondary_ipv6_prefix: str
     :ivar username: Username for the terminal server connection.
     :vartype username: str
     :ivar password: Password for the terminal server connection.
     :vartype password: str
     :ivar serial_number: Serial Number of Terminal server.
     :vartype serial_number: str
-    :ivar primary_ipv4_prefix: IPv4 Address Prefix of CE-PE interconnect links. Example:
-     172.31.0.0/31. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
-    :vartype primary_ipv4_prefix: str
-    :ivar primary_ipv6_prefix: IPv6 Address Prefix of CE-PE interconnect links. Example:
-     3FFE:FFFF:0:CD30::a0/126. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
-    :vartype primary_ipv6_prefix: str
-    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix of CE-PE interconnect links.
-     Example: 172.31.0.20/31. The values can be specified at the time of creation or can be updated
-     afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-     are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-     configured on PE1 and PE2 for Option B interfaces.
-    :vartype secondary_ipv4_prefix: str
-    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix of CE-PE interconnect links.
-     Example: 3FFE:FFFF:0:CD30::a4/126. The values can be specified at the time of creation or can
-     be updated afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st
-     and 3rd IPs are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs
-     are to be configured on PE1 and PE2 for Option B interfaces.
-    :vartype secondary_ipv6_prefix: str
     :ivar network_device_id: ARM Resource ID used for the NetworkDevice.
     :vartype network_device_id: str
     """
 
     _validation = {
+        "username": {"min_length": 1},
+        "password": {"min_length": 1},
+        "serial_number": {"min_length": 1},
         "network_device_id": {"readonly": True},
     }
 
     _attribute_map = {
-        "username": {"key": "username", "type": "str"},
-        "password": {"key": "password", "type": "str"},
-        "serial_number": {"key": "serialNumber", "type": "str"},
         "primary_ipv4_prefix": {"key": "primaryIpv4Prefix", "type": "str"},
         "primary_ipv6_prefix": {"key": "primaryIpv6Prefix", "type": "str"},
         "secondary_ipv4_prefix": {"key": "secondaryIpv4Prefix", "type": "str"},
         "secondary_ipv6_prefix": {"key": "secondaryIpv6Prefix", "type": "str"},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "serial_number": {"key": "serialNumber", "type": "str"},
         "network_device_id": {"key": "networkDeviceId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        serial_number: Optional[str] = None,
         primary_ipv4_prefix: Optional[str] = None,
         primary_ipv6_prefix: Optional[str] = None,
         secondary_ipv4_prefix: Optional[str] = None,
         secondary_ipv6_prefix: Optional[str] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        serial_number: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword primary_ipv4_prefix: IPv4 Address Prefix.
+        :paramtype primary_ipv4_prefix: str
+        :keyword primary_ipv6_prefix: IPv6 Address Prefix.
+        :paramtype primary_ipv6_prefix: str
+        :keyword secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+        :paramtype secondary_ipv4_prefix: str
+        :keyword secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+        :paramtype secondary_ipv6_prefix: str
         :keyword username: Username for the terminal server connection.
         :paramtype username: str
         :keyword password: Password for the terminal server connection.
         :paramtype password: str
         :keyword serial_number: Serial Number of Terminal server.
         :paramtype serial_number: str
-        :keyword primary_ipv4_prefix: IPv4 Address Prefix of CE-PE interconnect links. Example:
-         172.31.0.0/31. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
-        :paramtype primary_ipv4_prefix: str
-        :keyword primary_ipv6_prefix: IPv6 Address Prefix of CE-PE interconnect links. Example:
-         3FFE:FFFF:0:CD30::a0/126. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
-        :paramtype primary_ipv6_prefix: str
-        :keyword secondary_ipv4_prefix: Secondary IPv4 Address Prefix of CE-PE interconnect links.
-         Example: 172.31.0.20/31. The values can be specified at the time of creation or can be updated
-         afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st and 3rd IPs
-         are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs are to be
-         configured on PE1 and PE2 for Option B interfaces.
-        :paramtype secondary_ipv4_prefix: str
-        :keyword secondary_ipv6_prefix: Secondary IPv6 Address Prefix of CE-PE interconnect links.
-         Example: 3FFE:FFFF:0:CD30::a4/126. The values can be specified at the time of creation or can
-         be updated afterwards. Any update to the values post-provisioning may disrupt traffic. The 1st
-         and 3rd IPs are to be configured on CE1 and CE2 for Option B interfaces. The 2nd and 4th IPs
-         are to be configured on PE1 and PE2 for Option B interfaces.
-        :paramtype secondary_ipv6_prefix: str
         """
         super().__init__(
+            username=username,
+            password=password,
+            serial_number=serial_number,
             primary_ipv4_prefix=primary_ipv4_prefix,
             primary_ipv6_prefix=primary_ipv6_prefix,
             secondary_ipv4_prefix=secondary_ipv4_prefix,
             secondary_ipv6_prefix=secondary_ipv6_prefix,
-            username=username,
-            password=password,
-            serial_number=serial_number,
             **kwargs
         )
-        self.username = username
-        self.password = password
-        self.serial_number = serial_number
-        self.network_device_id = None
         self.primary_ipv4_prefix = primary_ipv4_prefix
         self.primary_ipv6_prefix = primary_ipv6_prefix
         self.secondary_ipv4_prefix = secondary_ipv4_prefix
         self.secondary_ipv6_prefix = secondary_ipv6_prefix
+        self.network_device_id = None
+        self.username = username
+        self.password = password
+        self.serial_number = serial_number
 
 
 class UpdateAdministrativeState(EnableDisableOnResources):
@@ -8031,7 +12034,7 @@ class UpdateAdministrativeState(EnableDisableOnResources):
     :ivar resource_ids: Network Fabrics or Network Rack resource Id.
     :vartype resource_ids: list[str]
     :ivar state: Administrative state. Known values are: "Enable" and "Disable".
-    :vartype state: str or ~azure.mgmt.managednetworkfabric.models.AdministrativeState
+    :vartype state: str or ~azure.mgmt.managednetworkfabric.models.EnableDisableState
     """
 
     _attribute_map = {
@@ -8043,176 +12046,505 @@ class UpdateAdministrativeState(EnableDisableOnResources):
         self,
         *,
         resource_ids: Optional[List[str]] = None,
-        state: Optional[Union[str, "_models.AdministrativeState"]] = None,
+        state: Optional[Union[str, "_models.EnableDisableState"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword resource_ids: Network Fabrics or Network Rack resource Id.
         :paramtype resource_ids: list[str]
         :keyword state: Administrative state. Known values are: "Enable" and "Disable".
-        :paramtype state: str or ~azure.mgmt.managednetworkfabric.models.AdministrativeState
+        :paramtype state: str or ~azure.mgmt.managednetworkfabric.models.EnableDisableState
         """
         super().__init__(resource_ids=resource_ids, **kwargs)
         self.state = state
 
 
-class UpdatePowerCycleProperties(_serialization.Model):
-    """Update power cycle input properties.
+class UpdateDeviceAdministrativeState(EnableDisableOnResources):
+    """Update the administrative state on list of resources.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar power_end: Primary or Secondary power end. Required. Known values are: "Primary" and
-     "Secondary".
-    :vartype power_end: str or ~azure.mgmt.managednetworkfabric.models.PowerEnd
-    :ivar state: On or Off toggle state. Required. Known values are: "On" and "Off".
-    :vartype state: str or ~azure.mgmt.managednetworkfabric.models.State
+    :ivar resource_ids: Network Fabrics or Network Rack resource Id.
+    :vartype resource_ids: list[str]
+    :ivar state: Administrative state. Known values are: "RMA", "Resync", "GracefulQuarantine", and
+     "Quarantine".
+    :vartype state: str or ~azure.mgmt.managednetworkfabric.models.DeviceAdministrativeState
     """
 
-    _validation = {
-        "power_end": {"required": True},
-        "state": {"required": True},
-    }
-
     _attribute_map = {
-        "power_end": {"key": "powerEnd", "type": "str"},
+        "resource_ids": {"key": "resourceIds", "type": "[str]"},
         "state": {"key": "state", "type": "str"},
     }
 
     def __init__(
-        self, *, power_end: Union[str, "_models.PowerEnd"], state: Union[str, "_models.State"], **kwargs: Any
+        self,
+        *,
+        resource_ids: Optional[List[str]] = None,
+        state: Optional[Union[str, "_models.DeviceAdministrativeState"]] = None,
+        **kwargs: Any
     ) -> None:
         """
-        :keyword power_end: Primary or Secondary power end. Required. Known values are: "Primary" and
-         "Secondary".
-        :paramtype power_end: str or ~azure.mgmt.managednetworkfabric.models.PowerEnd
-        :keyword state: On or Off toggle state. Required. Known values are: "On" and "Off".
-        :paramtype state: str or ~azure.mgmt.managednetworkfabric.models.State
+        :keyword resource_ids: Network Fabrics or Network Rack resource Id.
+        :paramtype resource_ids: list[str]
+        :keyword state: Administrative state. Known values are: "RMA", "Resync", "GracefulQuarantine",
+         and "Quarantine".
+        :paramtype state: str or ~azure.mgmt.managednetworkfabric.models.DeviceAdministrativeState
         """
-        super().__init__(**kwargs)
-        self.power_end = power_end
+        super().__init__(resource_ids=resource_ids, **kwargs)
         self.state = state
 
 
-class UpdateVersionProperties(_serialization.Model):
-    """Generate support package post action properties.
+class UpdateVersion(_serialization.Model):
+    """Update version properties.
 
-    All required parameters must be populated in order to send to Azure.
+    :ivar version: Specify the version.
+    :vartype version: str
+    """
 
-    :ivar sku_version: The supported version defined in network device SKU. Required.
-    :vartype sku_version: str
+    _attribute_map = {
+        "version": {"key": "version", "type": "str"},
+    }
+
+    def __init__(self, *, version: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword version: Specify the version.
+        :paramtype version: str
+        """
+        super().__init__(**kwargs)
+        self.version = version
+
+
+class ValidateConfigurationProperties(_serialization.Model):
+    """Validation configuration properties.
+
+    :ivar validate_action: Validate action that to be performed. Known values are: "Cabling",
+     "Configuration", and "Connectivity".
+    :vartype validate_action: str or ~azure.mgmt.managednetworkfabric.models.ValidateAction
+    """
+
+    _attribute_map = {
+        "validate_action": {"key": "validateAction", "type": "str"},
+    }
+
+    def __init__(
+        self, *, validate_action: Optional[Union[str, "_models.ValidateAction"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword validate_action: Validate action that to be performed. Known values are: "Cabling",
+         "Configuration", and "Connectivity".
+        :paramtype validate_action: str or ~azure.mgmt.managednetworkfabric.models.ValidateAction
+        """
+        super().__init__(**kwargs)
+        self.validate_action = validate_action
+
+
+class ValidateConfigurationResponse(ErrorResponse):
+    """The response of the action validate configuration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.managednetworkfabric.models.ErrorDetail
+    :ivar configuration_state: Gets the configuration state. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", and "DeferredControl".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar url: URL for the details of the response.
+    :vartype url: str
     """
 
     _validation = {
-        "sku_version": {"required": True},
+        "configuration_state": {"readonly": True},
     }
 
     _attribute_map = {
-        "sku_version": {"key": "skuVersion", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
+        "configuration_state": {"key": "configurationState", "type": "str"},
+        "url": {"key": "url", "type": "str"},
     }
 
-    def __init__(self, *, sku_version: str, **kwargs: Any) -> None:
+    def __init__(
+        self, *, error: Optional["_models.ErrorDetail"] = None, url: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword sku_version: The supported version defined in network device SKU. Required.
-        :paramtype sku_version: str
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.managednetworkfabric.models.ErrorDetail
+        :keyword url: URL for the details of the response.
+        :paramtype url: str
+        """
+        super().__init__(error=error, **kwargs)
+        self.configuration_state = None
+        self.url = url
+
+
+class VlanGroupProperties(_serialization.Model):
+    """Vlan group properties.
+
+    :ivar name: Vlan group name.
+    :vartype name: str
+    :ivar vlans: List of vlans.
+    :vartype vlans: list[str]
+    """
+
+    _validation = {
+        "name": {"min_length": 1},
+        "vlans": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "vlans": {"key": "vlans", "type": "[str]"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, vlans: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Vlan group name.
+        :paramtype name: str
+        :keyword vlans: List of vlans.
+        :paramtype vlans: list[str]
         """
         super().__init__(**kwargs)
-        self.sku_version = sku_version
+        self.name = name
+        self.vlans = vlans
+
+
+class VlanMatchCondition(_serialization.Model):
+    """The vlan match conditions that needs to be matched.
+
+    :ivar vlans: List of vlans that needs to be matched.
+    :vartype vlans: list[str]
+    :ivar inner_vlans: List of inner vlans that needs to be matched.
+    :vartype inner_vlans: list[str]
+    :ivar vlan_group_names: List of vlan group names that to be matched.
+    :vartype vlan_group_names: list[str]
+    """
+
+    _validation = {
+        "vlans": {"min_items": 1},
+        "inner_vlans": {"min_items": 1},
+        "vlan_group_names": {"min_items": 1},
+    }
+
+    _attribute_map = {
+        "vlans": {"key": "vlans", "type": "[str]"},
+        "inner_vlans": {"key": "innerVlans", "type": "[str]"},
+        "vlan_group_names": {"key": "vlanGroupNames", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        vlans: Optional[List[str]] = None,
+        inner_vlans: Optional[List[str]] = None,
+        vlan_group_names: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword vlans: List of vlans that needs to be matched.
+        :paramtype vlans: list[str]
+        :keyword inner_vlans: List of inner vlans that needs to be matched.
+        :paramtype inner_vlans: list[str]
+        :keyword vlan_group_names: List of vlan group names that to be matched.
+        :paramtype vlan_group_names: list[str]
+        """
+        super().__init__(**kwargs)
+        self.vlans = vlans
+        self.inner_vlans = inner_vlans
+        self.vlan_group_names = vlan_group_names
+
+
+class VpnConfigurationPatchableProperties(_serialization.Model):
+    """Network and credential configuration currently applied on terminal server.
+
+    :ivar network_to_network_interconnect_id: ARM Resource ID of the Network To Network
+     Interconnect.
+    :vartype network_to_network_interconnect_id: str
+    :ivar peering_option: Peering option list. Known values are: "OptionA" and "OptionB".
+    :vartype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
+    :ivar option_b_properties: option B properties.
+    :vartype option_b_properties: ~azure.mgmt.managednetworkfabric.models.OptionBProperties
+    :ivar option_a_properties: option A properties.
+    :vartype option_a_properties:
+     ~azure.mgmt.managednetworkfabric.models.VpnConfigurationPatchablePropertiesOptionAProperties
+    """
+
+    _attribute_map = {
+        "network_to_network_interconnect_id": {"key": "networkToNetworkInterconnectId", "type": "str"},
+        "peering_option": {"key": "peeringOption", "type": "str"},
+        "option_b_properties": {"key": "optionBProperties", "type": "OptionBProperties"},
+        "option_a_properties": {
+            "key": "optionAProperties",
+            "type": "VpnConfigurationPatchablePropertiesOptionAProperties",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        network_to_network_interconnect_id: Optional[str] = None,
+        peering_option: Optional[Union[str, "_models.PeeringOption"]] = None,
+        option_b_properties: Optional["_models.OptionBProperties"] = None,
+        option_a_properties: Optional["_models.VpnConfigurationPatchablePropertiesOptionAProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword network_to_network_interconnect_id: ARM Resource ID of the Network To Network
+         Interconnect.
+        :paramtype network_to_network_interconnect_id: str
+        :keyword peering_option: Peering option list. Known values are: "OptionA" and "OptionB".
+        :paramtype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
+        :keyword option_b_properties: option B properties.
+        :paramtype option_b_properties: ~azure.mgmt.managednetworkfabric.models.OptionBProperties
+        :keyword option_a_properties: option A properties.
+        :paramtype option_a_properties:
+         ~azure.mgmt.managednetworkfabric.models.VpnConfigurationPatchablePropertiesOptionAProperties
+        """
+        super().__init__(**kwargs)
+        self.network_to_network_interconnect_id = network_to_network_interconnect_id
+        self.peering_option = peering_option
+        self.option_b_properties = option_b_properties
+        self.option_a_properties = option_a_properties
+
+
+class VpnConfigurationPatchablePropertiesOptionAProperties(OptionAProperties, Layer3IpPrefixProperties):
+    """option A properties.
+
+    :ivar primary_ipv4_prefix: IPv4 Address Prefix.
+    :vartype primary_ipv4_prefix: str
+    :ivar primary_ipv6_prefix: IPv6 Address Prefix.
+    :vartype primary_ipv6_prefix: str
+    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+    :vartype secondary_ipv4_prefix: str
+    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+    :vartype secondary_ipv6_prefix: str
+    :ivar mtu: MTU to use for option A peering.
+    :vartype mtu: int
+    :ivar vlan_id: Vlan Id.Example : 501.
+    :vartype vlan_id: int
+    :ivar peer_asn: Peer ASN number.Example : 28.
+    :vartype peer_asn: int
+    :ivar bfd_configuration: BFD Configuration properties.
+    :vartype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+    """
+
+    _validation = {
+        "mtu": {"maximum": 9200, "minimum": 64},
+        "vlan_id": {"maximum": 4094, "minimum": 501},
+        "peer_asn": {"maximum": 4294967295, "minimum": 1},
+    }
+
+    _attribute_map = {
+        "primary_ipv4_prefix": {"key": "primaryIpv4Prefix", "type": "str"},
+        "primary_ipv6_prefix": {"key": "primaryIpv6Prefix", "type": "str"},
+        "secondary_ipv4_prefix": {"key": "secondaryIpv4Prefix", "type": "str"},
+        "secondary_ipv6_prefix": {"key": "secondaryIpv6Prefix", "type": "str"},
+        "mtu": {"key": "mtu", "type": "int"},
+        "vlan_id": {"key": "vlanId", "type": "int"},
+        "peer_asn": {"key": "peerASN", "type": "int"},
+        "bfd_configuration": {"key": "bfdConfiguration", "type": "BfdConfiguration"},
+    }
+
+    def __init__(
+        self,
+        *,
+        primary_ipv4_prefix: Optional[str] = None,
+        primary_ipv6_prefix: Optional[str] = None,
+        secondary_ipv4_prefix: Optional[str] = None,
+        secondary_ipv6_prefix: Optional[str] = None,
+        mtu: int = 1500,
+        vlan_id: Optional[int] = None,
+        peer_asn: Optional[int] = None,
+        bfd_configuration: Optional["_models.BfdConfiguration"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword primary_ipv4_prefix: IPv4 Address Prefix.
+        :paramtype primary_ipv4_prefix: str
+        :keyword primary_ipv6_prefix: IPv6 Address Prefix.
+        :paramtype primary_ipv6_prefix: str
+        :keyword secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+        :paramtype secondary_ipv4_prefix: str
+        :keyword secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+        :paramtype secondary_ipv6_prefix: str
+        :keyword mtu: MTU to use for option A peering.
+        :paramtype mtu: int
+        :keyword vlan_id: Vlan Id.Example : 501.
+        :paramtype vlan_id: int
+        :keyword peer_asn: Peer ASN number.Example : 28.
+        :paramtype peer_asn: int
+        :keyword bfd_configuration: BFD Configuration properties.
+        :paramtype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
+        """
+        super().__init__(
+            mtu=mtu,
+            vlan_id=vlan_id,
+            peer_asn=peer_asn,
+            bfd_configuration=bfd_configuration,
+            primary_ipv4_prefix=primary_ipv4_prefix,
+            primary_ipv6_prefix=primary_ipv6_prefix,
+            secondary_ipv4_prefix=secondary_ipv4_prefix,
+            secondary_ipv6_prefix=secondary_ipv6_prefix,
+            **kwargs
+        )
+        self.primary_ipv4_prefix = primary_ipv4_prefix
+        self.primary_ipv6_prefix = primary_ipv6_prefix
+        self.secondary_ipv4_prefix = secondary_ipv4_prefix
+        self.secondary_ipv6_prefix = secondary_ipv6_prefix
+        self.mtu = mtu
+        self.vlan_id = vlan_id
+        self.peer_asn = peer_asn
+        self.bfd_configuration = bfd_configuration
 
 
 class VpnConfigurationProperties(_serialization.Model):
-    """Configuration for infrastructure vpn.
+    """Network and credential configuration currently applied on terminal server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar administrative_state: Indicates configuration state. Example: Enabled | Disabled. Known
-     values are: "Enabled" and "Disabled".
-    :vartype administrative_state: str or
-     ~azure.mgmt.managednetworkfabric.models.EnabledDisabledState
-    :ivar network_to_network_interconnect_id: Gets the networkToNetworkInterconnectId of the
-     resource.
+    :ivar network_to_network_interconnect_id: ARM Resource ID of the Network To Network
+     Interconnect.
     :vartype network_to_network_interconnect_id: str
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", and "RMA".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     :ivar peering_option: Peering option list. Required. Known values are: "OptionA" and "OptionB".
     :vartype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
     :ivar option_b_properties: option B properties.
-    :vartype option_b_properties:
-     ~azure.mgmt.managednetworkfabric.models.OptionBPropertiesAutoGenerated
+    :vartype option_b_properties: ~azure.mgmt.managednetworkfabric.models.OptionBProperties
     :ivar option_a_properties: option A properties.
-    :vartype option_a_properties: ~azure.mgmt.managednetworkfabric.models.OptionAProperties
+    :vartype option_a_properties:
+     ~azure.mgmt.managednetworkfabric.models.VpnConfigurationPropertiesOptionAProperties
     """
 
     _validation = {
         "administrative_state": {"readonly": True},
-        "network_to_network_interconnect_id": {"readonly": True},
         "peering_option": {"required": True},
     }
 
     _attribute_map = {
-        "administrative_state": {"key": "administrativeState", "type": "str"},
         "network_to_network_interconnect_id": {"key": "networkToNetworkInterconnectId", "type": "str"},
+        "administrative_state": {"key": "administrativeState", "type": "str"},
         "peering_option": {"key": "peeringOption", "type": "str"},
-        "option_b_properties": {"key": "optionBProperties", "type": "OptionBPropertiesAutoGenerated"},
-        "option_a_properties": {"key": "optionAProperties", "type": "OptionAProperties"},
+        "option_b_properties": {"key": "optionBProperties", "type": "OptionBProperties"},
+        "option_a_properties": {"key": "optionAProperties", "type": "VpnConfigurationPropertiesOptionAProperties"},
     }
 
     def __init__(
         self,
         *,
         peering_option: Union[str, "_models.PeeringOption"],
-        option_b_properties: Optional["_models.OptionBPropertiesAutoGenerated"] = None,
-        option_a_properties: Optional["_models.OptionAProperties"] = None,
+        network_to_network_interconnect_id: Optional[str] = None,
+        option_b_properties: Optional["_models.OptionBProperties"] = None,
+        option_a_properties: Optional["_models.VpnConfigurationPropertiesOptionAProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword network_to_network_interconnect_id: ARM Resource ID of the Network To Network
+         Interconnect.
+        :paramtype network_to_network_interconnect_id: str
         :keyword peering_option: Peering option list. Required. Known values are: "OptionA" and
          "OptionB".
         :paramtype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
         :keyword option_b_properties: option B properties.
-        :paramtype option_b_properties:
-         ~azure.mgmt.managednetworkfabric.models.OptionBPropertiesAutoGenerated
+        :paramtype option_b_properties: ~azure.mgmt.managednetworkfabric.models.OptionBProperties
         :keyword option_a_properties: option A properties.
-        :paramtype option_a_properties: ~azure.mgmt.managednetworkfabric.models.OptionAProperties
+        :paramtype option_a_properties:
+         ~azure.mgmt.managednetworkfabric.models.VpnConfigurationPropertiesOptionAProperties
         """
         super().__init__(**kwargs)
+        self.network_to_network_interconnect_id = network_to_network_interconnect_id
         self.administrative_state = None
-        self.network_to_network_interconnect_id = None
         self.peering_option = peering_option
         self.option_b_properties = option_b_properties
         self.option_a_properties = option_a_properties
 
 
-class WorkloadServices(_serialization.Model):
-    """WorkloadServices IP ranges.
+class VpnConfigurationPropertiesOptionAProperties(OptionAProperties, Layer3IpPrefixProperties):
+    """option A properties.
 
-    :ivar ipv4_address_spaces: The IPv4 Address space is optional, if the value is defined at the
-     time of NFC creation, then the default value 10.0.0.0/19 is considered. The IPV4 address subnet
-     is an optional attribute.
-    :vartype ipv4_address_spaces: list[str]
-    :ivar ipv6_address_spaces: The IPv6 is not supported right now.
-    :vartype ipv6_address_spaces: list[str]
+    :ivar primary_ipv4_prefix: IPv4 Address Prefix.
+    :vartype primary_ipv4_prefix: str
+    :ivar primary_ipv6_prefix: IPv6 Address Prefix.
+    :vartype primary_ipv6_prefix: str
+    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+    :vartype secondary_ipv4_prefix: str
+    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+    :vartype secondary_ipv6_prefix: str
+    :ivar mtu: MTU to use for option A peering.
+    :vartype mtu: int
+    :ivar vlan_id: Vlan Id.Example : 501.
+    :vartype vlan_id: int
+    :ivar peer_asn: Peer ASN number.Example : 28.
+    :vartype peer_asn: int
+    :ivar bfd_configuration: BFD Configuration properties.
+    :vartype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
     """
 
+    _validation = {
+        "mtu": {"maximum": 9200, "minimum": 64},
+        "vlan_id": {"maximum": 4094, "minimum": 501},
+        "peer_asn": {"maximum": 4294967295, "minimum": 1},
+    }
+
     _attribute_map = {
-        "ipv4_address_spaces": {"key": "ipv4AddressSpaces", "type": "[str]"},
-        "ipv6_address_spaces": {"key": "ipv6AddressSpaces", "type": "[str]"},
+        "primary_ipv4_prefix": {"key": "primaryIpv4Prefix", "type": "str"},
+        "primary_ipv6_prefix": {"key": "primaryIpv6Prefix", "type": "str"},
+        "secondary_ipv4_prefix": {"key": "secondaryIpv4Prefix", "type": "str"},
+        "secondary_ipv6_prefix": {"key": "secondaryIpv6Prefix", "type": "str"},
+        "mtu": {"key": "mtu", "type": "int"},
+        "vlan_id": {"key": "vlanId", "type": "int"},
+        "peer_asn": {"key": "peerASN", "type": "int"},
+        "bfd_configuration": {"key": "bfdConfiguration", "type": "BfdConfiguration"},
     }
 
     def __init__(
         self,
         *,
-        ipv4_address_spaces: Optional[List[str]] = None,
-        ipv6_address_spaces: Optional[List[str]] = None,
+        primary_ipv4_prefix: Optional[str] = None,
+        primary_ipv6_prefix: Optional[str] = None,
+        secondary_ipv4_prefix: Optional[str] = None,
+        secondary_ipv6_prefix: Optional[str] = None,
+        mtu: int = 1500,
+        vlan_id: Optional[int] = None,
+        peer_asn: Optional[int] = None,
+        bfd_configuration: Optional["_models.BfdConfiguration"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword ipv4_address_spaces: The IPv4 Address space is optional, if the value is defined at
-         the time of NFC creation, then the default value 10.0.0.0/19 is considered. The IPV4 address
-         subnet is an optional attribute.
-        :paramtype ipv4_address_spaces: list[str]
-        :keyword ipv6_address_spaces: The IPv6 is not supported right now.
-        :paramtype ipv6_address_spaces: list[str]
+        :keyword primary_ipv4_prefix: IPv4 Address Prefix.
+        :paramtype primary_ipv4_prefix: str
+        :keyword primary_ipv6_prefix: IPv6 Address Prefix.
+        :paramtype primary_ipv6_prefix: str
+        :keyword secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+        :paramtype secondary_ipv4_prefix: str
+        :keyword secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+        :paramtype secondary_ipv6_prefix: str
+        :keyword mtu: MTU to use for option A peering.
+        :paramtype mtu: int
+        :keyword vlan_id: Vlan Id.Example : 501.
+        :paramtype vlan_id: int
+        :keyword peer_asn: Peer ASN number.Example : 28.
+        :paramtype peer_asn: int
+        :keyword bfd_configuration: BFD Configuration properties.
+        :paramtype bfd_configuration: ~azure.mgmt.managednetworkfabric.models.BfdConfiguration
         """
-        super().__init__(**kwargs)
-        self.ipv4_address_spaces = ipv4_address_spaces
-        self.ipv6_address_spaces = ipv6_address_spaces
+        super().__init__(
+            mtu=mtu,
+            vlan_id=vlan_id,
+            peer_asn=peer_asn,
+            bfd_configuration=bfd_configuration,
+            primary_ipv4_prefix=primary_ipv4_prefix,
+            primary_ipv6_prefix=primary_ipv6_prefix,
+            secondary_ipv4_prefix=secondary_ipv4_prefix,
+            secondary_ipv6_prefix=secondary_ipv6_prefix,
+            **kwargs
+        )
+        self.primary_ipv4_prefix = primary_ipv4_prefix
+        self.primary_ipv6_prefix = primary_ipv6_prefix
+        self.secondary_ipv4_prefix = secondary_ipv4_prefix
+        self.secondary_ipv6_prefix = secondary_ipv6_prefix
+        self.mtu = mtu
+        self.vlan_id = vlan_id
+        self.peer_asn = peer_asn
+        self.bfd_configuration = bfd_configuration

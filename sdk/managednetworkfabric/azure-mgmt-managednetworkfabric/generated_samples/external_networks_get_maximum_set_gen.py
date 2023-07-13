@@ -26,17 +26,17 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="42EEDB3B-8E17-46E3-B0B4-B1CD9842D90D",
     )
 
     response = client.external_networks.get(
-        resource_group_name="resourceGroupName",
-        l3_isolation_domain_name="example-l3domain",
-        external_network_name="example-externalnetwork",
+        resource_group_name="rgL3IsolationDomains",
+        l3_isolation_domain_name="yhtr",
+        external_network_name="fltpszzikbalrzaqq",
     )
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/ExternalNetworks_Get_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/ExternalNetworks_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
