@@ -15,7 +15,7 @@ class OversizeDataConfig:
     :type path: str
     """
 
-    # pylint: disable=unused-argument,no-self-use
+    # pylint: disable=unused-argument
     def __init__(self, path: Optional[str] = None, **kwargs):
         self.path = path
 

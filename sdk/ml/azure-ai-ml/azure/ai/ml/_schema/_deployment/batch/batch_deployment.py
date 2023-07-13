@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use,no-else-return
+# pylint: disable=unused-argument,no-else-return
 
 import logging
 from typing import Any

@@ -15,7 +15,7 @@ module_logger = logging.getLogger(__name__)
 class RequestLoggingSchema(metaclass=PatchedSchemaMeta):
     capture_headers = fields.List(fields.Str())
 
-    # pylint: disable=unused-argument,no-self-use
+    # pylint: disable=unused-argument
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
         from azure.ai.ml.entities._deployment.request_logging import RequestLogging

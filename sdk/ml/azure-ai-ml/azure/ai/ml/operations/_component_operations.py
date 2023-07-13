@@ -247,7 +247,6 @@ class ComponentOperations(_ScopeDependentOperations):
 
     @experimental
     @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
-    # pylint: disable=no-self-use
     def validate(
         self,
         component: Union[Component, types.FunctionType],
@@ -272,7 +271,7 @@ class ComponentOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
-    def _validate(  # pylint: disable=no-self-use
+    def _validate(
         self,
         component: Union[Component, types.FunctionType],
         raise_on_failure: bool,

@@ -62,13 +62,13 @@ class ComponentSchema(AssetSchema):
         super().__init__(*args, **kwargs)
 
     @pre_load
-    def convert_version_to_str(self, data, **kwargs):  # pylint: disable=unused-argument, no-self-use
+    def convert_version_to_str(self, data, **kwargs):  # pylint: disable=unused-argument
         if isinstance(data, dict) and data.get("version", None):
             data["version"] = str(data["version"])
         return data
 
     @pre_dump
-    def add_private_fields_to_dump(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
+    def add_private_fields_to_dump(self, data, **kwargs):  # pylint: disable=unused-argument
         # The ipp field is set on the component object as "_intellectual_property".
         # We need to set it as "intellectual_property" before dumping so that Marshmallow
         # can pick up the field correctly on dump and show it back to the user.
@@ -78,7 +78,7 @@ class ComponentSchema(AssetSchema):
         return data
 
     @post_dump
-    def convert_input_value_to_str(self, data, **kwargs):  # pylint:disable=unused-argument, no-self-use
+    def convert_input_value_to_str(self, data, **kwargs):  # pylint:disable=unused-argument
         if isinstance(data, dict) and data.get("inputs", None):
             input_dict = data["inputs"]
             for input_value in input_dict.values():
@@ -91,5 +91,5 @@ class ComponentSchema(AssetSchema):
         return data
 
     @pre_dump
-    def flatten_group_inputs(self, data, **kwargs):  # pylint: disable=unused-argument, no-self-use
+    def flatten_group_inputs(self, data, **kwargs):  # pylint: disable=unused-argument
         return _resolve_group_inputs_for_component(data)

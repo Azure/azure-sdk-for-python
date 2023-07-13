@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=no-self-use,protected-access
+# pylint: disable=protected-access
 
 import logging
 

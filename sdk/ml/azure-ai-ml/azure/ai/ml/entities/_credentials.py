@@ -427,7 +427,6 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
             resource_id=obj.resource_id,
         )
 
-    # pylint: disable=no-self-use
     def _to_identity_configuration_rest_object(self) -> RestUserAssignedIdentity:
         return RestUserAssignedIdentity()
 
@@ -481,7 +480,6 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
         super().__init__()
         self.type = IdentityType.USER_IDENTITY
 
-    # pylint: disable=no-self-use
     def _to_job_rest_object(self) -> RestUserIdentity:
         return RestUserIdentity()
 
@@ -516,7 +514,6 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
         super().__init__()
         self.type = IdentityType.AML_TOKEN
 
-    # pylint: disable=no-self-use
     def _to_job_rest_object(self) -> RestAmlToken:
         return RestAmlToken()
 
@@ -671,7 +668,6 @@ class NoneCredentialConfiguration(RestTranslatableMixin):
     def __init__(self):
         self.type = CredentialsType.NONE
 
-    # pylint: disable=no-self-use
     def _to_datastore_rest_object(self) -> RestNoneDatastoreCredentials:
         return RestNoneDatastoreCredentials()
 

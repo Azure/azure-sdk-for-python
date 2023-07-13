@@ -12,7 +12,7 @@ from azure.ai.ml.exceptions import VSCodeCommandNotFound
 
 
 class VSCodeClient(object):
-    # pylint: disable=client-method-has-more-than-5-positional-arguments, no-self-use
+    # pylint: disable=client-method-has-more-than-5-positional-arguments
     def create_dev_container_json(
         self,
         azureml_container,  # pylint: disable=unused-argument
@@ -33,7 +33,6 @@ class VSCodeClient(object):
         devcontainer.write_file(build_directory)
         return devcontainer.local_path
 
-    # pylint: disable=no-self-use
     def invoke_dev_container(self, devcontainer_path: str, app_path: str) -> None:
         hex_encoded_devcontainer_path = _encode_hex(devcontainer_path)
         command = [

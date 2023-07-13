@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=no-self-use
 
 from functools import wraps
 from typing import Any, Callable, Optional

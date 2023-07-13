@@ -19,7 +19,7 @@ class EventHub:
 
     """
 
-    # pylint: disable=unused-argument,no-self-use
+    # pylint: disable=unused-argument
     def __init__(
         self, namespace: Optional[str] = None, oversize_data_config: Optional[OversizeDataConfig] = None, **kwargs
     ):
