@@ -31,7 +31,6 @@ from urllib.parse import urlparse
 from urllib3.util.retry import Retry
 from azure.core.async_paging import AsyncItemPaged
 from azure.core import AsyncPipelineClient
-from azure.core.exceptions import raise_with_traceback  # type: ignore
 from azure.core.pipeline.policies import (
     AsyncHTTPPolicy,
     ContentDecodePolicy,
@@ -213,7 +212,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
     @property
     def _Session(self):
-        """Gets the session object from the client. """
+        """Gets the session object from the client.
+         :returns: the session for the client.
+         :rtype: _session.Session
+        """
         return self.session
 
     @_Session.setter
@@ -221,23 +223,27 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         """Sets a session object on the document client.
 
         This will override the existing session
+        :param _session.Session session: the client session to set.
         """
         self.session = session
 
     @property
     def _WriteEndpoint(self):
         """Gets the current write endpoint for a geo-replicated database account.
+        :returns: the write endpoint for the database account
+        :rtype: str
         """
         return self._global_endpoint_manager.get_write_endpoint()
 
     @property
     def _ReadEndpoint(self):
         """Gets the current read endpoint for a geo-replicated database account.
+        :returns: the read endpoint for the database account
+        :rtype: str
         """
         return self._global_endpoint_manager.get_read_endpoint()
 
     async def _setup(self):
-
         if 'database_account' not in self._setup_kwargs:
             database_account = await self._global_endpoint_manager._GetDatabaseAccount(
                 **self._setup_kwargs)
@@ -281,13 +287,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return consistency_level
 
 
-    def _GetDatabaseIdWithPathForUser(self, database_link, user):  # pylint: disable=no-self-use
+    def _GetDatabaseIdWithPathForUser(self, database_link, user):
         CosmosClientConnection.__ValidateResource(user)
         path = base.GetPathFromLink(database_link, "users")
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return database_id, path
 
-    def _GetContainerIdWithPathForSproc(self, collection_link, sproc):  # pylint: disable=no-self-use
+    def _GetContainerIdWithPathForSproc(self, collection_link, sproc):
         CosmosClientConnection.__ValidateResource(sproc)
         sproc = sproc.copy()
         if sproc.get("serverScript"):
@@ -298,7 +304,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return collection_id, path, sproc
 
-    def _GetContainerIdWithPathForTrigger(self, collection_link, trigger):  # pylint: disable=no-self-use
+    def _GetContainerIdWithPathForTrigger(self, collection_link, trigger):
         CosmosClientConnection.__ValidateResource(trigger)
         trigger = trigger.copy()
         if trigger.get("serverScript"):
@@ -310,7 +316,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return collection_id, path, trigger
 
-    def _GetContainerIdWithPathForUDF(self, collection_link, udf):  # pylint: disable=no-self-use
+    def _GetContainerIdWithPathForUDF(self, collection_link, udf):
         CosmosClientConnection.__ValidateResource(udf)
         udf = udf.copy()
         if udf.get("serverScript"):
@@ -325,6 +331,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     async def GetDatabaseAccount(self, url_connection=None, **kwargs):
         """Gets database account info.
 
+        :param str url_connection: the endpoint used to get the database account
         :return:
             The Database Account.
         :rtype:
@@ -374,7 +381,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The Azure Cosmos database to create.
         :param dict options:
             The request options for the request.
-
         :return:
             The Database that was created.
         :rtype: dict
@@ -396,7 +402,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The Azure Cosmos user to create.
         :param dict options:
             The request options for the request.
-
         :return:
             The created User.
         :rtype:
@@ -418,7 +423,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The Azure Cosmos collection to create.
         :param dict options:
             The request options for the request.
-
         :return: The Collection that was created.
         :rtype: dict
 
@@ -440,10 +444,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The Azure Cosmos document to create.
         :param dict options:
             The request options for the request.
-        :param bool options['disableAutomaticIdGeneration']:
-            Disables the automatic id generation. If id is missing in the body and this
-            option is true, an error will be returned.
-
         :return:
             The created Document.
         :rtype:
@@ -480,7 +480,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The Azure Cosmos user permission to create.
         :param dict options:
             The request options for the request.
-
         :return:
             The created Permission.
         :rtype:
@@ -501,7 +500,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param str udf:
         :param dict options:
             The request options for the request.
-
         :return:
             The created UDF.
         :rtype:
@@ -522,7 +520,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param dict trigger:
         :param dict options:
             The request options for the request.
-
         :return:
             The created Trigger.
         :rtype:
@@ -543,7 +540,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param str sproc:
         :param dict options:
             The request options for the request.
-
         :return:
             The created Stored Procedure.
         :rtype:
@@ -565,7 +561,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             List or None
         :param dict options:
             The request options for the request.
-
         :return:
             The Stored Procedure response.
         :rtype:
@@ -591,7 +586,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return result
 
     async def Create(self, body, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
-        """Creates a Azure Cosmos resource and returns it.
+        """Creates an Azure Cosmos resource and returns it.
 
         :param dict body:
         :param str path:
@@ -600,7 +595,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param dict initial_headers:
         :param dict options:
             The request options for the request.
-
         :return:
             The created Azure Cosmos resource.
         :rtype:
@@ -630,7 +624,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The Azure Cosmos user to upsert.
         :param dict options:
             The request options for the request.
-
         :return:
             The upserted User.
         :rtype: dict
@@ -650,7 +643,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The Azure Cosmos user permission to upsert.
         :param dict options:
             The request options for the request.
-
         :return:
             The upserted permission.
         :rtype:
@@ -672,10 +664,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The Azure Cosmos document to upsert.
         :param dict options:
             The request options for the request.
-        :param bool options['disableAutomaticIdGeneration']:
-            Disables the automatic id generation. If id is missing in the body and this
-            option is true, an error will be returned.
-
         :return:
             The upserted Document.
         :rtype:
@@ -703,7 +691,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return await self.Upsert(document, path, "docs", collection_id, None, options, **kwargs)
 
     async def Upsert(self, body, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
-        """Upserts a Azure Cosmos resource and returns it.
+        """Upserts an Azure Cosmos resource and returns it.
 
         :param dict body:
         :param str path:
@@ -712,7 +700,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param dict initial_headers:
         :param dict options:
             The request options for the request.
-
         :return:
             The upserted Azure Cosmos resource.
         :rtype:
@@ -737,16 +724,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     async def __Post(self, path, request_params, body, req_headers, **kwargs):
         """Azure Cosmos 'POST' async http request.
 
-        :params str url:
-        :params str path:
-        :params (str, unicode, dict) body:
-        :params dict req_headers:
-
-        :return:
-            Tuple of (result, headers).
-        :rtype:
-            tuple of (dict, dict)
-
+        :param str path: the url to be used for the request.
+        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param Union[str, unicode, Dict[Any, Any]] body: the request body.
+        :param Dict[str, Any] req_headers: the request headers.
+        :return: Tuple of (result, headers).
+        :rtype: tuple of (dict, dict)
         """
         request = self.pipeline_client.post(url=path, headers=req_headers)
         return await asynchronous_request.AsynchronousRequest(
@@ -973,17 +956,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return result
 
     async def __Get(self, path, request_params, req_headers, **kwargs):
-        """Azure Cosmos 'GET' async async http request.
+        """Azure Cosmos 'GET' async http request.
 
-        :params str url:
-        :params str path:
-        :params dict req_headers:
-
-        :return:
-            Tuple of (result, headers).
-        :rtype:
-            tuple of (dict, dict)
-
+        :param str path: the url to be used for the request.
+        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param Dict[str, Any] req_headers: the request headers.
+        :return: Tuple of (result, headers).
+        :rtype: tuple of (dict, dict)
         """
         request = self.pipeline_client.get(url=path, headers=req_headers)
         return await asynchronous_request.AsynchronousRequest(
@@ -1005,7 +984,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param dict user:
         :param dict options:
             The request options for the request.
-
         :return:
             The new User.
         :rtype:
@@ -1028,7 +1006,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param dict permission:
         :param dict options:
             The request options for the request.
-
         :return:
             The new Permission.
         :rtype:
@@ -1052,7 +1029,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The collection to be used.
         :param dict options:
             The request options for the request.
-
         :return:
             The new Collection.
         :rtype:
@@ -1075,7 +1051,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param dict udf:
         :param dict options:
             The request options for the request.
-
         :return:
             The new UDF.
         :rtype:
@@ -1104,7 +1079,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param dict trigger:
         :param dict options:
             The request options for the request.
-
         :return:
             The replaced Trigger.
         :rtype:
@@ -1133,7 +1107,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param dict new_document:
         :param dict options:
             The request options for the request.
-
         :return:
             The new Document.
         :rtype:
@@ -1166,7 +1139,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param str document_link: The link to the document.
         :param list operations: The operations for the patch request.
         :param dict options: The request options for the request.
-
         :return:
             The new Document.
         :rtype:
@@ -1200,7 +1172,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param str offer_link:
             The link to the offer.
         :param dict offer:
-
         :return:
             The replaced Offer.
         :rtype:
@@ -1220,7 +1191,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param dict sproc:
         :param dict options:
             The request options for the request.
-
         :return:
             The replaced Stored Procedure.
         :rtype:
@@ -1242,7 +1212,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return await self.Replace(sproc, path, "sprocs", sproc_id, None, options, **kwargs)
 
     async def Replace(self, resource, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
-        """Replaces a Azure Cosmos resource and returns it.
+        """Replaces an Azure Cosmos resource and returns it.
 
         :param dict resource:
         :param str path:
@@ -1251,7 +1221,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param dict initial_headers:
         :param dict options:
             The request options for the request.
-
         :return:
             The new Azure Cosmos resource.
         :rtype:
@@ -1274,16 +1243,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     async def __Put(self, path, request_params, body, req_headers, **kwargs):
         """Azure Cosmos 'PUT' async http request.
 
-        :params str url:
-        :params str path:
-        :params (str, unicode, dict) body:
-        :params dict req_headers:
-
-        :return:
-            Tuple of (result, headers).
-        :rtype:
-            tuple of (dict, dict)
-
+        :param str path: the url to be used for the request.
+        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param Union[str, unicode, Dict[Any, Any]] body: the request body.
+        :param Dict[str, Any] req_headers: the request headers.
+        :return: Tuple of (result, headers).
+        :rtype: tuple of (dict, dict)
         """
         request = self.pipeline_client.put(url=path, headers=req_headers)
         return await asynchronous_request.AsynchronousRequest(
@@ -1300,16 +1265,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     async def __Patch(self, path, request_params, request_data, req_headers, **kwargs):
         """Azure Cosmos 'PATCH' http request.
 
-        :params str path:
-        :params ~azure.cosmos.RequestObject request_params:
-        :params dict request_data:
-        :params dict req_headers:
-
-        :return:
-            Tuple of (result, headers).
-        :rtype:
-            tuple of (dict, dict)
-
+        :param str path: the url to be used for the request.
+        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param Union[str, unicode, Dict[Any, Any]] body: the request body.
+        :param Dict[str, Any] req_headers: the request headers.
+        :return: Tuple of (result, headers).
+        :rtype: tuple of (dict, dict)
         """
         request = self.pipeline_client.patch(url=path, headers=req_headers)
         return await asynchronous_request.AsynchronousRequest(
@@ -1330,7 +1291,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The link to the database.
         :param dict options:
             The request options for the request.
-
         :return:
             The deleted Database.
         :rtype:
@@ -1351,7 +1311,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The link to the user entity.
         :param dict options:
             The request options for the request.
-
         :return:
             The deleted user.
         :rtype:
@@ -1372,7 +1331,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The link to the permission.
         :param dict options:
             The request options for the request.
-
         :return:
             The deleted Permission.
         :rtype:
@@ -1393,7 +1351,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The link to the document collection.
         :param dict options:
             The request options for the request.
-
         :return:
             The deleted Collection.
         :rtype:
@@ -1414,7 +1371,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The link to the document.
         :param dict options:
             The request options for the request.
-
         :return:
             The deleted Document.
         :rtype:
@@ -1435,7 +1391,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The link to the user-defined function.
         :param dict options:
             The request options for the request.
-
         :return:
             The deleted UDF.
         :rtype:
@@ -1456,7 +1411,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The link to the trigger.
         :param dict options:
             The request options for the request.
-
         :return:
             The deleted Trigger.
         :rtype:
@@ -1477,7 +1431,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The link to the stored procedure.
         :param dict options:
             The request options for the request.
-
         :return:
             The deleted Stored Procedure.
         :rtype:
@@ -1498,7 +1451,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The link to the conflict.
         :param dict options:
             The request options for the request.
-
         :return:
             The deleted Conflict.
         :rtype:
@@ -1513,7 +1465,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return await self.DeleteResource(path, "conflicts", conflict_id, None, options, **kwargs)
 
     async def DeleteResource(self, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
-        """Deletes a Azure Cosmos resource and returns it.
+        """Deletes an Azure Cosmos resource and returns it.
 
         :param str path:
         :param str typ:
@@ -1521,7 +1473,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param dict initial_headers:
         :param dict options:
             The request options for the request.
-
         :return:
             The deleted Azure Cosmos resource.
         :rtype:
@@ -1545,15 +1496,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     async def __Delete(self, path, request_params, req_headers, **kwargs):
         """Azure Cosmos 'DELETE' async http request.
 
-        :params str url:
-        :params str path:
-        :params dict req_headers:
-
-        :return:
-            Tuple of (result, headers).
-        :rtype:
-            tuple of (dict, dict)
-
+        :param str path: the url to be used for the request.
+        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param Dict[str, Any] req_headers: the request headers.
+        :return: Tuple of (result, headers).
+        :rtype: tuple of (dict, dict)
         """
         request = self.pipeline_client.delete(url=path, headers=req_headers)
         return await asynchronous_request.AsynchronousRequest(
@@ -1573,7 +1520,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param str collection_link:
             The link to the document collection.
         :param dict feed_options:
-
         :return:
             Query Iterable of PartitionKeyRanges.
         :rtype:
@@ -1593,7 +1539,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param (str or dict) query:
         :param dict options:
             The request options for the request.
-
         :return:
             Query Iterable of PartitionKeyRanges.
         :rtype:
@@ -1624,7 +1569,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         :param dict options:
             The request options for the request.
-
         :return:
             Query Iterable of Databases.
         :rtype:
@@ -1642,7 +1586,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param (str or dict) query:
         :param dict options:
             The request options for the request.
-
         :return: Query Iterable of Databases.
         :rtype:
             query_iterable.QueryIterable
@@ -1671,7 +1614,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The link to the database.
         :param dict options:
             The request options for the request.
-
         :return: Query Iterable of Collections.
         :rtype:
             query_iterable.QueryIterable
@@ -1690,7 +1632,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param (str or dict) query:
         :param dict options:
             The request options for the request.
-
         :return: Query Iterable of Collections.
         :rtype:
             query_iterable.QueryIterable
@@ -1718,14 +1659,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     def ReadItems(self, collection_link, feed_options=None, response_hook=None, **kwargs):
         """Reads all documents in a collection.
 
-        :param str collection_link:
-            The link to the document collection.
-        :param dict feed_options:
-
-        :return:
-            Query Iterable of Documents.
-        :rtype:
-            query_iterable.QueryIterable
+        :param str collection_link: The link to the document collection.
+        :param dict feed_options: The additional options for the operation.
+        :param response_hook: A callable invoked with the response metadata.
+        :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
+        :return: Query Iterable of Documents.
+        :rtype: query_iterable.QueryIterable
 
         """
         if feed_options is None:
@@ -1746,14 +1685,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         :param str database_or_container_link:
             The link to the database when using partitioning, otherwise link to the document collection.
-        :param (str or dict) query:
-        :param dict options:
-            The request options for the request.
-        :param str partition_key:
-            Partition key for the query(default value None)
-        :param response_hook:
-            A callable invoked with the response metadata
-
+        :param (str or dict) query: the query to be used
+        :param dict options: The request options for the request.
+        :param str partition_key: Partition key for the query(default value None)
+        :param response_hook: A callable invoked with the response metadata.
+        :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
         :return:
             Query Iterable of Documents.
         :rtype:
@@ -1806,14 +1742,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     def QueryItemsChangeFeed(self, collection_link, options=None, response_hook=None, **kwargs):
         """Queries documents change feed in a collection.
 
-        :param str collection_link:
-            The link to the document collection.
-        :param dict options:
-            The request options for the request.
-            options may also specify partition key range id.
-        :param response_hook:
-            A callable invoked with the response metadata
-
+        :param str collection_link: The link to the document collection.
+        :param dict options: The request options for the request.
+        :param response_hook: A callable invoked with the response metadata.
+        :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
         :return:
             Query Iterable of Documents.
         :rtype:
@@ -1834,17 +1766,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     ):
         """Queries change feed of a resource in a collection.
 
-        :param str collection_link:
-            The link to the document collection.
-        :param str resource_type:
-            The type of the resource.
-        :param dict options:
-            The request options for the request.
-        :param str partition_key_range_id:
-            Specifies partition key range id.
-        :param response_hook:
-            A callable invoked with the response metadata
-
+        :param str collection_link: The link to the document collection.
+        :param str resource_type: The type of the resource.
+        :param dict options: The request options for the request.
+        :param str partition_key_range_id: Specifies partition key range id.
+        :param response_hook: A callable invoked with the response metadata
+        :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
         :return:
             Query Iterable of Documents.
         :rtype:
@@ -1897,7 +1824,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param (str or dict) query:
         :param dict options:
             The request options for the request
-
         :return:
             Query Iterable of Offers.
         :rtype:
@@ -1949,7 +1875,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param (str or dict) query:
         :param dict options:
             The request options for the request.
-
         :return:
             Query Iterable of Users.
         :rtype:
@@ -1982,7 +1907,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The link to the user entity.
         :param dict options:
             The request options for the request.
-
         :return:
             Query Iterable of Permissions.
         :rtype:
@@ -2002,7 +1926,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param (str or dict) query:
         :param dict options:
             The request options for the request.
-
         :return:
             Query Iterable of Permissions.
         :rtype:
@@ -2034,7 +1957,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The link to the document collection.
         :param dict options:
             The request options for the request.
-
         :return:
             Query Iterable of Stored Procedures.
         :rtype:
@@ -2054,7 +1976,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param (str or dict) query:
         :param dict options:
             The request options for the request.
-
         :return:
             Query Iterable of Stored Procedures.
         :rtype:
@@ -2087,7 +2008,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The link to the document collection.
         :param dict options:
             The request options for the request.
-
         :return:
             Query Iterable of Triggers.
         :rtype:
@@ -2107,7 +2027,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param (str or dict) query:
         :param dict options:
             The request options for the request.
-
         :return:
             Query Iterable of Triggers.
         :rtype:
@@ -2139,7 +2058,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The link to the document collection.
         :param dict options:
             The request options for the request.
-
         :return:
             Query Iterable of UDFs.
         :rtype:
@@ -2159,7 +2077,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param (str or dict) query:
         :param dict options:
             The request options for the request.
-
         :return:
             Query Iterable of UDFs.
         :rtype:
@@ -2191,7 +2108,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param str collection_link:
             The link to the document collection.
         :param dict feed_options:
-
         :return:
             Query Iterable of Conflicts.
         :rtype:
@@ -2211,7 +2127,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param (str or dict) query:
         :param dict options:
             The request options for the request.
-
         :return:
             Query Iterable of Conflicts.
         :rtype:
@@ -2240,18 +2155,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     async def QueryFeed(self, path, collection_id, query, options, partition_key_range_id=None, **kwargs):
         """Query Feed for Document Collection resource.
 
-        :param str path:
-            Path to the document collection.
-        :param str collection_id:
-            Id of the document collection.
+        :param str path: Path to the document collection.
+        :param str collection_id: Id of the document collection.
         :param (str or dict) query:
-        :param dict options:
-            The request options for the request.
-        :param str partition_key_range_id:
-            Partition key range id.
-        :rtype:
-            tuple
-
+        :param dict options: The request options for the request.
+        :param str partition_key_range_id: Partition key range id.
+        :return: Tuple of (result, headers).
+        :rtype: tuple of (dict, dict)
         """
         return (
             await self.__QueryFeed(
@@ -2297,12 +2207,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :param function response_hook:
         :param bool is_query_plan:
             Specifies if the call is to fetch query plan
-
-        :rtype:
-            list
-
+        :returns: A list of the queried resources.
+        :rtype: list
         :raises SystemError: If the query compatibility mode is undefined.
-
         """
         if options is None:
             options = {}
@@ -2337,9 +2244,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
 
         if (
-            self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
-            or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
-        ):
+            self._query_compatibility_mode in (CosmosClientConnection._QueryCompatibilityMode.Default,
+                                               CosmosClientConnection._QueryCompatibilityMode.Query)):
             initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.QueryJson
         elif self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery:
             initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.SQL
@@ -2371,9 +2277,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             dict or string
         """
         if (
-            self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
-            or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
-        ):
+                self._query_compatibility_mode in (CosmosClientConnection._QueryCompatibilityMode.Default,
+                                                   CosmosClientConnection._QueryCompatibilityMode.Query)):
             if not isinstance(query_body, dict) and not isinstance(query_body, str):
                 raise TypeError("query body must be a dict or string.")
             if isinstance(query_body, dict) and not query_body.get("query"):
@@ -2394,13 +2299,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         """
         Updates session if necessary.
 
-        :param dict response_result:
-        :param dict response_headers:
-        :param dict response_headers
-
-        :return:
-            None, but updates the client session if necessary.
-
+        :param dict request_headers: The request headers.
+        :param dict response_result: The response result.
+        :param dict response_headers: The response headers.
         """
 
         # if this request was made with consistency level as session, then update the session
@@ -2451,7 +2352,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return collection_id, document, path
 
-    def _GetUserIdWithPathForPermission(self, permission, user_link):  # pylint: disable=no-self-use
+    def _GetUserIdWithPathForPermission(self, permission, user_link):
         CosmosClientConnection.__ValidateResource(permission)
         path = base.GetPathFromLink(user_link, "permissions")
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
@@ -2599,8 +2500,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
                 if id_[-1] == " ":
                     raise ValueError("Id ends with a space.")
-            except AttributeError:
-                raise_with_traceback(TypeError, message="Id type must be a string.")
+            except AttributeError as e:
+                raise TypeError("Id type must be a string.") from e
 
     async def DeleteAllItemsByPartitionKey(
         self,

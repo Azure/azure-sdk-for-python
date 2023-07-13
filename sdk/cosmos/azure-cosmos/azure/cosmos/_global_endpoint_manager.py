@@ -143,8 +143,8 @@ class _GlobalEndpointManager(object):
 
     def _GetDatabaseAccountStub(self, endpoint, **kwargs):
         """Stub for getting database account from the client.
-
         This can be used for mocking purposes as well.
+
         :param str endpoint: the endpoint being used to get the database account
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
