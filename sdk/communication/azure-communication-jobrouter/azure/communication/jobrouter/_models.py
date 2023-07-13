@@ -7,24 +7,39 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import datetime
 import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, Union
 
-from .. import _serialization
+import datetime
+from datetime import timezone
+from dateutil.parser import parse
+
+from azure.core.serialization import _datetime_as_isostr  # pylint:disable=protected-access
+from azure.core.serialization import NULL as AzureCoreNull
+
+# pylint: disable=unused-import
+from ._enums import (
+    ScoringRuleParameterSelector,
+    LabelOperator,
+    JobMatchModeType,
+    ExpressionRouterRuleLanguage
+)
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
+
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class AcceptJobOfferResult(_serialization.Model):
+# cSpell:ignore tzinfos
+def _convert_str_to_datetime(datetime_as_str: str) -> datetime.datetime:
+    dt = parse(datetime_as_str, tzinfos=[timezone.utc])
+    return dt
+
+class AcceptJobOfferResult:
     """Response containing Id's for the worker, job, and assignment from an accepted offer.
 
     All required parameters must be populated in order to send to Azure.
@@ -50,7 +65,7 @@ class AcceptJobOfferResult(_serialization.Model):
         "worker_id": {"key": "workerId", "type": "str"},
     }
 
-    def __init__(self, *, assignment_id: str, job_id: str, worker_id: str, **kwargs: Any) -> None:
+    def __init__(self, *, assignment_id: str, job_id: str, worker_id: str) -> None:
         """
         :keyword assignment_id: The assignment Id that assigns a worker that has accepted an offer to a
          job. Required.
@@ -60,13 +75,13 @@ class AcceptJobOfferResult(_serialization.Model):
         :keyword worker_id: The Id of the worker that has been assigned this job. Required.
         :paramtype worker_id: str
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.assignment_id = assignment_id
         self.job_id = job_id
         self.worker_id = worker_id
 
 
-class DistributionMode(_serialization.Model):
+class DistributionMode:
     """Abstract base class for defining a distribution mode.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -193,8 +208,8 @@ class BestWorkerMode(DistributionMode):
         min_concurrent_offers: Optional[int] = None,
         max_concurrent_offers: Optional[int] = None,
         bypass_selectors: Optional[bool] = None,
-        scoring_rule: Optional["_models.RouterRule"] = None,
-        scoring_rule_options: Optional["_models.ScoringRuleOptions"] = None,
+        scoring_rule: Optional["RouterRule"] = None,
+        scoring_rule_options: Optional["ScoringRuleOptions"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -237,7 +252,7 @@ class BestWorkerMode(DistributionMode):
         self.scoring_rule_options = scoring_rule_options
 
 
-class ExceptionAction(_serialization.Model):
+class ExceptionAction:
     """The action to take when the exception is triggered.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -313,7 +328,7 @@ class CancelExceptionAction(ExceptionAction):
         self.disposition_code = disposition_code
 
 
-class CancelJobRequest(_serialization.Model):
+class CancelJobRequest:
     """Request payload for deleting a job.
 
     :ivar note: (Optional) A note that will be appended to the jobs' Notes collection with the
@@ -335,7 +350,7 @@ class CancelJobRequest(_serialization.Model):
         "disposition_code": {"key": "dispositionCode", "type": "str"},
     }
 
-    def __init__(self, *, note: Optional[str] = None, disposition_code: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, note: Optional[str] = None, disposition_code: Optional[str] = None) -> None:
         """
         :keyword note: (Optional) A note that will be appended to the jobs' Notes collection with the
          current timestamp.
@@ -345,12 +360,12 @@ class CancelJobRequest(_serialization.Model):
          If not provided, default value of "Cancelled" is set.
         :paramtype disposition_code: str
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.note = note
         self.disposition_code = disposition_code
 
 
-class ChannelConfiguration(_serialization.Model):
+class ChannelConfiguration:
     """Represents the capacity a job in this channel will consume from a worker.
 
     All required parameters must be populated in order to send to Azure.
@@ -372,7 +387,7 @@ class ChannelConfiguration(_serialization.Model):
         "max_number_of_jobs": {"key": "maxNumberOfJobs", "type": "int"},
     }
 
-    def __init__(self, *, capacity_cost_per_job: int, max_number_of_jobs: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(self, *, capacity_cost_per_job: int, max_number_of_jobs: Optional[int] = None) -> None:
         """
         :keyword capacity_cost_per_job: The amount of capacity that an instance of a job of this
          channel will consume of the total worker capacity. Required.
@@ -381,12 +396,12 @@ class ChannelConfiguration(_serialization.Model):
          this channel.
         :paramtype max_number_of_jobs: int
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.capacity_cost_per_job = capacity_cost_per_job
         self.max_number_of_jobs = max_number_of_jobs
 
 
-class ClassificationPolicy(_serialization.Model):
+class ClassificationPolicy:
     """A container for the rules that govern how jobs are classified.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -432,10 +447,9 @@ class ClassificationPolicy(_serialization.Model):
         *,
         name: Optional[str] = None,
         fallback_queue_id: Optional[str] = None,
-        queue_selectors: Optional[List["_models.QueueSelectorAttachment"]] = None,
-        prioritization_rule: Optional["_models.RouterRule"] = None,
-        worker_selectors: Optional[List["_models.WorkerSelectorAttachment"]] = None,
-        **kwargs: Any
+        queue_selectors: Optional[List["QueueSelectorAttachment"]] = None,
+        prioritization_rule: Optional["RouterRule"] = None,
+        worker_selectors: Optional[List["WorkerSelectorAttachment"]] = None
     ) -> None:
         """
         :keyword name: Friendly name of this policy.
@@ -459,7 +473,7 @@ class ClassificationPolicy(_serialization.Model):
         :paramtype worker_selectors:
          list[~azure.communication.jobrouter.models.WorkerSelectorAttachment]
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.id = None
         self.name = name
         self.fallback_queue_id = fallback_queue_id
@@ -468,40 +482,7 @@ class ClassificationPolicy(_serialization.Model):
         self.worker_selectors = worker_selectors
 
 
-class ClassificationPolicyCollection(_serialization.Model):
-    """A paged collection of classification policies.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.ClassificationPolicyItem]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ClassificationPolicyItem]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.ClassificationPolicyItem"], **kwargs: Any) -> None:
-        """
-        :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.ClassificationPolicyItem]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = None
-
-
-class ClassificationPolicyItem(_serialization.Model):
+class ClassificationPolicyItem:
     """Paged instance of ClassificationPolicy.
 
     :ivar classification_policy: A container for the rules that govern how jobs are classified.
@@ -509,6 +490,8 @@ class ClassificationPolicyItem(_serialization.Model):
     :ivar etag: (Optional) The Concurrency Token.
     :vartype etag: str
     """
+
+    _validation = {}
 
     _attribute_map = {
         "classification_policy": {"key": "classificationPolicy", "type": "ClassificationPolicy"},
@@ -518,9 +501,8 @@ class ClassificationPolicyItem(_serialization.Model):
     def __init__(
         self,
         *,
-        classification_policy: Optional["_models.ClassificationPolicy"] = None,
-        etag: Optional[str] = None,
-        **kwargs: Any
+        classification_policy: Optional["ClassificationPolicy"] = None,
+        etag: Optional[str] = None
     ) -> None:
         """
         :keyword classification_policy: A container for the rules that govern how jobs are classified.
@@ -528,12 +510,12 @@ class ClassificationPolicyItem(_serialization.Model):
         :keyword etag: (Optional) The Concurrency Token.
         :paramtype etag: str
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.classification_policy = classification_policy
         self.etag = etag
 
 
-class CloseJobRequest(_serialization.Model):
+class CloseJobRequest:
     """Request payload for closing jobs.
 
     All required parameters must be populated in order to send to Azure.
@@ -572,8 +554,7 @@ class CloseJobRequest(_serialization.Model):
         assignment_id: str,
         disposition_code: Optional[str] = None,
         close_at: Optional[datetime.datetime] = None,
-        note: Optional[str] = None,
-        **kwargs: Any
+        note: Optional[str] = None
     ) -> None:
         """
         :keyword assignment_id: The assignment within which the job is to be closed. Required.
@@ -590,90 +571,13 @@ class CloseJobRequest(_serialization.Model):
          current timestamp.
         :paramtype note: str
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.assignment_id = assignment_id
         self.disposition_code = disposition_code
         self.close_at = close_at
         self.note = note
 
-
-class CommunicationError(_serialization.Model):
-    """The Communication Services error.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar code: The error code. Required.
-    :vartype code: str
-    :ivar message: The error message. Required.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: Further details about specific errors that led to this error.
-    :vartype details: list[~azure.communication.jobrouter.models.CommunicationError]
-    :ivar inner_error: The inner error if any.
-    :vartype inner_error: ~azure.communication.jobrouter.models.CommunicationError
-    """
-
-    _validation = {
-        "code": {"required": True},
-        "message": {"required": True},
-        "target": {"readonly": True},
-        "details": {"readonly": True},
-        "inner_error": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[CommunicationError]"},
-        "inner_error": {"key": "innererror", "type": "CommunicationError"},
-    }
-
-    def __init__(self, *, code: str, message: str, **kwargs: Any) -> None:
-        """
-        :keyword code: The error code. Required.
-        :paramtype code: str
-        :keyword message: The error message. Required.
-        :paramtype message: str
-        """
-        super().__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = None
-        self.details = None
-        self.inner_error = None
-
-
-class CommunicationErrorResponse(_serialization.Model):
-    """The Communication Services error.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar error: The Communication Services error. Required.
-    :vartype error: ~azure.communication.jobrouter.models.CommunicationError
-    """
-
-    _validation = {
-        "error": {"required": True},
-    }
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "CommunicationError"},
-    }
-
-    def __init__(self, *, error: "_models.CommunicationError", **kwargs: Any) -> None:
-        """
-        :keyword error: The Communication Services error. Required.
-        :paramtype error: ~azure.communication.jobrouter.models.CommunicationError
-        """
-        super().__init__(**kwargs)
-        self.error = error
-
-
-class CompleteJobRequest(_serialization.Model):
+class CompleteJobRequest:
     """Request payload for completing jobs.
 
     All required parameters must be populated in order to send to Azure.
@@ -695,7 +599,7 @@ class CompleteJobRequest(_serialization.Model):
         "note": {"key": "note", "type": "str"},
     }
 
-    def __init__(self, *, assignment_id: str, note: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, assignment_id: str, note: Optional[str] = None) -> None:
         """
         :keyword assignment_id: The assignment within the job to complete. Required.
         :paramtype assignment_id: str
@@ -703,12 +607,12 @@ class CompleteJobRequest(_serialization.Model):
          current timestamp.
         :paramtype note: str
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.assignment_id = assignment_id
         self.note = note
 
 
-class QueueSelectorAttachment(_serialization.Model):
+class QueueSelectorAttachment:
     """An attachment of queue selectors to resolve a queue to a job from a classification policy.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -721,6 +625,8 @@ class QueueSelectorAttachment(_serialization.Model):
     :ivar kind: The type discriminator describing the type of queue selector attachment. Required.
     :vartype kind: str
     """
+
+    # additional_properties: Dict[str, Any] = {}
 
     _validation = {
         "kind": {"required": True},
@@ -781,7 +687,7 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment):
     }
 
     def __init__(
-        self, *, condition: "_models.RouterRule", queue_selectors: List["_models.RouterQueueSelector"], **kwargs: Any
+        self, *, condition: "RouterRule", queue_selectors: List["RouterQueueSelector"], **kwargs: Any
     ) -> None:
         """
         :keyword condition: A rule of one of the following types:
@@ -803,7 +709,7 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment):
         self.queue_selectors = queue_selectors
 
 
-class WorkerSelectorAttachment(_serialization.Model):
+class WorkerSelectorAttachment:
     """An attachment which attaches worker selectors to a job.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -876,7 +782,7 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment):
     }
 
     def __init__(
-        self, *, condition: "_models.RouterRule", worker_selectors: List["_models.RouterWorkerSelector"], **kwargs: Any
+        self, *, condition: "RouterRule", worker_selectors: List["RouterWorkerSelector"], **kwargs: Any
     ) -> None:
         """
         :keyword condition: A rule of one of the following types:
@@ -898,7 +804,7 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment):
         self.worker_selectors = worker_selectors
 
 
-class DeclineJobOfferRequest(_serialization.Model):
+class DeclineJobOfferRequest:
     """Request payload for declining offers.
 
     :ivar retry_offer_at: If the RetryOfferAt is not provided, then this job will not be offered
@@ -910,11 +816,13 @@ class DeclineJobOfferRequest(_serialization.Model):
     :vartype retry_offer_at: ~datetime.datetime
     """
 
+    _validation = {}
+
     _attribute_map = {
         "retry_offer_at": {"key": "retryOfferAt", "type": "iso-8601"},
     }
 
-    def __init__(self, *, retry_offer_at: Optional[datetime.datetime] = None, **kwargs: Any) -> None:
+    def __init__(self, *, retry_offer_at: Optional[datetime.datetime] = None) -> None:
         """
         :keyword retry_offer_at: If the RetryOfferAt is not provided, then this job will not be offered
          again to the worker who declined this job unless
@@ -924,11 +832,11 @@ class DeclineJobOfferRequest(_serialization.Model):
          eligible for the job at that time.
         :paramtype retry_offer_at: ~datetime.datetime
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.retry_offer_at = retry_offer_at
 
 
-class RouterRule(_serialization.Model):
+class RouterRule:
     """A rule of one of the following types:
 
     StaticRule:  A rule providing static rules that always return the same result, regardless of
@@ -940,7 +848,8 @@ class RouterRule(_serialization.Model):
     protocol.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    FunctionRule, DirectMapRule, ExpressionRule, StaticRule, WebhookRule
+    FunctionRouterRule, DirectMapRouterRule, ExpressionRouterRule, StaticRouterRule,
+    WebhookRouterRule
 
     All required parameters must be populated in order to send to Azure.
 
@@ -958,21 +867,21 @@ class RouterRule(_serialization.Model):
 
     _subtype_map = {
         "kind": {
-            "azure-function-rule": "FunctionRule",
-            "direct-map-rule": "DirectMapRule",
-            "expression-rule": "ExpressionRule",
-            "static-rule": "StaticRule",
-            "webhook-rule": "WebhookRule",
+            "azure-function-rule": "FunctionRouterRule",
+            "direct-map-rule": "DirectMapRouterRule",
+            "expression-rule": "ExpressionRouterRule",
+            "static-rule": "StaticRouterRule",
+            "webhook-rule": "WebhookRouterRule",
         }
     }
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self) -> None:
         """ """
-        super().__init__(**kwargs)
+        super().__init__()
         self.kind: Optional[str] = None
 
 
-class DirectMapRule(RouterRule):
+class DirectMapRouterRule(RouterRule):
     """A rule that return the same labels as the input labels.
 
     All required parameters must be populated in order to send to Azure.
@@ -995,7 +904,7 @@ class DirectMapRule(RouterRule):
         self.kind: str = "direct-map-rule"
 
 
-class DistributionPolicy(_serialization.Model):
+class DistributionPolicy:
     """Policy governing how jobs are distributed to workers.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1027,8 +936,7 @@ class DistributionPolicy(_serialization.Model):
         *,
         name: Optional[str] = None,
         offer_expires_after_seconds: Optional[float] = None,
-        mode: Optional["_models.DistributionMode"] = None,
-        **kwargs: Any
+        mode: Optional[DistributionMode] = None
     ) -> None:
         """
         :keyword name: The human readable name of the policy.
@@ -1039,47 +947,14 @@ class DistributionPolicy(_serialization.Model):
         :keyword mode: Abstract base class for defining a distribution mode.
         :paramtype mode: ~azure.communication.jobrouter.models.DistributionMode
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.id = None
         self.name = name
         self.offer_expires_after_seconds = offer_expires_after_seconds
         self.mode = mode
 
 
-class DistributionPolicyCollection(_serialization.Model):
-    """A paged collection of distribution policies.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.DistributionPolicyItem]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[DistributionPolicyItem]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.DistributionPolicyItem"], **kwargs: Any) -> None:
-        """
-        :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.DistributionPolicyItem]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = None
-
-
-class DistributionPolicyItem(_serialization.Model):
+class DistributionPolicyItem:
     """Paged instance of DistributionPolicy.
 
     :ivar distribution_policy: Policy governing how jobs are distributed to workers.
@@ -1087,6 +962,8 @@ class DistributionPolicyItem(_serialization.Model):
     :ivar etag: (Optional) The Concurrency Token.
     :vartype etag: str
     """
+
+    _validation = {}
 
     _attribute_map = {
         "distribution_policy": {"key": "distributionPolicy", "type": "DistributionPolicy"},
@@ -1096,9 +973,8 @@ class DistributionPolicyItem(_serialization.Model):
     def __init__(
         self,
         *,
-        distribution_policy: Optional["_models.DistributionPolicy"] = None,
-        etag: Optional[str] = None,
-        **kwargs: Any
+        distribution_policy: Optional[DistributionPolicy] = None,
+        etag: Optional[str] = None
     ) -> None:
         """
         :keyword distribution_policy: Policy governing how jobs are distributed to workers.
@@ -1106,12 +982,12 @@ class DistributionPolicyItem(_serialization.Model):
         :keyword etag: (Optional) The Concurrency Token.
         :paramtype etag: str
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.distribution_policy = distribution_policy
         self.etag = etag
 
 
-class ExceptionPolicy(_serialization.Model):
+class ExceptionPolicy:
     """A policy that defines actions to execute when exception are triggered.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1139,8 +1015,7 @@ class ExceptionPolicy(_serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        exception_rules: Optional[Dict[str, "_models.ExceptionRule"]] = None,
-        **kwargs: Any
+        exception_rules: Optional[Dict[str, "ExceptionRule"]] = None
     ) -> None:
         """
         :keyword name: (Optional) The name of the exception policy.
@@ -1149,46 +1024,13 @@ class ExceptionPolicy(_serialization.Model):
          exception policy. Key is the Id of each exception rule.
         :paramtype exception_rules: dict[str, ~azure.communication.jobrouter.models.ExceptionRule]
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.id = None
         self.name = name
         self.exception_rules = exception_rules
 
 
-class ExceptionPolicyCollection(_serialization.Model):
-    """A paged collection of exception policies.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.ExceptionPolicyItem]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ExceptionPolicyItem]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.ExceptionPolicyItem"], **kwargs: Any) -> None:
-        """
-        :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.ExceptionPolicyItem]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = None
-
-
-class ExceptionPolicyItem(_serialization.Model):
+class ExceptionPolicyItem:
     """Paged instance of ExceptionPolicy.
 
     :ivar exception_policy: A policy that defines actions to execute when exception are triggered.
@@ -1197,13 +1039,15 @@ class ExceptionPolicyItem(_serialization.Model):
     :vartype etag: str
     """
 
+    _validation = {}
+
     _attribute_map = {
         "exception_policy": {"key": "exceptionPolicy", "type": "ExceptionPolicy"},
         "etag": {"key": "etag", "type": "str"},
     }
 
     def __init__(
-        self, *, exception_policy: Optional["_models.ExceptionPolicy"] = None, etag: Optional[str] = None, **kwargs: Any
+        self, *, exception_policy: Optional["ExceptionPolicy"] = None, etag: Optional[str] = None
     ) -> None:
         """
         :keyword exception_policy: A policy that defines actions to execute when exception are
@@ -1212,12 +1056,12 @@ class ExceptionPolicyItem(_serialization.Model):
         :keyword etag: (Optional) The Concurrency Token.
         :paramtype etag: str
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.exception_policy = exception_policy
         self.etag = etag
 
 
-class ExceptionRule(_serialization.Model):
+class ExceptionRule:
     """A rule that defines actions to execute upon a specific trigger.
 
     All required parameters must be populated in order to send to Azure.
@@ -1240,7 +1084,7 @@ class ExceptionRule(_serialization.Model):
     }
 
     def __init__(
-        self, *, trigger: "_models.ExceptionTrigger", actions: Dict[str, "_models.ExceptionAction"], **kwargs: Any
+        self, *, trigger: "ExceptionTrigger", actions: Dict[str, "ExceptionAction"]
     ) -> None:
         """
         :keyword trigger: The trigger for this exception rule. Required.
@@ -1249,12 +1093,12 @@ class ExceptionRule(_serialization.Model):
          triggered. Key is the Id of each exception action. Required.
         :paramtype actions: dict[str, ~azure.communication.jobrouter.models.ExceptionAction]
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.trigger = trigger
         self.actions = actions
 
 
-class ExceptionTrigger(_serialization.Model):
+class ExceptionTrigger:
     """The trigger for this exception rule.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1276,13 +1120,13 @@ class ExceptionTrigger(_serialization.Model):
 
     _subtype_map = {"kind": {"queue-length": "QueueLengthExceptionTrigger", "wait-time": "WaitTimeExceptionTrigger"}}
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self) -> None:
         """ """
-        super().__init__(**kwargs)
+        super().__init__()
         self.kind: Optional[str] = None
 
 
-class ExpressionRule(RouterRule):
+class ExpressionRouterRule(RouterRule):
     """A rule providing inline expression rules.
 
     All required parameters must be populated in order to send to Azure.
@@ -1290,7 +1134,7 @@ class ExpressionRule(RouterRule):
     :ivar kind: The type discriminator describing a sub-type of Rule. Required.
     :vartype kind: str
     :ivar language: The expression language to compile to and execute. "powerFx"
-    :vartype language: str or ~azure.communication.jobrouter.models.ExpressionLanguage
+    :vartype language: str or ~azure.communication.jobrouter.models.ExpressionRouterRuleLanguage
     :ivar expression: The string containing the expression to evaluate. Should contain return
      statement with calculated values. Required.
     :vartype expression: str
@@ -1308,11 +1152,15 @@ class ExpressionRule(RouterRule):
     }
 
     def __init__(
-        self, *, expression: str, language: Optional[Union[str, "_models.ExpressionLanguage"]] = None, **kwargs: Any
+        self,
+        *,
+        expression: str,
+        language: Optional[Union[str, "ExpressionRouterRuleLanguage"]] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword language: The expression language to compile to and execute. "powerFx"
-        :paramtype language: str or ~azure.communication.jobrouter.models.ExpressionLanguage
+        :paramtype language: str or ~azure.communication.jobrouter.models.ExpressionRouterRuleLanguage
         :keyword expression: The string containing the expression to evaluate. Should contain return
          statement with calculated values. Required.
         :paramtype expression: str
@@ -1323,7 +1171,7 @@ class ExpressionRule(RouterRule):
         self.expression = expression
 
 
-class FunctionRule(RouterRule):
+class FunctionRouterRule(RouterRule):
     """A rule providing a binding to an HTTP Triggered Azure Function.
 
     All required parameters must be populated in order to send to Azure.
@@ -1333,7 +1181,7 @@ class FunctionRule(RouterRule):
     :ivar function_uri: URL for Azure Function. Required.
     :vartype function_uri: str
     :ivar credential: Credentials used to access Azure function rule.
-    :vartype credential: ~azure.communication.jobrouter.models.FunctionRuleCredential
+    :vartype credential: ~azure.communication.jobrouter.models.FunctionRouterRuleCredential
     """
 
     _validation = {
@@ -1344,17 +1192,17 @@ class FunctionRule(RouterRule):
     _attribute_map = {
         "kind": {"key": "kind", "type": "str"},
         "function_uri": {"key": "functionUri", "type": "str"},
-        "credential": {"key": "credential", "type": "FunctionRuleCredential"},
+        "credential": {"key": "credential", "type": "FunctionRouterRuleCredential"},
     }
 
     def __init__(
-        self, *, function_uri: str, credential: Optional["_models.FunctionRuleCredential"] = None, **kwargs: Any
+        self, *, function_uri: str, credential: Optional["FunctionRouterRuleCredential"] = None, **kwargs: Any
     ) -> None:
         """
         :keyword function_uri: URL for Azure Function. Required.
         :paramtype function_uri: str
         :keyword credential: Credentials used to access Azure function rule.
-        :paramtype credential: ~azure.communication.jobrouter.models.FunctionRuleCredential
+        :paramtype credential: ~azure.communication.jobrouter.models.FunctionRouterRuleCredential
         """
         super().__init__(**kwargs)
         self.kind: str = "azure-function-rule"
@@ -1362,7 +1210,7 @@ class FunctionRule(RouterRule):
         self.credential = credential
 
 
-class FunctionRuleCredential(_serialization.Model):
+class FunctionRouterRuleCredential:
     """Credentials used to access Azure function rule.
 
     :ivar function_key: (Optional) Access key scoped to a particular function.
@@ -1392,8 +1240,7 @@ class FunctionRuleCredential(_serialization.Model):
         *,
         function_key: Optional[str] = None,
         app_key: Optional[str] = None,
-        client_id: Optional[str] = None,
-        **kwargs: Any
+        client_id: Optional[str] = None
     ) -> None:
         """
         :keyword function_key: (Optional) Access key scoped to a particular function.
@@ -1405,13 +1252,13 @@ class FunctionRuleCredential(_serialization.Model):
          In context of Azure function, this is usually the name of the key.
         :paramtype client_id: str
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.function_key = function_key
         self.app_key = app_key
         self.client_id = client_id
 
 
-class JobMatchingMode(_serialization.Model):
+class JobMatchingMode:
     """JobMatchingMode.
 
     :ivar mode_type: Known values are: "queueAndMatchMode", "scheduleAndSuspendMode", and
@@ -1426,6 +1273,8 @@ class JobMatchingMode(_serialization.Model):
     :vartype suspend_mode: JSON
     """
 
+    _validation = {}
+
     _attribute_map = {
         "mode_type": {"key": "modeType", "type": "str"},
         "queue_and_match_mode": {"key": "queueAndMatchMode", "type": "object"},
@@ -1436,11 +1285,10 @@ class JobMatchingMode(_serialization.Model):
     def __init__(
         self,
         *,
-        mode_type: Optional[Union[str, "_models.JobMatchModeType"]] = None,
+        mode_type: Optional[Union[str, "JobMatchModeType"]] = None,
         queue_and_match_mode: Optional[JSON] = None,
-        schedule_and_suspend_mode: Optional["_models.ScheduleAndSuspendMode"] = None,
-        suspend_mode: Optional[JSON] = None,
-        **kwargs: Any
+        schedule_and_suspend_mode: Optional["ScheduleAndSuspendMode"] = None,
+        suspend_mode: Optional[JSON] = None
     ) -> None:
         """
         :keyword mode_type: Known values are: "queueAndMatchMode", "scheduleAndSuspendMode", and
@@ -1454,11 +1302,40 @@ class JobMatchingMode(_serialization.Model):
         :keyword suspend_mode: Any object.
         :paramtype suspend_mode: JSON
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.mode_type = mode_type
         self.queue_and_match_mode = queue_and_match_mode
         self.schedule_and_suspend_mode = schedule_and_suspend_mode
         self.suspend_mode = suspend_mode
+
+    @classmethod
+    def initialize_schedule_and_suspend_mode(cls,
+                                             schedule_and_suspend_mode: "ScheduleAndSuspendMode") -> "JobMatchingMode":
+        return cls(
+            mode_type = JobMatchModeType.SCHEDULE_AND_SUSPEND_MODE,
+            schedule_and_suspend_mode = schedule_and_suspend_mode,
+            queue_and_match_mode = AzureCoreNull,
+            suspend_mode = AzureCoreNull
+        )
+
+    @classmethod
+    def initialize_queue_and_match_mode(cls) -> "JobMatchingMode":
+        return cls(
+            mode_type = JobMatchModeType.QUEUE_AND_MATCH_MODE,
+            schedule_and_suspend_mode = AzureCoreNull,
+            queue_and_match_mode = {},
+            suspend_mode = AzureCoreNull
+        )
+
+    @classmethod
+    def initialize_suspend_mode(cls) -> "JobMatchingMode":
+        return cls(
+            mode_type = JobMatchModeType.SUSPEND_MODE,
+            schedule_and_suspend_mode = AzureCoreNull,
+            queue_and_match_mode = AzureCoreNull,
+            suspend_mode = {}
+        )
+
 
 
 class LongestIdleMode(DistributionMode):
@@ -1561,7 +1438,7 @@ class ManualReclassifyExceptionAction(ExceptionAction):
         *,
         queue_id: Optional[str] = None,
         priority: Optional[int] = None,
-        worker_selectors: Optional[List["_models.RouterWorkerSelector"]] = None,
+        worker_selectors: Optional[List["RouterWorkerSelector"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1579,7 +1456,7 @@ class ManualReclassifyExceptionAction(ExceptionAction):
         self.worker_selectors = worker_selectors
 
 
-class Oauth2ClientCredential(_serialization.Model):
+class Oauth2ClientCredential:
     """OAuth2.0 Credentials used to Contoso's Authorization server.
     Reference: https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/.
 
@@ -1599,14 +1476,14 @@ class Oauth2ClientCredential(_serialization.Model):
         "client_secret": {"key": "clientSecret", "type": "str"},
     }
 
-    def __init__(self, *, client_id: Optional[str] = None, client_secret: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, client_id: Optional[str] = None, client_secret: Optional[str] = None) -> None:
         """
         :keyword client_id: ClientId for Contoso Authorization server.
         :paramtype client_id: str
         :keyword client_secret: Client secret for Contoso Authorization server.
         :paramtype client_secret: str
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.client_id = client_id
         self.client_secret = client_secret
 
@@ -1639,7 +1516,7 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment):
         "label_operator": {"key": "labelOperator", "type": "str"},
     }
 
-    def __init__(self, *, key: str, label_operator: Union[str, "_models.LabelOperator"], **kwargs: Any) -> None:
+    def __init__(self, *, key: str, label_operator: Union[str, "LabelOperator"], **kwargs: Any) -> None:
         """
         :keyword key: The label key to query against. Required.
         :paramtype key: str
@@ -1690,7 +1567,7 @@ class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment):
         self,
         *,
         key: str,
-        label_operator: Union[str, "_models.LabelOperator"],
+        label_operator: Union[str, "LabelOperator"],
         expires_after_seconds: Optional[float] = None,
         **kwargs: Any
     ) -> None:
@@ -1745,7 +1622,7 @@ class QueueLengthExceptionTrigger(ExceptionTrigger):
         self.threshold = threshold
 
 
-class QueueWeightedAllocation(_serialization.Model):
+class QueueWeightedAllocation:
     """Contains the weight percentage and queue selectors to be applied if selected for weighted
     distributions.
 
@@ -1768,7 +1645,7 @@ class QueueWeightedAllocation(_serialization.Model):
         "queue_selectors": {"key": "queueSelectors", "type": "[RouterQueueSelector]"},
     }
 
-    def __init__(self, *, weight: float, queue_selectors: List["_models.RouterQueueSelector"], **kwargs: Any) -> None:
+    def __init__(self, *, weight: float, queue_selectors: List["RouterQueueSelector"]) -> None:
         """
         :keyword weight: The percentage of this weight, expressed as a fraction of 1. Required.
         :paramtype weight: float
@@ -1776,7 +1653,7 @@ class QueueWeightedAllocation(_serialization.Model):
          allocation is selected. Required.
         :paramtype queue_selectors: list[~azure.communication.jobrouter.models.RouterQueueSelector]
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.weight = weight
         self.queue_selectors = queue_selectors
 
@@ -1896,7 +1773,7 @@ class RoundRobinMode(DistributionMode):
         self.kind: str = "round-robin"
 
 
-class RouterJob(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class RouterJob:  # pylint: disable=too-many-instance-attributes
     """A unit of work to be routed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1983,12 +1860,11 @@ class RouterJob(_serialization.Model):  # pylint: disable=too-many-instance-attr
         queue_id: Optional[str] = None,
         priority: Optional[int] = None,
         disposition_code: Optional[str] = None,
-        requested_worker_selectors: Optional[List["_models.RouterWorkerSelector"]] = None,
+        requested_worker_selectors: Optional[List["RouterWorkerSelector"]] = None,
         labels: Optional[Dict[str, Any]] = None,
         tags: Optional[Dict[str, Any]] = None,
-        notes: Optional[Dict[str, str]] = None,
-        matching_mode: Optional["_models.JobMatchingMode"] = None,
-        **kwargs: Any
+        notes: Optional[Union[Dict[str, str], Dict[datetime.datetime, str]]] = None,
+        matching_mode: Optional["JobMatchingMode"] = None
     ) -> None:
         """
         :keyword channel_reference: Reference to an external parent context, eg. call ID.
@@ -2018,7 +1894,20 @@ class RouterJob(_serialization.Model):  # pylint: disable=too-many-instance-attr
         :keyword matching_mode:
         :paramtype matching_mode: ~azure.communication.jobrouter.models.JobMatchingMode
         """
-        super().__init__(**kwargs)
+        if notes:
+            for k in list(notes.keys()):
+                v: str = notes[k]
+                if isinstance(k, str):
+                    datetime_as_dt: datetime = _convert_str_to_datetime(k)  # pylint:disable=protected-access
+                    notes.pop(k)
+                    datetime_as_str: str = _datetime_as_isostr(datetime_as_dt)  # pylint:disable=protected-access
+                    notes[datetime_as_str] = v
+                elif isinstance(k, datetime.datetime):
+                    datetime_as_str: str = _datetime_as_isostr(k)  # pylint:disable=protected-access
+                    notes.pop(k)
+                    notes[datetime_as_str] = v
+
+        super().__init__()
         self.id = None
         self.channel_reference = channel_reference
         self.status = None
@@ -2038,7 +1927,7 @@ class RouterJob(_serialization.Model):  # pylint: disable=too-many-instance-attr
         self.matching_mode = matching_mode
 
 
-class RouterJobAssignment(_serialization.Model):
+class RouterJobAssignment:
     """Assignment details of a job to a worker.
 
     All required parameters must be populated in order to send to Azure.
@@ -2075,8 +1964,7 @@ class RouterJobAssignment(_serialization.Model):
         assigned_at: datetime.datetime,
         worker_id: Optional[str] = None,
         completed_at: Optional[datetime.datetime] = None,
-        closed_at: Optional[datetime.datetime] = None,
-        **kwargs: Any
+        closed_at: Optional[datetime.datetime] = None
     ) -> None:
         """
         :keyword assignment_id: The Id of the job assignment. Required.
@@ -2090,7 +1978,7 @@ class RouterJobAssignment(_serialization.Model):
         :keyword closed_at: The time the job was marked as closed after being completed in UTC.
         :paramtype closed_at: ~datetime.datetime
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.assignment_id = assignment_id
         self.worker_id = worker_id
         self.assigned_at = assigned_at
@@ -2098,40 +1986,7 @@ class RouterJobAssignment(_serialization.Model):
         self.closed_at = closed_at
 
 
-class RouterJobCollection(_serialization.Model):
-    """A paged collection of jobs.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.RouterJobItem]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[RouterJobItem]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.RouterJobItem"], **kwargs: Any) -> None:
-        """
-        :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.RouterJobItem]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = None
-
-
-class RouterJobItem(_serialization.Model):
+class RouterJobItem:
     """Paged instance of RouterJob.
 
     :ivar job: A unit of work to be routed.
@@ -2140,24 +1995,26 @@ class RouterJobItem(_serialization.Model):
     :vartype etag: str
     """
 
+    _validation = {}
+
     _attribute_map = {
         "job": {"key": "job", "type": "RouterJob"},
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, *, job: Optional["_models.RouterJob"] = None, etag: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, job: Optional["RouterJob"] = None, etag: Optional[str] = None) -> None:
         """
         :keyword job: A unit of work to be routed.
         :paramtype job: ~azure.communication.jobrouter.models.RouterJob
         :keyword etag: (Optional) The Concurrency Token.
         :paramtype etag: str
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.job = job
         self.etag = etag
 
 
-class RouterJobOffer(_serialization.Model):
+class RouterJobOffer:
     """An offer of a job to a worker.
 
     All required parameters must be populated in order to send to Azure.
@@ -2195,8 +2052,7 @@ class RouterJobOffer(_serialization.Model):
         job_id: str,
         capacity_cost: int,
         offered_at: Optional[datetime.datetime] = None,
-        expires_at: Optional[datetime.datetime] = None,
-        **kwargs: Any
+        expires_at: Optional[datetime.datetime] = None
     ) -> None:
         """
         :keyword offer_id: The Id of the offer. Required.
@@ -2210,7 +2066,7 @@ class RouterJobOffer(_serialization.Model):
         :keyword expires_at: The time that the offer will expire in UTC.
         :paramtype expires_at: ~datetime.datetime
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.offer_id = offer_id
         self.job_id = job_id
         self.capacity_cost = capacity_cost
@@ -2218,7 +2074,7 @@ class RouterJobOffer(_serialization.Model):
         self.expires_at = expires_at
 
 
-class RouterJobPositionDetails(_serialization.Model):
+class RouterJobPositionDetails:
     """Position and estimated wait time for a job.
 
     All required parameters must be populated in order to send to Azure.
@@ -2259,8 +2115,7 @@ class RouterJobPositionDetails(_serialization.Model):
         position: int,
         queue_id: str,
         queue_length: int,
-        estimated_wait_time_minutes: float,
-        **kwargs: Any
+        estimated_wait_time_minutes: float
     ) -> None:
         """
         :keyword job_id: Id of the job these details are about. Required.
@@ -2275,7 +2130,7 @@ class RouterJobPositionDetails(_serialization.Model):
          minute. Required.
         :paramtype estimated_wait_time_minutes: float
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.job_id = job_id
         self.position = position
         self.queue_id = queue_id
@@ -2283,7 +2138,7 @@ class RouterJobPositionDetails(_serialization.Model):
         self.estimated_wait_time_minutes = estimated_wait_time_minutes
 
 
-class RouterQueue(_serialization.Model):
+class RouterQueue:
     """A queue that can contain jobs to be routed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2321,8 +2176,7 @@ class RouterQueue(_serialization.Model):
         name: Optional[str] = None,
         distribution_policy_id: Optional[str] = None,
         labels: Optional[Dict[str, Any]] = None,
-        exception_policy_id: Optional[str] = None,
-        **kwargs: Any
+        exception_policy_id: Optional[str] = None
     ) -> None:
         """
         :keyword name: The name of this queue.
@@ -2337,7 +2191,7 @@ class RouterQueue(_serialization.Model):
          job escalation rules.
         :paramtype exception_policy_id: str
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.id = None
         self.name = name
         self.distribution_policy_id = distribution_policy_id
@@ -2345,40 +2199,7 @@ class RouterQueue(_serialization.Model):
         self.exception_policy_id = exception_policy_id
 
 
-class RouterQueueCollection(_serialization.Model):
-    """A paged collection of queues.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.RouterQueueItem]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[RouterQueueItem]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.RouterQueueItem"], **kwargs: Any) -> None:
-        """
-        :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.RouterQueueItem]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = None
-
-
-class RouterQueueItem(_serialization.Model):
+class RouterQueueItem:
     """Paged instance of RouterQueue.
 
     :ivar queue: A queue that can contain jobs to be routed.
@@ -2387,13 +2208,15 @@ class RouterQueueItem(_serialization.Model):
     :vartype etag: str
     """
 
+    _validation = {}
+
     _attribute_map = {
         "queue": {"key": "queue", "type": "RouterQueue"},
         "etag": {"key": "etag", "type": "str"},
     }
 
     def __init__(
-        self, *, queue: Optional["_models.RouterQueue"] = None, etag: Optional[str] = None, **kwargs: Any
+        self, *, queue: Optional["RouterQueue"] = None, etag: Optional[str] = None
     ) -> None:
         """
         :keyword queue: A queue that can contain jobs to be routed.
@@ -2401,12 +2224,12 @@ class RouterQueueItem(_serialization.Model):
         :keyword etag: (Optional) The Concurrency Token.
         :paramtype etag: str
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.queue = queue
         self.etag = etag
 
 
-class RouterQueueSelector(_serialization.Model):
+class RouterQueueSelector:
     """Describes a condition that must be met against a set of labels for queue selection.
 
     All required parameters must be populated in order to send to Azure.
@@ -2436,9 +2259,8 @@ class RouterQueueSelector(_serialization.Model):
         self,
         *,
         key: str,
-        label_operator: Union[str, "_models.LabelOperator"],
-        value: Optional[JSON] = None,
-        **kwargs: Any
+        label_operator: Union[str, "LabelOperator"],
+        value: Optional[JSON] = None
     ) -> None:
         """
         :keyword key: The label key to query against. Required.
@@ -2450,13 +2272,13 @@ class RouterQueueSelector(_serialization.Model):
         :keyword value: The value to compare against the actual label value with the given operator.
         :paramtype value: JSON
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.key = key
         self.label_operator = label_operator
         self.value = value
 
 
-class RouterQueueStatistics(_serialization.Model):
+class RouterQueueStatistics:
     """Statistics for the queue.
 
     All required parameters must be populated in order to send to Azure.
@@ -2491,8 +2313,7 @@ class RouterQueueStatistics(_serialization.Model):
         queue_id: str,
         length: int,
         estimated_wait_time_minutes: Optional[Dict[str, float]] = None,
-        longest_job_wait_time_minutes: Optional[float] = None,
-        **kwargs: Any
+        longest_job_wait_time_minutes: Optional[float] = None
     ) -> None:
         """
         :keyword queue_id: Id of the queue these details are about. Required.
@@ -2506,14 +2327,14 @@ class RouterQueueStatistics(_serialization.Model):
          queue for the longest.
         :paramtype longest_job_wait_time_minutes: float
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.queue_id = queue_id
         self.length = length
         self.estimated_wait_time_minutes = estimated_wait_time_minutes
         self.longest_job_wait_time_minutes = longest_job_wait_time_minutes
 
 
-class RouterWorker(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class RouterWorker:  # pylint: disable=too-many-instance-attributes
     """An entity for jobs to be routed to.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2577,9 +2398,8 @@ class RouterWorker(_serialization.Model):  # pylint: disable=too-many-instance-a
         total_capacity: Optional[int] = None,
         labels: Optional[Dict[str, Any]] = None,
         tags: Optional[Dict[str, Any]] = None,
-        channel_configurations: Optional[Dict[str, "_models.ChannelConfiguration"]] = None,
-        available_for_offers: Optional[bool] = None,
-        **kwargs: Any
+        channel_configurations: Optional[Dict[str, "ChannelConfiguration"]] = None,
+        available_for_offers: Optional[bool] = None
     ) -> None:
         """
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
@@ -2599,7 +2419,7 @@ class RouterWorker(_serialization.Model):  # pylint: disable=too-many-instance-a
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: bool
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.id = None
         self.state = None
         self.queue_assignments = queue_assignments
@@ -2613,7 +2433,7 @@ class RouterWorker(_serialization.Model):  # pylint: disable=too-many-instance-a
         self.available_for_offers = available_for_offers
 
 
-class RouterWorkerAssignment(_serialization.Model):
+class RouterWorkerAssignment:
     """The assignment for a worker to a job.
 
     All required parameters must be populated in order to send to Azure.
@@ -2644,7 +2464,7 @@ class RouterWorkerAssignment(_serialization.Model):
     }
 
     def __init__(
-        self, *, assignment_id: str, job_id: str, capacity_cost: int, assigned_at: datetime.datetime, **kwargs: Any
+        self, *, assignment_id: str, job_id: str, capacity_cost: int, assigned_at: datetime.datetime
     ) -> None:
         """
         :keyword assignment_id: The Id of the assignment. Required.
@@ -2657,47 +2477,14 @@ class RouterWorkerAssignment(_serialization.Model):
         :keyword assigned_at: The assignment time of the job in UTC. Required.
         :paramtype assigned_at: ~datetime.datetime
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.assignment_id = assignment_id
         self.job_id = job_id
         self.capacity_cost = capacity_cost
         self.assigned_at = assigned_at
 
 
-class RouterWorkerCollection(_serialization.Model):
-    """A paged collection of workers.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required.
-    :vartype value: list[~azure.communication.jobrouter.models.RouterWorkerItem]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[RouterWorkerItem]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.RouterWorkerItem"], **kwargs: Any) -> None:
-        """
-        :keyword value: Required.
-        :paramtype value: list[~azure.communication.jobrouter.models.RouterWorkerItem]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = None
-
-
-class RouterWorkerItem(_serialization.Model):
+class RouterWorkerItem:
     """Paged instance of RouterWorker.
 
     :ivar worker: An entity for jobs to be routed to.
@@ -2706,13 +2493,15 @@ class RouterWorkerItem(_serialization.Model):
     :vartype etag: str
     """
 
+    _validation = {}
+
     _attribute_map = {
         "worker": {"key": "worker", "type": "RouterWorker"},
         "etag": {"key": "etag", "type": "str"},
     }
 
     def __init__(
-        self, *, worker: Optional["_models.RouterWorker"] = None, etag: Optional[str] = None, **kwargs: Any
+        self, *, worker: Optional["RouterWorker"] = None, etag: Optional[str] = None
     ) -> None:
         """
         :keyword worker: An entity for jobs to be routed to.
@@ -2720,12 +2509,12 @@ class RouterWorkerItem(_serialization.Model):
         :keyword etag: (Optional) The Concurrency Token.
         :paramtype etag: str
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.worker = worker
         self.etag = etag
 
 
-class RouterWorkerSelector(_serialization.Model):
+class RouterWorkerSelector:
     """Describes a condition that must be met against a set of labels for worker selection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2771,11 +2560,10 @@ class RouterWorkerSelector(_serialization.Model):
         self,
         *,
         key: str,
-        label_operator: Union[str, "_models.LabelOperator"],
+        label_operator: Union[str, "LabelOperator"],
         value: Optional[JSON] = None,
         expires_after_seconds: Optional[float] = None,
-        expedite: Optional[bool] = None,
-        **kwargs: Any
+        expedite: Optional[bool] = None
     ) -> None:
         """
         :keyword key: The label key to query against. Required.
@@ -2783,7 +2571,7 @@ class RouterWorkerSelector(_serialization.Model):
         :keyword label_operator: Describes how the value of the label is compared to the value defined
          on the label selector. Required. Known values are: "equal", "notEqual", "lessThan",
          "lessThanEqual", "greaterThan", and "greaterThanEqual".
-        :paramtype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
+        :paramtype label_operator: str or ~azure.communication.jobrouter.LabelOperator
         :keyword value: The value to compare against the actual label value with the given operator.
         :paramtype value: JSON
         :keyword expires_after_seconds: Describes how long this label selector is valid in seconds.
@@ -2791,7 +2579,7 @@ class RouterWorkerSelector(_serialization.Model):
         :keyword expedite: Pushes the job to the front of the queue as long as this selector is active.
         :paramtype expedite: bool
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.key = key
         self.label_operator = label_operator
         self.value = value
@@ -2830,7 +2618,7 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment):
         "rule": {"key": "rule", "type": "RouterRule"},
     }
 
-    def __init__(self, *, rule: "_models.RouterRule", **kwargs: Any) -> None:
+    def __init__(self, *, rule: "RouterRule", **kwargs: Any) -> None:
         """
         :keyword rule: A rule of one of the following types:
 
@@ -2877,7 +2665,7 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment):
         "rule": {"key": "rule", "type": "RouterRule"},
     }
 
-    def __init__(self, *, rule: "_models.RouterRule", **kwargs: Any) -> None:
+    def __init__(self, *, rule: "RouterRule", **kwargs: Any) -> None:
         """
         :keyword rule: A rule of one of the following types:
 
@@ -2895,27 +2683,29 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment):
         self.rule = rule
 
 
-class ScheduleAndSuspendMode(_serialization.Model):
+class ScheduleAndSuspendMode:
     """ScheduleAndSuspendMode.
 
     :ivar schedule_at:
     :vartype schedule_at: ~datetime.datetime
     """
 
+    _validation = {}
+
     _attribute_map = {
         "schedule_at": {"key": "scheduleAt", "type": "iso-8601"},
     }
 
-    def __init__(self, *, schedule_at: Optional[datetime.datetime] = None, **kwargs: Any) -> None:
+    def __init__(self, *, schedule_at: Optional[datetime.datetime] = None) -> None:
         """
         :keyword schedule_at:
         :paramtype schedule_at: ~datetime.datetime
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.schedule_at = schedule_at
 
 
-class ScoringRuleOptions(_serialization.Model):
+class ScoringRuleOptions:
     """Encapsulates all options that can be passed as parameters for scoring rule with BestWorkerMode.
 
     :ivar batch_size: (Optional) Set batch size when AllowScoringBatchOfWorkers is set to true.
@@ -2923,8 +2713,8 @@ class ScoringRuleOptions(_serialization.Model):
     :vartype batch_size: int
     :ivar scoring_parameters: (Optional) List of extra parameters from the job that will be sent as
      part of the payload to scoring rule.
-     If not set, the job's labels (sent in the payload as ``job``\ ) and the job's worker selectors
-     (sent in the payload as ``selectors``\ )
+     If not set, the job's labels (sent in the payload as 'job' ) and the job's worker selectors
+     (sent in the payload as 'selectors' )
      are added to the payload of the scoring rule by default.
      Note: Worker labels are always sent with scoring payload.
     :vartype scoring_parameters: list[str or
@@ -2941,6 +2731,8 @@ class ScoringRuleOptions(_serialization.Model):
     :vartype descending_order: bool
     """
 
+    _validation = {}
+
     _attribute_map = {
         "batch_size": {"key": "batchSize", "type": "int"},
         "scoring_parameters": {"key": "scoringParameters", "type": "[str]"},
@@ -2952,10 +2744,9 @@ class ScoringRuleOptions(_serialization.Model):
         self,
         *,
         batch_size: Optional[int] = None,
-        scoring_parameters: Optional[List[Union[str, "_models.ScoringRuleParameterSelector"]]] = None,
+        scoring_parameters: Optional[List[Union[str, "ScoringRuleParameterSelector"]]] = None,
         allow_scoring_batch_of_workers: Optional[bool] = None,
-        descending_order: Optional[bool] = None,
-        **kwargs: Any
+        descending_order: Optional[bool] = None
     ) -> None:
         """
         :keyword batch_size: (Optional) Set batch size when AllowScoringBatchOfWorkers is set to true.
@@ -2963,8 +2754,8 @@ class ScoringRuleOptions(_serialization.Model):
         :paramtype batch_size: int
         :keyword scoring_parameters: (Optional) List of extra parameters from the job that will be sent
          as part of the payload to scoring rule.
-         If not set, the job's labels (sent in the payload as ``job``\ ) and the job's worker selectors
-         (sent in the payload as ``selectors``\ )
+         If not set, the job's labels (sent in the payload as 'job' ) and the job's worker selectors
+         (sent in the payload as 'selectors' )
          are added to the payload of the scoring rule by default.
          Note: Worker labels are always sent with scoring payload.
         :paramtype scoring_parameters: list[str or
@@ -2980,7 +2771,7 @@ class ScoringRuleOptions(_serialization.Model):
          If false, will sort scores by ascending order. By default, set to true.
         :paramtype descending_order: bool
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.batch_size = batch_size
         self.scoring_parameters = scoring_parameters
         self.allow_scoring_batch_of_workers = allow_scoring_batch_of_workers
@@ -3009,7 +2800,7 @@ class StaticQueueSelectorAttachment(QueueSelectorAttachment):
         "queue_selector": {"key": "queueSelector", "type": "RouterQueueSelector"},
     }
 
-    def __init__(self, *, queue_selector: "_models.RouterQueueSelector", **kwargs: Any) -> None:
+    def __init__(self, *, queue_selector: "RouterQueueSelector", **kwargs: Any) -> None:
         """
         :keyword queue_selector: Describes a condition that must be met against a set of labels for
          queue selection. Required.
@@ -3020,7 +2811,7 @@ class StaticQueueSelectorAttachment(QueueSelectorAttachment):
         self.queue_selector = queue_selector
 
 
-class StaticRule(RouterRule):
+class StaticRouterRule(RouterRule):
     """A rule providing static rules that always return the same result, regardless of input.
 
     All required parameters must be populated in order to send to Azure.
@@ -3072,7 +2863,7 @@ class StaticWorkerSelectorAttachment(WorkerSelectorAttachment):
         "worker_selector": {"key": "workerSelector", "type": "RouterWorkerSelector"},
     }
 
-    def __init__(self, *, worker_selector: "_models.RouterWorkerSelector", **kwargs: Any) -> None:
+    def __init__(self, *, worker_selector: "RouterWorkerSelector", **kwargs: Any) -> None:
         """
         :keyword worker_selector: Describes a condition that must be met against a set of labels for
          worker selection. Required.
@@ -3083,7 +2874,7 @@ class StaticWorkerSelectorAttachment(WorkerSelectorAttachment):
         self.worker_selector = worker_selector
 
 
-class UnassignJobRequest(_serialization.Model):
+class UnassignJobRequest:
     """Request payload for unassigning a job.
 
     :ivar suspend_matching: If WaitForActivation is true, then the job is not queued for
@@ -3091,21 +2882,23 @@ class UnassignJobRequest(_serialization.Model):
     :vartype suspend_matching: bool
     """
 
+    _validation = {}
+
     _attribute_map = {
         "suspend_matching": {"key": "suspendMatching", "type": "bool"},
     }
 
-    def __init__(self, *, suspend_matching: Optional[bool] = None, **kwargs: Any) -> None:
+    def __init__(self, *, suspend_matching: Optional[bool] = None) -> None:
         """
-        :keyword suspend_matching: If WaitForActivation is true, then the job is not queued for
+        :keyword suspend_matching: If set to true, then the job is not queued for
          re-matching with a worker.
         :paramtype suspend_matching: bool
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.suspend_matching = suspend_matching
 
 
-class UnassignJobResult(_serialization.Model):
+class UnassignJobResult:
     """Response payload after a job has been successfully unassigned.
 
     All required parameters must be populated in order to send to Azure.
@@ -3126,14 +2919,14 @@ class UnassignJobResult(_serialization.Model):
         "unassignment_count": {"key": "unassignmentCount", "type": "int"},
     }
 
-    def __init__(self, *, job_id: str, unassignment_count: int, **kwargs: Any) -> None:
+    def __init__(self, *, job_id: str, unassignment_count: int) -> None:
         """
         :keyword job_id: The Id of the job unassigned. Required.
         :paramtype job_id: str
         :keyword unassignment_count: The number of times a job is unassigned. At a maximum 3. Required.
         :paramtype unassignment_count: int
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.job_id = job_id
         self.unassignment_count = unassignment_count
 
@@ -3169,7 +2962,7 @@ class WaitTimeExceptionTrigger(ExceptionTrigger):
         self.threshold_seconds = threshold_seconds
 
 
-class WebhookRule(RouterRule):
+class WebhookRouterRule(RouterRule):
     """A rule providing a binding to an external web server.
 
     All required parameters must be populated in order to send to Azure.
@@ -3200,7 +2993,7 @@ class WebhookRule(RouterRule):
         self,
         *,
         authorization_server_uri: Optional[str] = None,
-        client_credential: Optional["_models.Oauth2ClientCredential"] = None,
+        client_credential: Optional["Oauth2ClientCredential"] = None,
         webhook_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -3242,7 +3035,7 @@ class WeightedAllocationQueueSelectorAttachment(QueueSelectorAttachment):
         "allocations": {"key": "allocations", "type": "[QueueWeightedAllocation]"},
     }
 
-    def __init__(self, *, allocations: List["_models.QueueWeightedAllocation"], **kwargs: Any) -> None:
+    def __init__(self, *, allocations: List["QueueWeightedAllocation"], **kwargs: Any) -> None:
         """
         :keyword allocations: A collection of percentage based weighted allocations. Required.
         :paramtype allocations: list[~azure.communication.jobrouter.models.QueueWeightedAllocation]
@@ -3274,7 +3067,7 @@ class WeightedAllocationWorkerSelectorAttachment(WorkerSelectorAttachment):
         "allocations": {"key": "allocations", "type": "[WorkerWeightedAllocation]"},
     }
 
-    def __init__(self, *, allocations: List["_models.WorkerWeightedAllocation"], **kwargs: Any) -> None:
+    def __init__(self, *, allocations: List["WorkerWeightedAllocation"], **kwargs: Any) -> None:
         """
         :keyword allocations: A collection of percentage based weighted allocations. Required.
         :paramtype allocations: list[~azure.communication.jobrouter.models.WorkerWeightedAllocation]
@@ -3284,7 +3077,7 @@ class WeightedAllocationWorkerSelectorAttachment(WorkerSelectorAttachment):
         self.allocations = allocations
 
 
-class WorkerWeightedAllocation(_serialization.Model):
+class WorkerWeightedAllocation:
     """Contains the weight percentage and worker selectors to be applied if selected for weighted
     distributions.
 
@@ -3307,7 +3100,7 @@ class WorkerWeightedAllocation(_serialization.Model):
         "worker_selectors": {"key": "workerSelectors", "type": "[RouterWorkerSelector]"},
     }
 
-    def __init__(self, *, weight: float, worker_selectors: List["_models.RouterWorkerSelector"], **kwargs: Any) -> None:
+    def __init__(self, *, weight: float, worker_selectors: List["RouterWorkerSelector"]) -> None:
         """
         :keyword weight: The percentage of this weight, expressed as a fraction of 1. Required.
         :paramtype weight: float
@@ -3315,6 +3108,6 @@ class WorkerWeightedAllocation(_serialization.Model):
          allocation is selected. Required.
         :paramtype worker_selectors: list[~azure.communication.jobrouter.models.RouterWorkerSelector]
         """
-        super().__init__(**kwargs)
+        super().__init__()
         self.weight = weight
         self.worker_selectors = worker_selectors

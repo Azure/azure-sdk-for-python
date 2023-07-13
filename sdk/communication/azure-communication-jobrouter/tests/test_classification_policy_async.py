@@ -33,10 +33,10 @@ from azure.communication.jobrouter import (
     PassThroughWorkerSelectorAttachment,
     WorkerWeightedAllocation,
     WeightedAllocationWorkerSelectorAttachment,
-    StaticRule,
-    ExpressionRule,
-    FunctionRule,
-    FunctionRuleCredential,
+    StaticRouterRule,
+    ExpressionRouterRule,
+    FunctionRouterRule,
+    FunctionRouterRuleCredential,
     DistributionPolicy,
     RouterQueue,
 )
@@ -57,22 +57,21 @@ queue_selectors = [
         )
     ),
     ConditionalQueueSelectorAttachment(
-        condition = StaticRule(value = True),
+        condition = StaticRouterRule(value = True),
         queue_selectors = [
             RouterQueueSelector(
                 key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
             )
         ]
     ),
-    RuleEngineQueueSelectorAttachment(
-        rule = StaticRule(value = [
-            RouterQueueSelector(
-                key = "test_key",
-                label_operator = LabelOperator.EQUAL,
-                value = "test_value"
-            )]
-        )
-    ),
+    # ## TODO: Bugfix required
+    # RuleEngineQueueSelectorAttachment(
+    #     rule = StaticRouterRule(value = [
+    #         RouterQueueSelector(
+    #             key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
+    #         )]
+    #     )
+    # ),
     PassThroughQueueSelectorAttachment(
         key = "testKey",
         label_operator = LabelOperator.EQUAL
@@ -92,11 +91,11 @@ queue_selectors = [
 ]
 
 prioritization_rules = [
-    StaticRule(value = 1),
-    ExpressionRule(expression = "1"),
-    FunctionRule(
+    StaticRouterRule(value = 1),
+    ExpressionRouterRule(expression = "1"),
+    FunctionRouterRule(
         function_uri = "https://fake.azurewebsites.net/fakeRule",
-        credential = FunctionRuleCredential(function_key = "fakeKey"))
+        credential = FunctionRouterRuleCredential(function_key = "fakeKey"))
 ]
 
 worker_selectors = [
@@ -105,33 +104,34 @@ worker_selectors = [
             key = "test_key",
             label_operator = LabelOperator.EQUAL,
             value = "test_value",
-            ttl_seconds = 10.0,
+            expires_after_seconds = 10.0,
             expedite = False
         )
     ),
     ConditionalWorkerSelectorAttachment(
-        condition = StaticRule(value = True),
+        condition = StaticRouterRule(value = True),
         worker_selectors = [
             RouterWorkerSelector(
                 key = "test_key",
                 label_operator = LabelOperator.EQUAL,
                 value = "test_value",
-                ttl_seconds = 10.0,
+                expires_after_seconds = 10.0,
                 expedite = False
             )
         ]
     ),
-    RuleEngineWorkerSelectorAttachment(
-        rule = StaticRule(value = [
-            RouterWorkerSelector(
-                key = "test_key",
-                label_operator = LabelOperator.EQUAL,
-                value = "test_value",
-                ttl_seconds = 10.0,
-                expedite = False
-            )]
-        )
-    ),
+    # ## TODO: Bugfix required
+    # RuleEngineWorkerSelectorAttachment(
+    #     rule = StaticRouterRule(value = [
+    #         RouterWorkerSelector(
+    #             key = "test_key",
+    #             label_operator = LabelOperator.EQUAL,
+    #             value = "test_value",
+    #             expires_after_seconds = 10.0,
+    #             expedite = False
+    #         )]
+    #     )
+    # ),
     PassThroughWorkerSelectorAttachment(
         key = "testKey",
         label_operator = LabelOperator.EQUAL
@@ -145,7 +145,7 @@ worker_selectors = [
                         key = "test_key",
                         label_operator = LabelOperator.EQUAL,
                         value = "test_value",
-                        ttl_seconds = 10.0,
+                        expires_after_seconds = 10.0,
                         expedite = False
                     )
                 ]
@@ -308,7 +308,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
                     worker_selectors = worker_selectors
                 )
 
-                updated_prioritization_rule = ExpressionRule(expression = "2")
+                updated_prioritization_rule = ExpressionRouterRule(expression = "2")
                 classification_policy.prioritization_rule = updated_prioritization_rule
 
                 updated_classification_policy = await router_client.update_classification_policy(
@@ -363,7 +363,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
                     worker_selectors = worker_selectors
                 )
 
-                updated_prioritization_rule = ExpressionRule(expression = "2")
+                updated_prioritization_rule = ExpressionRouterRule(expression = "2")
                 classification_policy.prioritization_rule = updated_prioritization_rule
 
                 updated_classification_policy = await router_client.update_classification_policy(

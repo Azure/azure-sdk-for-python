@@ -8,11 +8,15 @@
 
 """
 FILE: hello_world_async_sample.py
+
 DESCRIPTION:
     This sample demos set/get/delete operations for app configuration
-USAGE: python hello_world_async_sample.py
-"""
 
+USAGE: python hello_world_async_sample.py
+
+    Set the environment variables with your own values before running the sample:
+    1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
+"""
 import asyncio
 from azure.appconfiguration import ConfigurationSetting
 from util import print_configuration_setting
