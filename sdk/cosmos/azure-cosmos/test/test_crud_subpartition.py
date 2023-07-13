@@ -23,8 +23,6 @@
 
 """End to end test.
 """
-import sys
-sys.path.append(r"C:\Users\bryanambriz\Documents\projects\delpkallit\azure-sdk-for-python\sdk\cosmos\azure-cosmos")
 
 import json
 import logging
