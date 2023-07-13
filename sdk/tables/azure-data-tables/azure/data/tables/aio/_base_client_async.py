@@ -64,7 +64,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         :paramtype credential:
             ~azure.core.credentials.AzureNamedKeyCredential or
             ~azure.core.credentials.AzureSasCredential or
-            ~azure.core.credentials.TokenCredential or None
+            ~azure.core.credentials_async.AsyncTokenCredential or None
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str
