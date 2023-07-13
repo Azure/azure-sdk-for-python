@@ -591,6 +591,6 @@ class WebSocketTransportAsync(
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
         try:
-            await self.sock.send_bytes(s)
+            await self.ws.send_bytes(s)
         except ConnectionResetError as ce:
             raise ConnectionError('Websocket disconnected: %r' % ce) from ce
