@@ -58,29 +58,29 @@ class RouterWorkerSamplesAsync(object):
 
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
         from azure.communication.jobrouter import (
-            JobQueue
+            RouterQueue
         )
 
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
         async with router_admin_client:
-            job_queue1: JobQueue = await router_admin_client.create_queue(
+            job_queue1: RouterQueue = await router_admin_client.create_queue(
                 queue_id = "worker-q-1",
-                queue = JobQueue(
+                queue = RouterQueue(
                     distribution_policy_id = distribution_policy_id,
                 )
             )
 
-            job_queue2: JobQueue = await router_admin_client.create_queue(
+            job_queue2: RouterQueue = await router_admin_client.create_queue(
                 queue_id = "worker-q-2",
-                queue = JobQueue(
+                queue = RouterQueue(
                     distribution_policy_id = distribution_policy_id,
                 )
             )
 
-            job_queue3: JobQueue = await router_admin_client.create_queue(
+            job_queue3: RouterQueue = await router_admin_client.create_queue(
                 queue_id = "worker-q-3",
-                queue = JobQueue(
+                queue = RouterQueue(
                     distribution_policy_id = distribution_policy_id,
                 )
             )
@@ -94,7 +94,6 @@ class RouterWorkerSamplesAsync(object):
         from azure.communication.jobrouter.aio import JobRouterClient
         from azure.communication.jobrouter import (
             RouterWorker,
-            QueueAssignment,
             ChannelConfiguration,
         )
 
@@ -108,8 +107,8 @@ class RouterWorkerSamplesAsync(object):
                 router_worker = RouterWorker(
                     total_capacity = 100,
                     queue_assignments = {
-                        "worker-q-1": QueueAssignment(),
-                        "worker-q-2": QueueAssignment()
+                        "worker-q-1": {},
+                        "worker-q-2": {}
                     },
                     channel_configurations = {
                         "WebChat": ChannelConfiguration(capacity_cost_per_job = 1),
@@ -140,7 +139,6 @@ class RouterWorkerSamplesAsync(object):
         from azure.communication.jobrouter.aio import JobRouterClient
         from azure.communication.jobrouter import (
             RouterWorker,
-            QueueAssignment,
             ChannelConfiguration,
         )
 
@@ -159,7 +157,7 @@ class RouterWorkerSamplesAsync(object):
             updated_router_worker: RouterWorker = await router_client.update_worker(
                 worker_id = worker_id,
                 queue_assignments = {
-                    "worker-q-3": QueueAssignment()
+                    "worker-q-3": {}
                 },
                 channel_configurations = {
                     "WebChatEscalated": ChannelConfiguration(capacity_cost_per_job = 50)
@@ -234,7 +232,7 @@ class RouterWorkerSamplesAsync(object):
             router_worker_iterator = router_client.list_workers()
 
             async for w in router_worker_iterator:
-                print(f"Retrieved worker with id: {w.router_worker.id}")
+                print(f"Retrieved worker with id: {w.worker.id}")
 
             print(f"Successfully completed fetching workers")
         # [END list_workers_async]
@@ -254,7 +252,7 @@ class RouterWorkerSamplesAsync(object):
                 print(f"Retrieved {len(workers_in_page)} workers in current page")
 
                 for w in workers_in_page:
-                    print(f"Retrieved worker with id: {w.router_worker.id}")
+                    print(f"Retrieved worker with id: {w.worker.id}")
 
             print(f"Successfully completed fetching workers")
         # [END list_workers_batched_async]
