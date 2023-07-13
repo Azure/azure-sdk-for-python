@@ -107,8 +107,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
         if not share_name:
             raise ValueError("Please specify a share name.")
@@ -157,22 +157,23 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             An optional share snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`ShareClient.create_snapshot`.
         :param credential:
-        The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
-        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
-        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
-        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
-        should be the storage account key.
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :returns: A directory client.
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
         try:
             if not directory_url.lower().startswith('http'):
                 directory_url = "https://" + directory_url
-        except AttributeError:
-            raise ValueError("Directory URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Directory URL must be a string.") from exc
         parsed_url = urlparse(directory_url.rstrip('/'))
         if not parsed_url.path and not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {directory_url}")
@@ -190,9 +191,6 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             credential=credential, **kwargs)
 
     def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
         share_name = self.share_name
         if isinstance(share_name, str):
             share_name = share_name.encode('UTF-8')
@@ -226,6 +224,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :returns: A directory client.
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
@@ -241,8 +240,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
 
         The file need not already exist.
 
-        :param file_name:
-            The name of the file.
+        :param str file_name: The name of the file.
         :returns: A File Client.
         :rtype: ~azure.storage.fileshare.ShareFileClient
         """

@@ -18,7 +18,7 @@ from urllib.parse import urlparse, quote, unquote
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
-from azure.core.paging import ItemPaged  # pylint: disable=ungrouped-imports
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from ._generated import AzureFileStorage
 from ._generated.models import FileHTTPHeaders
@@ -166,8 +166,8 @@ class ShareFileClient(StorageAccountHostsMixin):
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
         if not (share_name and file_path):
             raise ValueError("Please specify a share name and file name.")
@@ -226,14 +226,15 @@ class ShareFileClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :returns: A File client.
         :rtype: ~azure.storage.fileshare.ShareFileClient
         """
         try:
             if not file_url.lower().startswith('http'):
                 file_url = "https://" + file_url
-        except AttributeError:
-            raise ValueError("File URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("File URL must be a string.") from exc
         parsed_url = urlparse(file_url.rstrip('/'))
 
         if not (parsed_url.netloc and parsed_url.path):
@@ -248,9 +249,6 @@ class ShareFileClient(StorageAccountHostsMixin):
         return cls(account_url, share_name, file_path, snapshot, credential, **kwargs)
 
     def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
         share_name = self.share_name
         if isinstance(share_name, str):
             share_name = share_name.encode('UTF-8')
@@ -286,6 +284,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :returns: A File client.
         :rtype: ~azure.storage.fileshare.ShareFileClient
 
@@ -714,6 +713,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         except HttpResponseError as error:
             process_storage_error(error)
 
+    @distributed_trace
     def abort_copy(self, copy_id, **kwargs):
         # type: (Union[str, FileProperties], Any) -> None
         """Abort an ongoing copy operation.
@@ -1440,6 +1440,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
         return [{'start': file_range.start, 'end': file_range.end} for file_range in ranges.ranges]
 
+    @distributed_trace
     def get_ranges_diff(  # type: ignore
             self,
             previous_sharesnapshot,  # type: Union[str, Dict[str, Any]]
