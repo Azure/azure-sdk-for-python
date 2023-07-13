@@ -11,20 +11,33 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class SparkJobEntryType:
+    """Type of Spark job entry. Possibilities are Python file entry or Scala class entry."""
+
     SPARK_JOB_FILE_ENTRY = "SparkJobPythonEntry"
     SPARK_JOB_CLASS_ENTRY = "SparkJobScalaEntry"
 
 
 class SparkJobEntry(RestTranslatableMixin):
-    """Entry for spark job.
+    """Entry for Spark job.
 
-    :param entry_type: Can be python or scala entry.
-    :type entry_type: SparkJobEntryType
-    :param entry: File or class entry point.
+    :param entry: The file or class entry point.
     :type entry: str
+    :param type: The entry type. Accepted values are SparkJobEntryType.SPARK_JOB_FILE_ENTRY or
+        SparkJobEntryType.SPARK_JOB_CLASS_ENTRY. Defaults to SparkJobEntryType.SPARK_JOB_FILE_ENTRY.
+    :type type: ~azure.ai.ml.entities.SparkJobEntryType
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+            :start-after: [START spark_component_definition]
+            :end-before: [END spark_component_definition]
+            :language: python
+            :dedent: 8
+            :caption: Creating SparkComponent.
     """
 
-    def __init__(self, *, entry: str, type: str = SparkJobEntryType.SPARK_JOB_FILE_ENTRY):
+    def __init__(self, *, entry: str, type: Optional[str] = SparkJobEntryType.SPARK_JOB_FILE_ENTRY) -> None:
         self.entry_type = type
         self.entry = entry
 

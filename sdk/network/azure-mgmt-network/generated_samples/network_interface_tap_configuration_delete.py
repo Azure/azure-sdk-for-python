@@ -29,12 +29,11 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.network_interface_tap_configurations.begin_delete(
+    client.network_interface_tap_configurations.begin_delete(
         resource_group_name="rg1",
         network_interface_name="test-networkinterface",
         tap_configuration_name="test-tapconfiguration",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkInterfaceTapConfigurationDelete.json

@@ -14,6 +14,7 @@ def _flatten_args(args: Union[List[Dict], List[List[Dict]]]) -> List[Dict]:
         return args[0]
     return args
 
+
 class IndexDocumentsBatch:
     """Represent a batch of update operations for documents in an Azure
     Search index.
@@ -41,7 +42,7 @@ class IndexDocumentsBatch:
          a single list of documents, or documents as individual parameters.
         :type documents: Dict or List[Dict]
         :return: the added actions
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return await self._extend_batch(_flatten_args(documents), "upload")
 
@@ -61,7 +62,7 @@ class IndexDocumentsBatch:
          a single list of documents, or documents as individual parameters.
         :type documents: Dict or List[Dict]
         :return: the added actions
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return await self._extend_batch(_flatten_args(documents), "delete")
 
@@ -78,7 +79,7 @@ class IndexDocumentsBatch:
          a single list of documents, or documents as individual parameters.
         :type documents: Dict or List[Dict]
         :return: the added actions
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return await self._extend_batch(_flatten_args(documents), "merge")
 
@@ -93,9 +94,9 @@ class IndexDocumentsBatch:
         :param documents: Documents to merge or upload into an Azure search
          index. May be a single list of documents, or documents as individual
          parameters.
-        :type documents: Dict or List[Dict]
+        :type documents: dict or list[dict]
         :return: the added actions
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return await self._extend_batch(_flatten_args(documents), "mergeOrUpload")
 
@@ -103,14 +104,15 @@ class IndexDocumentsBatch:
     def actions(self) -> List[IndexAction]:
         """The list of currently index actions to index.
 
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return list(self._actions)
 
     async def dequeue_actions(self) -> List[IndexAction]:
         """Get the list of currently configured index actions and clear it.
 
-        :rtype: List[IndexAction]
+        :return: the list of currently configured index actions
+        :rtype: list[IndexAction]
         """
         async with self._lock:
             result = list(self._actions)
@@ -118,7 +120,11 @@ class IndexDocumentsBatch:
         return result
 
     async def enqueue_actions(self, new_actions: Union[IndexAction, List[IndexAction]]) -> None:
-        """Enqueue a list of index actions to index."""
+        """Enqueue a list of index actions to index.
+
+        :param new_actions: the list of index actions to enqueue
+        :type new_actions: list[IndexAction]
+        """
         if isinstance(new_actions, IndexAction):
             async with self._lock:
                 self._actions.append(new_actions)
@@ -127,10 +133,7 @@ class IndexDocumentsBatch:
                 self._actions.extend(new_actions)
 
     async def _extend_batch(self, documents: List[Dict], action_type: str) -> List[IndexAction]:
-        new_actions = [
-            IndexAction(additional_properties=document, action_type=action_type)
-            for document in documents
-        ]
+        new_actions = [IndexAction(additional_properties=document, action_type=action_type) for document in documents]
         async with self._lock:
             self._actions.extend(new_actions)
         return new_actions

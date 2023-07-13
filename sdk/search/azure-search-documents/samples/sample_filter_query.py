@@ -26,6 +26,7 @@ service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
+
 def filter_query():
     # [START filter_query]
     from azure.core.credentials import AzureKeyCredential
@@ -38,7 +39,7 @@ def filter_query():
         search_text="WiFi",
         filter="Address/StateProvince eq 'FL' and Address/Country eq 'USA'",
         select=",".join(select),
-        order_by="Rating desc"
+        order_by="Rating desc",
     )
 
     print("Florida hotels containing 'WiFi', sorted by Rating:")
@@ -46,5 +47,6 @@ def filter_query():
         print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
     # [END filter_query]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     filter_query()

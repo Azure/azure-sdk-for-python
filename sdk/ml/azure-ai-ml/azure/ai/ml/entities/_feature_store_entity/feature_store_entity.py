@@ -62,7 +62,7 @@ class FeatureStoreEntity(Asset):
             tags=tags,
             **kwargs,
         )
-        if stage not in ["Development", "Production", "Archived"]:
+        if stage and stage not in ["Development", "Production", "Archived"]:
             msg = f"Stage must be Development, Production, or Archived, found {stage}"
             raise ValidationException(
                 message=msg,

@@ -24,7 +24,7 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         self._writer_codec = codec
 
     @lru_cache(maxsize=128)
-    def parse_schema(self, schema):  # pylint: disable=no-self-use
+    def parse_schema(self, schema):
         return avro.schema.parse(schema)
 
     def get_schema_fullname(self, schema):
@@ -32,20 +32,19 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         return parsed_schema.fullname
 
     @lru_cache(maxsize=128)
-    def get_schema_writer(self, schema):  # pylint: disable=no-self-use
+    def get_schema_writer(self, schema):
         schema = self.parse_schema(schema)
         return DatumWriter(schema)
 
     @lru_cache(maxsize=128)
     def get_schema_reader(
         self, schema, readers_schema=None
-    ):  # pylint: disable=no-self-use
+    ):
         schema = self.parse_schema(schema)
         if readers_schema:
             readers_schema = self.parse_schema(readers_schema)
         return DatumReader(writers_schema=schema, readers_schema=readers_schema)
 
-    # pylint: disable=no-self-use
     def encode(
         self,
         content,  # type: ObjectType
@@ -72,7 +71,6 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
             encoded_content = stream.getvalue()
         return encoded_content
 
-    # pylint: disable=no-self-use
     def decode(
         self,
         content,  # type: Union[bytes, BinaryIO]

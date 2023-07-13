@@ -31,7 +31,6 @@ class MessageType(Protocol):
         :param str content_type: The content type to be set on the message.
         :rtype: ~azure.schemaregistry.encoder.avroencoder.MessageType
         """
-        ...
 
     def __message_content__(self) -> MessageContent:
         """A MessageContent object, with `content` and `content_type` set to
@@ -39,4 +38,3 @@ class MessageType(Protocol):
 
         :rtype: ~azure.schemaregistry.encoder.avroencoder.MessageContent
         """
-        ...

@@ -45,7 +45,7 @@ from azure.core.exceptions import (
     ServiceResponseError,
     IncompleteReadError,
 )
-from azure.core.pipeline import Pipeline
+from azure.core.pipeline import AsyncPipeline
 
 from ._base import HttpRequest
 from ._base_async import AsyncHttpTransport, AsyncHttpResponse, _ResponseStopIteration
@@ -71,8 +71,9 @@ class AioHttpTransport(AsyncHttpTransport):
 
     Fully asynchronous implementation using the aiohttp library.
 
-    :param session: The client session.
-    :param bool session_owner: Session owner. Defaults True.
+    :keyword session: The client session.
+    :paramtype session: ~aiohttp.ClientSession
+    :keyword bool session_owner: Session owner. Defaults True.
 
     :keyword bool use_env_settings: Uses proxy settings from environment. Defaults to True.
 
@@ -86,7 +87,9 @@ class AioHttpTransport(AsyncHttpTransport):
             :caption: Asynchronous transport with aiohttp.
     """
 
-    def __init__(self, *, session: Optional[aiohttp.ClientSession] = None, loop=None, session_owner=True, **kwargs):
+    def __init__(
+        self, *, session: Optional[aiohttp.ClientSession] = None, loop=None, session_owner: bool = True, **kwargs
+    ):
         if loop and sys.version_info >= (3, 10):
             raise ValueError("Starting with Python 3.10, asyncio doesn’t support loop as a parameter anymore")
         self._loop = loop
@@ -124,7 +127,14 @@ class AioHttpTransport(AsyncHttpTransport):
             self._session_owner = False
             self.session = None
 
-    def _build_ssl_config(self, cert, verify):  # pylint: disable=no-self-use
+    def _build_ssl_config(self, cert, verify):
+        """Build the SSL configuration.
+
+        :param tuple cert: Cert information
+        :param bool verify: SSL verification or path to CA file or directory
+        :rtype: bool or str or :class:`ssl.SSLContext`
+        :return: SSL Configuration
+        """
         ssl_ctx = None
 
         if cert or verify not in (True, False):
@@ -139,15 +149,22 @@ class AioHttpTransport(AsyncHttpTransport):
             return ssl_ctx
         return verify
 
-    def _get_request_data(self, request):  # pylint: disable=no-self-use
+    def _get_request_data(self, request):
+        """Get the request data.
+
+        :param request: The request object
+        :type request: ~azure.core.pipeline.transport.HttpRequest or ~azure.core.rest.HttpRequest
+        :rtype: bytes or ~aiohttp.FormData
+        :return: The request data
+        """
         if request.files:
             form_data = aiohttp.FormData()
             for form_file, data in request.files.items():
                 content_type = data[2] if len(data) > 2 else None
                 try:
                     form_data.add_field(form_file, data[1], filename=data[0], content_type=content_type)
-                except IndexError:
-                    raise ValueError("Invalid formdata formatting: {}".format(data))
+                except IndexError as err:
+                    raise ValueError("Invalid formdata formatting: {}".format(data)) from err
             return form_data
         return request.data
 
@@ -160,7 +177,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
         :param request: The HttpRequest object
         :type request: ~azure.core.pipeline.transport.HttpRequest
-        :param config: Any keyword arguments
+        :keyword any config: Any keyword arguments
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
 
@@ -178,7 +195,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
         :param request: The HttpRequest object
         :type request: ~azure.core.rest.HttpRequest
-        :param config: Any keyword arguments
+        :keyword any config: Any keyword arguments
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.rest.AsyncHttpResponse
 
@@ -194,10 +211,10 @@ class AioHttpTransport(AsyncHttpTransport):
         Pass stream=True to avoid this behavior.
 
         :param request: The HttpRequest object
-        :type request: ~azure.core.pipeline.transport.HttpRequest
-        :param config: Any keyword arguments
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword any config: Any keyword arguments
         :return: The AsyncHttpResponse
-        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
 
         :keyword bool stream: Defaults to False.
         :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
@@ -266,10 +283,10 @@ class AioHttpTransport(AsyncHttpTransport):
                     await response.load_body()
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
-        except aiohttp.client_exceptions.ClientError as err:
-            raise ServiceRequestError(err, error=err) from err
         except asyncio.TimeoutError as err:
             raise ServiceResponseError(err, error=err) from err
+        except aiohttp.client_exceptions.ClientError as err:
+            raise ServiceRequestError(err, error=err) from err
         return response
 
 
@@ -277,12 +294,14 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
     """Streams the response body data.
 
     :param pipeline: The pipeline object
+    :type pipeline: ~azure.core.pipeline.AsyncPipeline
     :param response: The client response object.
-    :param bool decompress: If True which is default, will attempt to decode the body based
+    :type response: ~azure.core.rest.AsyncHttpResponse
+    :keyword bool decompress: If True which is default, will attempt to decode the body based
         on the *content-encoding* header.
     """
 
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, *, decompress=True) -> None:
+    def __init__(self, pipeline: AsyncPipeline, response: AsyncHttpResponse, *, decompress: bool = True) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
@@ -317,13 +336,19 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             return chunk
         except _ResponseStopIteration:
             internal_response.close()
-            raise StopAsyncIteration()
+            raise StopAsyncIteration()  # pylint: disable=raise-missing-from
         except aiohttp.client_exceptions.ClientPayloadError as err:
             # This is the case that server closes connection before we finish the reading. aiohttp library
             # raises ClientPayloadError.
             _LOGGER.warning("Incomplete download: %s", err)
             internal_response.close()
-            raise IncompleteReadError(err, error=err)
+            raise IncompleteReadError(err, error=err) from err
+        except aiohttp.client_exceptions.ClientResponseError as err:
+            raise ServiceResponseError(err, error=err) from err
+        except asyncio.TimeoutError as err:
+            raise ServiceResponseError(err, error=err) from err
+        except aiohttp.client_exceptions.ClientError as err:
+            raise ServiceRequestError(err, error=err) from err
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
@@ -339,12 +364,17 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     :type aiohttp_response: aiohttp.ClientResponse object
     :param block_size: block size of data sent over connection.
     :type block_size: int
-    :param bool decompress: If True which is default, will attempt to decode the body based
+    :keyword bool decompress: If True which is default, will attempt to decode the body based
             on the *content-encoding* header.
     """
 
     def __init__(
-        self, request: HttpRequest, aiohttp_response: aiohttp.ClientResponse, block_size=None, *, decompress=True
+        self,
+        request: HttpRequest,
+        aiohttp_response: aiohttp.ClientResponse,
+        block_size: Optional[int] = None,
+        *,
+        decompress: bool = True
     ) -> None:
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
@@ -357,7 +387,11 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         self._decompress = decompress
 
     def body(self) -> bytes:
-        """Return the whole body as bytes in memory."""
+        """Return the whole body as bytes in memory.
+
+        :rtype: bytes
+        :return: The whole response body.
+        """
         return _aiohttp_body_helper(self)
 
     def text(self, encoding: Optional[str] = None) -> str:
@@ -366,6 +400,8 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         If encoding is not provided, rely on aiohttp auto-detection.
 
         :param str encoding: The encoding to apply.
+        :rtype: str
+        :return: The whole response body as a string.
         """
         # super().text detects charset based on self._content() which is compressed
         # implement the decoding explicitly here
@@ -383,7 +419,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
             except LookupError:
                 encoding = None
         if not encoding:
-            if mimetype.type == "application" and (mimetype.subtype == "json" or mimetype.subtype == "rdap"):
+            if mimetype.type == "application" and mimetype.subtype in ["json", "rdap"]:
                 # RFC 7159 states that the default encoding is UTF-8.
                 # RFC 7483 defines application/rdap+json
                 encoding = "utf-8"
@@ -410,15 +446,23 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         except aiohttp.client_exceptions.ClientPayloadError as err:
             # This is the case that server closes connection before we finish the reading. aiohttp library
             # raises ClientPayloadError.
-            raise IncompleteReadError(err, error=err)
+            raise IncompleteReadError(err, error=err) from err
+        except aiohttp.client_exceptions.ClientResponseError as err:
+            raise ServiceResponseError(err, error=err) from err
+        except asyncio.TimeoutError as err:
+            raise ServiceResponseError(err, error=err) from err
+        except aiohttp.client_exceptions.ClientError as err:
+            raise ServiceRequestError(err, error=err) from err
 
     def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
         :param pipeline: The pipeline object
-        :type pipeline: azure.core.pipeline.Pipeline
+        :type pipeline: azure.core.pipeline.AsyncPipeline
         :keyword bool decompress: If True which is default, will attempt to decode the body based
             on the *content-encoding* header.
+        :rtype: AsyncIterator[bytes]
+        :return: An iterator of bytes chunks.
         """
         return AioHttpStreamDownloadGenerator(pipeline, self, **kwargs)
 

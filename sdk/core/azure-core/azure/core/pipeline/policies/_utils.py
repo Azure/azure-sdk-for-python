@@ -25,21 +25,34 @@
 # --------------------------------------------------------------------------
 import datetime
 import email.utils
+from typing import Optional, cast
+
+from urllib.parse import urlparse
 from ...utils._utils import _FixedOffset, case_insensitive_dict
 
 
-def _parse_http_date(text):
-    """Parse a HTTP date format into datetime."""
+def _parse_http_date(text: str) -> datetime.datetime:
+    """Parse a HTTP date format into datetime.
+
+    :param str text: Text containing a date in HTTP format
+    :rtype: datetime.datetime
+    :return: The parsed datetime
+    """
     parsed_date = email.utils.parsedate_tz(text)
-    return datetime.datetime(*parsed_date[:6], tzinfo=_FixedOffset(parsed_date[9] / 60))
+    if not parsed_date:
+        raise ValueError("Invalid HTTP date")
+    tz_offset = cast(int, parsed_date[9])  # Look at the code, tz_offset is always an int, at worst 0
+    return datetime.datetime(*parsed_date[:6], tzinfo=_FixedOffset(tz_offset / 60))
 
 
-def parse_retry_after(retry_after):
+def parse_retry_after(retry_after: str) -> float:
     """Helper to parse Retry-After and get value in seconds.
 
     :param str retry_after: Retry-After header
-    :rtype: int
+    :rtype: float
+    :return: Value of Retry-After in seconds.
     """
+    delay: float  # Using the Mypy recommendation to use float for "int or float"
     try:
         delay = int(retry_after)
     except ValueError:
@@ -49,7 +62,7 @@ def parse_retry_after(retry_after):
     return max(0, delay)
 
 
-def get_retry_after(response):
+def get_retry_after(response) -> Optional[float]:
     """Get the value of Retry-After in seconds.
 
     :param response: The PipelineResponse object
@@ -67,3 +80,13 @@ def get_retry_after(response):
             parsed_retry_after = parse_retry_after(retry_after)
             return parsed_retry_after / 1000.0
     return None
+
+
+def get_domain(url: str) -> str:
+    """Get the domain of an url.
+
+    :param str url: The url.
+    :rtype: str
+    :return: The domain of the url.
+    """
+    return str(urlparse(url).netloc).lower()

@@ -1,15 +1,26 @@
 # Release History
 
-## 1.4.1 (Unreleased)
+## 1.5.0b2 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.5.0b1 (2023-07-11)
+
+### Features Added
+- Added support for `Snapshot` CRUD operations.
+
+### Bugs Fixed
 - Fixed async `update_sync_token` to use async/await keywords
 
 ### Other Changes
+- Bumped minimum dependency on `azure-core` to `>=1.25.0`.
+- Updated the default `api_version` to "2022-11-01-preview".
 
 ## 1.4.0 (2022-02-13)
 

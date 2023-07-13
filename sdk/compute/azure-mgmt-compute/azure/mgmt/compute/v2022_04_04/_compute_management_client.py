@@ -76,17 +76,19 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.cloud_service_role_instances = CloudServiceRoleInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-04-04"
         )
         self.cloud_service_roles = CloudServiceRolesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-04-04"
         )
-        self.cloud_services = CloudServicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.cloud_services = CloudServicesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-04-04"
+        )
         self.cloud_services_update_domain = CloudServicesUpdateDomainOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-04-04"
         )
         self.cloud_service_operating_systems = CloudServiceOperatingSystemsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-04-04"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:

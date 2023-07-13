@@ -1,5 +1,34 @@
 # Release History
 
+## 2.0.0 (2023-06-29)
+
+### Features Added
+
+  - Added operation group AccessConnectorsOperations
+  - Added operation group OutboundNetworkDependenciesEndpointsOperations
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkResourcesOperations
+  - Model OperationDisplay has a new parameter description
+  - Model Workspace has a new parameter disk_encryption_set_id
+  - Model Workspace has a new parameter encryption
+  - Model Workspace has a new parameter managed_disk_identity
+  - Model Workspace has a new parameter private_endpoint_connections
+  - Model Workspace has a new parameter public_network_access
+  - Model Workspace has a new parameter required_nsg_rules
+  - Model Workspace has a new parameter system_data
+  - Model WorkspaceCustomParameters has a new parameter load_balancer_backend_pool_name
+  - Model WorkspaceCustomParameters has a new parameter load_balancer_id
+  - Model WorkspaceCustomParameters has a new parameter nat_gateway_name
+  - Model WorkspaceCustomParameters has a new parameter public_ip_name
+  - Model WorkspaceCustomParameters has a new parameter resource_tags
+  - Model WorkspaceCustomParameters has a new parameter storage_account_name
+  - Model WorkspaceCustomParameters has a new parameter storage_account_sku_name
+  - Model WorkspaceCustomParameters has a new parameter vnet_address_prefix
+
+### Breaking Changes
+
+  - Client name is changed from `DatabricksClient` to `AzureDatabricksManagementClient`
+
 ## 1.1.0b2 (2022-11-18)
 
 ### Features Added

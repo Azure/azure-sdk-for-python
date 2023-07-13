@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import trio
+import trio  # pylint: disable=networking-import-outside-azure-core-transport
 from ._http_response_impl_async import AsyncHttpResponseImpl
 from ._requests_basic import _RestRequestsTransportResponseBase
 from ..pipeline.transport._requests_trio import TrioStreamDownloadGenerator
