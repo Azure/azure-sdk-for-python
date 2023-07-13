@@ -50,7 +50,7 @@ class AzureDataLakeStorageRESTAPI:  # pylint: disable=client-accepts-api-version
         self._config = AzureDataLakeStorageRESTAPIConfiguration(
             url=url, x_ms_lease_duration=x_ms_lease_duration, **kwargs
         )
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)

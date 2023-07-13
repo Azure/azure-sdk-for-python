@@ -108,3 +108,40 @@ directive:
         delete $[oldName];
     }
 ```
+
+## Don't include FileSystem and Path in path - we have direct URIs.
+
+This directive is necessary for Python (also this directive is copied from .net) because we removed our call to
+_format_url_section in our generated code.
+
+```yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]
+  transform: >
+    for (const property in $)
+    {
+        if (property.includes('/{filesystem}/{path}'))
+        {
+            var oldName = property;
+            var newName = property.replace('/{filesystem}/{path}', '');
+            if (!newName.includes('?'))
+            {
+              newName = newName + '?' + 'filesystem_path'
+            }
+            $[newName] = $[oldName];
+            delete $[oldName];
+        }
+        else if (property.includes('/{filesystem}'))
+        {
+            var oldName = property;
+            var newName = property.replace('/{filesystem}', '');
+            if (!newName.includes('?'))
+            {
+              newName = newName + '?' + 'filesystem'
+            }
+            $[newName] = $[oldName];
+            delete $[oldName];
+        }
+    }
+```
