@@ -8,7 +8,6 @@ from typing import Dict
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema.core.fields import UnionField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 from .delay_metadata_schema import DelayMetadataSchema
@@ -18,10 +17,11 @@ from .timestamp_column_metadata_schema import TimestampColumnMetadataSchema
 
 class SourceMetadataSchema(metaclass=PatchedSchemaMeta):
     type = fields.Str(required=True)
-    path = UnionField([fields.Str(), fields.Dict()], required=True)
+    path = fields.Str(required=False)
     timestamp_column = fields.Nested(TimestampColumnMetadataSchema, required=True)
     source_delay = fields.Nested(DelayMetadataSchema, required=False)
-    source_process_code = fields.Nested(SourceProcessCodeSchema, required=False)
+    source_process_code = fields.Nested(SourceProcessCodeSchema, load_only=True, required=False)
+    dict = fields.Dict(keys=fields.Str(), values=fields.Str(), data_key="kwargs", load_only=True, required=False)
 
     @post_load
     def make(self, data: Dict, **kwargs):

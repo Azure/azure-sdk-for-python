@@ -10,8 +10,8 @@ from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 
 class SourceProcessCodeSchema(metaclass=PatchedSchemaMeta):
-    path = fields.Str(required=False)
-    process_class = fields.Str(required=False)
+    path = fields.Str(required=True, allow_none=False)
+    process_class = fields.Str(required=True, allow_none=False)
 
     @post_load
     def make(self, data, **kwargs):
