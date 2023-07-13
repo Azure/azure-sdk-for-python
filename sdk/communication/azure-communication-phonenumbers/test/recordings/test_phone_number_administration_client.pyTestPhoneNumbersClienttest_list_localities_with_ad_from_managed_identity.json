@@ -231,7 +231,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "292ms"
+        "X-Processing-Time": "235ms"
       },
       "ResponseBody": {
         "phoneNumberLocalities": [
@@ -299,13 +299,6 @@
             }
           },
           {
-            "localizedName": "Anaheim",
-            "administrativeDivision": {
-              "localizedName": "CA",
-              "abbreviatedName": "CA"
-            }
-          },
-          {
             "localizedName": "Burbank",
             "administrativeDivision": {
               "localizedName": "CA",
@@ -314,13 +307,6 @@
           },
           {
             "localizedName": "Concord",
-            "administrativeDivision": {
-              "localizedName": "CA",
-              "abbreviatedName": "CA"
-            }
-          },
-          {
-            "localizedName": "Escondido",
             "administrativeDivision": {
               "localizedName": "CA",
               "abbreviatedName": "CA"
@@ -838,13 +824,6 @@
             }
           },
           {
-            "localizedName": "Worcester",
-            "administrativeDivision": {
-              "localizedName": "MA",
-              "abbreviatedName": "MA"
-            }
-          },
-          {
             "localizedName": "Baltimore",
             "administrativeDivision": {
               "localizedName": "MD",
@@ -934,6 +913,27 @@
               "localizedName": "MI",
               "abbreviatedName": "MI"
             }
+          },
+          {
+            "localizedName": "Sault Ste Marie",
+            "administrativeDivision": {
+              "localizedName": "MI",
+              "abbreviatedName": "MI"
+            }
+          },
+          {
+            "localizedName": "Troy",
+            "administrativeDivision": {
+              "localizedName": "MI",
+              "abbreviatedName": "MI"
+            }
+          },
+          {
+            "localizedName": "Warren",
+            "administrativeDivision": {
+              "localizedName": "MI",
+              "abbreviatedName": "MI"
+            }
           }
         ],
         "nextLink": "/availablePhoneNumbers/countries/US/localities?skip=100\u0026api-version=2023-05-01-preview\u0026maxPageSize=100"
@@ -960,7 +960,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "267ms"
+        "X-Processing-Time": "261ms"
       },
       "ResponseBody": {
         "phoneNumberLocalities": [

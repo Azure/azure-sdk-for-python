@@ -459,7 +459,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         if self.is_playback():
             phone_numbers = [ "sanitized", "sanitized" ]
         else:
-            phone_numbers = [ "+14255550123", "+14255551234" ]
+            phone_numbers = [ self.phone_number, self.phone_number ]
 
         with pytest.raises(Exception) as ex:
             async with self.phone_number_client:
@@ -471,7 +471,12 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
 
     @recorded_by_proxy_async
     async def test_search_operator_information(self):
+        if self.is_playback():
+            phone_number = "sanitized"
+        else:
+            phone_number = self.phone_number
+
         async with self.phone_number_client:
-            results = await self.phone_number_client.search_operator_information([ self.phone_number ])
+            results = await self.phone_number_client.search_operator_information([ phone_number ])
         assert len(results.values) == 1
         assert results.values[0].phone_number == self.phone_number

@@ -15,6 +15,7 @@
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "92",
+        "Content-Security-Policy-Report-Only": "sanitized",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "Expires": "-1",
@@ -53,7 +54,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "163ms"
+        "X-Processing-Time": "119ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -97,7 +98,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "531ms"
+        "X-Processing-Time": "682ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -128,7 +129,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "143ms"
+        "X-Processing-Time": "124ms"
       },
       "ResponseBody": {
         "trunks": {

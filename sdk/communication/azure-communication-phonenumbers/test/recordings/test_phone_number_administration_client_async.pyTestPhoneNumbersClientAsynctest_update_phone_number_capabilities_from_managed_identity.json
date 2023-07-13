@@ -52,7 +52,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1003ms"
+        "X-Processing-Time": "1227ms"
       },
       "ResponseBody": {
         "id": "sanitized",
@@ -90,25 +90,25 @@
       "ResponseHeaders": {
         "Access-Control-Expose-Headers": "Operation-Location,Location,operation-id,capabilities-id",
         "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-12-01, 2022-12-02-preview2, 2023-05-01-preview",
-        "capabilities-id": "f6233cfc-c212-4935-861c-139200f58829",
+        "capabilities-id": "152f6862-e9cc-40d2-84d0-88366aa302e6",
         "Content-Length": "63",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "Location": "/phoneNumbers/\u002Bsanitized?api-version=2023-05-01-preview",
         "MS-CV": "sanitized",
-        "operation-id": "capabilities_f6233cfc-c212-4935-861c-139200f58829",
-        "Operation-Location": "/phoneNumbers/operations/capabilities_f6233cfc-c212-4935-861c-139200f58829?api-version=2023-05-01-preview",
+        "operation-id": "capabilities_152f6862-e9cc-40d2-84d0-88366aa302e6",
+        "Operation-Location": "/phoneNumbers/operations/capabilities_152f6862-e9cc-40d2-84d0-88366aa302e6?api-version=2023-05-01-preview",
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1847ms"
+        "X-Processing-Time": "24970ms"
       },
       "ResponseBody": {
-        "capabilitiesUpdateId": "f6233cfc-c212-4935-861c-139200f58829"
+        "capabilitiesUpdateId": "152f6862-e9cc-40d2-84d0-88366aa302e6"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_f6233cfc-c212-4935-861c-139200f58829?api-version=2023-05-01-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_152f6862-e9cc-40d2-84d0-88366aa302e6?api-version=2023-05-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -128,51 +128,19 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "178ms"
-      },
-      "ResponseBody": {
-        "operationType": "updatePhoneNumberCapabilities",
-        "status": "running",
-        "resourceLocation": "/phoneNumbers/\u002Bsanitized?api-version=2023-05-01-preview",
-        "createdDateTime": "2023-07-10T23:10:18.6587125\u002B00:00",
-        "id": "sanitized",
-        "lastActionDateTime": "0001-01-01T00:00:00\u002B00:00"
-      }
-    },
-    {
-      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_f6233cfc-c212-4935-861c-139200f58829?api-version=2023-05-01-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Expose-Headers": "Location",
-        "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-11-15-preview, 2022-12-01, 2022-12-02-preview2, 2023-05-01-preview",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "sanitized",
-        "Location": "/phoneNumbers/\u002Bsanitized?api-version=2023-05-01-preview",
-        "MS-CV": "sanitized",
-        "Strict-Transport-Security": "max-age=2592000",
-        "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "167ms"
+        "X-Processing-Time": "270ms"
       },
       "ResponseBody": {
         "operationType": "updatePhoneNumberCapabilities",
         "status": "running",
         "resourceLocation": "/phoneNumbers/\u002Bsanitized?api-version=2023-05-01-preview",
-        "createdDateTime": "2023-07-10T23:10:18.6587125\u002B00:00",
+        "createdDateTime": "2023-07-13T20:32:43.8689096\u002B00:00",
         "id": "sanitized",
         "lastActionDateTime": "0001-01-01T00:00:00\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_f6233cfc-c212-4935-861c-139200f58829?api-version=2023-05-01-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_152f6862-e9cc-40d2-84d0-88366aa302e6?api-version=2023-05-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -192,13 +160,45 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "162ms"
+        "X-Processing-Time": "166ms"
+      },
+      "ResponseBody": {
+        "operationType": "updatePhoneNumberCapabilities",
+        "status": "running",
+        "resourceLocation": "/phoneNumbers/\u002Bsanitized?api-version=2023-05-01-preview",
+        "createdDateTime": "2023-07-13T20:32:43.8689096\u002B00:00",
+        "id": "sanitized",
+        "lastActionDateTime": "0001-01-01T00:00:00\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_152f6862-e9cc-40d2-84d0-88366aa302e6?api-version=2023-05-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "Location",
+        "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-11-15-preview, 2022-12-01, 2022-12-02-preview2, 2023-05-01-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "sanitized",
+        "Location": "/phoneNumbers/\u002Bsanitized?api-version=2023-05-01-preview",
+        "MS-CV": "sanitized",
+        "Strict-Transport-Security": "max-age=2592000",
+        "Transfer-Encoding": "chunked",
+        "X-Azure-Ref": "sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Processing-Time": "204ms"
       },
       "ResponseBody": {
         "operationType": "updatePhoneNumberCapabilities",
         "status": "succeeded",
         "resourceLocation": "/phoneNumbers/\u002Bsanitized?api-version=2023-05-01-preview",
-        "createdDateTime": "2023-07-10T23:10:18.6587125\u002B00:00",
+        "createdDateTime": "2023-07-13T20:32:43.8689096\u002B00:00",
         "id": "sanitized",
         "lastActionDateTime": "0001-01-01T00:00:00\u002B00:00"
       }
@@ -222,7 +222,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1002ms"
+        "X-Processing-Time": "2950ms"
       },
       "ResponseBody": {
         "id": "sanitized",

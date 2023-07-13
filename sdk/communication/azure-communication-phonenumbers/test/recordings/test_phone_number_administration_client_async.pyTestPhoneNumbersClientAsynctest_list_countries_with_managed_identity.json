@@ -46,24 +46,40 @@
       "ResponseHeaders": {
         "api-supported-versions": "2022-12-01, 2022-12-02-preview2, 2023-05-01-preview",
         "Cache-Control": "max-age=21600, private, stale-while-revalidate=86400",
-        "Content-Length": "1253",
+        "Content-Length": "1487",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "2843ms"
+        "X-Processing-Time": "1671ms"
       },
       "ResponseBody": {
         "countries": [
+          {
+            "localizedName": "Argentina",
+            "countryCode": "AR"
+          },
+          {
+            "localizedName": "Brazil",
+            "countryCode": "BR"
+          },
           {
             "localizedName": "Canada",
             "countryCode": "CA"
           },
           {
+            "localizedName": "Chile",
+            "countryCode": "CL"
+          },
+          {
             "localizedName": "China",
             "countryCode": "CN"
+          },
+          {
+            "localizedName": "Colombia",
+            "countryCode": "CO"
           },
           {
             "localizedName": "Denmark",
@@ -104,6 +120,10 @@
           {
             "localizedName": "Malaysia",
             "countryCode": "MY"
+          },
+          {
+            "localizedName": "Mexico",
+            "countryCode": "MX"
           },
           {
             "localizedName": "Netherlands",

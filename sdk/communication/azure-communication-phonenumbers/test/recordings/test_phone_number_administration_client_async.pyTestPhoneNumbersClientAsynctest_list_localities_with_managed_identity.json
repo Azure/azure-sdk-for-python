@@ -53,7 +53,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "256ms"
+        "X-Processing-Time": "250ms"
       },
       "ResponseBody": {
         "phoneNumberLocalities": [
@@ -121,13 +121,6 @@
             }
           },
           {
-            "localizedName": "Anaheim",
-            "administrativeDivision": {
-              "localizedName": "CA",
-              "abbreviatedName": "CA"
-            }
-          },
-          {
             "localizedName": "Burbank",
             "administrativeDivision": {
               "localizedName": "CA",
@@ -136,13 +129,6 @@
           },
           {
             "localizedName": "Concord",
-            "administrativeDivision": {
-              "localizedName": "CA",
-              "abbreviatedName": "CA"
-            }
-          },
-          {
-            "localizedName": "Escondido",
             "administrativeDivision": {
               "localizedName": "CA",
               "abbreviatedName": "CA"
@@ -660,13 +646,6 @@
             }
           },
           {
-            "localizedName": "Worcester",
-            "administrativeDivision": {
-              "localizedName": "MA",
-              "abbreviatedName": "MA"
-            }
-          },
-          {
             "localizedName": "Baltimore",
             "administrativeDivision": {
               "localizedName": "MD",
@@ -756,35 +735,7 @@
               "localizedName": "MI",
               "abbreviatedName": "MI"
             }
-          }
-        ],
-        "nextLink": "/availablePhoneNumbers/countries/US/localities?skip=100\u0026api-version=2023-05-01-preview\u0026maxPageSize=100"
-      }
-    },
-    {
-      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/localities?skip=100\u0026api-version=2023-05-01-preview\u0026maxPageSize=100",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "api-supported-versions": "2022-12-01, 2022-12-02-preview2, 2023-05-01-preview",
-        "Cache-Control": "max-age=21600, private, stale-while-revalidate=86400",
-        "Content-Length": "10210",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "sanitized",
-        "MS-CV": "sanitized",
-        "Strict-Transport-Security": "max-age=2592000",
-        "X-Azure-Ref": "sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "259ms"
-      },
-      "ResponseBody": {
-        "phoneNumberLocalities": [
+          },
           {
             "localizedName": "Sault Ste Marie",
             "administrativeDivision": {
@@ -805,7 +756,35 @@
               "localizedName": "MI",
               "abbreviatedName": "MI"
             }
-          },
+          }
+        ],
+        "nextLink": "/availablePhoneNumbers/countries/US/localities?skip=100\u0026api-version=2023-05-01-preview\u0026maxPageSize=100"
+      }
+    },
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/localities?skip=100\u0026api-version=2023-05-01-preview\u0026maxPageSize=100",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2022-12-01, 2022-12-02-preview2, 2023-05-01-preview",
+        "Cache-Control": "max-age=21600, private, stale-while-revalidate=86400",
+        "Content-Length": "10213",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
+        "Strict-Transport-Security": "max-age=2592000",
+        "X-Azure-Ref": "sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Processing-Time": "238ms"
+      },
+      "ResponseBody": {
+        "phoneNumberLocalities": [
           {
             "localizedName": "Alexandria",
             "administrativeDivision": {
@@ -846,13 +825,6 @@
             "administrativeDivision": {
               "localizedName": "MN",
               "abbreviatedName": "MN"
-            }
-          },
-          {
-            "localizedName": "Columbia",
-            "administrativeDivision": {
-              "localizedName": "MO",
-              "abbreviatedName": "MO"
             }
           },
           {
@@ -1465,54 +1437,12 @@
             }
           },
           {
-            "localizedName": "Seattle",
-            "administrativeDivision": {
-              "localizedName": "WA",
-              "abbreviatedName": "WA"
-            }
-          },
-          {
-            "localizedName": "Tacoma",
-            "administrativeDivision": {
-              "localizedName": "WA",
-              "abbreviatedName": "WA"
-            }
-          },
-          {
             "localizedName": "Eau Claire",
             "administrativeDivision": {
               "localizedName": "WI",
               "abbreviatedName": "WI"
             }
-          }
-        ],
-        "nextLink": "/availablePhoneNumbers/countries/US/localities?skip=200\u0026api-version=2023-05-01-preview\u0026maxPageSize=100"
-      }
-    },
-    {
-      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/localities?skip=200\u0026api-version=2023-05-01-preview\u0026maxPageSize=100",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "api-supported-versions": "2022-12-01, 2022-12-02-preview2, 2023-05-01-preview",
-        "Cache-Control": "max-age=21600, private, stale-while-revalidate=86400",
-        "Content-Length": "644",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "sanitized",
-        "MS-CV": "sanitized",
-        "Strict-Transport-Security": "max-age=2592000",
-        "X-Azure-Ref": "sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "269ms"
-      },
-      "ResponseBody": {
-        "phoneNumberLocalities": [
+          },
           {
             "localizedName": "Green Bay",
             "administrativeDivision": {
@@ -1556,6 +1486,33 @@
             }
           }
         ],
+        "nextLink": "/availablePhoneNumbers/countries/US/localities?skip=200\u0026api-version=2023-05-01-preview\u0026maxPageSize=100"
+      }
+    },
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/localities?skip=200\u0026api-version=2023-05-01-preview\u0026maxPageSize=100",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2022-12-01, 2022-12-02-preview2, 2023-05-01-preview",
+        "Cache-Control": "max-age=21600, private, stale-while-revalidate=86400",
+        "Content-Length": "44",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
+        "Strict-Transport-Security": "max-age=2592000",
+        "X-Azure-Ref": "sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Processing-Time": "247ms"
+      },
+      "ResponseBody": {
+        "phoneNumberLocalities": [],
         "nextLink": null
       }
     }
