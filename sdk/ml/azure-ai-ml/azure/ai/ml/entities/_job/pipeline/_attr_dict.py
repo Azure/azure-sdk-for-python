@@ -113,14 +113,14 @@ class _AttrDict(Generic[K, V], dict, ABC):
             self.__setattr__(key, result)
             return result
 
-    def __setattr__(self, key: K, value: V):
+    def __setattr__(self, key: K, value: V) -> None:
         if not self._is_arbitrary_attr(key):
             super().__setattr__(key, value)
         else:
             self._logger.debug("setting %s to %s", key, value)
-            return super().__setitem__(key, value)
+            super().__setitem__(key, value)
 
-    def __setitem__(self, key: K, value: V):
+    def __setitem__(self, key: K, value: V) -> None:
         self.__setattr__(key, value)
 
     def __getitem__(self, item: V):
