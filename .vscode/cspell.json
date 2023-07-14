@@ -405,7 +405,8 @@
     "SDDL",
     "dacl",
     "whls",
-    "aiter"
+    "aiter",
+    "solft"
   ],
   "overrides": [
     {
@@ -565,8 +566,7 @@
         "fhir",
         "FHIR",
         "naam",
-        "aenter",
-        "solft"
+        "aenter"
       ]
     },
     {
