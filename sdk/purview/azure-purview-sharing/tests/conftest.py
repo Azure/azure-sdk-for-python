@@ -61,7 +61,3 @@ def add_sanitizers(test_proxy):
     add_body_key_sanitizer(json_path="$..atlasKafkaPrimaryEndpoint", value="000")
     add_body_key_sanitizer(json_path="$..atlasKafkaSecondaryEndpoint", value="000")
     add_body_key_sanitizer(json_path="$..systemData.createdBy", value="000")
-
-@pytest.fixture(scope="session", autouse=True)
-def start_proxy(test_proxy):
-    return
