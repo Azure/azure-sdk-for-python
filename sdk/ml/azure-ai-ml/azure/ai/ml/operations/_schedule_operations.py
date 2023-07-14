@@ -327,7 +327,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             error_messages = []
             if not signal.target_dataset or not signal.baseline_dataset:
                 # if there is no target dataset, we check the type of signal
-                if signal.type == MonitorSignalType.DATA_DRIFT or signal.type == MonitorSignalType.DATA_QUALITY:
+                if signal.type in {MonitorSignalType.DATA_DRIFT, MonitorSignalType.DATA_QUALITY}:
                     if mdc_input_enabled:
                         default_dataset = MonitorInputData(
                             input_dataset=Input(
