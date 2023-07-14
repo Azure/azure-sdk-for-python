@@ -27,7 +27,6 @@ import logging
 from functools import lru_cache
 from typing import (
     cast,
-    IO,
     TYPE_CHECKING,
     Any,
     Dict,
