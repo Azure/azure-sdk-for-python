@@ -24,10 +24,9 @@ from azure.core.configuration import Configuration
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport, HttpTransport
+from azure.core.pipeline.transport import RequestsTransport, HttpTransport  # pylint: disable=non-abstract-transport-import, no-name-in-module
 from azure.core.pipeline.policies import (
     AzureSasCredentialPolicy,
-    BearerTokenCredentialPolicy,
     ContentDecodePolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
@@ -36,7 +35,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 
-from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE, STORAGE_OAUTH_SCOPE
+from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE
 from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
@@ -44,6 +43,7 @@ from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .policies import (
     ExponentialRetry,
     QueueMessagePolicy,
+    StorageBearerTokenCredentialPolicy,
     StorageContentValidation,
     StorageHeadersPolicy,
     StorageHosts,
@@ -127,6 +127,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
         This could be either the primary endpoint,
         or the secondary endpoint depending on the current :func:`location_mode`.
+        :returns: The full endpoint URL to this entity, including SAS token if used.
+        :rtype: str
         """
         return self._format_url(self._hosts[self._location_mode])
 
@@ -218,7 +220,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            self._credential_policy = StorageBearerTokenCredentialPolicy(credential)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
@@ -255,13 +257,12 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             policies = policies + kwargs.get("_additional_pipeline_policies")
         return config, Pipeline(config.transport, policies=policies)
 
+    # Given a series of request, do a Storage batch call.
     def _batch_send(
         self,
         *reqs,  # type: HttpRequest
         **kwargs
     ):
-        """Given a series of request, do a Storage batch call.
-        """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         batch_id = str(uuid.uuid1())
@@ -396,8 +397,8 @@ def parse_connection_str(conn_str, credential, service):
                 f"https://{conn_settings['ACCOUNTNAME']}."
                 f"{service}.{conn_settings.get('ENDPOINTSUFFIX', SERVICE_HOST_BASE)}"
             )
-        except KeyError:
-            raise ValueError("Connection string missing required connection details.")
+        except KeyError as exc:
+            raise ValueError("Connection string missing required connection details.") from exc
     if service == "dfs":
         primary = primary.replace(".blob.", ".dfs.")
         if secondary:
@@ -457,6 +458,6 @@ def is_credential_sastoken(credential):
 
     sas_values = QueryStringConstants.to_list()
     parsed_query = parse_qs(credential.lstrip("?"))
-    if parsed_query and all([k in sas_values for k in parsed_query.keys()]):
+    if parsed_query and all(k in sas_values for k in parsed_query.keys()):
         return True
     return False
