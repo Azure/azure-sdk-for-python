@@ -40,9 +40,9 @@ async def autocomplete_query():
         result = await search_client.get_document(key="23")
 
         print("Details for hotel '23' are:")
-        print("        Name: {}".format(result["HotelName"]))
-        print("      Rating: {}".format(result["Rating"]))
-        print("    Category: {}".format(result["Category"]))
+        print("        Name: {}".format(result["hotelName"]))
+        print("      Rating: {}".format(result["rating"]))
+        print("    Category: {}".format(result["category"]))
     # [END get_document_async]
 
 

@@ -277,11 +277,11 @@ to be aware of.
 
 ```python
 DOCUMENT = {
-    "Category": "Hotel",
-    "HotelId": "1000",
-    "Rating": 4.0,
-    "Rooms": [],
-    "HotelName": "Azure Inn",
+    "category": "Hotel",
+    "hotelId": "1000",
+    "rating": 4.0,
+    "rooms": [],
+    "hotelName": "Azure Inn",
 }
 
 result = search_client.upload_documents(documents=[DOCUMENT])
