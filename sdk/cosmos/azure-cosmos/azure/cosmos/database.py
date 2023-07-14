@@ -115,8 +115,8 @@ class DatabaseProxy(object):
         return self._properties
 
     @distributed_trace
-    def read(self, populate_query_metrics=None, **kwargs):
-        # type: (Optional[bool], Any) -> Dict[str, Any]
+    def read(self, **kwargs):
+        # type: (Any) -> Dict[str, Any]
         """Read the database properties.
 
         :keyword str session_token: Token for use with Session consistency.
@@ -131,12 +131,6 @@ class DatabaseProxy(object):
         database_link = CosmosClient._get_database_link(self)
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if populate_query_metrics is not None:
-            warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                UserWarning,
-            )
-            request_options["populateQueryMetrics"] = populate_query_metrics
 
         self._properties = self.client_connection.ReadDatabase(
             database_link, options=request_options, **kwargs
@@ -154,7 +148,6 @@ class DatabaseProxy(object):
         partition_key,  # type: ~azure.cosmos.partition_key.PartitionKey
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
-        populate_query_metrics=None,  # type: Optional[bool]
         offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
@@ -227,12 +220,6 @@ class DatabaseProxy(object):
 
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if populate_query_metrics is not None:
-            warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                UserWarning,
-            )
-            request_options["populateQueryMetrics"] = populate_query_metrics
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         data = self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
@@ -250,7 +237,6 @@ class DatabaseProxy(object):
         partition_key,  # type: Any
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
-        populate_query_metrics=None,  # type: Optional[bool]
         offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
@@ -267,7 +253,6 @@ class DatabaseProxy(object):
         :param partition_key: The partition key to use for the container.
         :param indexing_policy: The indexing policy to apply to the container.
         :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :param offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :param unique_key_policy: The unique key policy to apply to the container.
@@ -290,7 +275,6 @@ class DatabaseProxy(object):
         try:
             container_proxy = self.get_container_client(id)
             container_proxy.read(
-                populate_query_metrics=populate_query_metrics,
                 **kwargs
             )
             return container_proxy
@@ -300,7 +284,6 @@ class DatabaseProxy(object):
                 partition_key=partition_key,
                 indexing_policy=indexing_policy,
                 default_ttl=default_ttl,
-                populate_query_metrics=populate_query_metrics,
                 offer_throughput=offer_throughput,
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
@@ -311,7 +294,6 @@ class DatabaseProxy(object):
     def delete_container(
         self,
         container,  # type: Union[str, ContainerProxy, Dict[str, Any]]
-        populate_query_metrics=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -332,12 +314,6 @@ class DatabaseProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        if populate_query_metrics is not None:
-            warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                UserWarning,
-            )
-            request_options["populateQueryMetrics"] = populate_query_metrics
 
         collection_link = self._get_container_link(container)
         result = self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
@@ -375,7 +351,7 @@ class DatabaseProxy(object):
         return ContainerProxy(self.client_connection, self.database_link, id_value)
 
     @distributed_trace
-    def list_containers(self, max_item_count=None, populate_query_metrics=None, **kwargs):
+    def list_containers(self, max_item_count=None, **kwargs):
         # type: (Optional[int], Optional[bool], Any) -> Iterable[Dict[str, Any]]
         """List the containers in the database.
 
@@ -400,12 +376,6 @@ class DatabaseProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if populate_query_metrics is not None:
-            warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                UserWarning,
-            )
-            feed_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.ReadContainers(
             database_link=self.database_link, options=feed_options, **kwargs
@@ -420,7 +390,6 @@ class DatabaseProxy(object):
         query=None,  # type: Optional[str]
         parameters=None,  # type: Optional[List[Dict[str, Any]]]
         max_item_count=None,  # type: Optional[int]
-        populate_query_metrics=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
@@ -440,12 +409,6 @@ class DatabaseProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if populate_query_metrics is not None:
-            warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                UserWarning,
-            )
-            feed_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.QueryContainers(
             database_link=self.database_link,
@@ -465,7 +428,6 @@ class DatabaseProxy(object):
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
-        populate_query_metrics=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
         # type: (...) -> ContainerProxy
@@ -482,7 +444,6 @@ class DatabaseProxy(object):
         :param int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
@@ -510,12 +471,6 @@ class DatabaseProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
-        if populate_query_metrics is not None:
-            warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                UserWarning,
-            )
-            request_options["populateQueryMetrics"] = populate_query_metrics
 
         container_id = self._get_container_id(container)
         container_link = self._get_container_link(container_id)
