@@ -73,7 +73,6 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
                 assert doc_type
                 assert source.source.container_url.endswith("training-data-classifier")
                 assert source.source.prefix
-                assert source.source is None
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -130,7 +129,6 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
                 assert doc_type
                 assert source.source.container_url.endswith("training-data-classifier")
                 assert source.source.file_list
-                assert source.source is None
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
