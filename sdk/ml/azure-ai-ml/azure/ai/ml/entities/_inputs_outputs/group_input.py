@@ -35,6 +35,16 @@ class GroupInput(Input):
 
         return isinstance(obj, _GroupAttrDict)
 
+    def __getattr__(self, item):
+        """Allow get value from values by __get_attr__."""
+        try:
+            return super().__getattr__(item)
+        except AttributeError:
+            # TODO: why values is not a dict in some cases?
+            if isinstance(self.values, dict) and item in self.values:
+                return self.values[item]
+            raise
+
     def _create_default(self):
         from .._job.pipeline._io import PipelineInput
 

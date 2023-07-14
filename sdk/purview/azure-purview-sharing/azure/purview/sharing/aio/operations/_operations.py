@@ -45,6 +45,7 @@ from ...operations._operations import (
     build_sent_shares_list_invitations_request,
     build_sent_shares_list_request,
     build_sent_shares_notify_user_invitation_request,
+    build_share_resources_list_request,
 )
 
 if sys.version_info >= (3, 9):
@@ -1205,13 +1206,7 @@ class ReceivedSharesOperations:
 
     @distributed_trace
     def list_attached(
-        self,
-        *,
-        reference_name: str,
-        skip_token: Optional[str] = None,
-        filter: Optional[str] = None,
-        orderby: Optional[str] = None,
-        **kwargs: Any
+        self, *, reference_name: str, filter: Optional[str] = None, order_by: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Get a list of attached received shares.
 
@@ -1219,12 +1214,10 @@ class ReceivedSharesOperations:
 
         :keyword reference_name: A name that references a data store. Required.
         :paramtype reference_name: str
-        :keyword skip_token: The continuation token to list the next page. Default value is None.
-        :paramtype skip_token: str
         :keyword filter: Filters the results using OData syntax. Default value is None.
         :paramtype filter: str
-        :keyword orderby: Sorts the results using OData syntax. Default value is None.
-        :paramtype orderby: str
+        :keyword order_by: Sorts the results using OData syntax. Default value is None.
+        :paramtype order_by: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1329,9 +1322,8 @@ class ReceivedSharesOperations:
 
                 request = build_received_shares_list_attached_request(
                     reference_name=reference_name,
-                    skip_token=skip_token,
                     filter=filter,
-                    orderby=orderby,
+                    order_by=order_by,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1391,23 +1383,16 @@ class ReceivedSharesOperations:
 
     @distributed_trace
     def list_detached(
-        self,
-        *,
-        skip_token: Optional[str] = None,
-        filter: Optional[str] = None,
-        orderby: Optional[str] = None,
-        **kwargs: Any
+        self, *, filter: Optional[str] = None, order_by: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Get a list of detached received shares.
 
         List detached received shares.
 
-        :keyword skip_token: The continuation token to list the next page. Default value is None.
-        :paramtype skip_token: str
         :keyword filter: Filters the results using OData syntax. Default value is None.
         :paramtype filter: str
-        :keyword orderby: Sorts the results using OData syntax. Default value is None.
-        :paramtype orderby: str
+        :keyword order_by: Sorts the results using OData syntax. Default value is None.
+        :paramtype order_by: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1511,9 +1496,8 @@ class ReceivedSharesOperations:
             if not next_link:
 
                 request = build_received_shares_list_detached_request(
-                    skip_token=skip_token,
                     filter=filter,
-                    orderby=orderby,
+                    order_by=order_by,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1933,13 +1917,7 @@ class SentSharesOperations:
 
     @distributed_trace
     def list(
-        self,
-        *,
-        reference_name: str,
-        skip_token: Optional[str] = None,
-        filter: Optional[str] = None,
-        orderby: Optional[str] = None,
-        **kwargs: Any
+        self, *, reference_name: str, filter: Optional[str] = None, order_by: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Get a list of sent shares.
 
@@ -1947,12 +1925,10 @@ class SentSharesOperations:
 
         :keyword reference_name: A name that references a data store. Required.
         :paramtype reference_name: str
-        :keyword skip_token: The continuation token to list the next page. Default value is None.
-        :paramtype skip_token: str
         :keyword filter: Filters the results using OData syntax. Default value is None.
         :paramtype filter: str
-        :keyword orderby: Sorts the results using OData syntax. Default value is None.
-        :paramtype orderby: str
+        :keyword order_by: Sorts the results using OData syntax. Default value is None.
+        :paramtype order_by: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2058,9 +2034,8 @@ class SentSharesOperations:
 
                 request = build_sent_shares_list_request(
                     reference_name=reference_name,
-                    skip_token=skip_token,
                     filter=filter,
-                    orderby=orderby,
+                    order_by=order_by,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3257,13 +3232,7 @@ class SentSharesOperations:
 
     @distributed_trace
     def list_invitations(
-        self,
-        sent_share_id: str,
-        *,
-        skip_token: Optional[str] = None,
-        filter: Optional[str] = None,
-        orderby: Optional[str] = None,
-        **kwargs: Any
+        self, sent_share_id: str, *, filter: Optional[str] = None, order_by: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """List all sent share invitations in a sent share.
 
@@ -3271,12 +3240,10 @@ class SentSharesOperations:
 
         :param sent_share_id: Id of the sent share. Required.
         :type sent_share_id: str
-        :keyword skip_token: The continuation token to list the next page. Default value is None.
-        :paramtype skip_token: str
         :keyword filter: Filters the results using OData syntax. Default value is None.
         :paramtype filter: str
-        :keyword orderby: Sorts the results using OData syntax. Default value is None.
-        :paramtype orderby: str
+        :keyword order_by: Sorts the results using OData syntax. Default value is None.
+        :paramtype order_by: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3359,9 +3326,8 @@ class SentSharesOperations:
 
                 request = build_sent_shares_list_invitations_request(
                     sent_share_id=sent_share_id,
-                    skip_token=skip_token,
                     filter=filter,
-                    orderby=orderby,
+                    order_by=order_by,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4261,3 +4227,135 @@ class SentSharesOperations:
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
+
+
+class ShareResourcesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.purview.sharing.aio.PurviewSharingClient`'s
+        :attr:`share_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(
+        self, *, filter: Optional[str] = None, order_by: Optional[str] = None, **kwargs: Any
+    ) -> AsyncIterable[JSON]:
+        """API operation to list ShareResources.
+
+        List share resources.
+
+        :keyword filter: Filters the results using OData syntax. Default value is None.
+        :paramtype filter: str
+        :keyword order_by: Sorts the results using OData syntax. Default value is None.
+        :paramtype order_by: str
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",  # Optional. The unique id of the resource.
+                    "receivedSharesCount": 0,  # Optional. A count of Received Shares associated
+                      with the
+                      Microsoft.Azure.Purview.Share.ApiService.V3.DataTransferObjects.ShareResource.
+                    "sentSharesCount": 0,  # Optional. A count of Sent Shares associated with the
+                      Microsoft.Azure.Purview.Share.ApiService.V3.DataTransferObjects.ShareResource.
+                    "storeKind": "str",  # Optional. The types of asset. Known values are:
+                      "AdlsGen2Account" and "BlobAccount".
+                    "storeReference": {
+                        "referenceName": "str",  # Optional. Reference name for resource
+                          associated with the sink or artifact.
+                        "type": "str"  # Optional. Defines the type of resource being shared.
+                          "ArmResourceReference"
+                    },
+                    "type": "str"  # Optional. Type of the resource.
+                }
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_share_resources_list_request(
+                    filter=filter,
+                    order_by=order_by,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
+
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)

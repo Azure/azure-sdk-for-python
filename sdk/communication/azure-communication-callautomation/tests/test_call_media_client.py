@@ -95,7 +95,7 @@ class TestCallMediaClient(unittest.TestCase):
     def test_play_text_to_all(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
-        play_source = TextSource(text='test test test')
+        play_source = TextSource(text='test test test', custom_voice_endpoint_id="customVoiceEndpointId")
 
         self.call_connection_client.play_media_to_all(play_source=play_source)
 
@@ -116,7 +116,9 @@ class TestCallMediaClient(unittest.TestCase):
     def test_play_ssml_to_all(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
-        play_source = SsmlSource(ssml_text='<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="en-US"><voice name="en-US-JennyNeural">Recognize Choice Completed, played through SSML source.</voice></speak>')
+        play_source = SsmlSource(
+            ssml_text='<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="en-US"><voice name="en-US-JennyNeural">Recognize Choice Completed, played through SSML source.</voice></speak>',
+            custom_voice_endpoint_id="customVoiceEndpointId")
 
         self.call_connection_client.play_media_to_all(play_source=play_source)
 

@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-missing-return, docstring-missing-rtype
 
 """Read/Write Avro File Object Containers."""
 
@@ -166,10 +167,9 @@ class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
     def get_meta(self, key):
         """Reports the value of a given metadata key.
 
-        Args:
-          key: Metadata key (string) to report the value of.
-        Returns:
-          Value associated to the metadata key, as bytes.
+        :param str key: Metadata key to report the value of.
+        :returns: Value associated to the metadata key, as bytes.
+        :rtype: bytes
         """
         return self._meta.get(key)
 

@@ -34,6 +34,17 @@ class ConfidentialVMEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     ENCRYPTED_WITH_CMK = "EncryptedWithCmk"
 
 
+class EdgeZoneStorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the storage account type to be used to store the image. This property is not
+    updatable.
+    """
+
+    STANDARD_LRS = "Standard_LRS"
+    STANDARD_ZRS = "Standard_ZRS"
+    STANDARD_SSD_LRS = "StandardSSD_LRS"
+    PREMIUM_LRS = "Premium_LRS"
+
+
 class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of extendedLocation."""
 
@@ -211,4 +222,3 @@ class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_LRS = "Standard_LRS"
     STANDARD_ZRS = "Standard_ZRS"
     PREMIUM_LRS = "Premium_LRS"
-    STANDARD_SSD_LRS = "StandardSSD_LRS"

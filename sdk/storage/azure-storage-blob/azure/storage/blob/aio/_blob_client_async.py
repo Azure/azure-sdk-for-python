@@ -668,6 +668,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: boolean
+        :rtype: bool
         """
         try:
             await self._client.blob.get_properties(
@@ -920,7 +921,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
         return await self._client.blob.set_immutability_policy(cls=return_response_headers, **kwargs)
 
-    @distributed_trace_async()
+    @distributed_trace_async
     async def delete_immutability_policy(self, **kwargs):
         # type: (**Any) -> None
         """The Delete Immutability Policy operation deletes the immutability policy on the blob.
@@ -2723,7 +2724,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         except HttpResponseError as error:
             process_storage_error(error)
 
-    @distributed_trace_async()
+    @distributed_trace_async
     async def append_block_from_url(self, copy_source_url,  # type: str
                                     source_offset=None,  # type: Optional[int]
                                     source_length=None,  # type: Optional[int]
@@ -2832,7 +2833,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         except HttpResponseError as error:
             process_storage_error(error)
 
-    @distributed_trace_async()
+    @distributed_trace_async
     async def seal_append_blob(self, **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
         """The Seal operation seals the Append Blob to make it read-only.

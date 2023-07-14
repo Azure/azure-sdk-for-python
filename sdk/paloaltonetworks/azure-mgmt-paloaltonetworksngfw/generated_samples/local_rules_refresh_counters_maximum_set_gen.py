@@ -29,14 +29,13 @@ def main():
         subscription_id="2bf4a339-294d-4c25-b0b2-ef649e9f5c27",
     )
 
-    response = client.local_rules.refresh_counters(
+    client.local_rules.refresh_counters(
         resource_group_name="firewall-rg",
         local_rulestack_name="lrs1",
         priority="1",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/paloaltonetworks/resource-manager/PaloAltoNetworks.Cloudngfw/preview/2022-08-29-preview/examples/LocalRules_refreshCounters_MaximumSet_Gen.json
+# x-ms-original-file: specification/paloaltonetworks/resource-manager/PaloAltoNetworks.Cloudngfw/stable/2022-08-29/examples/LocalRules_refreshCounters_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

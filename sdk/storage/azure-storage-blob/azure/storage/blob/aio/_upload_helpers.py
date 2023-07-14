@@ -302,9 +302,9 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 try:
                     # attempt to rewind the body to the initial position
                     stream.seek(0, SEEK_SET)
-                except UnsupportedOperation:
+                except UnsupportedOperation as exc:
                     # if body is not seekable, then retry would not work
-                    raise error
+                    raise error from exc
             await client.create(
                 content_length=0,
                 blob_http_headers=blob_headers,

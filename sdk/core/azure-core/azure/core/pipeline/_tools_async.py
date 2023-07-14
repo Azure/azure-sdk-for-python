@@ -30,7 +30,15 @@ if TYPE_CHECKING:
 
 
 async def await_result(func, *args, **kwargs):
-    """If func returns an awaitable, await it."""
+    """If func returns an awaitable, await it.
+
+    :param func: The function to run.
+    :type func: callable
+    :param args: The positional arguments to pass to the function.
+    :type args: list
+    :rtype: any
+    :return: The result of the function
+    """
     result = func(*args, **kwargs)
     if hasattr(result, "__await__"):
         # type ignore on await: https://github.com/python/mypy/issues/7587
@@ -42,6 +50,9 @@ async def handle_no_stream_rest_response(response: "RestAsyncHttpResponse") -> N
     """Handle reading and closing of non stream rest responses.
     For our new rest responses, we have to call .read() and .close() for our non-stream
     responses. This way, we load in the body for users to access.
+
+    :param response: The response to read and close.
+    :type response: ~azure.core.rest.AsyncHttpResponse
     """
     try:
         await response.read()
