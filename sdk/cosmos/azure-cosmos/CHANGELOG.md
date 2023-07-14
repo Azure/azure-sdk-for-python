@@ -3,9 +3,10 @@
 ### 4.4.1 (Unreleased)
 
 #### Features Added
-* Added **provisional** ability to limit Continuation Token size when querying for items. See [PR 30731](https://github.com/Azure/azure-sdk-for-python/pull/30731)
+* Added ability to limit Continuation Token size when querying for items. See [PR 30731](https://github.com/Azure/azure-sdk-for-python/pull/30731)
 
 #### Breaking Changes
+* Removed `populate_query_metrics` option from methods where it sees no use. See [PR 31096](https://github.com/Azure/azure-sdk-for-python/pull/31096).
 
 #### Bugs Fixed
 * Fixed bug with async patch_item method. See [PR 30804](https://github.com/Azure/azure-sdk-for-python/pull/30804).
