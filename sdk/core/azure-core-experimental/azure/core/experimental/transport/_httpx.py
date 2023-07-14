@@ -32,7 +32,7 @@ from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.rest import HttpRequest
 from azure.core.rest._http_response_impl import HttpResponseImpl
-from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
+from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest, HttpResponse as LegacyHttpResponse
 
 
 class HttpXTransportResponse(HttpResponseImpl):
@@ -96,7 +96,7 @@ class HttpXStreamDownloadGenerator:
     :param pipeline: The pipeline object
     :type pipeline: ~azure.core.pipeline.Pipeline
     :param response: The response object.
-    :type response: ~azure.core.rest.HttpResponse
+    :type response: HttpXTransportResponse
     :keyword bool decompress: If True which is default, will attempt to decode the body based
         on the *content-encoding* header.
     """
