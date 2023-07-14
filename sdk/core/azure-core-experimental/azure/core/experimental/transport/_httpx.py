@@ -23,28 +23,29 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, ContextManager, Iterator, Optional
+from typing import Any, ContextManager, Iterator, Optional, Union
 
 import httpx
-from azure.core.pipeline import Pipeline
-
+from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.rest import HttpRequest
 from azure.core.rest._http_response_impl import HttpResponseImpl
-from azure.core.configuration import ConnectionConfiguration
+from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 
 
 class HttpXTransportResponse(HttpResponseImpl):
     """HttpX response implementation.
 
-    :param HttpRequest request: The request sent to the server
+    :param request: The request sent to the server
+    :type request: HTTPRequest or LegacyHTTPRequest
     :param httpx.Response httpx_response: The response object returned from the HttpX library
     :param ContextManager stream_contextmanager: The context manager to stream response data.
     """
 
     def __init__(
-        self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]
+        self, request: Union[HttpRequest, LegacyHttpRequest], httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]
     ) -> None:
         super().__init__(
             request=request,
@@ -154,11 +155,11 @@ class HttpXTransport(HttpTransport):
     def __exit__(self, *args) -> None:
         self.close()
 
-    def send(self, request: HttpRequest, **kwargs) -> HttpXTransportResponse:
+    def send(self, request: Union[HttpRequest, LegacyHttpRequest], **kwargs) -> HttpXTransportResponse:
         """Send a request and get back a response.
 
         :param request: The request object to be sent.
-        :type request: ~azure.core.rest.HttpRequest
+        :type request: HTTPRequest or LegacyHTTPRequest
         :keyword bool stream: Whether to stream the response. Defaults to False.
         :return: An HTTPResponse object.
         :rtype: ~azure.core.experimental.transport.HttpXTransportResponse
