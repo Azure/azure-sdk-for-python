@@ -27,6 +27,7 @@ from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport, HttpTransport  # pylint: disable=non-abstract-transport-import, no-name-in-module
 from azure.core.pipeline.policies import (
     AzureSasCredentialPolicy,
+    BearerTokenCredentialPolicy,
     ContentDecodePolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
@@ -35,7 +36,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 
-from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE
+from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE, STORAGE_OAUTH_SCOPE
 from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
@@ -43,7 +44,6 @@ from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .policies import (
     ExponentialRetry,
     QueueMessagePolicy,
-    StorageBearerTokenCredentialPolicy,
     StorageContentValidation,
     StorageHeadersPolicy,
     StorageHosts,
@@ -220,7 +220,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
-            self._credential_policy = StorageBearerTokenCredentialPolicy(credential)
+            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):

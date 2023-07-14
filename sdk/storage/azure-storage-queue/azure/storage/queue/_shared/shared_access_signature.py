@@ -39,8 +39,6 @@ class QueryStringConstants(object):
     SIGNED_KEY_EXPIRY = 'ske'
     SIGNED_KEY_SERVICE = 'sks'
     SIGNED_KEY_VERSION = 'skv'
-
-    # for blob only
     SIGNED_ENCRYPTION_SCOPE = 'ses'
 
     # for ADLS
@@ -78,7 +76,6 @@ class QueryStringConstants(object):
             QueryStringConstants.SIGNED_KEY_EXPIRY,
             QueryStringConstants.SIGNED_KEY_SERVICE,
             QueryStringConstants.SIGNED_KEY_VERSION,
-            # for blob only
             QueryStringConstants.SIGNED_ENCRYPTION_SCOPE,
             # for ADLS
             QueryStringConstants.SIGNED_AUTHORIZED_OID,
@@ -110,7 +107,7 @@ class SharedAccessSignature(object):
         self.x_ms_version = x_ms_version
 
     def generate_account(self, services, resource_types, permission, expiry, start=None,
-                         ip=None, protocol=None, **kwargs):
+                         ip=None, protocol=None):
         '''
         Generates a shared access signature for the account.
         Use the returned signature with the sas_token parameter of the service
@@ -152,16 +149,12 @@ class SharedAccessSignature(object):
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value
             is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
-        :keyword str encryption_scope:
-            Optional. If specified, this is the encryption scope to use when sending requests
-            authorized with this SAS URI.
         :returns: The generated SAS token for the account.
         :rtype: str
         '''
         sas = _SharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_account(services, resource_types)
-        sas.add_encryption_scope(**kwargs)
         sas.add_account_signature(self.account_name, self.account_key)
 
         return sas.get_token()
@@ -174,9 +167,6 @@ class _SharedAccessHelper(object):
     def _add_query(self, name, val):
         if val:
             self.query_dict[name] = _str(val) if val is not None else None
-
-    def add_encryption_scope(self, **kwargs):
-        self._add_query(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE, kwargs.pop('encryption_scope', None))
 
     def add_base(self, permission, expiry, start, ip, protocol, x_ms_version):
         if isinstance(start, date):
@@ -228,7 +218,8 @@ class _SharedAccessHelper(object):
              get_value_to_append(QueryStringConstants.SIGNED_IP) +
              get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
              get_value_to_append(QueryStringConstants.SIGNED_VERSION) +
-             get_value_to_append(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE))
+             '\n'   # Signed Encryption Scope - always empty for queue
+             )
 
         self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
                         sign_string(account_key, string_to_sign))
