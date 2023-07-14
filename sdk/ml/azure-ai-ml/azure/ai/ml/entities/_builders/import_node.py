@@ -34,21 +34,21 @@ class Import(BaseNode):
     You should not instantiate this class directly. Instead, you should
     create from a builder function.
 
-    :param component: Id or instance of the import component/job to be run for the step
-    :type component: ImportComponent
-    :param inputs: Input parameters to the import.
-    :type inputs: Dict[str, str]
-    :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Dict[str, Union[str, Output]]
+    :param component: Id or instance of the import component/job to be run for the step.
+    :type component: ~azure.ai.ml.entities._component.import_component.ImportComponent
+    :param inputs: Input parameters to the import, defaults to None.
+    :type inputs: Dict[str, str], optional
+    :param outputs: Mapping of output data bindings used in the job, defaults to None.
+    :type outputs: Dict[str, Union[str, ~azure.ai.ml.entities._inputs_outputs.Output]], optional
     :param name: Name of the import.
     :type name: str
-    :param description: Description of the import.
-    :type description: str
-    :param display_name: Display name of the job.
-    :type display_name: str
-    :param experiment_name:  Name of the experiment the job will be created under,
-        if None is provided, default will be set to current directory name.
-    :type experiment_name: str
+    :param description: Description of the import, defaults to None.
+    :type description: str, optional
+    :param display_name: Display name of the job, defaults to None.
+    :type display_name: str, optional
+    :param experiment_name: Name of the experiment the job will be created under,
+        if None is provided, the default will be set to the current directory name, defaults to None.
+    :type experiment_name: str, optional
     """
 
     def __init__(
@@ -58,7 +58,7 @@ class Import(BaseNode):
         inputs: Optional[Dict[str, str]] = None,
         outputs: Optional[Dict[str, Output]] = None,
         **kwargs,
-    ):
+    ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 

@@ -46,10 +46,12 @@ def parse_inputs_outputs(data):
 
 
 def pipeline_node_decorator(func):
-    """Wrap func and add it return value to current DSL pipeline.
+    """Wrap a function and add its return value to the current DSL pipeline.
 
-    :return: _type_
-    :rtype: _type_
+    :param func: The function to be wrapped.
+    :type func: callable
+    :return: The wrapped function.
+    :rtype: callable
     """
 
     @wraps(func)
@@ -76,31 +78,41 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     You should not instantiate this class directly. Instead, you should
     create from a builder function.
 
-    :param type: Type of pipeline node
+    :param type: Type of pipeline node. Defaults to JobType.COMPONENT.
     :type type: str
     :param component: Id or instance of the component version to be run for the step
-    :type component: Union[Component, str]
-    :param inputs: Inputs to the node.
-    :type inputs: Dict[str, Union[Input, SweepDistribution, str, bool, int, float, Enum, dict]]
-    :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Dict[str, Union[str, Output, dict]]
-    :param name: Name of the node.
-    :type name: str
-    :param description: Description of the node.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The job property dictionary.
-    :type properties: dict[str, str]
-    :param comment: Comment of the pipeline node, which will be shown in designer canvas.
-    :type comment: str
-    :param display_name: Display name of the job.
-    :type display_name: str
-    :param compute: Compute definition containing the compute information for the step
-    :type compute: str
-    :param experiment_name:  Name of the experiment the job will be created under,
-        if None is provided, default will be set to current directory name. Will be ignored as a pipeline step.
-    :type experiment_name: str
+    :type component: Component
+    :param inputs: The inputs for the node. Defaults to None.
+    :type inputs: Optional[Dict[str, Union[
+        ~azure.ai.ml.entities._job.pipeline._io.PipelineInput,
+        ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
+        ~azure.ai.ml.entities._inputs_outputs.Input,
+        str,
+        bool,
+        int,
+        float,
+        Enum,
+        'Input']]]
+    :param outputs: Mapping of output data bindings used in the job. Defaults to None.
+    :type outputs: Optional[Dict[str, Union[str, ~azure.ai.ml.entities._inputs_outputs.Output, 'Output']]]
+    :param name: The name of the node. Defaults to None.
+    :type name: Optional[str]
+    :param display_name: The display name of the node. Defaults to None.
+    :type display_name: Optional[str]
+    :param description: The description of the node. Defaults to None.
+    :type description: Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :type tags: Optional[Dict]
+    :param properties: The properties of the job. Defaults to None.
+    :type properties: Optional[Dict]
+    :param comment: Comment of the pipeline node, which will be shown in designer canvas. Defaults to None.
+    :type comment: Optional[str]
+    :param compute: Compute definition containing the compute information for the step. Defaults to None.
+    :type compute: Optional[str]
+    :param experiment_name: Name of the experiment the job will be created under,
+        if None is provided, default will be set to current directory name. Will be ignored as a pipeline step. Defaults to None.
+    :type experiment_name: Optional[str]
+    :param kwargs: Additional keyword arguments for future compatibility.
     """
 
     def __init__(
@@ -134,7 +146,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         compute: Optional[str] = None,
         experiment_name: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         self._init = True
         # property _source can't be set
         kwargs.pop("_source", None)
@@ -198,12 +210,21 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
     @property
     def name(self) -> str:
-        """Name of the node."""
+        """Get the name of the node.
+
+        :return: The name of the node.
+        :rtype: str
+        """
         return self._name
 
     @name.setter
     def name(self, value):
-        """Set name of the node."""
+        """Set the name of the node.
+
+        :param value: The name to set for the node.
+        :type value: str
+        :return: None
+        """
         # when name is not lower case, lower it to make sure it's a valid node name
         if value and value != value.lower():
             module_logger.warning(
@@ -216,6 +237,14 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
     @classmethod
     def _get_supported_inputs_types(cls):
+        """Get the supported input types for node input.
+
+        :param cls: The class (or instance) to retrieve supported input types for.
+        :type cls: object
+
+        :return: A tuple of supported input types.
+        :rtype: tuple
+        """
         # supported input types for node input
         return (
             PipelineInput,
@@ -466,10 +495,20 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
     @property
     def inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
+        """Get the inputs for the object.
+
+        :return: A dictionary containing the inputs for the object.
+        :rtype: Dict[str, Union[~azure.ai.ml.entities._inputs_outputs.Input, str, bool, int, float]]
+        """
         return self._inputs
 
     @property
     def outputs(self) -> Dict[str, Union[str, Output]]:
+        """Get the outputs of the object.
+
+        :return: A dictionary containing the outputs for the object.
+        :rtype: Dict[str, Union[str, ~azure.ai.ml.entities._inputs_outputs.Output]]
+        """
         return self._outputs
 
     def __str__(self):

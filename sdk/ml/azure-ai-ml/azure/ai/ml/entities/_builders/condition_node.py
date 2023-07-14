@@ -15,12 +15,21 @@ from azure.ai.ml.entities._validation import MutableValidationResult
 
 
 class ConditionNode(ControlFlowNode):
-    """Conditional node in pipeline.
+    """Conditional node in the pipeline.
 
     Please do not directly use this class.
+
+    :param condition: The condition for the conditional node.
+    :type condition: Any
+    :param true_block: The list of nodes to execute when the condition is true.
+    :type true_block: List[~azure.ai.ml.entities._builders.BaseNode]
+    :param false_block: The list of nodes to execute when the condition is false.
+    :type false_block: List[~azure.ai.ml.entities._builders.BaseNode]
     """
 
-    def __init__(self, condition, *, true_block=None, false_block=None, **kwargs):  # pylint: disable=unused-argument
+    def __init__(
+        self, condition, *, true_block=None, false_block=None, **kwargs
+    ) -> None:  # pylint: disable=unused-argument
         kwargs.pop("type", None)
         super(ConditionNode, self).__init__(type=ControlFlowType.IF_ELSE, **kwargs)
         self.condition = condition
@@ -48,10 +57,20 @@ class ConditionNode(ControlFlowNode):
 
     @property
     def true_block(self) -> List[BaseNode]:
+        """Get the list of nodes to execute when the condition is true.
+
+        :return: The list of nodes to execute when the condition is true.
+        :rtype: List[~azure.ai.ml.entities._builders.BaseNode]
+        """
         return self._true_block
 
     @property
     def false_block(self) -> List[BaseNode]:
+        """Get the list of nodes to execute when the condition is false.
+
+        :return: The list of nodes to execute when the condition is false.
+        :rtype: List[~azure.ai.ml.entities._builders.BaseNode]
+        """
         return self._false_block
 
     def _to_dict(self) -> Dict:
