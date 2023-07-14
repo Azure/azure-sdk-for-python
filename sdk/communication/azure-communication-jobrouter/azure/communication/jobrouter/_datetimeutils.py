@@ -6,14 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
-from azure.core import CaseInsensitiveEnumMeta
 
+from datetime import datetime, timezone
+from dateutil.parser import parse
 
-class SmsSendResponseItemRepeatabilityResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The result of a repeatable request with one of the case-insensitive values accepted or
-    rejected.
-    """
-
-    ACCEPTED = "accepted"
-    REJECTED = "rejected"
+# cSpell:ignore tzinfos
+def _convert_str_to_datetime(datetime_as_str: str) -> datetime:
+    dt = parse(datetime_as_str, tzinfos=[timezone.utc])
+    return dt
