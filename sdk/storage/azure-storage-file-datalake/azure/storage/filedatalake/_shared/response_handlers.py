@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
+    Union, Optional, Any, Iterable, Dict, List, Type, Tuple, NoReturn,
     TYPE_CHECKING
 )
 import logging
@@ -90,7 +90,7 @@ def return_raw_deserialized(response, *_):
     return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
 
 
-def process_storage_error(storage_error):   # pylint:disable=too-many-statements
+def process_storage_error(storage_error) -> NoReturn:  # pylint:disable=too-many-statements
     raise_error = HttpResponseError
     serialized = False
     if not storage_error.response:
