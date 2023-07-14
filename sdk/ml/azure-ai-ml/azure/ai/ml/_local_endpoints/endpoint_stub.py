@@ -8,6 +8,7 @@ import shutil
 from pathlib import Path
 from typing import Iterable
 
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.entities import OnlineEndpoint
 from azure.ai.ml.entities._load_functions import load_online_endpoint
 

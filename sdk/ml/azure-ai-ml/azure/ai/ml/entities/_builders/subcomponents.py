@@ -6,8 +6,9 @@
 # that are used within node constructors. Keep imports and
 # general complexity in this file to a minimum.
 
-from azure.ai.ml.constants._common import DefaultOpenEncoding
 from mldesigner import command_component, Output
+
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 
 
 def save_mltable_yaml(path, mltable_paths):

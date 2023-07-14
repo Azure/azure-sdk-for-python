@@ -15,8 +15,9 @@ from io import BytesIO
 from pathlib import Path
 from threading import Lock
 
-from azure.ai.ml.constants._common import DefaultOpenEncoding
 import requests
+
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 
 from .utils import get_base_directory_for_cache
 
