@@ -88,7 +88,9 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
     """Generator for streaming response data.
 
     :param pipeline: The pipeline object
+    :type pipeline: ~azure.core.pipeline.Pipeline
     :param response: The response object.
+    :type response: ~azure.core.rest.HttpResponse
     :keyword bool decompress: If True which is default, will attempt to decode the body based
         on the *content-encoding* header.
     """
