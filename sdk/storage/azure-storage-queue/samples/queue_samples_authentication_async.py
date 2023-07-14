@@ -50,7 +50,8 @@ class QueueAuthSamplesAsync(object):
         # Instantiate a QueueServiceClient using a connection string
         # [START async_auth_from_connection_string]
         from azure.storage.queue.aio import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
+        if self.connection_string is not None:
+            queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
         # [END async_auth_from_connection_string]
 
         # Get information for the Queue Service
@@ -61,7 +62,8 @@ class QueueAuthSamplesAsync(object):
         # Instantiate a QueueServiceClient using a shared access key
         # [START async_create_queue_service_client]
         from azure.storage.queue.aio import QueueServiceClient
-        queue_service = QueueServiceClient(account_url=self.account_url, credential=self.access_key)
+        if self.account_url is not None:
+            queue_service = QueueServiceClient(account_url=self.account_url, credential=self.access_key)
         # [END async_create_queue_service_client]
 
         # Get information for the Queue Service
@@ -72,15 +74,23 @@ class QueueAuthSamplesAsync(object):
         # [START async_create_queue_service_client_token]
         # Get a token credential for authentication
         from azure.identity.aio import ClientSecretCredential
+        if self.active_directory_tenant_id is not None:
+            ad_tenant_id = self.active_directory_tenant_id
+        if self.active_directory_application_id is not None:
+            ad_application_id = self.active_directory_application_id
+        if self.active_directory_application_secret is not None:
+            ad_application_secret = self.active_directory_application_secret
+
         token_credential = ClientSecretCredential(
-            self.active_directory_tenant_id,
-            self.active_directory_application_id,
-            self.active_directory_application_secret
+            ad_tenant_id,
+            ad_application_id,
+            ad_application_secret
         )
 
         # Instantiate a QueueServiceClient using a token credential
         from azure.storage.queue.aio import QueueServiceClient
-        queue_service = QueueServiceClient(account_url=self.account_url, credential=token_credential)
+        if self.account_url is not None:
+            queue_service = QueueServiceClient(account_url=self.account_url, credential=token_credential)
         # [END async_create_queue_service_client_token]
 
         # Get information for the Queue Service
@@ -90,20 +100,27 @@ class QueueAuthSamplesAsync(object):
     async def authentication_by_shared_access_signature_async(self):
         # Instantiate a QueueServiceClient using a connection string
         from azure.storage.queue.aio import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
+        if self.connection_string is not None:
+            queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Create a SAS token to use for authentication of a client
         from azure.storage.queue import generate_account_sas, ResourceTypes, AccountSasPermissions
 
+        if self.account_name is not None:
+            account_name = self.account_name
+        if self.access_key is not None:
+            access_key = self.access_key
+
         sas_token = generate_account_sas(
-            queue_service.account_name,
-            queue_service.credential.account_key,
+            account_name,
+            access_key,
             resource_types=ResourceTypes(service=True),
             permission=AccountSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
 
-        token_auth_queue_service = QueueServiceClient(account_url=self.account_url, credential=sas_token)
+        if self.account_url is not None:
+            token_auth_queue_service = QueueServiceClient(account_url=self.account_url, credential=sas_token)
 
         # Get information for the Queue Service
         async with token_auth_queue_service:

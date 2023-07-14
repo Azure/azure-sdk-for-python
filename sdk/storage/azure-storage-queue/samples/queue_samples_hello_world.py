@@ -31,7 +31,8 @@ class QueueHelloWorldSamples(object):
     def create_client_with_connection_string(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
+        if self.connection_string is not None:
+            queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Get queue service properties
         properties = queue_service.get_service_properties()
@@ -39,7 +40,8 @@ class QueueHelloWorldSamples(object):
     def queue_and_messages_example(self):
         # Instantiate the QueueClient from a connection string
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="myqueue")
+        if self.connection_string is not None:
+            queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="myqueue")
 
         # Create the queue
         # [START create_queue]

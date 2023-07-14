@@ -61,7 +61,7 @@ class MessagesPaged(AsyncPageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    async def _extract_data_cb(self, messages: Any) -> Tuple[str, AsyncIterator[List[QueueMessage]]]:
+    async def _extract_data_cb(self, messages: Any) -> Tuple[str, AsyncIterator[QueueMessage]]:
         # There is no concept of continuation token, so raising on my own condition
         if not messages:
             raise StopAsyncIteration("End of paging")
@@ -124,7 +124,7 @@ class QueuePropertiesPaged(AsyncPageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    async def _extract_data_cb(self, get_next_return: Tuple[str, Any]) -> Tuple[Optional[str], List[QueueProperties]]:
+    async def _extract_data_cb(self, get_next_return: Tuple[str, Any]) -> Tuple[str, List[QueueProperties]]:
         self.location_mode, self._response = get_next_return
         if self._response is not None:
             if hasattr(self._response, 'service_endpoint'):
@@ -139,4 +139,4 @@ class QueuePropertiesPaged(AsyncPageIterator):
                 props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
             if hasattr(self._response, 'next_marker'):
                 next_marker = self._response.next_marker
-        return next_marker or None, props_list
+        return next_marker, props_list

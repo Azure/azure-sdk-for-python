@@ -80,12 +80,13 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
         elif should_update_counts and upload_stream_current is not None:
             upload_stream_current += int(response.http_request.headers.get('Content-Length', 0))
         for pipeline_obj in [request, response]:
-            pipeline_obj.context['data_stream_total'] = data_stream_total
-            pipeline_obj.context['download_stream_current'] = download_stream_current
-            pipeline_obj.context['upload_stream_current'] = upload_stream_current
+            if hasattr(pipeline_obj, 'context'):
+                pipeline_obj.context['data_stream_total'] = data_stream_total
+                pipeline_obj.context['download_stream_current'] = download_stream_current
+                pipeline_obj.context['upload_stream_current'] = upload_stream_current
         if response_callback:
             if asyncio.iscoroutine(response_callback):
-                await response_callback(response)
+                await response_callback(response) #type: ignore
             else:
                 response_callback(response)
             request.context['response_callback'] = response_callback

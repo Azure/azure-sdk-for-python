@@ -34,7 +34,8 @@ class QueueMessageSamples(object):
     def set_access_policy(self):
         # [START create_queue_client_from_connection_string]
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue1")
+        if self.connection_string is not None:
+            queue = QueueClient.from_connection_string(self.connection_string, "myqueue1")
         # [END create_queue_client_from_connection_string]
 
         # Create the queue
@@ -50,7 +51,7 @@ class QueueMessageSamples(object):
             access_policy = AccessPolicy()
             access_policy.start = datetime.utcnow() - timedelta(hours=1)
             access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
-            access_policy.permission = QueueSasPermissions(read=True)
+            access_policy.permission = QueueSasPermissions(read=True)  # type: ignore
             identifiers = {'my-access-policy-id': access_policy}
 
             # Set the access policy
@@ -86,7 +87,8 @@ class QueueMessageSamples(object):
     def queue_metadata(self):
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue2")
+        if self.connection_string is not None:
+            queue = QueueClient.from_connection_string(self.connection_string, "myqueue2")
 
         # Create the queue
         queue.create_queue()
@@ -108,7 +110,8 @@ class QueueMessageSamples(object):
     def send_and_receive_messages(self):
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue3")
+        if self.connection_string is not None:
+            queue = QueueClient.from_connection_string(self.connection_string, "myqueue3")
 
         # Create the queue
         queue.create_queue()
@@ -149,7 +152,8 @@ class QueueMessageSamples(object):
     def list_message_pages(self):
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue4")
+        if self.connection_string is not None:
+            queue = QueueClient.from_connection_string(self.connection_string, "myqueue4")
 
         # Create the queue
         queue.create_queue()
@@ -182,7 +186,8 @@ class QueueMessageSamples(object):
     def receive_one_message_from_queue(self):
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue5")
+        if self.connection_string is not None:
+            queue = QueueClient.from_connection_string(self.connection_string, "myqueue5")
 
         # Create the queue
         queue.create_queue()
@@ -199,8 +204,10 @@ class QueueMessageSamples(object):
             # We should see message 3 if we peek
             message3 = queue.peek_messages()[0]
 
-            print(message1.content)
-            print(message2.content)
+            if message1 is not None and hasattr(message1, 'content'):
+                print(message1.content)
+            if message2 is not None and hasattr(message2, 'content'):
+                print(message2.content)
             print(message3.content)
             # [END receive_one_message]
 
@@ -210,7 +217,8 @@ class QueueMessageSamples(object):
     def delete_and_clear_messages(self):
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue6")
+        if self.connection_string is not None:
+            queue = QueueClient.from_connection_string(self.connection_string, "myqueue6")
 
         # Create the queue
         queue.create_queue()
@@ -242,7 +250,8 @@ class QueueMessageSamples(object):
     def peek_messages(self):
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue7")
+        if self.connection_string is not None:
+            queue = QueueClient.from_connection_string(self.connection_string, "myqueue7")
 
         # Create the queue
         queue.create_queue()
@@ -274,7 +283,8 @@ class QueueMessageSamples(object):
     def update_message(self):
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue8")
+        if self.connection_string is not None:
+            queue = QueueClient.from_connection_string(self.connection_string, "myqueue8")
 
         # Create the queue
         queue.create_queue()
@@ -289,8 +299,10 @@ class QueueMessageSamples(object):
 
             # Update the message
             list_result = next(messages)
+            if list_result.id is not None:
+                id = list_result.id
             message = queue.update_message(
-                list_result.id,
+                id,
                 pop_receipt=list_result.pop_receipt,
                 visibility_timeout=0,
                 content="updated")
@@ -303,7 +315,8 @@ class QueueMessageSamples(object):
     def receive_messages_with_max_messages(self):
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue9")
+        if self.connection_string is not None:
+            queue = QueueClient.from_connection_string(self.connection_string, "myqueue9")
 
         # Create the queue
         queue.create_queue()

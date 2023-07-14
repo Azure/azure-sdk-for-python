@@ -67,7 +67,7 @@ class AsyncStorageAccountHostsMixin(object):
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, AsyncPipeline]
-        self._credential_policy = None
+        self._credential_policy: Optional[Union[AsyncBearerTokenCredentialPolicy, SharedKeyCredentialPolicy, AzureSasCredentialPolicy]] = None
         if hasattr(credential, 'get_token'):
             self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
@@ -79,15 +79,17 @@ class AsyncStorageAccountHostsMixin(object):
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
-        config.transport = kwargs.get('transport')  # type: ignore
+        transport = kwargs.get('transport')
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        if not config.transport:
+        if not transport:
             try:
                 from azure.core.pipeline.transport import AioHttpTransport
             except ImportError:
                 raise ImportError("Unable to create async transport. Please check aiohttp is installed.")
-            config.transport = AioHttpTransport(**kwargs)
+            transport = AioHttpTransport(**kwargs)
+        if hasattr(self, '_hosts'):
+            hosts = self._hosts
         policies = [
             QueueMessagePolicy(),
             config.headers_policy,
@@ -98,7 +100,7 @@ class AsyncStorageAccountHostsMixin(object):
             self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
-            StorageHosts(hosts=self._hosts, **kwargs), # type: ignore
+            StorageHosts(hosts=hosts, **kwargs),
             config.retry_policy,
             config.logging_policy,
             AsyncStorageResponseHook(**kwargs),
@@ -106,8 +108,10 @@ class AsyncStorageAccountHostsMixin(object):
             HttpLoggingPolicy(**kwargs),
         ]
         if kwargs.get("_additional_pipeline_policies"):
-            policies = policies + kwargs.get("_additional_pipeline_policies")
-        return config, AsyncPipeline(config.transport, policies=policies)
+            policies = policies + kwargs.get("_additional_pipeline_policies")  #type: ignore
+        if hasattr(config, 'transport'):
+            config.transport = transport
+        return config, AsyncPipeline(transport, policies=policies)
 
     async def _batch_send(
         self,
@@ -118,20 +122,28 @@ class AsyncStorageAccountHostsMixin(object):
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
-        request = self._client._client.post(  # pylint: disable=protected-access
+        if hasattr(self, '_client'):
+            client = self._client
+        if hasattr(self, 'scheme'):
+            scheme = self.scheme
+        if hasattr(self, 'primary_hostname'):
+            primary_hostname = self.primary_hostname
+        if hasattr(self, 'api_version'):
+            api_version = self.api_version
+        request = client._client.post(
             url=(
-                f'{self.scheme}://{self.primary_hostname}/'
+                f'{scheme}://{primary_hostname}/'
                 f"{kwargs.pop('path', '')}?{kwargs.pop('restype', '')}"
                 f"comp=batch{kwargs.pop('sas', '')}{kwargs.pop('timeout', '')}"
             ),
             headers={
-                'x-ms-version': self.api_version
+                'x-ms-version': api_version
             }
         )
 
         policies = [StorageHeadersPolicy()]
         if self._credential_policy:
-            policies.append(self._credential_policy)
+            policies.append(self._credential_policy)  # type: ignore
 
         request.set_multipart_mixed(
             *reqs,
@@ -139,9 +151,10 @@ class AsyncStorageAccountHostsMixin(object):
             enforce_https=False
         )
 
-        pipeline_response = await self._pipeline.run(
-            request, **kwargs
-        )
+        if hasattr(self, '_pipeline'):
+            pipeline_response = await self._pipeline.run(
+                request, **kwargs
+            )
         response = pipeline_response.http_response
 
         try:

@@ -25,15 +25,18 @@ import os
 
 class QueueServiceSamples(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    if os.getenv("AZURE_STORAGE_CONNECTION_STRING") is not None:
+        connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
     def queue_service_properties(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
+        if self.connection_string is not None:
+            queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START set_queue_service_properties]
         # Create service properties
+        from typing import List, Optional
         from azure.storage.queue import QueueAnalyticsLogging, Metrics, CorsRule, RetentionPolicy
 
         # Create logging settings
@@ -58,10 +61,10 @@ class QueueServiceSamples(object):
             allowed_headers=allowed_headers
         )
 
-        cors = [cors_rule1, cors_rule2]
+        cors: Optional[List[CorsRule]] = [cors_rule1, cors_rule2]
 
         # Set the service properties
-        queue_service.set_service_properties(logging, hour_metrics, minute_metrics, cors)
+        queue_service.set_service_properties(logging, hour_metrics, minute_metrics, cors)  # type: ignore
         # [END set_queue_service_properties]
 
         # [START get_queue_service_properties]
@@ -71,7 +74,8 @@ class QueueServiceSamples(object):
     def queues_in_account(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
+        if self.connection_string is not None:
+            queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START qsc_create_queue]
         queue_service.create_queue("myqueue1")
@@ -98,7 +102,8 @@ class QueueServiceSamples(object):
     def get_queue_client(self):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient, QueueClient
-        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
+        if self.connection_string is not None:
+            queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START get_queue_client]
         # Get the queue client to interact with a specific queue

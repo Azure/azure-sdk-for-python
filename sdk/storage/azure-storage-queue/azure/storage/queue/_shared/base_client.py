@@ -57,6 +57,7 @@ from .response_handlers import process_storage_error, PartialBatchErrorException
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.rest import HttpRequest
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
@@ -217,7 +218,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
-        self._credential_policy = None
+        self._credential_policy: Any = None
         if hasattr(credential, "get_token"):
             self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
@@ -233,8 +234,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         config.transport = kwargs.get("transport")  # type: ignore
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        if not config.transport:
-            config.transport = RequestsTransport(**kwargs)
+        if not hasattr(config, 'transport'):
+            config.transport = RequestsTransport(**kwargs)  # type: ignore
         policies = [
             QueueMessagePolicy(),
             config.proxy_policy,
@@ -253,21 +254,22 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             HttpLoggingPolicy(**kwargs)
         ]
         if kwargs.get("_additional_pipeline_policies"):
-            policies = policies + kwargs.get("_additional_pipeline_policies")
+            policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
         return config, Pipeline(config.transport, policies=policies)
 
     def _batch_send(
         self,
-        *reqs,  # type: HttpRequest
+        *reqs: HttpRequest,
         **kwargs
-    ):
+    ) -> None:
         """Given a series of request, do a Storage batch call.
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         batch_id = str(uuid.uuid1())
 
-        request = self._client._client.post(  # pylint: disable=protected-access
+        if hasattr(self, '_client'):
+            request = self._client._client.post(  # pylint: disable=protected-access
             url=(
                 f'{self.scheme}://{self.primary_hostname}/'
                 f"{kwargs.pop('path', '')}?{kwargs.pop('restype', '')}"
@@ -417,26 +419,36 @@ def create_configuration(**kwargs):
     config.proxy_policy = ProxyPolicy(**kwargs)
 
     # Storage settings
-    config.max_single_put_size = kwargs.get("max_single_put_size", 64 * 1024 * 1024)
-    config.copy_polling_interval = 15
+    if hasattr(config, 'max_single_put_size'):
+        config.max_single_put_size = kwargs.get("max_single_put_size", 64 * 1024 * 1024)
+    if hasattr(config, 'copy_polling_interval'):
+        config.copy_polling_interval = 15
 
     # Block blob uploads
-    config.max_block_size = kwargs.get("max_block_size", 4 * 1024 * 1024)
-    config.min_large_block_upload_threshold = kwargs.get("min_large_block_upload_threshold", 4 * 1024 * 1024 + 1)
-    config.use_byte_buffer = kwargs.get("use_byte_buffer", False)
+    if hasattr(config, 'max_block_size'):
+        config.max_block_size = kwargs.get("max_block_size", 4 * 1024 * 1024)
+    if hasattr(config, 'min_large_block_upload_threshold'):
+        config.min_large_block_upload_threshold = kwargs.get("min_large_block_upload_threshold", 4 * 1024 * 1024 + 1)
+    if hasattr(config, 'use_byte_buffer'):
+        config.use_byte_buffer = kwargs.get("use_byte_buffer", False)
 
     # Page blob uploads
-    config.max_page_size = kwargs.get("max_page_size", 4 * 1024 * 1024)
+    if hasattr(config, 'max_page_size'):
+        config.max_page_size = kwargs.get("max_page_size", 4 * 1024 * 1024)
 
     # Datalake file uploads
-    config.min_large_chunk_upload_threshold = kwargs.get("min_large_chunk_upload_threshold", 100 * 1024 * 1024 + 1)
+    if hasattr(config, 'min_large_chunk_upload_threshold'):
+        config.min_large_chunk_upload_threshold = kwargs.get("min_large_chunk_upload_threshold", 100 * 1024 * 1024 + 1)
 
     # Blob downloads
-    config.max_single_get_size = kwargs.get("max_single_get_size", 32 * 1024 * 1024)
-    config.max_chunk_get_size = kwargs.get("max_chunk_get_size", 4 * 1024 * 1024)
+    if hasattr(config, 'max_single_get_size'):
+        config.max_single_get_size = kwargs.get("max_single_get_size", 32 * 1024 * 1024)
+    if hasattr(config, 'max_chunk_get_size'):
+        config.max_chunk_get_size = kwargs.get("max_chunk_get_size", 4 * 1024 * 1024)
 
     # File uploads
-    config.max_range_size = kwargs.get("max_range_size", 4 * 1024 * 1024)
+    if hasattr(config, 'max_range_size'):
+        config.max_range_size = kwargs.get("max_range_size", 4 * 1024 * 1024)
     return config
 
 

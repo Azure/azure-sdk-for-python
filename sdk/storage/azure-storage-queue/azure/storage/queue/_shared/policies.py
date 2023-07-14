@@ -135,8 +135,7 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
 class StorageHeadersPolicy(HeadersPolicy):
     request_id_header_name = 'x-ms-client-request-id'
 
-    def on_request(self, request):
-        # type: (PipelineRequest, Any) -> None
+    def on_request(self, request: PipelineRequest)-> None:
         super(StorageHeadersPolicy, self).on_request(request)
         current_time = format_date_time(time())
         request.http_request.headers['x-ms-date'] = current_time
@@ -166,8 +165,7 @@ class StorageHosts(SansIOHTTPPolicy):
         self.hosts = hosts
         super(StorageHosts, self).__init__()
 
-    def on_request(self, request):
-        # type: (PipelineRequest, Any) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         request.context.options['hosts'] = self.hosts
         parsed_url = urlparse(request.http_request.url)
 
@@ -202,8 +200,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
         self.logging_body = kwargs.pop("logging_body", False)
         super(StorageLoggingPolicy, self).__init__(logging_enable=logging_enable, **kwargs)
 
-    def on_request(self, request):
-        # type: (PipelineRequest, Any) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         http_request = request.http_request
         options = request.context.options
         self.logging_body = self.logging_body or options.pop("logging_body", False)
@@ -243,8 +240,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
-    def on_response(self, request, response):
-        # type: (PipelineRequest, PipelineResponse, Any) -> None
+    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:
         if response.context.pop("logging_enable", self.enable_http_logger):
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
@@ -287,8 +283,7 @@ class StorageRequestHook(SansIOHTTPPolicy):
         self._request_callback = kwargs.get('raw_request_hook')
         super(StorageRequestHook, self).__init__()
 
-    def on_request(self, request):
-        # type: (PipelineRequest, **Any) -> PipelineResponse
+    def on_request(self, request: PipelineRequest) -> None:
         request_callback = request.context.options.pop('raw_request_hook', self._request_callback)
         if request_callback:
             request_callback(request)
@@ -334,9 +329,10 @@ class StorageResponseHook(HTTPPolicy):
         elif should_update_counts and upload_stream_current is not None:
             upload_stream_current += int(response.http_request.headers.get('Content-Length', 0))
         for pipeline_obj in [request, response]:
-            pipeline_obj.context['data_stream_total'] = data_stream_total
-            pipeline_obj.context['download_stream_current'] = download_stream_current
-            pipeline_obj.context['upload_stream_current'] = upload_stream_current
+            if hasattr(pipeline_obj, 'context'):
+                pipeline_obj.context['data_stream_total'] = data_stream_total
+                pipeline_obj.context['download_stream_current'] = download_stream_current
+                pipeline_obj.context['upload_stream_current'] = upload_stream_current
         if response_callback:
             response_callback(response)
             request.context['response_callback'] = response_callback
@@ -379,8 +375,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
 
         return md5.digest()
 
-    def on_request(self, request):
-        # type: (PipelineRequest, Any) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         validate_content = request.context.options.pop('validate_content', False)
         if validate_content and request.http_request.method != 'GET':
             computed_md5 = encode_base64(StorageContentValidation.get_content_md5(request.http_request.data))
