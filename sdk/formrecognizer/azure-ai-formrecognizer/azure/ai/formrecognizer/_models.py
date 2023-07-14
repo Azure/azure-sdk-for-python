@@ -3735,10 +3735,11 @@ class ClassifierDocumentTypeDetails:
         :rtype: ClassifierDocumentTypeDetails
         """
         source = data.get("source", None)
-        if source is not None & source.get("file_list") is not None:
-            source = AzureBlobFileListSource.from_dict(source)
-        elif source is not None:
-            source = AzureBlobSource.from_dict(source)
+        if source is not None:
+            if source.get("file_list") is not None:
+                source = AzureBlobFileListSource.from_dict(source)
+            else:
+                source = AzureBlobSource.from_dict(source)
         
         return cls(
             source=source,
