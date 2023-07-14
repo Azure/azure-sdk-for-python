@@ -11,6 +11,7 @@ from azure.communication.sms._shared.utils import parse_connection_str
 from azure_devtools.scenario_tests import RecordingProcessor, ReplayableTest
 from azure_devtools.scenario_tests.utilities import is_text_payload
 
+
 class ResponseReplacerProcessor(RecordingProcessor):
     def __init__(self, keys=None, replacement="sanitized"):
         self._keys = keys if keys else []
@@ -22,15 +23,17 @@ class ResponseReplacerProcessor(RecordingProcessor):
                 value = dictionary[key]
                 if isinstance(value, str):
                     dictionary[key] = re.sub(
-                        r"("+'|'.join(self._keys)+r")",
+                        r"(" + "|".join(self._keys) + r")",
                         self._replacement,
-                        dictionary[key])
+                        dictionary[key],
+                    )
                 elif isinstance(value, dict):
                     sanitize_dict(value)
 
         sanitize_dict(response)
 
         return response
+
 
 class BodyReplacerProcessor(RecordingProcessor):
     """Sanitize the sensitive info inside request or response bodies"""
@@ -46,8 +49,8 @@ class BodyReplacerProcessor(RecordingProcessor):
         return request
 
     def process_response(self, response):
-        if is_text_payload(response) and response['body']['string']:
-            response['body']['string'] = self._replace_keys(response['body']['string'])
+        if is_text_payload(response) and response["body"]["string"]:
+            response["body"]["string"] = self._replace_keys(response["body"]["string"])
 
         return response
 
@@ -58,9 +61,9 @@ class BodyReplacerProcessor(RecordingProcessor):
                     value = obj[key]
                     if key in self._keys:
                         obj[key] = self._replacement
-                    elif key == 'iceServers':
+                    elif key == "iceServers":
                         _replace_recursively(value[0])
-                    elif key == 'urls':
+                    elif key == "urls":
                         obj[key][0] = "turn.skype.com"
                     else:
                         _replace_recursively(value)
@@ -69,6 +72,7 @@ class BodyReplacerProcessor(RecordingProcessor):
                     _replace_recursively(i)
 
         import json
+
         try:
             body = json.loads(body)
             _replace_recursively(body)
@@ -78,14 +82,21 @@ class BodyReplacerProcessor(RecordingProcessor):
 
         return json.dumps(body)
 
+
 class CommunicationTestResourceType(Enum):
     """Type of ACS resource used for livetests."""
+
     UNSPECIFIED = auto()
     DYNAMIC = auto()
     STATIC = auto()
 
+
 class CommunicationTestCase(AzureTestCase):
-    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['x-azure-ref', 'x-ms-content-sha256', 'location']
+    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + [
+        "x-azure-ref",
+        "x-ms-content-sha256",
+        "location",
+    ]
 
     def __init__(self, method_name, *args, **kwargs):
         super(CommunicationTestCase, self).__init__(method_name, *args, **kwargs)
@@ -99,11 +110,14 @@ class CommunicationTestCase(AzureTestCase):
 
     def _get_connection_str(self, resource_type):
         if self.is_playback():
-            return "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
+            return (
+                "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
+            )
         if resource_type == CommunicationTestResourceType.UNSPECIFIED:
-            return os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING') or \
-                   os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
+            return os.getenv(
+                "COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING"
+            ) or os.getenv("COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING")
         if resource_type == CommunicationTestResourceType.DYNAMIC:
-            return os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
+            return os.getenv("COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING")
         if resource_type == CommunicationTestResourceType.STATIC:
-            return os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
+            return os.getenv("COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING")
