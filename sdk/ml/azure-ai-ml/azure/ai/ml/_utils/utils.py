@@ -59,15 +59,13 @@ def _is_https_url(url: str) -> Union[bool, str]:
     return False
 
 
-def _csv_parser(text: Optional[str], convert: Callable) -> str:
-    if text:
-        if "," in text:
-            txts = []
-            for t in text.split(","):
-                t = convert(t.strip())
-                txts.append(t)
-            return ",".join(txts)
-        return convert(text)
+def _csv_parser(text: Optional[str], convert: Callable) -> Optional[str]:
+    if not text:
+        return None
+    if "," in text:
+        return ",".join(convert(t.strip()) for t in text.split(","))
+
+    return convert(text)
 
 
 def _snake_to_pascal_convert(text: str) -> str:
