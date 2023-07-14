@@ -1041,6 +1041,8 @@ class TestFileSystem(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_system_client = self._create_file_system("fs2")
+        if file_system_client is None:
+            file_system_client = self.dsc.get_file_system_client(self._get_file_system_reference(prefix="fs2"))
         dir_path = 'dir10'
         dir_client = file_system_client.create_directory(dir_path)
         resp = dir_client.delete_directory()
@@ -1058,7 +1060,9 @@ class TestFileSystem(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_system_client = self._create_file_system("fs3")
-        file_path = 'dir10/fileŇ'
+        if file_system_client is None:
+            file_system_client = self.dsc.get_file_system_client(self._get_file_system_reference(prefix="fs3"))
+        file_path = 'dir10/file'
         dir_client = file_system_client.create_file(file_path)
         resp = dir_client.delete_file()
         with pytest.raises(HttpResponseError):

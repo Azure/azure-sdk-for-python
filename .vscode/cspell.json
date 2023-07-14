@@ -405,7 +405,8 @@
     "SDDL",
     "dacl",
     "whls",
-    "aiter"
+    "aiter",
+    "solft"
   ],
   "overrides": [
     {
