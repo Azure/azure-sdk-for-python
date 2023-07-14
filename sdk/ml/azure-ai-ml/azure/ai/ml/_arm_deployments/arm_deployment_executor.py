@@ -175,7 +175,7 @@ class ArmDeploymentExecutor(object):
                 else "LogAnalytics"
             )
             deployment_message = deployment_message_mapping[arm_id_obj.asset_type].format(f"{resource_name} ")
-            if target_resource.resource_name not in self._resources_being_deployed.keys():
+            if target_resource.resource_name not in self._resources_being_deployed:
                 self._resources_being_deployed[target_resource.resource_name] = (
                     deployment_message,
                     None,
