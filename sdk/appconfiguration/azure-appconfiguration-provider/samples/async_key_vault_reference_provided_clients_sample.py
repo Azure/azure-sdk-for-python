@@ -12,8 +12,8 @@ from sample_utilities import get_authority, get_credential
 
 
 async def main():
-    endpoint = os.environ.get("AZURE_APPCONFIG_ENDPOINT")
-    key_vault_uri = os.environ.get("AZURE_KEYVAULT_URI")
+    endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
+    key_vault_uri = os.environ.get("KEYVAULT_SECRET_URL")
     authority = get_authority(endpoint)
     credential = get_credential(authority, is_async=True)
 
@@ -23,7 +23,7 @@ async def main():
     key_vault_options = AzureAppConfigurationKeyVaultOptions(client_configs=client_configs)
     config = await load(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
 
-    print(config["secret"])
+    print(config.get("secret"))
 
     await credential.close()
     await config.close()

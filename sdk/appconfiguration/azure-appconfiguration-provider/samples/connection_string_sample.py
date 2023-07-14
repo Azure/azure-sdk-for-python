@@ -7,19 +7,19 @@
 from azure.appconfiguration.provider import load, SettingSelector
 import os
 
-connection_string = os.environ.get("AZURE_APPCONFIG_CONNECTION_STRING")
+connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
 
 # Connecting to Azure App Configuration using connection string
 config = load(connection_string=connection_string)
 
-print(config["message"])
-print(config["my_json"]["key"])
+print(config.get("message"))
+print(config.get("my_json", {}).get("key"))
 
 # Connecting to Azure App Configuration using connection string and trimmed key prefixes
 trimmed = {"test."}
 config = load(connection_string=connection_string, trim_prefixes=trimmed)
 
-print(config["message"])
+print(config.get("message"))
 
 # Connection to Azure App Configuration using SettingSelector
 selects = {SettingSelector(key_filter="message*")}

@@ -8,8 +8,8 @@ from azure.appconfiguration.provider import load, AzureAppConfigurationKeyVaultO
 import os
 from sample_utilities import get_authority, get_credential
 
-endpoint = os.environ.get("AZURE_APPCONFIG_ENDPOINT")
-key_vault_uri = os.environ.get("AZURE_KEYVAULT_URI")
+endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
+key_vault_uri = os.environ.get("KEYVAULT_SECRET_URL")
 authority = get_authority(endpoint)
 credential = get_credential(authority)
 
@@ -19,4 +19,4 @@ selects = {SettingSelector(key_filter="*", label_filter="prod")}
 key_vault_options = AzureAppConfigurationKeyVaultOptions(client_configs=client_configs)
 config = load(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
 
-print(config["secret"])
+print(config.get("secret"))

@@ -12,19 +12,19 @@ from sample_utilities import get_authority, get_audience, get_credential
 
 
 async def main():
-    endpoint = os.environ.get("AZURE_APPCONFIG_ENDPOINT")
+    endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
     authority = get_authority(endpoint)
     credential = get_credential(authority, is_async=True)
 
     # Connecting to Azure App Configuration using AAD
     config = await load(endpoint=endpoint, credential=credential)
-    print(config["message"])
+    print(config.get("message"))
 
     # Connecting to Azure App Configuration using AAD and trim key prefixes
     trimmed = {"test."}
     config = await load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed)
 
-    print(config["message"])
+    print(config.get("message"))
 
     # Connection to Azure App Configuration using SettingSelector
     selects = {SettingSelector(key_filter="message*")}
