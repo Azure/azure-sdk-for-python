@@ -678,7 +678,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
 
     def get_blob_client(
             self, container,  # type: Union[ContainerProperties, str]
-            blob,  # type: Union[BlobProperties, str]
+            blob,  # type: str
             snapshot=None,  # type: Optional[Union[Dict[str, Any], str]]
             *,
             version_id=None  # type: Optional[str]
@@ -692,10 +692,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
             The container that the blob is in. This can either be the name of the container,
             or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.ContainerProperties
-        :param blob:
-            The blob with which to interact. This can either be the name of the blob,
-            or an instance of BlobProperties.
-        :type blob: str or ~azure.storage.blob.BlobProperties
+        :param str blob:
+            The name of the blob with which to interact.
+        :type blob: str
         :param snapshot:
             The optional blob snapshot on which to operate. This can either be the ID of the snapshot,
             or a dictionary output returned by

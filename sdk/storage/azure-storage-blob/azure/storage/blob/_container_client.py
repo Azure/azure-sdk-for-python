@@ -953,7 +953,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def upload_blob(
-            self, name: Union[str, BlobProperties],
+            self, name: str,
             data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
             blob_type: Union[str, BlobType] = BlobType.BlockBlob,
             length: Optional[int] = None,
@@ -962,9 +962,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         ) -> BlobClient:
         """Creates a new blob from a data source with automatic chunking.
 
-        :param name: The blob with which to interact. If specified, this value will override
+        :param str name: 
+            The blob with which to interact. If specified, this value will override
             a blob value specified in the blob URL.
-        :type name: str or ~azure.storage.blob.BlobProperties
         :param data: The blob data to upload.
         :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
@@ -1091,7 +1091,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def delete_blob(
-            self, blob,  # type: Union[str, BlobProperties]
+            self, blob,  # type: str
             delete_snapshots=None,  # type: Optional[str]
             **kwargs
         ):
@@ -1109,9 +1109,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         Soft deleted blob or snapshot is accessible through :func:`list_blobs()` specifying `include=["deleted"]`
         option. Soft-deleted blob or snapshot can be restored using :func:`~azure.storage.blob.BlobClient.undelete()`
 
-        :param blob: The blob with which to interact. If specified, this value will override
+        :param str blob:
+            The blob with which to interact. If specified, this value will override
             a blob value specified in the blob URL.
-        :type blob: str or ~azure.storage.blob.BlobProperties
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -1168,7 +1168,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @overload
     def download_blob(
-            self, blob: Union[str, BlobProperties],
+            self, blob: str,
             offset: int = None,
             length: int = None,
             *,
@@ -1178,7 +1178,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @overload
     def download_blob(
-            self, blob: Union[str, BlobProperties],
+            self, blob: str,
             offset: int = None,
             length: int = None,
             *,
@@ -1188,7 +1188,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def download_blob(
-            self, blob: Union[str, BlobProperties],
+            self, blob: str,
             offset: int = None,
             length: int = None,
             *,
@@ -1198,9 +1198,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
 
-        :param blob: The blob with which to interact. If specified, this value will override
+        :param str blob:
+            The blob with which to interact. If specified, this value will override
             a blob value specified in the blob URL.
-        :type blob: str or ~azure.storage.blob.BlobProperties
         :param int offset:
             Start of byte range to use for downloading a section of the blob.
             Must be set if length is provided.
@@ -1352,7 +1352,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         return query_parameters, header_parameters
 
     def _generate_delete_blobs_options(
-            self, *blobs: Union[str, Dict[str, Any], BlobProperties],
+            self, *blobs: Union[str, Dict[str, Any]],
             **kwargs: Any
         ):
         timeout = kwargs.pop('timeout', None)
@@ -1409,7 +1409,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def delete_blobs(
-            self, *blobs: Union[str, Dict[str, Any], BlobProperties],
+            self, *blobs: Union[str, Dict[str, Any]],
             **kwargs: Any
         ) -> Iterator[HttpResponse]:
         """Marks the specified blobs or snapshots for deletion.
@@ -1428,7 +1428,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         :param blobs:
             The blobs to delete. This can be a single blob, or multiple values can
-            be supplied, where each value is either the name of the blob (str) or BlobProperties.
+            be supplied, where each value is either the name of the blob (str).
 
             .. note::
                 When the blob type is dict, here's a list of keys, value rules.
@@ -1454,7 +1454,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
-        :type blobs: str or dict(str, Any) or ~azure.storage.blob.BlobProperties
+        :type blobs: str or dict(str, Any)
         :keyword str delete_snapshots:
             Required if a blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -1549,7 +1549,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     def _generate_set_tiers_options(
             self, blob_tier: Optional[Union[str, 'StandardBlobTier', 'PremiumPageBlobTier']],
-            *blobs: Union[str, Dict[str, Any], BlobProperties],
+            *blobs: Union[str, Dict[str, Any]],
             **kwargs: Any
         ):
         timeout = kwargs.pop('timeout', None)
@@ -1596,7 +1596,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
     @distributed_trace
     def set_standard_blob_tier_blobs(
         self, standard_blob_tier: Optional[Union[str, 'StandardBlobTier']],
-        *blobs: Union[str, Dict[str, Any], BlobProperties],
+        *blobs: Union[str, Dict[str, Any]],
         **kwargs: Any
     ) -> Iterator[HttpResponse]:
         """This operation sets the tier on block blobs.
@@ -1621,7 +1621,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
         :param blobs:
             The blobs with which to interact. This can be a single blob, or multiple values can
-            be supplied, where each value is either the name of the blob (str) or BlobProperties.
+            be supplied, where each value is the name of the blob (str).
 
             .. note::
                 When the blob type is dict, here's a list of keys, value rules.
@@ -1643,7 +1643,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
-        :type blobs: str or dict(str, Any) or ~azure.storage.blob.BlobProperties
+        :type blobs: str or dict(str, Any)
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
         :keyword str if_tags_match_condition:
@@ -1671,7 +1671,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
     @distributed_trace
     def set_premium_page_blob_tier_blobs(
         self, premium_page_blob_tier: Optional[Union[str, 'PremiumPageBlobTier']],
-        *blobs: Union[str, Dict[str, Any], BlobProperties],
+        *blobs: Union[str, Dict[str, Any]],
         **kwargs: Any
     ) -> Iterator[HttpResponse]:
         """Sets the page blob tiers on all blobs. This API is only supported for page blobs on premium accounts.
@@ -1690,7 +1690,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :type premium_page_blob_tier: ~azure.storage.blob.PremiumPageBlobTier
         :param blobs:
             The blobs with which to interact. This can be a single blob, or multiple values can
-            be supplied, where each value is either the name of the blob (str) or BlobProperties.
+            be supplied, where each value is either the name of the blob (str).
 
             .. note::
                 When the blob type is dict, here's a list of keys, value rules.
@@ -1704,7 +1704,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
-        :type blobs: str or dict(str, Any) or ~azure.storage.blob.BlobProperties
+        :type blobs: str or dict(str, Any) or ~azure.storage.blob
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -1722,7 +1722,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         return self._batch_send(*reqs, **options)
 
     def get_blob_client(
-            self, blob,  # type: Union[str, BlobProperties]
+            self, blob,  # type: str
             snapshot=None,  # type: str
             *,
             version_id=None  # type: Optional[str]
@@ -1732,9 +1732,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         The blob need not already exist.
 
-        :param blob:
-            The blob with which to interact.
-        :type blob: str or ~azure.storage.blob.BlobProperties
+        :param str blob: The blob with which to interact.
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`~BlobClient.create_snapshot()`.
