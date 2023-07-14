@@ -452,6 +452,7 @@ class MLClient:
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
+            all_operations=self._operation_container,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATA, self._data)
@@ -474,7 +475,6 @@ class MLClient:
             requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
         )
-        self._data._job_operation = self._jobs
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
         self._schedules = ScheduleOperations(
             self._operation_scope,
