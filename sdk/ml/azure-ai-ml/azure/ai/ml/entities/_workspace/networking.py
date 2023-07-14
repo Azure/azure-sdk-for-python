@@ -42,7 +42,7 @@ class OutboundRule:
         self.status = kwargs.pop("status", None)
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: Any, name: str) -> "OutboundRule":
+    def _from_rest_object(cls, rest_obj: Any, name: str) -> Optional["OutboundRule"]:
         if isinstance(rest_obj, RestFqdnOutboundRule):
             rule = FqdnDestination(destination=rest_obj.destination, name=name)
             rule.category = rest_obj.category
@@ -68,6 +68,8 @@ class OutboundRule:
             rule.category = rest_obj.category
             rule.status = rest_obj.status
             return rule
+
+        return None
 
 
 @experimental

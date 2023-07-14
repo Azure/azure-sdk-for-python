@@ -47,3 +47,5 @@ class InferenceServerSchema(PathAwareSchema):
             return CustomInferencingServer(**data)
         elif data["type"] == InferenceServerType.TRITON:
             return TritonInferencingServer(**data)
+        else:
+            return None

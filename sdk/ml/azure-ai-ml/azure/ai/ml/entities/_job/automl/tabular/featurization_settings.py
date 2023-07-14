@@ -42,11 +42,12 @@ class ColumnTransformer(RestTranslatableMixin):
         return RestColumnTransformer(fields=self.fields, parameters=self.parameters)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestColumnTransformer) -> "ColumnTransformer":
+    def _from_rest_object(cls, obj: RestColumnTransformer) -> Optional["ColumnTransformer"]:
         if obj:
             fields = obj.fields
             parameters = obj.parameters
             return ColumnTransformer(fields=fields, parameters=parameters)
+        return None
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ColumnTransformer):

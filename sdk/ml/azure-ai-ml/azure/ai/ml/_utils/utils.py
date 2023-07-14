@@ -81,6 +81,7 @@ def snake_to_pascal(text: Optional[str]) -> str:
 def snake_to_kebab(text: Optional[str]) -> Optional[str]:
     if text:
         return re.sub("_", "-", text)
+    return None
 
 
 # https://stackoverflow.com/questions/1175208
@@ -100,6 +101,7 @@ def snake_to_camel(text: Optional[str]) -> Optional[str]:
     """convert snake name to camel."""
     if text:
         return re.sub("_([a-zA-Z0-9])", lambda m: m.group(1).upper(), text)
+    return None
 
 
 # This is real snake to camel

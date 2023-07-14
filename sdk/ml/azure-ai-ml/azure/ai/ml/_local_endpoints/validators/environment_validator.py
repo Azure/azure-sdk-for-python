@@ -126,8 +126,6 @@ def _get_local_environment_artifacts(base_path: str, environment: Environment):
             None,
             environment.inference_config,
         )
-
-    dockerfile_contents = None
     if environment.build and environment.build.dockerfile_path:
         absolute_build_directory = Path(base_path, environment.build.path).resolve()
         absolute_dockerfile_path = Path(absolute_build_directory, environment.build.dockerfile_path).resolve()
@@ -140,6 +138,8 @@ def _get_local_environment_artifacts(base_path: str, environment: Environment):
             dockerfile_contents,
             environment.inference_config,
         )
+
+    return None
 
 
 def _local_environment_is_valid(deployment: OnlineDeployment):

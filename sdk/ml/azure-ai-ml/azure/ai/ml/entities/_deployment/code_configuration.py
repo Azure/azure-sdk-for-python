@@ -49,12 +49,13 @@ class CodeConfiguration(DictMixin):
             )
 
     @staticmethod
-    def _from_rest_code_configuration(code_configuration: RestCodeConfiguration):
+    def _from_rest_code_configuration(code_configuration: RestCodeConfiguration) -> Optional["CodeConfiguration"]:
         if code_configuration:
             return CodeConfiguration(
                 code=code_configuration.code_id,
                 scoring_script=code_configuration.scoring_script,
             )
+        return None
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, CodeConfiguration):

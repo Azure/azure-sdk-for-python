@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from typing_extensions import Literal
 
@@ -131,7 +131,9 @@ class MonitoringSignal(RestTranslatableMixin):
         self.alert_enabled = alert_enabled
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMonitoringSignalBase) -> "MonitoringSignal":
+    def _from_rest_object(  # pylint: disable=too-many-return-statements
+        cls, obj: RestMonitoringSignalBase
+    ) -> Optional["MonitoringSignal"]:
         if obj.signal_type == MonitoringSignalType.DATA_DRIFT:
             return DataDriftSignal._from_rest_object(obj)
         if obj.signal_type == MonitoringSignalType.DATA_QUALITY:
@@ -144,6 +146,8 @@ class MonitoringSignal(RestTranslatableMixin):
             return FeatureAttributionDriftSignal._from_rest_object(obj)
         if obj.signal_type == MonitoringSignalType.CUSTOM:
             return CustomMonitoringSignal._from_rest_object(obj)
+
+        return None
 
 
 @experimental
@@ -606,13 +610,15 @@ class CustomMonitoringSignal(RestTranslatableMixin):
 
 def _from_rest_features(
     obj: RestMonitoringFeatureFilterBase,
-) -> Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]:
+) -> Optional[Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]]]:
     if isinstance(obj, RestTopNFeaturesByAttribution):
         return MonitorFeatureFilter(top_n_feature_importance=obj.top)
     if isinstance(obj, RestFeatureSubset):
         return obj.features
     if isinstance(obj, RestAllFeatures):
         return ALL_FEATURES
+
+    return None
 
 
 def _to_rest_features(
