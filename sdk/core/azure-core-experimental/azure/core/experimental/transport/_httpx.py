@@ -39,13 +39,16 @@ class HttpXTransportResponse(HttpResponseImpl):
     """HttpX response implementation.
 
     :param request: The request sent to the server
-    :type request: HTTPRequest or LegacyHTTPRequest
+    :type request: ~azure.core.rest.HTTPRequest or LegacyHTTPRequest
     :param httpx.Response httpx_response: The response object returned from the HttpX library
     :param ContextManager stream_contextmanager: The context manager to stream response data.
     """
 
     def __init__(
-        self, request: Union[HttpRequest, LegacyHttpRequest], httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]
+        self,
+        request: Union[HttpRequest, LegacyHttpRequest],
+        httpx_response: httpx.Response,
+        stream_contextmanager: Optional[ContextManager],
     ) -> None:
         super().__init__(
             request=request,
@@ -159,7 +162,7 @@ class HttpXTransport(HttpTransport):
         """Send a request and get back a response.
 
         :param request: The request object to be sent.
-        :type request: HTTPRequest or LegacyHTTPRequest
+        :type request: ~azure.core.rest.HTTPRequest or LegacyHTTPRequest
         :keyword bool stream: Whether to stream the response. Defaults to False.
         :return: An HTTPResponse object.
         :rtype: ~azure.core.experimental.transport.HttpXTransportResponse
