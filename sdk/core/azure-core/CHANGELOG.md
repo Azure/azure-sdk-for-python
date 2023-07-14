@@ -1,6 +1,6 @@
 # Release History
 
-## 1.27.1 (Unreleased)
+## 1.28.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,23 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.28.0 (2023-07-06)
+
+### Features Added
+
+- Added header name parameter to `RequestIdPolicy`. #30772
+- Added `SensitiveHeaderCleanupPolicy` that cleans up sensitive headers if a redirect happens and the new destination is in another domain. #28349
+
+### Other Changes
+
+- Catch aiohttp errors and translate them into azure-core errors.
+
+## 1.27.1 (2023-06-13)
+
+### Bugs Fixed
+
+- Fix url building for some complex query parameters scenarios  #30707
 
 ## 1.27.0 (2023-06-01)
 

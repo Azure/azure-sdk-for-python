@@ -17,10 +17,8 @@ from ._generated.models import (
     SipTrunkRouteInternal
 )
 from ._generated._client import SIPRoutingService
-from .._shared.utils import (
-    parse_connection_str,
-    get_authentication_policy
-)
+from .._shared.auth_policy_utils import get_authentication_policy
+from .._shared.utils import parse_connection_str
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:

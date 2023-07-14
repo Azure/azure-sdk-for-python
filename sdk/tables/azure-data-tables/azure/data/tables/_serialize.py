@@ -4,15 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 from binascii import hexlify
-from typing import Dict
+from typing import Dict, Optional, Union
 from uuid import UUID
 from datetime import datetime
 from math import isnan
 from enum import Enum
 
-import six
 from azure.core import MatchConditions
-from azure.core.exceptions import raise_with_traceback
 
 from ._entity import EdmType
 from ._common_conversion import _encode_base64, _to_utc_datetime
@@ -28,47 +26,57 @@ def _get_match_headers(etag, match_condition):
         if etag:
             raise ValueError("Etag is not supported for an Unconditional operation.")
         return "*"
-    raise ValueError("Unsupported match condition: {}".format(match_condition))
+    raise ValueError(f"Unsupported match condition: {match_condition}")
 
 
-def _prepare_key(keyvalue):
-    """Duplicate the single quote char to escape."""
+def _prepare_key(keyvalue: str) -> str:
+    """Duplicate the single quote char to escape.
+
+    :param keyvalue: A key value in table entity.
+    :type keyvalue: str
+    :return: A key value in table entity.
+    :rtype: str
+    """
     try:
         return keyvalue.replace("'", "''")
-    except AttributeError:
-        raise TypeError('PartitionKey or RowKey must be of type string.')
+    except AttributeError as exc:
+        raise TypeError('PartitionKey or RowKey must be of type string.') from exc
 
 
 def _parameter_filter_substitution(parameters: Dict[str, str], query_filter: str) -> str:
-    """Replace user defined parameter in filter
+    """Replace user defined parameters in filter.
+
     :param parameters: User defined parameters
+    :type parameters: dict[str, str]
     :param str query_filter: Filter for querying
+    :return: A query filter replaced by user defined parameters.
+    :rtype: str
     """
     if parameters:
         filter_strings = query_filter.split(' ')
         for index, word in enumerate(filter_strings):
-            if word[0] == u'@':
+            if word[0] == '@':
                 val = parameters[word[1:]]
                 if val in [True, False]:
                     filter_strings[index] = str(val).lower()
                 elif isinstance(val, (float)):
                     filter_strings[index] = str(val)
-                elif isinstance(val, six.integer_types):
+                elif isinstance(val, int):
                     if val.bit_length() <= 32:
                         filter_strings[index] = str(val)
                     else:
-                        filter_strings[index] = "{}L".format(str(val))
+                        filter_strings[index] = f"{str(val)}L"
                 elif isinstance(val, datetime):
-                    filter_strings[index] = "datetime'{}'".format(_to_utc_datetime(val))
+                    filter_strings[index] = f"datetime'{_to_utc_datetime(val)}'"
                 elif isinstance(val, UUID):
-                    filter_strings[index] = "guid'{}'".format(str(val))
-                elif isinstance(val, six.binary_type):
+                    filter_strings[index] = f"guid'{str(val)}'"
+                elif isinstance(val, bytes):
                     v = str(hexlify(val))
                     if v[0] == 'b': # Python 3 adds a 'b' and quotations, python 2.7 does neither
                         v = v[2:-1]
-                    filter_strings[index] = "X'{}'".format(v)
+                    filter_strings[index] = f"X'{v}'"
                 else:
-                    filter_strings[index] = "'{}'".format(_prepare_key(val))
+                    filter_strings[index] = f"'{_prepare_key(val)}'"
         return ' '.join(filter_strings)
     return query_filter
 
@@ -198,6 +206,11 @@ def _add_entity_properties(source):
        "PartitionKey":"my_partition_key",
        "RowKey":"my_row_key"
     }
+
+    :param source: A table entity.
+    :type source: ~azure.data.tables.TableEntity or Mapping[str, Any]
+    :return: An entity with property's metadata in JSON format.
+    :rtype: Mapping[str, Any]
     """
 
     properties = {}
@@ -239,12 +252,15 @@ def _add_entity_properties(source):
     return properties
 
 
-def serialize_iso(attr):
+def serialize_iso(attr: Optional[Union[str, datetime]]) -> Optional[str]:
     """Serialize Datetime object into ISO-8601 formatted string.
 
-    :param Datetime attr: Object to be serialized.
-    :rtype: str
-    :raises ValueError: If format is invalid.
+    :param attr: Object to be serialized.
+    :type attr: str or ~datetime.datetime or None
+    :return: A ISO-8601 formatted string or None
+    :rtype: str or None
+    :raises ValueError: When unable to serialize the input object.
+    :raises TypeError: When ISO-8601 object is an invalid datetime object.
     """
     if not attr:
         return None
@@ -256,14 +272,9 @@ def serialize_iso(attr):
         if utc.tm_year > 9999 or utc.tm_year < 1:
             raise OverflowError("Hit max or min date")
 
-        date = "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}".format(
-            # cspell:disable-next-line
-            utc.tm_year, utc.tm_mon, utc.tm_mday, utc.tm_hour, utc.tm_min, utc.tm_sec
-        )
+        date = f"{utc.tm_year:04}-{utc.tm_mon:02}-{utc.tm_mday:02}T{utc.tm_hour:02}:{utc.tm_min:02}:{utc.tm_sec:02}"
         return date + "Z"
     except (ValueError, OverflowError) as err:
-        msg = "Unable to serialize datetime object."
-        raise_with_traceback(ValueError, msg, err)
+        raise ValueError("Unable to serialize datetime object.") from err
     except AttributeError as err:
-        msg = "ISO-8601 object must be valid Datetime object."
-        raise_with_traceback(TypeError, msg, err)
+        raise TypeError("ISO-8601 object must be valid datetime object.") from err

@@ -46,16 +46,21 @@ class _ResponseStopIteration(Exception):
 
 
 def _iterate_response_content(iterator):
-    """ "To avoid:
-    TypeError: StopIteration interacts badly with generators and cannot be raised into a Future
+    """To avoid the following error from Python:
+    > TypeError: StopIteration interacts badly with generators and cannot be raised into a Future
+
+    :param iterator: An iterator
+    :type iterator: iterator
+    :return: The next item in the iterator
+    :rtype: any
     """
     try:
         return next(iterator)
     except StopIteration:
-        raise _ResponseStopIteration()
+        raise _ResponseStopIteration()  # pylint: disable=raise-missing-from
 
 
-class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
+class AsyncHttpResponse(_HttpResponseBase, AbstractAsyncContextManager):  # pylint: disable=abstract-method
     """An AsyncHttpResponse ABC.
 
     Allows for the asynchronous streaming of data from the response.
@@ -71,12 +76,15 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
         :type pipeline: azure.core.pipeline.Pipeline
         :keyword bool decompress: If True which is default, will attempt to decode the body based
             on the *content-encoding* header.
+        :return: An async iterator of bytes
+        :rtype: AsyncIterator[bytes]
         """
         raise NotImplementedError("stream_download is not implemented.")
 
     def parts(self) -> AsyncIterator:
         """Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
 
+        :return: An async iterator of the parts
         :rtype: AsyncIterator
         :raises ValueError: If the content is not multipart/mixed
         """
@@ -84,6 +92,9 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
             raise ValueError("You can't get parts if the response is not multipart/mixed")
 
         return _PartGenerator(self, default_http_response_type=AsyncHttpClientTransportResponse)
+
+    async def __aexit__(self, exc_type, exc_value, traceback):
+        return None
 
 
 class AsyncHttpClientTransportResponse(  # pylint: disable=abstract-method
@@ -107,7 +118,13 @@ class AsyncHttpTransport(
 
     @abc.abstractmethod
     async def send(self, request: HTTPRequestType, **kwargs) -> AsyncHTTPResponseType:
-        """Send the request using this HTTP sender."""
+        """Send the request using this HTTP sender.
+
+        :param request: The request object. Exact type can be inferred from the pipeline.
+        :type request: any
+        :return: The response object. Exact type can be inferred from the pipeline.
+        :rtype: any
+        """
 
     @abc.abstractmethod
     async def open(self):
@@ -117,5 +134,18 @@ class AsyncHttpTransport(
     async def close(self):
         """Close the session if it is not externally owned."""
 
-    async def sleep(self, duration):
+    async def sleep(self, duration: float) -> None:
+        """Sleep for the specified duration.
+
+        You should always ask the transport to sleep, and not call directly
+        the stdlib. This is mostly important in async, as the transport
+        may not use asyncio but other implementation like trio and they their own
+        way to sleep, but to keep design
+        consistent, it's cleaner to always ask the transport to sleep and let the transport
+        implementor decide how to do it.
+        By default, this method will use "asyncio", and don't need to be overridden
+        if your transport does too.
+
+        :param float duration: The number of seconds to sleep.
+        """
         await asyncio.sleep(duration)

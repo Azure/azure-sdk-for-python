@@ -1,6 +1,6 @@
 {
     "chosen_version": "2020-09-01",
-    "total_api_version_list": ["2020-07-01-preview", "2020-09-01"],
+    "total_api_version_list": ["2020-09-01"],
     "client": {
         "name": "PolicyClient",
         "filename": "_policy_client",
@@ -108,7 +108,6 @@
         "data_policy_manifests": "DataPolicyManifestsOperations",
         "policy_assignments": "PolicyAssignmentsOperations",
         "policy_definitions": "PolicyDefinitionsOperations",
-        "policy_set_definitions": "PolicySetDefinitionsOperations",
-        "policy_exemptions": "PolicyExemptionsOperations"
+        "policy_set_definitions": "PolicySetDefinitionsOperations"
     }
 }

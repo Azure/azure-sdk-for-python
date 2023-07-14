@@ -70,7 +70,7 @@ class ChangeFeedPaged(PageIterator):
                                        end_time=end_time,
                                        cf_cursor=dict_continuation_token)
 
-    def _get_next_cf(self, continuation_token):  # pylint:disable=unused-argument
+    def _get_next_cf(self, continuation_token):  # pylint:disable=inconsistent-return-statements, unused-argument
         try:
             return next(self._change_feed)
         except HttpResponseError:
@@ -354,10 +354,10 @@ class Chunk(object):
             self.cursor["EventIndex"] = self._data_stream.event_index
             self.cursor["BlockOffset"] = self._data_stream.object_position
             return event
-        except StopIteration:
+        except StopIteration as exc:
             self.cursor["EventIndex"] = self._data_stream.event_index
             self.cursor["BlockOffset"] = self._data_stream.object_position
-            raise StopIteration
+            raise StopIteration from exc
 
     next = __next__  # Python 2 compatibility.
 
@@ -394,7 +394,7 @@ class ChangeFeedStreamer(object):
         self._chunk_size_snapshot = blob_client.get_blob_properties().size
         length = self._chunk_size_snapshot - self._chunk_file_start
         self._iterator = blob_client.download_blob(offset=self._chunk_file_start,
-                                                   length=length).chunks() if length > 0 else iter(list())
+                                                   length=length).chunks() if length > 0 else iter([])
 
     def __len__(self):
         return self._download_offset

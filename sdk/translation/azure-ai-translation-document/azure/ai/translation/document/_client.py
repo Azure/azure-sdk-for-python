@@ -78,8 +78,8 @@ class DocumentTranslationClient:
         """
         try:
             self._endpoint = endpoint.rstrip("/")
-        except AttributeError:
-            raise ValueError("Parameter 'endpoint' must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Parameter 'endpoint' must be a string.") from exc
         self._credential = credential
         self._api_version = kwargs.pop("api_version", None)
         if hasattr(self._api_version, "value"):

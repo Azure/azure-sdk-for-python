@@ -59,12 +59,17 @@ def _local_model_is_valid(deployment: OnlineDeployment):
 
 def _model_contains_cloud_artifacts(deployment: OnlineDeployment):
     # If the deployment.model is a string, then it is the cloud model name or full arm ID
-    return isinstance(deployment.model, str)
+    return isinstance(deployment.model, str) or deployment.model.id is not None
 
 
 def _get_cloud_model_artifacts(model_operations: ModelOperations, model: str, download_path: str) -> str:
-    name, version = parse_prefixed_name_version(model)
-    model_asset = model_operations.get(name=name, version=version)
+    if isinstance(model, Model):
+        name = model.name
+        version = model._version
+        model_asset = model
+    else:
+        name, version = parse_prefixed_name_version(model)
+        model_asset = model_operations.get(name=name, version=version)
     model_uri_path = AzureMLDatastorePathUri(model_asset.path)
     path = Path(model_uri_path.path)
     starts_with = path if path.is_dir() else path.parent

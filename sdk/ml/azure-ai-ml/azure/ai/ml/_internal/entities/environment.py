@@ -87,7 +87,11 @@ class InternalEnvironment:
             )
         return validation_result
 
-    def _validate(self, base_path: str, skip_path_validation: bool = False) -> MutableValidationResult:
+    def validate(self, base_path: str, skip_path_validation: bool = False) -> MutableValidationResult:
+        """Validate the environment section.
+
+        This is a public method but won't be exposed to user given InternalEnvironment is an internal class.
+        """
         validation_result = _ValidationResultBuilder.success()
         if self.os is not None and self.os not in {"Linux", "Windows", "linux", "windows"}:
             validation_result.append_error(

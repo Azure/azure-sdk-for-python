@@ -243,7 +243,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: boolean
+        :returns: True if a file system exists, False otherwise.
+        :rtype: bool
         """
         return await self._container_client.exists(**kwargs)
 
@@ -270,7 +271,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         """
         await self._container_client._rename_container(new_name, **kwargs)   # pylint: disable=protected-access
         renamed_file_system = FileSystemClient(
-                "{}://{}".format(self.scheme, self.primary_hostname), file_system_name=new_name,
+                f"{self.scheme}://{self.primary_hostname}", file_system_name=new_name,
                 credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts)
         return renamed_file_system
@@ -492,6 +493,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
         :param str path:
             Filters the results to return only paths under the specified path.
+        :param Optional[bool] recursive: Optional. Set True for recursive, False for iterative.
         :param int max_results:
             An optional value that specifies the maximum
             number of items to return per page. If omitted or greater than 5,000, the
@@ -848,6 +850,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
+        :returns: Returns the DataLake client for the restored soft-deleted path.
         :rtype: ~azure.storage.file.datalake.aio.DataLakeDirectoryClient
                 or azure.storage.file.datalake.aio.DataLakeFileClient
         """

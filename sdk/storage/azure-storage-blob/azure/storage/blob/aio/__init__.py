@@ -40,6 +40,7 @@ async def upload_blob_to_url(
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
     :keyword bool overwrite:
         Whether the blob to be uploaded should overwrite the current data.
         If True, upload_blob_to_url will overwrite any existing data. If set to False, the
@@ -69,8 +70,8 @@ async def upload_blob_to_url(
         return await client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs)
 
 
+# Download data to specified open file-handle.
 async def _download_to_stream(client, handle, **kwargs):
-    """Download data to specified open file-handle."""
     stream = await client.download_blob(**kwargs)
     await stream.readinto(handle)
 
@@ -98,6 +99,7 @@ async def download_blob_from_url(
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
     :keyword bool overwrite:
         Whether the local file should be overwritten if it already exists. The default value is
         `False` - in which case a ValueError will be raised if the file already exists. If set to
@@ -128,7 +130,7 @@ async def download_blob_from_url(
             await _download_to_stream(client, output, **kwargs)
         else:
             if not overwrite and os.path.isfile(output):
-                raise ValueError("The file '{}' already exists.".format(output))
+                raise ValueError(f"The file '{output}' already exists.")
             with open(output, 'wb') as file_handle:
                 await _download_to_stream(client, file_handle, **kwargs)
 

@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import ContextManager, Iterator, Optional
+from typing import Any, ContextManager, Iterator, Optional
 
 import httpx
 from azure.core.pipeline import Pipeline
@@ -32,6 +32,7 @@ from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.rest import HttpRequest
 from azure.core.rest._http_response_impl import HttpResponseImpl
+from azure.core.configuration import ConnectionConfiguration
 
 
 class HttpXTransportResponse(HttpResponseImpl):
@@ -47,6 +48,11 @@ class HttpXTransportResponse(HttpResponseImpl):
             content_type=httpx_response.headers.get("content-type"),
             stream_download_generator=stream_contextmanager,
         )
+
+    def read(self) -> bytes:
+        if self._content is None:
+            self._content = self.internal_response.read()
+        return self.content
 
     def body(self) -> bytes:
         return self.internal_response.content
@@ -92,12 +98,18 @@ class HttpXTransport(HttpTransport):
     :keyword httpx.Client client: HTTPX client to use instead of the default one
     """
 
-    def __init__(self, **kwargs) -> None:
-        self.client = kwargs.get("client", None)
+    def __init__(self, *, client: Optional[httpx.Client] = None, **kwargs: Any) -> None:
+        self.client = client
+        self.connection_config = ConnectionConfiguration(**kwargs)
+        self._use_env_settings = kwargs.pop("use_env_settings", True)
 
     def open(self) -> None:
         if self.client is None:
-            self.client = httpx.Client()
+            self.client = httpx.Client(
+                trust_env=self._use_env_settings,
+                verify=self.connection_config.verify,
+                cert=self.connection_config.cert,
+            )
 
     def close(self) -> None:
         if self.client:
@@ -113,15 +125,22 @@ class HttpXTransport(HttpTransport):
 
     def send(self, request: HttpRequest, **kwargs) -> HttpXTransportResponse:
         stream_response = kwargs.pop("stream", False)
+        timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
+        # not needed here as its already handled during init
+        kwargs.pop("connection_verify", None)
         parameters = {
             "method": request.method,
             "url": request.url,
             "headers": request.headers.items(),
             "data": request.data,
-            "content": request.content,
             "files": request.files,
+            "timeout": timeout if timeout else request.timeout,
             **kwargs,
         }
+
+        if hasattr(request, "content"):
+            parameters["content"] = request.content
+
         stream_ctx: Optional[ContextManager] = None
         try:
             if stream_response:

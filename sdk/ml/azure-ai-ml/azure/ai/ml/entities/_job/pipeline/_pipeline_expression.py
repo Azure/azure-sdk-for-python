@@ -316,8 +316,12 @@ class PipelineExpression(PipelineExpressionMixin):
                     _postfix = _update_postfix(_postfix, _name, _new_name)
                     _expression_inputs[_new_name] = ExpressionInput(_new_name, _seen_input.type, _seen_input)
             _postfix.append(_name)
+
+            param_input = pipeline_inputs
+            for group_name in _pipeline_input._group_names:
+                param_input = param_input[group_name].values
             _expression_inputs[_name] = ExpressionInput(
-                _name, pipeline_inputs[_pipeline_input._port_name].type, _pipeline_input
+                _name, param_input[_pipeline_input._port_name].type, _pipeline_input
             )
             return _postfix, _expression_inputs
 
@@ -326,10 +330,11 @@ class PipelineExpression(PipelineExpressionMixin):
             _postfix: List[str],
             _expression_inputs: Dict[str, ExpressionInput],
         ) -> Tuple[List[str], dict]:
-            if not _component_output._meta.is_control:
+            if not _component_output._meta._is_control_or_primitive_type:
                 error_message = (
                     f"Component output {_component_output._port_name} in expression must have "
-                    f'"is_control" field with value {True!r}, got {_component_output._meta.is_control!r}'
+                    f'"is_control" field or is a primitive type with value {True!r}, '
+                    f"got {_component_output._meta._is_control_or_primitive_type!r}"
                 )
                 raise UserErrorException(message=error_message, no_personal_data_message=error_message)
             _name = _component_output._port_name

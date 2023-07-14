@@ -9,7 +9,7 @@
 import datetime
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -22,22 +22,19 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _format_url_section
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -57,7 +54,7 @@ def build_job_router_administration_upsert_classification_policy_request(id: str
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -83,7 +80,7 @@ def build_job_router_administration_get_classification_policy_request(id: str, *
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -107,7 +104,7 @@ def build_job_router_administration_delete_classification_policy_request(id: str
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -151,7 +148,7 @@ def build_job_router_administration_upsert_distribution_policy_request(id: str, 
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -177,7 +174,7 @@ def build_job_router_administration_get_distribution_policy_request(id: str, **k
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -201,7 +198,7 @@ def build_job_router_administration_delete_distribution_policy_request(id: str, 
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -245,7 +242,7 @@ def build_job_router_administration_upsert_exception_policy_request(id: str, **k
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -271,7 +268,7 @@ def build_job_router_administration_get_exception_policy_request(id: str, **kwar
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -295,7 +292,7 @@ def build_job_router_administration_delete_exception_policy_request(id: str, **k
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -339,7 +336,7 @@ def build_job_router_administration_upsert_queue_request(id: str, **kwargs: Any)
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -365,7 +362,7 @@ def build_job_router_administration_get_queue_request(id: str, **kwargs: Any) ->
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -389,7 +386,7 @@ def build_job_router_administration_delete_queue_request(id: str, **kwargs: Any)
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -433,7 +430,7 @@ def build_job_router_upsert_job_request(id: str, **kwargs: Any) -> HttpRequest:
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -459,7 +456,7 @@ def build_job_router_get_job_request(id: str, **kwargs: Any) -> HttpRequest:
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -483,7 +480,7 @@ def build_job_router_delete_job_request(id: str, **kwargs: Any) -> HttpRequest:
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -510,7 +507,7 @@ def build_job_router_reclassify_job_action_request(
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -537,7 +534,7 @@ def build_job_router_cancel_job_action_request(id: str, **kwargs: Any) -> HttpRe
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -564,7 +561,7 @@ def build_job_router_complete_job_action_request(id: str, **kwargs: Any) -> Http
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -591,7 +588,7 @@ def build_job_router_close_job_action_request(id: str, **kwargs: Any) -> HttpReq
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -606,7 +603,7 @@ def build_job_router_close_job_action_request(id: str, **kwargs: Any) -> HttpReq
 
 def build_job_router_list_jobs_request(
     *,
-    status: Union[str, _models.JobStateSelector] = "all",
+    status: str = "all",
     queue_id: Optional[str] = None,
     channel_id: Optional[str] = None,
     classification_policy_id: Optional[str] = None,
@@ -659,7 +656,7 @@ def build_job_router_get_in_queue_position_request(id: str, **kwargs: Any) -> Ht
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -674,6 +671,7 @@ def build_job_router_unassign_job_action_request(id: str, assignment_id: str, **
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-07-18-preview"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -684,12 +682,14 @@ def build_job_router_unassign_job_action_request(id: str, assignment_id: str, **
         "assignmentId": _SERIALIZER.url("assignment_id", assignment_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -709,7 +709,7 @@ def build_job_router_accept_job_action_request(worker_id: str, offer_id: str, **
         "offerId": _SERIALIZER.url("offer_id", offer_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -735,7 +735,7 @@ def build_job_router_decline_job_action_request(worker_id: str, offer_id: str, *
         "offerId": _SERIALIZER.url("offer_id", offer_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -761,7 +761,7 @@ def build_job_router_get_queue_statistics_request(id: str, **kwargs: Any) -> Htt
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -786,7 +786,7 @@ def build_job_router_upsert_worker_request(worker_id: str, **kwargs: Any) -> Htt
         "workerId": _SERIALIZER.url("worker_id", worker_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -812,7 +812,7 @@ def build_job_router_get_worker_request(worker_id: str, **kwargs: Any) -> HttpRe
         "workerId": _SERIALIZER.url("worker_id", worker_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -836,7 +836,7 @@ def build_job_router_delete_worker_request(worker_id: str, **kwargs: Any) -> Htt
         "workerId": _SERIALIZER.url("worker_id", worker_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -849,7 +849,7 @@ def build_job_router_delete_worker_request(worker_id: str, **kwargs: Any) -> Htt
 
 def build_job_router_list_workers_request(
     *,
-    status: Union[str, _models.WorkerStateSelector] = "all",
+    state: str = "all",
     channel_id: Optional[str] = None,
     queue_id: Optional[str] = None,
     has_capacity: Optional[bool] = None,
@@ -865,8 +865,8 @@ def build_job_router_list_workers_request(
     _url = "/routing/workers"
 
     # Construct parameters
-    if status is not None:
-        _params["status"] = _SERIALIZER.query("status", status, "str")
+    if state is not None:
+        _params["state"] = _SERIALIZER.query("state", state, "str")
     if channel_id is not None:
         _params["channelId"] = _SERIALIZER.query("channel_id", channel_id, "str")
     if queue_id is not None:
@@ -891,8 +891,6 @@ class JobRouterAdministrationOperations:
         :attr:`job_router_administration` attribute.
     """
 
-    models = _models
-
     def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
@@ -902,13 +900,8 @@ class JobRouterAdministrationOperations:
 
     @overload
     def upsert_classification_policy(
-        self,
-        id: str,
-        patch: _models.ClassificationPolicy,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.ClassificationPolicy:
+        self, id: str, patch: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> JSON:
         """Creates or updates a classification policy.
 
         Creates or updates a classification policy.
@@ -917,19 +910,200 @@ class JobRouterAdministrationOperations:
         :type id: str
         :param patch: Model of classification policy properties to be patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386. Required.
-        :type patch: ~azure.communication.jobrouter.models.ClassificationPolicy
+        :type patch: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: ClassificationPolicy
-        :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # JSON input template for discriminator value "webhook-rule":
+                router_rule = {
+                    "kind": "webhook-rule",
+                    "authorizationServerUri": "str",  # Optional. Uri for Authorization Server.
+                    "clientCredential": {
+                        "clientId": "str",  # Optional. ClientId for Contoso Authorization
+                          server.
+                        "clientSecret": "str"  # Optional. Client secret for Contoso
+                          Authorization server.
+                    },
+                    "webhookUri": "str"  # Optional. Uri for Contoso's Web Server.
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                patch = {
+                    "fallbackQueueId": "str",  # Optional. The fallback queue to select if the
+                      queue selector doesn't find a match.
+                    "id": "str",  # Optional. Unique identifier of this policy.
+                    "name": "str",  # Optional. Friendly name of this policy.
+                    "prioritizationRule": router_rule,
+                    "queueSelectors": [
+                        queue_selector_attachment
+                    ],
+                    "workerSelectors": [
+                        worker_selector_attachment
+                    ]
+                }
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # JSON input template for discriminator value "webhook-rule":
+                router_rule = {
+                    "kind": "webhook-rule",
+                    "authorizationServerUri": "str",  # Optional. Uri for Authorization Server.
+                    "clientCredential": {
+                        "clientId": "str",  # Optional. ClientId for Contoso Authorization
+                          server.
+                        "clientSecret": "str"  # Optional. Client secret for Contoso
+                          Authorization server.
+                    },
+                    "webhookUri": "str"  # Optional. Uri for Contoso's Web Server.
+                }
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # JSON input template for discriminator value "webhook-rule":
+                router_rule = {
+                    "kind": "webhook-rule",
+                    "authorizationServerUri": "str",  # Optional. Uri for Authorization Server.
+                    "clientCredential": {
+                        "clientId": "str",  # Optional. ClientId for Contoso Authorization
+                          server.
+                        "clientSecret": "str"  # Optional. Client secret for Contoso
+                          Authorization server.
+                    },
+                    "webhookUri": "str"  # Optional. Uri for Contoso's Web Server.
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "fallbackQueueId": "str",  # Optional. The fallback queue to select if the
+                      queue selector doesn't find a match.
+                    "id": "str",  # Optional. Unique identifier of this policy.
+                    "name": "str",  # Optional. Friendly name of this policy.
+                    "prioritizationRule": router_rule,
+                    "queueSelectors": [
+                        queue_selector_attachment
+                    ],
+                    "workerSelectors": [
+                        worker_selector_attachment
+                    ]
+                }
         """
 
     @overload
     def upsert_classification_policy(
         self, id: str, patch: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.ClassificationPolicy:
+    ) -> JSON:
         """Creates or updates a classification policy.
 
         Creates or updates a classification policy.
@@ -942,15 +1116,129 @@ class JobRouterAdministrationOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: ClassificationPolicy
-        :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # JSON input template for discriminator value "webhook-rule":
+                router_rule = {
+                    "kind": "webhook-rule",
+                    "authorizationServerUri": "str",  # Optional. Uri for Authorization Server.
+                    "clientCredential": {
+                        "clientId": "str",  # Optional. ClientId for Contoso Authorization
+                          server.
+                        "clientSecret": "str"  # Optional. Client secret for Contoso
+                          Authorization server.
+                    },
+                    "webhookUri": "str"  # Optional. Uri for Contoso's Web Server.
+                }
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # JSON input template for discriminator value "webhook-rule":
+                router_rule = {
+                    "kind": "webhook-rule",
+                    "authorizationServerUri": "str",  # Optional. Uri for Authorization Server.
+                    "clientCredential": {
+                        "clientId": "str",  # Optional. ClientId for Contoso Authorization
+                          server.
+                        "clientSecret": "str"  # Optional. Client secret for Contoso
+                          Authorization server.
+                    },
+                    "webhookUri": "str"  # Optional. Uri for Contoso's Web Server.
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "fallbackQueueId": "str",  # Optional. The fallback queue to select if the
+                      queue selector doesn't find a match.
+                    "id": "str",  # Optional. Unique identifier of this policy.
+                    "name": "str",  # Optional. Friendly name of this policy.
+                    "prioritizationRule": router_rule,
+                    "queueSelectors": [
+                        queue_selector_attachment
+                    ],
+                    "workerSelectors": [
+                        worker_selector_attachment
+                    ]
+                }
         """
 
     @distributed_trace
-    def upsert_classification_policy(
-        self, id: str, patch: Union[_models.ClassificationPolicy, IO], **kwargs: Any
-    ) -> _models.ClassificationPolicy:
+    def upsert_classification_policy(self, id: str, patch: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Creates or updates a classification policy.
 
         Creates or updates a classification policy.
@@ -958,15 +1246,195 @@ class JobRouterAdministrationOperations:
         :param id: Id of the classification policy. Required.
         :type id: str
         :param patch: Model of classification policy properties to be patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386. Is either a ClassificationPolicy type or a IO
-         type. Required.
-        :type patch: ~azure.communication.jobrouter.models.ClassificationPolicy or IO
+         https://datatracker.ietf.org/doc/html/rfc7386. Is either a JSON type or a IO type. Required.
+        :type patch: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
-        :return: ClassificationPolicy
-        :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # JSON input template for discriminator value "webhook-rule":
+                router_rule = {
+                    "kind": "webhook-rule",
+                    "authorizationServerUri": "str",  # Optional. Uri for Authorization Server.
+                    "clientCredential": {
+                        "clientId": "str",  # Optional. ClientId for Contoso Authorization
+                          server.
+                        "clientSecret": "str"  # Optional. Client secret for Contoso
+                          Authorization server.
+                    },
+                    "webhookUri": "str"  # Optional. Uri for Contoso's Web Server.
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                patch = {
+                    "fallbackQueueId": "str",  # Optional. The fallback queue to select if the
+                      queue selector doesn't find a match.
+                    "id": "str",  # Optional. Unique identifier of this policy.
+                    "name": "str",  # Optional. Friendly name of this policy.
+                    "prioritizationRule": router_rule,
+                    "queueSelectors": [
+                        queue_selector_attachment
+                    ],
+                    "workerSelectors": [
+                        worker_selector_attachment
+                    ]
+                }
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # JSON input template for discriminator value "webhook-rule":
+                router_rule = {
+                    "kind": "webhook-rule",
+                    "authorizationServerUri": "str",  # Optional. Uri for Authorization Server.
+                    "clientCredential": {
+                        "clientId": "str",  # Optional. ClientId for Contoso Authorization
+                          server.
+                        "clientSecret": "str"  # Optional. Client secret for Contoso
+                          Authorization server.
+                    },
+                    "webhookUri": "str"  # Optional. Uri for Contoso's Web Server.
+                }
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # JSON input template for discriminator value "webhook-rule":
+                router_rule = {
+                    "kind": "webhook-rule",
+                    "authorizationServerUri": "str",  # Optional. Uri for Authorization Server.
+                    "clientCredential": {
+                        "clientId": "str",  # Optional. ClientId for Contoso Authorization
+                          server.
+                        "clientSecret": "str"  # Optional. Client secret for Contoso
+                          Authorization server.
+                    },
+                    "webhookUri": "str"  # Optional. Uri for Contoso's Web Server.
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "fallbackQueueId": "str",  # Optional. The fallback queue to select if the
+                      queue selector doesn't find a match.
+                    "id": "str",  # Optional. Unique identifier of this policy.
+                    "name": "str",  # Optional. Friendly name of this policy.
+                    "prioritizationRule": router_rule,
+                    "queueSelectors": [
+                        queue_selector_attachment
+                    ],
+                    "workerSelectors": [
+                        worker_selector_attachment
+                    ]
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -980,7 +1448,7 @@ class JobRouterAdministrationOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ClassificationPolicy] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -988,7 +1456,7 @@ class JobRouterAdministrationOperations:
         if isinstance(patch, (IOBase, bytes)):
             _content = patch
         else:
-            _json = self._serialize.body(patch, "ClassificationPolicy")
+            _json = patch
 
         request = build_job_router_administration_upsert_classification_policy_request(
             id=id,
@@ -1011,29 +1479,105 @@ class JobRouterAdministrationOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("ClassificationPolicy", pipeline_response)
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 201:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def get_classification_policy(self, id: str, **kwargs: Any) -> _models.ClassificationPolicy:
+    def get_classification_policy(self, id: str, **kwargs: Any) -> JSON:
         """Retrieves an existing classification policy by Id.
 
         Retrieves an existing classification policy by Id.
 
         :param id: Id of the classification policy. Required.
         :type id: str
-        :return: ClassificationPolicy
-        :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # JSON input template for discriminator value "webhook-rule":
+                router_rule = {
+                    "kind": "webhook-rule",
+                    "authorizationServerUri": "str",  # Optional. Uri for Authorization Server.
+                    "clientCredential": {
+                        "clientId": "str",  # Optional. ClientId for Contoso Authorization
+                          server.
+                        "clientSecret": "str"  # Optional. Client secret for Contoso
+                          Authorization server.
+                    },
+                    "webhookUri": "str"  # Optional. Uri for Contoso's Web Server.
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "fallbackQueueId": "str",  # Optional. The fallback queue to select if the
+                      queue selector doesn't find a match.
+                    "id": "str",  # Optional. Unique identifier of this policy.
+                    "name": "str",  # Optional. Friendly name of this policy.
+                    "prioritizationRule": router_rule,
+                    "queueSelectors": [
+                        queue_selector_attachment
+                    ],
+                    "workerSelectors": [
+                        worker_selector_attachment
+                    ]
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -1046,7 +1590,7 @@ class JobRouterAdministrationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ClassificationPolicy] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         request = build_job_router_administration_get_classification_policy_request(
             id=id,
@@ -1068,15 +1612,17 @@ class JobRouterAdministrationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("ClassificationPolicy", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     @distributed_trace
     def delete_classification_policy(  # pylint: disable=inconsistent-return-statements
@@ -1125,29 +1671,95 @@ class JobRouterAdministrationOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def list_classification_policies(self, **kwargs: Any) -> Iterable["_models.ClassificationPolicyItem"]:
+    def list_classification_policies(self, **kwargs: Any) -> Iterable[JSON]:
         """Retrieves existing classification policies.
 
         Retrieves existing classification policies.
 
-        :return: An iterator like instance of ClassificationPolicyItem
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.ClassificationPolicyItem]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # JSON input template for discriminator value "webhook-rule":
+                router_rule = {
+                    "kind": "webhook-rule",
+                    "authorizationServerUri": "str",  # Optional. Uri for Authorization Server.
+                    "clientCredential": {
+                        "clientId": "str",  # Optional. ClientId for Contoso Authorization
+                          server.
+                        "clientSecret": "str"  # Optional. Client secret for Contoso
+                          Authorization server.
+                    },
+                    "webhookUri": "str"  # Optional. Uri for Contoso's Web Server.
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "classificationPolicy": {
+                        "fallbackQueueId": "str",  # Optional. The fallback queue to select
+                          if the queue selector doesn't find a match.
+                        "id": "str",  # Optional. Unique identifier of this policy.
+                        "name": "str",  # Optional. Friendly name of this policy.
+                        "prioritizationRule": router_rule,
+                        "queueSelectors": [
+                            queue_selector_attachment
+                        ],
+                        "workerSelectors": [
+                            worker_selector_attachment
+                        ]
+                    },
+                    "etag": "str"  # Optional. (Optional) The Concurrency Token.
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ClassificationPolicyCollection] = kwargs.pop(  # pylint: disable=protected-access
-            "cls", None
-        )
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1195,13 +1807,11 @@ class JobRouterAdministrationOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize(
-                _models._models.ClassificationPolicyCollection, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -1214,8 +1824,7 @@ class JobRouterAdministrationOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -1223,13 +1832,8 @@ class JobRouterAdministrationOperations:
 
     @overload
     def upsert_distribution_policy(
-        self,
-        id: str,
-        patch: _models.DistributionPolicy,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.DistributionPolicy:
+        self, id: str, patch: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> JSON:
         """Creates or updates a distribution policy.
 
         Creates or updates a distribution policy.
@@ -1238,19 +1842,251 @@ class JobRouterAdministrationOperations:
         :type id: str
         :param patch: Model of distribution policy properties to be patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386. Required.
-        :type patch: ~azure.communication.jobrouter.models.DistributionPolicy
+        :type patch: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: DistributionPolicy
-        :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "best-worker":
+                distribution_mode = {
+                    "kind": "best-worker",
+                    "bypassSelectors": bool,  # Optional. (Optional)"nIf set to true, then router
+                      will match workers to jobs even if they don't match label selectors."nWarning:
+                      You may get workers that are not qualified for the job they are matched with if
+                      you set this"nvariable to true. This flag is intended more for temporary
+                      usage."nBy default, set to false.
+                    "maxConcurrentOffers": 0,  # Optional. Governs the maximum number of active
+                      concurrent offers a job can have.
+                    "minConcurrentOffers": 0,  # Optional. Governs the minimum desired number of
+                      active concurrent offers a job can have.
+                    "scoringRule": router_rule,
+                    "scoringRuleOptions": {
+                        "allowScoringBatchOfWorkers": bool,  # Optional. (Optional)"nIf set
+                          to true, will score workers in batches, and the parameter name of the worker
+                          labels will be sent as ``workers``."nBy default, set to false and the
+                          parameter name for the worker labels will be sent as ``worker``."nNote: If
+                          enabled, use BatchSize to set batch size.
+                        "batchSize": 0,  # Optional. (Optional) Set batch size when
+                          AllowScoringBatchOfWorkers is set to true. Defaults to 20 if not configured.
+                        "descendingOrder": bool,  # Optional. (Optional)"nIf false, will sort
+                          scores by ascending order. By default, set to true.
+                        "scoringParameters": [
+                            "str"  # Optional. (Optional) List of extra parameters from
+                              the job that will be sent as part of the payload to scoring rule."nIf not
+                              set, the job's labels (sent in the payload as ``job``"" ) and the job's
+                              worker selectors (sent in the payload as ``selectors``"" )"nare added to
+                              the payload of the scoring rule by default."nNote: Worker labels are
+                              always sent with scoring payload.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                patch = {
+                    "id": "str",  # Optional. The unique identifier of the policy.
+                    "mode": distribution_mode,
+                    "name": "str",  # Optional. The human readable name of the policy.
+                    "offerExpiresAfterSeconds": 0.0  # Optional. The number of seconds after
+                      which any offers created under this policy will be expired.
+                }
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "best-worker":
+                distribution_mode = {
+                    "kind": "best-worker",
+                    "bypassSelectors": bool,  # Optional. (Optional)"nIf set to true, then router
+                      will match workers to jobs even if they don't match label selectors."nWarning:
+                      You may get workers that are not qualified for the job they are matched with if
+                      you set this"nvariable to true. This flag is intended more for temporary
+                      usage."nBy default, set to false.
+                    "maxConcurrentOffers": 0,  # Optional. Governs the maximum number of active
+                      concurrent offers a job can have.
+                    "minConcurrentOffers": 0,  # Optional. Governs the minimum desired number of
+                      active concurrent offers a job can have.
+                    "scoringRule": router_rule,
+                    "scoringRuleOptions": {
+                        "allowScoringBatchOfWorkers": bool,  # Optional. (Optional)"nIf set
+                          to true, will score workers in batches, and the parameter name of the worker
+                          labels will be sent as ``workers``."nBy default, set to false and the
+                          parameter name for the worker labels will be sent as ``worker``."nNote: If
+                          enabled, use BatchSize to set batch size.
+                        "batchSize": 0,  # Optional. (Optional) Set batch size when
+                          AllowScoringBatchOfWorkers is set to true. Defaults to 20 if not configured.
+                        "descendingOrder": bool,  # Optional. (Optional)"nIf false, will sort
+                          scores by ascending order. By default, set to true.
+                        "scoringParameters": [
+                            "str"  # Optional. (Optional) List of extra parameters from
+                              the job that will be sent as part of the payload to scoring rule."nIf not
+                              set, the job's labels (sent in the payload as ``job``"" ) and the job's
+                              worker selectors (sent in the payload as ``selectors``"" )"nare added to
+                              the payload of the scoring rule by default."nNote: Worker labels are
+                              always sent with scoring payload.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "best-worker":
+                distribution_mode = {
+                    "kind": "best-worker",
+                    "bypassSelectors": bool,  # Optional. (Optional)"nIf set to true, then router
+                      will match workers to jobs even if they don't match label selectors."nWarning:
+                      You may get workers that are not qualified for the job they are matched with if
+                      you set this"nvariable to true. This flag is intended more for temporary
+                      usage."nBy default, set to false.
+                    "maxConcurrentOffers": 0,  # Optional. Governs the maximum number of active
+                      concurrent offers a job can have.
+                    "minConcurrentOffers": 0,  # Optional. Governs the minimum desired number of
+                      active concurrent offers a job can have.
+                    "scoringRule": router_rule,
+                    "scoringRuleOptions": {
+                        "allowScoringBatchOfWorkers": bool,  # Optional. (Optional)"nIf set
+                          to true, will score workers in batches, and the parameter name of the worker
+                          labels will be sent as ``workers``."nBy default, set to false and the
+                          parameter name for the worker labels will be sent as ``worker``."nNote: If
+                          enabled, use BatchSize to set batch size.
+                        "batchSize": 0,  # Optional. (Optional) Set batch size when
+                          AllowScoringBatchOfWorkers is set to true. Defaults to 20 if not configured.
+                        "descendingOrder": bool,  # Optional. (Optional)"nIf false, will sort
+                          scores by ascending order. By default, set to true.
+                        "scoringParameters": [
+                            "str"  # Optional. (Optional) List of extra parameters from
+                              the job that will be sent as part of the payload to scoring rule."nIf not
+                              set, the job's labels (sent in the payload as ``job``"" ) and the job's
+                              worker selectors (sent in the payload as ``selectors``"" )"nare added to
+                              the payload of the scoring rule by default."nNote: Worker labels are
+                              always sent with scoring payload.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "id": "str",  # Optional. The unique identifier of the policy.
+                    "mode": distribution_mode,
+                    "name": "str",  # Optional. The human readable name of the policy.
+                    "offerExpiresAfterSeconds": 0.0  # Optional. The number of seconds after
+                      which any offers created under this policy will be expired.
+                }
         """
 
     @overload
     def upsert_distribution_policy(
         self, id: str, patch: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.DistributionPolicy:
+    ) -> JSON:
         """Creates or updates a distribution policy.
 
         Creates or updates a distribution policy.
@@ -1263,15 +2099,165 @@ class JobRouterAdministrationOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: DistributionPolicy
-        :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "best-worker":
+                distribution_mode = {
+                    "kind": "best-worker",
+                    "bypassSelectors": bool,  # Optional. (Optional)"nIf set to true, then router
+                      will match workers to jobs even if they don't match label selectors."nWarning:
+                      You may get workers that are not qualified for the job they are matched with if
+                      you set this"nvariable to true. This flag is intended more for temporary
+                      usage."nBy default, set to false.
+                    "maxConcurrentOffers": 0,  # Optional. Governs the maximum number of active
+                      concurrent offers a job can have.
+                    "minConcurrentOffers": 0,  # Optional. Governs the minimum desired number of
+                      active concurrent offers a job can have.
+                    "scoringRule": router_rule,
+                    "scoringRuleOptions": {
+                        "allowScoringBatchOfWorkers": bool,  # Optional. (Optional)"nIf set
+                          to true, will score workers in batches, and the parameter name of the worker
+                          labels will be sent as ``workers``."nBy default, set to false and the
+                          parameter name for the worker labels will be sent as ``worker``."nNote: If
+                          enabled, use BatchSize to set batch size.
+                        "batchSize": 0,  # Optional. (Optional) Set batch size when
+                          AllowScoringBatchOfWorkers is set to true. Defaults to 20 if not configured.
+                        "descendingOrder": bool,  # Optional. (Optional)"nIf false, will sort
+                          scores by ascending order. By default, set to true.
+                        "scoringParameters": [
+                            "str"  # Optional. (Optional) List of extra parameters from
+                              the job that will be sent as part of the payload to scoring rule."nIf not
+                              set, the job's labels (sent in the payload as ``job``"" ) and the job's
+                              worker selectors (sent in the payload as ``selectors``"" )"nare added to
+                              the payload of the scoring rule by default."nNote: Worker labels are
+                              always sent with scoring payload.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "best-worker":
+                distribution_mode = {
+                    "kind": "best-worker",
+                    "bypassSelectors": bool,  # Optional. (Optional)"nIf set to true, then router
+                      will match workers to jobs even if they don't match label selectors."nWarning:
+                      You may get workers that are not qualified for the job they are matched with if
+                      you set this"nvariable to true. This flag is intended more for temporary
+                      usage."nBy default, set to false.
+                    "maxConcurrentOffers": 0,  # Optional. Governs the maximum number of active
+                      concurrent offers a job can have.
+                    "minConcurrentOffers": 0,  # Optional. Governs the minimum desired number of
+                      active concurrent offers a job can have.
+                    "scoringRule": router_rule,
+                    "scoringRuleOptions": {
+                        "allowScoringBatchOfWorkers": bool,  # Optional. (Optional)"nIf set
+                          to true, will score workers in batches, and the parameter name of the worker
+                          labels will be sent as ``workers``."nBy default, set to false and the
+                          parameter name for the worker labels will be sent as ``worker``."nNote: If
+                          enabled, use BatchSize to set batch size.
+                        "batchSize": 0,  # Optional. (Optional) Set batch size when
+                          AllowScoringBatchOfWorkers is set to true. Defaults to 20 if not configured.
+                        "descendingOrder": bool,  # Optional. (Optional)"nIf false, will sort
+                          scores by ascending order. By default, set to true.
+                        "scoringParameters": [
+                            "str"  # Optional. (Optional) List of extra parameters from
+                              the job that will be sent as part of the payload to scoring rule."nIf not
+                              set, the job's labels (sent in the payload as ``job``"" ) and the job's
+                              worker selectors (sent in the payload as ``selectors``"" )"nare added to
+                              the payload of the scoring rule by default."nNote: Worker labels are
+                              always sent with scoring payload.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "id": "str",  # Optional. The unique identifier of the policy.
+                    "mode": distribution_mode,
+                    "name": "str",  # Optional. The human readable name of the policy.
+                    "offerExpiresAfterSeconds": 0.0  # Optional. The number of seconds after
+                      which any offers created under this policy will be expired.
+                }
         """
 
     @distributed_trace
-    def upsert_distribution_policy(
-        self, id: str, patch: Union[_models.DistributionPolicy, IO], **kwargs: Any
-    ) -> _models.DistributionPolicy:
+    def upsert_distribution_policy(self, id: str, patch: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Creates or updates a distribution policy.
 
         Creates or updates a distribution policy.
@@ -1279,15 +2265,246 @@ class JobRouterAdministrationOperations:
         :param id: Id of the distribution policy. Required.
         :type id: str
         :param patch: Model of distribution policy properties to be patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386. Is either a DistributionPolicy type or a IO
-         type. Required.
-        :type patch: ~azure.communication.jobrouter.models.DistributionPolicy or IO
+         https://datatracker.ietf.org/doc/html/rfc7386. Is either a JSON type or a IO type. Required.
+        :type patch: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
-        :return: DistributionPolicy
-        :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "best-worker":
+                distribution_mode = {
+                    "kind": "best-worker",
+                    "bypassSelectors": bool,  # Optional. (Optional)"nIf set to true, then router
+                      will match workers to jobs even if they don't match label selectors."nWarning:
+                      You may get workers that are not qualified for the job they are matched with if
+                      you set this"nvariable to true. This flag is intended more for temporary
+                      usage."nBy default, set to false.
+                    "maxConcurrentOffers": 0,  # Optional. Governs the maximum number of active
+                      concurrent offers a job can have.
+                    "minConcurrentOffers": 0,  # Optional. Governs the minimum desired number of
+                      active concurrent offers a job can have.
+                    "scoringRule": router_rule,
+                    "scoringRuleOptions": {
+                        "allowScoringBatchOfWorkers": bool,  # Optional. (Optional)"nIf set
+                          to true, will score workers in batches, and the parameter name of the worker
+                          labels will be sent as ``workers``."nBy default, set to false and the
+                          parameter name for the worker labels will be sent as ``worker``."nNote: If
+                          enabled, use BatchSize to set batch size.
+                        "batchSize": 0,  # Optional. (Optional) Set batch size when
+                          AllowScoringBatchOfWorkers is set to true. Defaults to 20 if not configured.
+                        "descendingOrder": bool,  # Optional. (Optional)"nIf false, will sort
+                          scores by ascending order. By default, set to true.
+                        "scoringParameters": [
+                            "str"  # Optional. (Optional) List of extra parameters from
+                              the job that will be sent as part of the payload to scoring rule."nIf not
+                              set, the job's labels (sent in the payload as ``job``"" ) and the job's
+                              worker selectors (sent in the payload as ``selectors``"" )"nare added to
+                              the payload of the scoring rule by default."nNote: Worker labels are
+                              always sent with scoring payload.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                patch = {
+                    "id": "str",  # Optional. The unique identifier of the policy.
+                    "mode": distribution_mode,
+                    "name": "str",  # Optional. The human readable name of the policy.
+                    "offerExpiresAfterSeconds": 0.0  # Optional. The number of seconds after
+                      which any offers created under this policy will be expired.
+                }
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "best-worker":
+                distribution_mode = {
+                    "kind": "best-worker",
+                    "bypassSelectors": bool,  # Optional. (Optional)"nIf set to true, then router
+                      will match workers to jobs even if they don't match label selectors."nWarning:
+                      You may get workers that are not qualified for the job they are matched with if
+                      you set this"nvariable to true. This flag is intended more for temporary
+                      usage."nBy default, set to false.
+                    "maxConcurrentOffers": 0,  # Optional. Governs the maximum number of active
+                      concurrent offers a job can have.
+                    "minConcurrentOffers": 0,  # Optional. Governs the minimum desired number of
+                      active concurrent offers a job can have.
+                    "scoringRule": router_rule,
+                    "scoringRuleOptions": {
+                        "allowScoringBatchOfWorkers": bool,  # Optional. (Optional)"nIf set
+                          to true, will score workers in batches, and the parameter name of the worker
+                          labels will be sent as ``workers``."nBy default, set to false and the
+                          parameter name for the worker labels will be sent as ``worker``."nNote: If
+                          enabled, use BatchSize to set batch size.
+                        "batchSize": 0,  # Optional. (Optional) Set batch size when
+                          AllowScoringBatchOfWorkers is set to true. Defaults to 20 if not configured.
+                        "descendingOrder": bool,  # Optional. (Optional)"nIf false, will sort
+                          scores by ascending order. By default, set to true.
+                        "scoringParameters": [
+                            "str"  # Optional. (Optional) List of extra parameters from
+                              the job that will be sent as part of the payload to scoring rule."nIf not
+                              set, the job's labels (sent in the payload as ``job``"" ) and the job's
+                              worker selectors (sent in the payload as ``selectors``"" )"nare added to
+                              the payload of the scoring rule by default."nNote: Worker labels are
+                              always sent with scoring payload.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "best-worker":
+                distribution_mode = {
+                    "kind": "best-worker",
+                    "bypassSelectors": bool,  # Optional. (Optional)"nIf set to true, then router
+                      will match workers to jobs even if they don't match label selectors."nWarning:
+                      You may get workers that are not qualified for the job they are matched with if
+                      you set this"nvariable to true. This flag is intended more for temporary
+                      usage."nBy default, set to false.
+                    "maxConcurrentOffers": 0,  # Optional. Governs the maximum number of active
+                      concurrent offers a job can have.
+                    "minConcurrentOffers": 0,  # Optional. Governs the minimum desired number of
+                      active concurrent offers a job can have.
+                    "scoringRule": router_rule,
+                    "scoringRuleOptions": {
+                        "allowScoringBatchOfWorkers": bool,  # Optional. (Optional)"nIf set
+                          to true, will score workers in batches, and the parameter name of the worker
+                          labels will be sent as ``workers``."nBy default, set to false and the
+                          parameter name for the worker labels will be sent as ``worker``."nNote: If
+                          enabled, use BatchSize to set batch size.
+                        "batchSize": 0,  # Optional. (Optional) Set batch size when
+                          AllowScoringBatchOfWorkers is set to true. Defaults to 20 if not configured.
+                        "descendingOrder": bool,  # Optional. (Optional)"nIf false, will sort
+                          scores by ascending order. By default, set to true.
+                        "scoringParameters": [
+                            "str"  # Optional. (Optional) List of extra parameters from
+                              the job that will be sent as part of the payload to scoring rule."nIf not
+                              set, the job's labels (sent in the payload as ``job``"" ) and the job's
+                              worker selectors (sent in the payload as ``selectors``"" )"nare added to
+                              the payload of the scoring rule by default."nNote: Worker labels are
+                              always sent with scoring payload.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "id": "str",  # Optional. The unique identifier of the policy.
+                    "mode": distribution_mode,
+                    "name": "str",  # Optional. The human readable name of the policy.
+                    "offerExpiresAfterSeconds": 0.0  # Optional. The number of seconds after
+                      which any offers created under this policy will be expired.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -1301,7 +2518,7 @@ class JobRouterAdministrationOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DistributionPolicy] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -1309,7 +2526,7 @@ class JobRouterAdministrationOperations:
         if isinstance(patch, (IOBase, bytes)):
             _content = patch
         else:
-            _json = self._serialize.body(patch, "DistributionPolicy")
+            _json = patch
 
         request = build_job_router_administration_upsert_distribution_policy_request(
             id=id,
@@ -1332,29 +2549,120 @@ class JobRouterAdministrationOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("DistributionPolicy", pipeline_response)
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 201:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def get_distribution_policy(self, id: str, **kwargs: Any) -> _models.DistributionPolicy:
+    def get_distribution_policy(self, id: str, **kwargs: Any) -> JSON:
         """Retrieves an existing distribution policy by Id.
 
         Retrieves an existing distribution policy by Id.
 
         :param id: Id of the distribution policy. Required.
         :type id: str
-        :return: DistributionPolicy
-        :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "best-worker":
+                distribution_mode = {
+                    "kind": "best-worker",
+                    "bypassSelectors": bool,  # Optional. (Optional)"nIf set to true, then router
+                      will match workers to jobs even if they don't match label selectors."nWarning:
+                      You may get workers that are not qualified for the job they are matched with if
+                      you set this"nvariable to true. This flag is intended more for temporary
+                      usage."nBy default, set to false.
+                    "maxConcurrentOffers": 0,  # Optional. Governs the maximum number of active
+                      concurrent offers a job can have.
+                    "minConcurrentOffers": 0,  # Optional. Governs the minimum desired number of
+                      active concurrent offers a job can have.
+                    "scoringRule": router_rule,
+                    "scoringRuleOptions": {
+                        "allowScoringBatchOfWorkers": bool,  # Optional. (Optional)"nIf set
+                          to true, will score workers in batches, and the parameter name of the worker
+                          labels will be sent as ``workers``."nBy default, set to false and the
+                          parameter name for the worker labels will be sent as ``worker``."nNote: If
+                          enabled, use BatchSize to set batch size.
+                        "batchSize": 0,  # Optional. (Optional) Set batch size when
+                          AllowScoringBatchOfWorkers is set to true. Defaults to 20 if not configured.
+                        "descendingOrder": bool,  # Optional. (Optional)"nIf false, will sort
+                          scores by ascending order. By default, set to true.
+                        "scoringParameters": [
+                            "str"  # Optional. (Optional) List of extra parameters from
+                              the job that will be sent as part of the payload to scoring rule."nIf not
+                              set, the job's labels (sent in the payload as ``job``"" ) and the job's
+                              worker selectors (sent in the payload as ``selectors``"" )"nare added to
+                              the payload of the scoring rule by default."nNote: Worker labels are
+                              always sent with scoring payload.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",  # Optional. The unique identifier of the policy.
+                    "mode": distribution_mode,
+                    "name": "str",  # Optional. The human readable name of the policy.
+                    "offerExpiresAfterSeconds": 0.0  # Optional. The number of seconds after
+                      which any offers created under this policy will be expired.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -1367,7 +2675,7 @@ class JobRouterAdministrationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DistributionPolicy] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         request = build_job_router_administration_get_distribution_policy_request(
             id=id,
@@ -1389,15 +2697,17 @@ class JobRouterAdministrationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("DistributionPolicy", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     @distributed_trace
     def delete_distribution_policy(  # pylint: disable=inconsistent-return-statements
@@ -1446,29 +2756,110 @@ class JobRouterAdministrationOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def list_distribution_policies(self, **kwargs: Any) -> Iterable["_models.DistributionPolicyItem"]:
+    def list_distribution_policies(self, **kwargs: Any) -> Iterable[JSON]:
         """Retrieves existing distribution policies.
 
         Retrieves existing distribution policies.
 
-        :return: An iterator like instance of DistributionPolicyItem
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.DistributionPolicyItem]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "best-worker":
+                distribution_mode = {
+                    "kind": "best-worker",
+                    "bypassSelectors": bool,  # Optional. (Optional)"nIf set to true, then router
+                      will match workers to jobs even if they don't match label selectors."nWarning:
+                      You may get workers that are not qualified for the job they are matched with if
+                      you set this"nvariable to true. This flag is intended more for temporary
+                      usage."nBy default, set to false.
+                    "maxConcurrentOffers": 0,  # Optional. Governs the maximum number of active
+                      concurrent offers a job can have.
+                    "minConcurrentOffers": 0,  # Optional. Governs the minimum desired number of
+                      active concurrent offers a job can have.
+                    "scoringRule": router_rule,
+                    "scoringRuleOptions": {
+                        "allowScoringBatchOfWorkers": bool,  # Optional. (Optional)"nIf set
+                          to true, will score workers in batches, and the parameter name of the worker
+                          labels will be sent as ``workers``."nBy default, set to false and the
+                          parameter name for the worker labels will be sent as ``worker``."nNote: If
+                          enabled, use BatchSize to set batch size.
+                        "batchSize": 0,  # Optional. (Optional) Set batch size when
+                          AllowScoringBatchOfWorkers is set to true. Defaults to 20 if not configured.
+                        "descendingOrder": bool,  # Optional. (Optional)"nIf false, will sort
+                          scores by ascending order. By default, set to true.
+                        "scoringParameters": [
+                            "str"  # Optional. (Optional) List of extra parameters from
+                              the job that will be sent as part of the payload to scoring rule."nIf not
+                              set, the job's labels (sent in the payload as ``job``"" ) and the job's
+                              worker selectors (sent in the payload as ``selectors``"" )"nare added to
+                              the payload of the scoring rule by default."nNote: Worker labels are
+                              always sent with scoring payload.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "azure-function-rule":
+                router_rule = {
+                    "functionUri": "str",  # URL for Azure Function. Required.
+                    "kind": "azure-function-rule",
+                    "credential": {
+                        "appKey": "str",  # Optional. (Optional) Access key scoped to a Azure
+                          Function app."nThis key grants access to all functions under the app.
+                        "clientId": "str",  # Optional. (Optional) Client id, when AppKey is
+                          provided"nIn context of Azure function, this is usually the name of the key.
+                        "functionKey": "str"  # Optional. (Optional) Access key scoped to a
+                          particular function.
+                    }
+                }
+
+                # JSON input template for discriminator value "direct-map-rule":
+                router_rule = {
+                    "kind": "direct-map-rule"
+                }
+
+                # JSON input template for discriminator value "expression-rule":
+                router_rule = {
+                    "expression": "str",  # The string containing the expression to evaluate.
+                      Should contain return statement with calculated values. Required.
+                    "kind": "expression-rule",
+                    "language": "str"  # Optional. The expression language to compile to and
+                      execute. "powerFx"
+                }
+
+                # JSON input template for discriminator value "static-rule":
+                router_rule = {
+                    "kind": "static-rule",
+                    "value": {}  # Optional. The static value this rule always returns.
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "distributionPolicy": {
+                        "id": "str",  # Optional. The unique identifier of the policy.
+                        "mode": distribution_mode,
+                        "name": "str",  # Optional. The human readable name of the policy.
+                        "offerExpiresAfterSeconds": 0.0  # Optional. The number of seconds
+                          after which any offers created under this policy will be expired.
+                    },
+                    "etag": "str"  # Optional. (Optional) The Concurrency Token.
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.DistributionPolicyCollection] = kwargs.pop(  # pylint: disable=protected-access
-            "cls", None
-        )
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1516,13 +2907,11 @@ class JobRouterAdministrationOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize(
-                _models._models.DistributionPolicyCollection, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -1535,8 +2924,7 @@ class JobRouterAdministrationOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -1544,13 +2932,8 @@ class JobRouterAdministrationOperations:
 
     @overload
     def upsert_exception_policy(
-        self,
-        id: str,
-        patch: _models.ExceptionPolicy,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.ExceptionPolicy:
+        self, id: str, patch: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> JSON:
         """Creates or updates a exception policy.
 
         Creates or updates a exception policy.
@@ -1559,19 +2942,50 @@ class JobRouterAdministrationOperations:
         :type id: str
         :param patch: Model of exception policy properties to be patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386. Required.
-        :type patch: ~azure.communication.jobrouter.models.ExceptionPolicy
+        :type patch: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: ExceptionPolicy
-        :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                patch = {
+                    "exceptionRules": {
+                        "str": {
+                            "actions": {
+                                "str": exception_action
+                            },
+                            "trigger": exception_trigger
+                        }
+                    },
+                    "id": "str",  # Optional. The Id of the exception policy.
+                    "name": "str"  # Optional. (Optional) The name of the exception policy.
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "exceptionRules": {
+                        "str": {
+                            "actions": {
+                                "str": exception_action
+                            },
+                            "trigger": exception_trigger
+                        }
+                    },
+                    "id": "str",  # Optional. The Id of the exception policy.
+                    "name": "str"  # Optional. (Optional) The name of the exception policy.
+                }
         """
 
     @overload
     def upsert_exception_policy(
         self, id: str, patch: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.ExceptionPolicy:
+    ) -> JSON:
         """Creates or updates a exception policy.
 
         Creates or updates a exception policy.
@@ -1584,15 +2998,30 @@ class JobRouterAdministrationOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: ExceptionPolicy
-        :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "exceptionRules": {
+                        "str": {
+                            "actions": {
+                                "str": exception_action
+                            },
+                            "trigger": exception_trigger
+                        }
+                    },
+                    "id": "str",  # Optional. The Id of the exception policy.
+                    "name": "str"  # Optional. (Optional) The name of the exception policy.
+                }
         """
 
     @distributed_trace
-    def upsert_exception_policy(
-        self, id: str, patch: Union[_models.ExceptionPolicy, IO], **kwargs: Any
-    ) -> _models.ExceptionPolicy:
+    def upsert_exception_policy(self, id: str, patch: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Creates or updates a exception policy.
 
         Creates or updates a exception policy.
@@ -1600,15 +3029,45 @@ class JobRouterAdministrationOperations:
         :param id: Id of the exception policy. Required.
         :type id: str
         :param patch: Model of exception policy properties to be patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386. Is either a ExceptionPolicy type or a IO type.
-         Required.
-        :type patch: ~azure.communication.jobrouter.models.ExceptionPolicy or IO
+         https://datatracker.ietf.org/doc/html/rfc7386. Is either a JSON type or a IO type. Required.
+        :type patch: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
-        :return: ExceptionPolicy
-        :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                patch = {
+                    "exceptionRules": {
+                        "str": {
+                            "actions": {
+                                "str": exception_action
+                            },
+                            "trigger": exception_trigger
+                        }
+                    },
+                    "id": "str",  # Optional. The Id of the exception policy.
+                    "name": "str"  # Optional. (Optional) The name of the exception policy.
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "exceptionRules": {
+                        "str": {
+                            "actions": {
+                                "str": exception_action
+                            },
+                            "trigger": exception_trigger
+                        }
+                    },
+                    "id": "str",  # Optional. The Id of the exception policy.
+                    "name": "str"  # Optional. (Optional) The name of the exception policy.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -1622,7 +3081,7 @@ class JobRouterAdministrationOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ExceptionPolicy] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -1630,7 +3089,7 @@ class JobRouterAdministrationOperations:
         if isinstance(patch, (IOBase, bytes)):
             _content = patch
         else:
-            _json = self._serialize.body(patch, "ExceptionPolicy")
+            _json = patch
 
         request = build_job_router_administration_upsert_exception_policy_request(
             id=id,
@@ -1653,29 +3112,55 @@ class JobRouterAdministrationOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("ExceptionPolicy", pipeline_response)
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 201:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def get_exception_policy(self, id: str, **kwargs: Any) -> _models.ExceptionPolicy:
+    def get_exception_policy(self, id: str, **kwargs: Any) -> JSON:
         """Retrieves an existing exception policy by Id.
 
         Retrieves an existing exception policy by Id.
 
         :param id: Id of the exception policy to retrieve. Required.
         :type id: str
-        :return: ExceptionPolicy
-        :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "exceptionRules": {
+                        "str": {
+                            "actions": {
+                                "str": exception_action
+                            },
+                            "trigger": exception_trigger
+                        }
+                    },
+                    "id": "str",  # Optional. The Id of the exception policy.
+                    "name": "str"  # Optional. (Optional) The name of the exception policy.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -1688,7 +3173,7 @@ class JobRouterAdministrationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ExceptionPolicy] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         request = build_job_router_administration_get_exception_policy_request(
             id=id,
@@ -1710,15 +3195,17 @@ class JobRouterAdministrationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("ExceptionPolicy", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     @distributed_trace
     def delete_exception_policy(self, id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -1765,28 +3252,46 @@ class JobRouterAdministrationOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def list_exception_policies(self, **kwargs: Any) -> Iterable["_models.ExceptionPolicyItem"]:
+    def list_exception_policies(self, **kwargs: Any) -> Iterable[JSON]:
         """Retrieves existing exception policies.
 
         Retrieves existing exception policies.
 
-        :return: An iterator like instance of ExceptionPolicyItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.ExceptionPolicyItem]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "etag": "str",  # Optional. (Optional) The Concurrency Token.
+                    "exceptionPolicy": {
+                        "exceptionRules": {
+                            "str": {
+                                "actions": {
+                                    "str": exception_action
+                                },
+                                "trigger": exception_trigger
+                            }
+                        },
+                        "id": "str",  # Optional. The Id of the exception policy.
+                        "name": "str"  # Optional. (Optional) The name of the exception
+                          policy.
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ExceptionPolicyCollection] = kwargs.pop(  # pylint: disable=protected-access
-            "cls", None
-        )
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1834,13 +3339,11 @@ class JobRouterAdministrationOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize(
-                _models._models.ExceptionPolicyCollection, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -1853,8 +3356,7 @@ class JobRouterAdministrationOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -1862,8 +3364,8 @@ class JobRouterAdministrationOperations:
 
     @overload
     def upsert_queue(
-        self, id: str, patch: _models.JobQueue, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.JobQueue:
+        self, id: str, patch: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> JSON:
         """Creates or updates a queue.
 
         Creates or updates a queue.
@@ -1872,19 +3374,50 @@ class JobRouterAdministrationOperations:
         :type id: str
         :param patch: Model of queue properties to be patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386. Required.
-        :type patch: ~azure.communication.jobrouter.models.JobQueue
+        :type patch: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.models.JobQueue
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                patch = {
+                    "distributionPolicyId": "str",  # Optional. The ID of the distribution policy
+                      that will determine how a job is distributed to workers.
+                    "exceptionPolicyId": "str",  # Optional. (Optional) The ID of the exception
+                      policy that determines various job escalation rules.
+                    "id": "str",  # Optional. The Id of this queue.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "name": "str"  # Optional. The name of this queue.
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "distributionPolicyId": "str",  # Optional. The ID of the distribution policy
+                      that will determine how a job is distributed to workers.
+                    "exceptionPolicyId": "str",  # Optional. (Optional) The ID of the exception
+                      policy that determines various job escalation rules.
+                    "id": "str",  # Optional. The Id of this queue.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "name": "str"  # Optional. The name of this queue.
+                }
         """
 
     @overload
     def upsert_queue(
         self, id: str, patch: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.JobQueue:
+    ) -> JSON:
         """Creates or updates a queue.
 
         Creates or updates a queue.
@@ -1897,13 +3430,30 @@ class JobRouterAdministrationOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.models.JobQueue
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "distributionPolicyId": "str",  # Optional. The ID of the distribution policy
+                      that will determine how a job is distributed to workers.
+                    "exceptionPolicyId": "str",  # Optional. (Optional) The ID of the exception
+                      policy that determines various job escalation rules.
+                    "id": "str",  # Optional. The Id of this queue.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "name": "str"  # Optional. The name of this queue.
+                }
         """
 
     @distributed_trace
-    def upsert_queue(self, id: str, patch: Union[_models.JobQueue, IO], **kwargs: Any) -> _models.JobQueue:
+    def upsert_queue(self, id: str, patch: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Creates or updates a queue.
 
         Creates or updates a queue.
@@ -1911,15 +3461,45 @@ class JobRouterAdministrationOperations:
         :param id: Id of the queue. Required.
         :type id: str
         :param patch: Model of queue properties to be patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386. Is either a JobQueue type or a IO type.
-         Required.
-        :type patch: ~azure.communication.jobrouter.models.JobQueue or IO
+         https://datatracker.ietf.org/doc/html/rfc7386. Is either a JSON type or a IO type. Required.
+        :type patch: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
-        :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.models.JobQueue
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                patch = {
+                    "distributionPolicyId": "str",  # Optional. The ID of the distribution policy
+                      that will determine how a job is distributed to workers.
+                    "exceptionPolicyId": "str",  # Optional. (Optional) The ID of the exception
+                      policy that determines various job escalation rules.
+                    "id": "str",  # Optional. The Id of this queue.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "name": "str"  # Optional. The name of this queue.
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "distributionPolicyId": "str",  # Optional. The ID of the distribution policy
+                      that will determine how a job is distributed to workers.
+                    "exceptionPolicyId": "str",  # Optional. (Optional) The ID of the exception
+                      policy that determines various job escalation rules.
+                    "id": "str",  # Optional. The Id of this queue.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "name": "str"  # Optional. The name of this queue.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -1933,7 +3513,7 @@ class JobRouterAdministrationOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.JobQueue] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -1941,7 +3521,7 @@ class JobRouterAdministrationOperations:
         if isinstance(patch, (IOBase, bytes)):
             _content = patch
         else:
-            _json = self._serialize.body(patch, "JobQueue")
+            _json = patch
 
         request = build_job_router_administration_upsert_queue_request(
             id=id,
@@ -1964,29 +3544,55 @@ class JobRouterAdministrationOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("JobQueue", pipeline_response)
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 201:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def get_queue(self, id: str, **kwargs: Any) -> _models.JobQueue:
+    def get_queue(self, id: str, **kwargs: Any) -> JSON:
         """Retrieves an existing queue by Id.
 
         Retrieves an existing queue by Id.
 
         :param id: Id of the queue to retrieve. Required.
         :type id: str
-        :return: JobQueue
-        :rtype: ~azure.communication.jobrouter.models.JobQueue
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "distributionPolicyId": "str",  # Optional. The ID of the distribution policy
+                      that will determine how a job is distributed to workers.
+                    "exceptionPolicyId": "str",  # Optional. (Optional) The ID of the exception
+                      policy that determines various job escalation rules.
+                    "id": "str",  # Optional. The Id of this queue.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "name": "str"  # Optional. The name of this queue.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -1999,7 +3605,7 @@ class JobRouterAdministrationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.JobQueue] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         request = build_job_router_administration_get_queue_request(
             id=id,
@@ -2021,15 +3627,17 @@ class JobRouterAdministrationOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("JobQueue", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     @distributed_trace
     def delete_queue(self, id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -2076,26 +3684,45 @@ class JobRouterAdministrationOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def list_queues(self, **kwargs: Any) -> Iterable["_models.JobQueueItem"]:
+    def list_queues(self, **kwargs: Any) -> Iterable[JSON]:
         """Retrieves existing queues.
 
         Retrieves existing queues.
 
-        :return: An iterator like instance of JobQueueItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.JobQueueItem]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "etag": "str",  # Optional. (Optional) The Concurrency Token.
+                    "queue": {
+                        "distributionPolicyId": "str",  # Optional. The ID of the
+                          distribution policy that will determine how a job is distributed to workers.
+                        "exceptionPolicyId": "str",  # Optional. (Optional) The ID of the
+                          exception policy that determines various job escalation rules.
+                        "id": "str",  # Optional. The Id of this queue.
+                        "labels": {
+                            "str": {}  # Optional. A set of key/value pairs that are
+                              identifying attributes used by the rules engines to make decisions.
+                        },
+                        "name": "str"  # Optional. The name of this queue.
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.QueueCollection] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -2143,13 +3770,11 @@ class JobRouterAdministrationOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize(
-                _models._models.QueueCollection, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -2162,8 +3787,7 @@ class JobRouterAdministrationOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -2180,8 +3804,6 @@ class JobRouterOperations:
         :attr:`job_router` attribute.
     """
 
-    models = _models
-
     def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
@@ -2191,8 +3813,8 @@ class JobRouterOperations:
 
     @overload
     def upsert_job(
-        self, id: str, patch: _models.RouterJob, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.RouterJob:
+        self, id: str, patch: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> JSON:
         """Creates or updates a router job.
 
         Creates or updates a router job.
@@ -2201,19 +3823,216 @@ class JobRouterOperations:
         :type id: str
         :param patch: Model of job properties to be created or patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386. Required.
-        :type patch: ~azure.communication.jobrouter.models.RouterJob
+        :type patch: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: RouterJob
-        :rtype: ~azure.communication.jobrouter.models.RouterJob
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                patch = {
+                    "assignments": {
+                        "str": {
+                            "assignedAt": "2020-02-20 00:00:00",  # The assignment time
+                              of the job in UTC. Required.
+                            "assignmentId": "str",  # The Id of the job assignment.
+                              Required.
+                            "closedAt": "2020-02-20 00:00:00",  # Optional. The time the
+                              job was marked as closed after being completed in UTC.
+                            "completedAt": "2020-02-20 00:00:00",  # Optional. The time
+                              the job was marked as completed after being assigned in UTC.
+                            "workerId": "str"  # Optional. The Id of the Worker assigned
+                              to the job.
+                        }
+                    },
+                    "attachedWorkerSelectors": [
+                        {
+                            "key": "str",  # The label key to query against. Required.
+                            "labelOperator": "str",  # Describes how the value of the
+                              label is compared to the value defined on the label selector. Required.
+                              Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+                              "greaterThan", and "greaterThanEqual".
+                            "expedite": bool,  # Optional. Pushes the job to the front of
+                              the queue as long as this selector is active.
+                            "expiresAfterSeconds": 0.0,  # Optional. Describes how long
+                              this label selector is valid in seconds.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time at
+                              which this worker selector expires in UTC.
+                            "status": "str",  # Optional. The status of the worker
+                              selector. Known values are: "active" and "expired".
+                            "value": {}  # Optional. The value to compare against the
+                              actual label value with the given operator.
+                        }
+                    ],
+                    "channelId": "str",  # Optional. The channel identifier. eg. voice, chat,
+                      etc.
+                    "channelReference": "str",  # Optional. Reference to an external parent
+                      context, eg. call ID.
+                    "classificationPolicyId": "str",  # Optional. The Id of the Classification
+                      policy used for classifying a job.
+                    "dispositionCode": "str",  # Optional. Reason code for cancelled or closed
+                      jobs.
+                    "enqueuedAt": "2020-02-20 00:00:00",  # Optional. The time a job was queued
+                      in UTC.
+                    "id": "str",  # Optional. The id of the job.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "matchingMode": {
+                        "modeType": "str",  # Optional. Known values are:
+                          "queueAndMatchMode", "scheduleAndSuspendMode", and "suspendMode".
+                        "queueAndMatchMode": {},  # Optional. Any object.
+                        "scheduleAndSuspendMode": {
+                            "scheduleAt": "2020-02-20 00:00:00"  # Optional.
+                        },
+                        "suspendMode": {}  # Optional. Any object.
+                    },
+                    "notes": {
+                        "str": "str"  # Optional. Notes attached to a job, sorted by
+                          timestamp.
+                    },
+                    "priority": 0,  # Optional. The priority of this job.
+                    "queueId": "str",  # Optional. The Id of the Queue that this job is queued
+                      to.
+                    "requestedWorkerSelectors": [
+                        {
+                            "key": "str",  # The label key to query against. Required.
+                            "labelOperator": "str",  # Describes how the value of the
+                              label is compared to the value defined on the label selector. Required.
+                              Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+                              "greaterThan", and "greaterThanEqual".
+                            "expedite": bool,  # Optional. Pushes the job to the front of
+                              the queue as long as this selector is active.
+                            "expiresAfterSeconds": 0.0,  # Optional. Describes how long
+                              this label selector is valid in seconds.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time at
+                              which this worker selector expires in UTC.
+                            "status": "str",  # Optional. The status of the worker
+                              selector. Known values are: "active" and "expired".
+                            "value": {}  # Optional. The value to compare against the
+                              actual label value with the given operator.
+                        }
+                    ],
+                    "scheduledAt": "2020-02-20 00:00:00",  # Optional. If set, job will be
+                      scheduled to be enqueued at a given time.
+                    "status": "str",  # Optional. The status of the Job. Known values are:
+                      "pendingClassification", "queued", "assigned", "completed", "closed",
+                      "cancelled", "classificationFailed", "created", "pendingSchedule", "scheduled",
+                      "scheduleFailed", and "waitingForActivation".
+                    "tags": {
+                        "str": {}  # Optional. A set of non-identifying attributes attached
+                          to this job.
+                    }
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "assignments": {
+                        "str": {
+                            "assignedAt": "2020-02-20 00:00:00",  # The assignment time
+                              of the job in UTC. Required.
+                            "assignmentId": "str",  # The Id of the job assignment.
+                              Required.
+                            "closedAt": "2020-02-20 00:00:00",  # Optional. The time the
+                              job was marked as closed after being completed in UTC.
+                            "completedAt": "2020-02-20 00:00:00",  # Optional. The time
+                              the job was marked as completed after being assigned in UTC.
+                            "workerId": "str"  # Optional. The Id of the Worker assigned
+                              to the job.
+                        }
+                    },
+                    "attachedWorkerSelectors": [
+                        {
+                            "key": "str",  # The label key to query against. Required.
+                            "labelOperator": "str",  # Describes how the value of the
+                              label is compared to the value defined on the label selector. Required.
+                              Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+                              "greaterThan", and "greaterThanEqual".
+                            "expedite": bool,  # Optional. Pushes the job to the front of
+                              the queue as long as this selector is active.
+                            "expiresAfterSeconds": 0.0,  # Optional. Describes how long
+                              this label selector is valid in seconds.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time at
+                              which this worker selector expires in UTC.
+                            "status": "str",  # Optional. The status of the worker
+                              selector. Known values are: "active" and "expired".
+                            "value": {}  # Optional. The value to compare against the
+                              actual label value with the given operator.
+                        }
+                    ],
+                    "channelId": "str",  # Optional. The channel identifier. eg. voice, chat,
+                      etc.
+                    "channelReference": "str",  # Optional. Reference to an external parent
+                      context, eg. call ID.
+                    "classificationPolicyId": "str",  # Optional. The Id of the Classification
+                      policy used for classifying a job.
+                    "dispositionCode": "str",  # Optional. Reason code for cancelled or closed
+                      jobs.
+                    "enqueuedAt": "2020-02-20 00:00:00",  # Optional. The time a job was queued
+                      in UTC.
+                    "id": "str",  # Optional. The id of the job.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "matchingMode": {
+                        "modeType": "str",  # Optional. Known values are:
+                          "queueAndMatchMode", "scheduleAndSuspendMode", and "suspendMode".
+                        "queueAndMatchMode": {},  # Optional. Any object.
+                        "scheduleAndSuspendMode": {
+                            "scheduleAt": "2020-02-20 00:00:00"  # Optional.
+                        },
+                        "suspendMode": {}  # Optional. Any object.
+                    },
+                    "notes": {
+                        "str": "str"  # Optional. Notes attached to a job, sorted by
+                          timestamp.
+                    },
+                    "priority": 0,  # Optional. The priority of this job.
+                    "queueId": "str",  # Optional. The Id of the Queue that this job is queued
+                      to.
+                    "requestedWorkerSelectors": [
+                        {
+                            "key": "str",  # The label key to query against. Required.
+                            "labelOperator": "str",  # Describes how the value of the
+                              label is compared to the value defined on the label selector. Required.
+                              Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+                              "greaterThan", and "greaterThanEqual".
+                            "expedite": bool,  # Optional. Pushes the job to the front of
+                              the queue as long as this selector is active.
+                            "expiresAfterSeconds": 0.0,  # Optional. Describes how long
+                              this label selector is valid in seconds.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time at
+                              which this worker selector expires in UTC.
+                            "status": "str",  # Optional. The status of the worker
+                              selector. Known values are: "active" and "expired".
+                            "value": {}  # Optional. The value to compare against the
+                              actual label value with the given operator.
+                        }
+                    ],
+                    "scheduledAt": "2020-02-20 00:00:00",  # Optional. If set, job will be
+                      scheduled to be enqueued at a given time.
+                    "status": "str",  # Optional. The status of the Job. Known values are:
+                      "pendingClassification", "queued", "assigned", "completed", "closed",
+                      "cancelled", "classificationFailed", "created", "pendingSchedule", "scheduled",
+                      "scheduleFailed", and "waitingForActivation".
+                    "tags": {
+                        "str": {}  # Optional. A set of non-identifying attributes attached
+                          to this job.
+                    }
+                }
         """
 
     @overload
     def upsert_job(
         self, id: str, patch: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.RouterJob:
+    ) -> JSON:
         """Creates or updates a router job.
 
         Creates or updates a router job.
@@ -2226,13 +4045,113 @@ class JobRouterOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: RouterJob
-        :rtype: ~azure.communication.jobrouter.models.RouterJob
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "assignments": {
+                        "str": {
+                            "assignedAt": "2020-02-20 00:00:00",  # The assignment time
+                              of the job in UTC. Required.
+                            "assignmentId": "str",  # The Id of the job assignment.
+                              Required.
+                            "closedAt": "2020-02-20 00:00:00",  # Optional. The time the
+                              job was marked as closed after being completed in UTC.
+                            "completedAt": "2020-02-20 00:00:00",  # Optional. The time
+                              the job was marked as completed after being assigned in UTC.
+                            "workerId": "str"  # Optional. The Id of the Worker assigned
+                              to the job.
+                        }
+                    },
+                    "attachedWorkerSelectors": [
+                        {
+                            "key": "str",  # The label key to query against. Required.
+                            "labelOperator": "str",  # Describes how the value of the
+                              label is compared to the value defined on the label selector. Required.
+                              Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+                              "greaterThan", and "greaterThanEqual".
+                            "expedite": bool,  # Optional. Pushes the job to the front of
+                              the queue as long as this selector is active.
+                            "expiresAfterSeconds": 0.0,  # Optional. Describes how long
+                              this label selector is valid in seconds.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time at
+                              which this worker selector expires in UTC.
+                            "status": "str",  # Optional. The status of the worker
+                              selector. Known values are: "active" and "expired".
+                            "value": {}  # Optional. The value to compare against the
+                              actual label value with the given operator.
+                        }
+                    ],
+                    "channelId": "str",  # Optional. The channel identifier. eg. voice, chat,
+                      etc.
+                    "channelReference": "str",  # Optional. Reference to an external parent
+                      context, eg. call ID.
+                    "classificationPolicyId": "str",  # Optional. The Id of the Classification
+                      policy used for classifying a job.
+                    "dispositionCode": "str",  # Optional. Reason code for cancelled or closed
+                      jobs.
+                    "enqueuedAt": "2020-02-20 00:00:00",  # Optional. The time a job was queued
+                      in UTC.
+                    "id": "str",  # Optional. The id of the job.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "matchingMode": {
+                        "modeType": "str",  # Optional. Known values are:
+                          "queueAndMatchMode", "scheduleAndSuspendMode", and "suspendMode".
+                        "queueAndMatchMode": {},  # Optional. Any object.
+                        "scheduleAndSuspendMode": {
+                            "scheduleAt": "2020-02-20 00:00:00"  # Optional.
+                        },
+                        "suspendMode": {}  # Optional. Any object.
+                    },
+                    "notes": {
+                        "str": "str"  # Optional. Notes attached to a job, sorted by
+                          timestamp.
+                    },
+                    "priority": 0,  # Optional. The priority of this job.
+                    "queueId": "str",  # Optional. The Id of the Queue that this job is queued
+                      to.
+                    "requestedWorkerSelectors": [
+                        {
+                            "key": "str",  # The label key to query against. Required.
+                            "labelOperator": "str",  # Describes how the value of the
+                              label is compared to the value defined on the label selector. Required.
+                              Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+                              "greaterThan", and "greaterThanEqual".
+                            "expedite": bool,  # Optional. Pushes the job to the front of
+                              the queue as long as this selector is active.
+                            "expiresAfterSeconds": 0.0,  # Optional. Describes how long
+                              this label selector is valid in seconds.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time at
+                              which this worker selector expires in UTC.
+                            "status": "str",  # Optional. The status of the worker
+                              selector. Known values are: "active" and "expired".
+                            "value": {}  # Optional. The value to compare against the
+                              actual label value with the given operator.
+                        }
+                    ],
+                    "scheduledAt": "2020-02-20 00:00:00",  # Optional. If set, job will be
+                      scheduled to be enqueued at a given time.
+                    "status": "str",  # Optional. The status of the Job. Known values are:
+                      "pendingClassification", "queued", "assigned", "completed", "closed",
+                      "cancelled", "classificationFailed", "created", "pendingSchedule", "scheduled",
+                      "scheduleFailed", and "waitingForActivation".
+                    "tags": {
+                        "str": {}  # Optional. A set of non-identifying attributes attached
+                          to this job.
+                    }
+                }
         """
 
     @distributed_trace
-    def upsert_job(self, id: str, patch: Union[_models.RouterJob, IO], **kwargs: Any) -> _models.RouterJob:
+    def upsert_job(self, id: str, patch: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Creates or updates a router job.
 
         Creates or updates a router job.
@@ -2240,15 +4159,211 @@ class JobRouterOperations:
         :param id: Id of the job. Required.
         :type id: str
         :param patch: Model of job properties to be created or patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386. Is either a RouterJob type or a IO type.
-         Required.
-        :type patch: ~azure.communication.jobrouter.models.RouterJob or IO
+         https://datatracker.ietf.org/doc/html/rfc7386. Is either a JSON type or a IO type. Required.
+        :type patch: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
-        :return: RouterJob
-        :rtype: ~azure.communication.jobrouter.models.RouterJob
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                patch = {
+                    "assignments": {
+                        "str": {
+                            "assignedAt": "2020-02-20 00:00:00",  # The assignment time
+                              of the job in UTC. Required.
+                            "assignmentId": "str",  # The Id of the job assignment.
+                              Required.
+                            "closedAt": "2020-02-20 00:00:00",  # Optional. The time the
+                              job was marked as closed after being completed in UTC.
+                            "completedAt": "2020-02-20 00:00:00",  # Optional. The time
+                              the job was marked as completed after being assigned in UTC.
+                            "workerId": "str"  # Optional. The Id of the Worker assigned
+                              to the job.
+                        }
+                    },
+                    "attachedWorkerSelectors": [
+                        {
+                            "key": "str",  # The label key to query against. Required.
+                            "labelOperator": "str",  # Describes how the value of the
+                              label is compared to the value defined on the label selector. Required.
+                              Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+                              "greaterThan", and "greaterThanEqual".
+                            "expedite": bool,  # Optional. Pushes the job to the front of
+                              the queue as long as this selector is active.
+                            "expiresAfterSeconds": 0.0,  # Optional. Describes how long
+                              this label selector is valid in seconds.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time at
+                              which this worker selector expires in UTC.
+                            "status": "str",  # Optional. The status of the worker
+                              selector. Known values are: "active" and "expired".
+                            "value": {}  # Optional. The value to compare against the
+                              actual label value with the given operator.
+                        }
+                    ],
+                    "channelId": "str",  # Optional. The channel identifier. eg. voice, chat,
+                      etc.
+                    "channelReference": "str",  # Optional. Reference to an external parent
+                      context, eg. call ID.
+                    "classificationPolicyId": "str",  # Optional. The Id of the Classification
+                      policy used for classifying a job.
+                    "dispositionCode": "str",  # Optional. Reason code for cancelled or closed
+                      jobs.
+                    "enqueuedAt": "2020-02-20 00:00:00",  # Optional. The time a job was queued
+                      in UTC.
+                    "id": "str",  # Optional. The id of the job.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "matchingMode": {
+                        "modeType": "str",  # Optional. Known values are:
+                          "queueAndMatchMode", "scheduleAndSuspendMode", and "suspendMode".
+                        "queueAndMatchMode": {},  # Optional. Any object.
+                        "scheduleAndSuspendMode": {
+                            "scheduleAt": "2020-02-20 00:00:00"  # Optional.
+                        },
+                        "suspendMode": {}  # Optional. Any object.
+                    },
+                    "notes": {
+                        "str": "str"  # Optional. Notes attached to a job, sorted by
+                          timestamp.
+                    },
+                    "priority": 0,  # Optional. The priority of this job.
+                    "queueId": "str",  # Optional. The Id of the Queue that this job is queued
+                      to.
+                    "requestedWorkerSelectors": [
+                        {
+                            "key": "str",  # The label key to query against. Required.
+                            "labelOperator": "str",  # Describes how the value of the
+                              label is compared to the value defined on the label selector. Required.
+                              Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+                              "greaterThan", and "greaterThanEqual".
+                            "expedite": bool,  # Optional. Pushes the job to the front of
+                              the queue as long as this selector is active.
+                            "expiresAfterSeconds": 0.0,  # Optional. Describes how long
+                              this label selector is valid in seconds.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time at
+                              which this worker selector expires in UTC.
+                            "status": "str",  # Optional. The status of the worker
+                              selector. Known values are: "active" and "expired".
+                            "value": {}  # Optional. The value to compare against the
+                              actual label value with the given operator.
+                        }
+                    ],
+                    "scheduledAt": "2020-02-20 00:00:00",  # Optional. If set, job will be
+                      scheduled to be enqueued at a given time.
+                    "status": "str",  # Optional. The status of the Job. Known values are:
+                      "pendingClassification", "queued", "assigned", "completed", "closed",
+                      "cancelled", "classificationFailed", "created", "pendingSchedule", "scheduled",
+                      "scheduleFailed", and "waitingForActivation".
+                    "tags": {
+                        "str": {}  # Optional. A set of non-identifying attributes attached
+                          to this job.
+                    }
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "assignments": {
+                        "str": {
+                            "assignedAt": "2020-02-20 00:00:00",  # The assignment time
+                              of the job in UTC. Required.
+                            "assignmentId": "str",  # The Id of the job assignment.
+                              Required.
+                            "closedAt": "2020-02-20 00:00:00",  # Optional. The time the
+                              job was marked as closed after being completed in UTC.
+                            "completedAt": "2020-02-20 00:00:00",  # Optional. The time
+                              the job was marked as completed after being assigned in UTC.
+                            "workerId": "str"  # Optional. The Id of the Worker assigned
+                              to the job.
+                        }
+                    },
+                    "attachedWorkerSelectors": [
+                        {
+                            "key": "str",  # The label key to query against. Required.
+                            "labelOperator": "str",  # Describes how the value of the
+                              label is compared to the value defined on the label selector. Required.
+                              Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+                              "greaterThan", and "greaterThanEqual".
+                            "expedite": bool,  # Optional. Pushes the job to the front of
+                              the queue as long as this selector is active.
+                            "expiresAfterSeconds": 0.0,  # Optional. Describes how long
+                              this label selector is valid in seconds.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time at
+                              which this worker selector expires in UTC.
+                            "status": "str",  # Optional. The status of the worker
+                              selector. Known values are: "active" and "expired".
+                            "value": {}  # Optional. The value to compare against the
+                              actual label value with the given operator.
+                        }
+                    ],
+                    "channelId": "str",  # Optional. The channel identifier. eg. voice, chat,
+                      etc.
+                    "channelReference": "str",  # Optional. Reference to an external parent
+                      context, eg. call ID.
+                    "classificationPolicyId": "str",  # Optional. The Id of the Classification
+                      policy used for classifying a job.
+                    "dispositionCode": "str",  # Optional. Reason code for cancelled or closed
+                      jobs.
+                    "enqueuedAt": "2020-02-20 00:00:00",  # Optional. The time a job was queued
+                      in UTC.
+                    "id": "str",  # Optional. The id of the job.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "matchingMode": {
+                        "modeType": "str",  # Optional. Known values are:
+                          "queueAndMatchMode", "scheduleAndSuspendMode", and "suspendMode".
+                        "queueAndMatchMode": {},  # Optional. Any object.
+                        "scheduleAndSuspendMode": {
+                            "scheduleAt": "2020-02-20 00:00:00"  # Optional.
+                        },
+                        "suspendMode": {}  # Optional. Any object.
+                    },
+                    "notes": {
+                        "str": "str"  # Optional. Notes attached to a job, sorted by
+                          timestamp.
+                    },
+                    "priority": 0,  # Optional. The priority of this job.
+                    "queueId": "str",  # Optional. The Id of the Queue that this job is queued
+                      to.
+                    "requestedWorkerSelectors": [
+                        {
+                            "key": "str",  # The label key to query against. Required.
+                            "labelOperator": "str",  # Describes how the value of the
+                              label is compared to the value defined on the label selector. Required.
+                              Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+                              "greaterThan", and "greaterThanEqual".
+                            "expedite": bool,  # Optional. Pushes the job to the front of
+                              the queue as long as this selector is active.
+                            "expiresAfterSeconds": 0.0,  # Optional. Describes how long
+                              this label selector is valid in seconds.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time at
+                              which this worker selector expires in UTC.
+                            "status": "str",  # Optional. The status of the worker
+                              selector. Known values are: "active" and "expired".
+                            "value": {}  # Optional. The value to compare against the
+                              actual label value with the given operator.
+                        }
+                    ],
+                    "scheduledAt": "2020-02-20 00:00:00",  # Optional. If set, job will be
+                      scheduled to be enqueued at a given time.
+                    "status": "str",  # Optional. The status of the Job. Known values are:
+                      "pendingClassification", "queued", "assigned", "completed", "closed",
+                      "cancelled", "classificationFailed", "created", "pendingSchedule", "scheduled",
+                      "scheduleFailed", and "waitingForActivation".
+                    "tags": {
+                        "str": {}  # Optional. A set of non-identifying attributes attached
+                          to this job.
+                    }
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -2262,7 +4377,7 @@ class JobRouterOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RouterJob] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -2270,7 +4385,7 @@ class JobRouterOperations:
         if isinstance(patch, (IOBase, bytes)):
             _content = patch
         else:
-            _json = self._serialize.body(patch, "RouterJob")
+            _json = patch
 
         request = build_job_router_upsert_job_request(
             id=id,
@@ -2293,29 +4408,138 @@ class JobRouterOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("RouterJob", pipeline_response)
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 201:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def get_job(self, id: str, **kwargs: Any) -> _models.RouterJob:
+    def get_job(self, id: str, **kwargs: Any) -> JSON:
         """Retrieves an existing job by Id.
 
         Retrieves an existing job by Id.
 
         :param id: Id of the job to retrieve. Required.
         :type id: str
-        :return: RouterJob
-        :rtype: ~azure.communication.jobrouter.models.RouterJob
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "assignments": {
+                        "str": {
+                            "assignedAt": "2020-02-20 00:00:00",  # The assignment time
+                              of the job in UTC. Required.
+                            "assignmentId": "str",  # The Id of the job assignment.
+                              Required.
+                            "closedAt": "2020-02-20 00:00:00",  # Optional. The time the
+                              job was marked as closed after being completed in UTC.
+                            "completedAt": "2020-02-20 00:00:00",  # Optional. The time
+                              the job was marked as completed after being assigned in UTC.
+                            "workerId": "str"  # Optional. The Id of the Worker assigned
+                              to the job.
+                        }
+                    },
+                    "attachedWorkerSelectors": [
+                        {
+                            "key": "str",  # The label key to query against. Required.
+                            "labelOperator": "str",  # Describes how the value of the
+                              label is compared to the value defined on the label selector. Required.
+                              Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+                              "greaterThan", and "greaterThanEqual".
+                            "expedite": bool,  # Optional. Pushes the job to the front of
+                              the queue as long as this selector is active.
+                            "expiresAfterSeconds": 0.0,  # Optional. Describes how long
+                              this label selector is valid in seconds.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time at
+                              which this worker selector expires in UTC.
+                            "status": "str",  # Optional. The status of the worker
+                              selector. Known values are: "active" and "expired".
+                            "value": {}  # Optional. The value to compare against the
+                              actual label value with the given operator.
+                        }
+                    ],
+                    "channelId": "str",  # Optional. The channel identifier. eg. voice, chat,
+                      etc.
+                    "channelReference": "str",  # Optional. Reference to an external parent
+                      context, eg. call ID.
+                    "classificationPolicyId": "str",  # Optional. The Id of the Classification
+                      policy used for classifying a job.
+                    "dispositionCode": "str",  # Optional. Reason code for cancelled or closed
+                      jobs.
+                    "enqueuedAt": "2020-02-20 00:00:00",  # Optional. The time a job was queued
+                      in UTC.
+                    "id": "str",  # Optional. The id of the job.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "matchingMode": {
+                        "modeType": "str",  # Optional. Known values are:
+                          "queueAndMatchMode", "scheduleAndSuspendMode", and "suspendMode".
+                        "queueAndMatchMode": {},  # Optional. Any object.
+                        "scheduleAndSuspendMode": {
+                            "scheduleAt": "2020-02-20 00:00:00"  # Optional.
+                        },
+                        "suspendMode": {}  # Optional. Any object.
+                    },
+                    "notes": {
+                        "str": "str"  # Optional. Notes attached to a job, sorted by
+                          timestamp.
+                    },
+                    "priority": 0,  # Optional. The priority of this job.
+                    "queueId": "str",  # Optional. The Id of the Queue that this job is queued
+                      to.
+                    "requestedWorkerSelectors": [
+                        {
+                            "key": "str",  # The label key to query against. Required.
+                            "labelOperator": "str",  # Describes how the value of the
+                              label is compared to the value defined on the label selector. Required.
+                              Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
+                              "greaterThan", and "greaterThanEqual".
+                            "expedite": bool,  # Optional. Pushes the job to the front of
+                              the queue as long as this selector is active.
+                            "expiresAfterSeconds": 0.0,  # Optional. Describes how long
+                              this label selector is valid in seconds.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time at
+                              which this worker selector expires in UTC.
+                            "status": "str",  # Optional. The status of the worker
+                              selector. Known values are: "active" and "expired".
+                            "value": {}  # Optional. The value to compare against the
+                              actual label value with the given operator.
+                        }
+                    ],
+                    "scheduledAt": "2020-02-20 00:00:00",  # Optional. If set, job will be
+                      scheduled to be enqueued at a given time.
+                    "status": "str",  # Optional. The status of the Job. Known values are:
+                      "pendingClassification", "queued", "assigned", "completed", "closed",
+                      "cancelled", "classificationFailed", "created", "pendingSchedule", "scheduled",
+                      "scheduleFailed", and "waitingForActivation".
+                    "tags": {
+                        "str": {}  # Optional. A set of non-identifying attributes attached
+                          to this job.
+                    }
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -2328,7 +4552,7 @@ class JobRouterOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.RouterJob] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         request = build_job_router_get_job_request(
             id=id,
@@ -2350,15 +4574,17 @@ class JobRouterOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("RouterJob", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     @distributed_trace
     def delete_job(self, id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -2405,8 +4631,7 @@ class JobRouterOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -2440,7 +4665,7 @@ class JobRouterOperations:
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         if reclassify_job_request is not None:
-            _json = self._serialize.body(reclassify_job_request, "object")
+            _json = reclassify_job_request
         else:
             _json = None
 
@@ -2466,21 +4691,23 @@ class JobRouterOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("object", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     @overload
     def cancel_job_action(
         self,
         id: str,
-        cancel_job_request: Optional[_models.CancelJobRequest] = None,
+        cancel_job_request: Optional[JSON] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2492,13 +4719,25 @@ class JobRouterOperations:
         :param id: Id of the job. Required.
         :type id: str
         :param cancel_job_request: Request model for cancelling job. Default value is None.
-        :type cancel_job_request: ~azure.communication.jobrouter.models.CancelJobRequest
+        :type cancel_job_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: JSON
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                cancel_job_request = {
+                    "dispositionCode": "str",  # Optional. Indicates the outcome of the job,
+                      populate this field with your own custom values."nIf not provided, default value
+                      of "Cancelled" is set.
+                    "note": "str"  # Optional. (Optional) A note that will be appended to the
+                      jobs' Notes collection with the current timestamp.
+                }
         """
 
     @overload
@@ -2522,24 +4761,34 @@ class JobRouterOperations:
         """
 
     @distributed_trace
-    def cancel_job_action(
-        self, id: str, cancel_job_request: Optional[Union[_models.CancelJobRequest, IO]] = None, **kwargs: Any
-    ) -> JSON:
+    def cancel_job_action(self, id: str, cancel_job_request: Optional[Union[JSON, IO]] = None, **kwargs: Any) -> JSON:
         """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
         Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
         :param id: Id of the job. Required.
         :type id: str
-        :param cancel_job_request: Request model for cancelling job. Is either a CancelJobRequest type
-         or a IO type. Default value is None.
-        :type cancel_job_request: ~azure.communication.jobrouter.models.CancelJobRequest or IO
+        :param cancel_job_request: Request model for cancelling job. Is either a JSON type or a IO
+         type. Default value is None.
+        :type cancel_job_request: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :return: JSON
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                cancel_job_request = {
+                    "dispositionCode": "str",  # Optional. Indicates the outcome of the job,
+                      populate this field with your own custom values."nIf not provided, default value
+                      of "Cancelled" is set.
+                    "note": "str"  # Optional. (Optional) A note that will be appended to the
+                      jobs' Notes collection with the current timestamp.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -2562,7 +4811,7 @@ class JobRouterOperations:
             _content = cancel_job_request
         else:
             if cancel_job_request is not None:
-                _json = self._serialize.body(cancel_job_request, "CancelJobRequest")
+                _json = cancel_job_request
             else:
                 _json = None
 
@@ -2589,24 +4838,21 @@ class JobRouterOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("object", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     @overload
     def complete_job_action(
-        self,
-        id: str,
-        complete_job_request: _models.CompleteJobRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, id: str, complete_job_request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         """Completes an assigned job.
 
@@ -2615,13 +4861,24 @@ class JobRouterOperations:
         :param id: Id of the job. Required.
         :type id: str
         :param complete_job_request: Request model for completing job. Required.
-        :type complete_job_request: ~azure.communication.jobrouter.models.CompleteJobRequest
+        :type complete_job_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: JSON
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                complete_job_request = {
+                    "assignmentId": "str",  # The assignment within the job to complete.
+                      Required.
+                    "note": "str"  # Optional. (Optional) A note that will be appended to the
+                      jobs' Notes collection with the current timestamp.
+                }
         """
 
     @overload
@@ -2645,24 +4902,33 @@ class JobRouterOperations:
         """
 
     @distributed_trace
-    def complete_job_action(
-        self, id: str, complete_job_request: Union[_models.CompleteJobRequest, IO], **kwargs: Any
-    ) -> JSON:
+    def complete_job_action(self, id: str, complete_job_request: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Completes an assigned job.
 
         Completes an assigned job.
 
         :param id: Id of the job. Required.
         :type id: str
-        :param complete_job_request: Request model for completing job. Is either a CompleteJobRequest
-         type or a IO type. Required.
-        :type complete_job_request: ~azure.communication.jobrouter.models.CompleteJobRequest or IO
+        :param complete_job_request: Request model for completing job. Is either a JSON type or a IO
+         type. Required.
+        :type complete_job_request: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :return: JSON
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                complete_job_request = {
+                    "assignmentId": "str",  # The assignment within the job to complete.
+                      Required.
+                    "note": "str"  # Optional. (Optional) A note that will be appended to the
+                      jobs' Notes collection with the current timestamp.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -2684,7 +4950,7 @@ class JobRouterOperations:
         if isinstance(complete_job_request, (IOBase, bytes)):
             _content = complete_job_request
         else:
-            _json = self._serialize.body(complete_job_request, "CompleteJobRequest")
+            _json = complete_job_request
 
         request = build_job_router_complete_job_action_request(
             id=id,
@@ -2709,24 +4975,21 @@ class JobRouterOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("object", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     @overload
     def close_job_action(
-        self,
-        id: str,
-        close_job_request: _models.CloseJobRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, id: str, close_job_request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         """Closes a completed job.
 
@@ -2735,13 +4998,30 @@ class JobRouterOperations:
         :param id: Id of the job. Required.
         :type id: str
         :param close_job_request: Request model for closing job. Required.
-        :type close_job_request: ~azure.communication.jobrouter.models.CloseJobRequest
+        :type close_job_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: JSON
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                close_job_request = {
+                    "assignmentId": "str",  # The assignment within which the job is to be
+                      closed. Required.
+                    "closeAt": "2020-02-20 00:00:00",  # Optional. If not provided, worker
+                      capacity is released immediately along with a JobClosedEvent notification."nIf
+                      provided, worker capacity is released along with a JobClosedEvent notification at
+                      a future time in UTC.
+                    "dispositionCode": "str",  # Optional. Indicates the outcome of the job,
+                      populate this field with your own custom values.
+                    "note": "str"  # Optional. (Optional) A note that will be appended to the
+                      jobs' Notes collection with the current timestamp.
+                }
         """
 
     @overload
@@ -2765,22 +5045,39 @@ class JobRouterOperations:
         """
 
     @distributed_trace
-    def close_job_action(self, id: str, close_job_request: Union[_models.CloseJobRequest, IO], **kwargs: Any) -> JSON:
+    def close_job_action(self, id: str, close_job_request: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Closes a completed job.
 
         Closes a completed job.
 
         :param id: Id of the job. Required.
         :type id: str
-        :param close_job_request: Request model for closing job. Is either a CloseJobRequest type or a
-         IO type. Required.
-        :type close_job_request: ~azure.communication.jobrouter.models.CloseJobRequest or IO
+        :param close_job_request: Request model for closing job. Is either a JSON type or a IO type.
+         Required.
+        :type close_job_request: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :return: JSON
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                close_job_request = {
+                    "assignmentId": "str",  # The assignment within which the job is to be
+                      closed. Required.
+                    "closeAt": "2020-02-20 00:00:00",  # Optional. If not provided, worker
+                      capacity is released immediately along with a JobClosedEvent notification."nIf
+                      provided, worker capacity is released along with a JobClosedEvent notification at
+                      a future time in UTC.
+                    "dispositionCode": "str",  # Optional. Indicates the outcome of the job,
+                      populate this field with your own custom values.
+                    "note": "str"  # Optional. (Optional) A note that will be appended to the
+                      jobs' Notes collection with the current timestamp.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -2802,7 +5099,7 @@ class JobRouterOperations:
         if isinstance(close_job_request, (IOBase, bytes)):
             _content = close_job_request
         else:
-            _json = self._serialize.body(close_job_request, "CloseJobRequest")
+            _json = close_job_request
 
         request = build_job_router_close_job_action_request(
             id=id,
@@ -2827,62 +5124,173 @@ class JobRouterOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("object", pipeline_response)
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if response.status_code == 202:
-            deserialized = self._deserialize("object", pipeline_response)
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def list_jobs(
         self,
         *,
-        status: Union[str, _models.JobStateSelector] = "all",
+        status: str = "all",
         queue_id: Optional[str] = None,
         channel_id: Optional[str] = None,
         classification_policy_id: Optional[str] = None,
         scheduled_before: Optional[datetime.datetime] = None,
         scheduled_after: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> Iterable["_models.RouterJobItem"]:
+    ) -> Iterable[JSON]:
         """Retrieves list of jobs based on filter parameters.
 
         Retrieves list of jobs based on filter parameters.
 
-        :keyword status: (Optional) If specified, filter jobs by status. Known values are: "all",
+        :keyword status: If specified, filter jobs by status. Known values are: "all",
          "pendingClassification", "queued", "assigned", "completed", "closed", "cancelled",
          "classificationFailed", "created", "pendingSchedule", "scheduled", "scheduleFailed",
          "waitingForActivation", and "active". Default value is "all".
-        :paramtype status: str or ~azure.communication.jobrouter.models.JobStateSelector
-        :keyword queue_id: (Optional) If specified, filter jobs by queue. Default value is None.
+        :paramtype status: str
+        :keyword queue_id: If specified, filter jobs by queue. Default value is None.
         :paramtype queue_id: str
-        :keyword channel_id: (Optional) If specified, filter jobs by channel. Default value is None.
+        :keyword channel_id: If specified, filter jobs by channel. Default value is None.
         :paramtype channel_id: str
-        :keyword classification_policy_id: (Optional) If specified, filter jobs by
-         classificationPolicy. Default value is None.
+        :keyword classification_policy_id: If specified, filter jobs by classificationPolicy. Default
+         value is None.
         :paramtype classification_policy_id: str
-        :keyword scheduled_before: (Optional) If specified, filter on jobs that was scheduled before or
-         at given timestamp. Range: (-Inf, scheduledBefore]. Default value is None.
+        :keyword scheduled_before: If specified, filter on jobs that was scheduled before or at given
+         timestamp. Range: (-Inf, scheduledBefore]. Default value is None.
         :paramtype scheduled_before: ~datetime.datetime
-        :keyword scheduled_after: (Optional) If specified, filter on jobs that was scheduled at or
-         after given value. Range: [scheduledAfter, +Inf). Default value is None.
+        :keyword scheduled_after: If specified, filter on jobs that was scheduled at or after given
+         value. Range: [scheduledAfter, +Inf). Default value is None.
         :paramtype scheduled_after: ~datetime.datetime
-        :return: An iterator like instance of RouterJobItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.RouterJobItem]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "etag": "str",  # Optional. (Optional) The Concurrency Token.
+                    "job": {
+                        "assignments": {
+                            "str": {
+                                "assignedAt": "2020-02-20 00:00:00",  # The
+                                  assignment time of the job in UTC. Required.
+                                "assignmentId": "str",  # The Id of the job
+                                  assignment. Required.
+                                "closedAt": "2020-02-20 00:00:00",  # Optional. The
+                                  time the job was marked as closed after being completed in UTC.
+                                "completedAt": "2020-02-20 00:00:00",  # Optional.
+                                  The time the job was marked as completed after being assigned in UTC.
+                                "workerId": "str"  # Optional. The Id of the Worker
+                                  assigned to the job.
+                            }
+                        },
+                        "attachedWorkerSelectors": [
+                            {
+                                "key": "str",  # The label key to query against.
+                                  Required.
+                                "labelOperator": "str",  # Describes how the value of
+                                  the label is compared to the value defined on the label selector.
+                                  Required. Known values are: "equal", "notEqual", "lessThan",
+                                  "lessThanEqual", "greaterThan", and "greaterThanEqual".
+                                "expedite": bool,  # Optional. Pushes the job to the
+                                  front of the queue as long as this selector is active.
+                                "expiresAfterSeconds": 0.0,  # Optional. Describes
+                                  how long this label selector is valid in seconds.
+                                "expiresAt": "2020-02-20 00:00:00",  # Optional. The
+                                  time at which this worker selector expires in UTC.
+                                "status": "str",  # Optional. The status of the
+                                  worker selector. Known values are: "active" and "expired".
+                                "value": {}  # Optional. The value to compare against
+                                  the actual label value with the given operator.
+                            }
+                        ],
+                        "channelId": "str",  # Optional. The channel identifier. eg. voice,
+                          chat, etc.
+                        "channelReference": "str",  # Optional. Reference to an external
+                          parent context, eg. call ID.
+                        "classificationPolicyId": "str",  # Optional. The Id of the
+                          Classification policy used for classifying a job.
+                        "dispositionCode": "str",  # Optional. Reason code for cancelled or
+                          closed jobs.
+                        "enqueuedAt": "2020-02-20 00:00:00",  # Optional. The time a job was
+                          queued in UTC.
+                        "id": "str",  # Optional. The id of the job.
+                        "labels": {
+                            "str": {}  # Optional. A set of key/value pairs that are
+                              identifying attributes used by the rules engines to make decisions.
+                        },
+                        "matchingMode": {
+                            "modeType": "str",  # Optional. Known values are:
+                              "queueAndMatchMode", "scheduleAndSuspendMode", and "suspendMode".
+                            "queueAndMatchMode": {},  # Optional. Any object.
+                            "scheduleAndSuspendMode": {
+                                "scheduleAt": "2020-02-20 00:00:00"  # Optional. A
+                                  unit of work to be routed.
+                            },
+                            "suspendMode": {}  # Optional. Any object.
+                        },
+                        "notes": {
+                            "str": "str"  # Optional. Notes attached to a job, sorted by
+                              timestamp.
+                        },
+                        "priority": 0,  # Optional. The priority of this job.
+                        "queueId": "str",  # Optional. The Id of the Queue that this job is
+                          queued to.
+                        "requestedWorkerSelectors": [
+                            {
+                                "key": "str",  # The label key to query against.
+                                  Required.
+                                "labelOperator": "str",  # Describes how the value of
+                                  the label is compared to the value defined on the label selector.
+                                  Required. Known values are: "equal", "notEqual", "lessThan",
+                                  "lessThanEqual", "greaterThan", and "greaterThanEqual".
+                                "expedite": bool,  # Optional. Pushes the job to the
+                                  front of the queue as long as this selector is active.
+                                "expiresAfterSeconds": 0.0,  # Optional. Describes
+                                  how long this label selector is valid in seconds.
+                                "expiresAt": "2020-02-20 00:00:00",  # Optional. The
+                                  time at which this worker selector expires in UTC.
+                                "status": "str",  # Optional. The status of the
+                                  worker selector. Known values are: "active" and "expired".
+                                "value": {}  # Optional. The value to compare against
+                                  the actual label value with the given operator.
+                            }
+                        ],
+                        "scheduledAt": "2020-02-20 00:00:00",  # Optional. If set, job will
+                          be scheduled to be enqueued at a given time.
+                        "status": "str",  # Optional. The status of the Job. Known values
+                          are: "pendingClassification", "queued", "assigned", "completed", "closed",
+                          "cancelled", "classificationFailed", "created", "pendingSchedule",
+                          "scheduled", "scheduleFailed", and "waitingForActivation".
+                        "tags": {
+                            "str": {}  # Optional. A set of non-identifying attributes
+                              attached to this job.
+                        }
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.JobCollection] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -2936,13 +5344,11 @@ class JobRouterOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize(
-                _models._models.JobCollection, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -2955,24 +5361,38 @@ class JobRouterOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_in_queue_position(self, id: str, **kwargs: Any) -> _models.JobPositionDetails:
+    def get_in_queue_position(self, id: str, **kwargs: Any) -> JSON:
         """Gets a job's position details.
 
         Gets a job's position details.
 
         :param id: Id of the job. Required.
         :type id: str
-        :return: JobPositionDetails
-        :rtype: ~azure.communication.jobrouter.models.JobPositionDetails
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "estimatedWaitTimeMinutes": 0.0,  # Estimated wait time of the job rounded up
+                      to the nearest minute. Required.
+                    "jobId": "str",  # Id of the job these details are about. Required.
+                    "position": 0,  # Position of the job in question within that queue.
+                      Required.
+                    "queueId": "str",  # Id of the queue this job is enqueued in. Required.
+                    "queueLength": 0  # Length of the queue: total number of enqueued jobs.
+                      Required.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -2985,7 +5405,7 @@ class JobRouterOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.JobPositionDetails] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         request = build_job_router_get_in_queue_position_request(
             id=id,
@@ -3007,18 +5427,28 @@ class JobRouterOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("JobPositionDetails", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
-    @distributed_trace
-    def unassign_job_action(self, id: str, assignment_id: str, **kwargs: Any) -> _models.UnassignJobResult:
+    @overload
+    def unassign_job_action(
+        self,
+        id: str,
+        assignment_id: str,
+        unassign_job_request: Optional[JSON] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> JSON:
         """Un-assign a job.
 
         Un-assign a job.
@@ -3027,9 +5457,107 @@ class JobRouterOperations:
         :type id: str
         :param assignment_id: Id of the assignment to un-assign. Required.
         :type assignment_id: str
-        :return: UnassignJobResult
-        :rtype: ~azure.communication.jobrouter.models.UnassignJobResult
+        :param unassign_job_request: Request body for unassign route. Default value is None.
+        :type unassign_job_request: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                unassign_job_request = {
+                    "suspendMatching": bool  # Optional. If WaitForActivation is true, then the
+                      job is not queued for re-matching with a worker.
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "jobId": "str",  # The Id of the job unassigned. Required.
+                    "unassignmentCount": 0  # The number of times a job is unassigned. At a
+                      maximum 3. Required.
+                }
+        """
+
+    @overload
+    def unassign_job_action(
+        self,
+        id: str,
+        assignment_id: str,
+        unassign_job_request: Optional[IO] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> JSON:
+        """Un-assign a job.
+
+        Un-assign a job.
+
+        :param id: Id of the job to un-assign. Required.
+        :type id: str
+        :param assignment_id: Id of the assignment to un-assign. Required.
+        :type assignment_id: str
+        :param unassign_job_request: Request body for unassign route. Default value is None.
+        :type unassign_job_request: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "jobId": "str",  # The Id of the job unassigned. Required.
+                    "unassignmentCount": 0  # The number of times a job is unassigned. At a
+                      maximum 3. Required.
+                }
+        """
+
+    @distributed_trace
+    def unassign_job_action(
+        self, id: str, assignment_id: str, unassign_job_request: Optional[Union[JSON, IO]] = None, **kwargs: Any
+    ) -> JSON:
+        """Un-assign a job.
+
+        Un-assign a job.
+
+        :param id: Id of the job to un-assign. Required.
+        :type id: str
+        :param assignment_id: Id of the assignment to un-assign. Required.
+        :type assignment_id: str
+        :param unassign_job_request: Request body for unassign route. Is either a JSON type or a IO
+         type. Default value is None.
+        :type unassign_job_request: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                unassign_job_request = {
+                    "suspendMatching": bool  # Optional. If WaitForActivation is true, then the
+                      job is not queued for re-matching with a worker.
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "jobId": "str",  # The Id of the job unassigned. Required.
+                    "unassignmentCount": 0  # The number of times a job is unassigned. At a
+                      maximum 3. Required.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -3039,15 +5567,30 @@ class JobRouterOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.UnassignJobResult] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(unassign_job_request, (IOBase, bytes)):
+            _content = unassign_job_request
+        else:
+            if unassign_job_request is not None:
+                _json = unassign_job_request
+            else:
+                _json = None
 
         request = build_job_router_unassign_job_action_request(
             id=id,
             assignment_id=assignment_id,
+            content_type=content_type,
             api_version=self._config.api_version,
+            json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -3065,18 +5608,20 @@ class JobRouterOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("UnassignJobResult", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     @distributed_trace
-    def accept_job_action(self, worker_id: str, offer_id: str, **kwargs: Any) -> _models.AcceptJobOfferResult:
+    def accept_job_action(self, worker_id: str, offer_id: str, **kwargs: Any) -> JSON:
         """Accepts an offer to work on a job and returns a 409/Conflict if another agent accepted the job
         already.
 
@@ -3087,9 +5632,21 @@ class JobRouterOperations:
         :type worker_id: str
         :param offer_id: Id of the offer. Required.
         :type offer_id: str
-        :return: AcceptJobOfferResult
-        :rtype: ~azure.communication.jobrouter.models.AcceptJobOfferResult
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "assignmentId": "str",  # The assignment Id that assigns a worker that has
+                      accepted an offer to a job. Required.
+                    "jobId": "str",  # The Id of the job assigned. Required.
+                    "workerId": "str"  # The Id of the worker that has been assigned this job.
+                      Required.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -3102,7 +5659,7 @@ class JobRouterOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AcceptJobOfferResult] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         request = build_job_router_accept_job_action_request(
             worker_id=worker_id,
@@ -3125,22 +5682,24 @@ class JobRouterOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("AcceptJobOfferResult", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     @overload
     def decline_job_action(
         self,
         worker_id: str,
         offer_id: str,
-        decline_job_offer_request: Optional[_models.DeclineJobOfferRequest] = None,
+        decline_job_offer_request: Optional[JSON] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3154,13 +5713,26 @@ class JobRouterOperations:
         :param offer_id: Id of the offer. Required.
         :type offer_id: str
         :param decline_job_offer_request: Request model for declining offer. Default value is None.
-        :type decline_job_offer_request: ~azure.communication.jobrouter.models.DeclineJobOfferRequest
+        :type decline_job_offer_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: JSON
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                decline_job_offer_request = {
+                    "retryOfferAt": "2020-02-20 00:00:00"  # Optional. If the RetryOfferAt is not
+                      provided, then this job will not be offered again to the worker who declined this
+                      job unless"nthe worker is de-registered and re-registered.  If a RetryOfferAt
+                      time is provided, then the job will be re-matched to"neligible workers at the
+                      retry time in UTC.  The worker that declined the job will also be eligible for
+                      the job at that time.
+                }
         """
 
     @overload
@@ -3184,8 +5756,7 @@ class JobRouterOperations:
         :param decline_job_offer_request: Request model for declining offer. Default value is None.
         :type decline_job_offer_request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Known values are: 'application/*+json', 'application/json', 'text/json'. Default value is
-         "application/json".
+         Default value is "application/json".
         :paramtype content_type: str
         :return: JSON
         :rtype: JSON
@@ -3194,11 +5765,7 @@ class JobRouterOperations:
 
     @distributed_trace
     def decline_job_action(
-        self,
-        worker_id: str,
-        offer_id: str,
-        decline_job_offer_request: Optional[Union[_models.DeclineJobOfferRequest, IO]] = None,
-        **kwargs: Any
+        self, worker_id: str, offer_id: str, decline_job_offer_request: Optional[Union[JSON, IO]] = None, **kwargs: Any
     ) -> JSON:
         """Declines an offer to work on a job.
 
@@ -3208,16 +5775,28 @@ class JobRouterOperations:
         :type worker_id: str
         :param offer_id: Id of the offer. Required.
         :type offer_id: str
-        :param decline_job_offer_request: Request model for declining offer. Is either a
-         DeclineJobOfferRequest type or a IO type. Default value is None.
-        :type decline_job_offer_request: ~azure.communication.jobrouter.models.DeclineJobOfferRequest
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/*+json',
-         'application/json', 'text/json'. Default value is None.
+        :param decline_job_offer_request: Request model for declining offer. Is either a JSON type or a
+         IO type. Default value is None.
+        :type decline_job_offer_request: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
         :paramtype content_type: str
         :return: JSON
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                decline_job_offer_request = {
+                    "retryOfferAt": "2020-02-20 00:00:00"  # Optional. If the RetryOfferAt is not
+                      provided, then this job will not be offered again to the worker who declined this
+                      job unless"nthe worker is de-registered and re-registered.  If a RetryOfferAt
+                      time is provided, then the job will be re-matched to"neligible workers at the
+                      retry time in UTC.  The worker that declined the job will also be eligible for
+                      the job at that time.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -3240,7 +5819,7 @@ class JobRouterOperations:
             _content = decline_job_offer_request
         else:
             if decline_job_offer_request is not None:
-                _json = self._serialize.body(decline_job_offer_request, "DeclineJobOfferRequest")
+                _json = decline_job_offer_request
             else:
                 _json = None
 
@@ -3268,27 +5847,44 @@ class JobRouterOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("object", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     @distributed_trace
-    def get_queue_statistics(self, id: str, **kwargs: Any) -> _models.QueueStatistics:
+    def get_queue_statistics(self, id: str, **kwargs: Any) -> JSON:
         """Retrieves a queue's statistics.
 
         Retrieves a queue's statistics.
 
         :param id: Id of the queue to retrieve statistics. Required.
         :type id: str
-        :return: QueueStatistics
-        :rtype: ~azure.communication.jobrouter.models.QueueStatistics
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "length": 0,  # Length of the queue: total number of enqueued jobs. Required.
+                    "queueId": "str",  # Id of the queue these details are about. Required.
+                    "estimatedWaitTimeMinutes": {
+                        "str": 0.0  # Optional. The estimated wait time of this queue rounded
+                          up to the nearest minute, grouped by job priority.
+                    },
+                    "longestJobWaitTimeMinutes": 0.0  # Optional. The wait time of the job that
+                      has been enqueued in this queue for the longest.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -3301,7 +5897,7 @@ class JobRouterOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.QueueStatistics] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         request = build_job_router_get_queue_statistics_request(
             id=id,
@@ -3323,25 +5919,22 @@ class JobRouterOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("QueueStatistics", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     @overload
     def upsert_worker(
-        self,
-        worker_id: str,
-        patch: _models.RouterWorker,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.RouterWorker:
+        self, worker_id: str, patch: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> JSON:
         """Creates or updates a worker.
 
         Creates or updates a worker.
@@ -3350,19 +5943,136 @@ class JobRouterOperations:
         :type worker_id: str
         :param patch: Model of worker properties to be created or patched. See also:
          https://datatracker.ietf.org/doc/html/rfc7386. Required.
-        :type patch: ~azure.communication.jobrouter.models.RouterWorker
+        :type patch: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: RouterWorker
-        :rtype: ~azure.communication.jobrouter.models.RouterWorker
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                patch = {
+                    "assignedJobs": [
+                        {
+                            "assignedAt": "2020-02-20 00:00:00",  # The assignment time
+                              of the job in UTC. Required.
+                            "assignmentId": "str",  # The Id of the assignment. Required.
+                            "capacityCost": 0,  # The amount of capacity this assignment
+                              has consumed on the worker. Required.
+                            "jobId": "str"  # The Id of the Job assigned. Required.
+                        }
+                    ],
+                    "availableForOffers": bool,  # Optional. A flag indicating this worker is
+                      open to receive offers or not.
+                    "channelConfigurations": {
+                        "str": {
+                            "capacityCostPerJob": 0,  # The amount of capacity that an
+                              instance of a job of this channel will consume of the total worker
+                              capacity. Required.
+                            "maxNumberOfJobs": 0  # Optional. The maximum number of jobs
+                              that can be supported concurrently for this channel.
+                        }
+                    },
+                    "id": "str",  # Optional.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "loadRatio": 0.0,  # Optional. A value indicating the workers capacity. A
+                      value of '1' means all capacity is consumed. A value of '0' means no capacity is
+                      currently consumed.
+                    "offers": [
+                        {
+                            "capacityCost": 0,  # The capacity cost consumed by the job
+                              offer. Required.
+                            "jobId": "str",  # The Id of the job. Required.
+                            "offerId": "str",  # The Id of the offer. Required.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time
+                              that the offer will expire in UTC.
+                            "offeredAt": "2020-02-20 00:00:00"  # Optional. The time the
+                              offer was created in UTC.
+                        }
+                    ],
+                    "queueAssignments": {
+                        "str": {}  # Optional. The queue(s) that this worker can receive work
+                          from.
+                    },
+                    "state": "str",  # Optional. The current state of the worker. Known values
+                      are: "active", "draining", and "inactive".
+                    "tags": {
+                        "str": {}  # Optional. A set of non-identifying attributes attached
+                          to this worker.
+                    },
+                    "totalCapacity": 0  # Optional. The total capacity score this worker has to
+                      manage multiple concurrent jobs.
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "assignedJobs": [
+                        {
+                            "assignedAt": "2020-02-20 00:00:00",  # The assignment time
+                              of the job in UTC. Required.
+                            "assignmentId": "str",  # The Id of the assignment. Required.
+                            "capacityCost": 0,  # The amount of capacity this assignment
+                              has consumed on the worker. Required.
+                            "jobId": "str"  # The Id of the Job assigned. Required.
+                        }
+                    ],
+                    "availableForOffers": bool,  # Optional. A flag indicating this worker is
+                      open to receive offers or not.
+                    "channelConfigurations": {
+                        "str": {
+                            "capacityCostPerJob": 0,  # The amount of capacity that an
+                              instance of a job of this channel will consume of the total worker
+                              capacity. Required.
+                            "maxNumberOfJobs": 0  # Optional. The maximum number of jobs
+                              that can be supported concurrently for this channel.
+                        }
+                    },
+                    "id": "str",  # Optional.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "loadRatio": 0.0,  # Optional. A value indicating the workers capacity. A
+                      value of '1' means all capacity is consumed. A value of '0' means no capacity is
+                      currently consumed.
+                    "offers": [
+                        {
+                            "capacityCost": 0,  # The capacity cost consumed by the job
+                              offer. Required.
+                            "jobId": "str",  # The Id of the job. Required.
+                            "offerId": "str",  # The Id of the offer. Required.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time
+                              that the offer will expire in UTC.
+                            "offeredAt": "2020-02-20 00:00:00"  # Optional. The time the
+                              offer was created in UTC.
+                        }
+                    ],
+                    "queueAssignments": {
+                        "str": {}  # Optional. The queue(s) that this worker can receive work
+                          from.
+                    },
+                    "state": "str",  # Optional. The current state of the worker. Known values
+                      are: "active", "draining", and "inactive".
+                    "tags": {
+                        "str": {}  # Optional. A set of non-identifying attributes attached
+                          to this worker.
+                    },
+                    "totalCapacity": 0  # Optional. The total capacity score this worker has to
+                      manage multiple concurrent jobs.
+                }
         """
 
     @overload
     def upsert_worker(
         self, worker_id: str, patch: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.RouterWorker:
+    ) -> JSON:
         """Creates or updates a worker.
 
         Creates or updates a worker.
@@ -3375,15 +6085,73 @@ class JobRouterOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: RouterWorker
-        :rtype: ~azure.communication.jobrouter.models.RouterWorker
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "assignedJobs": [
+                        {
+                            "assignedAt": "2020-02-20 00:00:00",  # The assignment time
+                              of the job in UTC. Required.
+                            "assignmentId": "str",  # The Id of the assignment. Required.
+                            "capacityCost": 0,  # The amount of capacity this assignment
+                              has consumed on the worker. Required.
+                            "jobId": "str"  # The Id of the Job assigned. Required.
+                        }
+                    ],
+                    "availableForOffers": bool,  # Optional. A flag indicating this worker is
+                      open to receive offers or not.
+                    "channelConfigurations": {
+                        "str": {
+                            "capacityCostPerJob": 0,  # The amount of capacity that an
+                              instance of a job of this channel will consume of the total worker
+                              capacity. Required.
+                            "maxNumberOfJobs": 0  # Optional. The maximum number of jobs
+                              that can be supported concurrently for this channel.
+                        }
+                    },
+                    "id": "str",  # Optional.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "loadRatio": 0.0,  # Optional. A value indicating the workers capacity. A
+                      value of '1' means all capacity is consumed. A value of '0' means no capacity is
+                      currently consumed.
+                    "offers": [
+                        {
+                            "capacityCost": 0,  # The capacity cost consumed by the job
+                              offer. Required.
+                            "jobId": "str",  # The Id of the job. Required.
+                            "offerId": "str",  # The Id of the offer. Required.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time
+                              that the offer will expire in UTC.
+                            "offeredAt": "2020-02-20 00:00:00"  # Optional. The time the
+                              offer was created in UTC.
+                        }
+                    ],
+                    "queueAssignments": {
+                        "str": {}  # Optional. The queue(s) that this worker can receive work
+                          from.
+                    },
+                    "state": "str",  # Optional. The current state of the worker. Known values
+                      are: "active", "draining", and "inactive".
+                    "tags": {
+                        "str": {}  # Optional. A set of non-identifying attributes attached
+                          to this worker.
+                    },
+                    "totalCapacity": 0  # Optional. The total capacity score this worker has to
+                      manage multiple concurrent jobs.
+                }
         """
 
     @distributed_trace
-    def upsert_worker(
-        self, worker_id: str, patch: Union[_models.RouterWorker, IO], **kwargs: Any
-    ) -> _models.RouterWorker:
+    def upsert_worker(self, worker_id: str, patch: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Creates or updates a worker.
 
         Creates or updates a worker.
@@ -3391,15 +6159,131 @@ class JobRouterOperations:
         :param worker_id: Id of the worker. Required.
         :type worker_id: str
         :param patch: Model of worker properties to be created or patched. See also:
-         https://datatracker.ietf.org/doc/html/rfc7386. Is either a RouterWorker type or a IO type.
-         Required.
-        :type patch: ~azure.communication.jobrouter.models.RouterWorker or IO
+         https://datatracker.ietf.org/doc/html/rfc7386. Is either a JSON type or a IO type. Required.
+        :type patch: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
-        :return: RouterWorker
-        :rtype: ~azure.communication.jobrouter.models.RouterWorker
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                patch = {
+                    "assignedJobs": [
+                        {
+                            "assignedAt": "2020-02-20 00:00:00",  # The assignment time
+                              of the job in UTC. Required.
+                            "assignmentId": "str",  # The Id of the assignment. Required.
+                            "capacityCost": 0,  # The amount of capacity this assignment
+                              has consumed on the worker. Required.
+                            "jobId": "str"  # The Id of the Job assigned. Required.
+                        }
+                    ],
+                    "availableForOffers": bool,  # Optional. A flag indicating this worker is
+                      open to receive offers or not.
+                    "channelConfigurations": {
+                        "str": {
+                            "capacityCostPerJob": 0,  # The amount of capacity that an
+                              instance of a job of this channel will consume of the total worker
+                              capacity. Required.
+                            "maxNumberOfJobs": 0  # Optional. The maximum number of jobs
+                              that can be supported concurrently for this channel.
+                        }
+                    },
+                    "id": "str",  # Optional.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "loadRatio": 0.0,  # Optional. A value indicating the workers capacity. A
+                      value of '1' means all capacity is consumed. A value of '0' means no capacity is
+                      currently consumed.
+                    "offers": [
+                        {
+                            "capacityCost": 0,  # The capacity cost consumed by the job
+                              offer. Required.
+                            "jobId": "str",  # The Id of the job. Required.
+                            "offerId": "str",  # The Id of the offer. Required.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time
+                              that the offer will expire in UTC.
+                            "offeredAt": "2020-02-20 00:00:00"  # Optional. The time the
+                              offer was created in UTC.
+                        }
+                    ],
+                    "queueAssignments": {
+                        "str": {}  # Optional. The queue(s) that this worker can receive work
+                          from.
+                    },
+                    "state": "str",  # Optional. The current state of the worker. Known values
+                      are: "active", "draining", and "inactive".
+                    "tags": {
+                        "str": {}  # Optional. A set of non-identifying attributes attached
+                          to this worker.
+                    },
+                    "totalCapacity": 0  # Optional. The total capacity score this worker has to
+                      manage multiple concurrent jobs.
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "assignedJobs": [
+                        {
+                            "assignedAt": "2020-02-20 00:00:00",  # The assignment time
+                              of the job in UTC. Required.
+                            "assignmentId": "str",  # The Id of the assignment. Required.
+                            "capacityCost": 0,  # The amount of capacity this assignment
+                              has consumed on the worker. Required.
+                            "jobId": "str"  # The Id of the Job assigned. Required.
+                        }
+                    ],
+                    "availableForOffers": bool,  # Optional. A flag indicating this worker is
+                      open to receive offers or not.
+                    "channelConfigurations": {
+                        "str": {
+                            "capacityCostPerJob": 0,  # The amount of capacity that an
+                              instance of a job of this channel will consume of the total worker
+                              capacity. Required.
+                            "maxNumberOfJobs": 0  # Optional. The maximum number of jobs
+                              that can be supported concurrently for this channel.
+                        }
+                    },
+                    "id": "str",  # Optional.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "loadRatio": 0.0,  # Optional. A value indicating the workers capacity. A
+                      value of '1' means all capacity is consumed. A value of '0' means no capacity is
+                      currently consumed.
+                    "offers": [
+                        {
+                            "capacityCost": 0,  # The capacity cost consumed by the job
+                              offer. Required.
+                            "jobId": "str",  # The Id of the job. Required.
+                            "offerId": "str",  # The Id of the offer. Required.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time
+                              that the offer will expire in UTC.
+                            "offeredAt": "2020-02-20 00:00:00"  # Optional. The time the
+                              offer was created in UTC.
+                        }
+                    ],
+                    "queueAssignments": {
+                        "str": {}  # Optional. The queue(s) that this worker can receive work
+                          from.
+                    },
+                    "state": "str",  # Optional. The current state of the worker. Known values
+                      are: "active", "draining", and "inactive".
+                    "tags": {
+                        "str": {}  # Optional. A set of non-identifying attributes attached
+                          to this worker.
+                    },
+                    "totalCapacity": 0  # Optional. The total capacity score this worker has to
+                      manage multiple concurrent jobs.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -3413,7 +6297,7 @@ class JobRouterOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RouterWorker] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -3421,7 +6305,7 @@ class JobRouterOperations:
         if isinstance(patch, (IOBase, bytes)):
             _content = patch
         else:
-            _json = self._serialize.body(patch, "RouterWorker")
+            _json = patch
 
         request = build_job_router_upsert_worker_request(
             worker_id=worker_id,
@@ -3444,29 +6328,98 @@ class JobRouterOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("RouterWorker", pipeline_response)
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 201:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def get_worker(self, worker_id: str, **kwargs: Any) -> _models.RouterWorker:
+    def get_worker(self, worker_id: str, **kwargs: Any) -> JSON:
         """Retrieves an existing worker by Id.
 
         Retrieves an existing worker by Id.
 
         :param worker_id: Id of the worker to retrieve. Required.
         :type worker_id: str
-        :return: RouterWorker
-        :rtype: ~azure.communication.jobrouter.models.RouterWorker
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "assignedJobs": [
+                        {
+                            "assignedAt": "2020-02-20 00:00:00",  # The assignment time
+                              of the job in UTC. Required.
+                            "assignmentId": "str",  # The Id of the assignment. Required.
+                            "capacityCost": 0,  # The amount of capacity this assignment
+                              has consumed on the worker. Required.
+                            "jobId": "str"  # The Id of the Job assigned. Required.
+                        }
+                    ],
+                    "availableForOffers": bool,  # Optional. A flag indicating this worker is
+                      open to receive offers or not.
+                    "channelConfigurations": {
+                        "str": {
+                            "capacityCostPerJob": 0,  # The amount of capacity that an
+                              instance of a job of this channel will consume of the total worker
+                              capacity. Required.
+                            "maxNumberOfJobs": 0  # Optional. The maximum number of jobs
+                              that can be supported concurrently for this channel.
+                        }
+                    },
+                    "id": "str",  # Optional.
+                    "labels": {
+                        "str": {}  # Optional. A set of key/value pairs that are identifying
+                          attributes used by the rules engines to make decisions.
+                    },
+                    "loadRatio": 0.0,  # Optional. A value indicating the workers capacity. A
+                      value of '1' means all capacity is consumed. A value of '0' means no capacity is
+                      currently consumed.
+                    "offers": [
+                        {
+                            "capacityCost": 0,  # The capacity cost consumed by the job
+                              offer. Required.
+                            "jobId": "str",  # The Id of the job. Required.
+                            "offerId": "str",  # The Id of the offer. Required.
+                            "expiresAt": "2020-02-20 00:00:00",  # Optional. The time
+                              that the offer will expire in UTC.
+                            "offeredAt": "2020-02-20 00:00:00"  # Optional. The time the
+                              offer was created in UTC.
+                        }
+                    ],
+                    "queueAssignments": {
+                        "str": {}  # Optional. The queue(s) that this worker can receive work
+                          from.
+                    },
+                    "state": "str",  # Optional. The current state of the worker. Known values
+                      are: "active", "draining", and "inactive".
+                    "tags": {
+                        "str": {}  # Optional. A set of non-identifying attributes attached
+                          to this worker.
+                    },
+                    "totalCapacity": 0  # Optional. The total capacity score this worker has to
+                      manage multiple concurrent jobs.
+                }
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -3479,7 +6432,7 @@ class JobRouterOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.RouterWorker] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         request = build_job_router_get_worker_request(
             worker_id=worker_id,
@@ -3501,15 +6454,17 @@ class JobRouterOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("RouterWorker", pipeline_response)
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return deserialized
+        return cast(JSON, deserialized)
 
     @distributed_trace
     def delete_worker(self, worker_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -3556,8 +6511,7 @@ class JobRouterOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -3566,38 +6520,103 @@ class JobRouterOperations:
     def list_workers(
         self,
         *,
-        status: Union[str, _models.WorkerStateSelector] = "all",
+        state: str = "all",
         channel_id: Optional[str] = None,
         queue_id: Optional[str] = None,
         has_capacity: Optional[bool] = None,
         **kwargs: Any
-    ) -> Iterable["_models.RouterWorkerItem"]:
+    ) -> Iterable[JSON]:
         """Retrieves existing workers.
 
         Retrieves existing workers.
 
-        :keyword status: (Optional) If specified, select workers by worker status. Known values are:
-         "active", "draining", "inactive", and "all". Default value is "all".
-        :paramtype status: str or ~azure.communication.jobrouter.models.WorkerStateSelector
-        :keyword channel_id: (Optional) If specified, select workers who have a channel configuration
-         with this channel. Default value is None.
+        :keyword state: If specified, select workers by worker state. Known values are: "active",
+         "draining", "inactive", and "all". Default value is "all".
+        :paramtype state: str
+        :keyword channel_id: If specified, select workers who have a channel configuration with this
+         channel. Default value is None.
         :paramtype channel_id: str
-        :keyword queue_id: (Optional) If specified, select workers who are assigned to this queue.
-         Default value is None.
+        :keyword queue_id: If specified, select workers who are assigned to this queue. Default value
+         is None.
         :paramtype queue_id: str
-        :keyword has_capacity: (Optional) If set to true, select only workers who have capacity for the
-         channel specified by ``channelId`` or for any channel
+        :keyword has_capacity: If set to true, select only workers who have capacity for the channel
+         specified by ``channelId`` or for any channel
                      if ``channelId`` not specified. If set to false, then will return all workers
          including workers without any capacity for jobs. Defaults to false. Default value is None.
         :paramtype has_capacity: bool
-        :return: An iterator like instance of RouterWorkerItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.RouterWorkerItem]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "etag": "str",  # Optional. (Optional) The Concurrency Token.
+                    "worker": {
+                        "assignedJobs": [
+                            {
+                                "assignedAt": "2020-02-20 00:00:00",  # The
+                                  assignment time of the job in UTC. Required.
+                                "assignmentId": "str",  # The Id of the assignment.
+                                  Required.
+                                "capacityCost": 0,  # The amount of capacity this
+                                  assignment has consumed on the worker. Required.
+                                "jobId": "str"  # The Id of the Job assigned.
+                                  Required.
+                            }
+                        ],
+                        "availableForOffers": bool,  # Optional. A flag indicating this
+                          worker is open to receive offers or not.
+                        "channelConfigurations": {
+                            "str": {
+                                "capacityCostPerJob": 0,  # The amount of capacity
+                                  that an instance of a job of this channel will consume of the total
+                                  worker capacity. Required.
+                                "maxNumberOfJobs": 0  # Optional. The maximum number
+                                  of jobs that can be supported concurrently for this channel.
+                            }
+                        },
+                        "id": "str",  # Optional. An entity for jobs to be routed to.
+                        "labels": {
+                            "str": {}  # Optional. A set of key/value pairs that are
+                              identifying attributes used by the rules engines to make decisions.
+                        },
+                        "loadRatio": 0.0,  # Optional. A value indicating the workers
+                          capacity. A value of '1' means all capacity is consumed. A value of '0' means
+                          no capacity is currently consumed.
+                        "offers": [
+                            {
+                                "capacityCost": 0,  # The capacity cost consumed by
+                                  the job offer. Required.
+                                "jobId": "str",  # The Id of the job. Required.
+                                "offerId": "str",  # The Id of the offer. Required.
+                                "expiresAt": "2020-02-20 00:00:00",  # Optional. The
+                                  time that the offer will expire in UTC.
+                                "offeredAt": "2020-02-20 00:00:00"  # Optional. The
+                                  time the offer was created in UTC.
+                            }
+                        ],
+                        "queueAssignments": {
+                            "str": {}  # Optional. The queue(s) that this worker can
+                              receive work from.
+                        },
+                        "state": "str",  # Optional. The current state of the worker. Known
+                          values are: "active", "draining", and "inactive".
+                        "tags": {
+                            "str": {}  # Optional. A set of non-identifying attributes
+                              attached to this worker.
+                        },
+                        "totalCapacity": 0  # Optional. The total capacity score this worker
+                          has to manage multiple concurrent jobs.
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.WorkerCollection] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -3611,7 +6630,7 @@ class JobRouterOperations:
             if not next_link:
 
                 request = build_job_router_list_workers_request(
-                    status=status,
+                    state=state,
                     channel_id=channel_id,
                     queue_id=queue_id,
                     has_capacity=has_capacity,
@@ -3649,13 +6668,11 @@ class JobRouterOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize(
-                _models._models.WorkerCollection, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -3668,8 +6685,7 @@ class JobRouterOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 

@@ -29,15 +29,14 @@ def main():
         subscription_id="91d12660-3dec-467a-be2a-213b5544ddc0",
     )
 
-    response = client.dps_certificate.delete(
+    client.dps_certificate.delete(
         resource_group_name="myResourceGroup",
         if_match="AAAAAAAADGk=",
         provisioning_service_name="myFirstProvisioningService",
         certificate_name="cert",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/deviceprovisioningservices/resource-manager/Microsoft.Devices/stable/2022-02-05/examples/DPSDeleteCertificate.json
+# x-ms-original-file: specification/deviceprovisioningservices/resource-manager/Microsoft.Devices/preview/2023-03-01-preview/examples/DPSDeleteCertificate.json
 if __name__ == "__main__":
     main()

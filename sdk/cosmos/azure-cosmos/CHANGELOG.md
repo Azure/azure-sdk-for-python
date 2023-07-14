@@ -3,10 +3,12 @@
 ### 4.4.1 (Unreleased)
 
 #### Features Added
+* Added **provisional** ability to limit Continuation Token size when querying for items. See [PR 30731](https://github.com/Azure/azure-sdk-for-python/pull/30731)
 
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug with async patch_item method. See [PR 30804](https://github.com/Azure/azure-sdk-for-python/pull/30804).
 
 #### Other Changes
 

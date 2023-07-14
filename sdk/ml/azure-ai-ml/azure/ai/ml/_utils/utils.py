@@ -12,14 +12,15 @@ import os
 import random
 import re
 import string
+import tempfile
 import time
 import warnings
 from collections import OrderedDict
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from datetime import timedelta
 from functools import singledispatch, wraps
 from os import PathLike
-from pathlib import PosixPath, PureWindowsPath
+from pathlib import Path, PosixPath, PureWindowsPath
 from typing import IO, Any, AnyStr, Callable, Dict, List, Optional, Tuple, Union
 from urllib.parse import urlparse
 from uuid import UUID
@@ -260,30 +261,10 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     if source is None:
         return {}
 
-    # pylint: disable=redefined-builtin
-    input = None  # type: IOBase
-    must_open_file = False
-    try:  # check source type by duck-typing it as an IOBase
-        readable = source.readable()
-        if not readable:  # source is misformatted stream or file
-            msg = "File Permissions Error: The already-open \n\n inputted file is not readable."
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message="File Permissions error",
-                error_category=ErrorCategory.USER_ERROR,
-                target=ErrorTarget.GENERAL,
-                error_type=ValidationErrorType.INVALID_VALUE,
-            )
-        # source is an already-open stream or file, we can read() from it directly.
-        input = source
-    except AttributeError:
-        # source has no writable() function, assume it's a string or file path.
-        must_open_file = True
-
-    if must_open_file:  # If supplied a file path, open it.
+    if isinstance(source, (str, os.PathLike)):
         try:
-            input = open(source, "r", encoding=DefaultOpenEncoding.READ)
-        except OSError as e:  # FileNotFoundError introduced in Python 3
+            cm = open(source, "r", encoding=DefaultOpenEncoding.READ)
+        except OSError as e:
             msg = "No such file or directory: {}"
             raise ValidationException(
                 message=msg.format(source),
@@ -292,23 +273,32 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
                 target=ErrorTarget.GENERAL,
                 error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
             ) from e
-    # input should now be an readable file or stream. Parse it.
-    cfg = {}
-    try:
-        cfg = yaml.safe_load(input)
-    except yaml.YAMLError as e:
-        msg = f"Error while parsing yaml file: {source} \n\n {str(e)}"
-        raise ValidationException(
-            message=msg,
-            no_personal_data_message="Error while parsing yaml file",
-            error_category=ErrorCategory.USER_ERROR,
-            target=ErrorTarget.GENERAL,
-            error_type=ValidationErrorType.CANNOT_PARSE,
-        ) from e
-    finally:
-        if must_open_file:
-            input.close()
-    return cfg
+    else:
+        # source is a subclass of IO
+        if not source.readable():
+            msg = "File Permissions Error: The already-open \n\n inputted file is not readable."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message="File Permissions error",
+                error_category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+
+        cm = nullcontext(enter_result=source)
+
+    with cm as f:
+        try:
+            return yaml.safe_load(f)
+        except yaml.YAMLError as e:
+            msg = f"Error while parsing yaml file: {source} \n\n {str(e)}"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message="Error while parsing yaml file",
+                error_category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.CANNOT_PARSE,
+            ) from e
 
 
 def dump_yaml(*args, **kwargs):
@@ -370,29 +360,9 @@ def dump_yaml_to_file(
                 error_type=ValidationErrorType.MISSING_FIELD,
             )
 
-    # Check inputs
-    output = None  # type: IOBase
-    must_open_file = False
-    try:  # check dest type by duck-typing it as an IOBase
-        writable = dest.writable()
-        if not writable:  # dest is misformatted stream or file
-            msg = "File Permissions Error: The already-open \n\n inputted file is not writable."
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message="File Permissions error",
-                error_category=ErrorCategory.USER_ERROR,
-                target=ErrorTarget.GENERAL,
-                error_type=ValidationErrorType.CANNOT_PARSE,
-            )
-        # dest is an already-open stream or file, we can write() to it directly.
-        output = dest
-    except AttributeError:
-        # dest has no writable() function, assume it's a string or file path.
-        must_open_file = True
-
-    if must_open_file:  # If supplied a file path, open it.
+    if isinstance(dest, (str, os.PathLike)):
         try:
-            output = open(dest, "w", encoding=DefaultOpenEncoding.WRITE)
+            cm = open(dest, "w", encoding=DefaultOpenEncoding.WRITE)
         except OSError as e:  # FileNotFoundError introduced in Python 3
             msg = "No such file or directory: {}"
             raise ValidationException(
@@ -402,23 +372,31 @@ def dump_yaml_to_file(
                 target=ErrorTarget.GENERAL,
                 error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
             ) from e
+    else:
+        # dest is a subclass of IO
+        if not dest.writable():  # dest is misformatted stream or file
+            msg = "File Permissions Error: The already-open \n\n inputted file is not writable."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message="File Permissions error",
+                error_category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.CANNOT_PARSE,
+            )
+        cm = nullcontext(enter_result=dest)
 
-    # Once we have an open file pointer through either method, dump.
-    try:
-        dump_yaml(data_dict, output, default_flow_style=default_flow_style)
-    except yaml.YAMLError as e:
-        msg = f"Error while parsing yaml file \n\n {str(e)}"
-        raise ValidationException(
-            message=msg,
-            no_personal_data_message="Error while parsing yaml file",
-            error_category=ErrorCategory.USER_ERROR,
-            target=ErrorTarget.GENERAL,
-            error_type=ValidationErrorType.CANNOT_PARSE,
-        ) from e
-    finally:
-        # close the file only if we opened it as part of this function.
-        if must_open_file:
-            output.close()
+    with cm as f:
+        try:
+            dump_yaml(data_dict, f, default_flow_style=default_flow_style)
+        except yaml.YAMLError as e:
+            msg = f"Error while parsing yaml file \n\n {str(e)}"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message="Error while parsing yaml file",
+                error_category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.CANNOT_PARSE,
+            ) from e
 
 
 def dict_eq(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> bool:
@@ -1003,3 +981,14 @@ def get_valid_dot_keys_with_wildcard(
     """
     left_reversed_parts = dot_key_wildcard.split(".")[::-1]
     return _get_valid_dot_keys_with_wildcard_impl(left_reversed_parts, root, validate_func=validate_func)
+
+
+def get_base_directory_for_cache() -> Path:
+    return Path(tempfile.gettempdir()).joinpath("azure-ai-ml")
+
+
+def get_versioned_base_directory_for_cache() -> Path:
+    # import here to avoid circular import
+    from azure.ai.ml._version import VERSION
+
+    return get_base_directory_for_cache().joinpath(VERSION)

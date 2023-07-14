@@ -205,14 +205,14 @@ class DictMixin(object):
     def __delitem__(self, key):
         self.__dict__[key] = None
 
+    # Compare objects by comparing all attributes.
     def __eq__(self, other):
-        """Compare objects by comparing all attributes."""
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return False
 
+    # Compare objects by comparing all attributes.
     def __ne__(self, other):
-        """Compare objects by comparing all attributes."""
         return not self.__eq__(other)
 
     def __str__(self):

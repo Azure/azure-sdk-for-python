@@ -12,13 +12,16 @@ from ._models import (
     ServerCallLocator,
     GroupCallLocator,
     FileSource,
+    TextSource,
+    SsmlSource,
     CallParticipant,
     RecordingProperties,
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult,
     MediaStreamingConfiguration,
-    ChannelAffinity
+    ChannelAffinity,
+    MuteParticipantsResult
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -42,10 +45,11 @@ from ._generated.models._enums import (
     MediaStreamingTransportType,
     DtmfTone,
     CallConnectionState,
-    RecordingState
+    RecordingState,
+    Gender
 )
 __all__ = [
-    # clients and parser
+    # clients
     "CallAutomationClient",
     "CallConnectionClient",
 
@@ -54,7 +58,10 @@ __all__ = [
     "ServerCallLocator",
     "GroupCallLocator",
     "FileSource",
+    "TextSource",
+    "SsmlSource",
     "ChannelAffinity",
+    "MediaStreamingConfiguration",
 
     # models for output
     "CallConnectionProperties",
@@ -63,7 +70,7 @@ __all__ = [
     "AddParticipantResult",
     "RemoveParticipantResult",
     "TransferCallResult",
-    "MediaStreamingConfiguration",
+    "MuteParticipantsResult",
 
     # common ACS communication identifier
     "CommunicationIdentifier",
@@ -87,6 +94,7 @@ __all__ = [
     "MediaStreamingTransportType",
     "DtmfTone",
     "CallConnectionState",
-    "RecordingState"
+    "RecordingState",
+    "Gender"
 ]
 __version__ = VERSION

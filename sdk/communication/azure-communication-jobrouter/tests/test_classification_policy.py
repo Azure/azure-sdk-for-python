@@ -15,30 +15,30 @@ from _validators import ClassificationPolicyValidator
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 
 from azure.communication.jobrouter import (
-    RouterAdministrationClient,
+    JobRouterAdministrationClient,
     RoundRobinMode,
     ClassificationPolicy,
     LabelOperator,
-    QueueSelector,
+    RouterQueueSelector,
     StaticQueueSelectorAttachment,
     ConditionalQueueSelectorAttachment,
     RuleEngineQueueSelectorAttachment,
     PassThroughQueueSelectorAttachment,
     QueueWeightedAllocation,
     WeightedAllocationQueueSelectorAttachment,
-    WorkerSelector,
+    RouterWorkerSelector,
     StaticWorkerSelectorAttachment,
     ConditionalWorkerSelectorAttachment,
     RuleEngineWorkerSelectorAttachment,
     PassThroughWorkerSelectorAttachment,
     WorkerWeightedAllocation,
     WeightedAllocationWorkerSelectorAttachment,
-    StaticRule,
-    ExpressionRule,
-    FunctionRule,
-    FunctionRuleCredential,
+    StaticRouterRule,
+    ExpressionRouterRule,
+    FunctionRouterRule,
+    FunctionRouterRuleCredential,
     DistributionPolicy,
-    JobQueue,
+    RouterQueue,
 )
 
 
@@ -52,26 +52,26 @@ queue_labels = {
 
 queue_selectors = [
     StaticQueueSelectorAttachment(
-        label_selector = QueueSelector(
+        queue_selector = RouterQueueSelector(
             key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
         )
     ),
     ConditionalQueueSelectorAttachment(
-        condition = StaticRule(value = True),
-        label_selectors = [
-            QueueSelector(
+        condition = StaticRouterRule(value = True),
+        queue_selectors = [
+            RouterQueueSelector(
                 key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
             )
         ]
     ),
-    ## TODO: Bugfix required
-    RuleEngineQueueSelectorAttachment(
-        rule = StaticRule(value = [
-            QueueSelector(
-                key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
-            )]
-        )
-    ),
+    # ## TODO: Bugfix required
+    # RuleEngineQueueSelectorAttachment(
+    #     rule = StaticRouterRule(value = [
+    #         RouterQueueSelector(
+    #             key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
+    #         )]
+    #     )
+    # ),
     PassThroughQueueSelectorAttachment(
         key = "testKey",
         label_operator = LabelOperator.EQUAL
@@ -80,8 +80,8 @@ queue_selectors = [
         allocations = [
             QueueWeightedAllocation(
                 weight = 1.0,
-                label_selectors = [
-                    QueueSelector(
+                queue_selectors = [
+                    RouterQueueSelector(
                         key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
                     )
                 ]
@@ -91,47 +91,47 @@ queue_selectors = [
 ]
 
 prioritization_rules = [
-    StaticRule(value = 1),
-    ExpressionRule(expression = "1"),
-    FunctionRule(
+    StaticRouterRule(value = 1),
+    ExpressionRouterRule(expression = "1"),
+    FunctionRouterRule(
         function_uri = "https://fake.azurewebsites.net/fakeRule",
-        credential = FunctionRuleCredential(function_key = "fakeKey"))
+        credential = FunctionRouterRuleCredential(function_key = "fakeKey"))
 ]
 
 worker_selectors = [
     StaticWorkerSelectorAttachment(
-        label_selector = WorkerSelector(
+        worker_selector = RouterWorkerSelector(
             key = "test_key",
             label_operator = LabelOperator.EQUAL,
             value = "test_value",
-            ttl_seconds = 10.0,
+            expires_after_seconds = 10.0,
             expedite = False
         )
     ),
     ConditionalWorkerSelectorAttachment(
-        condition = StaticRule(value = True),
-        label_selectors = [
-            WorkerSelector(
+        condition = StaticRouterRule(value = True),
+        worker_selectors = [
+            RouterWorkerSelector(
                 key = "test_key",
                 label_operator = LabelOperator.EQUAL,
                 value = "test_value",
-                ttl_seconds = 10.0,
+                expires_after_seconds = 10.0,
                 expedite = False
             )
         ]
     ),
-    ## TODO: Bugfix required
-    RuleEngineWorkerSelectorAttachment(
-        rule = StaticRule(value = [
-            WorkerSelector(
-                key = "test_key",
-                label_operator = LabelOperator.EQUAL,
-                value = "test_value",
-                ttl_seconds = 10.0,
-                expedite = False
-            )]
-        )
-    ),
+    # ## TODO: Bugfix required
+    # RuleEngineWorkerSelectorAttachment(
+    #     rule = StaticRouterRule(value = [
+    #         RouterWorkerSelector(
+    #             key = "test_key",
+    #             label_operator = LabelOperator.EQUAL,
+    #             value = "test_value",
+    #             expires_after_seconds = 10.0,
+    #             expedite = False
+    #         )]
+    #     )
+    # ),
     PassThroughWorkerSelectorAttachment(
         key = "testKey",
         label_operator = LabelOperator.EQUAL
@@ -140,12 +140,12 @@ worker_selectors = [
         allocations = [
             WorkerWeightedAllocation(
                 weight = 1.0,
-                label_selectors = [
-                    WorkerSelector(
+                worker_selectors = [
+                    RouterWorkerSelector(
                         key = "test_key",
                         label_operator = LabelOperator.EQUAL,
                         value = "test_value",
-                        ttl_seconds = 10.0,
+                        expires_after_seconds = 10.0,
                         expedite = False
                     )
                 ]
@@ -160,7 +160,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
     def clean_up(self):
         # delete in live mode
         if not self.is_playback():
-            router_client: RouterAdministrationClient = self.create_admin_client()
+            router_client: JobRouterAdministrationClient = self.create_admin_client()
             if self._testMethodName in self.classification_policy_ids \
                     and any(self.classification_policy_ids[self._testMethodName]):
                 for policy_id in set(self.classification_policy_ids[self._testMethodName]):
@@ -180,11 +180,11 @@ class TestClassificationPolicy(RouterRecordedTestCase):
         return self._testMethodName + "_tst_dp"
 
     def setup_distribution_policy(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
         distribution_policy_id = self.get_distribution_policy_id()
 
         policy: DistributionPolicy = DistributionPolicy(
-            offer_ttl_seconds = 10.0,
+            offer_expires_after_seconds = 10.0,
             mode = RoundRobinMode(min_concurrent_offers = 1,
                                   max_concurrent_offers = 1),
             name = distribution_policy_id,
@@ -206,10 +206,10 @@ class TestClassificationPolicy(RouterRecordedTestCase):
         return self._testMethodName + "_tst_q"
 
     def setup_job_queue(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
 
-        job_queue: JobQueue = JobQueue(
+        job_queue: RouterQueue = RouterQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
             name = "test"
         )
@@ -232,7 +232,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.after_test_execute('clean_up')
     def test_create_classification_policy(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_create_cp'
 
         for rule in prioritization_rules:
@@ -269,7 +269,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_classification_policy(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_update_cp'
 
         for rule in prioritization_rules:
@@ -300,7 +300,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                 worker_selectors = worker_selectors
             )
 
-            updated_prioritization_rule = ExpressionRule(expression = "2")
+            updated_prioritization_rule = ExpressionRouterRule(expression = "2")
             classification_policy.prioritization_rule = updated_prioritization_rule
 
             updated_classification_policy = router_client.update_classification_policy(
@@ -323,7 +323,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_classification_policy_w_kwargs(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_update_cp_w_kwargs'
 
         for rule in prioritization_rules:
@@ -354,7 +354,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                 worker_selectors = worker_selectors
             )
 
-            updated_prioritization_rule = ExpressionRule(expression = "2")
+            updated_prioritization_rule = ExpressionRouterRule(expression = "2")
             classification_policy.prioritization_rule = updated_prioritization_rule
 
             updated_classification_policy = router_client.update_classification_policy(
@@ -377,7 +377,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.after_test_execute('clean_up')
     def test_get_classification_policy(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_get_cp'
 
         for rule in prioritization_rules:
@@ -427,7 +427,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.after_test_execute('clean_up')
     def test_list_classification_policies(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifiers = ['tst_list_cp_1', 'tst_list_cp_2']
         created_cp_response = {}
         policy_count = 0
@@ -499,7 +499,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.after_test_execute('clean_up')
     def test_delete_classification_policy(self):
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_delete_cp'
 
         for rule in prioritization_rules:

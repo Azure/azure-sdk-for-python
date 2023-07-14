@@ -71,42 +71,39 @@ class AvroEncoder(object):
 
     """
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        try:
-            self._schema_registry_client = kwargs.pop(
-                "client"
-            )  # type: "SchemaRegistryClient"
-        except KeyError as exc:
-            raise TypeError(f"'{exc.args[0]}' is a required keyword.")
+    def __init__(
+        self,
+        *,
+        client: "SchemaRegistryClient",
+        group_name: Optional[str] = None,
+        auto_register: bool = False,
+        **kwargs: Any
+    ) -> None:
+        self._schema_registry_client = client
         self._avro_encoder = AvroObjectEncoder(codec=kwargs.get("codec"))
-        self._schema_group = kwargs.pop("group_name", None)
-        self._auto_register = kwargs.get("auto_register", False)
+        self._schema_group = group_name
+        self._auto_register = auto_register
         self._auto_register_schema_func = (
             self._schema_registry_client.register_schema
             if self._auto_register
             else self._schema_registry_client.get_schema_properties
         )
 
-    def __enter__(self):
-        # type: () -> AvroEncoder
+    def __enter__(self) -> "AvroEncoder":
         self._schema_registry_client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._schema_registry_client.__exit__(*exc_details)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
         self._schema_registry_client.close()
 
     @lru_cache(maxsize=128)
-    def _get_schema_id(self, schema_name, schema_str, **kwargs):
-        # type: (str, str, Any) -> str
+    def _get_schema_id(self, schema_name: str, schema_str: str, **kwargs: Any) -> str:
         """
         Get schema id from local cache with the given schema.
         If there is no item in the local cache, get schema id from the service and cache it.
@@ -123,8 +120,7 @@ class AvroEncoder(object):
         return schema_id
 
     @lru_cache(maxsize=128)
-    def _get_schema(self, schema_id, **kwargs):
-        # type: (str, Any) -> str
+    def _get_schema(self, schema_id: str, **kwargs: Any) -> str:
         """
         Get schema content from local cache with the given schema id.
         If there is no item in the local cache, get schema from the service and cache it.

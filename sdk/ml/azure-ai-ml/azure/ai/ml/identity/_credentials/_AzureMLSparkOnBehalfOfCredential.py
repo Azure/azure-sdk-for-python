@@ -25,23 +25,6 @@ class _AzureMLSparkOnBehalfOfCredential(ManagedIdentityBase):
 
 
 def _get_client_args(**kwargs) -> Optional[dict]:
-    from pyspark.sql import SparkSession  # cspell:disable-line # pylint: disable=import-error
-
-    try:
-        spark = SparkSession.builder.getOrCreate()
-    except Exception as e:
-        raise Exception("Fail to get spark session, please check if spark environment is set up.") from e
-
-    spark_conf = spark.sparkContext.getConf()
-    spark_conf_vars = {
-        "AZUREML_SYNAPSE_CLUSTER_IDENTIFIER": "spark.synapse.clusteridentifier",
-        "AZUREML_SYNAPSE_TOKEN_SERVICE_ENDPOINT": "spark.tokenServiceEndpoint",
-    }
-    for env_key, conf_key in spark_conf_vars.items():
-        value = spark_conf.get(conf_key)
-        if value:
-            os.environ[env_key] = value
-
     # Override default settings if provided via arguments
     if len(kwargs) > 0:
         env_key_from_kwargs = [
@@ -51,8 +34,27 @@ def _get_client_args(**kwargs) -> Optional[dict]:
             "AZUREML_RUN_TOKEN_EXPIRY",
         ]
         for env_key in env_key_from_kwargs:
-            if env_key in kwargs:
+            if env_key in kwargs.keys():
                 os.environ[env_key] = kwargs[env_key]
+            else:
+                raise Exception("Unable to initialize AzureMLHoboSparkOBOCredential due to invalid arguments")
+    else:
+        from pyspark.sql import SparkSession  # cspell:disable-line # pylint: disable=import-error
+
+        try:
+            spark = SparkSession.builder.getOrCreate()
+        except Exception as e:
+            raise Exception("Fail to get spark session, please check if spark environment is set up.") from e
+
+        spark_conf = spark.sparkContext.getConf()
+        spark_conf_vars = {
+            "AZUREML_SYNAPSE_CLUSTER_IDENTIFIER": "spark.synapse.clusteridentifier",
+            "AZUREML_SYNAPSE_TOKEN_SERVICE_ENDPOINT": "spark.tokenServiceEndpoint",
+        }
+        for env_key, conf_key in spark_conf_vars.items():
+            value = spark_conf.get(conf_key)
+            if value:
+                os.environ[env_key] = value
 
     token_service_endpoint = os.environ.get("AZUREML_SYNAPSE_TOKEN_SERVICE_ENDPOINT")
     obo_access_token = os.environ.get("AZUREML_OBO_CANARY_TOKEN")

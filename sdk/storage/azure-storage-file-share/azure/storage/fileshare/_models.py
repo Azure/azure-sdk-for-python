@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-few-public-methods, too-many-instance-attributes
-# pylint: disable=super-init-not-called, too-many-lines
+# pylint: disable=too-few-public-methods, too-many-instance-attributes, super-init-not-called, too-many-lines
+
 from urllib.parse import unquote
 from enum import Enum
 
@@ -47,7 +47,7 @@ class Metrics(GeneratedMetrics):
     """
 
     def __init__(self, **kwargs):
-        self.version = kwargs.get('version', u'1.0')
+        self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
@@ -1016,8 +1016,6 @@ class NTFSAttributes(object):
 
 
 def service_properties_deserialize(generated):
-    """Deserialize a ServiceProperties objects into a dict.
-    """
     return {
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access

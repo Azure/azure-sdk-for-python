@@ -10,7 +10,7 @@ from functools import partial
 from inspect import Parameter, signature
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -51,6 +51,7 @@ from ..entities._builders import BaseNode
 from ..entities._builders.condition_node import ConditionNode
 from ..entities._builders.control_flow_node import LoopNode
 from ..entities._component.automl_component import AutoMLComponent
+from ..entities._component.code import ComponentCodeMixin
 from ..entities._component.pipeline_component import PipelineComponent
 from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
@@ -90,6 +91,8 @@ class ComponentOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
         self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
+
+        self._client_key: Optional[str] = None
 
     @property
     def _code_operations(self) -> CodeOperations:
@@ -588,21 +591,15 @@ class ComponentOperations(_ScopeDependentOperations):
         the base path of the pipeline component.
         :type base_path: str
         """
-        from azure.ai.ml.entities._builders import Pipeline
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 
         for _, job_instance in jobs.items():
             # resolve inputs for each job's component
-            if isinstance(job_instance, Pipeline):
-                node: Pipeline = job_instance
-                self._job_operations._resolve_pipeline_job_inputs(
-                    node,
-                    base_path,
-                )
-            elif isinstance(job_instance, BaseNode):
+            if isinstance(job_instance, BaseNode):
                 node: BaseNode = job_instance
                 self._job_operations._resolve_job_inputs(
-                    map(lambda x: x._data, node.inputs.values()),
+                    # parameter group input need to be flattened first
+                    self._job_operations._flatten_group_inputs(node.inputs),
                     base_path,
                 )
             elif isinstance(job_instance, AutoMLJob):
@@ -755,6 +752,44 @@ class ComponentOperations(_ScopeDependentOperations):
 
         return layers
 
+    def _get_workspace_key(self) -> str:
+        try:
+            workspace_rest = self._workspace_operations._operation.get(
+                resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+            )
+            return workspace_rest.workspace_id
+        except HttpResponseError:
+            return "{}/{}/{}".format(self._subscription_id, self._resource_group_name, self._workspace_name)
+
+    def _get_registry_key(self) -> str:
+        """Get key for used registry.
+        Note that, although registry id is in registry discovery response, it is not in RegistryDiscoveryDto; and we'll
+        lose the information after deserialization.
+        To avoid changing related rest client, we simply use registry related information from self to construct
+        registry key, which means that on-disk cache will be invalid if a registry is deleted and then created
+        again with the same name.
+        """
+        return "{}/{}/{}".format(self._subscription_id, self._resource_group_name, self._registry_name)
+
+    def _get_client_key(self) -> str:
+        """Get key for used client.
+        Key should be able to uniquely identify used registry or workspace.
+        """
+        # check cache first
+        if self._client_key:
+            return self._client_key
+
+        # registry name has a higher priority comparing to workspace name according to current __init__ implementation
+        # of MLClient
+        if self._registry_name:
+            self._client_key = "registry/" + self._get_registry_key()
+        elif self._workspace_name:
+            self._client_key = "workspace/" + self._get_workspace_key()
+        else:
+            # This should never happen.
+            raise ValueError("Either workspace name or registry name must be provided to use component operations.")
+        return self._client_key
+
     def _resolve_dependencies_for_pipeline_component_jobs(
         self, component: Union[Component, str], resolver: Callable, *, resolve_inputs: bool = True
     ):
@@ -796,10 +831,7 @@ class ComponentOperations(_ScopeDependentOperations):
         # relatively simple and of small number of distinct instances
         component_cache = CachedNodeResolver(
             resolver=resolver,
-            subscription_id=self._subscription_id,
-            resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
-            registry_name=self._registry_name,
+            client_key=self._get_client_key(),
         )
 
         for layer in reversed(layers):
@@ -898,7 +930,8 @@ def _refine_component(component_func: types.FunctionType) -> Component:
 
 
 def _try_resolve_code_for_component(component: Component, get_arm_id_and_fill_back: Callable) -> None:
-    with component._resolve_local_code() as code:
-        if code is None:
-            return
-        component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)
+    if isinstance(component, ComponentCodeMixin):
+        with component._build_code() as code:
+            if code is None:
+                return
+            component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)

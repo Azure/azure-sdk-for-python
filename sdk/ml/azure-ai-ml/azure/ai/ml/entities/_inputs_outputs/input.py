@@ -56,6 +56,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     """
 
     _EMPTY = Parameter.empty
+    _IO_KEYS = ["path", "type", "mode", "description", "default", "min", "max", "enum", "optional", "datastore"]
 
     @overload
     def __init__(
@@ -279,7 +280,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
     def _to_dict(self):
         """Convert the Input object to a dict."""
-        keys = ["path", "type", "mode", "description", "default", "min", "max", "enum", "optional", "datastore"]
+        keys = self._IO_KEYS
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 
@@ -290,7 +291,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :return: The parsed value.
         """
         if self.type == "integer":
-            return int(val)
+            return int(float(val))  # backend returns 10.0，for integer， parse it to float before int
         if self.type == "number":
             return float(val)
         if self.type == "boolean":
