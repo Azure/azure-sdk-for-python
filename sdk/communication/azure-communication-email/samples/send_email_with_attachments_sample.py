@@ -51,7 +51,7 @@ class EmailWithAttachmentSample(object):
             "content": {
                 "subject": "This is the subject",
                 "plainText": "This is the body",
-                "html": "html><h1>This is the body</h1></html>"
+                "html": "<html><h1>This is the body</h1></html>"
             },
             "recipients": {
                 "to": [
