@@ -123,7 +123,7 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
         if includes_messages:
             request.http_request.url = request.http_request.url[:-(len('/messages'))]
             request.http_request.url = urljoin(request.http_request.url, 'messages')
-            
+
         message_id = request.context.options.pop('queue_message_id', None)
         if message_id:
             request.http_request.url = urljoin(
