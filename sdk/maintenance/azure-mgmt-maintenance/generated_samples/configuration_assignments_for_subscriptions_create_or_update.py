@@ -14,7 +14,7 @@ from azure.mgmt.maintenance import MaintenanceManagementClient
     pip install azure-identity
     pip install azure-mgmt-maintenance
 # USAGE
-    python maintenance_configurations_update_for_resource.py
+    python configuration_assignments_for_subscriptions_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,28 +29,29 @@ def main():
         subscription_id="5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     )
 
-    response = client.maintenance_configurations.update(
-        resource_group_name="examplerg",
-        resource_name="configuration1",
-        configuration={
-            "location": "westus2",
+    response = client.configuration_assignments_for_subscriptions.create_or_update(
+        configuration_assignment_name="workervmConfiguration",
+        configuration_assignment={
             "properties": {
-                "maintenanceScope": "OSImage",
-                "maintenanceWindow": {
-                    "duration": "05:00",
-                    "expirationDateTime": "9999-12-31 00:00",
-                    "recurEvery": "Month Third Sunday",
-                    "startDateTime": "2020-04-30 08:00",
-                    "timeZone": "Pacific Standard Time",
+                "filter": {
+                    "locations": ["Japan East", "UK South"],
+                    "resourceGroups": ["RG1", "RG2"],
+                    "resourceTypes": ["Microsoft.HybridCompute/machines", "Microsoft.Compute/virtualMachines"],
+                    "tagSettings": {
+                        "filterOperator": "Any",
+                        "tags": {
+                            "tag1": ["tag1Value1", "tag1Value2", "tag1Value3"],
+                            "tag2": ["tag2Value1", "tag2Value2", "tag2Value3"],
+                        },
+                    },
                 },
-                "namespace": "Microsoft.Maintenance",
-                "visibility": "Custom",
-            },
+                "maintenanceConfigurationId": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourcegroups/examplerg/providers/Microsoft.Maintenance/maintenanceConfigurations/configuration1",
+            }
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/maintenance/resource-manager/Microsoft.Maintenance/stable/2023-04-01/examples/MaintenanceConfigurations_UpdateForResource.json
+# x-ms-original-file: specification/maintenance/resource-manager/Microsoft.Maintenance/stable/2023-04-01/examples/ConfigurationAssignmentsForSubscriptions_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

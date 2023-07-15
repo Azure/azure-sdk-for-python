@@ -14,7 +14,7 @@ from azure.mgmt.maintenance import MaintenanceManagementClient
     pip install azure-identity
     pip install azure-mgmt-maintenance
 # USAGE
-    python apply_updates_create_or_update_parent.py
+    python configuration_assignments_for_subscriptions_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,17 +29,12 @@ def main():
         subscription_id="5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     )
 
-    response = client.apply_updates.create_or_update_parent(
-        resource_group_name="examplerg",
-        provider_name="Microsoft.Compute",
-        resource_parent_type="virtualMachineScaleSets",
-        resource_parent_name="smdtest1",
-        resource_type="virtualMachines",
-        resource_name="smdvm1",
+    response = client.configuration_assignments_for_subscriptions.delete(
+        configuration_assignment_name="workervmConfiguration",
     )
     print(response)
 
 
-# x-ms-original-file: specification/maintenance/resource-manager/Microsoft.Maintenance/stable/2023-04-01/examples/ApplyUpdates_CreateOrUpdateParent.json
+# x-ms-original-file: specification/maintenance/resource-manager/Microsoft.Maintenance/stable/2023-04-01/examples/ConfigurationAssignmentsForSubscriptions_Delete.json
 if __name__ == "__main__":
     main()
