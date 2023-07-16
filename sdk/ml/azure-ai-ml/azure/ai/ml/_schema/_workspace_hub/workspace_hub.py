@@ -17,6 +17,7 @@ from azure.ai.ml._schema._workspace_hub.workspace_hub_config import WorkspaceHub
 from azure.ai.ml._schema import ExperimentalField
 from azure.ai.ml._utils._experimental import experimental
 
+
 @experimental
 class WorkspaceHubSchema(PathAwareSchema):
     name = fields.Str(required=True)

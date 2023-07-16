@@ -439,8 +439,8 @@ class TestWorkspace(AzureRecordedTestCase):
         assert workspace.location == location
         assert workspace.description == wps_description
         assert workspace.display_name == wps_display_name
-        assert workspace.storage_account == workspace_hub.storage_accounts[0]
-        assert workspace.key_vault == workspace_hub.key_vaults[0]
+        assert workspace.storage_account == workspace_hub.storage_account
+        assert workspace.key_vault == workspace_hub.key_vault
 
         poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
         # verify that request was accepted by checking if poller is returned

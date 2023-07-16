@@ -33,7 +33,6 @@ from .entities._load_functions import (
     load_workspace,
     load_workspace_connection,
     load_workspace_hub,
-    load_model_package,
 )
 
 module_logger = logging.getLogger(__name__)

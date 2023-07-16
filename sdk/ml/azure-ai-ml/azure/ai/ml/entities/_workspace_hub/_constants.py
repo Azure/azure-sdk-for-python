@@ -3,4 +3,4 @@
 # ---------------------------------------------------------
 
 WORKSPACE_HUB_KIND = "hub"
-LEAN_WORKSPACE_KIND = "lean"
+PROJECT_WORKSPACE_KIND = "project"

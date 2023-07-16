@@ -19,10 +19,12 @@ from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.entities import Workspace, CustomerManagedKey
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml._utils._experimental import experimental
 
 from ._constants import WORKSPACE_HUB_KIND
 
 
+@experimental
 class WorkspaceHub(Workspace):
     def __init__(
         self,
@@ -42,7 +44,7 @@ class WorkspaceHub(Workspace):
         public_network_access: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
-        workspace_hub_config: Optional[WorkspaceHubConfig],
+        workspace_hub_config: Optional[WorkspaceHubConfig] = None,
         **kwargs,
     ):
 
@@ -140,7 +142,7 @@ class WorkspaceHub(Workspace):
             container_registry=rest_obj.container_registry,
             existing_workspaces=rest_obj.existing_workspaces,
             workspace_id=rest_obj.workspace_id,
-            workspace_hub_config = workspace_hub_config,
+            workspace_hub_config=workspace_hub_config,
             id=rest_obj.id,
         )
         workspacehub_object.set_associated_workspaces(rest_obj.associated_workspaces)

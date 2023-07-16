@@ -9,7 +9,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, load_workspace_hub
 from azure.ai.ml.constants._common import PublicNetworkAccess
-from azure.ai.ml.entities import WorkspaceHub
+from azure.ai.ml.entities import WorkspaceHub, WorkspaceHubConfig
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 
@@ -77,8 +77,7 @@ class TestWorkspace(AzureRecordedTestCase):
         assert workspace_hub.description == param_description
         assert workspace_hub.public_network_access == PublicNetworkAccess.DISABLED
         assert workspace_hub.tags == param_tags
-        assert workspace_hub.storage_accounts.count != 0
-        assert workspace_hub.key_vaults.count != 0
+        assert isinstance(workspace_hub.workspace_hub_config, WorkspaceHubConfig)
 
         poller = client.workspace_hubs.begin_delete(hub_name, delete_dependent_resources=True)
         # verify that request was accepted by checking if poller is returned

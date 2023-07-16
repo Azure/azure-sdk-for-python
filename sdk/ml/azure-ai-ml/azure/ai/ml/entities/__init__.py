@@ -185,7 +185,7 @@ from ._monitoring.thresholds import (
     CustomMonitoringMetricThreshold,
 )
 
-from ._workspace_hub.workspace_hub import WorkspaceHub
+from ._workspace_hub.workspace_hub import WorkspaceHub, WorkspaceHubConfig
 
 from ._assets._artifacts.feature_set import FeatureSet
 from ._workspace.compute_runtime import ComputeRuntime
@@ -343,6 +343,7 @@ __all__ = [
     "AutoPauseSettings",
     "WorkspaceModelReference",
     "WorkspaceHub",
+    "WorkspaceHubConfig",
     "Feature",
     "FeatureSet",
     "ComputeRuntime",

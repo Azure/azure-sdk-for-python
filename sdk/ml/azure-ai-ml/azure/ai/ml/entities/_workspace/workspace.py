@@ -15,7 +15,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkSet
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
-from azure.ai.ml.entities._workspace_hub._constants import LEAN_WORKSPACE_KIND
+from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
@@ -98,7 +98,7 @@ class Workspace(Resource):
         :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
             The flag can only be set at the creation phase, it can't be updated.
         :type enable_data_isolation: bool
-        :param workspace_hub: The resource ID of an existing workspace hub to help create lean workspace
+        :param workspace_hub: The resource ID of an existing workspace hub to help create project workspace
         :type workspace_hub: str
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
@@ -127,7 +127,7 @@ class Workspace(Resource):
         self.enable_data_isolation = enable_data_isolation
         self.workspace_hub = workspace_hub
         if workspace_hub:
-            self._kind = LEAN_WORKSPACE_KIND
+            self._kind = PROJECT_WORKSPACE_KIND
 
     @property
     def discovery_url(self) -> str:
