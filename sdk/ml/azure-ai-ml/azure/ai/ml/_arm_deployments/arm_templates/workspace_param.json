@@ -152,14 +152,8 @@
     "online_store_connection_target" : {
         "value": ""
     },
-    "storage_accounts" : {
-        "value": []
-    },
-    "key_vaults" : {
-        "value": []
-    },
-    "container_registies" : {
-        "value": []
+    "workspace_hub_config" : {
+        "value": {}
     },
     "existing_workspaces" : {
         "value": []

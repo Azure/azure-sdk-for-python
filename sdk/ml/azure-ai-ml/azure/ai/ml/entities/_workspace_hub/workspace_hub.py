@@ -9,9 +9,11 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2023_06_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2023_06_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
 
 from azure.ai.ml._schema._workspace_hub.workspace_hub import WorkspaceHubSchema
+from azure.ai.ml.entities._workspace_hub.workspace_hub_config import WorkspaceHubConfig
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.entities import Workspace, CustomerManagedKey
@@ -32,14 +34,15 @@ class WorkspaceHub(Workspace):
         location: Optional[str] = None,
         resource_group: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
-        storage_accounts: Optional[List[str]] = None,
-        key_vaults: Optional[List[str]] = None,
-        container_registries: Optional[List[str]] = None,
+        storage_account: Optional[str] = None,
+        key_vault: Optional[str] = None,
+        container_registry: Optional[str] = None,
         existing_workspaces: Optional[List[str]] = None,
         customer_managed_key: Optional[CustomerManagedKey] = None,
         public_network_access: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
+        workspace_hub_config: Optional[WorkspaceHubConfig],
         **kwargs,
     ):
 
@@ -60,12 +63,13 @@ class WorkspaceHub(Workspace):
         :type resource_group: str
         :param managed_network: workspace's Managed Network configuration
         :type managed_network: ManagedNetwork
-        :param storage_accounts: List of storage accounts used by WorkspaceHub
-        :type storage_accounts: List[str]
-        :param key_vaults: List of key vaults used by WorkspaceHub
-        :key_vaults: List[str]
-        :param container_registries: List of container registries used by WorkspaceHub
-        :type container_registries: List[str]
+        :param storage_account: The resource ID of an existing storage account to use instead of creating a new one.
+        :type storage_account: str
+        :param key_vault: The resource ID of an existing key vault to use instead of creating a new one.
+        :type key_vault: str
+        :param container_registry: The resource ID of an existing container registry
+            to use instead of creating a new one.
+        :type container_registry: str
         :param existing_workspaces: List of existing workspaces used by WorkspaceHub to do convert
         :type existing_workspaces: List[str]
         :param customer_managed_key: Key vault details for encrypting data with customer-managed keys.
@@ -90,6 +94,9 @@ class WorkspaceHub(Workspace):
             kind=WORKSPACE_HUB_KIND,
             display_name=display_name,
             location=location,
+            storage_account=storage_account,
+            key_vault=key_vault,
+            container_registry=container_registry,
             resource_group=resource_group,
             customer_managed_key=customer_managed_key,
             public_network_access=public_network_access,
@@ -98,10 +105,8 @@ class WorkspaceHub(Workspace):
             managed_network=managed_network,
             **kwargs,
         )
-        self.storage_accounts = storage_accounts
-        self.key_vaults = key_vaults
-        self.container_registries = container_registries
         self.existing_workspaces = existing_workspaces
+        self.workspace_hub_config = workspace_hub_config
         self.associated_workspaces = None
 
     @classmethod
@@ -110,6 +115,14 @@ class WorkspaceHub(Workspace):
             return None
 
         workspace_object = Workspace._from_rest_object(rest_obj)
+
+        workspace_hub_config = None
+        if hasattr(rest_obj, "workspace_hub_config"):
+            if rest_obj.workspace_hub_config and isinstance(rest_obj.workspace_hub_config, RestWorkspaceHubConfig):
+                workspace_hub_config = WorkspaceHubConfig._from_rest_object(  # pylint: disable=protected-access
+                    rest_obj.workspace_hub_config
+                )
+
         workspacehub_object = WorkspaceHub(
             name=workspace_object.name,
             description=workspace_object.description,
@@ -122,11 +135,12 @@ class WorkspaceHub(Workspace):
             public_network_access=workspace_object.public_network_access,
             identity=workspace_object.identity,
             primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
-            storage_accounts=rest_obj.storage_accounts,
-            key_vaults=rest_obj.key_vaults,
-            container_registries=rest_obj.container_registries,
+            storage_account=rest_obj.storage_account,
+            key_vault=rest_obj.key_vault,
+            container_registry=rest_obj.container_registry,
             existing_workspaces=rest_obj.existing_workspaces,
             workspace_id=rest_obj.workspace_id,
+            workspace_hub_config = workspace_hub_config,
             id=rest_obj.id,
         )
         workspacehub_object.set_associated_workspaces(rest_obj.associated_workspaces)
@@ -158,8 +172,6 @@ class WorkspaceHub(Workspace):
 
     def _to_rest_object(self) -> RestWorkspace:
         restWorkspace = super()._to_rest_object()
-        restWorkspace.storage_accounts = (self.storage_accounts,)
-        restWorkspace.container_registries = (self.container_registries,)
-        restWorkspace.key_vaults = (self.key_vaults,)
+        restWorkspace.workspace_hub_config = (self.workspace_hub_config,)
         restWorkspace.existing_workspaces = (self.existing_workspaces,)
         return restWorkspace

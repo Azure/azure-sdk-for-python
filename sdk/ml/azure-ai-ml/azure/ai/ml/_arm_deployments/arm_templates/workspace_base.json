@@ -487,25 +487,11 @@
                 "description": "A flag to determine if workspace has data isolation enabled. The flag can only be set at the creation phase, it can't be updated."
             }
         },
-        "storage_accounts" : {
-            "type": "array",
-            "defaultValue": [],
+        "workspace_hub_config" : {
+            "type": "object",
+            "defaultValue": {},
             "metadata": {
-                "description": "A list of storage accounts used by Hub."
-            }
-        },
-        "key_vaults" : {
-            "type": "array",
-            "defaultValue": [],
-            "metadata": {
-                "description": "A list of key vaults used by Hub."
-            }
-        },
-        "container_registies" : {
-            "type": "array",
-            "defaultValue": [],
-            "metadata": {
-                "description": "A list of container registries used by Hub."
+                "description": "Additional configuration for WorkspaceHub."
             }
         },
         "existing_workspaces" : {
@@ -555,10 +541,7 @@
         "offlineStoreConnectionName": "[if(equals(parameters('offline_store_connection_name'), ''), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]",
         "onlineStoreConnectionName": "[if(equals(parameters('online_store_connection_name'), ''), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]",
         "isWorkspaceHub": "[equals(parameters('kind'), 'hub')]",
-        "storageAccountList": ["[variables('storageAccount')]"],
-        "keyVaultList": ["[variables('keyVault')]"],
         "emptyArray": [],
-        "containerRegistryList": "[if(not(equals(parameters('containerRegistryOption'), 'none')), array(variables('containerRegistry')), variables('emptyArray'))]"
     },
     "resources": [
         {
@@ -602,7 +585,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('storageAccountOption'), 'new'), equals(length(parameters('storage_accounts')), 0))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('storageAccountOption'), 'new'))]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-04-01",
             "name": "[parameters('storageAccountName')]",
@@ -633,7 +616,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('keyVaultOption'), 'new'), equals(length(parameters('key_vaults')), 0))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('keyVaultOption'), 'new'))]",
             "type": "Microsoft.KeyVault/vaults",
             "apiVersion": "2019-09-01",
             "tags": "[parameters('tagValues')]",
@@ -653,7 +636,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('containerRegistryOption'), 'new'), equals(length(parameters('container_registies')), 0))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('containerRegistryOption'), 'new'))]",
             "type": "Microsoft.ContainerRegistry/registries",
             "apiVersion": "2019-05-01",
             "tags": "[parameters('tagValues')]",
@@ -745,9 +728,7 @@
                     "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
                 },
                 "enableDataIsolation": "[parameters('enable_data_isolation')]",
-                "storageAccounts": "[if(equals(length(parameters('storage_accounts')), 0), variables('storageAccountList'), parameters('storage_accounts'))]",
-                "keyVaults": "[if(equals(length(parameters('key_vaults')), 0), variables('keyVaultList'), parameters('key_vaults'))]",
-                "containerRegistries": "[if(equals(length(parameters('container_registies')), 0), variables('containerRegistryList'), parameters('container_registies'))]",
+                "workspaceHubConfig": "[parameters('workspace_hub_config')]",
                 "existingWorkspaces": "[parameters('existing_workspaces')]"
             }
         },
