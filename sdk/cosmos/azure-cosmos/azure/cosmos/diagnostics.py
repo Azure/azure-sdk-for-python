@@ -20,6 +20,8 @@
 # SOFTWARE.
 
 """Diagnostic tools for Azure Cosmos database service operations.
+IMPORTANT: This file has been marked for deprecation and will be removed in the future. For diagnostics logging in our
+SDK, please use our CosmosHttpLoggingPolicy outlined in our README.
 """
 
 import warnings
