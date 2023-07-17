@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-
+import re
 from typing import Any, Iterable
 
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
@@ -45,6 +45,7 @@ from ..constants._monitoring import (
     DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY,
     DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY,
     DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY,
+    COLLECTIONS_DATA_REG,
     MonitorDatasetContext,
 )
 from . import JobOperations, OnlineDeploymentOperations, DataOperations
@@ -276,6 +277,9 @@ class ScheduleOperations(_ScopeDependentOperations):
         self, schedule: MonitorSchedule
     ) -> None:
         # resolve target ARM ID
+        import debugpy
+        debugpy.connect(("localhost", 5678))
+        debugpy.breakpoint()
         model_inputs_name, model_outputs_name = None, None
         model_inputs_version, model_outputs_version = None, None
         mdc_input_enabled, mdc_output_enabled = False, False
@@ -283,12 +287,23 @@ class ScheduleOperations(_ScopeDependentOperations):
         if target and target.endpoint_deployment_id:
             endpoint_name, deployment_name = self._process_and_get_endpoint_deployment_names_from_id(target)
             online_deployment = self._online_deployment_operations.get(deployment_name, endpoint_name)
-            model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
-            model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
-            model_outputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY)
-            model_outputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY)
-            mdc_input_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY)
-            mdc_output_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY)
+            deployment_data_collector = online_deployment.data_collector.collections
+            if deployment_data_collector:
+                in_reg = re.compile(COLLECTIONS_DATA_REG).match(deployment_data_collector.get("model_inputs").data)
+                out_reg = re.compile(COLLECTIONS_DATA_REG).match(deployment_data_collector.get("model_outputs").data)
+                model_inputs_name = in_reg.group(1)
+                model_inputs_version = in_reg.group(2)
+                model_outputs_name = out_reg.group(1)
+                model_outputs_version = out_reg.group(2)
+                mdc_input_enabled_str = deployment_data_collector.get("model_inputs").enabled
+                mdc_output_enabled_str = deployment_data_collector.get("model_outputs").enabled
+            else:
+                model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
+                model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
+                model_outputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY)
+                model_outputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY)
+                mdc_input_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY)
+                mdc_output_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY)
             if mdc_input_enabled_str and mdc_input_enabled_str.lower() == "true":
                 mdc_input_enabled = True
             if mdc_output_enabled_str and mdc_output_enabled_str.lower() == "true":

@@ -21,6 +21,7 @@ DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY = "data_collector.collections.model_outputs
 DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY = "data_collector.collections.model_inputs.enabled"
 DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY = "data_collector.collections.model_outputs.enabled"
 
+COLLECTIONS_DATA_REG = r".*/data/(.+)/versions/(.+)"
 
 SPARK_INSTANCE_TYPE_KEY = "compute.spark.resources.instance_type"
 SPARK_RUNTIME_VERSION = "compute.spark.resources.runtime_version"
