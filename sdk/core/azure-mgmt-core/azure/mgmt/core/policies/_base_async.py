@@ -72,8 +72,7 @@ class AsyncARMAutoResourceProviderRegistrationPolicy(
         post_url = "{}providers/{}/register?api-version=2016-02-01".format(url_prefix, rp_name)
         get_url = "{}providers/{}?api-version=2016-02-01".format(url_prefix, rp_name)
         _LOGGER.warning(
-            "Resource provider '%s' used by this operation is not " \
-            "registered. We are registering for you.",
+            "Resource provider '%s' used by this operation is not registered. We are registering for you.",
             rp_name,
         )
         post_response = await self.next.send(self._build_next_request(initial_request, "POST", post_url))
