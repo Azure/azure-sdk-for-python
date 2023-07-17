@@ -606,10 +606,10 @@ HTTP status code 409: The ID (name) provided for the container is already in use
 The container name must be unique within the database.""")
 
 ```
-### Logging Diagnostics
+### Logging
 
 This library uses the standard
-[logging](https://docs.python.org/3.5/library/logging.html) library for logging diagnostics.
+[logging](https://docs.python.org/3.5/library/logging.html) library for logging.
 Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
 level.
 

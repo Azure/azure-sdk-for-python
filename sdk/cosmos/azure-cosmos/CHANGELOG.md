@@ -11,8 +11,6 @@
 * Fixed bug with async patch_item method. See [PR 30804](https://github.com/Azure/azure-sdk-for-python/pull/30804).
 
 #### Other Changes
-* Removed outdated `diagnostics.py` file since we now recommend the use of our `CosmosHttpLoggingPolicy` for diagnostics.
-For more on the `CosmosHttpLoggingPolicy` see our [README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos#logging-diagnostics).
 
 ### 4.4.0 (2023-06-09)
 
