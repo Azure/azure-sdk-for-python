@@ -28,7 +28,10 @@ import warnings
 
 
 class RecordDiagnostics(object):
-    """Record Response headers from Cosmos read operations.
+    """This file is currently deprecated and will be removed in the future. Please use our CosmosHttpLoggingPolicy
+    for logging SDK diagnostics moving forward. More information on this can be found in our README.
+
+    Record Response headers from Cosmos read operations.
 
     The full response headers are stored in the ``headers`` property.
 
