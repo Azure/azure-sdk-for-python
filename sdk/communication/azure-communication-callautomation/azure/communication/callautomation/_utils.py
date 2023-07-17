@@ -46,7 +46,7 @@ def serialize_phone_identifier(
     :param identifier: PhoneNumberIdentifier
     :type identifier: PhoneNumberIdentifier
     :return: PhoneNumberIdentifierModel
-    :rtype: ~azure.communication.callautomation.PhoneNumberIdentifierModel
+    :rtype: ~azure.communication.callautomation._generated.models.PhoneNumberIdentifierModel
     """
     try:
         if identifier.kind and identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
@@ -65,7 +65,7 @@ def serialize_communication_user_identifier(
     :param identifier: CommunicationUserIdentifier
     :type identifier: CommunicationUserIdentifier
     :return: CommunicationUserIdentifierModel
-    :rtype: ~azure.communication.callautomation.CommunicationUserIdentifierModel
+    :rtype: ~azure.communication.callautomation._generated.models.CommunicationUserIdentifierModel
     """
     try:
         if identifier.kind and identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
