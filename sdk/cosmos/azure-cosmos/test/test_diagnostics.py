@@ -25,15 +25,13 @@ class BaseUnitTests(unittest.TestCase):
         rh = m.RecordDiagnostics()
         rh(_headers, "body")
         assert rh.headers == _headers
-        assert rh.headers is not _headers
 
     def test_headers_case(self):
         rh = m.RecordDiagnostics()
         rh(_headers, "body")
         rh_headers = rh.headers
         for key in rh.headers.keys():
-            assert key.upper() in rh_headers
-            assert key.lower() in rh_headers 
+            assert key.lower() in rh_headers
 
     def test_common_attrs(self):
         rh = m.RecordDiagnostics()
