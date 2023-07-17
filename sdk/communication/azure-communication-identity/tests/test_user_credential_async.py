@@ -5,13 +5,14 @@
 # license information.
 # --------------------------------------------------------------------------
 from unittest import TestCase
+from unittest.mock import patch
 import pytest
 from asyncio import Future
 
 try:
-    from unittest.mock import MagicMock, patch
+    from unittest.mock import MagicMock
 except ImportError:  # python < 3.3
-    from mock import MagicMock, patch
+    from mock import MagicMock
 from azure.communication.identity._shared.user_credential_async import (
     CommunicationTokenCredential,
 )

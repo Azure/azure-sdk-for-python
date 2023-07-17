@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (
-    Union, Optional, Any, TYPE_CHECKING
+from typing import (  # pylint: disable=unused-import
+    Union, Optional, TYPE_CHECKING
 )
 
 from azure.storage.queue._shared import sign_string
@@ -21,6 +21,7 @@ if TYPE_CHECKING:
         AccountSasPermissions,
         QueueSasPermissions
     )
+    from typing import Any
 
 class QueueSharedAccessSignature(SharedAccessSignature):
     '''
@@ -132,7 +133,7 @@ def generate_account_sas(
         expiry,  # type: Optional[Union[datetime, str]]
         start=None,  # type: Optional[Union[datetime, str]]
         ip=None,  # type: Optional[str]
-        **kwargs  # type: Any
+        **kwargs  # type: "Any"
     ):  # type: (...) -> str
     """Generates a shared access signature for the queue service.
 
@@ -194,7 +195,7 @@ def generate_queue_sas(
         start=None,  # type: Optional[Union[datetime, str]]
         policy_id=None,  # type: Optional[str]
         ip=None,  # type: Optional[str]
-        **kwargs  # type: Any
+        **kwargs  # type: "Any"
     ):  # type: (...) -> str
     """Generates a shared access signature for a queue.
 

@@ -168,11 +168,11 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):  # p
         error_type = HttpResponseError
 
     try:
-        error_message += "\nErrorCode:{}".format(error_code.value)
+        error_message += f"\nErrorCode:{error_code.value}"
     except AttributeError:
-        error_message += "\nErrorCode:{}".format(error_code)
+        error_message += f"\nErrorCode:{error_code}"
     for name, info in additional_data.items():
-        error_message += "\n{}:{}".format(name, info)
+        error_message += f"\n{name}:{info}"
 
     error = error_type(message=error_message, response=response, **kwargs)
     error.error_code = error_code
@@ -184,16 +184,16 @@ def _reraise_error(decoded_error):
     _, _, exc_traceback = sys.exc_info()
     try:
         raise decoded_error.with_traceback(exc_traceback)
-    except AttributeError:
+    except AttributeError as exc:
         decoded_error.__traceback__ = exc_traceback
-        raise decoded_error
+        raise decoded_error from exc
 
 
 def _process_table_error(storage_error, table_name=None):
     try:
         decoded_error = _decode_error(storage_error.response, storage_error.message)
-    except AttributeError:
-        raise storage_error
+    except AttributeError as exc:
+        raise storage_error from exc
     if table_name:
         _validate_tablename_error(decoded_error, table_name)
     _reraise_error(decoded_error)
@@ -227,8 +227,8 @@ def _reprocess_error(decoded_error, identifiers=None):
                 "Too many access policies provided. The server does not support setting more than 5 access policies"\
                     "on a single resource."
                 )
-    except AttributeError:
-        raise decoded_error
+    except AttributeError as exc:
+        raise decoded_error from exc
 
 
 class TableTransactionError(HttpResponseError):
