@@ -404,6 +404,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         :param model_id: Model identifier.
         :type model_id: str
+        :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
 
@@ -593,6 +594,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         a custom classifier model, see https://aka.ms/azsdk/formrecognizer/buildclassifiermodel.
 
         :param doc_types: Required. Mapping of document types to classify against.
+        :paramtype doc_types: Mapping[str, ~azure.ai.formrecognizer.ClassifierDocumentTypeDetails]
         :keyword str classifier_id: Unique document classifier name.
             If not specified, a classifier ID will be created for you.
         :keyword str description: Document classifier description.
@@ -721,6 +723,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         """Delete a document classifier.
 
         :param str classifier_id: Classifier identifier.
+        :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
 

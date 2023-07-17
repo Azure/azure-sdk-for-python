@@ -714,7 +714,10 @@ class JobOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        is_batch_job = job_details.tags.get("azureml.batchrun", None) == "true"
+        is_batch_job = (
+            job_details.tags.get("azureml.batchrun", None) == "true"
+            and job_details.tags.get("azureml.jobtype", None) != PipelineConstants.PIPELINE_JOB_TYPE
+        )
         outputs = {}
         download_path = Path(download_path)
         artifact_directory_name = "artifacts"

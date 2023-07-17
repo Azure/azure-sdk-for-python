@@ -5,18 +5,12 @@
 # pylint: skip-file
 
 from enum import Enum
-from six import with_metaclass
 from typing import Mapping, Optional, Union, Any
-
-try:
-    from typing import Protocol, TypedDict
-except ImportError:
-    from typing_extensions import Protocol, TypedDict
-
 from azure.core import CaseInsensitiveEnumMeta
+from typing_extensions import TypedDict, Protocol
 
 
-class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CommunicationIdentifierKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Communication Identifier Kind.
 
     For checking yet unknown identifiers it is better to rely on the presence of the `raw_id` property,
@@ -32,7 +26,7 @@ class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, E
     MICROSOFT_BOT = "microsoft_bot"
 
 
-class CommunicationCloudEnvironment(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CommunicationCloudEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The cloud environment that the identifier belongs to"""
 
     PUBLIC = "PUBLIC"
@@ -54,7 +48,7 @@ class CommunicationIdentifier(Protocol):
     properties = {}  # type: Mapping[str, Any]
 
 
-CommunicationUserProperties = TypedDict("CommunicationUserProperties", id=str)
+CommunicationUserProperties = TypedDict("CommunicationUserProperties", {"id": str})
 
 PHONE_NUMBER_PREFIX = "4:"
 BOT_PREFIX = "28:"
@@ -103,11 +97,11 @@ class CommunicationUserIdentifier(object):
 
 def _communication_user_raw_id(identifier: CommunicationUserIdentifier) -> str:
     if identifier.raw_id:
-        return identifier.raw_id
-    return identifier.properties["id"]
+        return str(identifier.raw_id)
+    return str(identifier.properties["id"])
 
 
-PhoneNumberProperties = TypedDict("PhoneNumberProperties", value=str)
+PhoneNumberProperties = TypedDict("PhoneNumberProperties", {"value": str})
 
 
 class PhoneNumberIdentifier(object):
@@ -140,7 +134,7 @@ class PhoneNumberIdentifier(object):
 
 def _phone_number_raw_id(identifier: PhoneNumberIdentifier) -> str:
     if identifier.raw_id:
-        return identifier.raw_id
+        return str(identifier.raw_id)
     value = identifier.properties["value"]
     # We just assume correct E.164 format here because
     # validation should only happen server-side, not client-side.
@@ -169,7 +163,7 @@ class UnknownIdentifier(object):
 
     def __init__(self, identifier: str) -> None:
         self.raw_id = identifier
-        self.properties = {}
+        self.properties = {}  # type: Any
 
     def __eq__(self, other):
         try:
@@ -180,9 +174,11 @@ class UnknownIdentifier(object):
 
 MicrosoftTeamsUserProperties = TypedDict(
     "MicrosoftTeamsUserProperties",
-    user_id=str,
-    is_anonymous=bool,
-    cloud=Union[CommunicationCloudEnvironment, str],
+    {
+        "user_id": str,
+        "is_anonymous": bool,
+        "cloud": Union[CommunicationCloudEnvironment, str],
+    },
 )
 
 
@@ -227,7 +223,7 @@ class MicrosoftTeamsUserIdentifier(object):
 
 def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> str:
     if identifier.raw_id:
-        return identifier.raw_id
+        return str(identifier.raw_id)
     user_id = identifier.properties["user_id"]
     if identifier.properties["is_anonymous"]:
         return f"{TEAMS_USER_ANONYMOUS_PREFIX}{user_id}"
@@ -243,9 +239,11 @@ def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> st
 
 MicrosoftBotProperties = TypedDict(
     "MicrosoftBotProperties",
-    bot_id=str,
-    is_resource_account_configured=bool,
-    cloud=Union[CommunicationCloudEnvironment, str],
+    {
+        "bot_id": str,
+        "is_resource_account_configured": bool,
+        "cloud": Union[CommunicationCloudEnvironment, str],
+    },
 )
 
 
@@ -273,7 +271,7 @@ class MicrosoftBotIdentifier(object):
 
     def __init__(self, bot_id: str, **kwargs: Any) -> None:
         self.raw_id = kwargs.get("raw_id")
-        self.properties: MicrosoftBotProperties = MicrosoftBotProperties(
+        self.properties = MicrosoftBotProperties(
             bot_id=bot_id,
             is_resource_account_configured=kwargs.get(
                 "is_resource_account_configured", True
@@ -292,7 +290,7 @@ class MicrosoftBotIdentifier(object):
 
 def _microsoft_bot_raw_id(identifier: MicrosoftBotIdentifier) -> str:
     if identifier.raw_id:
-        return identifier.raw_id
+        return str(identifier.raw_id)
     bot_id = identifier.properties["bot_id"]
     cloud = identifier.properties["cloud"]
     if identifier.properties["is_resource_account_configured"] is False:
@@ -320,7 +318,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
     if raw_id.startswith(PHONE_NUMBER_PREFIX):
         return PhoneNumberIdentifier(
             value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id
-        )
+        )  # type: ignore
 
     segments = raw_id.split(":", maxsplit=2)
     if len(segments) != 3:
@@ -330,76 +328,76 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
                 is_resource_account_configured=False,
                 cloud=CommunicationCloudEnvironment.PUBLIC,
                 raw_id=raw_id,
-            )
-        return UnknownIdentifier(identifier=raw_id)
+            )  # type: ignore
+        return UnknownIdentifier(identifier=raw_id)  # type: ignore
 
     prefix = f"{segments[0]}:{segments[1]}:"
     suffix = segments[2]
     if prefix == TEAMS_USER_ANONYMOUS_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix, is_anonymous=True, raw_id=raw_id
-        )
+        )  # type: ignore
     elif prefix == TEAMS_USER_PUBLIC_CLOUD_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.PUBLIC,
             raw_id=raw_id,
-        )
+        )  # type: ignore
     elif prefix == TEAMS_USER_DOD_CLOUD_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.DOD,
             raw_id=raw_id,
-        )
+        )  # type: ignore
     elif prefix == TEAMS_USER_GCCH_CLOUD_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.GCCH,
             raw_id=raw_id,
-        )
+        )  # type: ignore
     elif prefix in [
         ACS_USER_PREFIX,
         ACS_USER_DOD_CLOUD_PREFIX,
         ACS_USER_GCCH_CLOUD_PREFIX,
         SPOOL_USER_PREFIX,
     ]:
-        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)
+        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)  # type: ignore
     elif prefix == BOT_GCCH_CLOUD_GLOBAL_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_resource_account_configured=False,
             cloud=CommunicationCloudEnvironment.GCCH,
             raw_id=raw_id,
-        )
+        )  # type: ignore
     elif prefix == BOT_PUBLIC_CLOUD_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_resource_account_configured=True,
             cloud=CommunicationCloudEnvironment.PUBLIC,
             raw_id=raw_id,
-        )
+        )  # type: ignore
     elif prefix == BOT_DOD_CLOUD_GLOBAL_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_resource_account_configured=False,
             cloud=CommunicationCloudEnvironment.DOD,
             raw_id=raw_id,
-        )
+        )  # type: ignore
     elif prefix == BOT_GCCH_CLOUD_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_resource_account_configured=True,
             cloud=CommunicationCloudEnvironment.GCCH,
             raw_id=raw_id,
-        )
+        )  # type: ignore
     elif prefix == BOT_DOD_CLOUD_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_resource_account_configured=True,
             cloud=CommunicationCloudEnvironment.DOD,
             raw_id=raw_id,
-        )
-    return UnknownIdentifier(identifier=raw_id)
+        )  # type: ignore
+    return UnknownIdentifier(identifier=raw_id)  # type: ignore

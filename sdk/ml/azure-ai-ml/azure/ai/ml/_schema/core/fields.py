@@ -8,6 +8,7 @@ import copy
 import logging
 import os
 import re
+import traceback
 import typing
 from abc import abstractmethod
 from pathlib import Path
@@ -16,25 +17,11 @@ from typing import List, Optional
 from marshmallow import RAISE, fields
 from marshmallow.exceptions import ValidationError
 from marshmallow.fields import _T, Field, Nested
-from marshmallow.utils import (
-    FieldInstanceResolutionError,
-    from_iso_datetime,
-    resolve_field_instance,
-)
+from marshmallow.utils import FieldInstanceResolutionError, from_iso_datetime, resolve_field_instance
 
-from ..._utils._arm_id_utils import (
-    AMLVersionedArmId,
-    is_ARM_id_for_resource,
-    parse_name_label,
-    parse_name_version,
-)
+from ..._utils._arm_id_utils import AMLVersionedArmId, is_ARM_id_for_resource, parse_name_label, parse_name_version
 from ..._utils._experimental import _is_warning_cached
-from ..._utils.utils import (
-    is_data_binding_expression,
-    is_valid_node_name,
-    load_file,
-    load_yaml,
-)
+from ..._utils.utils import is_data_binding_expression, is_valid_node_name, load_file, load_yaml
 from ...constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
@@ -51,9 +38,7 @@ from ...constants._common import (
     RESOURCE_ID_FORMAT,
     AzureMLResourceType,
 )
-from ...entities._job.pipeline._attr_dict import (
-    try_get_non_arbitrary_attr_for_potential_attr_dict,
-)
+from ...entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
 from ...exceptions import ValidationException
 from ..core.schema import PathAwareSchema
 
@@ -484,8 +469,18 @@ class UnionField(fields.Field):
                 return schema.deserialize(value, attr, data, **kwargs)
             except ValidationError as e:
                 errors.append(e.normalized_messages())
-            except (ValidationException, FileNotFoundError, TypeError) as e:
+            except ValidationException as e:
+                # ValidationException is explicitly raised in project code so usually easy to locate with error message
                 errors.append([str(e)])
+            except (FileNotFoundError, TypeError) as e:
+                # FileNotFoundError and TypeError can be raised in system code, so we need to add more information
+                # TODO: consider if it's possible to handle those errors in their directly relative
+                #  code instead of in UnionField
+                trace = traceback.format_exc().splitlines()
+                if len(trace) >= 3:
+                    errors.append([f"{trace[-1]} from {trace[-3]} {trace[-2]}"])
+                else:
+                    errors.append([f"{e.__class__.__name__}: {e}"])
             finally:
                 # Revert base path to original path when job schema fail to deserialize job. For example, when load
                 # parallel job with component file reference starting with FILE prefix, maybe first CommandSchema will
@@ -681,8 +676,8 @@ def DistributionField(**kwargs):
     from azure.ai.ml._schema.job.distribution import (
         MPIDistributionSchema,
         PyTorchDistributionSchema,
-        TensorFlowDistributionSchema,
         RayDistributionSchema,
+        TensorFlowDistributionSchema,
     )
 
     return UnionField(

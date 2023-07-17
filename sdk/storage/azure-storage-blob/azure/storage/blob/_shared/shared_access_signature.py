@@ -39,8 +39,6 @@ class QueryStringConstants(object):
     SIGNED_KEY_EXPIRY = 'ske'
     SIGNED_KEY_SERVICE = 'sks'
     SIGNED_KEY_VERSION = 'skv'
-
-    # for blob only
     SIGNED_ENCRYPTION_SCOPE = 'ses'
 
     # for ADLS
@@ -78,7 +76,6 @@ class QueryStringConstants(object):
             QueryStringConstants.SIGNED_KEY_EXPIRY,
             QueryStringConstants.SIGNED_KEY_SERVICE,
             QueryStringConstants.SIGNED_KEY_VERSION,
-            # for blob only
             QueryStringConstants.SIGNED_ENCRYPTION_SCOPE,
             # for ADLS
             QueryStringConstants.SIGNED_AUTHORIZED_OID,
@@ -116,6 +113,7 @@ class SharedAccessSignature(object):
         Use the returned signature with the sas_token parameter of the service
         or to create a new account object.
 
+        :param Any services: The specified services associated with the shared access signature.
         :param ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account
             SAS. You can combine values to provide access to more than one
@@ -154,6 +152,8 @@ class SharedAccessSignature(object):
         :keyword str encryption_scope:
             Optional. If specified, this is the encryption scope to use when sending requests
             authorized with this SAS URI.
+        :returns: The generated SAS token for the account.
+        :rtype: str
         '''
         sas = _SharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)

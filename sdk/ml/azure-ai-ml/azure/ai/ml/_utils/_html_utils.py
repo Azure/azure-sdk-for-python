@@ -7,7 +7,6 @@ from collections import OrderedDict
 from datetime import datetime, timedelta
 from html import escape
 
-import six
 
 SUPPORTED_VALUE_TYPE_TUPLE = (int, float, str, datetime, timedelta)
 TABLE_FMT = '<table style="width:100%">{0}</table>'
@@ -99,7 +98,7 @@ def to_html(object_to_convert):
 
 def is_string_link(string):
     # type: (str) -> bool
-    return isinstance(string, six.text_type) and string.strip().lower().startswith("http")
+    return isinstance(string, str) and string.strip().lower().startswith("http")
 
 
 def make_link(link_string, link_text=None):

@@ -19,6 +19,7 @@ from azure.appconfiguration import (
     ResourceReadOnlyError,
     AzureAppConfigurationClient,
     ConfigurationSetting,
+    ConfigurationSettingFilter,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
     FILTER_PERCENTAGE,
@@ -35,7 +36,6 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
-from typing import Any
 from uuid import uuid4
 from preparers import app_config_decorator
 from devtools_testutils import recorded_by_proxy
@@ -363,10 +363,12 @@ class TestAppConfigurationClient(AppConfigTestCase):
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("timestamp", str(datetime.datetime.utcnow()))
 
-        with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
+        with self.create_client(appconfiguration_connection_string) as client:
             # Confirm all configuration settings are cleaned up
             current_config_settings = client.list_configuration_settings()
-            assert len(list(current_config_settings)) == 0
+            if len(list(current_config_settings)) != 0:
+                for config_setting in current_config_settings:
+                    client.delete_configuration_setting(config_setting)
 
             revision = client.list_configuration_settings(accept_datetime=recorded_variables.get("timestamp"))
             assert len(list(revision)) >= 0
@@ -880,6 +882,82 @@ class TestAppConfigurationClient(AppConfigTestCase):
 
         client.delete_configuration_setting(new.key)
 
+    @app_config_decorator
+    @recorded_by_proxy
+    def test_create_snapshot(self, appconfiguration_connection_string):
+        self.set_up(appconfiguration_connection_string)
+        snapshot_name = self.get_resource_name("snapshot")
+        filters = [ConfigurationSettingFilter(key=KEY, label=LABEL)]
+        response = self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        created_snapshot = response.result()
+        assert created_snapshot.name == snapshot_name
+        assert created_snapshot.status == "ready"
+        assert len(created_snapshot.filters) == 1
+        assert created_snapshot.filters[0].key == KEY
+        assert created_snapshot.filters[0].label == LABEL
+
+        received_snapshot = self.client.get_snapshot(name=snapshot_name)
+        self._assert_snapshots(received_snapshot, created_snapshot)
+
+        self.tear_down()
+
+    @app_config_decorator
+    @recorded_by_proxy
+    def test_update_snapshot_status(self, appconfiguration_connection_string):
+        self.set_up(appconfiguration_connection_string)
+        snapshot_name = self.get_resource_name("snapshot")
+        filters = [ConfigurationSettingFilter(key=KEY, label=LABEL)]
+        response = self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        created_snapshot = response.result()
+        assert created_snapshot.status == "ready"
+
+        archived_snapshot = self.client.archive_snapshot(name=snapshot_name)
+        assert archived_snapshot.status == "archived"
+
+        recovered_snapshot = self.client.recover_snapshot(name=snapshot_name)
+        assert recovered_snapshot.status == "ready"
+
+        self.tear_down()
+
+    @app_config_decorator
+    @recorded_by_proxy
+    def test_list_snapshots(self, appconfiguration_connection_string):
+        self.set_up(appconfiguration_connection_string)
+
+        result = self.client.list_snapshots()
+        initial_snapshots = len(list(result))
+
+        snapshot_name1 = self.get_resource_name("snapshot1")
+        snapshot_name2 = self.get_resource_name("snapshot2")
+        filters1 = [ConfigurationSettingFilter(key=KEY)]
+        response1 = self.client.begin_create_snapshot(name=snapshot_name1, filters=filters1)
+        created_snapshot1 = response1.result()
+        assert created_snapshot1.status == "ready"
+        filters2 = [ConfigurationSettingFilter(key=KEY, label=LABEL)]
+        response2 = self.client.begin_create_snapshot(name=snapshot_name2, filters=filters2)
+        created_snapshot2 = response2.result()
+        assert created_snapshot2.status == "ready"
+
+        result = self.client.list_snapshots()
+        assert len(list(result)) == initial_snapshots + 2
+
+        self.tear_down()
+
+    @app_config_decorator
+    @recorded_by_proxy
+    def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string):
+        self.set_up(appconfiguration_connection_string)
+        snapshot_name = self.get_resource_name("snapshot")
+        filters = [ConfigurationSettingFilter(key=KEY, label=LABEL)]
+        response = self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        created_snapshot = response.result()
+        assert created_snapshot.status == "ready"
+
+        items = self.client.list_snapshot_configuration_settings(snapshot_name)
+        assert len(list(items)) == 1
+
+        self.tear_down()
+
 
 class TestAppConfigurationClientUnitTest:
     def test_type_error(self):
@@ -908,7 +986,7 @@ class TestAppConfigurationClientUnitTest:
             def open(self):
                 pass
 
-            def send(self, request: PipelineRequest, **kwargs: Any) -> PipelineResponse:
+            def send(self, request: PipelineRequest, **kwargs) -> PipelineResponse:
                 assert request.headers["Authorization"] != self.auth_headers
                 self.auth_headers.append(request.headers["Authorization"])
                 response = HttpResponse(request, None)

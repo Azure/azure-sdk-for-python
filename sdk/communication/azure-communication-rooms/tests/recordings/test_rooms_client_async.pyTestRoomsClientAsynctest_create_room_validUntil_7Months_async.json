@@ -18,18 +18,17 @@
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "validFrom": "2023-06-08T15:43:52.666740Z",
-        "validUntil": "2023-12-28T15:43:52.666740Z"
+        "validFrom": "2023-07-08T15:17:39.888279Z",
+        "validUntil": "2024-01-27T15:17:39.888279Z"
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "sanitized",
+        "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-error-code": "BadRequest"
       },

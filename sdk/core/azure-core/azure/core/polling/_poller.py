@@ -64,14 +64,21 @@ class PollingMethod(Generic[PollingReturnType_co]):
         raise TypeError("Polling method '{}' doesn't support from_continuation_token".format(cls.__name__))
 
 
-class NoPolling(PollingMethod):
+class NoPolling(PollingMethod[PollingReturnType_co]):
     """An empty poller that returns the deserialized initial response."""
+
+    _deserialization_callback: Callable[[Any], PollingReturnType_co]
+    """Deserialization callback passed during initialization"""
 
     def __init__(self):
         self._initial_response = None
-        self._deserialization_callback = None
 
-    def initialize(self, _: Any, initial_response: Any, deserialization_callback: Callable) -> None:
+    def initialize(
+        self,
+        _: Any,
+        initial_response: Any,
+        deserialization_callback: Callable[[Any], PollingReturnType_co],
+    ) -> None:
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
 
@@ -79,9 +86,10 @@ class NoPolling(PollingMethod):
         """Empty run, no polling."""
 
     def status(self) -> str:
-        """Return the current status as a string.
+        """Return the current status.
 
         :rtype: str
+        :return: The current status
         """
         return "succeeded"
 
@@ -89,10 +97,11 @@ class NoPolling(PollingMethod):
         """Is this polling finished?
 
         :rtype: bool
+        :return: Whether this polling is finished
         """
         return True
 
-    def resource(self) -> Any:
+    def resource(self) -> PollingReturnType_co:
         return self._deserialization_callback(self._initial_response)
 
     def get_continuation_token(self) -> str:
@@ -105,7 +114,7 @@ class NoPolling(PollingMethod):
         try:
             deserialization_callback = kwargs["deserialization_callback"]
         except KeyError:
-            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
+            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token") from None
         import pickle
 
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
@@ -130,7 +139,7 @@ class LROPoller(Generic[PollingReturnType_co]):
         self,
         client: Any,
         initial_response: Any,
-        deserialization_callback: Callable,
+        deserialization_callback: Callable[[Any], PollingReturnType_co],
         polling_method: PollingMethod[PollingReturnType_co],
     ) -> None:
         self._callbacks: List[Callable] = []
@@ -147,10 +156,11 @@ class LROPoller(Generic[PollingReturnType_co]):
 
         # Prepare thread execution
         self._thread = None
-        self._done = None
+        self._done = threading.Event()
         self._exception = None
-        if not self._polling_method.finished():
-            self._done = threading.Event()
+        if self._polling_method.finished():
+            self._done.set()
+        else:
             self._thread = threading.Thread(
                 target=with_current_context(self._start),
                 name="LROPoller({})".format(uuid.uuid4()),
@@ -161,9 +171,6 @@ class LROPoller(Generic[PollingReturnType_co]):
     def _start(self):
         """Start the long running operation.
         On completion, runs any callbacks.
-
-        :param callable update_cmd: The API request to check the status of
-         the operation.
         """
         try:
             self._polling_method.run()
@@ -189,7 +196,11 @@ class LROPoller(Generic[PollingReturnType_co]):
             callbacks, self._callbacks = self._callbacks, []
 
     def polling_method(self) -> PollingMethod[PollingReturnType_co]:
-        """Return the polling method associated to this poller."""
+        """Return the polling method associated to this poller.
+
+        :return: The polling method
+        :rtype: ~azure.core.polling.PollingMethod
+        """
         return self._polling_method
 
     def continuation_token(self) -> str:
@@ -223,8 +234,9 @@ class LROPoller(Generic[PollingReturnType_co]):
         """Return the result of the long running operation, or
         the result available after the specified timeout.
 
-        :returns: The deserialized resource of the long running operation,
-         if one is available.
+        :param float timeout: Period of time to wait before getting back control.
+        :returns: The deserialized resource of the long running operation, if one is available.
+        :rtype: any or None
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
         self.wait(timeout)
@@ -266,7 +278,7 @@ class LROPoller(Generic[PollingReturnType_co]):
          argument, a completed LongRunningOperation.
         """
         # Still use "_done" and not "done", since CBs are executed inside the thread.
-        if self._done is None or self._done.is_set():
+        if self._done.is_set():
             func(self._polling_method)
         # Let's add them still, for consistency (if you wish to access to it for some reasons)
         self._callbacks.append(func)
