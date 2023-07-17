@@ -454,7 +454,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
             distribution_policy_id: str,
             *,
             name: Optional[str],
-            offer_ttl_seconds: Optional[float],
+            offer_expires_after_seconds: Optional[float],
             mode: Optional[Union[BestWorkerMode, LongestIdleMode, RoundRobinMode]],
             **kwargs: Any
     ) -> DistributionPolicy:
