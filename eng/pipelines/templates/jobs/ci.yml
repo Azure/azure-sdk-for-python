@@ -169,6 +169,27 @@ jobs:
   #     name: azsdk-pool-mms-win-2022-general
   #     vmImage: MMS2022
   #   steps:
+  #      # Skip sparse checkout for the `azure-sdk-for-<lang>-pr` private mirrored repositories
+  #      # as we require the GitHub service connection to be loaded.
+  #      - ${{ if not(contains(variables['Build.DefinitionName'], 'js-pr')) }}:
+  #        # For PullRequests CredScan will be run against the files changed in the PR.
+  #        # For non-pull requests CredScan runs against the service directory.
+  #        - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+  #          - pwsh: |
+  #              $changedFiles = & "eng/common/scripts/get-changedfiles.ps1"
+  #              $tmp = ConvertTo-Json @($changedFiles | Sort-Object | Get-Unique) -Compress
+  #              Write-Host "##vso[task.setvariable variable=SparseCheckoutDirectories;]$tmp"
+  #
+  #          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+  #            parameters:
+  #              Paths: $(SparseCheckoutDirectories)
+  #
+  #        - ${{ else }}:
+  #          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+  #            parameters:
+  #              Paths: 
+  #                - "sdk/${{ parameters.ServiceDirectory }}"
+  #
   #     - template: /eng/common/pipelines/templates/steps/credscan.yml
   #       parameters:
   #         ServiceDirectory: ${{ parameters.ServiceDirectory }}
