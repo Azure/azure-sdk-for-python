@@ -30,13 +30,13 @@ import logging
 
 _LOGGER = logging.getLogger(__name__)
 _ARMID_RE = re.compile(
-    "(?i)/subscriptions/(?P<subscription>[^/]+)(/resourceGroups/(?P<resource_group>[^/]+))?"
+    "(?i)/subscriptions/(?P<subscription>[^/]+)(/resourceGroups/(?P<resource_group>[^/]+))?" +
     "(/providers/(?P<namespace>[^/]+)/(?P<type>[^/]*)/(?P<name>[^/]+)(?P<children>.*))?"
 )
 
 _CHILDREN_RE = re.compile(
-    "(?i)(/providers/(?P<child_namespace>[^/]+))?/" "(?P<child_type>[^/]*)/(?P<child_name>[^/]+)"
-)  # pylint: disable=implicit-str-concat
+    "(?i)(/providers/(?P<child_namespace>[^/]+))?/" + "(?P<child_type>[^/]*)/(?P<child_name>[^/]+)"
+)
 
 _ARMNAME_RE = re.compile("^[^<>%&:\\?/]{1,260}$")
 
