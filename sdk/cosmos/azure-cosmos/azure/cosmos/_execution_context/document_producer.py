@@ -112,7 +112,7 @@ def _compare_helper(a, b):
     return (a > b) - (a < b)
 
 
-class _PartitionKeyRangeDocumentProduerComparator(object):
+class _PartitionKeyRangeDocumentProducerComparator(object):
     """
     Provides a Comparator for document producers using the min value of the
     corresponding target partition.
@@ -213,7 +213,7 @@ def _peek_order_by_items(peek_result):
     return peek_result["orderByItems"]
 
 
-class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerComparator):
+class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProducerComparator):
     """Provide a Comparator for document producers which respects orderby sort order.
     """
 
@@ -260,7 +260,7 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
                 if self._sort_order[i] == "Descending":
                     return -res
 
-        return _PartitionKeyRangeDocumentProduerComparator.compare(self, doc_producer1, doc_producer2)
+        return _PartitionKeyRangeDocumentProducerComparator.compare(self, doc_producer1, doc_producer2)
 
     def _validate_orderby_items(self, res1, res2):
         if len(res1) != len(res2):
