@@ -40,6 +40,9 @@ class TableBatchOperations(object):
     supported within a single transaction. The batch can include at most 100
     entities, and its total payload may be no more than 4 MB in size.
 
+    :ivar str table_name: The name of the table.
+    :ivar requests: A list of :class:`~azure.core.pipeline.transport.HttpRequest` in a batch.
+    :vartype requests: list[~azure.core.pipeline.transport.HttpRequest]
     """
 
     def __init__(
@@ -51,22 +54,21 @@ class TableBatchOperations(object):
         table_name: str,
         is_cosmos_endpoint: bool = False,
         **kwargs
-    ):
+    ) -> None:
         """Create TableClient from a Credential.
 
-        :param client: an AzureTable object
-        :type client: AzureTable
-        :param serializer: serializer object for request serialization
+        :param client: An AzureTable object.
+        :type client: ~azure.data.tables._generated.AzureTable
+        :param serializer: A Serializer object for request serialization.
         :type serializer: ~azure.data.tables._generated._serialization.Serializer
-        :param deserializer: deserializer object for request serialization
+        :param deserializer: A Deserializer object for request deserialization.
         :type deserializer: ~azure.data.tables._generated._serialization.Deserializer
-        :param config: Azure Table Configuration object
-        :type config: AzureTableConfiguration
-        :param table_name: name of the Table to perform operations on
+        :param config: An AzureTableConfiguration object.
+        :type config: ~azure.data.tables._generated._configuration.AzureTableConfiguration
+        :param table_name: The name of the Table to perform operations on.
         :type table_name: str
-        :param table_client: TableClient object to perform operations on
-        :type table_client: TableClient
-
+        :param is_cosmos_endpoint: True if the client endpoint is for Tables Cosmos. False if not. Default is False.
+        :type is_cosmos_endpoint: bool
         :returns: None
         """
         self._client = client
@@ -89,23 +91,30 @@ class TableBatchOperations(object):
             raise ValueError("Partition Keys must all be the same")
 
     def add_operation(self, operation: TransactionOperationType) -> None:
-        """Add a single operation to a batch."""
+        """Add a single operation to a batch.
+
+        :param operation: An operation include operation type and entity, may with kwargs.
+        :type operation: A tuple of ~azure.data.tables.TransactionOperation or str, and
+            ~azure.data.tables.TableEntity or Mapping[str, Any]. Or a tuple of
+            ~azure.data.tables.TransactionOperation or str, and
+            ~azure.data.tables.TableEntity or Mapping[str, Any], and Mapping[str, Any]
+        :return: None
+        """
         try:
             operation_type, entity, kwargs = operation  # type: ignore
         except ValueError:
             operation_type, entity, kwargs = operation[0], operation[1], {}  # type: ignore
         try:
             getattr(self, operation_type.lower())(entity, **kwargs)
-        except AttributeError:
-            raise ValueError("Unrecognized operation: {}".format(operation))
+        except AttributeError as exc:
+            raise ValueError(f"Unrecognized operation: {operation}") from exc
 
     def create(self, entity: EntityType, **kwargs) -> None:
         """Adds an insert operation to the current batch.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :return: None
-        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:
@@ -149,18 +158,19 @@ class TableBatchOperations(object):
         :param: entity:
             The entity to insert. Can be a dict or an entity object
             Must contain a PartitionKey and a RowKey.
-        :type: entity: Dict or :class:`~azure.data.tables.models.Entity`
+        :type: entity: dict[str, Any] or ~azure.data.tables.models.Entity
         :param timeout: The timeout parameter is expressed in seconds.
-        :type timeout: int
+        :type timeout: int or None
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when analytics logging is enabled.
-        :type request_id_parameter: str
+        :type request_id_parameter: str or None
         :param response_preference: Specifies the return format. Default is return without content.
         :type response_preference: str or ~azure.data.tables.models.ResponseFormat
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
-        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat or None
+        :return: None
         """
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json;odata=nometadata")
@@ -227,14 +237,13 @@ class TableBatchOperations(object):
         """Adds an update operation to the current batch.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity
-        :type mode: :class:`~azure.data.tables.UpdateMode`
+        :type mode: ~azure.data.tables.UpdateMode
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchCondition
         :return: None
-        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:
@@ -284,7 +293,7 @@ class TableBatchOperations(object):
                 **kwargs
             )
         else:
-            raise ValueError("Mode type '{}' is not supported.".format(mode))
+            raise ValueError(f"Mode type '{mode}' is not supported.")
 
     def _batch_update_entity(
         self,
@@ -307,23 +316,22 @@ class TableBatchOperations(object):
         :param row_key: The row key of the entity.
         :type row_key: str
         :param timeout: The timeout parameter is expressed in seconds.
-        :type timeout: int
+        :type timeout: int or None
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when analytics logging is enabled.
-        :type request_id_parameter: str
+        :type request_id_parameter: str or None
         :param if_match: Match condition for an entity to be updated. If specified and a matching
          entity is not found, an error will be raised. To force an unconditional update, set to the
          wildcard character (*). If not specified, an insert will be performed when no existing entity
          is found to update and a replace will be performed if an existing entity is found.
-        :type if_match: str
+        :type if_match: str or None
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: Dict[str, object]
+        :type table_entity_properties: dict[str, object] or None
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
-        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat or None
         :return: None
-        :rtype: None
         """
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json")
@@ -411,23 +419,22 @@ class TableBatchOperations(object):
         :param row_key: The row key of the entity.
         :type row_key: str
         :param timeout: The timeout parameter is expressed in seconds.
-        :type timeout: int
+        :type timeout: int or None
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when analytics logging is enabled.
-        :type request_id_parameter: str
+        :type request_id_parameter: str or None
         :param if_match: Match condition for an entity to be updated. If specified and a matching
          entity is not found, an error will be raised. To force an unconditional update, set to the
          wildcard character (*). If not specified, an insert will be performed when no existing entity
          is found to update and a merge will be performed if an existing entity is found.
-        :type if_match: str
+        :type if_match: str or None
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: Dict[str, object]
+        :type table_entity_properties: dict[str, object] or None
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
-        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat or None
         :return: None
-        :rtype: None
         """
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json")
@@ -498,14 +505,13 @@ class TableBatchOperations(object):
     def delete(self, entity: EntityType, **kwargs) -> None:
         """Adds a delete operation to the current branch.
 
-        :param partition_key: The partition key of the entity.
-        :type partition_key: str
-        :param row_key: The row key of the entity.
-        :type row_key: str
+        param entity: The properties for the table entity.
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchCondition
-        :raises ValueError:
+        :return: None
+        :raises: ValueError
 
         .. admonition:: Example:
 
@@ -564,16 +570,15 @@ class TableBatchOperations(object):
          wildcard character (*).
         :type if_match: str
         :param timeout: The timeout parameter is expressed in seconds.
-        :type timeout: int
+        :type timeout: int or None
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when analytics logging is enabled.
-        :type request_id_parameter: str
+        :type request_id_parameter: str or None
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
-        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat or None
         :return: None
-        :rtype: None
         """
         data_service_version = "3.0"
         accept = "application/json;odata=minimalmetadata"
@@ -633,10 +638,11 @@ class TableBatchOperations(object):
         """Adds an upsert (update/merge) operation to the batch.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity
-        :type mode: :class:`~azure.data.tables.UpdateMode`
-        :raises ValueError:
+        :type mode: ~azure.data.tables.UpdateMode
+        :return: None
+        :raises: ValueError
 
         .. admonition:: Example:
 
@@ -671,4 +677,4 @@ class TableBatchOperations(object):
                 **kwargs
             )
         else:
-            raise ValueError("Mode type '{}' is not supported.".format(mode))
+            raise ValueError(f"Mode type '{mode}' is not supported.")

@@ -75,6 +75,7 @@ from ..._schema.job.distribution import (
     RayDistributionSchema,
     TensorFlowDistributionSchema,
 )
+from .._job.pipeline._io import NodeWithGroupInputMixin
 from .._util import (
     convert_ordered_dict_to_dict,
     from_rest_dict_to_dummy_rest_object,
@@ -88,7 +89,7 @@ from .sweep import Sweep
 module_logger = logging.getLogger(__name__)
 
 
-class Command(BaseNode):
+class Command(BaseNode, NodeWithGroupInputMixin):
     """Base class for command node, used for command component version consumption.
 
     You should not instantiate this class directly. Instead, you should

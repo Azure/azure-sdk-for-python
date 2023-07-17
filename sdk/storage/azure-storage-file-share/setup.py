@@ -44,7 +44,7 @@ setup(
     author_email='ascl@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
@@ -63,14 +63,14 @@ setup(
     ]),
     python_requires=">=3.7",
     install_requires=[
-        "azure-core<2.0.0,>=1.26.0",
+        "azure-core<2.0.0,>=1.28.0",
         "cryptography>=2.1.4",
-        "typing-extensions>=4.0.1",
+        "typing-extensions>=4.3.0",
         "isodate>=0.6.1"
     ],
     extras_require={
         "aio": [
-            "azure-core[aio]<2.0.0,>=1.26.0",
+            "azure-core[aio]<2.0.0,>=1.28.0",
         ],
     },
 )

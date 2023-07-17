@@ -6,31 +6,30 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import os
-import sys
-
 
 def print_configuration_setting(config_setting):
     if not config_setting:
         return
-    print("key: " + config_setting.key)
-    if config_setting.label:
-        print("label: " + config_setting.label)
-    if config_setting.value:
-        print("value: " + config_setting.value)
-    if config_setting.read_only:
-        print("read_only: True")
-    else:
-        print("read_only: False")
-    if config_setting.etag:
-        print("etag: " + config_setting.etag)
+    print(f"key: {config_setting.key}")
+    print(f"label: {config_setting.label}")
+    print(f"value: {config_setting.value}")
+    print(f"read_only: {config_setting.read_only}")
+    print(f"etag: {config_setting.etag}")
 
 
-def get_connection_string():
-    try:
-        CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
-        return CONNECTION_STRING
-
-    except KeyError:
-        print("APPCONFIGURATION_CONNECTION_STRING must be set.")
-        sys.exit(1)
+def print_snapshot(snapshot):
+    if not snapshot:
+        return
+    print(f"name: {snapshot.name}")
+    print(f"status: {snapshot.status}")
+    print("filers: ")
+    for config_setting_filter in snapshot.filters:
+        print(f"key: {config_setting_filter.key} label: {config_setting_filter.label}")
+    print(f"composition_type: {snapshot.composition_type}")
+    print(f"created: {snapshot.created}")
+    print(f"expires: {snapshot.expires}")
+    print(f"retention_period: {snapshot.retention_period}")
+    print(f"size: {snapshot.size}")
+    print(f"items_count: {snapshot.items_count}")
+    print(f"tags: {snapshot.tags}")
+    print(f"etag: {snapshot.etag}")

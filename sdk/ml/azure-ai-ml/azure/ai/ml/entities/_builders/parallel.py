@@ -23,14 +23,14 @@ from .._job.job_resource_configuration import JobResourceConfiguration
 from .._job.parallel.parallel_job import ParallelJob
 from .._job.parallel.parallel_task import ParallelTask
 from .._job.parallel.retry_settings import RetrySettings
-from .._job.pipeline._io import NodeOutput
+from .._job.pipeline._io import NodeOutput, NodeWithGroupInputMixin
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, validate_attribute_type
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
 
 
-class Parallel(BaseNode):
+class Parallel(BaseNode, NodeWithGroupInputMixin):
     """Base class for parallel node, used for parallel component version consumption.
 
     You should not instantiate this class directly. Instead, you should

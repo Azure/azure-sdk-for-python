@@ -206,6 +206,14 @@ class InputOutputBase(ABC):
             return None
         return data.mode if data is not None and hasattr(data, "mode") else kwargs.pop("mode", None)
 
+    @property
+    def _is_primitive_type(self):
+        return self.type in IOConstants.PRIMITIVE_STR_2_TYPE
+
+    @property
+    def _is_control_or_primitive_type(self):
+        return getattr(self, "is_control", None) or getattr(self, "_is_primitive_type", None)
+
 
 class NodeInput(InputOutputBase):
     """Define one input of a Component."""

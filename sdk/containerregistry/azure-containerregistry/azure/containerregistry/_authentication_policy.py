@@ -32,6 +32,8 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         The base implementation authorizes the request with a bearer token.
 
         :param ~azure.core.pipeline.PipelineRequest request: the request
+        :return: None
+        :rtype: None
         """
         # Future caching implementation will be included here
         pass  # pylint: disable=unnecessary-pass
@@ -39,7 +41,9 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
     def send(self, request: PipelineRequest) -> PipelineResponse:
         """Authorizes a request with a bearer token, possibly handling an authentication challenge
 
-        :param ~azure.core.pipeline.PipelineRequest request: the request
+        :param ~azure.core.pipeline.PipelineRequest request: The pipeline request object.
+        :return: The pipeline response object.
+        :rtype: ~azure.core.pipeline.PipelineResponse
         """
         _enforce_https(request)
 
@@ -70,8 +74,9 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
         :param str challenge: response's WWW-Authenticate header, unparsed. It may contain multiple challenges.
         :returns: a bool indicating whether the policy should send the request
+        :rtype: bool
         """
-        # pylint:disable=unused-argument, no-self-use
+        # pylint:disable=unused-argument
 
         access_token = self._exchange_client.get_acr_access_token(challenge)
         if access_token is not None:

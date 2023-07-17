@@ -9,8 +9,8 @@ import asyncio
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from .testcase import CommunicationTestCase
 
-class AsyncCommunicationTestCase(CommunicationTestCase):
 
+class AsyncCommunicationTestCase(CommunicationTestCase):
     @staticmethod
     def await_prepared_test(test_fn):
         """Synchronous wrapper for async test methods. Used to avoid making changes

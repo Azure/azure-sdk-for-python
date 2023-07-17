@@ -20,12 +20,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential
 from azure.communication.jobrouter._shared.policy import HMACCredentialsPolicy
-
-from .._shared.utils import parse_connection_str
-
-from .._generated._serialization import Serializer  # pylint:disable=protected-access
 from .._generated.aio import AzureCommunicationJobRouterService
-from .._generated.models import (
+
+from .._models import (
     ClassificationPolicy,
     DistributionPolicy,
     ExceptionPolicy,
@@ -46,17 +43,24 @@ from .._generated.models import (
     RuleEngineWorkerSelectorAttachment,
     PassThroughWorkerSelectorAttachment,
     WeightedAllocationWorkerSelectorAttachment,
-    StaticRule,
-    ExpressionRule,
-    FunctionRule,
+    StaticRouterRule,
+    ExpressionRouterRule,
+    FunctionRouterRule,
+    WebhookRouterRule,
+    DirectMapRouterRule,
     RouterQueue,
     RouterQueueItem
 )
 
+from .._router_serializer import (
+    _deserialize_from_json, # pylint:disable=protected-access
+    _serialize_to_json, # pylint:disable=protected-access
+    _SERIALIZER, # pylint:disable=protected-access
+)
+
+from .._shared.utils import parse_connection_str
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
-
-_SERIALIZER = Serializer()
 
 
 class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-methods,too-many-lines
@@ -93,7 +97,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Host URL must be a string")
+            raise ValueError("Host URL must be a string") # pylint:disable=raise-missing-from
 
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
@@ -151,7 +155,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
         :param exception_policy: An instance of exception policy.
         :type exception_policy: ~azure.communication.jobrouter.ExceptionPolicy
 
-        :return: ExceptionPolicy
+        :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.ExceptionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -169,7 +173,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return await self._client.job_router_administration.upsert_exception_policy(
             id = exception_policy_id,
-            patch = exception_policy,
+            patch = _serialize_to_json(exception_policy, "ExceptionPolicy"),  # pylint:disable=protected-access
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("ExceptionPolicy", deserialized_json_response),
             **kwargs
         )
 
@@ -188,7 +194,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
           Please provide either this or individual keyword parameters.
         :type exception_policy: ~azure.communication.jobrouter.ExceptionPolicy
 
-        :return: ExceptionPolicy
+        :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.ExceptionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -212,7 +218,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         :keyword Optional[str] name: The name of this policy.
 
-        :return: ExceptionPolicy
+        :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.ExceptionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -242,7 +248,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
           class instance will not be considered if they are also specified in keyword arguments.
         :paramtype exception_policy: Optional[~azure.communication.jobrouter.ExceptionPolicy]
 
-        :return: ExceptionPolicy
+        :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.ExceptionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -269,7 +275,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return await self._client.job_router_administration.upsert_exception_policy(
             id = exception_policy_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "ExceptionPolicy"),  # pylint:disable=protected-access
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("ExceptionPolicy", deserialized_json_response),
             **kwargs
         )
 
@@ -283,7 +291,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         :param str exception_policy_id: Id of the policy.
 
-        :return: ExceptionPolicy
+        :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.ExceptionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -301,12 +309,16 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return await self._client.job_router_administration.get_exception_policy(
             id = exception_policy_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("ExceptionPolicy", deserialized_json_response),
             **kwargs
         )
 
     @distributed_trace
     def list_exception_policies(
             self,
+            *,
+            results_per_page: Optional[int] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[ExceptionPolicyItem]:
         """Retrieves existing exception policies.
@@ -336,14 +348,15 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
                 :caption: Use a JobRouterAdministrationClient to list exception policies in batches
         """
 
-        results_per_page = kwargs.pop("results_per_page", None)
-
         params = {}
         if results_per_page is not None:
             params['maxpagesize'] = _SERIALIZER.query("maxpagesize", results_per_page, 'int')
 
         return self._client.job_router_administration.list_exception_policies(
             params = params,
+            # pylint:disable=protected-access
+            cls = lambda deserialized_json_array: [_deserialize_from_json("ExceptionPolicyItem", elem) for elem in
+                                                   deserialized_json_array],
             **kwargs
         )
 
@@ -396,7 +409,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
         :param distribution_policy: An instance of distribution policy.
         :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
 
-        :return: DistributionPolicy
+        :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -414,7 +427,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return await self._client.job_router_administration.upsert_distribution_policy(
             id = distribution_policy_id,
-            patch = distribution_policy,
+            patch = _serialize_to_json(distribution_policy, "DistributionPolicy"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("DistributionPolicy", deserialized_json_response),
             **kwargs
         )
 
@@ -433,7 +448,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
           Please provide either this or individual keyword parameters.
         :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
 
-        :return: DistributionPolicy
+        :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -461,7 +476,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         :keyword Optional[str] name: The name of this policy.
 
-        :return: DistributionPolicy
+        :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -494,7 +509,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
             class instance will not be considered if they are also specified in keyword arguments.
         :paramtype distribution_policy: Optional[~azure.communication.jobrouter.DistributionPolicy]
 
-        :return: DistributionPolicy
+        :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -523,7 +538,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return await self._client.job_router_administration.upsert_distribution_policy(
             id = distribution_policy_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "DistributionPolicy"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("DistributionPolicy", deserialized_json_response),
             **kwargs
         )
 
@@ -537,7 +554,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         :param str distribution_policy_id: Id of the policy.
 
-        :return: DistributionPolicy
+        :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -555,12 +572,16 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return await self._client.job_router_administration.get_distribution_policy(
             id = distribution_policy_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("DistributionPolicy", deserialized_json_response),
             **kwargs
         )
 
     @distributed_trace
     def list_distribution_policies(
             self,
+            *,
+            results_per_page: Optional[int] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[DistributionPolicyItem]:
         """Retrieves existing distribution policies.
@@ -590,14 +611,15 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
                 :caption: Use a JobRouterAdministrationClient to list distribution policies in batches
         """
 
-        results_per_page = kwargs.pop("results_per_page", None)
-
         params = {}
         if results_per_page is not None:
             params['maxpagesize'] = _SERIALIZER.query("maxpagesize", results_per_page, 'int')
 
         return self._client.job_router_administration.list_distribution_policies(
             params = params,
+            # pylint:disable=protected-access
+            cls = lambda deserialized_json_array: [_deserialize_from_json("DistributionPolicyItem", elem) for elem in
+                                                   deserialized_json_array],
             **kwargs
         )
 
@@ -650,7 +672,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
         :param queue: An instance of JobQueue.
         :type queue: ~azure.communication.jobrouter.RouterQueue
 
-        :return: JobQueue
+        :return: Instance of RouterQueue
         :rtype: ~azure.communication.jobrouter.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -668,7 +690,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return await self._client.job_router_administration.upsert_queue(
             id = queue_id,
-            patch = queue,
+            patch = _serialize_to_json(queue, "RouterQueue"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("RouterQueue", deserialized_json_response),
             **kwargs)
 
     @overload
@@ -686,7 +710,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
           Please provide either this or individual keyword parameters.
         :type queue: ~azure.communication.jobrouter.JobQueue
 
-        :return: JobQueue
+        :return: Instance of RouterQueue
         :rtype: ~azure.communication.jobrouter.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -718,7 +742,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
         :keyword Optional[str] exception_policy_id: The ID of the exception policy that determines various
           job escalation rules.
 
-        :return: JobQueue
+        :return: Instance of RouterQueue
         :rtype: ~azure.communication.jobrouter.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -750,7 +774,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
         :keyword Optional[str] exception_policy_id: The ID of the exception policy that determines various
           job escalation rules.
 
-        :return: JobQueue
+        :return: Instance of RouterQueue
         :rtype: ~azure.communication.jobrouter.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -779,7 +803,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return await self._client.job_router_administration.upsert_queue(
             id = queue_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "RouterQueue"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterQueue", deserialized_json_response),
             **kwargs)
 
     @distributed_trace_async
@@ -792,7 +818,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         :param str queue_id: Id of the queue.
 
-        :return: JobQueue
+        :return: Instance of RouterQueue
         :rtype: ~azure.communication.jobrouter.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -810,12 +836,16 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return await self._client.job_router_administration.get_queue(
             id = queue_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("RouterQueue", deserialized_json_response),
             **kwargs
         )
 
     @distributed_trace
     def list_queues(
             self,
+            *,
+            results_per_page: Optional[int] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[RouterQueueItem]:
         """Retrieves existing queues.
@@ -845,14 +875,15 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
                 :caption: Use a JobRouterAdministrationClient to list queues in batches
         """
 
-        results_per_page = kwargs.pop("results_per_page", None)
-
         params = {}
         if results_per_page is not None:
             params['maxpagesize'] = _SERIALIZER.query("maxpagesize", results_per_page, 'int')
 
         return self._client.job_router_administration.list_queues(
             params = params,
+            # pylint:disable=protected-access
+            cls = lambda deserialized_json_array: [_deserialize_from_json("RouterQueueItem", elem) for elem in
+                                                   deserialized_json_array],
             **kwargs
         )
 
@@ -905,7 +936,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
         :param classification_policy: An instance of Classification policy.
         :type classification_policy: ~azure.communication.jobrouter.ClassificationPolicy
 
-        :return: ClassificationPolicy
+        :return: Instance of ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -924,7 +955,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return await self._client.job_router_administration.upsert_classification_policy(
             id = classification_policy_id,
-            patch = classification_policy,
+            patch = _serialize_to_json(classification_policy, "ClassificationPolicy"),
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("ClassificationPolicy", deserialized_json_response),
             **kwargs)
 
     @overload
@@ -942,7 +975,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
          parameter. Please provide either this or individual keyword parameters.
         :type classification_policy: ~azure.communication.jobrouter.ClassificationPolicy
 
-        :return: ClassificationPolicy
+        :return: Instance of ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -955,7 +988,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
             name: Optional[str],
             fallback_queue_id: Optional[str],
             queue_selectors: Optional[List[Union[StaticQueueSelectorAttachment, ConditionalQueueSelectorAttachment, RuleEngineQueueSelectorAttachment, PassThroughQueueSelectorAttachment, WeightedAllocationQueueSelectorAttachment]]],  # pylint: disable=line-too-long
-            prioritization_rule: Optional[Union[StaticRule, ExpressionRule, FunctionRule]],
+            prioritization_rule: Optional[Union[StaticRouterRule, ExpressionRouterRule, FunctionRouterRule, WebhookRouterRule]],  # pylint: disable=line-too-long
             worker_selectors: Optional[List[Union[StaticWorkerSelectorAttachment, ConditionalWorkerSelectorAttachment, RuleEngineWorkerSelectorAttachment, PassThroughWorkerSelectorAttachment, WeightedAllocationWorkerSelectorAttachment]]],  # pylint: disable=line-too-long
             **kwargs: Any
     ) -> ClassificationPolicy:
@@ -976,8 +1009,10 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
           ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
 
         :keyword prioritization_rule: The rule to determine a priority score for a given job.
-        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRule,
-          ~azure.communication.jobrouter.ExpressionRule, ~azure.communication.jobrouter.FunctionRule]]
+        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRouterRule,
+          ~azure.communication.jobrouter.ExpressionRouterRule,
+          ~azure.communication.jobrouter.FunctionRouterRule,
+          ~azure.communication.jobrouter.WebhookRouterRule]]
 
         :keyword worker_selectors: The worker label selectors to attach to a given job.
         :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelectorAttachment,
@@ -986,7 +1021,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
           ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
           ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
 
-        :return: ClassificationPolicy
+        :return: Instance of ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -1019,8 +1054,10 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
           ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
 
         :keyword prioritization_rule: The rule to determine a priority score for a given job.
-        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRule,
-          ~azure.communication.jobrouter.ExpressionRule, ~azure.communication.jobrouter.FunctionRule]]
+        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRouterRule,
+          ~azure.communication.jobrouter.ExpressionRouterRule,
+          ~azure.communication.jobrouter.FunctionRouterRule,
+          ~azure.communication.jobrouter.WebhookRouterRule]]
 
         :keyword worker_selectors: The worker label selectors to attach to a given job.
         :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelectorAttachment,
@@ -1029,7 +1066,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
           ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
           ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
 
-        :return: ClassificationPolicy
+        :return: Instance of ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -1060,7 +1097,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return await self._client.job_router_administration.upsert_classification_policy(
             id = classification_policy_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "ClassificationPolicy"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("ClassificationPolicy", deserialized_json_response),
             **kwargs)
 
     @distributed_trace_async
@@ -1073,7 +1112,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         :param str classification_policy_id: The id of classification policy.
 
-        :return: ClassificationPolicy
+        :return: Instance of ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -1091,11 +1130,15 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return await self._client.job_router_administration.get_classification_policy(
             classification_policy_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("ClassificationPolicy", deserialized_json_response),
             **kwargs)
 
     @distributed_trace
     def list_classification_policies(
             self,
+            *,
+            results_per_page: Optional[int] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[ClassificationPolicyItem]:
         """Retrieves existing classification policies.
@@ -1124,7 +1167,6 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
                 :dedent: 8
                 :caption: Use a JobRouterAdministrationClient to list classification policies in batches
         """
-        results_per_page = kwargs.pop("results_per_page", None)
 
         params = {}
         if results_per_page is not None:
@@ -1132,6 +1174,9 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
 
         return self._client.job_router_administration.list_classification_policies(
             params = params,
+            # pylint:disable=protected-access
+            cls = lambda deserialized_json_array: [_deserialize_from_json("ClassificationPolicyItem", elem) for elem in
+                                                   deserialized_json_array],
             **kwargs)
 
     @distributed_trace_async
