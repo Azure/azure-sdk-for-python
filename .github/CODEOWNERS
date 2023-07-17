@@ -207,13 +207,13 @@
 
 # PRLabel: %ML-Pipelines
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/pipeline/                    @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/component/                   @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/component/                   @wangchao1230 @elliotzh
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/schedule/                    @wangchao1230
 /sdk/ml/azure-ai-ml/azure/ai/ml/dsl/                                 @wangchao1230
 /sdk/ml/azure-ai-ml/azure/ai/ml/entities/_schedule/                  @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_component/                 @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_component/                 @wangchao1230 @elliotzh
 /sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders/                  @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/_internal/                           @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/_internal/                           @wangchao1230 @elliotzh
 /sdk/ml/pipeline.tests.yml                                           @wangchao1230 @eniac871
 
 # PRLabel: %ML-RegistryManagement
