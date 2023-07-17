@@ -172,6 +172,9 @@ jobs:
   #      # Skip sparse checkout for the `azure-sdk-for-<lang>-pr` private mirrored repositories
   #      # as we require the GitHub service connection to be loaded.
   #      - ${{ if not(contains(variables['Build.DefinitionName'], 'js-pr')) }}:
+  #        # First checkout the eng folder to get the common scripts
+  #        - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+  #
   #        # For PullRequests CredScan will be run against the files changed in the PR.
   #        # For non-pull requests CredScan runs against the service directory.
   #        - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
@@ -183,12 +186,14 @@ jobs:
   #          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
   #            parameters:
   #              Paths: $(SparseCheckoutDirectories)
+  #              SkipCheckoutNone: true
   #
   #        - ${{ else }}:
   #          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
   #            parameters:
   #              Paths: 
   #                - "sdk/${{ parameters.ServiceDirectory }}"
+  #              SkipCheckoutNone: true
   #
   #     - template: /eng/common/pipelines/templates/steps/credscan.yml
   #       parameters:
