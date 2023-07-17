@@ -171,7 +171,7 @@ jobs:
   #   steps:
   #      # Skip sparse checkout for the `azure-sdk-for-<lang>-pr` private mirrored repositories
   #      # as we require the GitHub service connection to be loaded.
-  #      - ${{ if not(contains(variables['Build.DefinitionName'], 'js-pr')) }}:
+  #      - ${{ if not(contains(variables['Build.DefinitionName'], 'python-pr')) }}:
   #        # First checkout the eng folder to get the common scripts
   #        - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
   #
