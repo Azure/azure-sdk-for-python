@@ -467,7 +467,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     _LOGGER.info(
                         "%r returns an exception %r", self._container_id, last_exception
                     )
-                    raise last_exception # pylint: disable=raise-missing-from
+                    raise last_exception from None
             finally:
                 mgmt_client.close()
 
@@ -614,7 +614,7 @@ class ConsumerProducerMixin(object):
                         self._name,
                         last_exception,
                     )
-                    raise last_exception # pylint:disable=raise-missing-from
+                    raise last_exception from None
 
     def close(self):
         # type:() -> None

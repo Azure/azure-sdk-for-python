@@ -383,7 +383,7 @@ class ClientBaseAsync(ClientBase):
                     _LOGGER.info(
                         "%r returns an exception %r", self._container_id, last_exception
                     )
-                    raise last_exception # pylint:disable=raise-missing-from
+                    raise last_exception from None
             finally:
                 await mgmt_client.close_async()
 
