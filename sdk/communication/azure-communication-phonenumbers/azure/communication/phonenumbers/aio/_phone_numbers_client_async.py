@@ -62,7 +62,7 @@ class PhoneNumbersClient(object):
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Account URL must be a string.")
+            raise ValueError("Account URL must be a string.") # pylint:disable=raise-missing-from
 
         if not credential:
             raise ValueError(
@@ -256,6 +256,7 @@ class PhoneNumbersClient(object):
         :param phone_number: The purchased phone number whose details are to be fetched in E.164 format,
          e.g. +11234567890.
         :type phone_number: str
+        :return: The details of the given purchased phone number.
         :rtype: ~azure.communication.phonenumbers.models.PurchasedPhoneNumber
         """
         return await self._phone_number_client.phone_numbers.get_by_number(
