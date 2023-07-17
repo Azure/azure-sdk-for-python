@@ -31,7 +31,7 @@ from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.rest import HttpRequest
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
-from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest, HttpResponse as LegacyHttpResponse
+from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 
 
 class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):

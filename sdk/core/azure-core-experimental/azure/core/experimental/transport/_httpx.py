@@ -32,7 +32,7 @@ from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.rest import HttpRequest
 from azure.core.rest._http_response_impl import HttpResponseImpl
-from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest, HttpResponse as LegacyHttpResponse
+from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 
 
 class HttpXTransportResponse(HttpResponseImpl):
