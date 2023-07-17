@@ -22,7 +22,7 @@
 """Diagnostic tools for Azure Cosmos database service operations.
 """
 
-from requests.structures import CaseInsensitiveDict
+import warnings
 
 
 class RecordDiagnostics(object):
@@ -54,13 +54,18 @@ class RecordDiagnostics(object):
     }
 
     def __init__(self):
-        self._headers = CaseInsensitiveDict()
+        self._headers = {}
         self._body = None
         self._request_charge = 0
+        warnings.warn("The `diagnostics.py` file is deprecated and will be removed in the future. For logging " +
+                      "diagnostics information for the SDK, please use our CosmosHttpLoggingPolicy. For more " +
+                      "information on this, please see our README.",
+                      DeprecationWarning,
+                      stacklevel=2)
 
     @property
     def headers(self):
-        return CaseInsensitiveDict(self._headers)
+        return self._headers
 
     @property
     def body(self):
