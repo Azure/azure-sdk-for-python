@@ -18,7 +18,6 @@ uuid_regex_pattern = re.compile(
 )
 
 
-# pylint: disable=R0201
 class ConnectionStringParser:
     """ConnectionString parser.
 
@@ -69,9 +68,9 @@ class ConnectionStringParser:
 
     def _validate_instrumentation_key(self) -> None:
         """Validates the instrumentation key used for Azure Monitor.
+
         An instrumentation key cannot be null or empty. An instrumentation key
         is valid for Azure Monitor only if it is a valid UUID.
-        :param instrumentation_key: The instrumentation key to validate
         """
         if not self.instrumentation_key:
             raise ValueError("Instrumentation key cannot be none or empty.")
@@ -88,8 +87,8 @@ class ConnectionStringParser:
             result = dict(s.split("=") for s in pairs)
             # Convert keys to lower-case due to case type-insensitive checking
             result = {key.lower(): value for key, value in result.items()}
-        except Exception:
-            raise ValueError("Invalid connection string")
+        except Exception as exc:
+            raise ValueError("Invalid connection string") from exc
         # Validate authorization
         auth = result.get("authorization")
         if auth is not None and auth.lower() != "ikey":
