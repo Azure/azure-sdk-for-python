@@ -48,10 +48,8 @@ from .._generated.models import (
     MuteParticipantsRequest,
 )
 from .._generated.models._enums import RecognizeInputType
-from .._shared.utils import (
-    get_authentication_policy,
-    parse_connection_str
-)
+from .._shared.auth_policy_utils import get_authentication_policy
+from .._shared.utils import parse_connection_str
 if TYPE_CHECKING:
     from ._call_automation_client_async import CallAutomationClient
     from .._generated.models._enums import DtmfTone

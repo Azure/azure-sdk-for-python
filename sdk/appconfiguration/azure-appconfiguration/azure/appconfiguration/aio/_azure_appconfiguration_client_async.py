@@ -605,7 +605,7 @@ class AzureAppConfigurationClient:
                 ),
             )
         except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     @distributed_trace_async
     async def archive_snapshot(
@@ -637,7 +637,7 @@ class AzureAppConfigurationClient:
             )
             return Snapshot._from_generated(generated_snapshot)
         except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     @distributed_trace_async
     async def recover_snapshot(
@@ -668,7 +668,7 @@ class AzureAppConfigurationClient:
             )
             return Snapshot._from_generated(generated_snapshot)
         except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     @distributed_trace_async
     async def get_snapshot(self, name: str, *, fields: Optional[List[str]] = None, **kwargs) -> Snapshot:
@@ -686,7 +686,7 @@ class AzureAppConfigurationClient:
             )
             return Snapshot._from_generated(generated_snapshot)
         except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     @distributed_trace
     def list_snapshots(
@@ -715,7 +715,7 @@ class AzureAppConfigurationClient:
                 **kwargs
             )
         except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     @distributed_trace
     def list_snapshot_configuration_settings(
@@ -742,7 +742,7 @@ class AzureAppConfigurationClient:
                 **kwargs
             )
         except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     async def update_sync_token(self, token: str) -> None:
 

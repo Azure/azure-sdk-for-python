@@ -3,10 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
-    TYPE_CHECKING
-)
+from typing import NoReturn, TYPE_CHECKING
 import logging
 from xml.etree.ElementTree import Element
 
@@ -90,7 +87,7 @@ def return_raw_deserialized(response, *_):
     return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
 
 
-def process_storage_error(storage_error):   # pylint:disable=too-many-statements
+def process_storage_error(storage_error) -> NoReturn:   # pylint:disable=too-many-statements
     raise_error = HttpResponseError
     serialized = False
     if not storage_error.response or storage_error.response.status_code in [200, 204]:

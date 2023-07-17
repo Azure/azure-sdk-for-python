@@ -9,7 +9,6 @@ from urllib.parse import urlparse
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 from datetime import datetime
 
-import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
