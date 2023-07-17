@@ -62,11 +62,6 @@ class RecordDiagnostics(object):
         self._headers = {}
         self._body = None
         self._request_charge = 0
-        warnings.warn("The `diagnostics.py` file is deprecated and will be removed in the future. For logging " +
-                      "diagnostics information for the SDK, please use our CosmosHttpLoggingPolicy. For more " +
-                      "information on this, please see our README.",
-                      DeprecationWarning,
-                      stacklevel=2)
 
     @property
     def headers(self):
@@ -90,6 +85,10 @@ class RecordDiagnostics(object):
         self._request_charge += float(headers.get("x-ms-request-charge", 0))
 
     def __getattr__(self, name):
+        warnings.warn("The `diagnostics.py` file is deprecated and will be removed in the future. For logging " +
+                      "diagnostics information for the SDK, please use our CosmosHttpLoggingPolicy. For more " +
+                      "information on this, please see our README.",
+                      DeprecationWarning)
         key = "x-ms-" + name.replace("_", "-")
         if key in self._common:
             return self._headers[key]
