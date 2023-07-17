@@ -100,7 +100,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Host URL must be a string")
+            raise ValueError("Host URL must be a string") # pylint:disable=raise-missing-from
 
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
@@ -1123,7 +1123,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         )
 
     @distributed_trace
-    async def unassign_job(
+    async def unassign_job( # pylint: disable=client-method-missing-tracing-decorator-async
             self,
             job_id: str,
             assignment_id: str,
