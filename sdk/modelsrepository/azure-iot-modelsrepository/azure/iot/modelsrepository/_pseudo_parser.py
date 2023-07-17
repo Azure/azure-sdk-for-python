@@ -12,7 +12,6 @@ Note that this implementation is not representative of what an eventual full
 parser implementation would necessarily look like from an API perspective
 """
 import logging
-import six
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -69,13 +68,13 @@ def _get_model_dependencies(model):
         # Models defined in a DTDL can implement extensions of up to two interfaces.
         # These interfaces can be in the form of a DTMI reference, or a nested model (which would
         # have it's own dependencies)
-        if isinstance(model["extends"], six.text_type):
+        if isinstance(model["extends"], str):
             # If it's just a string, that's a single DTMI reference, so just add that to our list
             dependencies.append(model["extends"])
         elif isinstance(model["extends"], list):
             # If it's a list, could have DTMIs or nested models
             for item in model["extends"]:
-                if isinstance(item, six.text_type):
+                if isinstance(item, str):
                     # If there are strings in the list, that's a DTMI reference, so add it
                     dependencies.append(item)
                 elif isinstance(item, dict):

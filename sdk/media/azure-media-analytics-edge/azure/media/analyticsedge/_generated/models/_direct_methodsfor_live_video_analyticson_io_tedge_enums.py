@@ -6,34 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class MediaGraphGrpcExtensionDataTransferMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MediaGraphGrpcExtensionDataTransferMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """How frame data should be transmitted to the inference engine.
     """
 
     EMBEDDED = "Embedded"  #: Frames are transferred embedded into the gRPC messages.
     SHARED_MEMORY = "SharedMemory"  #: Frames are transferred through shared memory.
 
-class MediaGraphImageFormatRawPixelFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MediaGraphImageFormatRawPixelFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The pixel format that will be used to encode images.
     """
 
@@ -49,7 +33,7 @@ class MediaGraphImageFormatRawPixelFormat(with_metaclass(_CaseInsensitiveEnumMet
     ABGR = "Abgr"  #: Packed ABGR 8:8:8:8, 32bpp, ABGRABGR.
     BGRA = "Bgra"  #: Packed BGRA 8:8:8:8, 32bpp, BGRABGRA.
 
-class MediaGraphImageScaleMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MediaGraphImageScaleMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the modes for scaling an input video frame into an image, before it is sent to an
     inference engine.
     """
@@ -58,7 +42,7 @@ class MediaGraphImageScaleMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     PAD = "Pad"  #: Center pad the input frame to match the given dimensions.
     STRETCH = "Stretch"  #: Stretch input frame to match given dimensions.
 
-class MediaGraphInstanceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MediaGraphInstanceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allowed states for a graph instance.
     """
 
@@ -67,7 +51,7 @@ class MediaGraphInstanceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     ACTIVE = "Active"  #: The media graph instance is active and processing media.
     DEACTIVATING = "Deactivating"  #: The media graph instance is transitioning into the inactive state.
 
-class MediaGraphMotionDetectionSensitivity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MediaGraphMotionDetectionSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumeration that specifies the sensitivity of the motion detection processor.
     """
 
@@ -75,20 +59,20 @@ class MediaGraphMotionDetectionSensitivity(with_metaclass(_CaseInsensitiveEnumMe
     MEDIUM = "Medium"  #: Medium Sensitivity.
     HIGH = "High"  #: High Sensitivity.
 
-class MediaGraphOutputSelectorOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MediaGraphOutputSelectorOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operator to compare streams by.
     """
 
     IS_ENUM = "is"  #: A media type is the same type or a subtype.
     IS_NOT = "isNot"  #: A media type is not the same type or a subtype.
 
-class MediaGraphOutputSelectorProperty(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MediaGraphOutputSelectorProperty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The stream property to compare with.
     """
 
     MEDIA_TYPE = "mediaType"  #: The stream's MIME type or subtype.
 
-class MediaGraphParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MediaGraphParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the parameter.
     """
 
@@ -98,7 +82,7 @@ class MediaGraphParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     DOUBLE = "Double"  #: A 64-bit double-precision floating point type as parameter value.
     BOOL = "Bool"  #: A boolean value that is either true or false.
 
-class MediaGraphRtspTransport(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class MediaGraphRtspTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Underlying RTSP transport. This is used to enable or disable HTTP tunneling.
     """
 
