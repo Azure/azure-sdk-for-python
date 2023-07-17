@@ -25,6 +25,7 @@ def serialize_identifier(identifier:CommunicationIdentifier) -> Dict[str, Any]:
     :param identifier: Identifier object
     :type identifier: CommunicationIdentifier
     :return: CommunicationIdentifierModel
+    :rtype: dict[str, any]
     """
     try:
         request_model = {'raw_id': identifier.raw_id}
@@ -32,7 +33,7 @@ def serialize_identifier(identifier:CommunicationIdentifier) -> Dict[str, Any]:
             request_model[identifier.kind] = dict(identifier.properties)
         return request_model
     except AttributeError:
-        raise TypeError(f"Unsupported identifier type: {identifier.__class__.__name__}")
+        raise TypeError(f"Unsupported identifier type: {identifier.__class__.__name__}") from None
 
 
 def serialize_phone_identifier(identifier: Optional[PhoneNumberIdentifier]) -> Optional[PhoneNumberIdentifierModel]:
@@ -41,6 +42,7 @@ def serialize_phone_identifier(identifier: Optional[PhoneNumberIdentifier]) -> O
     :param identifier: PhoneNumberIdentifier
     :type identifier: PhoneNumberIdentifier
     :return: PhoneNumberIdentifierModel
+    :rtype: ~azure.communication.callautomation._generated.models.PhoneNumberIdentifierModel
     """
     if identifier is None:
         return None
@@ -61,6 +63,7 @@ def serialize_communication_user_identifier(
     :param identifier: CommunicationUserIdentifier
     :type identifier: CommunicationUserIdentifier
     :return: CommunicationUserIdentifierModel
+    :rtype: ~azure.communication.callautomation._generated.models.CommunicationUserIdentifierModel
     """
     if identifier is None:
         return None
@@ -82,6 +85,7 @@ def deserialize_identifier(
     :param identifier_model: CommunicationIdentifierModel
     :type identifier_model: CommunicationIdentifierModel
     :return: CommunicationIdentifier
+    :rtype: ~azure.communication.callautomation.CommunicationIdentifier
     """
     raw_id = identifier_model.raw_id
 
@@ -108,6 +112,7 @@ def deserialize_phone_identifier(
     :param identifier_model: PhoneNumberIdentifierModel
     :type identifier_model: PhoneNumberIdentifierModel
     :return: PhoneNumberIdentifier
+    :rtype: ~azure.communication.callautomation.PhoneNumberIdentifier
     """
     if identifier_model:
         return PhoneNumberIdentifier(identifier_model.value)
@@ -123,5 +128,6 @@ def deserialize_comm_user_identifier(
     :param identifier_model: CommunicationUserIdentifierModel
     :type identifier_model: CommunicationUserIdentifierModel
     :return: CommunicationUserIdentifier
+    :rtype: ~azure.communication.callautomation.CommunicationUserIdentifier
     """
     return CommunicationUserIdentifierModel(id=identifier_model.id) if identifier_model else None

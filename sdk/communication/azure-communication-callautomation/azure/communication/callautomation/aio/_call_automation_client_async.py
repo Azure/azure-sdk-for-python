@@ -92,7 +92,7 @@ class CallAutomationClient:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Host URL must be a string")
+            raise ValueError("Host URL must be a string") # pylint:disable=raise-missing-from
 
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
@@ -127,7 +127,7 @@ class CallAutomationClient:
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, access_key, **kwargs)
 
-    def get_call_connection(
+    def get_call_connection( # pylint:disable=client-method-missing-tracing-decorator
         self,
         call_connection_id: str,
         **kwargs
