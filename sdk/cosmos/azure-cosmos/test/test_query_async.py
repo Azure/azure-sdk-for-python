@@ -398,9 +398,9 @@ class QueryTest(unittest.TestCase):
         iter_list = [item async for item in query_iterable]
         self.assertEqual(iter_list[0]['id'], doc_id)
 
-        METRICS_HEADER_NAME = 'x-ms-documentdb-query-metrics'
-        self.assertTrue(METRICS_HEADER_NAME in created_collection.client_connection.last_response_headers)
-        metrics_header = created_collection.client_connection.last_response_headers[METRICS_HEADER_NAME]
+        metrics_header_name = 'x-ms-documentdb-query-metrics'
+        self.assertTrue(metrics_header_name in created_collection.client_connection.last_response_headers)
+        metrics_header = created_collection.client_connection.last_response_headers[metrics_header_name]
         # Validate header is well-formed: "key1=value1;key2=value2;etc"
         metrics = metrics_header.split(';')
         self.assertTrue(len(metrics) > 1)
@@ -419,14 +419,14 @@ class QueryTest(unittest.TestCase):
             query=query,
             max_item_count=1
         )
-        self.validate_query_requests_count(query_iterable, 11 * 2 + 1)
+        await self.validate_query_requests_count(query_iterable, 11 * 2 + 1)
 
         query_iterable = created_collection.query_items(
             query=query,
             max_item_count=100
         )
 
-        self.validate_query_requests_count(query_iterable, 5)
+        await self.validate_query_requests_count(query_iterable, 5)
 
     async def validate_query_requests_count(self, query_iterable, expected_count):
         self.count = 0
@@ -520,23 +520,23 @@ class QueryTest(unittest.TestCase):
             document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4())}
             values.append(await created_collection.create_item(body=document_definition)['pk'])
 
-        self._validate_offset_limit(created_collection=created_collection,
-                                    query='SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5',
-                                    results=values[:5])
+        await self._validate_offset_limit(created_collection=created_collection,
+                                          query='SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5',
+                                          results=values[:5])
 
-        self._validate_offset_limit(created_collection=created_collection,
-                                    query='SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10',
-                                    results=values[5:])
+        await self._validate_offset_limit(created_collection=created_collection,
+                                          query='SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10',
+                                          results=values[5:])
 
-        self._validate_offset_limit(created_collection=created_collection,
-                                    query='SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5',
-                                    results=[])
+        await self._validate_offset_limit(created_collection=created_collection,
+                                          query='SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5',
+                                          results=[])
 
-        self._validate_offset_limit(created_collection=created_collection,
-                                    query='SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1',
-                                    results=[])
+        await self._validate_offset_limit(created_collection=created_collection,
+                                          query='SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1',
+                                          results=[])
 
-    def _validate_offset_limit(self, created_collection, query, results):
+    async def _validate_offset_limit(self, created_collection, query, results):
         query_iterable = created_collection.query_items(query=query)
         self.assertListEqual(list(map(lambda doc: doc['pk'], [item async for item in query_iterable])), results)
 
@@ -574,72 +574,78 @@ class QueryTest(unittest.TestCase):
 
         padded_docs = self._pad_with_none(documents, distinct_field)
 
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field),
-                                # nosec
-                                results=self._get_distinct_docs(
-                                    self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None,
-                                    True),
-                                is_select=False,
-                                fields=[distinct_field])
+        await self._validate_distinct(created_collection=created_collection,
+                                      query='SELECT distinct c.%s from c ORDER BY c.%s' % (
+                                      distinct_field, distinct_field),
+                                      # nosec
+                                      results=self._get_distinct_docs(
+                                          self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field,
+                                          None,
+                                          True),
+                                      is_select=False,
+                                      fields=[distinct_field])
 
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (
-                                    distinct_field, pk_field, pk_field, distinct_field),  # nosec
-                                results=self._get_distinct_docs(
-                                    self._get_order_by_docs(padded_docs, pk_field, distinct_field), distinct_field,
-                                    pk_field, True),
-                                is_select=False,
-                                fields=[distinct_field, pk_field])
+        await self._validate_distinct(created_collection=created_collection,
+                                      query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (
+                                          distinct_field, pk_field, pk_field, distinct_field),  # nosec
+                                      results=self._get_distinct_docs(
+                                          self._get_order_by_docs(padded_docs, pk_field, distinct_field),
+                                          distinct_field,
+                                          pk_field, True),
+                                      is_select=False,
+                                      fields=[distinct_field, pk_field])
 
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (
-                                    distinct_field, pk_field, distinct_field, pk_field),  # nosec
-                                results=self._get_distinct_docs(
-                                    self._get_order_by_docs(padded_docs, distinct_field, pk_field), distinct_field,
-                                    pk_field, True),
-                                is_select=False,
-                                fields=[distinct_field, pk_field])
+        await self._validate_distinct(created_collection=created_collection,
+                                      query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (
+                                          distinct_field, pk_field, distinct_field, pk_field),  # nosec
+                                      results=self._get_distinct_docs(
+                                          self._get_order_by_docs(padded_docs, distinct_field, pk_field),
+                                          distinct_field,
+                                          pk_field, True),
+                                      is_select=False,
+                                      fields=[distinct_field, pk_field])
 
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct value c.%s from c ORDER BY c.%s' % (
-                                    distinct_field, distinct_field),  # nosec
-                                results=self._get_distinct_docs(
-                                    self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None,
-                                    True),
-                                is_select=False,
-                                fields=[distinct_field])
+        await self._validate_distinct(created_collection=created_collection,
+                                      query='SELECT distinct value c.%s from c ORDER BY c.%s' % (
+                                          distinct_field, distinct_field),  # nosec
+                                      results=self._get_distinct_docs(
+                                          self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field,
+                                          None,
+                                          True),
+                                      is_select=False,
+                                      fields=[distinct_field])
 
-        self._validate_distinct(created_collection=created_collection,  # returns {} and is right number
-                                query='SELECT distinct c.%s from c' % (distinct_field),  # nosec
-                                results=self._get_distinct_docs(padded_docs, distinct_field, None, False),
-                                is_select=True,
-                                fields=[distinct_field])
+        await self._validate_distinct(created_collection=created_collection,  # returns {} and is right number
+                                      query='SELECT distinct c.%s from c' % (distinct_field),  # nosec
+                                      results=self._get_distinct_docs(padded_docs, distinct_field, None, False),
+                                      is_select=True,
+                                      fields=[distinct_field])
 
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s, c.%s from c' % (distinct_field, pk_field),  # nosec
-                                results=self._get_distinct_docs(padded_docs, distinct_field, pk_field, False),
-                                is_select=True,
-                                fields=[distinct_field, pk_field])
+        await self._validate_distinct(created_collection=created_collection,
+                                      query='SELECT distinct c.%s, c.%s from c' % (distinct_field, pk_field),  # nosec
+                                      results=self._get_distinct_docs(padded_docs, distinct_field, pk_field, False),
+                                      is_select=True,
+                                      fields=[distinct_field, pk_field])
 
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct value c.%s from c' % (distinct_field),  # nosec
-                                results=self._get_distinct_docs(padded_docs, distinct_field, None, True),
-                                is_select=True,
-                                fields=[distinct_field])
+        await self._validate_distinct(created_collection=created_collection,
+                                      query='SELECT distinct value c.%s from c' % (distinct_field),  # nosec
+                                      results=self._get_distinct_docs(padded_docs, distinct_field, None, True),
+                                      is_select=True,
+                                      fields=[distinct_field])
 
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s from c ORDER BY c.%s' % (different_field, different_field),
-                                # nosec
-                                results=[],
-                                is_select=True,
-                                fields=[different_field])
+        await self._validate_distinct(created_collection=created_collection,
+                                      query='SELECT distinct c.%s from c ORDER BY c.%s' % (
+                                      different_field, different_field),
+                                      # nosec
+                                      results=[],
+                                      is_select=True,
+                                      fields=[different_field])
 
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s from c' % different_field,  # nosec
-                                results=['None'],
-                                is_select=True,
-                                fields=[different_field])
+        await self._validate_distinct(created_collection=created_collection,
+                                      query='SELECT distinct c.%s from c' % different_field,  # nosec
+                                      results=['None'],
+                                      is_select=True,
+                                      fields=[different_field])
 
         await created_database.delete_container(created_collection.id)
 
@@ -664,7 +670,7 @@ class QueryTest(unittest.TestCase):
                 doc[field] = None
         return documents
 
-    def _validate_distinct(self, created_collection, query, results, is_select, fields):
+    async def _validate_distinct(self, created_collection, query, results, is_select, fields):
         query_iterable = created_collection.query_items(query=query)
         query_results = [item async for item in query_iterable]
 
@@ -699,56 +705,56 @@ class QueryTest(unittest.TestCase):
         self.OriginalExecuteFunction = _QueryExecutionContextBase.__anext__
         _QueryExecutionContextBase.__anext__ = self._MockNextFunction
 
-        self._validate_distinct_on_different_types_and_field_orders(
+        await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f1 from c",
             expected_results=[1],
             get_mock_result=lambda x, i: (None, x[i]["f1"])
         )
 
-        self._validate_distinct_on_different_types_and_field_orders(
+        await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f2 from c",
             expected_results=['value', '\'value'],
             get_mock_result=lambda x, i: (None, x[i]["f2"])
         )
 
-        self._validate_distinct_on_different_types_and_field_orders(
+        await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f2 from c order by c.f2",
             expected_results=['value', '\'value'],
             get_mock_result=lambda x, i: (x[i]["f2"], x[i]["f2"])
         )
 
-        self._validate_distinct_on_different_types_and_field_orders(
+        await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f3 from c",
             expected_results=[100000000000000000],
             get_mock_result=lambda x, i: (None, x[i]["f3"])
         )
 
-        self._validate_distinct_on_different_types_and_field_orders(
+        await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f4 from c",
             expected_results=[[1, 2, '3']],
             get_mock_result=lambda x, i: (None, x[i]["f4"])
         )
 
-        self._validate_distinct_on_different_types_and_field_orders(
+        await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f5.f6 from c",
             expected_results=[{'f7': 2}],
             get_mock_result=lambda x, i: (None, x[i]["f5"]["f6"])
         )
 
-        self._validate_distinct_on_different_types_and_field_orders(
+        await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct c.f1, c.f2, c.f3 from c",
             expected_results=[self.payloads[0], self.payloads[1]],
             get_mock_result=lambda x, i: (None, x[i])
         )
 
-        self._validate_distinct_on_different_types_and_field_orders(
+        await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct c.f1, c.f2, c.f3 from c order by c.f1",
             expected_results=[self.payloads[0], self.payloads[1]],
@@ -784,7 +790,7 @@ class QueryTest(unittest.TestCase):
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
-    def test_cross_partition_query_with_continuation_token(self):
+    async def test_cross_partition_query_with_continuation_token(self):
         created_collection = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_ID,
             PartitionKey(path="/id"))
@@ -807,8 +813,8 @@ class QueryTest(unittest.TestCase):
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
-    def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results,
-                                                               get_mock_result):
+    async def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results,
+                                                                     get_mock_result):
         self.count = 0
         self.get_mock_result = get_mock_result
         query_iterable = collection.query_items(query)
@@ -822,7 +828,7 @@ class QueryTest(unittest.TestCase):
                 self.assertEqual(results[i], expected_results[i])
         self.count = 0
 
-    def test_value_max_query(self):
+    async def test_value_max_query(self):
         container = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
@@ -832,7 +838,7 @@ class QueryTest(unittest.TestCase):
 
         self.assertListEqual([item async for item in query_results], [None])
 
-    def test_continuation_token_size_limit_query(self):
+    async def test_continuation_token_size_limit_query(self):
         container = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         for i in range(1, 1000):
