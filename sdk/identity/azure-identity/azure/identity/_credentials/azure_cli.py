@@ -80,7 +80,7 @@ class AzureCliCredential:
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
@@ -117,7 +117,7 @@ def parse_token(output) -> Optional[AccessToken]:
 
     :param str output: Output of 'az' command.
     :return: An AccessToken or None if the output isn't valid.
-    :rtype: :class:`azure.core.credentials.AccessToken` or None
+    :rtype: azure.core.credentials.AccessToken or None
     """
     try:
         token = json.loads(output)

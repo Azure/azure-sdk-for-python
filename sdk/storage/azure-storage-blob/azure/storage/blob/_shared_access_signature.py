@@ -66,6 +66,11 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param str snapshot:
             The snapshot parameter is an opaque DateTime value that,
             when present, specifies the blob snapshot to grant permission.
+        :param str version_id:
+            An optional blob version ID. This parameter is only applicable for versioning-enabled
+            Storage accounts. Note that the 'versionid' query parameter is not included in the output
+            SAS. Therefore, please provide the 'version_id' parameter to any APIs when using the output
+            SAS to operate on a specific version.
         :param permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
@@ -117,6 +122,8 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :return: A Shared Access Signature (sas) token.
+        :rtype: str
         '''
         resource_path = container_name + '/' + blob_name
 
@@ -202,6 +209,8 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :return: A Shared Access Signature (sas) token.
+        :rtype: str
         '''
         sas = _BlobSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)

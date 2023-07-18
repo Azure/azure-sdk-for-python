@@ -14,7 +14,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import PurviewSharingClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import ReceivedSharesOperations, SentSharesOperations
+from .operations import ReceivedSharesOperations, SentSharesOperations, ShareResourcesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -28,12 +28,14 @@ class PurviewSharingClient:  # pylint: disable=client-accepts-api-version-keywor
     :vartype received_shares: azure.purview.sharing.operations.ReceivedSharesOperations
     :ivar sent_shares: SentSharesOperations operations
     :vartype sent_shares: azure.purview.sharing.operations.SentSharesOperations
+    :ivar share_resources: ShareResourcesOperations operations
+    :vartype share_resources: azure.purview.sharing.operations.ShareResourcesOperations
     :param endpoint: The sharing endpoint of your purview account. Example:
      https://{accountName}.purview.azure.com/share. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2023-02-15-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-05-30-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -50,6 +52,7 @@ class PurviewSharingClient:  # pylint: disable=client-accepts-api-version-keywor
         self._serialize.client_side_validation = False
         self.received_shares = ReceivedSharesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sent_shares = SentSharesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.share_resources = ShareResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

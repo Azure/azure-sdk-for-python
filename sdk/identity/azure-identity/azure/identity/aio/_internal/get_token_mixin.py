@@ -32,7 +32,7 @@ class GetTokenMixin(abc.ABC):
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
 
         :return: An access token with the desired scopes if successful; otherwise, None.
-        :rtype: :class:`azure.core.credentials.AccessToken` or None
+        :rtype: ~azure.core.credentials.AccessToken or None
         """
 
     @abc.abstractmethod
@@ -44,7 +44,7 @@ class GetTokenMixin(abc.ABC):
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
 
         :return: An access token with the desired scopes.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
         """
 
     def _should_refresh(self, token: AccessToken) -> bool:
@@ -66,7 +66,7 @@ class GetTokenMixin(abc.ABC):
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``

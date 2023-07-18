@@ -16,15 +16,17 @@ from typing import (
     ContextManager,
     Dict,
 )
+from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse
+from azure.core.rest import (
+    HttpResponse as RestHttpResponse,
+    AsyncHttpResponse as AsyncRestHttpResponse,
+    HttpRequest as RestHttpRequest,
+)
+
+HttpResponseType = Union[HttpResponse, AsyncHttpResponse, RestHttpResponse, AsyncRestHttpResponse]
+HttpRequestType = Union[HttpRequest, RestHttpRequest]
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import (
-        HttpRequest,
-        HttpResponse,
-        AsyncHttpResponse,
-    )
-
-    HttpResponseType = Union[HttpResponse, AsyncHttpResponse]
     AttributeValue = Union[
         str,
         bool,
@@ -133,7 +135,7 @@ class AbstractSpan(Protocol):
         :type value: Union[str, int]
         """
 
-    def set_http_attributes(self, request: "HttpRequest", response: Optional["HttpResponseType"] = None) -> None:
+    def set_http_attributes(self, request: HttpRequestType, response: Optional[HttpResponseType] = None) -> None:
         """
         Add correct attributes for a http client span.
 
@@ -251,7 +253,7 @@ class HttpSpanMixin(_MIXIN_BASE):
     _NET_PEER_NAME = "net.peer.name"
     _NET_PEER_PORT = "net.peer.port"
 
-    def set_http_attributes(self, request: "HttpRequest", response: Optional["HttpResponseType"] = None) -> None:
+    def set_http_attributes(self, request: HttpRequestType, response: Optional[HttpResponseType] = None) -> None:
         """
         Add correct attributes for a http client span.
 

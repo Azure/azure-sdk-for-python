@@ -71,7 +71,12 @@ class AsyncNoPolling(_NoPolling):
         """
 
 
-async def async_poller(client, initial_response, deserialization_callback, polling_method):
+async def async_poller(
+    client: Any,
+    initial_response: Any,
+    deserialization_callback: Callable[[Any], PollingReturnType_co],
+    polling_method: AsyncPollingMethod[PollingReturnType_co],
+) -> PollingReturnType_co:
     """Async Poller for long running operations.
 
     .. deprecated:: 1.5.0
@@ -86,6 +91,8 @@ async def async_poller(client, initial_response, deserialization_callback, polli
     :type deserialization_callback: callable or msrest.serialization.Model
     :param polling_method: The polling strategy to adopt
     :type polling_method: ~azure.core.polling.PollingMethod
+    :return: The final resource at the end of the polling.
+    :rtype: any or None
     """
     poller = AsyncLROPoller(client, initial_response, deserialization_callback, polling_method)
     return await poller
@@ -109,7 +116,7 @@ class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable):
         self,
         client: Any,
         initial_response: Any,
-        deserialization_callback: Callable,
+        deserialization_callback: Callable[[Any], PollingReturnType_co],
         polling_method: AsyncPollingMethod[PollingReturnType_co],
     ):
         self._polling_method = polling_method
@@ -124,7 +131,11 @@ class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable):
         self._polling_method.initialize(client, initial_response, deserialization_callback)
 
     def polling_method(self) -> AsyncPollingMethod[PollingReturnType_co]:
-        """Return the polling method associated to this poller."""
+        """Return the polling method associated to this poller.
+
+        :return: The polling method associated to this poller.
+        :rtype: ~azure.core.polling.AsyncPollingMethod
+        """
         return self._polling_method
 
     def continuation_token(self) -> str:
@@ -158,6 +169,7 @@ class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable):
         """Return the result of the long running operation.
 
         :returns: The deserialized resource of the long running operation, if one is available.
+        :rtype: any or None
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
         await self.wait()

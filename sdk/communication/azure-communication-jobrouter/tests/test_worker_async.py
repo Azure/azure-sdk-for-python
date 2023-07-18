@@ -24,7 +24,6 @@ from azure.communication.jobrouter.aio import (
 from azure.communication.jobrouter import (
     RoundRobinMode,
     RouterWorker,
-    QueueAssignment,
     ChannelConfiguration, DistributionPolicy, RouterQueue,
 )
 
@@ -133,7 +132,7 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
     async def test_create_worker(self):
         w_identifier = "tst_create_w_async"
         router_client: JobRouterClient = self.create_client()
-        worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
+        worker_queue_assignments = {self.get_job_queue_id(): {}}
 
         async with router_client:
             router_worker: RouterWorker = RouterWorker(
@@ -174,7 +173,7 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
     async def test_update_worker(self):
         w_identifier = "tst_update_w_async"
         router_client: JobRouterClient = self.create_client()
-        worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
+        worker_queue_assignments = {self.get_job_queue_id(): {}}
 
         async with router_client:
             router_worker: RouterWorker = RouterWorker(
@@ -236,7 +235,7 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
     async def test_update_worker_w_kwargs(self):
         w_identifier = "tst_update_w_kwargs_async"
         router_client: JobRouterClient = self.create_client()
-        worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
+        worker_queue_assignments = {self.get_job_queue_id(): {}}
 
         async with router_client:
             router_worker: RouterWorker = RouterWorker(
@@ -297,7 +296,7 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
     async def test_get_worker(self):
         w_identifier = "tst_get_w_async"
         router_client: JobRouterClient = self.create_client()
-        worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
+        worker_queue_assignments = {self.get_job_queue_id(): {}}
 
         async with router_client:
             router_worker: RouterWorker = RouterWorker(
@@ -352,7 +351,7 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
     async def test_delete_worker(self):
         w_identifier = "tst_delete_w_async"
         router_client: JobRouterClient = self.create_client()
-        worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
+        worker_queue_assignments = {self.get_job_queue_id(): {}}
 
         async with router_client:
             router_worker: RouterWorker = RouterWorker(
@@ -395,7 +394,7 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
     async def test_list_workers(self):
         router_client: JobRouterClient = self.create_client()
         w_identifiers = ["tst_list_w_1", "tst_list_w_2", "tst_list_w_3"]
-        worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
+        worker_queue_assignments = {self.get_job_queue_id(): {}}
         created_w_response = {}
         w_count = len(w_identifiers)
         self.worker_ids[self._testMethodName] = []
@@ -434,14 +433,14 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
                 created_w_response[worker.id] = worker
 
             router_workers = router_client.list_workers(
-                results_per_page = 2,
+                results_per_page = 3,
                 state = "inactive",
                 queue_id = self.get_job_queue_id(),
                 channel_id = "fakeChannel1")
 
             async for worker_page in router_workers.by_page():
                 list_of_workers = [i async for i in worker_page]
-                assert len(list_of_workers) <= 2
+                assert len(list_of_workers) <= 3
 
                 for w_item in list_of_workers:
                     response_at_creation = created_w_response.get(w_item.worker.id, None)
