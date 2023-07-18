@@ -169,7 +169,7 @@ class BodyContentPolling(LongRunningOperation):
         """Process the latest status update retrieved from the same URL as
         the previous request.
 
-        :param azure.core.pipeline.PipelineResponse pipeline_response: latest REST call response.
+        :param PipelineResponseType pipeline_response: latest REST call response.
         :return: Status string.
         :rtype: str
         :raises: BadResponse if status not 200 or 204.
