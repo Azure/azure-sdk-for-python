@@ -8,6 +8,7 @@ from azure.ai.ml.entities import AzureBlobDatastore, AzureFileDatastore
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
 from azure.ai.ml.entities._datastore.datastore import Datastore
+from azure.ai.ml.entities._datastore.one_lake import OneLakeDatastore
 
 
 @pytest.fixture
@@ -53,6 +54,11 @@ def hdfs_keytab_file() -> str:
 @pytest.fixture
 def hdfs_pw_file() -> str:
     return "./tests/test_configs/datastore/hdfs_kerberos_pw.yml"
+
+
+@pytest.fixture
+def one_lake_file() -> str:
+    return "./tests/test_configs/datastore/credential_less_one_lake.yml"
 
 
 def b64read(p):
@@ -167,6 +173,28 @@ class TestDatastore(AzureRecordedTestCase):
         assert isinstance(created_datastore, AzureBlobDatastore)
         assert created_datastore.container_name == internal_blob_ds.container_name
         assert created_datastore.account_name == internal_blob_ds.account_name
+        assert isinstance(created_datastore.credentials, NoneCredentialConfiguration)
+        client.datastores.delete(random_name)
+        with pytest.raises(Exception):
+            client.datastores.get(random_name)
+
+    def test_one_lake_credential_less(
+        self,
+        client: MLClient,
+        one_lake_credential_less_file: str,
+        randstr: Callable[[str], str],
+    ) -> None:
+        random_name = randstr("random_name")
+        params_override = [
+            {"name": random_name},
+        ]
+        internal_one_lake_ds = load_datastore(one_lake_credential_less_file, params_override=params_override)
+        created_datastore = datastore_create_get_list(client, internal_one_lake_ds, random_name)
+        assert isinstance(created_datastore, OneLakeDatastore)
+        assert created_datastore.artifact.artifact_name == internal_one_lake_ds.artifact.artifact_name
+        assert created_datastore.artifact.artifact_type == internal_one_lake_ds.artifact.artifact_type
+        assert created_datastore.one_lake_workspace_name == internal_one_lake_ds.one_lake_workspace_name
+        assert created_datastore.endpoint == internal_one_lake_ds.endpoint
         assert isinstance(created_datastore.credentials, NoneCredentialConfiguration)
         client.datastores.delete(random_name)
         with pytest.raises(Exception):

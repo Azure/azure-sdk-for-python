@@ -21,12 +21,12 @@ from azure.ai.ml.exceptions import ErrorTarget
 def mock_datastore_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config_no_progress: OperationConfig,
-    mock_aml_services_2022_10_01: Mock,
+    mock_aml_services_2023_04_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config_no_progress,
-        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
+        serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
     )
 
 
