@@ -28,7 +28,7 @@ Each service might have a number of libraries available from each of the followi
 
 ### Client: New Releases
 
-New wave of packages that we are announcing as **GA** and several that are currently releasing in **preview**. These libraries allow you to use and consume existing resources and interact with them, for example: upload a blob. These libraries share a number of core functionalities such as: retries, logging, transport protocols, authentication protocols, etc. that can be found in the [azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core) library. You can learn more about these libraries by reading guidelines that they follow [here](https://azure.github.io/azure-sdk/python/guidelines/index.html).
+We are announcing a new wave of packages as **GA** and will release several others that are currently in **preview**. These libraries allow you to use and consume existing resources and interact with them, for example: upload a blob. These libraries share several core functionalities, such as retries, logging, transport protocols, authentication protocols, etc. that can be found in the [azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core) library. You can learn more about these libraries by reading the guidelines that they follow [here](https://azure.github.io/azure-sdk/python/guidelines/index.html).
 
 You can find the [most up to date list of all of the new packages on our page](https://azure.github.io/azure-sdk/releases/latest/index.html#python)
 
@@ -36,7 +36,7 @@ You can find the [most up to date list of all of the new packages on our page](h
 
 ### Client: Previous Versions
 
-Last stable versions of packages that have been provided for usage with Azure and are production-ready. These libraries provide you with similar functionalities to the Preview ones as they allow you to use and consume existing resources and interact with them, for example: upload a blob. They might not implement the [guidelines](https://azure.github.io/azure-sdk/python/guidelines/index.html) or have the same feature set as the November releases. They do however offer wider coverage of services.
+The last stable versions of packages provided for usage with Azure are production-ready. These libraries provide you with functionalities similar to the Preview ones as they allow you to use and consume existing resources and interact with them, such as uploading a blob. They might not implement the [guidelines](https://azure.github.io/azure-sdk/python/guidelines/index.html)or have the same feature set as the November releases. However, they offer wider coverage of services.
 
 ### Management: New Releases
 A new set of management libraries that follow the [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python/guidelines/) are now available. These new libraries provide a number of core capabilities that are shared amongst all Azure SDKs, including the intuitive Azure Identity library, an HTTP Pipeline with custom policies, error-handling, distributed tracing, and much more.
@@ -47,7 +47,7 @@ You can find the [most up to date list of all of the new packages on our page](h
 > NOTE: If you need to ensure your code is ready for production use one of the stable, non-preview libraries. Also, if you are experiencing authentication issues with the management libraries after upgrading certain packages, it's possible that you upgraded to the new versions of SDK without changing the authentication code, please refer to the migration guide mentioned above for proper instructions.
 
 ### Management: Previous Versions
-For a complete list of management libraries which enable you to provision and manage Azure resources, please [check here](https://azure.github.io/azure-sdk/releases/latest/all/python.html). They might not have the same feature set as the new releases but they do offer wider coverage of services.
+For a complete list of management libraries that enable you to provision and manage Azure resources, please [check here](https://azure.github.io/azure-sdk/releases/latest/all/python.html). They might not have the same feature set as the new releases but they do offer wider coverage of services.
 Management libraries can be identified by namespaces that start with `azure-mgmt-`, e.g. `azure-mgmt-compute`
 
 ## Need help?
