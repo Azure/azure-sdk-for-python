@@ -164,7 +164,7 @@ class Sweep(ParameterizedSweep, BaseNode):
 
         Each key is the name of a hyperparameter and its value is the parameter expression.
 
-        rtype: Dict[str, Union[~azure.ai.ml.entities.Choice, ~azure.ai.ml.entities.LogNormal,
+        :rtype: Dict[str, Union[~azure.ai.ml.entities.Choice, ~azure.ai.ml.entities.LogNormal,
             ~azure.ai.ml.entities.LogUniform, ~azure.ai.ml.entities.Normal, ~azure.ai.ml.entities.QLogNormal,
             ~azure.ai.ml.entities.QLogUniform, ~azure.ai.ml.entities.QNormal, ~azure.ai.ml.entities.QUniform,
             ~azure.ai.ml.entities.Randint, ~azure.ai.ml.entities.Uniform]]
