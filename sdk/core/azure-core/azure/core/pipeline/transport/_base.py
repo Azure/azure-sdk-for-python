@@ -228,7 +228,7 @@ class HttpRequest:
     def body(self) -> Optional[DataType]:
         """Alias to data.
 
-        :rtype: bytes or dict
+        :rtype: bytes or str or dict or None
         :return: The body of the request.
         """
         return self.data
