@@ -82,7 +82,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
         async for completion in response:
             # API versions after 2023-05-15 send an empty first completion with RAI
-            if len(completion.choices) > 1:
+            if len(completion.choices) > 0:
                 assert completion.id
                 assert completion.object == "chat.completion.chunk"
                 assert completion.created
