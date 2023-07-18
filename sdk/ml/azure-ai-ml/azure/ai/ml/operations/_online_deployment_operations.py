@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,no-self-use,broad-except
+# pylint: disable=protected-access,broad-except
 
 import random
 import re

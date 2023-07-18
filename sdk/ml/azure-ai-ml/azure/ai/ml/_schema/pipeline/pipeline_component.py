@@ -285,7 +285,7 @@ class PipelineSchema(BaseNodeSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.PIPELINE])
 
     @post_load
-    def make(self, data, **kwargs) -> "Pipeline":  # pylint: disable=no-self-use
+    def make(self, data, **kwargs) -> "Pipeline":
         from azure.ai.ml.entities._builders import parse_inputs_outputs
         from azure.ai.ml.entities._builders.pipeline import Pipeline
 
@@ -293,5 +293,5 @@ class PipelineSchema(BaseNodeSchema):
         return Pipeline(**data)  # pylint: disable=abstract-class-instantiated
 
     @pre_dump
-    def resolve_inputs_outputs(self, data, **kwargs):  # pylint: disable=no-self-use
+    def resolve_inputs_outputs(self, data, **kwargs):
         return _resolve_inputs_outputs(data)

@@ -53,7 +53,6 @@ class EndpointStub:
         build_directory = self._get_build_directory(endpoint_name=endpoint_name)
         shutil.rmtree(build_directory)
 
-    # pylint: disable=no-self-use
     def invoke(self):
         """Invoke a local endpoint.
 
