@@ -219,6 +219,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         sip_headers: Optional[Dict[str, str]] = None,
         voip_headers: Optional[Dict[str, str]] = None,
         operation_context: Optional[str] = None,
+        callback_url_override: Optional[str] = None,
         **kwargs
     ) -> TransferCallResult:
         """Transfer the call to a participant.
@@ -231,6 +232,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype voip_headers: dict[str, str]
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
+        :keyword callback_url_override: Url that overrides original callback URI for this request.
+        :paramtype callback_url_override: str
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -241,7 +244,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             ) if sip_headers or voip_headers else None
         request = TransferToParticipantRequest(
             target_participant=serialize_identifier(target_participant),
-            custom_context=user_custom_context, operation_context=operation_context)
+            custom_context=user_custom_context, operation_context=operation_context,
+            callback_uri_override=callback_url_override)
 
         return await self._call_connection_client.transfer_to_participant(
             self._call_connection_id, request,
@@ -254,6 +258,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         *,
         invitation_timeout: Optional[int] = None,
         operation_context: Optional[str] = None,
+        callback_url_override: Optional[str] = None,
         **kwargs
     ) -> AddParticipantResult:
         """Add a participant to the call.
@@ -265,6 +270,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype invitation_timeout: int
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
+        :keyword callback_url_override: Url that overrides original callback URI for this request.
+        :paramtype callback_url_override: str
         :return: AddParticipantResult
         :rtype: ~azure.communication.callautomation.AddParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -280,7 +287,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             source_display_name=target_participant.source_display_name,
             custom_context=user_custom_context,
             invitation_timeout=invitation_timeout,
-            operation_context=operation_context)
+            operation_context=operation_context,
+            callback_uri_override=callback_url_override)
 
         response = await self._call_connection_client.add_participant(
             self._call_connection_id,
@@ -295,6 +303,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         target_participant: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
+        callback_url_override: Optional[str] = None,
         **kwargs
     ) -> RemoveParticipantResult:
         """Remove a participant from the call.
@@ -303,13 +312,15 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
+        :keyword callback_url_override: Url that overrides original callback URI for this request.
+        :paramtype callback_url_override: str
         :return: RemoveParticipantResult
         :rtype: ~azure.communication.callautomation.RemoveParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         remove_participant_request = RemoveParticipantRequest(
             participant_to_remove=serialize_identifier(target_participant),
-            operation_context=operation_context)
+            operation_context=operation_context, callback_uri_override=callback_url_override)
 
         response = await self._call_connection_client.remove_participant(
             self._call_connection_id,
