@@ -24,7 +24,7 @@ class AzureEnvironments:
     ENV_CHINA = "AzureChinaCloud"
 
 
-class EndpointURLS:  # pylint: disable=too-few-public-methods,no-init
+class EndpointURLS:  # pylint: disable=too-few-public-methods
     AZURE_PORTAL_ENDPOINT = "azure_portal"
     RESOURCE_MANAGER_ENDPOINT = "resource_manager"
     ACTIVE_DIRECTORY_ENDPOINT = "active_directory"

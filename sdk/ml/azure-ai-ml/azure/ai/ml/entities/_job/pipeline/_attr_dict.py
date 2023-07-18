@@ -49,7 +49,7 @@ class _AttrDict(Generic[K, V], dict, ABC):
             self._key_restriction = True
         self._logger = logging.getLogger("attr_dict")
 
-    def _initializing(self) -> bool:  # pylint: disable=no-self-use
+    def _initializing(self) -> bool:
         # use this to indicate ongoing init process, sub class need to make sure this return True during init process.
         return False
 
