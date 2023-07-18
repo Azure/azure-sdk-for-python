@@ -2,6 +2,7 @@ from typing import Callable, Union
 
 from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
+import re
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import AzureMLResourceType
@@ -25,7 +26,11 @@ from azure.ai.ml.entities._monitoring.thresholds import (
     DataQualityMetricThreshold,
     PredictionDriftMetricThreshold,
 )
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_ARM_id_for_parented_resource
+from azure.ai.ml._utils._arm_id_utils import (
+    is_ARM_id_for_resource, 
+    is_ARM_id_for_parented_resource,
+    AMLVersionedArmId,
+)
 from azure.ai.ml._utils.utils import snake_to_camel
 
 
@@ -200,13 +205,31 @@ class TestMonitorSchedule(AzureRecordedTestCase):
 
 def get_model_inputs_outputs_from_deployment(client: MLClient, endpoint_name: str, deployment_name: str):
     online_deployment = client.online_deployments.get(deployment_name, endpoint_name)
+    deployment_data_collector = online_deployment.data_collector.collections
+    model_inputs_name, model_outputs_name = None, None
+    model_inputs_version, model_outputs_version = None, None
 
-    model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
-    model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
-    model_outputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY)
-    model_outputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY)
-    model_inputs_type = client.data.get(model_inputs_name, model_inputs_version).type
-    model_outputs_type = client.data.get(model_outputs_name, model_outputs_version).type
+    if deployment_data_collector:
+        in_reg = AMLVersionedArmId(deployment_data_collector.get("model_inputs").data)
+        out_reg = AMLVersionedArmId(deployment_data_collector.get("model_outputs").data)
+        model_inputs_name = in_reg.group(1)
+        model_inputs_version = in_reg.group(2)
+        model_outputs_name = out_reg.group(1)
+        model_outputs_version = out_reg.group(2)
+        model_inputs_type = client.data.get(model_inputs_name, model_inputs_version).type
+        model_outputs_type = client.data.get(model_outputs_name, model_outputs_version).type
+    else:
+        model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
+        model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
+        model_outputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY)
+        model_outputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY)
+        model_inputs_type = client.data.get(model_inputs_name, model_inputs_version).type
+        model_outputs_type = client.data.get(model_outputs_name, model_outputs_version).type
+
+    assert model_inputs_name != None
+    assert model_inputs_version != None
+    assert model_outputs_name != None
+    assert model_outputs_version != None
 
     return (
         model_inputs_name,

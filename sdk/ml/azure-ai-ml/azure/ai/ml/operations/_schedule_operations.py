@@ -27,7 +27,11 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from .._restclient.v2022_10_01.models import ScheduleListViewType
-from .._utils._arm_id_utils import is_ARM_id_for_parented_resource, AMLNamedArmId
+from .._utils._arm_id_utils import (
+    is_ARM_id_for_parented_resource, 
+    AMLNamedArmId,
+    AMLVersionedArmId,
+)
 from .._utils.utils import snake_to_camel
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import (
@@ -45,7 +49,6 @@ from ..constants._monitoring import (
     DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY,
     DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY,
     DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY,
-    COLLECTIONS_DATA_REG,
     MonitorDatasetContext,
 )
 from . import JobOperations, OnlineDeploymentOperations, DataOperations
@@ -286,12 +289,12 @@ class ScheduleOperations(_ScopeDependentOperations):
             online_deployment = self._online_deployment_operations.get(deployment_name, endpoint_name)
             deployment_data_collector = online_deployment.data_collector.collections
             if deployment_data_collector:
-                in_reg = re.compile(COLLECTIONS_DATA_REG).match(deployment_data_collector.get("model_inputs").data)
-                out_reg = re.compile(COLLECTIONS_DATA_REG).match(deployment_data_collector.get("model_outputs").data)
-                model_inputs_name = in_reg.group(1)
-                model_inputs_version = in_reg.group(2)
-                model_outputs_name = out_reg.group(1)
-                model_outputs_version = out_reg.group(2)
+                in_reg = AMLVersionedArmId(deployment_data_collector.get("model_inputs").data)
+                out_reg = AMLVersionedArmId(deployment_data_collector.get("model_outputs").data)
+                model_inputs_name = in_reg.asset_name
+                model_inputs_version = in_reg.asset_version
+                model_outputs_name = out_reg.asset_name
+                model_outputs_version = out_reg.asset_version
                 mdc_input_enabled_str = deployment_data_collector.get("model_inputs").enabled
                 mdc_output_enabled_str = deployment_data_collector.get("model_outputs").enabled
             else:
