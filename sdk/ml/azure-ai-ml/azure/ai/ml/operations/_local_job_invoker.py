@@ -85,7 +85,7 @@ def _get_creationflags_and_startupinfo_for_background_process(
         args["stderr"] = subprocess.STDOUT
 
     # filter entries with value None
-    return {arg_name: args[arg_name] for arg_name in args if args[arg_name]}
+    return {k: v for (k, v) in args.items() if v}
 
 
 def patch_invocation_script_serialization(invocation_path: Path) -> None:
