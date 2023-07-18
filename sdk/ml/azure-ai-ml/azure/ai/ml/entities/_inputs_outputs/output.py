@@ -10,8 +10,8 @@ from typing_extensions import Literal
 
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import IOConstants
-from azure.ai.ml.exceptions import UserErrorException
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
+from azure.ai.ml.exceptions import UserErrorException
 
 from .base import _InputOutputBase
 from .utils import _remove_empty_values
@@ -21,71 +21,96 @@ class Output(_InputOutputBase):
     """Define an output of a Component or Job.
 
     :param type: The type of the data output. Possible values include:
-                        'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
+        'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
+        Defaults to 'uri_folder'.
     :type type: str
-    :param path: The path to which the output is pointing. Needs to point to a cloud path.
-    :type path: str
+    :param path: The path to which the output is pointing. Needs to point to a cloud path. Defaults to None.
+    :type path: str, optional
     :param mode: The mode of the data output. Possible values are:
-                        'rw_mount': Read-write mount the data,
-                        'upload': Upload the data from the compute target,
-                        'direct': Pass in the URI as a string
-    :type mode: str
-    :param description: Description of the output
-    :type description: str
-    :param name: The name used to register output as data or model asset. Name can be set without setting version.
-    :type name: str
+        'rw_mount': Read-write mount the data,
+        'upload': Upload the data from the compute target,
+        'direct': Pass in the URI as a string.
+        Defaults to None.
+    :type mode: str, optional
+    :param description: Description of the output. Defaults to None.
+    :type description: str, optional
+    :param name: The name used to register output as data or model asset.
+        Name can be set without setting version.
+        Defaults to None.
+    :type name: str, optional
     :param version: The version used to register output as data or model asset.
         Version can be set only when name is set.
-    :type version: str
+        Defaults to None.
+    :type version: str, optional
+    :param is_control: Determine if the output is a control output. Defaults to None.
+    :type is_control: bool, optional
+    :param early_available: Mark the output for early node orchestration. Defaults to None.
+    :type early_available: bool, optional
+    :param intellectual_property: Intellectual property associated with the output.
+        It can be an instance of `IntellectualProperty` or a dictionary that will be used to create an instance.
+        Defaults to None.
+    :type intellectual_property: Union[~azure.ai.ml.entities._assets.intellectual_property.IntellectualProperty, dict], optional
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Output cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     @overload
-    def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None):
+    def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None) -> None:
         """Define a uri_folder output.
 
         :param type: The type of the data output. Possible values include:
-                            'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
+            'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
+            Defaults to 'uri_folder'.
         :type type: str
-        :param path: The path to which the output is pointing. Needs to point to a cloud path.
-        :type path: str
+        :param path: The path to which the output is pointing. Needs to point to a cloud path. Defaults to None.
+        :type path: str, optional
         :param mode: The mode of the data output. Possible values are:
-                            'rw_mount': Read-write mount the data,
-                            'upload': Upload the data from the compute target,
-                            'direct': Pass in the URI as a string
-        :type mode: str
-        :param description: Description of the output
-        :type description: str
-        :param name: The name used to register output as data or model asset. Name can be set without setting version.
-        :type name: str
+            'rw_mount': Read-write mount the data,
+            'upload': Upload the data from the compute target,
+            'direct': Pass in the URI as a string.
+            Defaults to None.
+        :type mode: str, optional
+        :param description: Description of the output. Defaults to None.
+        :type description: str, optional
+        :param name: The name used to register output as data or model asset.
+            Name can be set without setting version.
+            Defaults to None.
+        :type name: str, optional
         :param version: The version used to register output as data or model asset.
             Version can be set only when name is set.
-        :type version: str
+            Defaults to None.
+        :type version: str, optional
         """
 
     @overload
-    def __init__(self, type: Literal["uri_file"] = "uri_file", path=None, mode=None, description=None):
+    def __init__(self, type: Literal["uri_file"] = "uri_file", path=None, mode=None, description=None) -> None:
         """Define a uri_file output.
 
         :param type: The type of the data output. Possible values include:
-                            'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
+            'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
+            Defaults to 'uri_file'.
         :type type: str
-        :param path: The path to which the output is pointing. Needs to point to a cloud path.
-        :type path: str
+        :param path: The path to which the output is pointing. Needs to point to a cloud path. Defaults to None.
+        :type path: str, optional
         :param mode: The mode of the data output. Possible values are:
-                            'rw_mount': Read-write mount the data,
-                            'upload': Upload the data from the compute target,
-                            'direct': Pass in the URI as a string
-        :type mode: str
-        :param description: Description of the output
-        :type description: str
-        :param name: The name used to register output as data or model asset. Name can be set without setting version.
-        :type name: str
+            'rw_mount': Read-write mount the data,
+            'upload': Upload the data from the compute target,
+            'direct': Pass in the URI as a string.
+            Defaults to None.
+        :type mode: str, optional
+        :param description: Description of the output. Defaults to None.
+        :type description: str, optional
+        :param name: The name used to register output as data or model asset.
+            Name can be set without setting version.
+            Defaults to None.
+        :type name: str, optional
         :param version: The version used to register output as data or model asset.
             Version can be set only when name is set.
-        :type version: str
+            Defaults to None.
+        :type version: str, optional
         """
 
-    def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs):
+    def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs) -> None:
         super(Output, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the _port_name.
         self._port_name = None

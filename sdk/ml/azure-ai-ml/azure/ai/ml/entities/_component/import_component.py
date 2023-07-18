@@ -19,22 +19,23 @@ from .component import Component
 class ImportComponent(Component):
     """Import component version, used to define an import component.
 
-    :param name: Name of the component.
-    :type name: str
-    :param version: Version of the component.
-    :type version: str
-    :param description: Description of the component.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict
-    :param display_name: Display name of the component.
-    :type display_name: str
-    :param source: input source parameters of the component.
-    :type source: dict
-    :param output: Output of the component.
-    :type output: dict
-    :param is_deterministic: Whether the command component is deterministic.
+    :param name: Name of the component. Defaults to None.
+    :type name: str, optional
+    :param version: Version of the component. Defaults to None.
+    :type version: str, optional
+    :param description: Description of the component. Defaults to None.
+    :type description: str, optional
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :type tags: dict, optional
+    :param display_name: Display name of the component. Defaults to None.
+    :type display_name: str, optional
+    :param source: Input source parameters of the component. Defaults to None.
+    :type source: dict, optional
+    :param output: Output of the component. Defaults to None.
+    :type output: dict, optional
+    :param is_deterministic: Whether the command component is deterministic. Defaults to True.
     :type is_deterministic: bool
+    :param kwargs: Additional parameters for the import component.
     """
 
     def __init__(
@@ -49,7 +50,7 @@ class ImportComponent(Component):
         output: Optional[Dict] = None,
         is_deterministic: bool = True,
         **kwargs,
-    ):
+    ) -> None:
         kwargs[COMPONENT_TYPE] = NodeType.IMPORT
         # Set default base path
         if "base_path" not in kwargs:

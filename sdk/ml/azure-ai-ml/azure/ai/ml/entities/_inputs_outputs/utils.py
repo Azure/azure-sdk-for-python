@@ -16,7 +16,13 @@ from azure.ai.ml.exceptions import UserErrorException
 
 
 def is_group(obj):
-    """Return True if obj is a group or an instance of a parameter group class."""
+    """Return True if obj is a group or an instance of a parameter group class.
+
+    :param obj: The object to check.
+    :type obj: Any
+    :return: True if obj is a group or an instance, False otherwise.
+    :rtype: bool
+    """
     return hasattr(obj, IOConstants.GROUP_ATTR_NAME)
 
 

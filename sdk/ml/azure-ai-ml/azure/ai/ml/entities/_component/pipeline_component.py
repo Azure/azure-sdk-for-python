@@ -16,8 +16,8 @@ from marshmallow import Schema
 from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, ComponentVersionProperties
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
-from azure.ai.ml._utils.utils import is_data_binding_expression, hash_dict
-from azure.ai.ml.constants._common import COMPONENT_TYPE, ARM_ID_PREFIX, ASSET_ARM_ID_REGEX_FORMAT
+from azure.ai.ml._utils.utils import hash_dict, is_data_binding_expression
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ARM_ID_REGEX_FORMAT, COMPONENT_TYPE
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode, Command
@@ -37,23 +37,26 @@ module_logger = logging.getLogger(__name__)
 
 
 class PipelineComponent(Component):
-    """Pipeline component, currently used to store components in a azure.ai.ml.dsl.pipeline.
+    """Pipeline component, currently used to store components in an azure.ai.ml.dsl.pipeline.
 
     :param name: Name of the component.
-    :type name: str
+    :type name: str, defaults to None
     :param version: Version of the component.
-    :type version: str
+    :type version: str, defaults to None
     :param description: Description of the component.
-    :type description: str
+    :type description: str, defaults to None
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict
+    :type tags: dict, defaults to None
     :param display_name: Display name of the component.
-    :type display_name: str
-    :type inputs: Component inputs
-    :param outputs: Outputs of the component.
-    :type outputs: Component outputs
-    :param jobs: Id to components dict inside pipeline definition.
-    :type jobs: OrderedDict[str, Component]
+    :type display_name: str, defaults to None
+    :param inputs: Component inputs.
+    :type inputs: dict, defaults to None
+    :param outputs: Component outputs.
+    :type outputs: dict, defaults to None
+    :param jobs: Id to components dict inside the pipeline definition.
+    :type jobs: Dict[str, ~azure.ai.ml.entities._builders.BaseNode], defaults to None
+    :param is_deterministic: Whether the pipeline component is deterministic.
+    :type is_deterministic: bool, defaults to None
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if PipelineComponent cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -71,7 +74,7 @@ class PipelineComponent(Component):
         jobs: Optional[Dict[str, BaseNode]] = None,
         is_deterministic: Optional[bool] = None,
         **kwargs,
-    ):
+    ) -> None:
         kwargs[COMPONENT_TYPE] = NodeType.PIPELINE
         super().__init__(
             name=name,
@@ -283,7 +286,11 @@ class PipelineComponent(Component):
 
     @property
     def jobs(self) -> Dict[str, BaseNode]:
-        """Return a dictionary from component variable name to component object."""
+        """Return a dictionary from component variable name to component object.
+
+        :return: Dictionary mapping component variable names to component objects.
+        :rtype: Dict[str, ~azure.ai.ml.entities._builders.BaseNode]
+        """
         return self._jobs
 
     @classmethod

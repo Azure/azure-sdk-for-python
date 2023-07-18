@@ -17,6 +17,20 @@ from azure.ai.ml.entities._validation import MutableValidationResult
 
 class ComponentIgnoreFile(IgnoreFile):
     _COMPONENT_CODE_IGNORES = ["__pycache__"]
+    """Component-specific ignore file used for ignoring files in a component directory.
+
+    :param directory_path: The directory path for the ignore file.
+    :type directory_path: Union[str, Path]
+    :param additional_includes_file_name: Name of the additional includes file in the root directory to be ignored, defaults to None.
+    :type additional_includes_file_name: str, optional
+    :param skip_ignore_file: Whether to skip the ignore file, defaults to False.
+    :type skip_ignore_file: bool, optional
+    :param extra_ignore_list: List of additional ignore files to be considered during file exclusion, defaults to None.
+    :type extra_ignore_list: List[~azure.ai.ml._utils._asset_utils.IgnoreFile], optional
+    :raises ValueError: If additional include file is not found.
+    :return: The ComponentIgnoreFile object.
+    :rtype: ComponentIgnoreFile
+    """
 
     def __init__(
         self,
@@ -36,21 +50,42 @@ class ComponentIgnoreFile(IgnoreFile):
         super(ComponentIgnoreFile, self).__init__(file_path=file_path)
 
     def exists(self) -> bool:
-        """Override to always return True as we do have default ignores."""
+        """Check if the ignore file exists.
+
+        :return: True
+        :rtype: bool
+        """
         return True
 
     @property
     def base_path(self) -> Path:
+        """Get the base path of the ignore file.
+
+        :return: The base path.
+        :rtype: Path
+        """
         # for component ignore file, the base path can be different from file.parent
         return self._base_path
 
     def rebase(self, directory_path: Union[str, Path]) -> "ComponentIgnoreFile":
-        """Rebase the ignore file to a new directory."""
+        """Rebase the ignore file to a new directory.
+
+        :param directory_path: The new directory path.
+        :type directory_path: Union[str, Path]
+        :return: The rebased ComponentIgnoreFile object.
+        :rtype: ComponentIgnoreFile
+        """
         self._base_path = directory_path
         return self
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
-        """Override to add custom ignores for internal component."""
+        """Check if a file should be excluded based on the ignore file rules.
+
+        :param file_path: The file path.
+        :type file_path: Union[str, Path]
+        :return: True if the file should be excluded, False otherwise.
+        :rtype: bool
+        """
         if self._additional_includes_file_name and self._get_rel_path(file_path) == self._additional_includes_file_name:
             return True
         for ignore_file in self._extra_ignore_list:
@@ -59,7 +94,13 @@ class ComponentIgnoreFile(IgnoreFile):
         return super(ComponentIgnoreFile, self).is_file_excluded(file_path)
 
     def merge(self, other_path: Path) -> "ComponentIgnoreFile":
-        """Merge ignore list from another ComponentIgnoreFile object."""
+        """Merge the ignore list from another ComponentIgnoreFile object.
+
+        :param other_path: The path of the other ignore file.
+        :type other_path: Path
+        :return: The merged ComponentIgnoreFile object.
+        :rtype: ComponentIgnoreFile
+        """
         if other_path.is_file():
             return self
         return ComponentIgnoreFile(other_path, extra_ignore_list=self._extra_ignore_list + [self])

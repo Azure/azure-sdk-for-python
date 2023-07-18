@@ -51,35 +51,35 @@ class Component(
 ):
     """Base class for component version, used to define a component. Can't be instantiated directly.
 
-    :param name: Name of the resource.
+    :param name: Name of the resource. Defaults to None.
     :type name: str
-    :param version: Version of the resource.
+    :param version: Version of the resource. Defaults to None.
     :type version: str
-    :param id:  Global id of the resource, Azure Resource Manager ID.
+    :param id: Global ID of the resource, Azure Resource Manager ID. Defaults to None.
     :type id: str
-    :param type:  Type of the command, supported is 'command'.
-    :param type:  Type of the command, supported is 'command'.
+    :param type: Type of the command, supported is 'command'. Defaults to None.
     :type type: str
-    :param description: Description of the resource.
+    :param description: Description of the resource. Defaults to None.
     :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
     :type tags: dict
-    :param properties: Internal use only.
+    :param properties: Internal use only. Defaults to None.
     :type properties: dict
-    :param display_name: Display name of the component.
+    :param display_name: Display name of the component. Defaults to None.
     :type display_name: str
-    :param is_deterministic: Whether the component is deterministic.
+    :param is_deterministic: Whether the component is deterministic. Defaults to True.
     :type is_deterministic: bool
-    :param inputs: Inputs of the component.
+    :param inputs: Inputs of the component. Defaults to None.
     :type inputs: dict
-    :param outputs: Outputs of the component.
+    :param outputs: Outputs of the component. Defaults to None.
     :type outputs: dict
-    :param yaml_str: The yaml string of the component.
+    :param yaml_str: The YAML string of the component. Defaults to None.
     :type yaml_str: str
-    :param _schema: Schema of the component.
+    :param _schema: Schema of the component. Defaults to None.
     :type _schema: str
-    :param creation_context: Creation metadata of the component.
+    :param creation_context: Creation metadata of the component. Defaults to None.
     :type creation_context: ~azure.ai.ml.entities.SystemData
+    :param kwargs: Additional parameters for the component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -103,7 +103,7 @@ class Component(
         _schema: Optional[str] = None,
         creation_context: Optional[SystemData] = None,
         **kwargs,
-    ):
+    ) -> None:
         self._intellectual_property = kwargs.pop("intellectual_property", None)
         # Setting this before super init because when asset init version, _auto_increment_version's value may change
         self._auto_increment_version = kwargs.pop("auto_increment", False)
@@ -209,10 +209,20 @@ class Component(
 
     @property
     def version(self) -> str:
+        """Version of the component.
+
+        :return: Version of the component.
+        :rtype: str
+        """
         return self._version
 
     @version.setter
     def version(self, value: str) -> None:
+        """Set the version of the component.
+
+        :param value: The version of the component.
+        :type value: str
+        """
         if value:
             if not isinstance(value, str):
                 msg = f"Component version must be a string, not type {type(value)}."
