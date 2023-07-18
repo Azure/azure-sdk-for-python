@@ -46,9 +46,9 @@ class OsImageMetadataSchema(PathAwareSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import OsImageMetadata
+        from azure.ai.ml.entities import ImageMetadata
 
-        return OsImageMetadata(**data)
+        return ImageMetadata(**data)
 
 
 class ComputeInstanceSchema(ComputeSchema):

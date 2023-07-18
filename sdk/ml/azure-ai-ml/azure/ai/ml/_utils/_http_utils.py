@@ -21,7 +21,10 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     UserAgentPolicy,
 )
-from azure.core.pipeline.transport import HttpTransport, RequestsTransport
+from azure.core.pipeline.transport import HttpTransport
+from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import,no-name-in-module
+    RequestsTransport,
+)
 from azure.core.rest import HttpRequest, HttpResponse
 
 
@@ -116,6 +119,9 @@ class HttpPipeline(Pipeline):
         config.polling_interval = kwargs.get("polling_interval", 30)
 
         super().__init__(
+            # RequestsTransport normally should not be imported outside of azure.core, since transports
+            # are meant to be user configurable.
+            # RequestsTransport is only used in this file as the default transport when not user specified.
             transport=transport or RequestsTransport(**kwargs),
             policies=[
                 config.headers_policy,
