@@ -545,7 +545,7 @@ class ConsumerProducerMixin(_MIXIN_BASE):
                         self._name,
                         last_exception,
                     )
-                    raise last_exception # pylint:disable=raise-missing-from
+                    raise last_exception from None
         return None
 
     async def close(self) -> None:
