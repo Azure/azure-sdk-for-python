@@ -347,12 +347,11 @@ def document_page(document_span, document_word, document_selection_mark, documen
         words=[document_word[0]],
         selection_marks=[document_selection_mark[0]],
         lines=[document_line[0]],
-        kind="document",
         formulas=[document_formula[0]],
         barcodes=[document_barcode[0]],
     )
     model_repr = "DocumentPage(page_number={}, angle={}, width={}, height={}, unit={}, lines=[{}], words=[{}], selection_marks=[{}], spans=[{}], " \
-                 "kind={}, barcodes=[{}], formulas=[{}])".format(
+                 "barcodes=[{}], formulas=[{}])".format(
                 1,
                 120.0,
                 8.0,
@@ -362,7 +361,6 @@ def document_page(document_span, document_word, document_selection_mark, documen
                 document_word[1],
                 document_selection_mark[1],
                 document_span[1],
-                "document",
                 document_barcode[1],
                 document_formula[1],
             )
