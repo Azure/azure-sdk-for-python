@@ -107,13 +107,15 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         response = await openai.Completion.acreate(prompt="hello world", stream=True, **kwargs)
 
         async for completion in response:
-            assert completion.id
-            assert completion.object == "text_completion"
-            assert completion.created
-            assert completion.model
-            for c in completion.choices:
-                assert c.index is not None
-                assert c.text is not None
+            # API versions after 2023-05-15 send an empty first completion with RAI
+            if len(completion.choices) > 1:
+                assert completion.id
+                assert completion.object == "text_completion"
+                assert completion.created
+                assert completion.model
+                for c in completion.choices:
+                    assert c.index is not None
+                    assert c.text is not None
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])

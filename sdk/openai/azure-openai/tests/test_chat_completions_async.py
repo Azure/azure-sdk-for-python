@@ -81,13 +81,15 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         response = await openai.ChatCompletion.acreate(messages=messages, stream=True, **kwargs)
 
         async for completion in response:
-            assert completion.id
-            assert completion.object == "chat.completion.chunk"
-            assert completion.created
-            assert completion.model
-            for c in completion.choices:
-                assert c.index is not None
-                assert c.delta is not None
+            # API versions after 2023-05-15 send an empty first completion with RAI
+            if len(completion.choices) > 1:
+                assert completion.id
+                assert completion.object == "chat.completion.chunk"
+                assert completion.created
+                assert completion.model
+                for c in completion.choices:
+                    assert c.index is not None
+                    assert c.delta is not None
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
