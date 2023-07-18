@@ -1,11 +1,11 @@
 import unittest
 import uuid
-import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos._retry_utility as retry_utility
+import azure.cosmos.aio._cosmos_client as cosmos_client
+import azure.cosmos.aio._retry_utility_async as retry_utility
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
-from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
+from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos.documents import _DistinctType
 import pytest
 import collections
@@ -24,7 +24,7 @@ class QueryTest(unittest.TestCase):
     connectionPolicy = config.connectionPolicy
 
     @classmethod
-    def setUpClass(cls):
+    async def setUpClass(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
@@ -34,37 +34,38 @@ class QueryTest(unittest.TestCase):
 
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey,
                                                 consistency_level="Session", connection_policy=cls.connectionPolicy)
-        cls.created_db = cls.client.create_database_if_not_exists(cls.config.TEST_DATABASE_ID)
+        cls.created_db = await cls.client.create_database_if_not_exists(cls.config.TEST_DATABASE_ID)
 
-    def test_first_and_last_slashes_trimmed_for_query_string(self):
-        created_collection = self.created_db.create_container_if_not_exists(
+    async def test_first_and_last_slashes_trimmed_for_query_string(self):
+        created_collection = await self.created_db.create_container_if_not_exists(
             "test_trimmed_slashes", PartitionKey(path="/pk"))
         doc_id = 'myId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
 
         query = 'SELECT * from c'
         query_iterable = created_collection.query_items(
             query=query,
             partition_key='pk'
         )
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(iter_list[0]['id'], doc_id)
 
-    def test_query_change_feed_with_pk(self):
-        created_collection = self.created_db.create_container_if_not_exists("change_feed_test_" + str(uuid.uuid4()),
-                                                                            PartitionKey(path="/pk"))
+    async def test_query_change_feed_with_pk(self):
+        created_collection = await self.created_db.create_container_if_not_exists(
+            "change_feed_test_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"))
         # The test targets partition #3
         partition_key = "pk"
 
         # Read change feed without passing any options
         query_iterable = created_collection.query_items_change_feed()
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 0)
 
         # Read change feed from current should return an empty list
         query_iterable = created_collection.query_items_change_feed(partition_key=partition_key)
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 0)
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
         self.assertNotEqual(created_collection.client_connection.last_response_headers['etag'], '')
@@ -74,7 +75,7 @@ class QueryTest(unittest.TestCase):
             is_start_from_beginning=True,
             partition_key=partition_key
         )
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 0)
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
         continuation1 = created_collection.client_connection.last_response_headers['etag']
@@ -82,12 +83,12 @@ class QueryTest(unittest.TestCase):
 
         # Create a document. Read change feed should return be able to read that document
         document_definition = {'pk': 'pk', 'id': 'doc1'}
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
         query_iterable = created_collection.query_items_change_feed(
             is_start_from_beginning=True,
             partition_key=partition_key
         )
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 1)
         self.assertEqual(iter_list[0]['id'], 'doc1')
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
@@ -98,9 +99,9 @@ class QueryTest(unittest.TestCase):
         # Create two new documents. Verify that change feed contains the 2 new documents
         # with page size 1 and page size 100
         document_definition = {'pk': 'pk', 'id': 'doc2'}
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
         document_definition = {'pk': 'pk', 'id': 'doc3'}
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
 
         for pageSize in [1, 100]:
             # verify iterator
@@ -109,10 +110,10 @@ class QueryTest(unittest.TestCase):
                 max_item_count=pageSize,
                 partition_key=partition_key
             )
-            it = query_iterable.__iter__()
+            it = query_iterable.__aiter__()
             expected_ids = 'doc2.doc3.'
             actual_ids = ''
-            for item in it:
+            async for item in it:
                 actual_ids += item['id'] + '.'
             self.assertEqual(actual_ids, expected_ids)
 
@@ -127,7 +128,7 @@ class QueryTest(unittest.TestCase):
             expected_count = 2
             all_fetched_res = []
             for page in query_iterable.by_page():
-                fetched_res = list(page)
+                fetched_res = [item async for item in page]
                 self.assertEqual(len(fetched_res), min(pageSize, expected_count - count))
                 count += len(fetched_res)
                 all_fetched_res.extend(fetched_res)
@@ -143,9 +144,9 @@ class QueryTest(unittest.TestCase):
             partition_key=partition_key
         )
         expected_ids = ['doc1', 'doc2', 'doc3']
-        it = query_iterable.__iter__()
+        it = query_iterable.__aiter__()
         for i in range(0, len(expected_ids)):
-            doc = next(it)
+            doc = await anext(it)
             self.assertEqual(doc['id'], expected_ids[i])
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
         continuation3 = created_collection.client_connection.last_response_headers['etag']
@@ -156,24 +157,24 @@ class QueryTest(unittest.TestCase):
             is_start_from_beginning=True,
             partition_key=partition_key
         )
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 0)
 
-    def test_query_change_feed_with_pk_range_id(self):
-        created_collection = self.created_db.create_container_if_not_exists("change_feed_test_" + str(uuid.uuid4()),
-                                                                            PartitionKey(path="/pk"))
+    async def test_query_change_feed_with_pk_range_id(self):
+        created_collection = await self.created_db.create_container_if_not_exists("cf_test_" + str(uuid.uuid4()),
+                                                                                  PartitionKey(path="/pk"))
         # The test targets partition #3
         partition_key_range_id = 0
-        partitionParam = {"partition_key_range_id": partition_key_range_id}
+        partition_param = {"partition_key_range_id": partition_key_range_id}
 
         # Read change feed without passing any options
         query_iterable = created_collection.query_items_change_feed()
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 0)
 
         # Read change feed from current should return an empty list
-        query_iterable = created_collection.query_items_change_feed(**partitionParam)
-        iter_list = list(query_iterable)
+        query_iterable = created_collection.query_items_change_feed(**partition_param)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 0)
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
         self.assertNotEqual(created_collection.client_connection.last_response_headers['etag'], '')
@@ -181,9 +182,9 @@ class QueryTest(unittest.TestCase):
         # Read change feed from beginning should return an empty list
         query_iterable = created_collection.query_items_change_feed(
             is_start_from_beginning=True,
-            **partitionParam
+            **partition_param
         )
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 0)
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
         continuation1 = created_collection.client_connection.last_response_headers['etag']
@@ -191,12 +192,12 @@ class QueryTest(unittest.TestCase):
 
         # Create a document. Read change feed should return be able to read that document
         document_definition = {'pk': 'pk', 'id': 'doc1'}
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
         query_iterable = created_collection.query_items_change_feed(
             is_start_from_beginning=True,
-            **partitionParam
+            **partition_param
         )
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 1)
         self.assertEqual(iter_list[0]['id'], 'doc1')
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
@@ -207,21 +208,21 @@ class QueryTest(unittest.TestCase):
         # Create two new documents. Verify that change feed contains the 2 new documents
         # with page size 1 and page size 100
         document_definition = {'pk': 'pk', 'id': 'doc2'}
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
         document_definition = {'pk': 'pk', 'id': 'doc3'}
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
 
         for pageSize in [1, 100]:
             # verify iterator
             query_iterable = created_collection.query_items_change_feed(
                 continuation=continuation2,
                 max_item_count=pageSize,
-                **partitionParam
+                **partition_param
             )
-            it = query_iterable.__iter__()
+            it = query_iterable.__aiter__()
             expected_ids = 'doc2.doc3.'
             actual_ids = ''
-            for item in it:
+            async for item in it:
                 actual_ids += item['id'] + '.'
             self.assertEqual(actual_ids, expected_ids)
 
@@ -230,13 +231,13 @@ class QueryTest(unittest.TestCase):
             query_iterable = created_collection.query_items_change_feed(
                 continuation=continuation2,
                 max_item_count=pageSize,
-                **partitionParam
+                **partition_param
             )
             count = 0
             expected_count = 2
             all_fetched_res = []
             for page in query_iterable.by_page():
-                fetched_res = list(page)
+                fetched_res = [item async for item in page]
                 self.assertEqual(len(fetched_res), min(pageSize, expected_count - count))
                 count += len(fetched_res)
                 all_fetched_res.extend(fetched_res)
@@ -249,10 +250,10 @@ class QueryTest(unittest.TestCase):
         # verify reading change feed from the beginning
         query_iterable = created_collection.query_items_change_feed(
             is_start_from_beginning=True,
-            **partitionParam
+            **partition_param
         )
         expected_ids = ['doc1', 'doc2', 'doc3']
-        it = query_iterable.__iter__()
+        it = query_iterable.__aiter__()
         for i in range(0, len(expected_ids)):
             doc = next(it)
             self.assertEqual(doc['id'], expected_ids[i])
@@ -263,14 +264,15 @@ class QueryTest(unittest.TestCase):
         query_iterable = created_collection.query_items_change_feed(
             continuation=continuation3,
             is_start_from_beginning=True,
-            **partitionParam
+            **partition_param
         )
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 0)
 
-    def test_query_change_feed(self, use_partition_key):
-        created_collection = self.created_db.create_container_if_not_exists("change_feed_test_" + str(uuid.uuid4()),
-                                                                            PartitionKey(path="/pk"))
+    async def test_query_change_feed(self, use_partition_key):
+        created_collection = await self.created_db.create_container_if_not_exists(
+            "change_feed_test_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"))
         # The test targets partition #3
         partition_key = "pk"
         partition_key_range_id = 0
@@ -279,12 +281,12 @@ class QueryTest(unittest.TestCase):
 
         # Read change feed without passing any options
         query_iterable = created_collection.query_items_change_feed()
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 0)
 
         # Read change feed from current should return an empty list
         query_iterable = created_collection.query_items_change_feed(**partition_param)
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 0)
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
         self.assertNotEqual(created_collection.client_connection.last_response_headers['etag'], '')
@@ -294,7 +296,7 @@ class QueryTest(unittest.TestCase):
             is_start_from_beginning=True,
             **partition_param
         )
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 0)
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
         continuation1 = created_collection.client_connection.last_response_headers['etag']
@@ -302,12 +304,12 @@ class QueryTest(unittest.TestCase):
 
         # Create a document. Read change feed should return be able to read that document
         document_definition = {'pk': 'pk', 'id': 'doc1'}
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
         query_iterable = created_collection.query_items_change_feed(
             is_start_from_beginning=True,
             **partition_param
         )
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 1)
         self.assertEqual(iter_list[0]['id'], 'doc1')
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
@@ -318,9 +320,9 @@ class QueryTest(unittest.TestCase):
         # Create two new documents. Verify that change feed contains the 2 new documents
         # with page size 1 and page size 100
         document_definition = {'pk': 'pk', 'id': 'doc2'}
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
         document_definition = {'pk': 'pk', 'id': 'doc3'}
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
 
         for pageSize in [1, 100]:
             # verify iterator
@@ -329,10 +331,10 @@ class QueryTest(unittest.TestCase):
                 max_item_count=pageSize,
                 **partition_param
             )
-            it = query_iterable.__iter__()
+            it = query_iterable.__aiter__()
             expected_ids = 'doc2.doc3.'
             actual_ids = ''
-            for item in it:
+            async for item in it:
                 actual_ids += item['id'] + '.'
             self.assertEqual(actual_ids, expected_ids)
 
@@ -347,7 +349,7 @@ class QueryTest(unittest.TestCase):
             expected_count = 2
             all_fetched_res = []
             for page in query_iterable.by_page():
-                fetched_res = list(page)
+                fetched_res = [item async for item in page]
                 self.assertEqual(len(fetched_res), min(pageSize, expected_count - count))
                 count += len(fetched_res)
                 all_fetched_res.extend(fetched_res)
@@ -363,9 +365,9 @@ class QueryTest(unittest.TestCase):
             **partition_param
         )
         expected_ids = ['doc1', 'doc2', 'doc3']
-        it = query_iterable.__iter__()
+        it = query_iterable.__aiter__()
         for i in range(0, len(expected_ids)):
-            doc = next(it)
+            doc = await anext(it)
             self.assertEqual(doc['id'], expected_ids[i])
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
         continuation3 = created_collection.client_connection.last_response_headers['etag']
@@ -376,15 +378,15 @@ class QueryTest(unittest.TestCase):
             is_start_from_beginning=True,
             **partition_param
         )
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 0)
 
     def test_populate_query_metrics(self):
-        created_collection = self.created_db.create_container_if_not_exists("query_metrics_test",
-                                                                            PartitionKey(path="/pk"))
+        created_collection = await self.created_db.create_container_if_not_exists("query_metrics_test",
+                                                                                  PartitionKey(path="/pk"))
         doc_id = 'MyId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
 
         query = 'SELECT * from c'
         query_iterable = created_collection.query_items(
@@ -393,7 +395,7 @@ class QueryTest(unittest.TestCase):
             populate_query_metrics=True
         )
 
-        iter_list = list(query_iterable)
+        iter_list = [item async for item in query_iterable]
         self.assertEqual(iter_list[0]['id'], doc_id)
 
         METRICS_HEADER_NAME = 'x-ms-documentdb-query-metrics'
@@ -405,45 +407,43 @@ class QueryTest(unittest.TestCase):
         self.assertTrue(all(['=' in x for x in metrics]))
 
     def test_max_item_count_honored_in_order_by_query(self):
-        created_collection = self.created_db.create_container_if_not_exists(
+        created_collection = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         docs = []
         for i in range(10):
             document_definition = {'pk': 'pk', 'id': 'myId' + str(uuid.uuid4())}
-            docs.append(created_collection.create_item(body=document_definition))
+            docs.append(await created_collection.create_item(body=document_definition))
 
         query = 'SELECT * from c ORDER BY c._ts'
         query_iterable = created_collection.query_items(
             query=query,
-            max_item_count=1,
-            enable_cross_partition_query=True
+            max_item_count=1
         )
         self.validate_query_requests_count(query_iterable, 11 * 2 + 1)
 
         query_iterable = created_collection.query_items(
             query=query,
-            max_item_count=100,
-            enable_cross_partition_query=True
+            max_item_count=100
         )
 
         self.validate_query_requests_count(query_iterable, 5)
 
-    def validate_query_requests_count(self, query_iterable, expected_count):
+    async def validate_query_requests_count(self, query_iterable, expected_count):
         self.count = 0
-        self.OriginalExecuteFunction = retry_utility.ExecuteFunction
-        retry_utility.ExecuteFunction = self._MockExecuteFunction
+        self.OriginalExecuteFunction = retry_utility.ExecuteFunctionAsync
+        retry_utility.ExecuteFunctionAsync = self._MockExecuteFunction
         for block in query_iterable.by_page():
-            assert len(list(block)) != 0
-        retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+            assert len([item async for item in block]) != 0
+        retry_utility.ExecuteFunctionAsync = self.OriginalExecuteFunction
         self.assertEqual(self.count, expected_count)
         self.count = 0
 
-    def _MockExecuteFunction(self, function, *args, **kwargs):
+    async def _MockExecuteFunction(self, function, *args, **kwargs):
         self.count += 1
-        return self.OriginalExecuteFunction(function, *args, **kwargs)
+        return await self.OriginalExecuteFunction(function, *args, **kwargs)
 
     def test_get_query_plan_through_gateway(self):
-        created_collection = self.created_db.create_container_if_not_exists(
+        created_collection = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         self._validate_query_plan(query="Select top 10 value count(c.id) from c",
                                   container_link=created_collection.container_link,
@@ -494,33 +494,31 @@ class QueryTest(unittest.TestCase):
         self.assertEqual(query_execution_info.has_limit(), limit is not None)
         self.assertEqual(query_execution_info.get_limit(), limit)
 
-    def test_unsupported_queries(self):
-        created_collection = self.created_db.create_container_if_not_exists(
+    async def test_unsupported_queries(self):
+        created_collection = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         queries = ['SELECT COUNT(1) FROM c', 'SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
         for query in queries:
-            query_iterable = created_collection.query_items(query=query, enable_cross_partition_query=True)
+            query_iterable = created_collection.query_items(query=query)
             try:
-                list(query_iterable)
-                print("we here mate")
+                results = [item async for item in query_iterable]
                 self.fail()
             except exceptions.CosmosHttpResponseError as e:
                 self.assertEqual(e.status_code, 400)
 
-    def test_query_with_non_overlapping_pk_ranges(self):
-        created_collection = self.created_db.create_container_if_not_exists(
+    async def test_query_with_non_overlapping_pk_ranges(self):
+        created_collection = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
-        query_iterable = created_collection.query_items("select * from c where c.pk='1' or c.pk='2'",
-                                                        enable_cross_partition_query=True)
-        self.assertListEqual(list(query_iterable), [])
+        query_iterable = created_collection.query_items("select * from c where c.pk='1' or c.pk='2'")
+        self.assertListEqual([item async for item in query_iterable], [])
 
-    def test_offset_limit(self):
-        created_collection = self.created_db.create_container_if_not_exists("offset_limit_test_" + str(uuid.uuid4()),
-                                                                            PartitionKey(path="/pk"))
+    async def test_offset_limit(self):
+        created_collection = await self.created_db.create_container_if_not_exists("offset_limit_" + str(uuid.uuid4()),
+                                                                                  PartitionKey(path="/pk"))
         values = []
         for i in range(10):
             document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4())}
-            values.append(created_collection.create_item(body=document_definition)['pk'])
+            values.append(await created_collection.create_item(body=document_definition)['pk'])
 
         self._validate_offset_limit(created_collection=created_collection,
                                     query='SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5',
@@ -539,21 +537,18 @@ class QueryTest(unittest.TestCase):
                                     results=[])
 
     def _validate_offset_limit(self, created_collection, query, results):
-        query_iterable = created_collection.query_items(
-            query=query,
-            enable_cross_partition_query=True
-        )
-        self.assertListEqual(list(map(lambda doc: doc['pk'], list(query_iterable))), results)
+        query_iterable = created_collection.query_items(query=query)
+        self.assertListEqual(list(map(lambda doc: doc['pk'], [item async for item in query_iterable])), results)
 
     # TODO: Look into distinct query behavior to re-enable this test when possible
     @unittest.skip("intermittent failures in the pipeline")
-    def test_distinct(self):
-        created_database = self.config.create_database_if_not_exist(self.client)
+    async def test_distinct(self):
+        created_database = await self.config.create_database_if_not_exist(self.client)
         distinct_field = 'distinct_field'
         pk_field = "pk"
         different_field = "different_field"
 
-        created_collection = created_database.create_container(
+        created_collection = await created_database.create_container(
             id='collection with composite index ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk", kind="Hash"),
             indexing_policy={
@@ -570,11 +565,11 @@ class QueryTest(unittest.TestCase):
             j = i
             while j > i - 5:
                 document_definition = {pk_field: i, 'id': str(uuid.uuid4()), distinct_field: j}
-                documents.append(created_collection.create_item(body=document_definition))
+                documents.append(await created_collection.create_item(body=document_definition))
                 document_definition = {pk_field: i, 'id': str(uuid.uuid4()), distinct_field: j}
-                documents.append(created_collection.create_item(body=document_definition))
+                documents.append(await created_collection.create_item(body=document_definition))
                 document_definition = {pk_field: i, 'id': str(uuid.uuid4())}
-                documents.append(created_collection.create_item(body=document_definition))
+                documents.append(await created_collection.create_item(body=document_definition))
                 j -= 1
 
         padded_docs = self._pad_with_none(documents, distinct_field)
@@ -646,7 +641,7 @@ class QueryTest(unittest.TestCase):
                                 is_select=True,
                                 fields=[different_field])
 
-        created_database.delete_container(created_collection.id)
+        await created_database.delete_container(created_collection.id)
 
     def _get_order_by_docs(self, documents, field1, field2):
         if field2 is None:
@@ -670,11 +665,8 @@ class QueryTest(unittest.TestCase):
         return documents
 
     def _validate_distinct(self, created_collection, query, results, is_select, fields):
-        query_iterable = created_collection.query_items(
-            query=query,
-            enable_cross_partition_query=True
-        )
-        query_results = list(query_iterable)
+        query_iterable = created_collection.query_items(query=query)
+        query_results = [item async for item in query_iterable]
 
         self.assertEqual(len(results), len(query_results))
         query_results_strings = []
@@ -696,16 +688,16 @@ class QueryTest(unittest.TestCase):
 
         return res
 
-    def test_distinct_on_different_types_and_field_orders(self):
-        created_collection = self.created_db.create_container_if_not_exists(
+    async def test_distinct_on_different_types_and_field_orders(self):
+        created_collection = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         self.payloads = [
             {'f1': 1, 'f2': 'value', 'f3': 100000000000000000, 'f4': [1, 2, '3'], 'f5': {'f6': {'f7': 2}}},
             {'f2': '\'value', 'f4': [1.0, 2, '3'], 'f5': {'f6': {'f7': 2.0}}, 'f1': 1.0, 'f3': 100000000000000000.00},
             {'f3': 100000000000000000.0, 'f5': {'f6': {'f7': 2}}, 'f2': '\'value', 'f1': 1, 'f4': [1, 2.0, '3']}
         ]
-        self.OriginalExecuteFunction = _QueryExecutionContextBase.__next__
-        _QueryExecutionContextBase.__next__ = self._MockNextFunction
+        self.OriginalExecuteFunction = _QueryExecutionContextBase.__anext__
+        _QueryExecutionContextBase.__anext__ = self._MockNextFunction
 
         self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
@@ -763,17 +755,17 @@ class QueryTest(unittest.TestCase):
             get_mock_result=lambda x, i: (i, x[i])
         )
 
-        _QueryExecutionContextBase.__next__ = self.OriginalExecuteFunction
+        _QueryExecutionContextBase.__anext__ = self.OriginalExecuteFunction
         _QueryExecutionContextBase.next = self.OriginalExecuteFunction
 
-    def test_paging_with_continuation_token(self):
-        created_collection = self.created_db.create_container_if_not_exists(
+    async def test_paging_with_continuation_token(self):
+        created_collection = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
 
         document_definition = {'pk': 'pk', 'id': '1'}
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
         document_definition = {'pk': 'pk', 'id': '2'}
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
 
         query = 'SELECT * from c'
         query_iterable = created_collection.query_items(
@@ -784,35 +776,34 @@ class QueryTest(unittest.TestCase):
         pager = query_iterable.by_page()
         pager.next()
         token = pager.continuation_token
-        second_page = list(pager.next())[0]
+
+        second_page = [item async for item in pager.next()]
 
         pager = query_iterable.by_page(token)
-        second_page_fetched_with_continuation_token = list(pager.next())[0]
+        second_page_fetched_with_continuation_token = [item async for item in pager.next()][0]
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
     def test_cross_partition_query_with_continuation_token(self):
-        created_collection = self.created_db.create_container_if_not_exists(
+        created_collection = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_ID,
             PartitionKey(path="/id"))
         document_definition = {'pk': 'pk1', 'id': '1'}
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
         document_definition = {'pk': 'pk2', 'id': '2'}
-        created_collection.create_item(body=document_definition)
+        await created_collection.create_item(body=document_definition)
 
         query = 'SELECT * from c'
         query_iterable = created_collection.query_items(
             query=query,
-            enable_cross_partition_query=True,
-            max_item_count=1,
-        )
+            max_item_count=1)
         pager = query_iterable.by_page()
         pager.next()
         token = pager.continuation_token
-        second_page = list(pager.next())[0]
+        second_page = [item async for item in pager.next()][0]
 
         pager = query_iterable.by_page(token)
-        second_page_fetched_with_continuation_token = list(pager.next())[0]
+        second_page_fetched_with_continuation_token = [item async for item in pager.next()][0]
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
@@ -820,8 +811,8 @@ class QueryTest(unittest.TestCase):
                                                                get_mock_result):
         self.count = 0
         self.get_mock_result = get_mock_result
-        query_iterable = collection.query_items(query, enable_cross_partition_query=True)
-        results = list(query_iterable)
+        query_iterable = collection.query_items(query)
+        results = [item async for item in query_iterable]
         for i in range(len(expected_results)):
             if isinstance(results[i], dict):
                 self.assertDictEqual(results[i], expected_results[i])
@@ -832,20 +823,20 @@ class QueryTest(unittest.TestCase):
         self.count = 0
 
     def test_value_max_query(self):
-        container = self.created_db.create_container_if_not_exists(
+        container = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
         query_results = container.query_items(query, parameters=[
             {"name": "@lookupVersion", "value": "console_csat"}  # cspell:disable-line
-        ], enable_cross_partition_query=True)
+        ])
 
-        self.assertListEqual(list(query_results), [None])
+        self.assertListEqual([item async for item in query_results], [None])
 
     def test_continuation_token_size_limit_query(self):
-        container = self.created_db.create_container_if_not_exists(
+        container = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         for i in range(1, 1000):
-            container.create_item(body=dict(pk='123', id=str(i), some_value=str(i % 3)))
+            await container.create_item(body=dict(pk='123', id=str(i), some_value=str(i % 3)))
         query = "Select * from c where c.some_value='2'"
         response_query = container.query_items(query, partition_key='123', max_item_count=100,
                                                response_continuation_token_limit_in_kb=1)
@@ -859,7 +850,7 @@ class QueryTest(unittest.TestCase):
 
         # verify a second time
         self.assertLessEqual(len(token.encode('utf-8')), 1024)
-        self.created_db.delete_container(container)
+        await self.created_db.delete_container(container)
 
     def _MockNextFunction(self):
         if self.count < len(self.payloads):
@@ -871,7 +862,3 @@ class QueryTest(unittest.TestCase):
                 return result
         else:
             raise StopIteration
-
-
-if __name__ == "__main__":
-    unittest.main()
