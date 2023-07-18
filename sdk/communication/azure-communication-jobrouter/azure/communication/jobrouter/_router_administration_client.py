@@ -94,7 +94,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Host URL must be a string")
+            raise ValueError("Host URL must be a string") # pylint: disable=raise-missing-from
 
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
@@ -454,7 +454,7 @@ class JobRouterAdministrationClient(object):  # pylint:disable=too-many-public-m
             distribution_policy_id: str,
             *,
             name: Optional[str],
-            offer_ttl_seconds: Optional[float],
+            offer_expires_after_seconds: Optional[float],
             mode: Optional[Union[BestWorkerMode, LongestIdleMode, RoundRobinMode]],
             **kwargs: Any
     ) -> DistributionPolicy:

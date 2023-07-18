@@ -49,7 +49,7 @@ class _AttrDict(Generic[K, V], dict, ABC):
             self._key_restriction = True
         self._logger = logging.getLogger("attr_dict")
 
-    def _initializing(self) -> bool:  # pylint: disable=no-self-use
+    def _initializing(self) -> bool:
         # use this to indicate ongoing init process, sub class need to make sure this return True during init process.
         return False
 
@@ -91,7 +91,7 @@ class _AttrDict(Generic[K, V], dict, ABC):
         if self._initializing():
             return False
         # If there's key restriction, only keys in it can be set as arbitrary attribute.
-        if self._key_restriction and attr_name not in self._allowed_keys.keys():
+        if self._key_restriction and attr_name not in self._allowed_keys:
             return False
         # Attributes already in attribute dict will not be set as arbitrary attribute.
         try:

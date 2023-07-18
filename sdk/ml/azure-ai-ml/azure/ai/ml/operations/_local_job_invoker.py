@@ -86,7 +86,7 @@ def _get_creationflags_and_startupinfo_for_background_process(
         args["stderr"] = subprocess.STDOUT
 
     # filter entries with value None
-    return {arg_name: args[arg_name] for arg_name in args if args[arg_name]}
+    return {k: v for (k, v) in args.items() if v}
 
 
 def patch_invocation_script_serialization(invocation_path: Path) -> None:
@@ -113,7 +113,7 @@ def invoke_command(project_temp_dir: Path) -> None:
 
     env = os.environ.copy()
     env.pop("AZUREML_TARGET_TYPE", None)
-    subprocess.Popen(
+    subprocess.Popen(  # pylint: disable=consider-using-with
         invoked_command,
         cwd=project_temp_dir,
         env=env,
@@ -204,10 +204,10 @@ class CommonRuntimeHelper:
             self.common_runtime_temp_folder,
             CommonRuntimeHelper.VM_BOOTSTRAPPER_FILE_NAME,
         )
-        self.stdout = open(
+        self.stdout = open(  # pylint: disable=consider-using-with
             os.path.join(self.common_runtime_temp_folder, "stdout"), "w+", encoding=DefaultOpenEncoding.WRITE
         )
-        self.stderr = open(
+        self.stderr = open(  # pylint: disable=consider-using-with
             os.path.join(self.common_runtime_temp_folder, "stderr"), "w+", encoding=DefaultOpenEncoding.WRITE
         )
 
@@ -349,7 +349,7 @@ class CommonRuntimeHelper:
 
         env = self.LOCAL_JOB_ENV_VARS
 
-        process = subprocess.Popen(
+        process = subprocess.Popen(  # pylint: disable=consider-using-with
             cmd,
             env=env,
             stdout=subprocess.PIPE,

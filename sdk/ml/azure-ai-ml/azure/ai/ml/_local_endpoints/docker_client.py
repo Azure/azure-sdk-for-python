@@ -420,7 +420,7 @@ class DockerClient(object):
                 raise
             raise LocalEndpointImageBuildError(e) from e
 
-    def _reformat_volumes(self, volumes_dict: dict) -> list:  # pylint: disable=no-self-use
+    def _reformat_volumes(self, volumes_dict: dict) -> list:
         """Returns a list of volumes to pass to docker.
 
         :param volumes_dict: custom formatted dict of volumes to mount. We expect the keys to be unique.

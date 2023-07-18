@@ -40,7 +40,7 @@ class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Account URL must be a string.")
+            raise ValueError("Account URL must be a string.") # pylint: disable=raise-missing-from
 
         if not credential:
             raise ValueError(
@@ -79,7 +79,7 @@ class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
 
         return cls(endpoint, access_key, **kwargs)
 
-    @distributed_trace_async()
+    @distributed_trace_async
     async def send(self, from_, # type: str
              to, # type: Union[str, List[str]]
              message, # type: str

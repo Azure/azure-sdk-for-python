@@ -113,7 +113,7 @@ class InternalComponentSchema(ComponentSchema):
         ]
     )
 
-    def get_skip_fields(self):  # pylint: disable=no-self-use
+    def get_skip_fields(self):
         return ["properties"]
 
     def _serialize(self, obj, *, many: bool = False):
@@ -158,7 +158,7 @@ class InternalComponentSchema(ComponentSchema):
         return super().add_param_overrides(data, **kwargs)
 
     @post_dump(pass_original=True)
-    def simplify_input_output_port(self, data, original, **kwargs):  # pylint:disable=unused-argument, no-self-use
+    def simplify_input_output_port(self, data, original, **kwargs):  # pylint:disable=unused-argument
         # remove None in input & output
         for io_ports in [data["inputs"], data["outputs"]]:
             for port_name, port_definition in io_ports.items():
@@ -172,7 +172,7 @@ class InternalComponentSchema(ComponentSchema):
         return data
 
     @post_dump(pass_original=True)
-    def add_back_type_label(self, data, original, **kwargs):  # pylint:disable=unused-argument, no-self-use
+    def add_back_type_label(self, data, original, **kwargs):  # pylint:disable=unused-argument
         type_label = original._type_label  # pylint:disable=protected-access
         if type_label:
             data["type"] = LABELLED_RESOURCE_NAME.format(data["type"], type_label)

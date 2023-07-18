@@ -7,5 +7,5 @@ class SearchSpace:
     """SearchSpace class for AutoML verticals."""
 
     def __init__(self, **kwargs) -> None:
-        for k in kwargs:
-            self.__setattr__(k, kwargs[k])
+        for k, v in kwargs.items():
+            self.__setattr__(k, v)
