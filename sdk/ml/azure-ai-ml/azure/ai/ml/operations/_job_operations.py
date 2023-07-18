@@ -272,7 +272,7 @@ class JobOperations(_ScopeDependentOperations):
         try:
             return self._resolve_azureml_id(Job._from_rest_object(job_object))
         except JobParsingError:
-            pass
+            return None
 
     @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
@@ -1202,9 +1202,7 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_automl_job(  # pylint: disable=no-self-use
-        self, job: Job, resolver: Callable, inside_pipeline: bool
-    ) -> Job:
+    def _resolve_arm_id_for_automl_job(self, job: Job, resolver: Callable, inside_pipeline: bool) -> Job:
         """Resolve arm_id for AutoMLJob."""
         # AutoML does not have dependency uploads. Only need to resolve reference to arm id.
 

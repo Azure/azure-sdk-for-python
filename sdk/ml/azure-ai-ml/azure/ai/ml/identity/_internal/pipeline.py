@@ -16,6 +16,8 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     UserAgentPolicy,
 )
+
+# pylint: disable-next=no-name-in-module,non-abstract-transport-import
 from azure.core.pipeline.transport import RequestsTransport
 
 
@@ -76,6 +78,7 @@ def build_async_pipeline(transport=None, policies=None, **kwargs):
         config.retry_policy = AsyncRetryPolicy(**kwargs)
         policies = _get_policies(config, **kwargs)
     if not transport:
+        # pylint: disable-next=no-name-in-module,non-abstract-transport-import
         from azure.core.pipeline.transport import AioHttpTransport
 
         transport = AioHttpTransport(**kwargs)

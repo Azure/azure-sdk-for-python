@@ -78,7 +78,7 @@ class NodeIOMixin:
         # For un-configured outputs, settings it to None, so we won't pass extra fields(eg: default mode)
         return NodeOutput(port_name=name, meta=meta, data=data, owner=self)
 
-    def _get_default_input_val(self, val):  # pylint: disable=unused-argument, no-self-use
+    def _get_default_input_val(self, val):  # pylint: disable=unused-argument
         # use None value as data placeholder for unfilled inputs.
         # server side will fill the default value
         return None
@@ -319,7 +319,7 @@ def flatten_dict(dct, _type, *, allow_dict_fields=None):
 class NodeWithGroupInputMixin(NodeIOMixin):
     """This class provide build_inputs_dict for a node to use ParameterGroup as an input."""
 
-    def _validate_group_input_type(  # pylint: disable=no-self-use
+    def _validate_group_input_type(
         self,
         input_definition_dict: dict,
         inputs: Dict[str, Union[Input, str, bool, int, float]],

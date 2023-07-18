@@ -2,27 +2,24 @@
 
 ## 1.9.0 (Unreleased)
 
+### Features Added
+- Added support to enable gpu access (local_enable_gpu) for local deployment.
+
 ### Other Changes
 
-- Improved the output when printing a workspace object to be more clean and readable. 
+- Improved the output when printing a workspace object to be more clean and readable.
+- Log level of unknown field notifications for pipeline nodes raised from INFO to WARNING.
 
-## 1.8.0 (Unreleased)
+## 1.8.0 (2023-06-12)
 
 ### Features Added
 - Added support to enable set workspace connection secret expiry time.
 - Added support for `stage` on model version
-- Added support to enable gpu access (local_enable_gpu) for local deployment.
 
 ### Bugs Fixed
 
 - Fixed an issue affecting authentication to registry-related services in sovereign regions.
 - Made job_tier and priority values case insensitive
-
-### Breaking Changes
-
-### Other Changes
-- Log level of unknown field notifications for pipeline nodes raised from INFO to WARNING.
-
 
 ## 1.7.2 (2023-05-18)
 

@@ -34,7 +34,7 @@ def _get_client_args(**kwargs) -> Optional[dict]:
             "AZUREML_RUN_TOKEN_EXPIRY",
         ]
         for env_key in env_key_from_kwargs:
-            if env_key in kwargs.keys():
+            if env_key in kwargs:
                 os.environ[env_key] = kwargs[env_key]
             else:
                 raise Exception("Unable to initialize AzureMLHoboSparkOBOCredential due to invalid arguments")
