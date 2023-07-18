@@ -159,7 +159,7 @@ def _import_component_with_working_dir(module_name, working_dir=None, force_relo
 
 @contextlib.contextmanager
 def environment_variable_overwrite(key, val):
-    if key in os.environ.keys():
+    if key in os.environ:
         backup_value = os.environ[key]
     else:
         backup_value = None
