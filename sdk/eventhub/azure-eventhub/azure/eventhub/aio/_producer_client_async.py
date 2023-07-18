@@ -844,9 +844,9 @@ class EventHubProducerClient(
                 )
                 self._buffered_producer_dispatcher = None
 
-            for pid in self._producers: # pylint: disable=consider-using-dict-items
-                if self._producers[pid] is not None:
-                    await self._producers[pid].close()  # type: ignore
+            for pid, producer in self._producers.items():
+                if producer is not None:
+                    await producer.close()  # type: ignore
                 self._producers[pid] = None
 
         await super(EventHubProducerClient, self)._close_async()
