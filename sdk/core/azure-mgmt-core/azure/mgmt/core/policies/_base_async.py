@@ -66,7 +66,7 @@ class AsyncARMAutoResourceProviderRegistrationPolicy(
         :param any initial_request: The initial request
         :param str url_prefix: The URL prefix
         :param str rp_name: The resource provider name
-        :return: True if the registration succeeded, False otherwise
+        :return: True if the registration succeeded, False otherwise.
         :rtype: bool
         """
         post_url = "{}providers/{}/register?api-version=2016-02-01".format(url_prefix, rp_name)
