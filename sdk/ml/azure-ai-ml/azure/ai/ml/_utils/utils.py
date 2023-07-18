@@ -59,15 +59,13 @@ def _is_https_url(url: str) -> Union[bool, str]:
     return False
 
 
-def _csv_parser(text: Optional[str], convert: Callable) -> str:
-    if text:
-        if "," in text:
-            txts = []
-            for t in text.split(","):
-                t = convert(t.strip())
-                txts.append(t)
-            return ",".join(txts)
-        return convert(text)
+def _csv_parser(text: Optional[str], convert: Callable) -> Optional[str]:
+    if not text:
+        return None
+    if "," in text:
+        return ",".join(convert(t.strip()) for t in text.split(","))
+
+    return convert(text)
 
 
 def _snake_to_pascal_convert(text: str) -> str:
@@ -81,6 +79,7 @@ def snake_to_pascal(text: Optional[str]) -> str:
 def snake_to_kebab(text: Optional[str]) -> Optional[str]:
     if text:
         return re.sub("_", "-", text)
+    return None
 
 
 # https://stackoverflow.com/questions/1175208
@@ -100,6 +99,7 @@ def snake_to_camel(text: Optional[str]) -> Optional[str]:
     """convert snake name to camel."""
     if text:
         return re.sub("_([a-zA-Z0-9])", lambda m: m.group(1).upper(), text)
+    return None
 
 
 # This is real snake to camel
@@ -452,8 +452,7 @@ def resolve_short_datastore_url(value: Union[PathLike, str], workspace: Operatio
 
 def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
     try:
-        if urlparse(str(value)).scheme == "runs":
-            return value
+        return urlparse(str(value)).scheme == "runs"
     except ValueError:
         return False
 
@@ -865,12 +864,11 @@ def _str_to_bool(s):
     return s.lower() == "true"
 
 
-def _is_user_error_from_exception_type(e: Union[Exception, None]):
+def _is_user_error_from_exception_type(e: Optional[Exception]) -> bool:
     """Determine whether if an exception is user error from it's exception type."""
     # Connection error happens on user's network failure, should be user error.
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
-    if isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28):
-        return True
+    return isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28)
 
 
 class DockerProxy:

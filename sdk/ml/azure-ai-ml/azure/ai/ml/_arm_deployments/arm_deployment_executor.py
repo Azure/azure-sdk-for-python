@@ -130,6 +130,7 @@ class ArmDeploymentExecutor(object):
             raise error
         if len(resources_being_deployed) > 1 and total_duration:
             module_logger.info("Total time : %s\n", from_iso_duration_format_min_sec(total_duration))
+        return None
 
     def _get_poller(self, template: str, parameters: Optional[Dict] = None, wait: bool = True) -> None:
         # deploy the template

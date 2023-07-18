@@ -472,7 +472,7 @@ class DataOperations(_ScopeDependentOperations):
                 except Exception:  # pylint: disable=broad-except
                     # skip validation for remote MLTable when the contents cannot be read
                     module_logger.info("Unable to access MLTable metadata at path %s", asset_path)
-                    return
+                    return None
             else:
                 metadata_contents = read_local_mltable_metadata_contents(path=asset_path)
                 metadata_yaml_path = Path(asset_path, "MLTable")
@@ -487,13 +487,14 @@ class DataOperations(_ScopeDependentOperations):
 
         if is_url(asset_path):
             # skip validation for remote URI_FILE or URI_FOLDER
-            return
-
-        if os.path.isabs(asset_path):
+            pass
+        elif os.path.isabs(asset_path):
             _assert_local_path_matches_asset_type(asset_path, asset_type)
         else:
             abs_path = Path(base_path, asset_path).resolve()
             _assert_local_path_matches_asset_type(abs_path, asset_type)
+
+        return None
 
     def _try_get_mltable_metadata_jsonschema(self, mltable_schema_url: str) -> Union[Dict, None]:
         if mltable_schema_url is None:

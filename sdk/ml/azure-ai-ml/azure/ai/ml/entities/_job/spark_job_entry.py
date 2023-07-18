@@ -44,7 +44,7 @@ class SparkJobEntry(RestTranslatableMixin):
     @classmethod
     def _from_rest_object(cls, obj: Union[SparkJobPythonEntry, SparkJobScalaEntry]) -> Optional["SparkJobEntry"]:
         if obj is None:
-            return
+            return None
         if isinstance(obj, dict):
             obj = RestSparkJobEntry.from_dict(obj)
         if obj.spark_job_entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY:

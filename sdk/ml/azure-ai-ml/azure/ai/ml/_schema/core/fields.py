@@ -66,7 +66,7 @@ class StringTransformedEnum(Field):
 
     def _serialize(self, value, attr, obj, **kwargs):
         if not value:
-            return
+            return None
         if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
             return value if self.pass_original else self.casing_transform(value)
         raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
@@ -562,19 +562,22 @@ class TypeSensitiveUnionField(UnionField):
         self._type_sensitive_fields_dict[type_name].insert(0, field)
         self.insert_union_field(field)
 
-    def _raise_simplified_error_base_on_type(self, e, value, attr):
-        """If value doesn't have type, raise original error; If value has type.
+    def _simplified_error_base_on_type(self, e, value, attr) -> Exception:
+        """Returns a simplified error based on value type
 
-        & its type doesn't match any allowed types, raise "Value {} not in set {}"; If value has type & its type matches
-        at least 1 field, return the first matched error message;
+        :return: Returns
+         * e if value doesn't havetype
+         * ValidationError("Value {} not in set {}") if value type not in allowed types
+         * First Matched Error message if value has type and type matches atleast one field
+        :rtype: Exception
         """
         value_type = try_get_non_arbitrary_attr_for_potential_attr_dict(value, self.type_field_name)
         if value_type is None:
             # if value has no type field, raise original error
-            raise e
+            return e
         if value_type not in self.allowed_types:
             # if value has type field but its value doesn't match any allowed value, raise ValidationError directly
-            raise ValidationError(
+            return ValidationError(
                 message={self.type_field_name: f"Value {value_type!r} passed is not in set {self.allowed_types}"},
                 field_name=attr,
             )
@@ -586,9 +589,9 @@ class TypeSensitiveUnionField(UnionField):
             # for nested schema, type field won't be within error only if type field value is matched
             # then return first matched error message
             if self.type_field_name not in error:
-                raise ValidationError(message=error, field_name=attr)
+                return ValidationError(message=error, field_name=attr)
         # shouldn't reach here
-        raise e
+        return e
 
     def _serialize(self, value, attr, obj, **kwargs):
         union_fields = self._union_fields[:]
@@ -602,7 +605,7 @@ class TypeSensitiveUnionField(UnionField):
         try:
             return super(TypeSensitiveUnionField, self)._serialize(value, attr, obj, **kwargs)
         except ValidationError as e:
-            self._raise_simplified_error_base_on_type(e, value, attr)
+            raise self._simplified_error_base_on_type(e, value, attr)
         finally:
             self._union_fields = union_fields
 
@@ -632,7 +635,7 @@ class TypeSensitiveUnionField(UnionField):
         except ValidationError as e:
             if isinstance(value, str) and self._allow_load_from_yaml:
                 value = self._try_load_from_yaml(value)
-            self._raise_simplified_error_base_on_type(e, value, attr)
+            raise self._simplified_error_base_on_type(e, value, attr)
 
 
 def ComputeField(**kwargs):
