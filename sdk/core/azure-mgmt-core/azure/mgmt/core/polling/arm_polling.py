@@ -76,7 +76,7 @@ class AzureAsyncOperationPolling(OperationResourcePolling):
         # type: (PipelineResponseType) -> Optional[str]
         """If a final GET is needed, returns the URL.
 
-        :param PipelineResponseType pipeline_response: The pipeline response object.
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: The pipeline response object.
         :return: The URL to poll for the final GET.
         :rtype: str
         """
@@ -101,7 +101,7 @@ class BodyContentPolling(LongRunningOperation):
         # type: (PipelineResponseType) -> bool
         """Answer if this polling method could be used.
 
-        :param PipelineResponseType pipeline_response: The pipeline response object.
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: The pipeline response object.
         :return: True if this polling method could be used.
         :rtype: bool
         """
@@ -120,7 +120,7 @@ class BodyContentPolling(LongRunningOperation):
         # type: (PipelineResponseType) -> Optional[str]
         """If a final GET is needed, returns the URL.
 
-        :param PipelineResponseType pipeline_response: The pipeline response object.
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: The pipeline response object.
         :return: The URL to poll for the final GET.
         :rtype: str
         """
@@ -130,7 +130,7 @@ class BodyContentPolling(LongRunningOperation):
         # type: (PipelineResponseType) -> str
         """Process first response after initiating long running operation.
 
-        :param PipelineResponseType pipeline_response: initial REST call response.
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: initial REST call response.
         :return: Status string.
         :rtype: str
         """
@@ -169,7 +169,7 @@ class BodyContentPolling(LongRunningOperation):
         """Process the latest status update retrieved from the same URL as
         the previous request.
 
-        :param PipelineResponseType pipeline_response: latest REST call response.
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: latest REST call response.
         :return: Status string.
         :rtype: str
         :raises: BadResponse if status not 200 or 204.
