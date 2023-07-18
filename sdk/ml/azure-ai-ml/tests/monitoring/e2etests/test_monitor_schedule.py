@@ -26,7 +26,7 @@ from azure.ai.ml.entities._monitoring.thresholds import (
     PredictionDriftMetricThreshold,
 )
 from azure.ai.ml._utils._arm_id_utils import (
-    is_ARM_id_for_resource, 
+    is_ARM_id_for_resource,
     is_ARM_id_for_parented_resource,
     AMLVersionedArmId,
 )
@@ -204,7 +204,7 @@ class TestMonitorSchedule(AzureRecordedTestCase):
 
 def get_model_inputs_outputs_from_deployment(client: MLClient, endpoint_name: str, deployment_name: str):
     online_deployment = client.online_deployments.get(deployment_name, endpoint_name)
- 
+
     model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
     model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
     model_outputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY)
