@@ -31,6 +31,7 @@ from ._poller import _SansIONoPolling
 
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
+DeserializationCallbackType = Any
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -38,7 +39,9 @@ _LOGGER = logging.getLogger(__name__)
 class AsyncPollingMethod(Generic[PollingReturnType_co]):
     """ABC class for polling method."""
 
-    def initialize(self, client: Any, initial_response: Any, deserialization_callback: Any) -> None:
+    def initialize(
+        self, client: Any, initial_response: Any, deserialization_callback: DeserializationCallbackType
+    ) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
     async def run(self) -> None:
@@ -59,7 +62,7 @@ class AsyncPollingMethod(Generic[PollingReturnType_co]):
     @classmethod
     def from_continuation_token(
         cls, continuation_token: str, **kwargs: Any
-    ) -> Tuple[Any, Any, Callable[[Any], PollingReturnType_co]]:
+    ) -> Tuple[Any, Any, DeserializationCallbackType]:
         raise TypeError("Polling method '{}' doesn't support from_continuation_token".format(cls.__name__))
 
 
