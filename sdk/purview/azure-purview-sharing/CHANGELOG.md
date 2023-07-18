@@ -1,16 +1,14 @@
 # Release History
 
-## 1.0.0b3 (2023-07-14)
+## 1.0.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
 
 ### Bugs Fixed
 
-- Updated broken link in samples README to point to Azure/azure-python-sdk instead of developer fork
-
 ### Other Changes
-
-- Migrated test recordings to the azure-sdk-assets repo
-- Added more sanitizers to conftest.py
-
 
 ## 1.0.0b3 (2023-06-29)
 
