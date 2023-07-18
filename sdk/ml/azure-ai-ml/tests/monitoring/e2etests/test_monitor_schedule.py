@@ -212,10 +212,10 @@ def get_model_inputs_outputs_from_deployment(client: MLClient, endpoint_name: st
     if deployment_data_collector:
         in_reg = AMLVersionedArmId(deployment_data_collector.get("model_inputs").data)
         out_reg = AMLVersionedArmId(deployment_data_collector.get("model_outputs").data)
-        model_inputs_name = in_reg.group(1)
-        model_inputs_version = in_reg.group(2)
-        model_outputs_name = out_reg.group(1)
-        model_outputs_version = out_reg.group(2)
+        model_inputs_name = in_reg.asset_name
+        model_inputs_version = in_reg.asset_version
+        model_outputs_name = out_reg.asset_name
+        model_outputs_version = out_reg.asset_version
         model_inputs_type = client.data.get(model_inputs_name, model_inputs_version).type
         model_outputs_type = client.data.get(model_outputs_name, model_outputs_version).type
     else:
