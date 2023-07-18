@@ -36,7 +36,7 @@ from . import ARMAutoResourceProviderRegistrationPolicy
 
 _LOGGER = logging.getLogger(__name__)
 
-HTTPResponseType = TypeVar("HTTPResponseType")
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 
@@ -47,7 +47,7 @@ class AsyncARMAutoResourceProviderRegistrationPolicy(
 
     async def send(  # pylint: disable=invalid-overridden-method
         self, request: PipelineRequest[HTTPRequestType]
-    ) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
+    ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
         http_request = request.http_request
         response = await self.next.send(request)
         if response.http_response.status_code == 409:
