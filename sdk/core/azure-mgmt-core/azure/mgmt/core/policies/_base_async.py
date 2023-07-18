@@ -27,13 +27,17 @@ import asyncio
 import json
 import logging
 import uuid
+from typing import TypeVar
 
-from azure.core.pipeline import PipelineRequest
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 
 from . import ARMAutoResourceProviderRegistrationPolicy
 
 _LOGGER = logging.getLogger(__name__)
+
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 
 class AsyncARMAutoResourceProviderRegistrationPolicy(
@@ -41,7 +45,9 @@ class AsyncARMAutoResourceProviderRegistrationPolicy(
 ):  # pylint: disable=name-too-long
     """Auto register an ARM resource provider if not done yet."""
 
-    async def send(self, request: PipelineRequest):  # pylint: disable=invalid-overridden-method
+    async def send(  # pylint: disable=invalid-overridden-method
+        self, request: PipelineRequest[HTTPRequestType]
+    ) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         http_request = request.http_request
         response = await self.next.send(request)
         if response.http_response.status_code == 409:

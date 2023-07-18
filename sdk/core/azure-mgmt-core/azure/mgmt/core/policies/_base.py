@@ -28,20 +28,23 @@ import logging
 import re
 import time
 import uuid
+from typing import TypeVar
 
-from azure.core.pipeline import PipelineContext, PipelineRequest
+from azure.core.pipeline import PipelineContext, PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpRequest
 
 
 _LOGGER = logging.getLogger(__name__)
 
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
+
 
 class ARMAutoResourceProviderRegistrationPolicy(HTTPPolicy):  # pylint: disable=name-too-long
     """Auto register an ARM resource provider if not done yet."""
 
-    def send(self, request):
-        # type: (PipelineRequest[HTTPRequestType], Any) -> PipelineResponse[HTTPRequestType, HTTPResponseType]
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         http_request = request.http_request
         response = self.next.send(request)
         if response.http_response.status_code == 409:
