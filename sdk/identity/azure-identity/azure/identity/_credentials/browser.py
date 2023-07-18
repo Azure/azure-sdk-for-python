@@ -2,8 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import platform
 import socket
 from typing import Dict, Any
+import subprocess
+import webbrowser
 from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
@@ -11,6 +14,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from .._internal import InteractiveCredential, wrap_exceptions
+from .._internal import AuthCodeRedirectServer, InteractiveCredential, wrap_exceptions
 
 
 class InteractiveBrowserCredential(InteractiveCredential):
@@ -76,6 +80,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
         self._login_hint = kwargs.pop("login_hint", None)
         self._timeout = kwargs.pop("timeout", 300)
+        self._server_class = kwargs.pop("_server_class", AuthCodeRedirectServer)
         client_id = kwargs.pop("client_id", DEVELOPER_SIGN_ON_CLIENT_ID)
         super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
 
@@ -105,3 +110,24 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
         # base class will raise for other errors
         return result
+
+def _open_browser(url):
+    opened = webbrowser.open(url)
+    if not opened:
+        uname = platform.uname()
+        system = uname[0].lower()
+        release = uname[2].lower()
+        if "microsoft" in release and system == "linux":
+            kwargs = {}
+            if platform.python_version() >= "3.3":
+                kwargs["timeout"] = 5
+
+            try:
+                exit_code = subprocess.call(
+                    ["powershell.exe", "-NoProfile", "-Command", 'Start-Process "{}"'.format(url)], **kwargs
+                )
+                opened = exit_code == 0
+            except Exception:  # pylint:disable=broad-except
+                # powershell.exe isn't available, or the subprocess timed out
+                pass
+    return opened
