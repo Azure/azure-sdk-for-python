@@ -2,7 +2,6 @@ from typing import Callable, Union
 
 from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
-import re
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import AzureMLResourceType
