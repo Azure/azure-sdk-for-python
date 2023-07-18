@@ -381,7 +381,7 @@ class QueryTest(unittest.TestCase):
         iter_list = [item async for item in query_iterable]
         self.assertEqual(len(iter_list), 0)
 
-    def test_populate_query_metrics(self):
+    async def test_populate_query_metrics(self):
         created_collection = await self.created_db.create_container_if_not_exists("query_metrics_test",
                                                                                   PartitionKey(path="/pk"))
         doc_id = 'MyId' + str(uuid.uuid4())
@@ -406,7 +406,7 @@ class QueryTest(unittest.TestCase):
         self.assertTrue(len(metrics) > 1)
         self.assertTrue(all(['=' in x for x in metrics]))
 
-    def test_max_item_count_honored_in_order_by_query(self):
+    async def test_max_item_count_honored_in_order_by_query(self):
         created_collection = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         docs = []
@@ -442,7 +442,7 @@ class QueryTest(unittest.TestCase):
         self.count += 1
         return await self.OriginalExecuteFunction(function, *args, **kwargs)
 
-    def test_get_query_plan_through_gateway(self):
+    async def test_get_query_plan_through_gateway(self):
         created_collection = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         self._validate_query_plan(query="Select top 10 value count(c.id) from c",
