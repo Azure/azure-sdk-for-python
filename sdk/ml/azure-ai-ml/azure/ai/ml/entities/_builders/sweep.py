@@ -67,20 +67,28 @@ class Sweep(ParameterizedSweep, BaseNode):
     :type compute: str
     :param limits: The limits for the sweep node.
     :type limits: ~azure.ai.ml.sweep.SweepJobLimits
-    :param sampling_algorithm: The sampling algorithm to use to sample inside the search space. Accepted values are: "random", "grid", or "bayesian". # pylint: disable=line-too-long
+    :param sampling_algorithm: The sampling algorithm to use to sample inside the search space.
+        Accepted values are: "random", "grid", or "bayesian".
     :type sampling_algorithm: str
-    :param objective: The objective used to determine the target run with the local optimal hyperparameter in search space. # pylint: disable=line-too-long
+    :param objective: The objective used to determine the target run with the local optimal
+        hyperparameter in search space.
     :type objective: ~azure.ai.ml.sweep.Objective
     :param early_termination_policy: The early termination policy of the sweep node.
-    :type early_termination_policy: Union[~azure.mgmt.machinelearningservices.models.BanditPolicy, ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy, ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy] # pylint: disable=line-too-long
+    :type early_termination_policy: Union[~azure.mgmt.machinelearningservices.models.BanditPolicy,
+        ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
+        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
     :param search_space: The hyperparameter search space to run trials in.
-    :type search_space: Dict[str, Union[~azure.ai.ml.entities.Choice, ~azure.ai.ml.entities.LogNormal, ~azure.ai.ml.entities.LogUniform, ~azure.ai.ml.entities.Normal, ~azure.ai.ml.entities.QLogNormal, ~azure.ai.ml.entities.QLogUniform, ~azure.ai.ml.entities.QNormal, ~azure.ai.ml.entities.QUniform, ~azure.ai.ml.entities.Randint, ~azure.ai.ml.entities.Uniform]] # pylint: disable=line-too-long
+    :type search_space: Dict[str, Union[~azure.ai.ml.entities.Choice, ~azure.ai.ml.entities.LogNormal,
+        ~azure.ai.ml.entities.LogUniform, ~azure.ai.ml.entities.Normal, ~azure.ai.ml.entities.QLogNormal,
+        ~azure.ai.ml.entities.QLogUniform, ~azure.ai.ml.entities.QNormal, ~azure.ai.ml.entities.QUniform,
+        ~azure.ai.ml.entities.Randint, ~azure.ai.ml.entities.Uniform]]
     :param inputs: Mapping of input data bindings used in the job.
     :type inputs: Dict[str, Union[~azure.ai.ml.Input, str, bool, int, float]]
     :param outputs: Mapping of output data bindings used in the job.
     :type outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
     :param identity: The identity that the training job will use while running on compute.
-    :type identity: Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration, ~azure.ai.ml.UserIdentityConfiguration] # pylint: disable=line-too-long
+    :type identity: Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
+        ~azure.ai.ml.UserIdentityConfiguration]
     :param queue_settings: The queue settings for the job.
     :type queue_settings: ~azure.ai.ml.entities.QueueSettings
     """
@@ -156,7 +164,10 @@ class Sweep(ParameterizedSweep, BaseNode):
 
         Each key is the name of a hyperparameter and its value is the parameter expression.
 
-        rtype: Dict[str, Union[~azure.ai.ml.entities.Choice, ~azure.ai.ml.entities.LogNormal, ~azure.ai.ml.entities.LogUniform, ~azure.ai.ml.entities.Normal, ~azure.ai.ml.entities.QLogNormal, ~azure.ai.ml.entities.QLogUniform, ~azure.ai.ml.entities.QNormal, ~azure.ai.ml.entities.QUniform, ~azure.ai.ml.entities.Randint, ~azure.ai.ml.entities.Uniform]] # pylint: disable=line-too-long
+        rtype: Dict[str, Union[~azure.ai.ml.entities.Choice, ~azure.ai.ml.entities.LogNormal,
+            ~azure.ai.ml.entities.LogUniform, ~azure.ai.ml.entities.Normal, ~azure.ai.ml.entities.QLogNormal,
+            ~azure.ai.ml.entities.QLogUniform, ~azure.ai.ml.entities.QNormal, ~azure.ai.ml.entities.QUniform,
+            ~azure.ai.ml.entities.Randint, ~azure.ai.ml.entities.Uniform]]
         """
         return self._search_space
 
@@ -368,7 +379,8 @@ class Sweep(ParameterizedSweep, BaseNode):
     def early_termination(self) -> Union[str, EarlyTerminationPolicy]:
         """The early termination policy for the sweep job.
 
-        :rtype: Union[str, ~azure.ai.ml.sweep.BanditPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy, ~azure.ai.ml.sweep.TruncationSelectionPolicy] # pylint: disable=line-too-long
+        :rtype: Union[str, ~azure.ai.ml.sweep.BanditPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy,
+            ~azure.ai.ml.sweep.TruncationSelectionPolicy]
         """
         return self._early_termination
 
@@ -377,7 +389,8 @@ class Sweep(ParameterizedSweep, BaseNode):
         """Sets the early termination policy for the sweep job.
 
         :param value: The early termination policy for the sweep job.
-        :type value: Union[~azure.ai.ml.sweep.BanditPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy, ~azure.ai.ml.sweep.TruncationSelectionPolicy, dict[str, Union[str, float, int, bool]]] # pylint: disable=line-too-long
+        :type value: Union[~azure.ai.ml.sweep.BanditPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy,
+            ~azure.ai.ml.sweep.TruncationSelectionPolicy, dict[str, Union[str, float, int, bool]]]
         """
         if isinstance(value, dict):
             early_termination_schema = EarlyTerminationField()
