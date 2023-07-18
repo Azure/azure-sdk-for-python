@@ -210,8 +210,8 @@ def get_model_inputs_outputs_from_deployment(client: MLClient, endpoint_name: st
         assert deployment_data_collector.collections.get("model_inputs") != None
         assert deployment_data_collector.collections.get("model_outputs") != None
 
-        in_reg = AMLVersionedArmId(deployment_data_collector.get("model_inputs").data)
-        out_reg = AMLVersionedArmId(deployment_data_collector.get("model_outputs").data)
+        in_reg = AMLVersionedArmId(deployment_data_collector.collections.get("model_inputs").data)
+        out_reg = AMLVersionedArmId(deployment_data_collector.collections.get("model_outputs").data)
         model_inputs_name = in_reg.asset_name
         model_inputs_version = in_reg.asset_version
         model_outputs_name = out_reg.asset_name
