@@ -69,7 +69,7 @@ from ...utils._pipeline_transport_rest_shared import (
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 PipelineType = TypeVar("PipelineType")
-DataType = Optional[Union[bytes, str, Dict[str, Union[str, int]]]]
+DataType = Union[bytes, str, Dict[str, Union[str, int]]]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -225,7 +225,7 @@ class HttpRequest:
         return {}
 
     @property
-    def body(self) -> DataType:
+    def body(self) -> Optional[DataType]:
         """Alias to data.
 
         :rtype: bytes or dict
@@ -234,7 +234,7 @@ class HttpRequest:
         return self.data
 
     @body.setter
-    def body(self, value: DataType) -> None:
+    def body(self, value: Optional[DataType]) -> None:
         self.data = value
 
     @staticmethod
