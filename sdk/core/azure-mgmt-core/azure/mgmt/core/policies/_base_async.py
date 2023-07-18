@@ -63,10 +63,11 @@ class AsyncARMAutoResourceProviderRegistrationPolicy(
 
         Return False if we have a reason to believe this didn't work
 
-        :param ~azure.core.pipeline.PipelineRequest initial_request: The initial request
-        :param str url_prefix: The URL prefix
+        :param initial_request: The initial request
+        :type initial_request: ~azure.core.pipeline.PipelineRequest
+        :param str url_prefix: The url prefix
         :param str rp_name: The resource provider name
-        :return: True if the registration succeeded, False otherwise.
+        :return: Return False if we have a reason to believe this didn't work
         :rtype: bool
         """
         post_url = "{}providers/{}/register?api-version=2016-02-01".format(url_prefix, rp_name)
