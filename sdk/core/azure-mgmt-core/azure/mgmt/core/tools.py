@@ -142,18 +142,14 @@ def resource_id(**kwargs):
     This method builds the resource id from the left until the next required id parameter
     to be appended is not found. It then returns the built up id.
 
-    :keyword dict kwargs: The keyword arguments that will make up the id.
-
-        The method accepts the following keyword arguments:
-            - subscription (required): Subscription id
-            - resource_group:          Name of resource group
-            - namespace:               Namespace for the resource provider (i.e. Microsoft.Compute)
-            - type:                    Type of the resource (i.e. virtualMachines)
-            - name:                    Name of the resource (or parent if child_name is also \
-            specified)
-            - child_namespace_{level}: Namespace for the child resource of that level (optional)
-            - child_type_{level}:      Type of the child resource of that level
-            - child_name_{level}:      Name of the child resource of that level
+    :keyword str subscription: (required) Subscription id
+    :keyword str resource_group: Name of resource group
+    :keyword str namespace: Namespace for the resource provider (i.e. Microsoft.Compute)
+    :keyword str type: Type of the resource (i.e. virtualMachines)
+    :keyword str name: Name of the resource (or parent if child_name is also specified)
+    :keyword str child_namespace_{level}: Namespace for the child resource of that level (optional)
+    :keyword str child_type_{level}: Type of the child resource of that level
+    :keyword str child_name_{level}: Name of the child resource of that level
 
     :returns: A resource id built from the given arguments.
     :rtype: str

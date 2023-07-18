@@ -93,7 +93,7 @@ class ARMAutoResourceProviderRegistrationPolicy(HTTPPolicy):  # pylint: disable=
 
         Return False if we have a reason to believe this didn't work
 
-        :param any initial_request: The initial request
+        :param ~azure.core.pipeline.PipelineRequest initial_request: The initial request
         :param str url_prefix: The URL prefix
         :param str rp_name: The resource provider name
         :return: True if the registration succeeded, False otherwise.

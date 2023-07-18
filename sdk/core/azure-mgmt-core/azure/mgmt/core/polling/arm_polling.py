@@ -130,7 +130,7 @@ class BodyContentPolling(LongRunningOperation):
         # type: (PipelineResponseType) -> str
         """Process first response after initiating long running operation.
 
-        :param azure.core.pipeline.PipelineResponse pipeline_response: initial REST call response.
+        :param PipelineResponseType pipeline_response: initial REST call response.
         :return: Status string.
         :rtype: str
         """
