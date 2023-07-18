@@ -286,10 +286,10 @@ class ScheduleOperations(_ScopeDependentOperations):
         if target and target.endpoint_deployment_id:
             endpoint_name, deployment_name = self._process_and_get_endpoint_deployment_names_from_id(target)
             online_deployment = self._online_deployment_operations.get(deployment_name, endpoint_name)
-            deployment_data_collector = online_deployment.data_collector.collections
+            deployment_data_collector = online_deployment.data_collector
             if deployment_data_collector:
-                in_reg = AMLVersionedArmId(deployment_data_collector.get("model_inputs").data)
-                out_reg = AMLVersionedArmId(deployment_data_collector.get("model_outputs").data)
+                in_reg = AMLVersionedArmId(deployment_data_collector.collections.get("model_inputs").data)
+                out_reg = AMLVersionedArmId(deployment_data_collector.collections.get("model_outputs").data)
                 model_inputs_name = in_reg.asset_name
                 model_inputs_version = in_reg.asset_version
                 model_outputs_name = out_reg.asset_name
