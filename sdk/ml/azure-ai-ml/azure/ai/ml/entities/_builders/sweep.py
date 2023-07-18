@@ -150,7 +150,7 @@ class Sweep(ParameterizedSweep, BaseNode):
     def trial(self) -> CommandComponent:
         """The ID or instance of the command component or job to be run for the step.
 
-        :rtype: Union[~azure.ai.ml.entities.CommandComponent, str]
+        :rtype: ~azure.ai.ml.entities.CommandComponent
         """
         return self._component
 
