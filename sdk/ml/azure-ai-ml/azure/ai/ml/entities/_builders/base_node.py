@@ -110,7 +110,8 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     :param compute: Compute definition containing the compute information for the step. Defaults to None.
     :type compute: Optional[str]
     :param experiment_name: Name of the experiment the job will be created under,
-        if None is provided, default will be set to current directory name. Will be ignored as a pipeline step. Defaults to None.
+        if None is provided, default will be set to current directory name.
+        Will be ignored as a pipeline step. Defaults to None.
     :type experiment_name: Optional[str]
     :param kwargs: Additional keyword arguments for future compatibility.
     """
@@ -310,8 +311,8 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     def _set_base_path(self, base_path):
         """Set the base path for the node.
 
-        Will be used for schema validation. If not set, will use Path.cwd() as the base path (default logic defined in
-        SchemaValidatableMixin._base_path_for_validation).
+        Will be used for schema validation. If not set, will use Path.cwd() as the base path
+        (default logic defined in SchemaValidatableMixin._base_path_for_validation).
         """
         self._base_path = base_path
 
@@ -403,8 +404,8 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
     @abstractmethod
     def _to_job(self) -> Job:
-        """This private function is used by the CLI to get a plain job object so that the CLI can properly serialize the
-        object.
+        """This private function is used by the CLI to get a plain job object
+        so that the CLI can properly serialize the object.
 
         It is needed as BaseNode._to_dict() dumps objects using pipeline child job schema instead of standalone job
         schema, for example Command objects dump have a nested component property, which doesn't apply to stand alone

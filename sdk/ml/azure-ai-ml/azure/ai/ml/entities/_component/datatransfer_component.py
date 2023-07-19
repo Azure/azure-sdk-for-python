@@ -26,7 +26,8 @@ from .component import Component
 class DataTransferComponent(Component):  # pylint: disable=too-many-instance-attributes
     """DataTransfer component version, used to define a data transfer component.
 
-    :param task: Task type in the data transfer component. Possible values are "copy_data", "import_data", and "export_data". Defaults to None.
+    :param task: Task type in the data transfer component. Possible values are "copy_data",
+                 "import_data", and "export_data". Defaults to None.
     :type task: str, optional
     :param inputs: Mapping of input data bindings used in the job. Defaults to None.
     :type inputs: dict, optional
@@ -130,7 +131,8 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
 class DataTransferCopyComponent(DataTransferComponent):
     """DataTransfer copy component version, used to define a data transfer copy component.
 
-    :param data_copy_mode: Data copy mode in the copy task. Possible values are "merge_with_overwrite" and "fail_if_conflict". Defaults to None.
+    :param data_copy_mode: Data copy mode in the copy task.
+                           Possible values are "merge_with_overwrite" and "fail_if_conflict". Defaults to None.
     :type data_copy_mode: str, optional
     :param inputs: Mapping of input data bindings used in the job. Defaults to None.
     :type inputs: dict, optional
@@ -228,7 +230,8 @@ class DataTransferImportComponent(DataTransferComponent):
 
     :param source: The data source of the file system or database. Defaults to None.
     :type source: dict, optional
-    :param outputs: Mapping of output data bindings used in the job. Default value is an output port with the key "sink" and the type "mltable". Defaults to None.
+    :param outputs: Mapping of output data bindings used in the job.
+                    Default value is an output port with the key "sink" and the type "mltable". Defaults to None.
     :type outputs: dict, optional
     :param kwargs: Additional parameters for the data transfer import component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the component cannot be successfully validated.

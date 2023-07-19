@@ -27,7 +27,8 @@ def import_job(
     is_deterministic: bool = True,
     **kwargs,
 ) -> Import:
-    """Create an Import object which can be used inside dsl.pipeline as a function and can also be created as a standalone import job.
+    """Create an Import object which can be used inside dsl.pipeline as a function
+    and can also be created as a standalone import job.
 
     :param name: Name of the import job or component created. Defaults to None.
     :type name: str, optional
@@ -54,7 +55,7 @@ def import_job(
     :type is_deterministic: bool
     :param kwargs: Additional keyword arguments.
     :returns: The Import object.
-    :rtype: ~import_node.Import
+    :rtype: ~azure.ai.ml.entities._builders.import_node.Import
     """
     inputs = source._to_job_inputs() if source else kwargs.pop("inputs")
     outputs = {"output": output} if output else kwargs.pop("outputs")

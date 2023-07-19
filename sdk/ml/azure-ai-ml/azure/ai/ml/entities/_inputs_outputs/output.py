@@ -49,7 +49,9 @@ class Output(_InputOutputBase):
     :param intellectual_property: Intellectual property associated with the output.
         It can be an instance of `IntellectualProperty` or a dictionary that will be used to create an instance.
         Defaults to None.
-    :type intellectual_property: Union[~azure.ai.ml.entities._assets.intellectual_property.IntellectualProperty, dict], optional
+    :type intellectual_property: Union[
+                                ~azure.ai.ml.entities._assets.intellectual_property.IntellectualProperty,
+                                dict], optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Output cannot be successfully validated.
         Details will be provided in the error message.
     """

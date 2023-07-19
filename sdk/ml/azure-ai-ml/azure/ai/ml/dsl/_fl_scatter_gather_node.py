@@ -75,9 +75,9 @@ def fl_scatter_gather(
 
     .. code-block:: python
 
-        @azure.ai.ml._utils._experimental.experimental
+        @experimental
         def fl_pipeline():
-            fl_node = azure.ai.ml.dsl.fl_scatter_gather(**many_inputs)
+            fl_node = fl_scatter_gather(**many_inputs)
             return {"pipeline_output" : fl_node.outputs["aggregated_model"]}
 
         submitted_pipeline_job = my_client.jobs.create_or_update(fl_pipeline(), experiment_name="example_fl_pipeline")
@@ -94,7 +94,9 @@ def fl_scatter_gather(
         and does something with them. In a typical horizontal federated learning context, this component will merge
         the models that were independently trained on each silo's data in a single model. Can be either a
         PipelineJob or a CommandComponent.
-    :type aggregation_component: Union[~azure.ai.ml.entities.PipelineJob, ~azure.ai.ml.entities._builders.CommandComponent]
+    :type aggregation_component: Union[
+        ~azure.ai.ml.entities.PipelineJob,
+        ~azure.ai.ml.entities._builders.CommandComponent]
     :param aggregation_compute: The name of the compute that the aggregation component will use.
     :type aggregation_compute: str, optional
     :param aggregation_datastore: The name of the datastore that the aggregation component will use.
@@ -115,7 +117,8 @@ def fl_scatter_gather(
     :type aggregation_to_silo_argument_map: Dict, optional
     :param max_iterations: The maximum number of scatter gather iterations that should be performed.
     :type max_iterations: int, optional
-    :param _create_default_mappings_if_needed: If True, try to automatically create input/output mappings if they're unset.
+    :param _create_default_mappings_if_needed:
+        If True, try to automatically create input/output mappings if they're unset.
     :type _create_default_mappings_if_needed: bool, optional
     :param kwargs: Additional keyword arguments to be passed to the `FLScatterGather` constructor.
     :return: The federated learning scatter-gather subgraph node.

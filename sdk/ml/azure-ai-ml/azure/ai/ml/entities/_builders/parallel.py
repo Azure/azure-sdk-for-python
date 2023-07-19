@@ -37,7 +37,7 @@ class Parallel(BaseNode):
     create from builder function: parallel.
 
     :param component: Id or instance of the parallel component/job to be run for the step
-    :type component: ~_component.parallel_component.parallelComponent
+    :type component: ~azure.ai.ml.entities._component.parallel_component.parallelComponent
     :param name: Name of the parallel, defaults to None
     :type name: str, optional
     :param description: Description of the commad, defaults to None
@@ -60,14 +60,21 @@ class Parallel(BaseNode):
     :type mini_batch_error_threshold: int, optional
     :param task: The parallel task, defaults to None
     :type task: ParallelTask, optional
-    :param mini_batch_size: For FileDataset input, this field is the number of files a user script can process in one run() call.
-                            For TabularDataset input, this field is the approximate size of data the user script can process in one run() call.
-                            Example values are 1024, 1024KB, 10MB, and 1GB. (optional, default value is 10 files for FileDataset and 1MB for TabularDataset.)
+    :param mini_batch_size: For FileDataset input, this field is the number of files
+                            a user script can process in one run() call.
+                            For TabularDataset input, this field is the approximate size of data
+                            the user script can process in one run() call.
+                            Example values are 1024, 1024KB, 10MB, and 1GB. (optional, default value is 10 files
+                            for FileDataset and 1MB for TabularDataset.)
                             This value could be set through PipelineParameter, defaults to None
     :type mini_batch_size: str, optional
-    :param partition_keys: The keys used to partition dataset into mini-batches. If specified, the data with the same key will be partitioned into the same mini-batch.
-                           If both partition_keys and mini_batch_size are specified, the partition keys will take effect.
-                           The input(s) must be partitioned dataset(s), and the partition_keys must be a subset of the keys of every input dataset for this to work, defaults to None
+    :param partition_keys: The keys used to partition dataset into mini-batches. If specified,
+                           the data with the same key will be partitioned into the same mini-batch.
+                           If both partition_keys and mini_batch_size are specified,
+                           the partition keys will take effect.
+                           The input(s) must be partitioned dataset(s),
+                           and the partition_keys must be a subset of the keys of every input dataset for this to work,
+                           defaults to None
     :type partition_keys: List, optional
     :param input_data: The input data, defaults to None
     :type input_data: str, optional
@@ -188,7 +195,7 @@ class Parallel(BaseNode):
         """Get the retry settings for the parallel job.
 
         :return: The retry settings for the parallel job.
-        :rtype: ~_job.parallel.retry_settings.RetrySettings
+        :rtype: ~azure.ai.ml.entities._job.parallel.retry_settings.RetrySettings
         """
         return self._retry_settings
 
@@ -197,7 +204,7 @@ class Parallel(BaseNode):
         """Set the retry settings for the parallel job.
 
         :param value: The retry settings for the parallel job.
-        :type value: ~_job.parallel.retry_settings.RetrySettings or dict
+        :type value: ~azure.ai.ml.entities._job.parallel.retry_settings.RetrySettings or dict
         """
         if isinstance(value, dict):
             value = RetrySettings(**value)
@@ -208,7 +215,7 @@ class Parallel(BaseNode):
         """Get the resource configuration for the parallel job.
 
         :return: The resource configuration for the parallel job.
-        :rtype: ~_job.job_resource_configuration.JobResourceConfiguration
+        :rtype: ~azure.ai.ml.entities._job.job_resource_configuration.JobResourceConfiguration
         """
         return self._resources
 
@@ -217,7 +224,7 @@ class Parallel(BaseNode):
         """Set the resource configuration for the parallel job.
 
         :param value: The resource configuration for the parallel job.
-        :type value: JobResourceConfiguration or dict
+        :type value: ~azure.ai.ml.entities._job.job_resource_configuration.JobResourceConfiguration or dict
         """
         if isinstance(value, dict):
             value = JobResourceConfiguration(**value)
@@ -228,7 +235,7 @@ class Parallel(BaseNode):
         """Get the component of the parallel job.
 
         :return: The component of the parallel job.
-        :rtype: str or ~_component.parallel_component.ParallelComponent
+        :rtype: str or ~azure.ai.ml.entities._component.parallel_component.ParallelComponent
         """
         return self._component
 
@@ -237,7 +244,7 @@ class Parallel(BaseNode):
         """Get the parallel task.
 
         :return: The parallel task.
-        :rtype: ~_job.parallel.parallel_task.ParallelTask
+        :rtype: ~azure.ai.ml.entities._job.parallel.parallel_task.ParallelTask
         """
         return self._task
 
@@ -246,7 +253,7 @@ class Parallel(BaseNode):
         """Set the parallel task.
 
         :param value: The parallel task.
-        :type value: ~_job.parallel.parallel_task.ParallelTask or dict
+        :type value: ~azure.ai.ml.entities._job.parallel.parallel_task.ParallelTask or dict
         """
         # base path should be reset if task is set via sdk
         self._base_path = None

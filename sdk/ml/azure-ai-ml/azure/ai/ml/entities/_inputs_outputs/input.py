@@ -117,11 +117,14 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
         :param type: The type of the data input. Can only be set to "number".
         :type type: str
-        :param default: The default value of this input. When a `default` is set, the input will be optional. Defaults to None.
+        :param default: The default value of this input. When a `default` is set, the input will be optional.
+                        Defaults to None.
         :type default: float, optional
-        :param min: The min value -- if a smaller value is passed to a job, the job execution will fail. Defaults to None.
+        :param min: The min value -- if a smaller value is passed to a job, the job execution will fail.
+                    Defaults to None.
         :type min: float, optional
-        :param max: The max value -- if a larger value is passed to a job, the job execution will fail. Defaults to None.
+        :param max: The max value -- if a larger value is passed to a job, the job execution will fail.
+                    Defaults to None.
         :type max: float, optional
         :param optional: Determine if this input is optional. Defaults to None.
         :type optional: bool, optional
@@ -147,11 +150,14 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
         :param type: The type of the data input. Can only be set to "integer".
         :type type: str
-        :param default: The default value of this input. When a `default` is set, the input will be optional. Defaults to None.
+        :param default: The default value of this input. When a `default` is set,
+                        the input will be optional. Defaults to None.
         :type default: int, optional
-        :param min: The min value -- if a smaller value is passed to a job, the job execution will fail. Defaults to None.
+        :param min: The min value -- if a smaller value is passed to a job, the job execution will fail.
+                    Defaults to None.
         :type min: int, optional
-        :param max: The max value -- if a larger value is passed to a job, the job execution will fail. Defaults to None.
+        :param max: The max value -- if a larger value is passed to a job, the job execution will fail.
+                    Defaults to None.
         :type max: int, optional
         :param optional: Determine if this input is optional. Defaults to None.
         :type optional: bool, optional
@@ -175,7 +181,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
         :param type: The type of the data input. Can only be set to "string".
         :type type: str
-        :param default: The default value of this input. When a `default` is set, the input will be optional. Defaults to None.
+        :param default: The default value of this input. When a `default` is set, the input will be optional.
+                        Defaults to None.
         :type default: str, optional
         :param optional: Determine if this input is optional. Defaults to None.
         :type optional: bool, optional
@@ -199,7 +206,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
         :param type: The type of the data input. Can only be set to "boolean".
         :type type: str
-        :param default: The default value of this input. When a `default` is set, the input will be optional. Defaults to None.
+        :param default: The default value of this input. When a `default` is set, the input will be optional.
+                        Defaults to None.
         :type default: bool, optional
         :param optional: Determine if this input is optional. Defaults to None.
         :type optional: bool, optional

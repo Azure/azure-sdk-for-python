@@ -113,12 +113,14 @@ def parallel_run_function(
                             if None is provided, default will be set to current directory name.
                             Will be ignored as a pipeline step, defaults to None.
     :type experiment_name: str, optional
-    :param compute: The name of the compute where the parallel job is executed (will not be used if the parallel is used as a component/function), defaults to None.
+    :param compute: The name of the compute where the parallel job is executed (will not be used
+                    if the parallel is used as a component/function), defaults to None.
     :type compute: str, optional
     :param retry_settings: Parallel component run failed retry, defaults to None
     :type retry_settings: ~azure.ai.ml.entities._deployment.deployment_settings.BatchRetrySettings, optional
     :param environment_variables: A dictionary of environment variables names and values.
-                                  These environment variables are set on the process where user script is being executed, defaults to None.
+                                  These environment variables are set on the process
+                                  where user script is being executed, defaults to None.
     :type environment_variables: Dict[str, str], optional
     :param logging_level: A string of the logging level name, which is defined in 'logging'.
                           Possible values are 'WARNING', 'INFO', and 'DEBUG'. (optional, default value is 'INFO'.)
@@ -126,23 +128,34 @@ def parallel_run_function(
     :type logging_level: str, optional
     :param max_concurrency_per_instance: The max parallellism that each compute instance has., defaults to None
     :type max_concurrency_per_instance: int, optional
-    :param error_threshold: The number of record failures for Tabular Dataset and file failures for File Dataset that should be ignored during processing.
+    :param error_threshold: The number of record failures for Tabular Dataset and file failures for File Dataset
+                            that should be ignored during processing.
                             If the error count goes above this value, then the job will be aborted.
-                            Error threshold is for the entire input rather than the individual mini-batch sent to run() method.
-                            The range is [-1, int.max]. -1 indicates ignore all failures during processing, defaults to None.
+                            Error threshold is for the entire input rather
+                            than the individual mini-batch sent to run() method.
+                            The range is [-1, int.max]. -1 indicates ignore all failures during processing,
+                            defaults to None.
     :type error_threshold: int, optional
-    :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored., defaults to None
+    :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored,
+                                       defaults to None
     :type mini_batch_error_threshold: int, optional
     :param task: The parallel task, defaults to None
     :type task: ~azure.ai.ml.entities._job.parallel.run_function.RunFunction, optional
-    :param mini_batch_size: For FileDataset input, this field is the number of files a user script can process in one run() call.
-                            For TabularDataset input, this field is the approximate size of data the user script can process in one run() call.
-                            Example values are 1024, 1024KB, 10MB, and 1GB. (optional, default value is 10 files for FileDataset and 1MB for TabularDataset.)
+    :param mini_batch_size: For FileDataset input,
+                            this field is the number of files a user script can process in one run() call.
+                            For TabularDataset input, this field is the approximate size of data
+                            the user script can process in one run() call.
+                            Example values are 1024, 1024KB, 10MB, and 1GB.
+                            (optional, default value is 10 files for FileDataset and 1MB for TabularDataset.)
                             This value could be set through PipelineParameter, defaults to None.
     :type mini_batch_size: str, optional
-    :param partition_keys: The keys used to partition dataset into mini-batches. If specified, the data with the same key will be partitioned into the same mini-batch.
-                           If both partition_keys and mini_batch_size are specified, the partition keys will take effect.
-                           The input(s) must be partitioned dataset(s), and the partition_keys must be a subset of the keys of every input dataset for this to work, defaults to None.
+    :param partition_keys: The keys used to partition dataset into mini-batches. If specified,
+                           the data with the same key will be partitioned into the same mini-batch.
+                           If both partition_keys and mini_batch_size are specified,
+                           the partition keys will take effect.
+                           The input(s) must be partitioned dataset(s),
+                           and the partition_keys must be a subset of the keys of every input dataset for this to work,
+                           defaults to None.
     :type partition_keys: List, optional
     :param input_data: The input data, defaults to None.
     :type input_data: str, optional
@@ -150,20 +163,32 @@ def parallel_run_function(
     :type inputs: Dict, optional
     :param outputs: The outputs of this parallel, defaults to None
     :type outputs: Dict, optional
-    :param instance_count: Optional number of instances or nodes used by the compute target. Defaults to 1, defaults to None
+    :param instance_count: Optional number of instances or nodes used by the compute target.
+                           Defaults to 1
     :type instance_count: int, optional
     :param instance_type: Optional type of VM used as supported by the compute target., defaults to None.
     :type instance_type: str, optional
-    :param docker_args: Extra arguments to pass to the Docker run command. This would override any parameters that have already been set by the system, or in this section.
+    :param docker_args: Extra arguments to pass to the Docker run command.
+                        This would override any parameters that have already been set by the system,
+                        or in this section.
                         This parameter is only supported for Azure ML compute types, defaults to None.
     :type docker_args: str, optional
-    :param shm_size: Size of the docker container's shared memory block. This should be in the format of (number)(unit) where number as to be greater than 0 and the unit can be one of b(bytes), k(kilobytes), m(megabytes), or g(gigabytes), defaults to None.
+    :param shm_size: Size of the docker container's shared memory block.
+                     This should be in the format of (number)(unit) where number as to be greater than 0
+                     and the unit can be one of b(bytes), k(kilobytes), m(megabytes), or g(gigabytes),
+                     defaults to None.
     :type shm_size: str, optional
     :param identity: Identity that training job will use while running on compute, defaults to None.
-    :type identity: Union[~azure.ai.ml._restclient.v2022_02_01_preview.models.ManagedIdentity, ~azure.ai.ml._restclient.v2022_02_01_preview.models.AmlToken], optional
-    :param is_deterministic: Specify whether the parallel will return same output given same input. If a parallel (component) is deterministic, when use it as a node/step in a pipeline,
-                             it will reuse results from a previous submitted job in current workspace which has same inputs and settings.
-                             In this case, this step will not use any compute resource. Defaults to True, specify is_deterministic=False if you would like to avoid such reuse behavior, defaults to True.
+    :type identity: Union[
+                    ~azure.ai.ml._restclient.v2022_02_01_preview.models.ManagedIdentity,
+                    ~azure.ai.ml._restclient.v2022_02_01_preview.models.AmlToken], optional
+    :param is_deterministic: Specify whether the parallel will return same output given same input.
+                             If a parallel (component) is deterministic, when use it as a node/step in a pipeline,
+                             it will reuse results from a previous submitted job in current workspace
+                             which has same inputs and settings.
+                             In this case, this step will not use any compute resource. Defaults to True,
+                             specify is_deterministic=False if you would like to avoid such reuse behavior,
+                             defaults to True.
     :type is_deterministic: bool
     """
     # pylint: disable=too-many-locals
