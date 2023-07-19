@@ -3766,11 +3766,11 @@ class AzureBlobFileListSource:
     file_list: str
     """Path to a JSONL file within the container specifying a subset of documents for training."""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         container_url: str,
         file_list: str,
-        **kwargs: Any  # pylint: disable=unused-argument
+        **kwargs: Any
     ) -> None:
         self.container_url = container_url
         self.file_list = file_list
@@ -3816,12 +3816,12 @@ class AzureBlobSource:
     prefix: Optional[str]
     """Blob name prefix."""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         container_url: str,
         *,
         prefix: Optional[str] = None,
-        **kwargs: Any  # pylint: disable=unused-argument
+        **kwargs: Any
     ) -> None:
         self.container_url = container_url
         self.prefix = prefix
@@ -3865,10 +3865,10 @@ class ClassifierDocumentTypeDetails:
     source: Union[AzureBlobSource, AzureBlobFileListSource]
     """Content source containing the training data."""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         source: Union[AzureBlobSource, AzureBlobFileListSource],
-        **kwargs: Any  # pylint: disable=unused-argument
+        **kwargs: Any
     ) -> None:
         self.source = source
 
@@ -3909,7 +3909,6 @@ class ClassifierDocumentTypeDetails:
                 source = AzureBlobFileListSource.from_dict(source)
             else:
                 source = AzureBlobSource.from_dict(source)
-        
         return cls(
             source=source,
         )
