@@ -452,6 +452,7 @@ class MLClient:
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
+            all_operations=self._operation_container,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATA, self._data)
@@ -474,7 +475,6 @@ class MLClient:
             requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
         )
-        self._data._job_operation = self._jobs
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
         self._schedules = ScheduleOperations(
             self._operation_scope,
@@ -884,6 +884,7 @@ class MLClient:
     # Each entry here requires a registered _create_or_update function below
     T = TypeVar("T", Job, Model, Environment, Component, Datastore)
 
+    # pylint: disable-next=client-method-missing-tracing-decorator
     def create_or_update(
         self,
         entity: T,
@@ -916,6 +917,7 @@ class MLClient:
         Schedule,
     )
 
+    # pylint: disable-next=client-method-missing-tracing-decorator
     def begin_create_or_update(
         self,
         entity: R,

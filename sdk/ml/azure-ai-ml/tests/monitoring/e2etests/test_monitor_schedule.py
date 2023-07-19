@@ -25,7 +25,11 @@ from azure.ai.ml.entities._monitoring.thresholds import (
     DataQualityMetricThreshold,
     PredictionDriftMetricThreshold,
 )
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_ARM_id_for_parented_resource
+from azure.ai.ml._utils._arm_id_utils import (
+    is_ARM_id_for_resource,
+    is_ARM_id_for_parented_resource,
+    AMLVersionedArmId,
+)
 from azure.ai.ml._utils.utils import snake_to_camel
 
 

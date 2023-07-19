@@ -83,7 +83,7 @@ class RouterJobSamples(object):
 
         from azure.communication.jobrouter import (
             JobRouterAdministrationClient,
-            StaticRule,
+            StaticRouterRule,
             StaticQueueSelectorAttachment,
             RouterQueueSelector,
             LabelOperator,
@@ -96,7 +96,7 @@ class RouterJobSamples(object):
         classification_policy = router_admin_client.create_classification_policy(
             classification_policy_id = classification_policy_id,
             classification_policy = ClassificationPolicy(
-                prioritization_rule = StaticRule(value = 10),
+                prioritization_rule = StaticRouterRule(value = 10),
                 queue_selectors = [
                     StaticQueueSelectorAttachment(
                         queue_selector = RouterQueueSelector(
@@ -116,7 +116,6 @@ class RouterJobSamples(object):
         from azure.communication.jobrouter import (
             JobRouterClient,
             ChannelConfiguration,
-            QueueAssignment,
             RouterWorker
         )
 
@@ -130,7 +129,7 @@ class RouterJobSamples(object):
                     "general": ChannelConfiguration(capacity_cost_per_job = 1)
                 },
                 queue_assignments = {
-                    queue_id: QueueAssignment()
+                    queue_id: {}
                 }
             )
         )
@@ -203,7 +202,6 @@ class RouterJobSamples(object):
         from azure.communication.jobrouter import (
             JobRouterClient,
             RouterWorker,
-            QueueAssignment,
             ChannelConfiguration,
         )
 
@@ -334,9 +332,7 @@ class RouterJobSamples(object):
         # [START complete_job]
         from azure.communication.jobrouter import (
             JobRouterClient,
-            RouterJob,
-            CompleteJobResult,
-            CloseJobResult
+            RouterJob
         )
 
         router_client = JobRouterClient.from_connection_string(conn_str = connection_string)
@@ -345,7 +341,7 @@ class RouterJobSamples(object):
 
         assignment_id = [k for k, v in queried_job.assignments.items()][0]
 
-        complete_job_result: CompleteJobResult = router_client.complete_job(
+        complete_job_result = router_client.complete_job(
             job_id = job_id,
             assignment_id = assignment_id
         )
@@ -356,7 +352,7 @@ class RouterJobSamples(object):
         # [END complete_job]
 
         # [START close_job]
-        close_job_result: CloseJobResult = router_client.close_job(
+        close_job_result = router_client.close_job(
             job_id = job_id,
             assignment_id = assignment_id
         )

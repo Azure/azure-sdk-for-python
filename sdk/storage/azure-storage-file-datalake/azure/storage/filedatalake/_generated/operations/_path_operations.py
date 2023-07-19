@@ -26,7 +26,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -86,12 +86,12 @@ def build_create_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}/{path}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -219,12 +219,12 @@ def build_update_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}/{path}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -312,12 +312,12 @@ def build_lease_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}/{path}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -375,12 +375,12 @@ def build_read_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}/{path}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -440,12 +440,12 @@ def build_get_properties_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}/{path}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -495,12 +495,12 @@ def build_delete_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}/{path}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -553,12 +553,12 @@ def build_set_access_control_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}/{path}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["action"] = _SERIALIZER.query("action", action, "str")
@@ -614,12 +614,12 @@ def build_set_access_control_recursive_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}/{path}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["action"] = _SERIALIZER.query("action", action, "str")
@@ -680,12 +680,12 @@ def build_flush_data_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}/{path}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["action"] = _SERIALIZER.query("action", action, "str")
@@ -774,12 +774,12 @@ def build_append_data_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}/{path}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["action"] = _SERIALIZER.query("action", action, "str")
@@ -844,12 +844,12 @@ def build_set_expiry_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}/{path}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -884,12 +884,12 @@ def build_undelete_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{filesystem}/{path}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -1156,8 +1156,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1185,7 +1186,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {"url": "{url}/{filesystem}/{path}"}
+    create.metadata = {"url": "{url}"}
 
     @distributed_trace
     def update(
@@ -1408,8 +1409,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1454,7 +1456,7 @@ class PathOperations:
 
         return deserialized
 
-    update.metadata = {"url": "{url}/{filesystem}/{path}"}
+    update.metadata = {"url": "{url}"}
 
     @distributed_trace
     def lease(  # pylint: disable=inconsistent-return-statements
@@ -1484,7 +1486,7 @@ class PathOperations:
          the current lease ID in "x-ms-lease-id" and the new lease ID in "x-ms-proposed-lease-id" to
          change the lease ID of an active lease. Use "renew" and specify the "x-ms-lease-id" to renew an
          existing lease. Use "release" and specify the "x-ms-lease-id" to release a lease. Known values
-         are: "acquire", "break", "change", "renew", and "release". Required.
+         are: "acquire", "break", "change", "renew", "release", and "break". Required.
         :type x_ms_lease_action: str or ~azure.storage.filedatalake.models.PathLeaseAction
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -1559,8 +1561,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1597,7 +1600,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    lease.metadata = {"url": "{url}/{filesystem}/{path}"}
+    lease.metadata = {"url": "{url}"}
 
     @distributed_trace
     def read(
@@ -1703,8 +1706,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=True, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1791,7 +1795,7 @@ class PathOperations:
 
         return deserialized  # type: ignore
 
-    read.metadata = {"url": "{url}/{filesystem}/{path}"}
+    read.metadata = {"url": "{url}"}
 
     @distributed_trace
     def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -1888,8 +1892,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1927,7 +1932,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {"url": "{url}/{filesystem}/{path}"}
+    get_properties.metadata = {"url": "{url}"}
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -2017,8 +2022,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2038,7 +2044,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {"url": "{url}/{filesystem}/{path}"}
+    delete.metadata = {"url": "{url}"}
 
     @distributed_trace
     def set_access_control(  # pylint: disable=inconsistent-return-statements
@@ -2140,8 +2146,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2164,7 +2171,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_access_control.metadata = {"url": "{url}/{filesystem}/{path}"}
+    set_access_control.metadata = {"url": "{url}"}
 
     @distributed_trace
     def set_access_control_recursive(
@@ -2257,8 +2264,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2284,7 +2292,7 @@ class PathOperations:
 
         return deserialized
 
-    set_access_control_recursive.metadata = {"url": "{url}/{filesystem}/{path}"}
+    set_access_control_recursive.metadata = {"url": "{url}"}
 
     @distributed_trace
     def flush_data(  # pylint: disable=inconsistent-return-statements
@@ -2455,8 +2463,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2487,7 +2496,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    flush_data.metadata = {"url": "{url}/{filesystem}/{path}"}
+    flush_data.metadata = {"url": "{url}"}
 
     @distributed_trace
     def append_data(  # pylint: disable=inconsistent-return-statements
@@ -2622,8 +2631,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2656,7 +2666,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_data.metadata = {"url": "{url}/{filesystem}/{path}"}
+    append_data.metadata = {"url": "{url}"}
 
     @distributed_trace
     def set_expiry(  # pylint: disable=inconsistent-return-statements
@@ -2720,8 +2730,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2744,7 +2755,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_expiry.metadata = {"url": "{url}/{filesystem}/{path}"}
+    set_expiry.metadata = {"url": "{url}"}
 
     @distributed_trace
     def undelete(  # pylint: disable=inconsistent-return-statements
@@ -2804,8 +2815,9 @@ class PathOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2827,4 +2839,4 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    undelete.metadata = {"url": "{url}/{filesystem}/{path}"}
+    undelete.metadata = {"url": "{url}"}

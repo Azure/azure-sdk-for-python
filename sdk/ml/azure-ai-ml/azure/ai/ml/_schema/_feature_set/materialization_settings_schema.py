@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 from marshmallow import fields, post_load
 
@@ -27,8 +27,8 @@ class MaterializationSettingsSchema(metaclass=PatchedSchemaMeta):
     notification = NestedField(NotificationSchema)
     resource = NestedField(MaterializationComputeResourceSchema)
     spark_configuration = fields.Dict()
-    offline_enabled = fields.Boolean(required=True, allow_none=False)
-    online_enabled = fields.Boolean(required=True, allow_none=False)
+    offline_enabled = fields.Boolean()
+    online_enabled = fields.Boolean()
 
     @post_load
     def make(self, data, **kwargs):

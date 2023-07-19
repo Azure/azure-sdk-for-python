@@ -26,7 +26,7 @@ from azure.mgmt.networkcloud import NetworkCloudMgmtClient
 def main():
     client = NetworkCloudMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="123e4567-e89b-12d3-a456-426655440000",
     )
 
     response = client.virtual_machines.begin_create_or_update(
@@ -34,7 +34,7 @@ def main():
         virtual_machine_name="virtualMachineName",
         virtual_machine_parameters={
             "extendedLocation": {
-                "name": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ExtendedLocation/customLocations/clusterExtendedLocationName",
+                "name": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ExtendedLocation/customLocations/clusterExtendedLocationName",
                 "type": "CustomLocation",
             },
             "location": "location",
@@ -42,14 +42,14 @@ def main():
                 "adminUsername": "username",
                 "bootMethod": "UEFI",
                 "cloudServicesNetworkAttachment": {
-                    "attachedNetworkId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/cloudServicesNetworks/cloudServicesNetworkName",
+                    "attachedNetworkId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/cloudServicesNetworks/cloudServicesNetworkName",
                     "ipAllocationMethod": "Dynamic",
                 },
                 "cpuCores": 2,
                 "memorySizeGB": 8,
                 "networkAttachments": [
                     {
-                        "attachedNetworkId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/l3Networks/l3NetworkName",
+                        "attachedNetworkId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/l3Networks/l3NetworkName",
                         "defaultGateway": "True",
                         "ipAllocationMethod": "Dynamic",
                         "ipv4Address": "198.51.100.1",
@@ -61,7 +61,7 @@ def main():
                 "placementHints": [
                     {
                         "hintType": "Affinity",
-                        "resourceId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/racks/rackName",
+                        "resourceId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/racks/rackName",
                         "schedulingExecution": "Hard",
                         "scope": "",
                     }
@@ -74,7 +74,7 @@ def main():
                 "storageProfile": {
                     "osDisk": {"createOption": "Ephemeral", "deleteOption": "Delete", "diskSizeGB": 120},
                     "volumeAttachments": [
-                        "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/volumes/volumeName"
+                        "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/volumes/volumeName"
                     ],
                 },
                 "userData": "dXNlckRhdGVTYW1wbGU=",
@@ -92,6 +92,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2022-12-12-preview/examples/VirtualMachines_Create.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2023-05-01-preview/examples/VirtualMachines_Create.json
 if __name__ == "__main__":
     main()

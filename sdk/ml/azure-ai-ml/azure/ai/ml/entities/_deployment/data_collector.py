@@ -51,7 +51,7 @@ class DataCollector:
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestDataCollector) -> "DataCollector":
-        collections = dict()
+        collections = {}
         sampling_rate = None
         for k, v in rest_obj.collections.items():
             sampling_rate = v.sampling_rate
@@ -72,7 +72,7 @@ class DataCollector:
         return DataCollectorSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def _to_rest_object(self) -> RestDataCollector:
-        rest_collections = dict()
+        rest_collections = {}
         for collection in self.collections.values():
             collection.sampling_rate = self.sampling_rate
         delattr(self, "sampling_rate")

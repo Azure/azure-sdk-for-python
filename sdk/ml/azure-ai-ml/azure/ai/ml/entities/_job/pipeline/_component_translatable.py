@@ -42,7 +42,7 @@ class ComponentTranslatableMixin:
             )
         input_data = pipeline_job_inputs[_input_name]
         input_type = type(input_data)
-        if input_type in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+        if input_type in cls._PYTHON_SDK_TYPE_MAPPING:
             return cls._PYTHON_SDK_TYPE_MAPPING[input_type], None
         return getattr(input_data, "type", AssetTypes.URI_FOLDER), getattr(input_data, "mode", None)
 
@@ -63,7 +63,7 @@ class ComponentTranslatableMixin:
             )
         output_data = pipeline_job_outputs[_output_name]
         output_type = type(output_data)
-        if output_type in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+        if output_type in cls._PYTHON_SDK_TYPE_MAPPING:
             return cls._PYTHON_SDK_TYPE_MAPPING[output_type], None
         if isinstance(output_data, dict):
             if "type" in output_data:
@@ -223,7 +223,7 @@ class ComponentTranslatableMixin:
                 input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[float]
 
             input_variable["optional"] = False
-        elif type(input) in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+        elif type(input) in cls._PYTHON_SDK_TYPE_MAPPING:
             input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(input)]
             input_variable["default"] = input
         elif isinstance(input, PipelineInput):
@@ -293,7 +293,7 @@ class ComponentTranslatableMixin:
         elif isinstance(output, PipelineOutput):
             output_variable = output._to_output()._to_dict()
 
-        elif type(output) in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+        elif type(output) in cls._PYTHON_SDK_TYPE_MAPPING:
             output_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(output)]
             output_variable["default"] = output
         else:

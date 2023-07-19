@@ -26,9 +26,9 @@ ENV_TENANT_ID = "AZURE_TENANT_ID"
 ENV_CLIENT_ID = "AZURE_CLIENT_ID"
 ENV_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
 
-ENV_AZURE_OPENAI_API_VERSION = "2023-06-01-preview"
+ENV_AZURE_OPENAI_API_VERSION = "2023-07-01-preview"
 ENV_AZURE_OPENAI_COMPLETIONS_NAME = "text-davinci-003"
-ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME = "gpt-35-turbo"
+ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME = "gpt-35-turbo-0613"
 ENV_AZURE_OPENAI_EMBEDDINGS_NAME = "text-embedding-ada-002"
 
 ENV_OPENAI_KEY = "OPENAI_KEY"
@@ -70,28 +70,47 @@ def azure_openai_creds():
     }
 
 
+def configure_api_type(api_type, **kwargs):
+    if api_type == "azure":
+        openai.api_base = os.getenv(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/")
+        openai.api_type = "azure"
+        openai.api_key = os.getenv(ENV_AZURE_OPENAI_KEY)
+        openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+    elif api_type == "azuread":
+        credential = DefaultAzureCredential()
+        token = credential.get_token("https://cognitiveservices.azure.com/.default")
+        openai.api_base = os.getenv(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/")
+        openai.api_type = "azuread"
+        openai.api_key = token.token
+        openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+    elif api_type == "openai":
+        openai.api_base = "https://api.openai.com/v1"
+        openai.api_type = "openai"
+        openai.api_key = os.getenv(ENV_OPENAI_KEY)
+        openai.api_version = None
+
+
+def configure_async(f):
+    @functools.wraps(f)
+    async def wrapper(*args, **kwargs):
+        api_type = kwargs.pop("api_type")
+        configure_api_type(api_type, **kwargs)
+        try:
+            return await f(*args, api_type=api_type, **kwargs)
+        except openai.error.RateLimitError:
+            pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Rate limit reached.")
+
+    return wrapper
+
+
 def configure(f):
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
         api_type = kwargs.pop("api_type")
-        if api_type == "azure":
-            openai.api_base = os.getenv(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/")
-            openai.api_type = "azure"
-            openai.api_key = os.getenv(ENV_AZURE_OPENAI_KEY)
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
-        elif api_type == "azuread":
-            credential = DefaultAzureCredential()
-            token = credential.get_token("https://cognitiveservices.azure.com/.default")
-            openai.api_base = os.getenv(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/")
-            openai.api_type = "azuread"
-            openai.api_key = token.token
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
-        elif api_type == "openai":
-            openai.api_base = "https://api.openai.com/v1"
-            openai.api_type = "openai"
-            openai.api_key = os.getenv(ENV_OPENAI_KEY)
-            openai.api_version = None
-
-        return f(*args, api_type=api_type, **kwargs)
+        configure_api_type(api_type, **kwargs)
+        try:
+            return f(*args, api_type=api_type, **kwargs)
+        except openai.error.RateLimitError:
+            pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Rate limit reached.")
 
     return wrapper

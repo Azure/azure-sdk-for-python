@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines,no-self-use
+# pylint: disable=too-many-lines
 
 from functools import partial
 from io import BytesIO
@@ -162,8 +162,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
 
         if not (container_name and blob_name):
@@ -232,6 +232,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override
@@ -242,8 +243,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         try:
             if not blob_url.lower().startswith('http'):
                 blob_url = "https://" + blob_url
-        except AttributeError:
-            raise ValueError("Blob URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Blob URL must be a string.") from exc
         parsed_url = urlparse(blob_url.rstrip('/'))
 
         if not parsed_url.netloc:
@@ -315,6 +316,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
 
@@ -925,9 +927,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             except AttributeError:
                 try:
                     delimiter = input_format.delimiter
-                except AttributeError:
+                except AttributeError as exc:
                     raise ValueError("The Type of blob_format can only be DelimitedTextDialect or "
-                                     "DelimitedJsonDialect or ParquetDialect")
+                                     "DelimitedJsonDialect or ParquetDialect") from exc
         output_format = kwargs.pop('output_format', None)
         if output_format == QuickQueryDialect.DelimitedJson:
             output_format = DelimitedJsonDialect()
@@ -1207,7 +1209,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         except HttpResponseError as error:
             process_storage_error(error)
 
-    @distributed_trace()
+    @distributed_trace
     def exists(self, **kwargs):
         # type: (**Any) -> bool
         """
@@ -1224,6 +1226,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: boolean
+        :rtype: bool
         """
         version_id = get_version_id(self.version_id, kwargs)
         try:

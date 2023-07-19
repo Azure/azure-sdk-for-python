@@ -436,6 +436,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         # only show help when component has definition
         if isinstance(self._component, Component):
             return self._component.__help__()
+        return None
 
     def __bool__(self):
         # _attr_dict will return False if no extra attributes are set
