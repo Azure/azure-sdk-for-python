@@ -9,7 +9,6 @@ from azure.core.credentials import AccessToken
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
-from .._internal import get_token_request_additions
 from .._internal.decorators import log_get_token
 from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
@@ -139,8 +138,6 @@ class EnvironmentCredential:
 
         :raises ~azure.identity.CredentialUnavailableError: environment variable configuration is incomplete
         """
-        additions = get_token_request_additions(claims, tenant_id)
-        kwargs.update(additions)
         if not self._credential:
             message = (
                 "EnvironmentCredential authentication unavailable. Environment variables are not fully configured.\n"
@@ -148,4 +145,4 @@ class EnvironmentCredential:
                 "this issue."
             )
             raise CredentialUnavailableError(message=message)
-        return self._credential.get_token(*scopes, **kwargs)
+        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)

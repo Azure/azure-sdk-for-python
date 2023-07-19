@@ -10,7 +10,6 @@ from .decorators import wrap_exceptions
 from .interactive import InteractiveCredential
 from .utils import (
     get_default_authority,
-    get_token_request_additions,
     normalize_authority,
     resolve_tenant,
     validate_tenant_id,
@@ -45,7 +44,6 @@ __all__ = [
     "AuthCodeRedirectServer",
     "AadClientCertificate",
     "get_default_authority",
-    "get_token_request_additions",
     "InteractiveCredential",
     "normalize_authority",
     "resolve_tenant",

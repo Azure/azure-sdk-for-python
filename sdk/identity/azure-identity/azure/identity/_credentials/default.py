@@ -214,15 +214,13 @@ class DefaultAzureCredential(ChainedTokenCredential):
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
           `message` attribute listing each authentication attempt and its error message.
         """
-        additions = get_token_request_additions(claims, tenant_id)
-        kwargs.update(additions)
         if self._successful_credential:
-            token = self._successful_credential.get_token(*scopes, **kwargs)
+            token = self._successful_credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
             _LOGGER.info(
                 "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
             )
             return token
         within_dac.set(True)
-        token = super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
+        token = super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
         within_dac.set(False)
         return token

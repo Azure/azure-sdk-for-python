@@ -156,8 +156,6 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
           Studio Code
         """
-        additions = get_token_request_additions(claims, tenant_id)
-        kwargs.update(additions)
         if self._unavailable_reason:
             error_message = (
                 self._unavailable_reason + "\n"
@@ -167,11 +165,11 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
             raise CredentialUnavailableError(message=error_message)
         if within_dac.get():
             try:
-                token = super(VisualStudioCodeCredential, self).get_token(*scopes, **kwargs)
+                token = super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
                 return token
             except ClientAuthenticationError as ex:
                 raise CredentialUnavailableError(message=ex.message) from ex
-        return super(VisualStudioCodeCredential, self).get_token(*scopes, **kwargs)
+        return super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
     def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         self._client = cast(AadClient, self._client)

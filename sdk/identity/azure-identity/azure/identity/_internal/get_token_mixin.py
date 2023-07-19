@@ -10,7 +10,6 @@ from typing import Any, Optional
 from azure.core.credentials import AccessToken
 from .utils import within_credential_chain
 from .._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
-from .._internal import get_token_request_additions
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -79,17 +78,15 @@ class GetTokenMixin(abc.ABC):
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
 
-        additions = get_token_request_additions(claims, tenant_id)
-        kwargs.update(additions)
         try:
-            token = self._acquire_token_silently(*scopes, **kwargs)
+            token = self._acquire_token_silently(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
             if not token:
                 self._last_request_time = int(time.time())
-                token = self._request_token(*scopes, **kwargs)
+                token = self._request_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
             elif self._should_refresh(token):
                 try:
                     self._last_request_time = int(time.time())
-                    token = self._request_token(*scopes, **kwargs)
+                    token = self._request_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
                 except Exception:  # pylint:disable=broad-except
                     pass
             _LOGGER.log(

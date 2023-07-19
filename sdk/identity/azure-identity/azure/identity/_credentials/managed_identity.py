@@ -9,7 +9,6 @@ from typing import Optional, TYPE_CHECKING, Any
 from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
-from .._internal import get_token_request_additions
 from .._internal.decorators import log_get_token
 
 if TYPE_CHECKING:
@@ -128,8 +127,6 @@ class ManagedIdentityCredential:
         :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """
 
-        additions = get_token_request_additions(claims, tenant_id)
-        kwargs.update(additions)
         if not self._credential:
             raise CredentialUnavailableError(
                 message="No managed identity endpoint found. \n"
@@ -137,4 +134,4 @@ class ManagedIdentityCredential:
                 "Visit https://aka.ms/azsdk/python/identity/managedidentitycredential/troubleshoot to "
                 "troubleshoot this issue."
             )
-        return self._credential.get_token(*scopes, **kwargs)
+        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)

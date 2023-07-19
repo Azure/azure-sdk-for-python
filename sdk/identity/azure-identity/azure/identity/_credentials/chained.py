@@ -8,7 +8,7 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
-from .._internal import get_token_request_additions, within_credential_chain
+from .._internal import within_credential_chain
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -86,13 +86,11 @@ class ChainedTokenCredential:
         :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
-        additions = get_token_request_additions(claims, tenant_id)
-        kwargs.update(additions)
         within_credential_chain.set(True)
         history = []
         for credential in self.credentials:
             try:
-                token = credential.get_token(*scopes, **kwargs)
+                token = credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
                 _LOGGER.info("%s acquired a token from %s", self.__class__.__name__, credential.__class__.__name__)
                 self._successful_credential = credential
                 return token
