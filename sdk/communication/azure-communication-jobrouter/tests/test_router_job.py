@@ -32,7 +32,13 @@ from azure.communication.jobrouter import (
     StaticRouterRule,
     StaticWorkerSelectorAttachment,
     RouterJobStatus,
-    RouterJobStatusSelector, DistributionPolicy, RouterQueue, ClassificationPolicy, RouterJob, JobMatchingMode, JobMatchModeType, ScheduleAndSuspendMode
+    DistributionPolicy,
+    RouterQueue,
+    ClassificationPolicy,
+    RouterJob,
+    JobMatchingMode,
+    JobMatchModeType,
+    ScheduleAndSuspendMode
 )
 
 job_labels = {
@@ -991,7 +997,7 @@ class TestRouterJob(RouterRecordedTestCase):
 
         router_jobs = router_client.list_jobs(
             results_per_page = 2,
-            status = RouterJobStatusSelector.QUEUED,
+            status = RouterJobStatus.QUEUED,
             queue_id = self.get_job_queue_id(),
             channel_id = job_channel_ids[0]
         )
@@ -1090,7 +1096,7 @@ class TestRouterJob(RouterRecordedTestCase):
 
         router_jobs = router_client.list_jobs(
             results_per_page = 2,
-            status = RouterJobStatusSelector.SCHEDULED,
+            status = RouterJobStatus.SCHEDULED,
             queue_id = self.get_job_queue_id(),
             channel_id = job_channel_ids[0],
             scheduled_before = recorded_variables["scheduled_time_utc"]
