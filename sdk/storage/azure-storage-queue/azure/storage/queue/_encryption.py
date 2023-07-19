@@ -24,6 +24,7 @@ from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.padding import PKCS7
 
 from azure.core.exceptions import HttpResponseError
+from azure.core.utils import CaseInsensitiveDict
 
 from ._version import VERSION
 from ._shared import encode_base64, decode_base64_to_bytes
@@ -377,7 +378,9 @@ def parse_encryption_data(metadata: Dict[str, Any]) -> Optional[_EncryptionData]
     :rtype: Optional[_EncryptionData]
     """
     try:
-        return _dict_to_encryption_data(loads(metadata['encryptiondata']))
+        # Use case insensitive dict as key needs to be case-insensitive
+        case_insensitive_metadata = CaseInsensitiveDict(metadata)
+        return _dict_to_encryption_data(loads(case_insensitive_metadata['encryptiondata']))
     except:  # pylint: disable=bare-except
         return None
 
@@ -771,7 +774,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
     except Exception as exc:  # pylint: disable=broad-except
         if require_encryption:
             raise ValueError(
-                'Encryption required, but received data does not contain appropriate metatadata.' + \
+                'Encryption required, but received data does not contain appropriate metadata.' + \
                 'Data was either not encrypted or metadata has been lost.') from exc
 
         return content
