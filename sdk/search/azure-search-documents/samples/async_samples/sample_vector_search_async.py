@@ -26,7 +26,6 @@ import asyncio
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
-from azure.search.documents.models import Vector
 
 service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
@@ -67,7 +66,7 @@ def get_hotel_index(name: str):
             name="descriptionVector",
             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
             searchable=True,
-            dimensions=1536,
+            vector_search_dimensions=1536,
             vector_search_configuration="my-vector-config",
         ),
         SearchableField(
@@ -134,7 +133,9 @@ async def single_vector_search():
     async with search_client:
         results = await search_client.search(
             search_text="",
-            vector=Vector(value=get_embeddings(query), k=3, fields="descriptionVector"),
+            vector=get_embeddings(query),
+            top_k=3,
+            vector_fields="descriptionVector",
             select=["hotelId", "hotelName"],
         )
 
@@ -152,7 +153,9 @@ async def single_vector_search_with_filter():
     async with search_client:
         results = await search_client.search(
             search_text="",
-            vector=Vector(value=get_embeddings(query), k=3, fields="descriptionVector"),
+            vector=get_embeddings(query),
+            top_k=3,
+            vector_fields="descriptionVector",
             filter="category eq 'Luxury'",
             select=["hotelId", "hotelName"],
         )
@@ -171,7 +174,9 @@ async def simple_hybrid_search():
     async with search_client:
         results = await search_client.search(
             search_text=query,
-            vector=Vector(value=get_embeddings(query), k=3, fields="descriptionVector"),
+            vector=get_embeddings(query),
+            top_k=3,
+            vector_fields="descriptionVector",
             select=["hotelId", "hotelName"],
         )
         print(await results.get_answers())

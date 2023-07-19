@@ -47,10 +47,8 @@ from ._generated.models import (
     MuteParticipantsRequest,
 )
 from ._generated.models._enums import RecognizeInputType
-from ._shared.utils import (
-    get_authentication_policy,
-    parse_connection_str
-)
+from ._shared.auth_policy_utils import get_authentication_policy
+from ._shared.utils import parse_connection_str
 if TYPE_CHECKING:
     from ._call_automation_client import CallAutomationClient
     from ._generated.models._enums import DtmfTone
@@ -103,7 +101,7 @@ class CallConnectionClient:
                 if not endpoint.lower().startswith('http'):
                     endpoint = "https://" + endpoint
             except AttributeError:
-                raise ValueError("Host URL must be a string")
+                raise ValueError("Host URL must be a string") # pylint: disable=raise-missing-from
             parsed_url = urlparse(endpoint.rstrip('/'))
             if not parsed_url.netloc:
                 raise ValueError(f"Invalid URL: {format(endpoint)}")

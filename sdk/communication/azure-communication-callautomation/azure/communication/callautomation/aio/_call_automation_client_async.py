@@ -11,10 +11,8 @@ from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 from ._call_connection_client_async import CallConnectionClient
 from .._generated.aio import AzureCommunicationCallAutomationService
-from .._shared.utils import (
-    get_authentication_policy,
-    parse_connection_str
-)
+from .._shared.auth_policy_utils import get_authentication_policy
+from .._shared.utils import parse_connection_str
 from .._generated.models import (
     CreateCallRequest,
     AnswerCallRequest,
@@ -95,7 +93,7 @@ class CallAutomationClient:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Host URL must be a string")
+            raise ValueError("Host URL must be a string") # pylint:disable=raise-missing-from
 
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
@@ -130,7 +128,7 @@ class CallAutomationClient:
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, access_key, **kwargs)
 
-    def get_call_connection(
+    def get_call_connection( # pylint:disable=client-method-missing-tracing-decorator
         self,
         call_connection_id: str,
         **kwargs

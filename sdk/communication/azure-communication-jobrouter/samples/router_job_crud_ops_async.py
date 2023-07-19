@@ -83,7 +83,7 @@ class RouterJobSamplesAsync(object):
 
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
         from azure.communication.jobrouter import (
-            StaticRule,
+            StaticRouterRule,
             StaticQueueSelectorAttachment,
             RouterQueueSelector,
             LabelOperator,
@@ -97,7 +97,7 @@ class RouterJobSamplesAsync(object):
             classification_policy = await router_admin_client.create_classification_policy(
                 classification_policy_id = classification_policy_id,
                 classification_policy = ClassificationPolicy(
-                    prioritization_rule = StaticRule(value = 10),
+                    prioritization_rule = StaticRouterRule(value = 10),
                     queue_selectors = [
                         StaticQueueSelectorAttachment(
                             queue_selector = RouterQueueSelector(
@@ -117,7 +117,6 @@ class RouterJobSamplesAsync(object):
         from azure.communication.jobrouter.aio import JobRouterClient
         from azure.communication.jobrouter import (
             ChannelConfiguration,
-            QueueAssignment,
             RouterWorker
         )
 
@@ -133,7 +132,7 @@ class RouterJobSamplesAsync(object):
                         "general": ChannelConfiguration(capacity_cost_per_job = 1)
                     },
                     queue_assignments = {
-                        queue_id: QueueAssignment()
+                        queue_id: {}
                     }
                 )
             )
@@ -342,9 +341,7 @@ class RouterJobSamplesAsync(object):
         # [START complete_job_async]
         from azure.communication.jobrouter.aio import JobRouterClient
         from azure.communication.jobrouter import (
-            RouterJob,
-            CompleteJobResult,
-            CloseJobResult
+            RouterJob
         )
 
         router_client = JobRouterClient.from_connection_string(conn_str = connection_string)
@@ -354,7 +351,7 @@ class RouterJobSamplesAsync(object):
 
             assignment_id = [k for k, v in queried_job.assignments.items()][0]
 
-            complete_job_result: CompleteJobResult = await router_client.complete_job(
+            complete_job_result = await router_client.complete_job(
                 job_id = job_id,
                 assignment_id = assignment_id
             )
@@ -365,7 +362,7 @@ class RouterJobSamplesAsync(object):
         # [END complete_job_async]
 
         # [START close_job_async]
-            close_job_result: CloseJobResult = await router_client.close_job(
+            close_job_result = await router_client.close_job(
                 job_id = job_id,
                 assignment_id = assignment_id
             )

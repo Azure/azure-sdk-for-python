@@ -8,39 +8,40 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "Content-Length": "149",
+        "Content-Length": "158",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "272e6ef8-e48d-11ed-90ae-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "19d50850-2028-11ee-86fc-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:41 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:29 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
         "name": "test_update_job_w_cp_tst_dp",
-        "offerTtlSeconds": 10.0,
+        "offerExpiresAfterSeconds": 10.0,
         "mode": {
           "kind": "round-robin",
           "minConcurrentOffers": 1,
           "maxConcurrentOffers": 1
         }
       },
-      "StatusCode": 200,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 23:50:41 GMT",
+        "Date": "Tue, 11 Jul 2023 20:18:30 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 23:50:42 GMT",
-        "trace-id": "b87ee57f-eb5a-9521-f7be-21f63a56c850",
+        "Last-Modified": "Tue, 11 Jul 2023 20:18:30 GMT",
+        "trace-id": "90c357fb-9f97-f84c-326b-def3453ed8f6",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "00rhJZAAAAABY8flQjtliRrpjUvK40jPcWVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "x-azure-ref": "20230711T201829Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s000000000899h",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "id": "test_update_job_w_cp_tst_dp",
         "name": "test_update_job_w_cp_tst_dp",
-        "offerTtlSeconds": 10,
+        "offerExpiresAfterSeconds": 10,
         "mode": {
           "kind": "round-robin",
           "minConcurrentOffers": 1,
@@ -59,10 +60,10 @@
         "Connection": "keep-alive",
         "Content-Length": "149",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "276997d8-e48d-11ed-9e19-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "19eb0529-2028-11ee-92b0-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:42 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:30 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -77,13 +78,14 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 23:50:42 GMT",
+        "Date": "Tue, 11 Jul 2023 20:18:30 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 23:50:42 GMT",
-        "trace-id": "45b085d2-a3e3-48a2-0bab-c15f56c5c9ca",
+        "Last-Modified": "Tue, 11 Jul 2023 20:18:30 GMT",
+        "trace-id": "8b0e86b6-4de1-3fb2-5a16-e1bbb758b430",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "00rhJZAAAAAAmeBt\u002BF8CoT66AximvQtcrWVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "x-azure-ref": "20230711T201830Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s00000000089ab",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -108,10 +110,10 @@
         "Connection": "keep-alive",
         "Content-Length": "154",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "27a4f90f-e48d-11ed-97c3-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "1a062be8-2028-11ee-8cdc-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:42 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:30 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -126,13 +128,14 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 23:50:42 GMT",
+        "Date": "Tue, 11 Jul 2023 20:18:30 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 23:50:42 GMT",
-        "trace-id": "9e6ea959-90da-9dbf-b2ec-4c7931a78970",
+        "Last-Modified": "Tue, 11 Jul 2023 20:18:30 GMT",
+        "trace-id": "36fdd5a0-b62b-b284-91c8-56e995edfb2e",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "00rhJZAAAAADQPc\u002BP2aYqSpFKBm3O/SVCWVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "x-azure-ref": "20230711T201830Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s00000000089b1",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -155,12 +158,12 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "Content-Length": "422",
+        "Content-Length": "423",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "27db40fa-e48d-11ed-864a-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "1a1d09eb-2028-11ee-b932-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:42 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:30 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -169,7 +172,7 @@
         "queueSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "queueSelector": {
               "key": "Id",
               "labelOperator": "equal",
               "value": "test_update_job_w_cp_tst_q"
@@ -183,7 +186,7 @@
         "workerSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "workerSelector": {
               "key": "FakeKeyFromCp",
               "labelOperator": "equal",
               "value": "FakeValue"
@@ -191,16 +194,17 @@
           }
         ]
       },
-      "StatusCode": 200,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 23:50:42 GMT",
+        "Date": "Tue, 11 Jul 2023 20:18:30 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 23:50:43 GMT",
-        "trace-id": "d9922983-633d-c843-4bbf-3c14f51a28ab",
+        "Last-Modified": "Tue, 11 Jul 2023 20:18:30 GMT",
+        "trace-id": "c109c000-17b6-bcbf-1079-92c5e3d1aa75",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "007hJZAAAAACx2XRGmt1lR6WKZ5SZRwZmWVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "x-azure-ref": "20230711T201830Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s00000000089c0",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -210,7 +214,7 @@
         "queueSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "queueSelector": {
               "key": "Id",
               "labelOperator": "equal",
               "value": "test_update_job_w_cp_tst_q"
@@ -224,9 +228,9 @@
         "workerSelectors": [
           {
             "kind": "static",
-            "labelSelector": {
+            "workerSelector": {
               "expedite": false,
-              "state": "active",
+              "status": "active",
               "key": "FakeKeyFromCp",
               "labelOperator": "equal",
               "value": "FakeValue"
@@ -245,10 +249,10 @@
         "Connection": "keep-alive",
         "Content-Length": "723",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "281e1c1d-e48d-11ed-9fb5-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "1a41ad56-2028-11ee-ba61-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:43 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:30 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -299,64 +303,65 @@
           "2022-05-13T16:59:04.531199Z": "Fake notes attached to job"
         }
       },
-      "StatusCode": 200,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 23:50:43 GMT",
+        "Date": "Tue, 11 Jul 2023 20:18:30 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 23:50:43 GMT",
-        "trace-id": "f30dd38a-450d-3d8f-9816-4cd56ec56705",
+        "Last-Modified": "Tue, 11 Jul 2023 20:18:30 GMT",
+        "trace-id": "6b193ee3-e6f0-aeee-0260-4677307bd4e0",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "007hJZAAAAAAMXBgU2BNHSbcy0fuEiZM/WVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "x-azure-ref": "20230711T201830Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s00000000089d5",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "id": "tst_update_job_cp",
         "channelReference": "fakeChannelRef1",
-        "jobStatus": "pendingClassification",
+        "status": "pendingClassification",
         "channelId": "fakeChannelId1",
         "classificationPolicyId": "test_update_job_w_cp_tst_cp",
         "priority": 1,
         "requestedWorkerSelectors": [
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey1",
             "labelOperator": "equal",
             "value": true
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey2",
             "labelOperator": "notEqual",
             "value": false
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey3",
             "labelOperator": "lessThan",
             "value": 10
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey4",
             "labelOperator": "lessThanEqual",
             "value": 10.01
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey5",
             "labelOperator": "greaterThan",
             "value": 10
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey6",
             "labelOperator": "greaterThanEqual",
             "value": 10
@@ -374,6 +379,10 @@
         },
         "notes": {
           "2022-05-13T16:59:04.531199\u002B00:00": "Fake notes attached to job"
+        },
+        "matchingMode": {
+          "modeType": "queueAndMatchMode",
+          "queueAndMatchMode": {}
         }
       }
     },
@@ -385,71 +394,72 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "28741850-e48d-11ed-9ecb-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "1a66d0f4-2028-11ee-b507-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:43 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:30 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 23:50:43 GMT",
+        "Date": "Tue, 11 Jul 2023 20:18:31 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 23:50:43 GMT",
-        "trace-id": "54c8d9a4-f2bb-3978-2dc6-a44c19b10425",
+        "Last-Modified": "Tue, 11 Jul 2023 20:18:30 GMT",
+        "trace-id": "3aed45d2-b6b6-f0b0-4a08-1b06bf4aacb3",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "01LhJZAAAAAAd1sLFg7hKS5xZa1BYxd3LWVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "x-azure-ref": "20230711T201830Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s00000000089dx",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "id": "tst_update_job_cp",
         "channelReference": "fakeChannelRef1",
-        "jobStatus": "pendingClassification",
+        "status": "pendingClassification",
         "channelId": "fakeChannelId1",
         "classificationPolicyId": "test_update_job_w_cp_tst_cp",
         "priority": 1,
         "requestedWorkerSelectors": [
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey1",
             "labelOperator": "equal",
             "value": true
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey2",
             "labelOperator": "notEqual",
             "value": false
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey3",
             "labelOperator": "lessThan",
             "value": 10
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey4",
             "labelOperator": "lessThanEqual",
             "value": 10.01
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey5",
             "labelOperator": "greaterThan",
             "value": 10
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey6",
             "labelOperator": "greaterThanEqual",
             "value": 10
@@ -467,6 +477,10 @@
         },
         "notes": {
           "2022-05-13T16:59:04.531199\u002B00:00": "Fake notes attached to job"
+        },
+        "matchingMode": {
+          "modeType": "queueAndMatchMode",
+          "queueAndMatchMode": {}
         }
       }
     },
@@ -478,30 +492,31 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "2a52f597-e48d-11ed-b2d8-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "1c42a099-2028-11ee-8a0d-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:46 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:33 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 23:50:46 GMT",
+        "Date": "Tue, 11 Jul 2023 20:18:34 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 23:50:45 GMT",
-        "trace-id": "da489313-e3db-4d60-b9ff-7eb34c39aa7d",
+        "Last-Modified": "Tue, 11 Jul 2023 20:18:31 GMT",
+        "trace-id": "2c887c3f-db0f-bec8-f3bc-a6fbd20293f2",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "017hJZAAAAAC3\u002BGkObjTQQKRXTDgmO3QUWVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "x-azure-ref": "20230711T201834Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s00000000089t5",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "id": "tst_update_job_cp",
         "channelReference": "fakeChannelRef1",
-        "jobStatus": "queued",
-        "enqueueTimeUtc": "2023-04-26T23:50:45.3143382\u002B00:00",
+        "status": "queued",
+        "enqueuedAt": "2023-07-11T20:18:31.3333318\u002B00:00",
         "channelId": "fakeChannelId1",
         "classificationPolicyId": "test_update_job_w_cp_tst_cp",
         "queueId": "test_update_job_w_cp_tst_q",
@@ -509,42 +524,42 @@
         "requestedWorkerSelectors": [
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey1",
             "labelOperator": "equal",
             "value": true
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey2",
             "labelOperator": "notEqual",
             "value": false
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey3",
             "labelOperator": "lessThan",
             "value": 10
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey4",
             "labelOperator": "lessThanEqual",
             "value": 10.01
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey5",
             "labelOperator": "greaterThan",
             "value": 10
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey6",
             "labelOperator": "greaterThanEqual",
             "value": 10
@@ -553,7 +568,7 @@
         "attachedWorkerSelectors": [
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKeyFromCp",
             "labelOperator": "equal",
             "value": "FakeValue"
@@ -570,6 +585,10 @@
         },
         "notes": {
           "2022-05-13T16:59:04.531199\u002B00:00": "Fake notes attached to job"
+        },
+        "matchingMode": {
+          "modeType": "queueAndMatchMode",
+          "queueAndMatchMode": {}
         }
       }
     },
@@ -581,12 +600,12 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "Content-Length": "882",
+        "Content-Length": "958",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "2a714853-e48d-11ed-9708-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "1c58fc76-2028-11ee-b593-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:47 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:34 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -643,25 +662,30 @@
         },
         "notes": {
           "2022-05-13T16:59:04.531199Z": "Fake notes attached to job"
+        },
+        "matchingMode": {
+          "modeType": "queueAndMatchMode",
+          "queueAndMatchMode": {}
         }
       },
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 23:50:48 GMT",
+        "Date": "Tue, 11 Jul 2023 20:18:34 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 23:50:47 GMT",
-        "trace-id": "55c02e3d-e35b-a47d-3f7d-a0bccc883a55",
+        "Last-Modified": "Tue, 11 Jul 2023 20:18:34 GMT",
+        "trace-id": "6bf018ce-15ca-e597-da8b-4aceb7c6c09a",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "017hJZAAAAADD6apvkrILS6dMbxv9Tp8nWVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "x-azure-ref": "20230711T201834Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s00000000089te",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "id": "tst_update_job_cp",
         "channelReference": "fakeChannelRef1",
-        "jobStatus": "pendingClassification",
-        "enqueueTimeUtc": "2023-04-26T23:50:45.3143382\u002B00:00",
+        "status": "pendingClassification",
+        "enqueuedAt": "2023-07-11T20:18:31.3333318\u002B00:00",
         "channelId": "fakeChannelId1",
         "classificationPolicyId": "test_update_job_w_cp_tst_cp",
         "queueId": "test_update_job_w_cp_tst_q",
@@ -669,42 +693,42 @@
         "requestedWorkerSelectors": [
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey1",
             "labelOperator": "equal",
             "value": true
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey2",
             "labelOperator": "notEqual",
             "value": false
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey3",
             "labelOperator": "lessThan",
             "value": 10
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey4",
             "labelOperator": "lessThanEqual",
             "value": 10.01
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey5",
             "labelOperator": "greaterThan",
             "value": 10
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey6",
             "labelOperator": "greaterThanEqual",
             "value": 10
@@ -713,7 +737,7 @@
         "attachedWorkerSelectors": [
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKeyFromCp",
             "labelOperator": "equal",
             "value": "FakeValue"
@@ -731,6 +755,10 @@
         },
         "notes": {
           "2022-05-13T16:59:04.531199\u002B00:00": "Fake notes attached to job"
+        },
+        "matchingMode": {
+          "modeType": "queueAndMatchMode",
+          "queueAndMatchMode": {}
         }
       }
     },
@@ -742,73 +770,74 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "2b6db42b-e48d-11ed-82eb-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "1c8eaea3-2028-11ee-bc37-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:48 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:34 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 23:50:48 GMT",
+        "Date": "Tue, 11 Jul 2023 20:18:34 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 23:50:48 GMT",
-        "trace-id": "697a2fc5-d043-777a-869f-1d32c1d7c704",
+        "Last-Modified": "Tue, 11 Jul 2023 20:18:34 GMT",
+        "trace-id": "f3c619ce-0d0f-808f-38b8-25cc8a9e46e8",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "02bhJZAAAAABn/TZbAjVWT5u3SauLh2sSWVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "x-azure-ref": "20230711T201834Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s00000000089vb",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "id": "tst_update_job_cp",
         "channelReference": "fakeChannelRef1",
-        "jobStatus": "pendingClassification",
-        "enqueueTimeUtc": "2023-04-26T23:50:45.3143382\u002B00:00",
+        "status": "pendingClassification",
+        "enqueuedAt": "2023-07-11T20:18:31.3333318\u002B00:00",
         "channelId": "fakeChannelId1",
         "classificationPolicyId": "test_update_job_w_cp_tst_cp",
         "queueId": "test_update_job_w_cp_tst_q",
-        "priority": 10,
+        "priority": 1,
         "requestedWorkerSelectors": [
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey1",
             "labelOperator": "equal",
             "value": true
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey2",
             "labelOperator": "notEqual",
             "value": false
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey3",
             "labelOperator": "lessThan",
             "value": 10
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey4",
             "labelOperator": "lessThanEqual",
             "value": 10.01
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey5",
             "labelOperator": "greaterThan",
             "value": 10
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey6",
             "labelOperator": "greaterThanEqual",
             "value": 10
@@ -817,7 +846,7 @@
         "attachedWorkerSelectors": [
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKeyFromCp",
             "labelOperator": "equal",
             "value": "FakeValue"
@@ -835,6 +864,10 @@
         },
         "notes": {
           "2022-05-13T16:59:04.531199\u002B00:00": "Fake notes attached to job"
+        },
+        "matchingMode": {
+          "modeType": "queueAndMatchMode",
+          "queueAndMatchMode": {}
         }
       }
     },
@@ -846,30 +879,31 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "2d4f6e62-e48d-11ed-8b06-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "1e6a3b3c-2028-11ee-842c-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:52 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:37 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 23:50:51 GMT",
+        "Date": "Tue, 11 Jul 2023 20:18:37 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 23:50:49 GMT",
-        "trace-id": "706a811f-d490-73cb-047f-8c52326d3ec7",
+        "Last-Modified": "Tue, 11 Jul 2023 20:18:34 GMT",
+        "trace-id": "dae13f3a-d3cf-e6d1-c6e6-957568350185",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "03LhJZAAAAADQmDlN5c4oTISU2jn0zD7zWVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "x-azure-ref": "20230711T201837Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s0000000008a7w",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "id": "tst_update_job_cp",
         "channelReference": "fakeChannelRef1",
-        "jobStatus": "queued",
-        "enqueueTimeUtc": "2023-04-26T23:50:45.3143382\u002B00:00",
+        "status": "queued",
+        "enqueuedAt": "2023-07-11T20:18:31.3333318\u002B00:00",
         "channelId": "fakeChannelId1",
         "classificationPolicyId": "test_update_job_w_cp_tst_cp",
         "queueId": "test_update_job_w_cp_tst_q",
@@ -877,42 +911,42 @@
         "requestedWorkerSelectors": [
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey1",
             "labelOperator": "equal",
             "value": true
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey2",
             "labelOperator": "notEqual",
             "value": false
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey3",
             "labelOperator": "lessThan",
             "value": 10
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey4",
             "labelOperator": "lessThanEqual",
             "value": 10.01
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey5",
             "labelOperator": "greaterThan",
             "value": 10
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey6",
             "labelOperator": "greaterThanEqual",
             "value": 10
@@ -921,7 +955,7 @@
         "attachedWorkerSelectors": [
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKeyFromCp",
             "labelOperator": "equal",
             "value": "FakeValue"
@@ -939,6 +973,10 @@
         },
         "notes": {
           "2022-05-13T16:59:04.531199\u002B00:00": "Fake notes attached to job"
+        },
+        "matchingMode": {
+          "modeType": "queueAndMatchMode",
+          "queueAndMatchMode": {}
         }
       }
     },
@@ -950,30 +988,31 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "2d6d23b2-e48d-11ed-aec3-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "1e7b1b29-2028-11ee-a007-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:52 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:37 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 23:50:51 GMT",
+        "Date": "Tue, 11 Jul 2023 20:18:37 GMT",
         "ETag": "Sanitized",
-        "Last-Modified": "Wed, 26 Apr 2023 23:50:49 GMT",
-        "trace-id": "1e9be37d-3633-9208-0513-b09d36b9ba50",
+        "Last-Modified": "Tue, 11 Jul 2023 20:18:34 GMT",
+        "trace-id": "49ea09ff-6895-2c08-bbb4-569d248163ba",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "03LhJZAAAAAD6NWsheAMSTKgUhhl4d3JdWVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "x-azure-ref": "20230711T201837Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s0000000008a8b",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
         "id": "tst_update_job_cp",
         "channelReference": "fakeChannelRef1",
-        "jobStatus": "queued",
-        "enqueueTimeUtc": "2023-04-26T23:50:45.3143382\u002B00:00",
+        "status": "queued",
+        "enqueuedAt": "2023-07-11T20:18:31.3333318\u002B00:00",
         "channelId": "fakeChannelId1",
         "classificationPolicyId": "test_update_job_w_cp_tst_cp",
         "queueId": "test_update_job_w_cp_tst_q",
@@ -981,42 +1020,42 @@
         "requestedWorkerSelectors": [
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey1",
             "labelOperator": "equal",
             "value": true
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey2",
             "labelOperator": "notEqual",
             "value": false
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey3",
             "labelOperator": "lessThan",
             "value": 10
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey4",
             "labelOperator": "lessThanEqual",
             "value": 10.01
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey5",
             "labelOperator": "greaterThan",
             "value": 10
           },
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKey6",
             "labelOperator": "greaterThanEqual",
             "value": 10
@@ -1025,7 +1064,7 @@
         "attachedWorkerSelectors": [
           {
             "expedite": false,
-            "state": "active",
+            "status": "active",
             "key": "FakeKeyFromCp",
             "labelOperator": "equal",
             "value": "FakeValue"
@@ -1043,6 +1082,10 @@
         },
         "notes": {
           "2022-05-13T16:59:04.531199\u002B00:00": "Fake notes attached to job"
+        },
+        "matchingMode": {
+          "modeType": "queueAndMatchMode",
+          "queueAndMatchMode": {}
         }
       }
     },
@@ -1056,10 +1099,10 @@
         "Connection": "keep-alive",
         "Content-Length": "54",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "2d896e0a-e48d-11ed-b053-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "1e8b4988-2028-11ee-a5c0-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:52 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:37 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -1068,11 +1111,12 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 26 Apr 2023 23:50:52 GMT",
-        "trace-id": "0dd9abb5-416e-0f5d-0740-e8ebc8d18750",
+        "Date": "Tue, 11 Jul 2023 20:18:38 GMT",
+        "trace-id": "f67e14c6-a68f-2894-0b12-c2b0d225180d",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "03LhJZAAAAAC/7FK7UyKLRr4FffCUWYUlWVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "x-azure-ref": "20230711T201837Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s0000000008a8k",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {}
@@ -1086,19 +1130,20 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "2dd3df3e-e48d-11ed-8473-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "1eb0d9bb-2028-11ee-945a-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:52 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:38 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
-        "Date": "Wed, 26 Apr 2023 23:50:53 GMT",
-        "trace-id": "94caf82d-1af9-0de2-17fd-f4e1f25cb07a",
-        "X-Azure-Ref": "03bhJZAAAAABkyngBnVQ7RbGywawmzyX\u002BWVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "Connection": "keep-alive",
+        "Date": "Tue, 11 Jul 2023 20:18:38 GMT",
+        "trace-id": "1c82c6bf-0fb9-f23a-5857-f81038649fd5",
+        "x-azure-ref": "20230711T201838Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s0000000008a9m",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -1112,19 +1157,20 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "2e3cb2ac-e48d-11ed-a78f-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "1ed5a17c-2028-11ee-a7d5-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:53 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:38 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
-        "Date": "Wed, 26 Apr 2023 23:50:53 GMT",
-        "trace-id": "477cf072-e526-a93d-3e2b-2b83be12fe95",
-        "X-Azure-Ref": "03bhJZAAAAAASHjlvDPS1SqrujHWd5mg9WVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "Connection": "keep-alive",
+        "Date": "Tue, 11 Jul 2023 20:18:38 GMT",
+        "trace-id": "93a40201-e561-7381-f324-6ed595d153fd",
+        "x-azure-ref": "20230711T201838Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s0000000008aap",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -1138,19 +1184,20 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "2e70e082-e48d-11ed-877b-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "1eee6b56-2028-11ee-8911-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:53 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:38 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
-        "Date": "Wed, 26 Apr 2023 23:50:53 GMT",
-        "trace-id": "1b417a74-8af1-aae2-7672-10d6134b048c",
-        "X-Azure-Ref": "03rhJZAAAAABgJoT/pb6aRZy7iP74D2l4WVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "Connection": "keep-alive",
+        "Date": "Tue, 11 Jul 2023 20:18:38 GMT",
+        "trace-id": "72aa298a-22ea-e1d1-3dc4-90d8cf804571",
+        "x-azure-ref": "20230711T201838Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s0000000008abx",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -1164,19 +1211,20 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "2eaf2e56-e48d-11ed-9265-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "1f06dfd7-2028-11ee-93c9-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:54 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:38 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
-        "Date": "Wed, 26 Apr 2023 23:50:54 GMT",
-        "trace-id": "1470c2ff-6b01-c180-3e30-b6a564d96b90",
-        "X-Azure-Ref": "03rhJZAAAAAC9reG8XKRgS4gYpVgvTqJzWVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "Connection": "keep-alive",
+        "Date": "Tue, 11 Jul 2023 20:18:38 GMT",
+        "trace-id": "419b646a-7623-d05e-fbd8-8b4aee7012f8",
+        "x-azure-ref": "20230711T201838Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s0000000008acf",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null
@@ -1190,19 +1238,20 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
-        "x-ms-client-request-id": "2ef7c1f1-e48d-11ed-a707-046c590fec67",
+        "User-Agent": "azsdk-python-communication-jobrouter/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "1f215851-2028-11ee-9526-046c590f95d2",
         "x-ms-content-sha256": "Sanitized",
-        "x-ms-date": "Wed, 26 Apr 2023 23:50:54 GMT",
+        "x-ms-date": "Tue, 11 Jul 2023 20:18:38 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "api-supported-versions": "2021-04-07-preview1, 2022-07-18-preview",
-        "Date": "Wed, 26 Apr 2023 23:50:54 GMT",
-        "trace-id": "3bee72df-ec56-baa0-4a94-7bb9ac1ac04f",
-        "X-Azure-Ref": "037hJZAAAAAAUOD8OhE3/TKij7gM0ZQbiWVRPMjIxMDkwODE3MDE3ADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "Connection": "keep-alive",
+        "Date": "Tue, 11 Jul 2023 20:18:39 GMT",
+        "trace-id": "4f7c023c-b3e9-c4f5-3289-d984e8fdc030",
+        "x-azure-ref": "20230711T201838Z-vtx77f6w9h5gx68a8v8ckm5ren00000003s0000000008ad5",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null

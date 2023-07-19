@@ -8,7 +8,7 @@
 from uuid import UUID
 import pytest
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
 
@@ -31,7 +31,6 @@ from azure.data.tables import (
     TableSasPermissions,
     TableServiceClient,
 )
-from azure.data.tables._common_conversion import TZ_UTC
 
 from _shared.testcase import TableTestCase
 from preparers import cosmos_decorator
@@ -1841,7 +1840,7 @@ class TestTableEntityCosmos(AzureRecordedTestCase, TableTestCase):
         entity = {
             'PartitionKey': partition,
             'RowKey': row,
-            'Timestamp': datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=TZ_UTC)
+            'Timestamp': datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=timezone.utc)
         }
         try:
             self.table.create_entity(entity)
@@ -1852,7 +1851,7 @@ class TestTableEntityCosmos(AzureRecordedTestCase, TableTestCase):
             assert isinstance(received.metadata['timestamp'], datetime)
             assert received.metadata['timestamp'].year > 2020
         
-            received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=TZ_UTC)
+            received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=timezone.utc)
             self.table.update_entity(received, mode=UpdateMode.REPLACE)
             received = self.table.get_entity(partition, row)
 
