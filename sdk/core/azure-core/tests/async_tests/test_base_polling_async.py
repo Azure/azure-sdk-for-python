@@ -313,6 +313,33 @@ async def test_post_direct_success(async_pipeline_client_builder, deserializatio
     assert result["status"] == "succeeded"
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "http_request,http_response", request_and_responses_product(ASYNCIO_REQUESTS_TRANSPORT_RESPONSES)
+)
+async def test_post_fail(async_pipeline_client_builder, deserialization_cb, http_request, http_response):
+
+    # ResourceLocation
+
+    # The initial response contains both Location and Operation-Location, a 202 and a success body
+    initial_response = TestBasePolling.mock_send(
+        http_request,
+        http_response,
+        "POST",
+        500,
+        {"status": "failed"},
+    )
+
+    async def send(request, **kwargs):
+        pytest.fail("No requests allowed")
+
+    client = async_pipeline_client_builder(send)
+
+    with pytest.raises(HttpResponseError):
+        poll = async_poller(client, initial_response, deserialization_cb, AsyncLROBasePolling(0))
+        result = await poll
+
+
 class TestBasePolling(object):
 
     convert = re.compile("([a-z0-9])([A-Z])")
