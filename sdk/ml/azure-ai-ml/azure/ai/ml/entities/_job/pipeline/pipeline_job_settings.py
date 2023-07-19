@@ -10,14 +10,14 @@ from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
 class PipelineJobSettings(_AttrDict):
     """Settings of PipelineJob, include default_datastore, default_compute, continue_on_step_failure and force_rerun.
 
-    :param default_datastore: The default datastore of pipeline.
-    :type default_datastore: str
-    :param default_compute: The default compute target of pipeline.
-    :type default_compute: str
-    :param continue_on_step_failure: Flag when set, continue pipeline execution if a step fails.
-    :type continue_on_step_failure: bool
-    :param force_rerun: Flag will force rerun pipeline execution after set.
-    :type force_rerun: bool
+    :param default_datastore: The default datastore of the pipeline.
+    :type default_datastore: str, optional
+    :param default_compute: The default compute target of the pipeline.
+    :type default_compute: str, optional
+    :param continue_on_step_failure: Flag indicating whether to continue pipeline execution if a step fails.
+    :type continue_on_step_failure: bool, optional
+    :param force_rerun: Flag indicating whether to force rerun pipeline execution.
+    :type force_rerun: bool, optional
     """
 
     def __init__(
@@ -27,7 +27,7 @@ class PipelineJobSettings(_AttrDict):
         continue_on_step_failure: Optional[bool] = None,
         force_rerun: Optional[bool] = None,
         **kwargs
-    ):
+    ) -> None:
         self._init = True
         super().__init__()
         self.default_compute = default_compute

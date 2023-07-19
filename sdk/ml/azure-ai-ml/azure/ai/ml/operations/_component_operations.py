@@ -69,6 +69,20 @@ class ComponentOperations(_ScopeDependentOperations):
     You should not instantiate this class directly. Instead, you should
     create an MLClient instance that instantiates it for you and
     attaches it as an attribute.
+
+    :param operation_scope: The operation scope.
+    :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
+    :param operation_config: The operation configuration.
+    :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
+    :param service_client: The service client for API operations.
+    :type service_client: Union[~azure.ai.ml._restclient.v2022_10_01.AzureMachineLearningWorkspaces,
+                                    ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview.AzureMachineLearningWorkspaces]
+    :param all_operations: The container for all available operations.
+    :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
+    :param preflight_operation: The preflight operation for deployments, defaults to None.
+    :type preflight_operation: Optional[~azure.ai.ml._vendor.azure_resources.operations.DeploymentsOperations]
+    :param kwargs: Additional keyword arguments.
+    :type kwargs: Dict
     """
 
     def __init__(
@@ -79,7 +93,7 @@ class ComponentOperations(_ScopeDependentOperations):
         all_operations: OperationsContainer,
         preflight_operation: Optional[DeploymentsOperations] = None,
         **kwargs: Dict,
-    ):
+    ) -> None:
         super(ComponentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._version_operation = service_client.component_versions
@@ -208,9 +222,9 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param name: Name of the code component.
         :type name: str
-        :param version: Version of the component.
+        :param version: Version of the component, defaults to None.
         :type version: Optional[str]
-        :param label: Label of the component. (mutually exclusive with version)
+        :param label: Label of the component, mutually exclusive with version, defaults to None.
         :type label: Optional[str]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully
             identified and retrieved. Details will be provided in the error message.
@@ -259,10 +273,10 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param component: The component object or a mldesigner component function that generates component object
         :type component: Union[Component, types.FunctionType]
-        :param raise_on_failure: whether to raise exception on validation error
+        :param raise_on_failure: whether to raise exception on validation error, defaults to False
         :type raise_on_failure: bool
         :return: All validation errors
-        :type: ValidationResult
+        :type: ~azure.ai.ml.entities.ValidationResult
         """
         return self._validate(
             component,
@@ -322,9 +336,9 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param component: The component object or a mldesigner component function that generates component object
         :type component: Union[Component, types.FunctionType]
-        :param version: The component version to override.
+        :param version: The component version to override. Defaults to None.
         :type version: str
-        :param skip_validation: whether to skip validation before creating/updating the component
+        :param skip_validation: whether to skip validation before creating/updating the component, defaults to False
         :type skip_validation: bool
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
             Details will be provided in the error message.
@@ -463,9 +477,9 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param name: Name of the component.
         :type name: str
-        :param version: Version of the component.
+        :param version: Version of the component. Defaults to None.
         :type version: str
-        :param label: Label of the component. (mutually exclusive with version)
+        :param label: Label of the component. (mutually exclusive with version). Defaults to None.
         :type label: str
         """
         _archive_or_restore(
@@ -490,9 +504,9 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param name: Name of the component.
         :type name: str
-        :param version: Version of the component.
+        :param version: Version of the component. Defaults to None.
         :type version: str
-        :param label: Label of the component. (mutually exclusive with version)
+        :param label: Label of the component. (mutually exclusive with version). Defaults to None.
         :type label: str
         """
         _archive_or_restore(
