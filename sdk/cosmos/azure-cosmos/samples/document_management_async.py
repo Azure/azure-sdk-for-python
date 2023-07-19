@@ -113,7 +113,7 @@ async def query_items_with_continuation_token(container):
     item_pages = query_iterable.by_page()
 
     # It is worth mentioning that from Python 3.10, you can use the syntax below to iterate as opposed to __anext__()
-    # first_page = await anext(item_pages)
+    # first_page = await anext(item_pages)  # cspell:disable-line
 
     first_page = await item_pages.__anext__()
     continuation_token = item_pages.continuation_token
