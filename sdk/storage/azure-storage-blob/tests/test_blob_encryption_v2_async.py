@@ -407,7 +407,8 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         content = b'Hello World Encrypted!'
 
         # Upload blob with encryption V2
-        await blob.upload_blob(content, overwrite=True)
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True)
 
         # Change the case of the metadata key
         metadata = (await blob.get_blob_properties()).metadata
