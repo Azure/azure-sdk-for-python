@@ -3,7 +3,8 @@
 ### 4.4.1 (Unreleased)
 
 #### Features Added
-* Added **provisional** ability to limit Continuation Token size when querying for items. See [PR 30731](https://github.com/Azure/azure-sdk-for-python/pull/30731)
+* Added ability to limit continuation token size when querying for items. See [PR 30731](https://github.com/Azure/azure-sdk-for-python/pull/30731)
+* Added support for continuation tokens for streamable cross partition queries. See [PR 31189](https://github.com/Azure/azure-sdk-for-python/pull/31189).
 
 #### Breaking Changes
 
