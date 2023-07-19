@@ -243,7 +243,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: boolean
+        :returns: True if a file system exists, False otherwise.
+        :rtype: bool
         """
         return await self._container_client.exists(**kwargs)
 
@@ -492,6 +493,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
 
         :param str path:
             Filters the results to return only paths under the specified path.
+        :param Optional[bool] recursive: Optional. Set True for recursive, False for iterative.
         :param int max_results:
             An optional value that specifies the maximum
             number of items to return per page. If omitted or greater than 5,000, the
@@ -848,6 +850,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
+        :returns: Returns the DataLake client for the restored soft-deleted path.
         :rtype: ~azure.storage.file.datalake.aio.DataLakeDirectoryClient
                 or azure.storage.file.datalake.aio.DataLakeFileClient
         """

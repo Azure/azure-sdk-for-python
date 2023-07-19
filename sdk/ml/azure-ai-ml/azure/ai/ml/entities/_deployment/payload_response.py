@@ -15,7 +15,7 @@ class PayloadResponse:
 
     """
 
-    # pylint: disable=unused-argument,no-self-use
+    # pylint: disable=unused-argument
     def __init__(self, enabled: str = None, **kwargs):
         self.enabled = enabled
 

@@ -26,16 +26,19 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
-from typing import Optional
+from typing import Optional, TypeVar
 import logging
 from urllib.parse import urlparse
 
 from azure.core.exceptions import TooManyRedirectsError
 from azure.core.pipeline import PipelineResponse, PipelineRequest
-
+from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import HttpResponse, HttpRequest
 from ._base import HTTPPolicy, RequestHistory
 from ._utils import get_domain
 
+HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -146,7 +149,7 @@ class RedirectPolicyBase:
         return settings["redirects"] >= 0
 
 
-class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
+class RedirectPolicy(RedirectPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """A redirect policy.
 
     A redirect policy in the pipeline can be configured directly or per operation.
@@ -164,7 +167,7 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
             :caption: Configuring a redirect policy.
     """
 
-    def send(self, request: PipelineRequest) -> PipelineResponse:
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Sends the PipelineRequest object to the next policy.
         Uses redirect settings to send request to redirect endpoint if necessary.
 

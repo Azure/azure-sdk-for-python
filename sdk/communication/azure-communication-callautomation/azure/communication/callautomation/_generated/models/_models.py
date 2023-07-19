@@ -116,6 +116,8 @@ class AddParticipantRequest(_serialization.Model):
     :vartype operation_context: str
     :ivar custom_context: Used by customer to send custom context to targets.
     :vartype custom_context: ~azure.communication.callautomation.models.CustomContext
+    :ivar callback_uri_override: The callback URI override.
+    :vartype callback_uri_override: str
     """
 
     _validation = {
@@ -130,6 +132,7 @@ class AddParticipantRequest(_serialization.Model):
         "invitation_timeout_in_seconds": {"key": "invitationTimeoutInSeconds", "type": "int"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "custom_context": {"key": "customContext", "type": "CustomContext"},
+        "callback_uri_override": {"key": "callbackUriOverride", "type": "str"},
     }
 
     def __init__(
@@ -141,6 +144,7 @@ class AddParticipantRequest(_serialization.Model):
         invitation_timeout_in_seconds: Optional[int] = None,
         operation_context: Optional[str] = None,
         custom_context: Optional["_models.CustomContext"] = None,
+        callback_uri_override: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -166,6 +170,8 @@ class AddParticipantRequest(_serialization.Model):
         :paramtype operation_context: str
         :keyword custom_context: Used by customer to send custom context to targets.
         :paramtype custom_context: ~azure.communication.callautomation.models.CustomContext
+        :keyword callback_uri_override: The callback URI override.
+        :paramtype callback_uri_override: str
         """
         super().__init__(**kwargs)
         self.source_caller_id_number = source_caller_id_number
@@ -174,6 +180,7 @@ class AddParticipantRequest(_serialization.Model):
         self.invitation_timeout_in_seconds = invitation_timeout_in_seconds
         self.operation_context = operation_context
         self.custom_context = custom_context
+        self.callback_uri_override = callback_uri_override
 
 
 class AddParticipantResponse(_serialization.Model):
@@ -3430,6 +3437,8 @@ class RemoveParticipantRequest(_serialization.Model):
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
+    :ivar callback_uri_override: The callback URI override.
+    :vartype callback_uri_override: str
     """
 
     _validation = {
@@ -3439,6 +3448,7 @@ class RemoveParticipantRequest(_serialization.Model):
     _attribute_map = {
         "participant_to_remove": {"key": "participantToRemove", "type": "CommunicationIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
+        "callback_uri_override": {"key": "callbackUriOverride", "type": "str"},
     }
 
     def __init__(
@@ -3446,6 +3456,7 @@ class RemoveParticipantRequest(_serialization.Model):
         *,
         participant_to_remove: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
+        callback_uri_override: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3455,10 +3466,13 @@ class RemoveParticipantRequest(_serialization.Model):
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
+        :keyword callback_uri_override: The callback URI override.
+        :paramtype callback_uri_override: str
         """
         super().__init__(**kwargs)
         self.participant_to_remove = participant_to_remove
         self.operation_context = operation_context
+        self.callback_uri_override = callback_uri_override
 
 
 class RemoveParticipantResponse(_serialization.Model):
@@ -4150,6 +4164,8 @@ class TransferToParticipantRequest(_serialization.Model):
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
+    :ivar callback_uri_override: The callback URI override.
+    :vartype callback_uri_override: str
     """
 
     _validation = {
@@ -4160,6 +4176,7 @@ class TransferToParticipantRequest(_serialization.Model):
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "custom_context": {"key": "customContext", "type": "CustomContext"},
         "operation_context": {"key": "operationContext", "type": "str"},
+        "callback_uri_override": {"key": "callbackUriOverride", "type": "str"},
     }
 
     def __init__(
@@ -4168,6 +4185,7 @@ class TransferToParticipantRequest(_serialization.Model):
         target_participant: "_models.CommunicationIdentifierModel",
         custom_context: Optional["_models.CustomContext"] = None,
         operation_context: Optional[str] = None,
+        callback_uri_override: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4180,11 +4198,14 @@ class TransferToParticipantRequest(_serialization.Model):
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
+        :keyword callback_uri_override: The callback URI override.
+        :paramtype callback_uri_override: str
         """
         super().__init__(**kwargs)
         self.target_participant = target_participant
         self.custom_context = custom_context
         self.operation_context = operation_context
+        self.callback_uri_override = callback_uri_override
 
 
 class UnmuteParticipantsRequest(_serialization.Model):

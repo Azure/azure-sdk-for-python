@@ -3013,7 +3013,7 @@ class WebhookRouterRule(RouterRule):
         self.webhook_uri = webhook_uri
 
 
-class WeightedAllocationQueueSelectorAttachment(QueueSelectorAttachment):
+class WeightedAllocationQueueSelectorAttachment(QueueSelectorAttachment): # pylint: disable=name-too-long
     """Describes multiple sets of queue selectors, of which one will be selected and attached
     according to a weighting.
 
@@ -3045,7 +3045,7 @@ class WeightedAllocationQueueSelectorAttachment(QueueSelectorAttachment):
         self.allocations = allocations
 
 
-class WeightedAllocationWorkerSelectorAttachment(WorkerSelectorAttachment):
+class WeightedAllocationWorkerSelectorAttachment(WorkerSelectorAttachment): # pylint: disable=name-too-long
     """Describes multiple sets of worker selectors, of which one will be selected and attached
     according to a weighting.
 
