@@ -410,8 +410,8 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
         # Change the case of the metadata key
         metadata = blob.get_blob_properties().metadata
-        encryption_data = loads(metadata['encryptiondata'])
-        metadata = {'Encryptiondata': dumps(encryption_data)}
+        encryption_data = metadata['encryptiondata']
+        metadata = {'Encryptiondata': encryption_data}
         blob.set_blob_metadata(metadata)
 
         # Act

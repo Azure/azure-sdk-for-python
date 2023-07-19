@@ -411,8 +411,8 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
         # Change the case of the metadata key
         metadata = (await blob.get_blob_properties()).metadata
-        encryption_data = loads(metadata['encryptiondata'])
-        metadata = {'Encryptiondata': dumps(encryption_data)}
+        encryption_data = metadata['encryptiondata']
+        metadata = {'Encryptiondata': encryption_data}
         await blob.set_blob_metadata(metadata)
 
         # Act
