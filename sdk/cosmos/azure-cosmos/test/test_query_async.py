@@ -146,7 +146,7 @@ class QueryTest(unittest.TestCase):
         expected_ids = ['doc1', 'doc2', 'doc3']
         it = query_iterable.__aiter__()
         for i in range(0, len(expected_ids)):
-            doc = await anext(it)
+            doc = await it.__anext__()
             self.assertEqual(doc['id'], expected_ids[i])
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
         continuation3 = created_collection.client_connection.last_response_headers['etag']
@@ -367,7 +367,7 @@ class QueryTest(unittest.TestCase):
         expected_ids = ['doc1', 'doc2', 'doc3']
         it = query_iterable.__aiter__()
         for i in range(0, len(expected_ids)):
-            doc = await anext(it)
+            doc = await it.__anext__()
             self.assertEqual(doc['id'], expected_ids[i])
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
         continuation3 = created_collection.client_connection.last_response_headers['etag']
@@ -783,10 +783,10 @@ class QueryTest(unittest.TestCase):
         await pager.__anext__()
         token = pager.continuation_token
 
-        second_page = [item async for item in pager.__anext__()]
+        second_page = [item async for item in await pager.__anext__()]
 
         pager = query_iterable.by_page(token)
-        second_page_fetched_with_continuation_token = [item async for item in pager.__anext__()][0]
+        second_page_fetched_with_continuation_token = [item async for item in await pager.__anext__()][0]
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
@@ -804,12 +804,12 @@ class QueryTest(unittest.TestCase):
             query=query,
             max_item_count=1)
         pager = query_iterable.by_page()
-        pager.__anext__()
+        await pager.__anext__()
         token = pager.continuation_token
-        second_page = [item async for item in pager.__anext__()][0]
+        second_page = [item async for item in await pager.__anext__()][0]
 
         pager = query_iterable.by_page(token)
-        second_page_fetched_with_continuation_token = [item async for item in pager.__anext__()][0]
+        second_page_fetched_with_continuation_token = [item async for item in await pager.__anext__()][0]
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
