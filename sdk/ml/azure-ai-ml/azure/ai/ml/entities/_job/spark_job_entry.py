@@ -37,7 +37,7 @@ class SparkJobEntry(RestTranslatableMixin):
             :caption: Creating SparkComponent.
     """
 
-    def __init__(self, *, entry: str, type: Optional[str] = SparkJobEntryType.SPARK_JOB_FILE_ENTRY) -> None:
+    def __init__(self, *, entry: str, type: str = SparkJobEntryType.SPARK_JOB_FILE_ENTRY) -> None:
         self.entry_type = type
         self.entry = entry
 
