@@ -40,7 +40,7 @@ def build_get_request(network_device_sku_name: str, subscription_id: str, **kwar
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -49,7 +49,7 @@ def build_get_request(network_device_sku_name: str, subscription_id: str, **kwar
         "/subscriptions/{subscriptionId}/providers/Microsoft.ManagedNetworkFabric/networkDeviceSkus/{networkDeviceSkuName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "networkDeviceSkuName": _SERIALIZER.url("network_device_sku_name", network_device_sku_name, "str"),
     }
 
@@ -68,7 +68,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -76,7 +76,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
         "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.ManagedNetworkFabric/networkDeviceSkus"
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
@@ -113,9 +113,9 @@ class NetworkDeviceSkusOperations:
     def get(self, network_device_sku_name: str, **kwargs: Any) -> _models.NetworkDeviceSku:
         """Gets a Network Device Sku.
 
-        Get Network Device SKU details.
+        Get a Network Device SKU details.
 
-        :param network_device_sku_name: Name of the Network Device Sku. Required.
+        :param network_device_sku_name: Name of the Network Device SKU. Required.
         :type network_device_sku_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkDeviceSku or the result of cls(response)
@@ -172,7 +172,7 @@ class NetworkDeviceSkusOperations:
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.NetworkDeviceSku"]:
-        """List NetworkDeviceSkus by subscription.
+        """List Network Device SKUs by subscription.
 
         List Network Device SKUs for the given subscription.
 
