@@ -277,11 +277,11 @@ to be aware of.
 
 ```python
 DOCUMENT = {
-    "Category": "Hotel",
-    "HotelId": "1000",
-    "Rating": 4.0,
-    "Rooms": [],
-    "HotelName": "Azure Inn",
+    "category": "Hotel",
+    "hotelId": "1000",
+    "rating": 4.0,
+    "rooms": [],
+    "hotelName": "Azure Inn",
 }
 
 result = search_client.upload_documents(documents=[DOCUMENT])
@@ -330,9 +330,9 @@ search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(ke
 result = search_client.get_document(key="23")
 
 print("Details for hotel '23' are:")
-print("        Name: {}".format(result["HotelName"]))
-print("      Rating: {}".format(result["Rating"]))
-print("    Category: {}".format(result["Category"]))
+print("        Name: {}".format(result["hotelName"]))
+print("      Rating: {}".format(result["rating"]))
+print("    Category: {}".format(result["category"]))
 ```
 
 <!-- END SNIPPET -->
@@ -358,7 +358,7 @@ async with search_client:
 
     print("Hotels containing 'spa' in the name (or other fields):")
     async for result in results:
-        print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
+        print("    Name: {} (rating {})".format(result["hotelName"], result["rating"]))
 ```
 
 <!-- END SNIPPET -->
