@@ -105,6 +105,7 @@ class YamlTranslatableMixin:
             "version",
             "display_name",
             "description",
+            "tags",
             "type",
             "inputs",
             "outputs",
@@ -126,7 +127,8 @@ class YamlTranslatableMixin:
                 for node_name, node in dict_value["jobs"].items():
                     dict_value["jobs"][node_name] = _sort_dict_according_to_list(order_keys, node)
             difference = list(set(dict_value.keys()).difference(set(order_keys)))
-            order_keys.extend(difference)
+            # keys not in order_keys will be put at the end of the list in the order of alphabetic
+            order_keys.extend(sorted(difference))
             return dict(
                 sorted(
                     dict_value.items(),

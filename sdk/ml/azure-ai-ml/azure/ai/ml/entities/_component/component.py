@@ -531,6 +531,12 @@ class Component(
         # TODO: handle other_parameters and remove override from subclass
         return component_schema_dict
 
+    def _localize(self):
+        if not self.id:
+            raise ValueError("Only remote component can be localize, please check if this is a created component.")
+        self._id = None
+        self._creation_context = None
+
     def _get_telemetry_values(self, *args, **kwargs):  # pylint: disable=unused-argument
         # Note: the is_anonymous is not reliable here, create_or_update will log is_anonymous from parameter.
         is_anonymous = self.name is None or ANONYMOUS_COMPONENT_NAME in self.name

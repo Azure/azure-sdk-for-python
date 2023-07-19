@@ -676,6 +676,22 @@ def CodeField(**kwargs):
     )
 
 
+def EnvironmentField(*, extra_fields: List[Field] = None, **kwargs):
+    extra_fields = extra_fields or []
+    # local import to avoid circular dependency
+    from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema
+
+    return UnionField(
+        [
+            NestedField(AnonymousEnvironmentSchema),
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
+        ]
+        + extra_fields,
+        **kwargs,
+    )
+
+
 def DistributionField(**kwargs):
     from azure.ai.ml._schema.job.distribution import (
         MPIDistributionSchema,

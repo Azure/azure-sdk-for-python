@@ -1,5 +1,6 @@
+import os.path
 import re
-import time
+import shutil
 import uuid
 from itertools import tee
 from pathlib import Path
@@ -1079,3 +1080,28 @@ class TestComponent(AzureRecordedTestCase):
             keys_to_omit=["creation_context"]
         ) != new_component._get_component_hash(keys_to_omit=["creation_context"])
         assert new_component.version == new_version
+
+    @pytest.mark.parametrize(
+        "component_path",
+        [
+            pytest.param("./tests/test_configs/components/helloworld_component.yml", id="command"),
+            pytest.param("./tests/test_configs/components/helloworld_parallel.yml", id="parallel"),
+        ],
+    )
+    def test_component_download(self, client: MLClient, randstr, component_path: str, request):
+        component = load_component(component_path)
+
+        component.name = randstr("component_name")
+        _ = client.components.create_or_update(
+            component,
+        )
+
+        output_dir = f"./tests/test_configs/components/downloaded/{request.node.callspec.id}"
+        if os.path.isdir(output_dir):
+            shutil.rmtree(Path(output_dir))
+
+        client.components.download(
+            component.name,
+            version=component.version,
+            download_path=output_dir,
+        )
