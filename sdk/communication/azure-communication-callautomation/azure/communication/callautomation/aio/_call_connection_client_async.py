@@ -531,7 +531,7 @@ class CallConnectionClient:
         elif input_type == RecognizeInputType.CHOICES:
             options.choices = choices
         else:
-            raise NotImplementedError(f"{input_type} is not supported")
+            raise ValueError(f"Input type '{input_type}' is not supported.")
 
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
