@@ -71,10 +71,12 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         *,
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
-        process_timeout: int = 10
+        process_timeout: int = 10,
+        is_chained: bool = False
     ) -> None:
 
         self.tenant_id = tenant_id
+        self._is_chained = is_chained
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
@@ -111,15 +113,21 @@ class AzureDeveloperCliCredential(AsyncContextManager):
 
         if tenant:
             command += " --tenant-id " + tenant
-        output = await _run_command(command, self._process_timeout)
+        output = await _run_command(command, self._process_timeout, is_chained=self._is_chained)
 
         token = parse_token(output)
         if not token:
             sanitized_output = sanitize_output(output)
+            if self._is_chained:
+                raise CredentialUnavailableError(
+                    message="Unexpected output from Azure CLI: '{}'. \n"
+                    "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                    "https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot.".format(sanitized_output)
+                )
             raise ClientAuthenticationError(
                 message="Unexpected output from Azure CLI: '{}'. \n"
-                        "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-                        "https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot.".format(sanitized_output)
+                "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                "https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot.".format(sanitized_output)
             )
 
         return token
@@ -128,7 +136,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         """Calling this method is unnecessary"""
 
 
-async def _run_command(command: str, timeout: int) -> str:
+async def _run_command(command: str, timeout: int, is_chained: bool = False) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
     if shutil.which(EXECUTABLE_NAME) is None:
         raise CredentialUnavailableError(message=CLI_NOT_FOUND)
@@ -170,4 +178,6 @@ async def _run_command(command: str, timeout: int) -> str:
         raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
     message = sanitize_output(stderr) if stderr else "Failed to invoke Azure Developer CLI"
+    if is_chained:
+        raise CredentialUnavailableError(message=message)
     raise ClientAuthenticationError(message=message)

@@ -66,7 +66,10 @@ def build_pipeline(transport=None, policies=None, **kwargs):
         config.retry_policy = RetryPolicy(**kwargs)
         policies = _get_policies(config, **kwargs)
     if not transport:
-        from azure.core.pipeline.transport import RequestsTransport  # pylint: disable=no-name-in-module,non-abstract-transport-import
+        from azure.core.pipeline.transport import (
+            RequestsTransport,
+        )  # pylint: disable=no-name-in-module,non-abstract-transport-import
+
         transport = RequestsTransport(**kwargs)
 
     return Pipeline(transport, policies=policies)
@@ -82,7 +85,9 @@ def build_async_pipeline(transport=None, policies=None, **kwargs):
         config.retry_policy = AsyncRetryPolicy(**kwargs)
         policies = _get_policies(config, **kwargs)
     if not transport:
-        from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=no-name-in-module,non-abstract-transport-import
+        from azure.core.pipeline.transport import (
+            AioHttpTransport,
+        )  # pylint: disable=no-name-in-module,non-abstract-transport-import
 
         transport = AioHttpTransport(**kwargs)
 

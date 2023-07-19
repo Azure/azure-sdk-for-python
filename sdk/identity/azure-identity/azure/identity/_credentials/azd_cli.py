@@ -19,9 +19,11 @@ from .. import CredentialUnavailableError
 from .._internal import resolve_tenant
 from .._internal.decorators import log_get_token
 
-CLI_NOT_FOUND = 'Azure Developer CLI could not be found. '\
-                 'Please visit https://aka.ms/azure-dev for installation instructions and then,'\
-                 'once installed, authenticate to your Azure account using \'azd auth login\'.'
+CLI_NOT_FOUND = (
+    "Azure Developer CLI could not be found. "
+    "Please visit https://aka.ms/azure-dev for installation instructions and then,"
+    "once installed, authenticate to your Azure account using 'azd auth login'."
+)
 COMMAND_LINE = "azd auth token --output json --scope {}"
 EXECUTABLE_NAME = "azd"
 NOT_LOGGED_IN = "Please run 'azd auth login' from a command prompt to authenticate before using this credential."
@@ -126,8 +128,8 @@ class AzureDeveloperCliCredential:
             sanitized_output = sanitize_output(output)
             raise ClientAuthenticationError(
                 message="Unexpected output from Azure CLI: '{}'. \n"
-                        "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-                        "https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot.".format(sanitized_output)
+                "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                "https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot.".format(sanitized_output)
             )
 
         return token

@@ -128,6 +128,7 @@ def test_authority(authority):
             with patch.dict("os.environ", {}, clear=True):
                 test_initialization(mock_credential, expect_argument=False)
 
+
 def test_exclude_options():
     def assert_credentials_not_present(chain, *excluded_credential_classes):
         actual = {c.__class__ for c in chain.credentials}

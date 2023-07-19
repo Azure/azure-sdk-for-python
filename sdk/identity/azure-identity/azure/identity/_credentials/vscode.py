@@ -8,6 +8,7 @@ import sys
 from typing import cast, Any, Dict, Optional
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 from .._exceptions import CredentialUnavailableError
 from .._constants import AzureAuthorityHosts, AZURE_VSCODE_CLIENT_ID, EnvironmentVariables
 from .._internal import normalize_authority, validate_tenant_id
@@ -28,6 +29,7 @@ class _VSCodeCredentialBase(abc.ABC):
         super(_VSCodeCredentialBase, self).__init__()
 
         user_settings = get_user_settings()
+        self._is_chained = kwargs.pop("is_chained", False)
         self._cloud = user_settings.get("azure.cloud", "AzureCloud")
         self._refresh_token = None
         self._unavailable_reason = ""
@@ -154,16 +156,21 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
           Studio Code
         """
         if self._unavailable_reason:
-            error_message = self._unavailable_reason \
-                            + '\n' \
-                              "Visit https://aka.ms/azsdk/python/identity/vscodecredential/troubleshoot" \
-                              " to troubleshoot this issue."
+            error_message = (
+                self._unavailable_reason + "\n"
+                "Visit https://aka.ms/azsdk/python/identity/vscodecredential/troubleshoot"
+                " to troubleshoot this issue."
+            )
             raise CredentialUnavailableError(message=error_message)
+        if self._is_chained:
+            try:
+                token = super(VisualStudioCodeCredential, self).get_token(*scopes, **kwargs)
+                return token
+            except ClientAuthenticationError as ex:
+                raise CredentialUnavailableError(message=ex.message) from ex
         return super(VisualStudioCodeCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(
-        self, *scopes: str, **kwargs: Any
-    ) -> Optional[AccessToken]:
+    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         self._client = cast(AadClient, self._client)
         return self._client.get_cached_access_token(scopes, **kwargs)
 
