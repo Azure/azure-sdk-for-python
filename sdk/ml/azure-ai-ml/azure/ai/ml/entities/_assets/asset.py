@@ -18,18 +18,20 @@ class Asset(Resource):
 
     This class should not be instantiated directly. Instead, use one of the child classes.
 
-    :param name: The name of the asset. If not specified, a random name will be generated.
-    :type name: str
-    :param version: The version of the asset. If not specified, a default value will be used.
-    :type version: str
-    :param description: The description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
+    :param name: The name of the asset. Defaults to a random GUID.
+    :type name: Optional[str]]
+    :param version: The version of the asset. Defaults to "1" if no name is provided, otherwise defaults to autoincrement
+        from the last registered version of the asset with that name. For a model name that has never been registered,
+        a default version will be assigned.
+    :type version: Optional[str]
+    :param description: The description of the resource. Defaults to None.
+    :type description: Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :type tags: Optional[dict[str, str]]
+    :param properties: The asset property dictionary. Defaults to None.
+    :type properties: Optional[dict[str, str]]
     :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :type kwargs: Optional[dict]
     """
 
     def __init__(
@@ -40,7 +42,7 @@ class Asset(Resource):
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         **kwargs,
-    ):
+    ) -> None:
         self._is_anonymous = kwargs.pop("is_anonymous", False)
         self._auto_increment_version = kwargs.pop("auto_increment_version", False)
         self.auto_delete_setting = kwargs.pop("auto_delete_setting", None)
@@ -89,7 +91,7 @@ class Asset(Resource):
 
         :param value: The asset version.
         :type value: str
-        :raises: ValidationException if value is not a string.
+        :raises ValidationException: Raised if value is not a string.
         """
         if value:
             if not isinstance(value, str):
@@ -115,8 +117,8 @@ class Asset(Resource):
         :type dest: Union[PathLike, str, IO[AnyStr]]
         :param kwargs: Additional arguments to pass to the YAML serializer.
         :type kwargs: dict
-        :raises: FileExistsError if dest is a file path and the file already exists.
-        :raises: IOError if dest is an open file and the file is not writable.
+        :raises FileExistsError: Raised if dest is a file path and the file already exists.
+        :raises IOError: Raised if dest is an open file and the file is not writable.
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()

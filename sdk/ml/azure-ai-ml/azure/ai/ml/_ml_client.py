@@ -99,23 +99,23 @@ class MLClient:
     :param credential: The credential to use for authentication.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Azure subscription ID. Optional for registry assets only. Defaults to None.
-    :type subscription_id: str
+    :type subscription_id: Optional[str]
     :param resource_group_name: The Azure resource group. Optional for registry assets only. Defaults to None.
-    :type resource_group_name: str
+    :type resource_group_name: Optional[str]
     :param workspace_name: The workspace to use in the client. Optional only for operations that are not
         workspace-dependent. Defaults to None.
-    :type workspace_name: str
+    :type workspace_name: Optional[str]
     :param registry_name: The registry to use in the client. Optional only for operations that are not
         workspace-dependent. Defaults to None.
-    :type registry_name: str
+    :type registry_name: Optional[str]
     :param show_progress: Specifies whether or not to display progress bars for long-running operations (e.g. customers
         may consider setting this to False if not using this SDK in an interactive setup). Defaults to True.
-    :type show_progress: bool
+    :type show_progress: Optional[bool]
     :param enable_telemetry: Specifies whether or not to enable telemetry. Will be overridden to False if not in a
         Jupyter Notebook. Defaults to True if in a Jupyter Notebook.
-    :type enable_telemetry: bool
+    :type enable_telemetry: Optional[bool]
     :param cloud: The cloud name to use. Defaults to "AzureCloud".
-    :type cloud: str
+    :type cloud: Optional[str]
     :raises ValueError: Raised if credential is None.
     :raises ~azure.ai.ml.ValidationException: Raised if both workspace_name and registry_name are provided.
 
@@ -520,13 +520,13 @@ class MLClient:
         :param credential: The credential object for the workspace.
         :type credential: ~azure.core.credentials.TokenCredential
         :param path: The path to the configuration file or starting directory to search for the configuration file
-            within. Defaults to None which indicates the current directory.
-        :type path: Union[os.PathLike, str]
+            within. Defaults to None, indicating the current directory will be used.
+        :type path: Optional[Union[os.PathLike, str]]
         :param file_name: The configuration file name to search for when path is a directory path. Defaults to
             "config.json".
-        :type file_name: str
+        :type file_name: Optional[str]
         :param cloud: The cloud name to use. Defaults to AzureCloud.
-        :type cloud: str
+        :type cloud: Optional[str]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if "config.json", or file_name if overridden,
             cannot be found in directory. Details will be provided in the error message.
         :returns: The client for an existing Azure ML Workspace.
@@ -809,7 +809,7 @@ class MLClient:
         """The name of the workspace where workspace-dependent operations will be executed.
 
         :return: The name of the default workspace.
-        :rtype: str
+        :rtype: Optional[str]
         """
         return self._operation_scope.workspace_name
 

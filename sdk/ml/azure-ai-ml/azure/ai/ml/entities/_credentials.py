@@ -68,7 +68,7 @@ class AccountKeyConfiguration(RestTranslatableMixin, DictMixin):
         self,
         *,
         account_key: str,
-    ):
+    ) -> None:
         self.type = camel_to_snake(CredentialsType.ACCOUNT_KEY)
         self.account_key = account_key
 
@@ -94,7 +94,7 @@ class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
         self,
         *,
         sas_token: str,
-    ):
+    ) -> None:
         super().__init__()
         self.type = camel_to_snake(CredentialsType.SAS)
         self.sas_token = sas_token
@@ -141,7 +141,7 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
             :caption: Configuring a personal access token configuration for a WorkspaceConnection.
     """
 
-    def __init__(self, *, pat: str):
+    def __init__(self, *, pat: str) -> None:
         super().__init__()
         self.type = camel_to_snake(ConnectionAuthType.PAT)
         self.pat = pat
@@ -204,14 +204,14 @@ class BaseTenantCredentials(RestTranslatableMixin, DictMixin, ABC):
 
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
-    :param authority_url: The authority URL.
-    :type authority_url: str
+    :param authority_url: The authority URL. If None specified, a URL will be retrieved from the metadata in the cloud.
+    :type authority_url: Optional[str]
     :param resource_url: The resource URL.
-    :type resource_url: str
+    :type resource_url: Optional[str]
     :param tenant_id: The tenant ID.
-    :type tenant_id: str
+    :type tenant_id: Optional[str]
     :param client_id: The client ID.
-    :type client_id: str
+    :type client_id: Optional[str]
     """
 
     def __init__(
@@ -233,6 +233,8 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
 
     :param client_secret: The client secret.
     :type client_secret: str
+    :param kwargs: Additional arguments to pass to the parent class.
+    :type kwargs: Optional[dict]
     """
 
     def __init__(
@@ -306,7 +308,7 @@ class CertificateConfiguration(BaseTenantCredentials):
         certificate: Optional[str] = None,
         thumbprint: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         super().__init__(**kwargs)
         self.type = CredentialsType.CERTIFICATE
         self.certificate = certificate
@@ -408,9 +410,13 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
     """Managed Identity credential configuration.
 
     :param client_id: The client ID of the managed identity.
-    :type client_id: str
+    :type client_id: Optional[str]
     :param resource_id: The resource ID of the managed identity.
-    :type resource_id: str
+    :type resource_id: Optional[str]
+    :param object_id: The object ID.
+    :type object_id: Optional[str]
+    :param principal_id: The principal ID.
+    :type principal_id: Optional[str]
     """
 
     def __init__(
@@ -595,7 +601,7 @@ class IdentityConfiguration(RestTranslatableMixin):
     :param type: The type of managed identity.
     :type type: str
     :param user_assigned_identities: A list of ManagedIdentityConfiguration objects.
-    :type user_assigned_identities: list[~azure.ai.ml.entities.ManagedIdentityConfiguration]
+    :type user_assigned_identities: Optional[list[~azure.ai.ml.entities.ManagedIdentityConfiguration]]
     """
 
     def __init__(
@@ -739,9 +745,9 @@ class NoneCredentialConfiguration(RestTranslatableMixin):
 class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
     """Access Key Credentials.
 
-    :param access_key_id: access key id
+    :param access_key_id: The access key ID.
     :type access_key_id: str
-    :param secret_access_key: secret access key
+    :param secret_access_key: The secrete access key.
     :type secret_access_key: str
     """
 
@@ -750,7 +756,7 @@ class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
         *,
         access_key_id: str,
         secret_access_key: str,
-    ):
+    ) -> None:
         super().__init__()
         self.type = camel_to_snake(ConnectionAuthType.ACCESS_KEY)
         self.access_key_id = access_key_id

@@ -111,69 +111,70 @@ def spark(
     """Creates a Spark object which can be used inside a dsl.pipeline function or used as a standalone Spark job.
 
     :param experiment_name:  The name of the experiment the job will be created under.
-    :type experiment_name: str
+    :type experiment_name: Optional[str]
     :param name: The name of the job.
-    :type name: str
+    :type name: Optional[str]
     :param display_name: The job display name.
-    :type display_name: str
-    :param description: The description of the job.
-    :type description: str
-    :param tags: The dictionary of tags for the job. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :type display_name: Optional[str]
+    :param description: The description of the job. Defaults to None.
+    :type description: Optional[str]
+    :param tags: The dictionary of tags for the job. Tags can be added, removed, and updated. Defaults to None.
+    :type tags: Optional[dict[str, str]]
     :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
         to a remote location.
-    :type code: Union[str, os.PathLike]
+    :type code: Optional[Union[str, os.PathLike]]
     :param entry: The file or class entry point.
-    :type entry: Union[dict[str, str], ~azure.ai.ml.entities.SparkJobEntry]
-    :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
-    :type py_files: list[str]
-    :param jars: The list of .JAR files to include on the driver and executor classpaths.
-    :type jars: list[str]
-    :param files: The list of files to be placed in the working directory of each executor.
-    :type files: list[str]
+    :type entry: Optional[Union[dict[str, str], ~azure.ai.ml.entities.SparkJobEntry]]
+    :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps. Defaults to None.
+    :type py_files: Optional[list[str]]
+    :param jars: The list of .JAR files to include on the driver and executor classpaths. Defaults to None.
+    :type jars: Optional[list[str]]
+    :param files: The list of files to be placed in the working directory of each executor. Defaults to None.
+    :type files: Optional[list[str]]
     :param archives: The list of archives to be extracted into the working directory of each executor.
-    :type archives: list[str]
+        Defaults to None.
+    :type archives: Optional[list[str]]
     :param identity: The identity that the Spark job will use while running on compute.
-    :type identity: Union[
+    :type identity: Optional[Union[
         dict[str, str],
         ~azure.ai.ml.entities.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities.AmlTokenConfiguration,
-        ~azure.ai.ml.entities.UserIdentityConfiguration]
+        ~azure.ai.ml.entities.UserIdentityConfiguration]]
     :param driver_cores: The number of cores to use for the driver process, only in cluster mode.
-    :type driver_cores: int
+    :type driver_cores: Optional[int]
     :param driver_memory: The amount of memory to use for the driver process, formatted as strings with a size unit
         suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
-    :type driver_memory: str
+    :type driver_memory: Optional[str]
     :param executor_cores: The number of cores to use on each executor.
-    :type executor_cores: int
+    :type executor_cores: Optional[int]
     :param executor_memory: The amount of memory to use per executor process, formatted as strings with a size unit
         suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
-    :type executor_memory: str
+    :type executor_memory: Optional[str]
     :param executor_instances: The initial number of executors.
-    :type executor_instances: int
+    :type executor_instances: Optional[int]
     :param dynamic_allocation_enabled: Whether to use dynamic resource allocation, which scales the number of executors
         registered with this application up and down based on the workload.
-    :type dynamic_allocation_enabled: bool
+    :type dynamic_allocation_enabled: Optional[bool]
     :param dynamic_allocation_min_executors: The lower bound for the number of executors if dynamic allocation is
         enabled.
-    :type dynamic_allocation_min_executors: int
+    :type dynamic_allocation_min_executors: Optional[int]
     :param dynamic_allocation_max_executors: The upper bound for the number of executors if dynamic allocation is
         enabled.
-    :type dynamic_allocation_max_executors: int
-    :param conf: A dictionary with pre-defined Spark configurations key and values.
-    :type conf: dict[str, str]
+    :type dynamic_allocation_max_executors: Optional[int]
+    :param conf: A dictionary with pre-defined Spark configurations key and values. Defaults to None.
+    :type conf: Optional[dict[str, str]]
     :param environment: The Azure ML environment to run the job in.
-    :type environment: Union[str, ~azure.ai.ml.entities.Environment]
-    :param inputs: A mapping of input names to input data used in the job.
-    :type inputs: dict[str, ~azure.ai.ml.Input]
-    :param outputs: A mapping of output names to output data used in the job.
-    :type outputs: dict[str, ~azure.ai.ml.Output]
+    :type environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
+    :param inputs: A mapping of input names to input data used in the job. Defaults to None.
+    :type inputs: Optional[dict[str, ~azure.ai.ml.Input]]
+    :param outputs: A mapping of output names to output data used in the job. Defaults to None.
+    :type outputs: Optional[dict[str, ~azure.ai.ml.Output]]
     :param args: The arguments for the job.
-    :type args: str
+    :type args: Optional[str]
     :param compute: The compute resource the job runs on.
-    :type compute: str
+    :type compute: Optional[str]
     :param resources: The compute resource configuration for the job.
-    :type resources: Union[dict, ~azure.ai.ml.entities.SparkResourceConfiguration]
+    :type resources: Optional[Union[dict, ~azure.ai.ml.entities.SparkResourceConfiguration]]
 
     .. admonition:: Example:
         :class: tip

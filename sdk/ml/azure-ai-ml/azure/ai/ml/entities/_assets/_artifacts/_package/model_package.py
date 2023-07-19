@@ -31,10 +31,10 @@ class PackageInputPathId:
     """Package input path specified with a resource ID.
 
     :param input_path_type: The type of the input path. Accepted values are "Url", "PathId", and "PathVersion".
-    :type input_path_type: str
+    :type input_path_type: Optional[str]
     :param resource_id: The resource ID of the input path. e.g. "azureml://subscriptions/<>/resourceGroups/
     <>/providers/Microsoft.MachineLearningServices/workspaces/<>/data/<>/versions/<>".
-    :type resource_id: str
+    :type resource_id: Optional[str]
     """
 
     def __init__(self, *, input_path_type: Optional[str] = None, resource_id: Optional[str] = None) -> None:
@@ -60,11 +60,11 @@ class PackageInputPathVersion:
     """Package input path specified with a resource name and version.
 
     :param input_path_type: The type of the input path. Accepted values are "Url", "PathId", and "PathVersion".
-    :type input_path_type: str
+    :type input_path_type: Optional[str]
     :param resource_name: The resource name of the input path.
-    :type resource_name: str
+    :type resource_name: Optional[str]
     :param resource_version: The resource version of the input path.
-    :type resource_version: str
+    :type resource_version: Optional[str]
     """
 
     def __init__(
@@ -101,10 +101,10 @@ class PackageInputPathUrl:
     """Package input path specified with a url.
 
     :param input_path_type: The type of the input path. Accepted values are "Url", "PathId", and "PathVersion".
-    :type input_path_type: str
+    :type input_path_type: Optional[str]
     :param url: The url of the input path. e.g. "azureml://subscriptions/<>/resourceGroups/
     <>/providers/Microsoft.MachineLearningServices/workspaces/data/<>/versions/<>".
-    :type url: str
+    :type url: Optional[str]
     """
 
     def __init__(self, *, input_path_type: Optional[str] = None, url: Optional[str] = None) -> None:
@@ -130,14 +130,14 @@ class ModelPackageInput:
     """Model package input.
 
     :param type: The type of the input.
-    :type type: str
+    :type type: Optional[str]
     :param path: The path of the input.
-    :type path: Union[~azure.ai.ml.entities.PackageInputPathId, ~azure.ai.ml.entities.PackageInputPathUrl,
-        ~azure.ai.ml.entities.PackageInputPathVersion]
+    :type path: Optional[Union[~azure.ai.ml.entities.PackageInputPathId, ~azure.ai.ml.entities.PackageInputPathUrl,
+        ~azure.ai.ml.entities.PackageInputPathVersion]]
     :param mode: The input mode.
-    :type mode: str
+    :type mode: Optional[str]
     :param mount_path: The mount path for the input.
-    :type mount_path: str
+    :type mount_path: Optional[str]
     """
 
     def __init__(
@@ -183,15 +183,15 @@ class ModelPackage(Resource, PackageRequest):
     :param base_environment_source: The base environment source of the model package.
     :type base_environment_source: ~azure.ai.ml.entities.BaseEnvironment
     :param target_environment_version: The version of the model package.
-    :type target_environment_version: str
+    :type target_environment_version: Optional[str]
     :param environment_variables: The environment variables of the model package.
-    :type environment_variables: dict
+    :type environment_variables: Optional[dict[str, str]]
     :param inputs: The inputs of the model package.
-    :type inputs: list[~azure.ai.ml.entities.ModelPackageInput]
+    :type inputs: Optional[list[~azure.ai.ml.entities.ModelPackageInput]]
     :param model_configuration: The model configuration.
-    :type model_configuration: ~azure.ai.ml.entities.ModelConfiguration
+    :type model_configuration: Optional[~azure.ai.ml.entities.ModelConfiguration]
     :param tags: The tags of the model package.
-    :type tags: dict
+    :type tags: Optiona[dict[str, str]]
     """
 
     def __init__(
@@ -247,8 +247,8 @@ class ModelPackage(Resource, PackageRequest):
         :type dest: Union[PathLike, str, IO[AnyStr]]
         :param kwargs: Additional arguments to pass to the YAML serializer.
         :type kwargs: dict
-        :raises: FileExistsError if dest is a file path and the file already exists.
-        :raises: IOError if dest is an open file and the file is not writable.
+        :raises FileExistsError: Raised if dest is a file path and the file already exists.
+        :raises IOError: Raised if dest is an open file and the file is not writable.
         """
         yaml_serialized = self._to_dict()
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False)

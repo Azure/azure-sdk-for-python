@@ -32,30 +32,32 @@ from .artifact import ArtifactStorageInfo
 class Model(Artifact):  # pylint: disable=too-many-instance-attributes
     """Model for training and scoring.
 
-    :param name: The name of the model.
-    :type name: str
-    :param version: The version of the model.
-    :type version: str
+    :param name: The name of the model. Defaults to a random GUID.
+    :type name: Optional[str]
+    :param version: The version of the model. Defaults to "1" if no name is provided, otherwise defaults to autoincrement
+        from the last registered version of the model with that name. For a model name that has never been registered,
+        the version defaults to "1".
+    :type version: Optional[str]
     :param type: The storage format for this entity, used for NCD (Novel Class Discovery). Accepted values are
-    "custom_model", "mlflow_model", or "triton_model".
-    :type type: str
+        "custom_model", "mlflow_model", or "triton_model". Defaults to "custom_model".
+    :type type: Optional[str]
     :param utc_time_created: The date and time when the model was created, in
-        UTC ISO 8601 format. (e.g. '2020-10-19 17:44:02.096572')
-    :type utc_time_created: str
-    :param flavors: The flavors in which the model can be interpreted.
-    :type flavors: Dict[str, Any]
-    :param path: A remote uri or a local path pointing to a model.
-    :type path: str
-    :param description: The description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param stage: The stage of the resource.
-    :type stage: str
+        UTC ISO 8601 format. (e.g. '2020-10-19 17:44:02.096572').
+    :type utc_time_created: Optional[str]
+    :param flavors: The flavors in which the model can be interpreted. Defaults to None.
+    :type flavors: Optional[dict[str, Any]]
+    :param path: A remote uri or a local path pointing to a model. Defaults to None.
+    :type path: Optional[str]
+    :param description: The description of the resource. Defaults to None
+    :type description: Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :type tags: Optional[dict[str, str]]
+    :param properties: The asset property dictionary. Defaults to None.
+    :type properties: Optional[dict[str, str]]
+    :param stage: The stage of the resource. Defaults to None.
+    :type stage: Optional[str]
     :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :type kwargs: Optional[dict]
 
     .. admonition:: Example:
 

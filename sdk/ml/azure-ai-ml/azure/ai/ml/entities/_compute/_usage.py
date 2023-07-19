@@ -18,9 +18,9 @@ class UsageName:
         """The usage name.
 
         :param value: The name of the resource.
-        :type value: str
+        :type value: Optional[str]
         :param localized_value: The localized name of the resource.
-        :type localized_value: str
+        :type localized_value: Optional[str]
         """
         self.value = value
         self.localized_value = localized_value
@@ -30,19 +30,19 @@ class Usage(RestTranslatableMixin):
     """AzureML resource usage.
 
     :param id: The resource ID.
-    :type id: str
+    :type id: Optional[str]
     :param aml_workspace_location: The region of the AzureML workspace specified by the ID.
-    :type aml_workspace_location: str
+    :type aml_workspace_location: Optional[str]
     :param type: The resource type.
-    :type type: str
+    :type type: Optional[str]
     :param unit: The unit of measurement for usage. Accepted value is "Count".
-    :type unit: Union[str, ~azure.ai.ml.entities.UsageUnit]
+    :type unit: Optional[Union[str, ~azure.ai.ml.entities.UsageUnit]]
     :param current_value: The current usage of the resource.
-    :type current_value: int
+    :type current_value: Optional[int]
     :param limit: The maximum permitted usage for the resource.
-    :type limit: int
+    :type limit: Optional[int]
     :param name: The name of the usage type.
-    :type name: ~azure.ai.ml.entities.UsageName
+    :type name: Optional[~azure.ai.ml.entities.UsageName]
     """
 
     def __init__(

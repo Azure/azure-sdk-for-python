@@ -22,11 +22,11 @@ class AutoScaleSettings:
     """Auto-scale settings for Synapse Spark compute.
 
     :param min_node_count: The minimum compute node count.
-    :type min_node_count: int
+    :type min_node_count: Optional[int]
     :param max_node_count: The maximum compute node count.
-    :type max_node_count: int
+    :type max_node_count: Optional[int]
     :param enabled: Specifies if auto-scale is enabled.
-    :type enabled: bool
+    :type enabled: Optional[bool]
 
     .. admonition:: Example:
         :class: tip
@@ -71,9 +71,9 @@ class AutoPauseSettings:
     """Auto pause settings for Synapse Spark compute.
 
     :param delay_in_minutes: The time delay in minutes before pausing cluster.
-    :type delay_in_minutes: int
-    :param enabled:  Specifies if auto-pause is enabled.
-    :type enabled: bool
+    :type delay_in_minutes: Optional[int]
+    :param enabled: Specifies if auto-pause is enabled.
+    :type enabled: Optional[bool]
 
     .. admonition:: Example:
         :class: tip
@@ -110,28 +110,26 @@ class SynapseSparkCompute(Compute):
 
     :param name: The name of the compute.
     :type name: str
-    :param description: The description of the resource.
-    :type description: str
-    :param tags: The set of resource tags defined as key/value pairs.
-    :type tags: Dict[str, str]
+    :param description: The description of the resource. Defaults to None.
+    :type description: Optional[str]
+    :param tags: The set of resource tags defined as key/value pairs. Defaults to None.
+    :type tags: Optional[[dict[str, str]]
     :param node_count: The number of nodes in the compute.
-    :type node_count: int
+    :type node_count: Optional[int]
     :param node_family: The node family of the compute.
-    :type node_family: str
+    :type node_family: Optional[str]
     :param node_size: The size of the node.
-    :type node_size: str
+    :type node_size: Optional[str]
     :param spark_version: The version of Spark to use.
-    :type spark_version: str
+    :type spark_version: Optional[str]
     :param identity: The configuration of identities that are associated with the compute cluster.
-    :type identity: ~azure.ai.ml.entities.IdentityConfiguration
+    :type identity: Optional[~azure.ai.ml.entities.IdentityConfiguration]
     :param scale_settings: The scale settings for the compute.
-    :type scale_settings: ~azure.ai.ml.entities.AutoScaleSettings
+    :type scale_settings: Optional[~azure.ai.ml.entities.AutoScaleSettings]
     :param auto_pause_settings: The auto pause settings for the compute.
-    :type auto_pause_settings: ~azure.ai.ml.entities.AutoPauseSettings
-    :param location: The resource location.
-    :type location: str
-    :param resource_id: The ARM resource ID of the underlying compute.
-    :type resource_id: str
+    :type auto_pause_settings: Optional[~azure.ai.ml.entities.AutoPauseSettings]
+    :param kwargs: Additional keyword arguments passed to the parent class.
+    :type kwargs: Optional[dict]
 
     .. admonition:: Example:
         :class: tip

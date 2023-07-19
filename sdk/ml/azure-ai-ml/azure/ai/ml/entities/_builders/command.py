@@ -94,65 +94,47 @@ class Command(BaseNode):
     You should not instantiate this class directly. Instead, you should
     create it using the builder function: command().
 
-    :param name: The name of the command.
-    :type name: str
-    :param description: The description of the command.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The job property dictionary.
-    :type properties: dict[str, str]
-    :param display_name: The display name of the job.
-    :type display_name: str
-    :param experiment_name: The name of the experiment the job will be created under. Defaults to current directory
-        name.
-    :type experiment_name: str
-    :param command: The command to be executed during job.
-    :type command: str
-    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
-        to a remote location.
-    :type code: str
     :param component: The ID or instance of the command component or job to be run for the step.
     :type component: Union[str, ~azure.ai.ml.entities.CommandComponent]
     :param compute: The compute target the job will run on.
-    :type compute: str
+    :type compute: Optional[str]
     :param inputs: A mapping of input names to input data sources used in the job.
-    :type inputs: dict[str, Union[
+    :type inputs: Optional[dict[str, Union[
         ~azure.ai.ml.Input,
         str,
         bool,
         int,
         float,
         Enum,
-        ]
-    ]
+        ]]]
     :param outputs: A mapping of output names to output data sources used in the job.
-    :type outputs: dict[str, Union[str, ~azure.ai.ml.Output]]
+    :type outputs: Optional[dict[str, Union[str, ~azure.ai.ml.Output]]]
     :param limits: The limits for the command component or job.
     :type limits: ~azure.ai.ml.entities.CommandJobLimits
     :param identity: The identity that the command job will use while running on compute.
-    :type identity: Union[
+    :type identity: Optional[Union[
         dict[str, str],
         ~azure.ai.ml.entities.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities.AmlTokenConfiguration,
-        ~azure.ai.ml.entities.UserIdentityConfiguration]
+        ~azure.ai.ml.entities.UserIdentityConfiguration]]
     :param distribution: The configuration for distributed jobs.
-    :type distribution: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
-        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
+    :type distribution: Optional[Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]]
     :param environment: The environment that the job will run in.
-    :type environment: Union[str, ~azure.ai.ml.entities.Environment]
+    :type environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
     :param environment_variables:  A dictionary of environment variable names and values.
         These environment variables are set on the process where the user script is being executed.
-    :type environment_variables: dict[str, str]
+    :type environment_variables: Optional[dict[str, str]]
     :param resources: The compute resource configuration for the command.
-    :type resources: ~azure.ai.ml.entities.JobResourceConfiguration
+    :type resources: Optional[~azure.ai.ml.entities.JobResourceConfiguration]
     :param services: The interactive services for the node. This is an experimental parameter, and may change at any
         time. Please see https://aka.ms/azuremlexperimental for more information.
-    :type services: dict[str, Union[~azure.ai.ml.entities.JobService, ~azure.ai.ml.entities.JupyterLabJobService,
+    :type services: Optional[dict[str, Union[~azure.ai.ml.entities.JobService,
+        ~azure.ai.ml.entities.JupyterLabJobService,
         ~azure.ai.ml.entities.SshJobService, ~azure.ai.ml.entities.TensorBoardJobService,
-        ~azure.ai.ml.entities.VsCodeJobService]]
+        ~azure.ai.ml.entities.VsCodeJobService]]]
     :param queue_settings: Queue settings for the job.
-    :type queue_settings: ~azure.ai.ml.entities.QueueSettings
+    :type queue_settings: Optional[~azure.ai.ml.entities.QueueSettings]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -257,7 +239,7 @@ class Command(BaseNode):
         """The configuration for the distributed command component or job.
 
         :rtype: Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
-        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
+            ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
         """
         return self._distribution
 
@@ -270,7 +252,7 @@ class Command(BaseNode):
 
         :param value: The configuration for distributed jobs.
         :type value: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
-        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
+            ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
         """
         if isinstance(value, dict):
             dist_schema = UnionField(
@@ -328,8 +310,8 @@ class Command(BaseNode):
     ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
         """The identity that the job will use while running on compute.
 
-        :rtype: Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
-        ~azure.ai.ml.UserIdentityConfiguration]
+        :rtype: Optional[Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
+            ~azure.ai.ml.UserIdentityConfiguration]]
         """
         return self._identity
 
@@ -344,7 +326,7 @@ class Command(BaseNode):
 
         :param value: The identity that the job will use while running on compute.
         :type value: Union[dict[str, str], ~azure.ai.ml.ManagedIdentityConfiguration,
-        ~azure.ai.ml.AmlTokenConfiguration, ~azure.ai.ml.UserIdentityConfiguration]
+            ~azure.ai.ml.AmlTokenConfiguration, ~azure.ai.ml.UserIdentityConfiguration]
         """
         if isinstance(value, dict):
             identity_schema = UnionField(
@@ -403,7 +385,7 @@ class Command(BaseNode):
     def command(self) -> Optional[str]:
         """Sets the command to be executed.
 
-        :rtype: str
+        :rtype: Optional[str]
         """
         # the same as code
         if not isinstance(self.component, CommandComponent):
@@ -433,7 +415,7 @@ class Command(BaseNode):
     def code(self) -> Optional[Union[str, PathLike]]:
         """The source code to run the job.
 
-        :rtype: Union[str, os.PathLike]
+        :rtype: Optional[Union[str, os.PathLike]]
         """
         # BaseNode is an _AttrDict to allow dynamic attributes, so that lower version of SDK can work with attributes
         # added in higher version of SDK.
@@ -481,21 +463,21 @@ class Command(BaseNode):
 
         :param instance_type: The type of compute instance to run the job on. If not specified, the job will run on
             the default compute target.
-        :type instance_type: Union[str, list[str]]
+        :type instance_type: Optional[Union[str, list[str]]]
         :param instance_count: The number of instances to run the job on. If not specified, the job will run on a
             single instance.
-        :type instance_count: int
+        :type instance_count: Optional[int]
         :param locations: The list of locations where the job will run. If not specified, the job will run on the
             default compute target.
-        :type locations: list[str]
+        :type locations: Optional[list[str]]
         :param properties: The properties of the job.
-        :type properties: dict
+        :type properties: Optional[dict]
         :param docker_args: The Docker arguments for the job.
-        :type docker_args: str
+        :type docker_args: Optional[str]
         :param shm_size: The size of the docker container's shared memory block. This should be in the
             format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
             b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
-        :type shm_size: str
+        :type shm_size: Optional[str]
 
         .. admonition:: Example:
             :class: tip
@@ -552,9 +534,9 @@ class Command(BaseNode):
         """Set QueueSettings for the job.
 
         :param job_tier: The job tier. Accepted values are "Spot", "Basic", "Standard", or "Premium".
-        :type job_tier: str
+        :type job_tier: Optional[str]
         :param priority:  The priority of the job on the compute. Defaults to "Medium".
-        :type priority: str
+        :type priority: Optional[str]
 
         .. admonition:: Example:
             :class: tip
@@ -608,40 +590,38 @@ class Command(BaseNode):
         :type primary_metric: str
         :param goal: The goal of the Sweep objective. Accepted values are "minimize" or "maximize".
         :type goal: str
-        :param sampling_algorithm: The sampling algorithm to use inside the search space. Defaults to "random".
-        Acceptable values are "random", "grid", or "bayesian".
-        :type sampling_algorithm: str
+        :param sampling_algorithm: The sampling algorithm to use inside the search space.
+            Acceptable values are "random", "grid", or "bayesian". Defaults to "random".
+        :type sampling_algorithm: Optional[str]
         :param compute: The target compute to run the node on. If not specified, the current node's compute
-        will be used.
-        :type compute: str
-        :param max_total_trials: The maximum number of trials to run. This value will overwrite value in
-        CommandJob.limits if specified.
-        :type max_total_trials: int
+            will be used.
+        :type compute: Optional[str]
+        :param max_total_trials: The maximum number of total trials to run. This value will overwrite value in
+            CommandJob.limits if specified.
+        :type max_total_trials: Optional[int]
         :param max_concurrent_trials: The maximum number of concurrent trials for the Sweep job.
-        :type max_concurrent_trials: int
-        :param max_total_trials: The maximum number of total trials for the Sweep Job.
-        :type max_total_trials: int
+        :type max_concurrent_trials: Optional[int]
         :param timeout: The maximum run duration in seconds, after which the job will be cancelled.
-        :type timeout: int
-        :param trial_timeout: The Sweep Job trial timeout value in seconds.
-        :type trial_timeout: int
+        :type timeout: Optional[int]
+        :param trial_timeout: The Sweep Job trial timeout value, in seconds.
+        :type trial_timeout: Optional[int]
         :param early_termination_policy: The early termination policy of the sweep node. Acceptable
-        values are "bandit", "median_stopping", or "truncation_selection".
-        :type early_termination_policy: Union[~azure.ai.ml.sweep.BanditPolicy,
-        ~azure.ai.ml.sweep.TruncationSelectionPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy, str]
+            values are "bandit", "median_stopping", or "truncation_selection". Defaults to None.
+        :type early_termination_policy: Optional[Union[~azure.ai.ml.sweep.BanditPolicy,
+            ~azure.ai.ml.sweep.TruncationSelectionPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy, str]]
         :param identity: The identity that the job will use while running on compute.
-        :type identity: Union[
+        :type identity: Optional[Union[
             ~azure.ai.ml.ManagedIdentityConfiguration,
             ~azure.ai.ml.AmlTokenConfiguration,
-            ~azure.ai.ml.UserIdentityConfiguration]
+            ~azure.ai.ml.UserIdentityConfiguration]]
         :param queue_settings: The queue settings for the job.
-        :type queue_settings: ~azure.ai.ml.entities.QueueSettings
+        :type queue_settings: Optional[~azure.ai.ml.entities.QueueSettings]
         :param job_tier: **Experimental** The job tier. Accepted values are "Spot", "Basic",
-        "Standard", or "Premium".
-        :type job_tier: str
+            "Standard", or "Premium".
+        :type job_tier: Optional[str]
         :param priority: **Experimental** The compute priority. Accepted values are "low",
-        "medium", and "high".
-        :type priority: str
+            "medium", and "high". Defaults to "medium".
+        :type priority: Optional[str]
         :return: A Sweep node with the component from current Command node as its trial component.
         :rtype: ~azure.ai.ml.entities.Sweep
 
