@@ -195,6 +195,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert id_document.fields.get("CountryRegion").value == "USA"
         assert id_document.fields.get("Region").value == "Washington"
 
+    @pytest.mark.skip("Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/31214")
     @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -235,6 +236,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @pytest.mark.skip("Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/31214")
     @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
