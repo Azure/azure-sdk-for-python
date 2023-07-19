@@ -8,7 +8,7 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
-from .._internal import within_credential_chain
+from .._internal import get_token_request_additions, within_credential_chain
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -69,7 +69,9 @@ class ChainedTokenCredential:
         """Close the transport session of each credential in the chain."""
         self.__exit__()
 
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
+    def get_token(
+            self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Request a token from each chained credential, in order, returning the first token received.
 
         This method is called automatically by Azure SDK clients.
@@ -77,11 +79,15 @@ class ChainedTokenCredential:
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
+        :keyword str tenant_id: not used by this credential; any value provided will be ignored.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
+        additions = get_token_request_additions(claims, tenant_id)
+        kwargs.update(additions)
         within_credential_chain.set(True)
         history = []
         for credential in self.credentials:

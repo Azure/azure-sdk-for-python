@@ -8,7 +8,7 @@ from azure.core.credentials import AccessToken
 from .silent import SilentAuthenticationCredential
 from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
-from .._internal import AadClient, AadClientBase
+from .._internal import AadClient, AadClientBase, get_token_request_additions
 from .._internal.decorators import log_get_token
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 
@@ -77,6 +77,8 @@ class SharedTokenCacheCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
             attribute gives a reason.
         """
+        additions = get_token_request_additions(claims, tenant_id)
+        kwargs.update(additions)
         return self._credential.get_token(*scopes, **kwargs)
 
     @staticmethod

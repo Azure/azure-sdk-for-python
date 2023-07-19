@@ -5,7 +5,7 @@
 import os
 import logging
 from contextvars import ContextVar
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from urllib.parse import urlparse
 
@@ -41,6 +41,30 @@ def normalize_authority(authority: str) -> str:
 def get_default_authority() -> str:
     authority = os.environ.get(EnvironmentVariables.AZURE_AUTHORITY_HOST, KnownAuthorities.AZURE_PUBLIC_CLOUD)
     return normalize_authority(authority)
+
+
+def get_token_request_additions(claims: Optional[str], tenant_id: Optional[str]) -> Dict[str, str]:
+    """Return a dictionary that **kwargs can be updated with in a get_token method.
+
+    This method centralizes the logic of pulling keyword-only arguments out of get_token requests so that they're not
+    erroneously sent through to the pipeline if unspecified.
+
+    :param claims: additional claims required in the token, such as those returned in a resource provider's
+        claims challenge following an authorization failure
+    :type claims: str or None
+    :param tenant_id: optional tenant to include in the token request
+    :type tenant_id: str or None
+
+    :return: A dictionary containing each parameter as a key, mapped to its value, if the parameter has a non-None value
+    :rtype: dict
+    """
+
+    additions = {}
+    if claims is not None:
+        additions["claims"] = claims
+    if tenant_id is not None:
+        additions["tenant_id"] = tenant_id
+    return additions
 
 
 VALID_TENANT_ID_CHARACTERS = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" + "0123456789" + "-.")

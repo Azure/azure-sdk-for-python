@@ -156,6 +156,8 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
           Studio Code
         """
+        additions = get_token_request_additions(claims, tenant_id)
+        kwargs.update(additions)
         if self._unavailable_reason:
             error_message = (
                 self._unavailable_reason + "\n"
