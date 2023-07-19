@@ -36,10 +36,10 @@ from azure.core.pipeline import Pipeline
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
-from azure.core.pipeline.transport import (
+from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
     HttpRequest,
     AsyncioRequestsTransport,
-)  # pylint: disable=non-abstract-transport-import, no-name-in-module
+)
 
 
 class PyodideTransportResponse(AsyncHttpResponseImpl):
