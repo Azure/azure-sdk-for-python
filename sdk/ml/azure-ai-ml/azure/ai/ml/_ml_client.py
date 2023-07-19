@@ -79,6 +79,7 @@ from azure.ai.ml.entities import (
     Registry,
     Workspace,
 )
+from azure.ai.ml.entities._assets._artifacts.custom_asset import CustomAsset
 from azure.ai.ml.entities._assets import WorkspaceAssetReference
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.operations import (
@@ -97,6 +98,7 @@ from azure.ai.ml.operations import (
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
 )
+from azure.ai.ml.operations._custom_asset_operations import CustomAssetOperations
 from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
@@ -486,6 +488,16 @@ class MLClient:
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.SCHEDULE, self._schedules)
+        self._custom_assets = CustomAssetOperations(
+            self._operation_scope,
+            self._operation_config,
+            self._service_client_04_2023_preview,
+            self._operation_container,
+            self._credential,
+            _service_client_kwargs=kwargs,
+            **ops_kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.CUSTOM_ASSET, self._custom_assets)
 
         try:
             from azure.ai.ml.operations._virtual_cluster_operations import VirtualClusterOperations
@@ -792,6 +804,15 @@ class MLClient:
         :rtype: ScheduleOperations
         """
         return self._schedules
+
+    @property
+    def custom_assets(self) -> CustomAssetOperations:
+        """A collection of custom asset related operations.
+
+        :return: Custom Asset operations.
+        :rtype: CustomAssetOperations
+        """
+        return self._custom_assets
 
     @property
     def subscription_id(self) -> str:

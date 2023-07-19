@@ -187,6 +187,8 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
 class AzureMLResourceType:
     """AzureMLResourceType is a class that defines the resource types that are supported by the SDK/CLI."""
 
+    # TODO: Add custom types here
+
     CODE = "codes"
     """Code resource type."""
     COMPUTE = "computes"
@@ -231,6 +233,7 @@ class AzureMLResourceType:
     """Feature store entity resource type."""
     FEATURE_STORE = "feature_store"
     """Feature store resource type."""
+    CUSTOM_ASSET = "custom_asset" # TODO - do we want to break this into more detailed categories like PROMPT = "prompt"?
 
     NAMED_TYPES = {
         JOB,
@@ -240,8 +243,9 @@ class AzureMLResourceType:
         ONLINE_DEPLOYMENT,
         DATASTORE,
         SCHEDULE,
+        CUSTOM_ASSET,
     }
-    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY}
+    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY, CUSTOM_ASSET}
 
 
 class ArmConstants:
@@ -699,6 +703,8 @@ class AssetTypes:
     """Triton model asset type."""
     CUSTOM_MODEL = "custom_model"
     """Custom model asset type."""
+    CUSTOM_ASSET = "custom_asset"
+    # TODO: define custom asset types here (e.g. PROMPT = "prompt")
 
 
 class InputTypes:
