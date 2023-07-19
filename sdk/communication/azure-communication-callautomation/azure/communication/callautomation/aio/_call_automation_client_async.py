@@ -33,7 +33,8 @@ from ._content_downloader_async import ContentDownloader
 from .._utils import (
     serialize_phone_identifier,
     serialize_identifier,
-    serialize_communication_user_identifier
+    serialize_communication_user_identifier,
+    build_call_locator
 )
 if TYPE_CHECKING:
     from .._models  import (
@@ -510,28 +511,7 @@ class CallAutomationClient:
         # pylint:disable=protected-access
         channel_affinity: List['ChannelAffinity'] = kwargs.pop("channel_affinity", None) or []
         channel_affinity_internal = [c._to_generated() for c in channel_affinity]
-        call_locator: Optional[CallLocator] = None
-        if args:
-            call_locator = args[0]._to_generated()
-        else:
-            if "call_locator" in kwargs:
-                call_locator = kwargs["call_locator"]._to_generated()
-        if "group_call_id" in kwargs:
-            if call_locator is not None:
-                raise ValueError(
-                    "Received multiple values for call locator. "
-                    "Please provide either 'group_call_id' or 'server_call_id'."
-                )
-            call_locator = CallLocator(group_call_id=kwargs["group_call_id"], kind="groupCallLocator")
-        if "server_call_id" in kwargs:
-            if call_locator is not None:
-                raise ValueError(
-                    "Received multiple values for call locator. "
-                    "Please provide either 'group_call_id' or 'server_call_id'."
-                )
-            call_locator = CallLocator(server_call_id=kwargs["server_call_id"], kind="serverCallLocator")
-        if call_locator is None:
-            raise ValueError("Call locator required. Please provide either 'group_call_id' or 'server_call_id'.")
+        call_locator = build_call_locator(args, kwargs)
 
         start_recording_request = StartCallRecordingRequest(
             call_locator=call_locator,
@@ -544,7 +524,6 @@ class CallAutomationClient:
             external_storage_location = kwargs.pop("external_storage_location", None),
             channel_affinity = channel_affinity_internal
         )
-
         recording_state_result = await self._call_recording_client.start_recording(
             start_call_recording=start_recording_request,
             **kwargs
