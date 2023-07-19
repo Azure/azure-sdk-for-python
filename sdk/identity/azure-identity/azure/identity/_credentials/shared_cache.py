@@ -65,7 +65,7 @@ class SharedTokenCacheCredential:
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure
         :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
-            token.Defaults to False.
+            token. Defaults to False.
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
