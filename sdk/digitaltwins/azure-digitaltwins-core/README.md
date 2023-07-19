@@ -28,16 +28,6 @@ authentication as demonstrated below.
 
 ### How to use
 
-#### Import the packages
-Once the modules are installed, you can use them in your Python code by importing them as shown above. 
-For example, you could use the following code to create a Digital Twins Client and authenticate to an Azure Digital Twins instance:
-
-```Bash
-from azure.identity import DefaultAzureCredential
-from azure.digitaltwins.core import DigitalTwinsClient
-```
-
-
 #### Authentication, permission
 
 To create a new digital twins client, you need the endpoint to an Azure Digital Twin instance and credentials.
@@ -54,6 +44,9 @@ It attempts to use multiple credential types in an order until it finds a workin
 ##### Sample code
 
 ```python Snippet:dt_create_digitaltwins_service_client.py
+from azure.identity import DefaultAzureCredential
+from azure.digitaltwins.core import DigitalTwinsClient
+
 # DefaultAzureCredential supports different authentication mechanisms and determines the appropriate credential type based of the environment it is executing in.
 # It attempts to use multiple credential types in an order until it finds a working credential.
 
