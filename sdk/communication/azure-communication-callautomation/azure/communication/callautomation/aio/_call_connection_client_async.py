@@ -32,12 +32,12 @@ from .._generated.models import (
     TransferToParticipantRequest,
     PlayRequest,
     RecognizeRequest,
-    DtmfOptions,
-    PlayOptions,
-    RecognizeOptions,
-    SpeechOptions,
     ContinuousDtmfRecognitionRequest,
     SendDtmfRequest,
+    DtmfOptions,
+    SpeechOptions,
+    PlayOptions,
+    RecognizeOptions,
     MuteParticipantsRequest
 )
 from .._generated.models._enums import RecognizeInputType
@@ -48,7 +48,11 @@ from .._shared.utils import (
 if TYPE_CHECKING:
     from ._call_automation_client_async import CallAutomationClient
     from .._models  import (
-        CallInvite
+        FileSource,
+        TextSource,
+        SsmlSource,
+        CallInvite,
+        Choice
     )
     from azure.core.credentials_async import (
         AsyncTokenCredential
@@ -59,17 +63,7 @@ if TYPE_CHECKING:
     from .._shared.models import (
         CommunicationIdentifier,
     )
-    from .._generated.models._enums import (
-        DtmfTone,
-    )
-    from .._generated.models import (
-        Choice,
-    )
-    from .._models import (
-        FileSource,
-        TextSource,
-        SsmlSource,
-    )
+    from .._generated.models._enums import DtmfTone
     from azure.core.exceptions import HttpResponseError
 
 class CallConnectionClient(object): # pylint: disable=client-accepts-api-version-keyword
@@ -147,7 +141,15 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         callautomation_client: 'CallAutomationClient',
         call_connection_id: str
     ) -> 'CallConnectionClient':
-        """Internal constructor for sharing the pipeline with CallAutomationClient."""
+        """Internal constructor for sharing the pipeline with CallAutomationClient.
+
+        :param callautomation_client: An existing callautomation client.
+        :type callautomation_client: ~azure.communication.callautomation.CallAutomationClient
+        :param call_connection_id: Call Connection Id of ongoing call.
+        :type call_connection_id: str
+        :return: CallConnectionClient
+        :rtype: ~azure.communication.callautomation.CallConnectionClient
+        """
         return cls(None, None, call_connection_id, _callautomation_client=callautomation_client)
 
     @distributed_trace_async
@@ -158,7 +160,6 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
         call_properties = await self._call_connection_client.get_call(
             call_connection_id=self._call_connection_id,
             **kwargs)
@@ -317,22 +318,23 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace_async
     async def play_media(
         self,
-        play_source: Union['FileSource', 'TextSource', 'SsmlSource', List['FileSource'], List['TextSource'],
-        List['SsmlSource']],
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource',
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         play_to: List['CommunicationIdentifier'],
         *,
-        loop: Optional[bool] = False,
+        loop: bool = False,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
         """Play media to specific participant(s) in the call.
 
         :param play_source: A PlaySource representing the source to play.
-        :type play_source: Union[~azure.communication.callautomation.FileSource,
-         ~azure.communication.callautomation.TextSource, ~azure.communication.callautomation.SsmlSource,
-         List[~azure.communication.callautomation.FileSource], List[~azure.communication.callautomation.TextSource],
-         List[~azure.communication.callautomation.SsmlSource]]
-        :param play_to: The targets to play media to.
+        :type play_source: ~azure.communication.callautomation.FileSource or
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource or
+         list[~azure.communication.callautomation.FileSource or
+          ~azure.communication.callautomation.TextSource or
+          ~azure.communication.callautomation.SsmlSource]
         :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
@@ -342,11 +344,15 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if not isinstance(play_source, List):
-            play_source = [play_source]
+        play_source_single: Union['FileSource', 'TextSource', 'SsmlSource'] = None
+        if isinstance(play_source, list):
+            if play_source:  # Check if the list is not empty
+                play_source_single = play_source[0]
+        else:
+            play_source_single = play_source
 
         play_request = PlayRequest(
-            play_sources=[play_source._to_generated() for play_source in play_source],#pylint:disable=protected-access
+            play_sources=[play_source_single._to_generated()],#pylint:disable=protected-access
             play_to=[serialize_identifier(identifier)
                      for identifier in play_to],
             play_options=PlayOptions(loop=loop),
@@ -358,20 +364,22 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace_async
     async def play_media_to_all(
         self,
-        play_source: Union['FileSource', 'TextSource', 'SsmlSource', List['FileSource'], List['TextSource'],
-        List['SsmlSource']],
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource',
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         *,
-        loop: Optional[bool] = False,
+        loop: bool = False,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> None:
         """Play media to all participants in the call.
 
         :param play_source: A PlaySource representing the source to play.
-        :type play_source: Union[~azure.communication.callautomation.FileSource,
-         ~azure.communication.callautomation.TextSource, ~azure.communication.callautomation.SsmlSource,
-         List[~azure.communication.callautomation.FileSource], List[~azure.communication.callautomation.TextSource],
-         List[~azure.communication.callautomation.SsmlSource]]
+        :type play_source: ~azure.communication.callautomation.FileSource or
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource or
+         list[~azure.communication.callautomation.FileSource or
+          ~azure.communication.callautomation.TextSource or
+          ~azure.communication.callautomation.SsmlSource]
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
@@ -380,10 +388,14 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if not isinstance(play_source, List):
-            play_source = [play_source]
+        play_source_single: Union['FileSource', 'TextSource', 'SsmlSource'] = None
+        if isinstance(play_source, list):
+            if play_source:  # Check if the list is not empty
+                play_source_single = play_source[0]
+        else:
+            play_source_single = play_source
 
-        await self.play_media(play_source=play_source, play_to=[],
+        await self.play_media(play_source=play_source_single, play_to=[],
                               loop=loop,
                               operation_context=operation_context,
                               **kwargs)
@@ -391,21 +403,22 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
     @distributed_trace_async
     async def start_recognizing_media(
         self,
-        input_type : Union[str, 'RecognizeInputType'],
+        input_type: Union[str, 'RecognizeInputType'],
         target_participant: 'CommunicationIdentifier',
         *,
         initial_silence_timeout: Optional[int] = None,
-        play_prompt: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None,
-        interrupt_call_media_operation: Optional[bool] = False,
+        play_prompt: Optional[Union['FileSource', 'TextSource', 'SsmlSource',
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]]] = None,
+        interrupt_call_media_operation: bool = False,
         operation_context: Optional[str] = None,
-        interrupt_prompt: Optional[bool] = False,
+        interrupt_prompt: bool = False,
         dtmf_inter_tone_timeout: Optional[int] = None,
         dtmf_max_tones_to_collect: Optional[int] = None,
         dtmf_stop_tones: Optional[List[str or 'DtmfTone']] = None,
         speech_language: Optional[str] = None,
-        speech_recognition_model_endpoint_id: Optional[str] = None,
         choices: Optional[List['Choice']] = None,
         end_silence_timeout_in_ms: Optional[int] = None,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
         **kwargs
     ) -> None:
         """Recognize tones from specific participant in the call.
@@ -418,7 +431,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype initial_silence_timeout: int
         :keyword play_prompt: The source of the audio to be played for recognition.
         :paramtype play_prompt: ~azure.communication.callautomation.FileSource or
-        ~azure.communication.callautomation.TextSource or ~azure.communication.callautomation.SsmlSource
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource or
+         list[~azure.communication.callautomation.FileSource or
+          ~azure.communication.callautomation.TextSource or
+          ~azure.communication.callautomation.SsmlSource]
         :keyword interrupt_call_media_operation:
          If set recognize can barge into other existing queued-up/currently-processing requests.
         :paramtype interrupt_call_media_operation: bool
@@ -434,13 +451,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
         :keyword speech_language: Speech language to be recognized, If not set default is en-US.
         :paramtype speech_language: str
-        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
-        :paramtype speech_recognition_model_endpoint_id: str
         :keyword choices: Defines Ivr choices for recognize.
         :paramtype choices: list[~azure.communication.callautomation.models.Choice]
         :keyword end_silence_timeout_in_ms: The length of end silence when user stops speaking and cogservice
          send response.
         :paramtype end_silence_timeout_in_ms: int
+        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :paramtype speech_recognition_model_endpoint_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -452,6 +469,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             speech_language=speech_language,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id
         )
+
+        play_source_single: Union['FileSource', 'TextSource', 'SsmlSource'] = None
+        if isinstance(play_prompt, list):
+            if play_prompt:  # Check if the list is not empty
+                play_source_single = play_prompt[0]
+        else:
+            play_source_single = play_prompt
 
         if not isinstance(input_type, RecognizeInputType):
             input_type = RecognizeInputType[input_type.upper()]
@@ -476,13 +500,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             options.dtmf_options = dtmf_options
             options.speech_options = speech_options
         elif input_type == RecognizeInputType.CHOICES:
-            options.choices = choices
+            options.choices = [choice._to_generated() for choice in choices] #pylint:disable=protected-access
         else:
             raise NotImplementedError(f"{type(input_type).__name__} is not supported")
 
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
-            play_prompt=play_prompt._to_generated(),#pylint:disable=protected-access
+            play_prompt=play_source_single._to_generated() if play_source_single is not None else None,#pylint:disable=protected-access
             interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             recognize_options=options,
@@ -604,6 +628,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         **kwargs
     ) -> MuteParticipantsResult:
         """Mute participants from the call using identifier.
+
         :param target_participant: Participant to be muted from the call. Only ACS Users are supported. Required.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the request to the
