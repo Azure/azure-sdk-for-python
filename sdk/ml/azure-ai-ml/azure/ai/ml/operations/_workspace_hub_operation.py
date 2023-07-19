@@ -54,7 +54,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
     # @monitor_with_activity(logger, "WorkspaceHub.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[WorkspaceHub]:
-        """List all hub workspaces that the user has access to in the current
+        """List all WorkspaceHubs that the user has access to in the current
         resource group or subscription.
 
         :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
@@ -82,11 +82,11 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
     @distributed_trace
     # pylint: disable=arguments-renamed
     def get(self, name: str, **kwargs: Dict) -> WorkspaceHub:
-        """Get a hub workspace by name.
+        """Get a Workspace WorkspaceHub by name.
 
-        :param name: Name of the hub.
+        :param name: Name of the WorkspaceHub.
         :type name: str
-        :return: The hub with the provided name.
+        :return: The WorkspaceHub with the provided name.
         :rtype: WorkspaceHub
         """
 
@@ -109,13 +109,13 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
     ) -> LROPoller[WorkspaceHub]:
         """Create a new WorkspaceHub.
 
-        Returns the hub workspace if already exists.
+        Returns the WorkspaceHub if already exists.
 
-        :param workspace_hub: Hub definition.
+        :param workspace_hub: WorkspaceHub definition.
         :type workspace_hub: WorkspaceHub
         :type update_dependent_resources: boolean
-        :return: An instance of LROPoller that returns a Hub.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Hub]
+        :return: An instance of LROPoller that returns a WorkspaceHub.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.WorkspaceHub]
         """
 
         def get_callback():
@@ -138,10 +138,10 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         update_dependent_resources: bool = False,
         **kwargs: Dict,
     ) -> LROPoller[WorkspaceHub]:
-        """Update friendly name, description, tags, or PNA, manageNetworkSettings, encryption of a Hub.
+        """Update friendly name, description, tags, or PNA, manageNetworkSettings, encryption of a WorkspaceHub.
 
-        :param hub: Hub resource.
-        :type hub: WorkspaceHub
+        :param workspace_hub: WorkspaceHub resource.
+        :type workspace_hub: WorkspaceHub
         :return: An instance of LROPoller that returns a WorkspaceHub.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.WorkspaceHub]
         """
@@ -150,7 +150,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         if not (
             rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
         ):
-            raise ValidationError("{0} is not a hub workspace".format(workspace_hub.name))
+            raise ValidationError("{0} is not a WorkspaceHub".format(workspace_hub.name))
 
         def deserialize_callback(rest_obj):
             return WorkspaceHub._from_rest_object(rest_obj=rest_obj)
