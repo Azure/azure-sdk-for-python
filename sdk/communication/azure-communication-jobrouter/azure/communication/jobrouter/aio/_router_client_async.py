@@ -13,8 +13,7 @@ from typing import (
     List,
     Optional,
     Union,
-    overload,
-    Literal
+    overload
 )
 from urllib.parse import urlparse
 
@@ -63,6 +62,11 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
 
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
