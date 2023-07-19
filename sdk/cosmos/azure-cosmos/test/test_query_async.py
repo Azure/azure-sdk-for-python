@@ -780,13 +780,13 @@ class QueryTest(unittest.TestCase):
             max_item_count=1
         )
         pager = query_iterable.by_page()
-        pager.next()
+        await pager.__anext__()
         token = pager.continuation_token
 
-        second_page = [item async for item in pager.next()]
+        second_page = [item async for item in pager.__anext__()]
 
         pager = query_iterable.by_page(token)
-        second_page_fetched_with_continuation_token = [item async for item in pager.next()][0]
+        second_page_fetched_with_continuation_token = [item async for item in pager.__anext__()][0]
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
@@ -804,12 +804,12 @@ class QueryTest(unittest.TestCase):
             query=query,
             max_item_count=1)
         pager = query_iterable.by_page()
-        pager.next()
+        pager.__anext__()
         token = pager.continuation_token
-        second_page = [item async for item in pager.next()][0]
+        second_page = [item async for item in pager.__anext__()][0]
 
         pager = query_iterable.by_page(token)
-        second_page_fetched_with_continuation_token = [item async for item in pager.next()][0]
+        second_page_fetched_with_continuation_token = [item async for item in pager.__anext__()][0]
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
@@ -847,11 +847,11 @@ class QueryTest(unittest.TestCase):
         response_query = container.query_items(query, partition_key='123', max_item_count=100,
                                                response_continuation_token_limit_in_kb=1)
         pager = response_query.by_page()
-        pager.next()
+        await pager.__anext__()
         token = pager.continuation_token
         # Continuation token size should be below 1kb
         self.assertLessEqual(len(token.encode('utf-8')), 1024)
-        pager.next()
+        await pager.__anext__()
         token = pager.continuation_token
 
         # verify a second time
