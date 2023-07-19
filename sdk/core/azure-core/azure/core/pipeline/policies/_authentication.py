@@ -35,7 +35,9 @@ class _BearerTokenCredentialPolicyBase:
         tokens. Defaults to False.
     """
 
-    def __init__(self, credential: "TokenCredential", *scopes: str, **kwargs: Any) -> None:  # pylint:disable=unused-argument
+    def __init__(
+        self, credential: "TokenCredential", *scopes: str, **kwargs: Any
+    ) -> None:  # pylint:disable=unused-argument
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
         self._credential = credential
