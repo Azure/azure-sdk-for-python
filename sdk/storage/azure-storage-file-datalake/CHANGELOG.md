@@ -4,11 +4,6 @@
 
 ### Features Added
 
-## 12.12.0 (Unreleased)
-
-### Features Added
-
-
 ## 12.12.0 (2023-07-11)
 
 ### Features Added

@@ -8,11 +8,6 @@ all APIs that accept `version_id` will operate on the version ID provided during
 - Added optional keyword `version_id` to `get_blob_client` APIs which, if provided, will result in a version-aware `BlobClient` in which
 all APIs that accept `version_id` will operate on the version ID provided to the `get_blob_client` API call by default.
 
-## 12.17.0 (Unreleased)
-
-### Features Added
-
-
 ## 12.17.0 (2023-07-11)
 
 ### Features Added
