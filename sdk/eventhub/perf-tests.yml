@@ -6,7 +6,7 @@ PrimaryPackage: azure-eventhub
 
 PackageVersions:
 - azure-core: 1.26.1
-  azure-eventhub: 5.11.1
+  azure-eventhub: 5.11.3
 - azure-core: source
   azure-eventhub: source
 

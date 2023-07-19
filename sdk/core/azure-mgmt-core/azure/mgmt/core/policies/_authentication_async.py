@@ -40,7 +40,13 @@ AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 
 
 async def await_result(func, *args, **kwargs):
-    """If func returns an awaitable, await it."""
+    """If func returns an awaitable, await it.
+
+    :param callable func: Function to call
+    :param any args: Positional arguments to pass to func
+    :return: Result of func
+    :rtype: any
+    """
     result = func(*args, **kwargs)
     if inspect.isawaitable(result):
         return await result
@@ -68,6 +74,7 @@ class AsyncARMChallengeAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
         :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
         :returns: a bool indicating whether the policy should send the request
+        :rtype: bool
         """
 
         challenge = response.http_response.headers.get("WWW-Authenticate")
@@ -123,7 +130,7 @@ class AsyncAuxiliaryAuthenticationPolicy(
         :param request: The Pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        # pylint: disable=no-self-use,unused-argument
+        # pylint: disable=unused-argument
         return
 
     async def send(
@@ -133,6 +140,8 @@ class AsyncAuxiliaryAuthenticationPolicy(
 
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The pipeline response object
+        :rtype: ~azure.core.pipeline.PipelineResponse
         """
         await await_result(self.on_request, request)
         try:

@@ -236,6 +236,7 @@ class CallConnectionClient:
         sip_headers: Optional[Dict[str, str]] = None,
         voip_headers: Optional[Dict[str, str]] = None,
         operation_context: Optional[str] = None,
+        callback_url_override: Optional[str] = None,
         **kwargs
     ) -> TransferCallResult:
         """Transfer the call to a participant.
@@ -248,6 +249,8 @@ class CallConnectionClient:
         :paramtype voip_headers: dict[str, str]
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
+        :keyword callback_url_override: Url that overrides original callback URI for this request.
+        :paramtype callback_url_override: str
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -259,7 +262,8 @@ class CallConnectionClient:
         request = TransferToParticipantRequest(
             target_participant=serialize_identifier(target_participant),
             custom_context=user_custom_context,
-            operation_context=operation_context
+            operation_context=operation_context,
+            callback_uri_override=callback_url_override
         )
         result = await self._call_connection_client.transfer_to_participant(
             self._call_connection_id,
@@ -279,6 +283,7 @@ class CallConnectionClient:
         voip_headers: Optional[Dict[str, str]] = None,
         source_caller_id_number: Optional['PhoneNumberIdentifier'] = None,
         source_display_name: Optional[str] = None,
+        callback_url_override: Optional[str] = None,
         **kwargs
     ) -> AddParticipantResult:
         """Add a participant to the call.
@@ -300,6 +305,8 @@ class CallConnectionClient:
         :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
         :keyword source_display_name: Display name of the caller.
         :paramtype source_display_name: str
+        :keyword callback_url_override: Url that overrides original callback URI for this request.
+        :paramtype callback_url_override: str
         :return: AddParticipantResult
         :rtype: ~azure.communication.callautomation.AddParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -324,7 +331,8 @@ class CallConnectionClient:
             source_display_name=source_display_name,
             custom_context=user_custom_context,
             invitation_timeout=invitation_timeout,
-            operation_context=operation_context
+            operation_context=operation_context,
+            callback_uri_override=callback_url_override
         )
         response = await self._call_connection_client.add_participant(
             self._call_connection_id,
@@ -339,6 +347,7 @@ class CallConnectionClient:
         target_participant: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
+        callback_url_override: Optional[str] = None,
         **kwargs
     ) -> RemoveParticipantResult:
         """Remove a participant from the call.
@@ -347,13 +356,16 @@ class CallConnectionClient:
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
+        :keyword callback_url_override: Url that overrides original callback URI for this request.
+        :paramtype callback_url_override: str
         :return: RemoveParticipantResult
         :rtype: ~azure.communication.callautomation.RemoveParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         remove_participant_request = RemoveParticipantRequest(
             participant_to_remove=serialize_identifier(target_participant),
-            operation_context=operation_context
+            operation_context=operation_context,
+            callback_uri_override=callback_url_override
         )
         response = await self._call_connection_client.remove_participant(
             self._call_connection_id,

@@ -535,7 +535,7 @@ def _build_pipeline_parameter(func, *, user_provided_kwargs, group_default_kwarg
     # transform default values
     for left_args in parameters:
         if (
-            left_args.name not in transformed_kwargs.keys()
+            left_args.name not in transformed_kwargs
             and left_args.kind != Parameter.VAR_KEYWORD
             and left_args.name not in non_pipeline_inputs
         ):

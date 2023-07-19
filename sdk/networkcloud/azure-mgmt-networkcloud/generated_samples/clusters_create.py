@@ -26,7 +26,7 @@ from azure.mgmt.networkcloud import NetworkCloudMgmtClient
 def main():
     client = NetworkCloudMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="123e4567-e89b-12d3-a456-426655440000",
     )
 
     response = client.clusters.begin_create_or_update(
@@ -34,7 +34,7 @@ def main():
         cluster_name="clusterName",
         cluster_parameters={
             "extendedLocation": {
-                "name": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ExtendedLocation/customLocations/clusterManagerExtendedLocationName",
+                "name": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ExtendedLocation/customLocations/clusterManagerExtendedLocationName",
                 "type": "CustomLocation",
             },
             "location": "location",
@@ -60,10 +60,10 @@ def main():
                             "serialNumber": "BM1219YYY",
                         },
                     ],
-                    "networkRackId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/networkRacks/networkRackName",
+                    "networkRackId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/networkRacks/networkRackName",
                     "rackLocation": "Foo Datacenter, Floor 3, Aisle 9, Rack 2",
                     "rackSerialNumber": "AA1234",
-                    "rackSkuId": "/subscriptions/subscriptionId/providers/Microsoft.NetworkCloud/rackSkus/rackSkuName",
+                    "rackSkuId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/providers/Microsoft.NetworkCloud/rackSkus/rackSkuName",
                     "storageApplianceConfigurationData": [
                         {
                             "adminCredentials": {"password": "{password}", "username": "username"},
@@ -73,7 +73,7 @@ def main():
                         }
                     ],
                 },
-                "analyticsWorkspaceId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/microsoft.operationalInsights/workspaces/logAnalyticsWorkspaceName",
+                "analyticsWorkspaceId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/microsoft.operationalInsights/workspaces/logAnalyticsWorkspaceName",
                 "clusterLocation": "Foo Street, 3rd Floor, row 9",
                 "clusterServicePrincipal": {
                     "applicationId": "12345678-1234-1234-1234-123456789012",
@@ -106,10 +106,10 @@ def main():
                                 "serialNumber": "BM1219YYY",
                             },
                         ],
-                        "networkRackId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/networkRacks/networkRackName",
+                        "networkRackId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/networkRacks/networkRackName",
                         "rackLocation": "Foo Datacenter, Floor 3, Aisle 9, Rack 2",
                         "rackSerialNumber": "AA1234",
-                        "rackSkuId": "/subscriptions/subscriptionId/providers/Microsoft.NetworkCloud/rackSkus/rackSkuName",
+                        "rackSkuId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/providers/Microsoft.NetworkCloud/rackSkus/rackSkuName",
                         "storageApplianceConfigurationData": [
                             {
                                 "adminCredentials": {"password": "{password}", "username": "username"},
@@ -121,7 +121,7 @@ def main():
                     }
                 ],
                 "managedResourceGroupConfiguration": {"location": "East US", "name": "my-managed-rg"},
-                "networkFabricId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/networkFabrics/fabricName",
+                "networkFabricId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/networkFabrics/fabricName",
             },
             "tags": {"key1": "myvalue1", "key2": "myvalue2"},
         },
@@ -129,6 +129,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2022-12-12-preview/examples/Clusters_Create.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2023-05-01-preview/examples/Clusters_Create.json
 if __name__ == "__main__":
     main()
