@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping
+from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
 from azure.core.rest import HttpResponse, HttpRequest
@@ -31,13 +31,16 @@ class _BearerTokenCredentialPolicyBase:
     :param credential: The credential.
     :type credential: ~azure.core.credentials.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
+    :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) on all requested
+        tokens. Defaults to False.
     """
 
-    def __init__(self, credential: "TokenCredential", *scopes: str, **kwargs) -> None:  # pylint:disable=unused-argument
+    def __init__(self, credential: "TokenCredential", *scopes: str, **kwargs: Any) -> None:  # pylint:disable=unused-argument
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
         self._credential = credential
         self._token: Optional["AccessToken"] = None
+        self._enable_cae: bool = kwargs.get("enable_cae", False)
 
     @staticmethod
     def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
@@ -75,6 +78,8 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
     :param credential: The credential.
     :type credential: ~azure.core.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
+    :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) on all requested
+        tokens. Defaults to False.
     :raises: :class:`~azure.core.exceptions.ServiceRequestError`
     """
 
@@ -88,7 +93,8 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         self._enforce_https(request)
 
         if self._token is None or self._need_new_token:
-            self._token = self._credential.get_token(*self._scopes)
+            get_token_args: MutableMapping[str, Any] = {"enable_cae": True} if self._enable_cae else {}
+            self._token = self._credential.get_token(*self._scopes, **get_token_args)
         self._update_headers(request.http_request.headers, self._token.token)
 
     def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs) -> None:
@@ -100,6 +106,9 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         :param ~azure.core.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
+        if self._enable_cae:
+            # Only set enable_cae in kwargs if it's enabled on the policy.
+            kwargs["enable_cae"] = kwargs.get("enable_cae", self._enable_cae)
         self._token = self._credential.get_token(*scopes, **kwargs)
         self._update_headers(request.http_request.headers, self._token.token)
 

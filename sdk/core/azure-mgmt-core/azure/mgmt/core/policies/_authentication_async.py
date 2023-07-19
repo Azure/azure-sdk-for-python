@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, Awaitable, Optional
+from typing import TypeVar, Awaitable, Optional, TYPE_CHECKING, Any
 import inspect
 
 from azure.core.pipeline.policies import (
@@ -33,6 +33,9 @@ from azure.core.pipeline.policies import (
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 from ._authentication import _parse_claims_challenge, _AuxiliaryAuthenticationPolicyBase
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -62,6 +65,11 @@ class AsyncARMChallengeAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
     :param ~azure.core.credentials.TokenCredential credential: credential for authorizing requests
     :param str scopes: required authentication scopes
     """
+
+    def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: Any) -> None:
+        # ARM supports Continuous Access Evaluation (CAE). This policy will enable it by default.
+        kwargs.setdefault("enable_cae", True)
+        super().__init__(credential, *scopes, **kwargs)
 
     # pylint:disable=unused-argument
     async def on_challenge(
