@@ -149,7 +149,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         self._jobs = (jobs or {}) if isinstance(component, str) else {}
 
         self.component: Union[PipelineComponent, str] = component
-        if "type" not in kwargs.keys():
+        if "type" not in kwargs:
             kwargs["type"] = JobType.PIPELINE
         if isinstance(component, PipelineComponent):
             description = component.description if description is None else description

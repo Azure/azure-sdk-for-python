@@ -29,13 +29,12 @@ def main():
         subscription_id="2bf4a339-294d-4c25-b0b2-ef649e9f5c27",
     )
 
-    response = client.firewalls.save_log_profile(
+    client.firewalls.save_log_profile(
         resource_group_name="firewall-rg",
         firewall_name="firewall1",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/paloaltonetworks/resource-manager/PaloAltoNetworks.Cloudngfw/preview/2022-08-29-preview/examples/Firewalls_saveLogProfile_MinimumSet_Gen.json
+# x-ms-original-file: specification/paloaltonetworks/resource-manager/PaloAltoNetworks.Cloudngfw/stable/2022-08-29/examples/Firewalls_saveLogProfile_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

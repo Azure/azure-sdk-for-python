@@ -15,8 +15,7 @@ from io import BytesIO
 from pathlib import Path
 from threading import Lock
 
-import requests
-
+from ._http_utils import HttpPipeline
 from .utils import get_base_directory_for_cache
 
 _logger = logging.getLogger(__name__)
@@ -169,15 +168,21 @@ class ArtifactCache:
             token = credential.get_token("https://management.azure.com/.default")
             header = {"Authorization": "Bearer " + token.token}
 
+            # The underlying HttpTransport is meant to be user configurable.
+            # MLClient instances have a user configured Pipeline for sending http requests
+            # TODO: Replace this with MlCLient._requests_pipeline
+            requests_pipeline = HttpPipeline()
             url = (
                 f"https://{organization_name}.vsblob.visualstudio.com/_apis/clienttools/ArtifactTool/release?"
                 f"osName={os_name}&arch=AMD64"
             )
-            response = requests.get(url, headers=header)
+            response = requests_pipeline.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+                url, headers=header
+            )
             if response.status_code == 200:
                 artifacts_tool_path = tempfile.mktemp()  # nosec B306
                 artifacts_tool_uri = response.json()["uri"]
-                response = requests.get(artifacts_tool_uri)
+                response = requests_pipeline.get(artifacts_tool_uri)  # pylint: disable=too-many-function-args
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
                     zip_file.extractall(artifacts_tool_path)
                 os.environ["AZURE_DEVOPS_EXT_ARTIFACTTOOL_OVERRIDE_PATH"] = str(artifacts_tool_path.resolve())

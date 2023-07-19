@@ -89,7 +89,7 @@ class InputOutputBase(ABC):
         super(InputOutputBase, self).__init__(**kwargs)
 
     @abstractmethod
-    def _build_data(self, data, key=None):  # pylint: disable=unused-argument, no-self-use
+    def _build_data(self, data, key=None):  # pylint: disable=unused-argument
         """Validate if data matches type and translate it to Input/Output acceptable type."""
 
     @abstractmethod

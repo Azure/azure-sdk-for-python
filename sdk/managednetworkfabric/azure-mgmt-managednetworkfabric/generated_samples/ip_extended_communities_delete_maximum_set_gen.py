@@ -26,15 +26,15 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     client.ip_extended_communities.begin_delete(
-        resource_group_name="rgIpExtendedCommunityLists",
-        ip_extended_community_name="example_ipExtendedCommunity",
+        resource_group_name="example-rg",
+        ip_extended_community_name="example-ipExtendedCommunity",
     ).result()
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/IpExtendedCommunities_Delete_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/IpExtendedCommunities_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
