@@ -5,7 +5,7 @@ import logging
 import re
 import uuid
 from abc import ABC
-from typing import Dict, Union
+from typing import Dict, Union  # pylint: disable=unused-import
 
 from marshmallow import ValidationError
 
