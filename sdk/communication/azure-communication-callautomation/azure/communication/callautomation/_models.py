@@ -576,8 +576,8 @@ class Choice(object):
     def _to_generated(self):
         return ChoiceInternal(label=self.label, phrases=self.phrases, tone=self.tone)
 
-class MuteParticipantsResult(object):
-    """The response payload for muting participants from the call.
+class MuteParticipantResult(object):
+    """The response payload for muting participant from the call.
 
     :keyword operation_context: The operation context provided by client.
     :paramtype operation_context: str
@@ -596,8 +596,8 @@ class MuteParticipantsResult(object):
         self.operation_context = operation_context
 
     @classmethod
-    def _from_generated(cls, mute_participants_result_generated: 'MuteParticipantsResultRest'):
-        return cls(operation_context=mute_participants_result_generated.operation_context)
+    def _from_generated(cls, mute_participant_result_generated: 'MuteParticipantsResultRest'):
+        return cls(operation_context=mute_participant_result_generated.operation_context)
 
 class SendDtmfResult(object):
     """The response payload for send Dtmf.

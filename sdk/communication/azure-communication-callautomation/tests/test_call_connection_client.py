@@ -175,7 +175,7 @@ class TestCallConnectionClient(unittest.TestCase):
         self.assertFalse(raised, 'Expected is no exception raised')
         self.assertEqual(self.operation_context, response.operation_context)
 
-    def test_mute_participants(self):
+    def test_mute_participant(self):
         raised = False
 
         def mock_send(*_, **__):
@@ -189,7 +189,7 @@ class TestCallConnectionClient(unittest.TestCase):
             transport=Mock(send=mock_send))
         user = CommunicationUserIdentifier(self.communication_user_id)
         try:
-            response = call_connection.mute_participants(user)
+            response = call_connection.mute_participant(user)
         except:
             raised = True
             raise

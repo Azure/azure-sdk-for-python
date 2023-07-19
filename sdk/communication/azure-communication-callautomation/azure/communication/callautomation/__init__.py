@@ -21,7 +21,7 @@ from ._models import (
     RemoveParticipantResult,
     TransferCallResult,
     ChannelAffinity,
-    MuteParticipantsResult,
+    MuteParticipantResult,
     SendDtmfResult
 )
 from ._shared.models import (
@@ -67,7 +67,7 @@ __all__ = [
     "AddParticipantResult",
     "RemoveParticipantResult",
     "TransferCallResult",
-    "MuteParticipantsResult",
+    "MuteParticipantResult",
     "SendDtmfResult",
 
     # common ACS communication identifier
