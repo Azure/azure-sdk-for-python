@@ -388,7 +388,7 @@ class CallConnectionClient:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        play_source_single: MediaSources = None
+        play_source_single: Optional[MediaSources] = None
         if isinstance(play_source, list):
             if play_source:  # Check if the list is not empty
                 play_source_single = play_source[0]
@@ -431,15 +431,8 @@ class CallConnectionClient:
             "The method 'play_media_to_all' is deprecated. Please use 'play_media' instead.",
             DeprecationWarning
         )
-        play_source_single = None
-        if isinstance(play_source, list):
-            if play_source:  # Check if the list is not empty
-                play_source_single = play_source[0]
-        else:
-            play_source_single = play_source
-
         self.play_media(
-            play_source=play_source_single,
+            play_source=play_source,
             loop=loop,
             operation_context=operation_context,
             **kwargs
@@ -452,8 +445,7 @@ class CallConnectionClient:
         target_participant: 'CommunicationIdentifier',
         *,
         initial_silence_timeout: Optional[int] = None,
-        play_prompt: Optional[Union['FileSource', 'TextSource', 'SsmlSource',
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]]] = None,
+        play_prompt: Optional[Union[MediaSources, List[MediaSources]]] = None,
         interrupt_call_media_operation: bool = False,
         operation_context: Optional[str] = None,
         interrupt_prompt: bool = False,
@@ -507,7 +499,7 @@ class CallConnectionClient:
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id
         )
 
-        play_source_single: Union['FileSource', 'TextSource', 'SsmlSource'] = None
+        play_source_single: Optional[MediaSources] = None
         if isinstance(play_prompt, list):
             if play_prompt:  # Check if the list is not empty
                 play_source_single = play_prompt[0]

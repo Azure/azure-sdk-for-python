@@ -269,26 +269,16 @@ class CallAutomationClient:
             "The method 'create_group_call' is deprecated. Please use 'create_call' instead.",
             DeprecationWarning
         )
-        user_custom_context = None
-        if sip_headers or voip_headers:
-            user_custom_context = CustomContext(
-                voip_headers=voip_headers,
-                sip_headers=sip_headers
-            )
-        create_call_request = CreateCallRequest(
-            targets=[serialize_identifier(p) for p in target_participants],
-            callback_uri=callback_url,
-            source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
+        return self.create_call(
+            target_participant=target_participants,
+            callback_url=callback_url,
+            source_caller_id_number=source_caller_id_number,
             source_display_name=source_display_name,
-            source_identity=serialize_communication_user_identifier(self.source),
+            sip_headers=sip_headers,
+            voip_headers=voip_headers,
             operation_context=operation_context,
-            custom_context=user_custom_context,
-        )
-        result = self._client.create_call(
-            create_call_request=create_call_request,
             **kwargs
         )
-        return CallConnectionProperties._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace
     def answer_call(
