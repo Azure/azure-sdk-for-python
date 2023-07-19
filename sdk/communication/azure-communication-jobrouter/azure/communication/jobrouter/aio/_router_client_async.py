@@ -26,8 +26,8 @@ from azure.communication.jobrouter._shared.policy import HMACCredentialsPolicy
 from .._datetimeutils import _convert_str_to_datetime  # pylint:disable=protected-access
 from .._generated.aio import AzureCommunicationJobRouterService
 from .._enums import (
-    RouterWorkerStateSelector,
-    RouterJobStatusSelector,
+    RouterWorkerState,
+    RouterJobStatus,
 )
 from .._models import (
     RouterQueueStatistics,
@@ -62,6 +62,11 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
 
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -414,7 +419,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
     def list_workers(
             self,
             *,
-            state: Optional[Union[str, RouterWorkerStateSelector]] = RouterWorkerStateSelector.ALL,
+            state: Optional[Union[str, RouterWorkerState, Literal["all"]]] = "all",
             channel_id: Optional[str] = None,
             queue_id: Optional[str] = None,
             has_capacity: Optional[bool] = None,
@@ -425,7 +430,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :keyword state: If specified, select workers by worker status. Default value is "all".
           Accepted value(s): active, draining, inactive, all
-        :paramtype state: Optional[Union[str, ~azure.communication.jobrouter.RouterWorkerStateSelector]]
+        :paramtype state: Optional[Union[str, ~azure.communication.jobrouter.RouterWorkerState, Literal["all"]]]
 
         :keyword channel_id: If specified, select workers who have a channel configuration
            with this channel. Default value is None.
@@ -769,7 +774,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
     def list_jobs(
             self,
             *,
-            status: Optional[Union[str, RouterJobStatusSelector]] = RouterJobStatusSelector.ALL,
+            status: Optional[Union[str, RouterJobStatus, Literal["all", "active"] ]] = "all",
             channel_id: Optional[str] = None,
             queue_id: Optional[str] = None,
             classification_policy_id: Optional[str] = None,
@@ -783,7 +788,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :keyword status: If specified, filter jobs by status. Default value is "all".
             Accepted value(s): pendingClassification, queued, assigned, completed, closed, cancelled,
             classificationFailed, active, all
-        :paramtype status: Optional[Union[str, ~azure.communication.jobrouter.RouterJobStatusSelector]]
+        :paramtype status: Optional[Union[str, ~azure.communication.jobrouter.RouterJobStatus, Literal["all","active"]]]
 
         :keyword channel_id: If specified, filter jobs by channel. Default value is None.
         :paramtype channel_id: Optional[str]
