@@ -24,6 +24,7 @@ IMPORTANT: This file has been marked for deprecation and will be removed in the 
 SDK, please use our CosmosHttpLoggingPolicy outlined in our README.
 """
 
+from azure.core.utils import CaseInsensitiveDict
 import warnings
 
 
@@ -59,13 +60,13 @@ class RecordDiagnostics(object):
     }
 
     def __init__(self):
-        self._headers = {}
+        self._headers = CaseInsensitiveDict()
         self._body = None
         self._request_charge = 0
 
     @property
     def headers(self):
-        return self._headers
+        return CaseInsensitiveDict(self._headers)
 
     @property
     def body(self):
