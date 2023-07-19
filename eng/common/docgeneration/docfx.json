@@ -24,7 +24,7 @@
       },
       {
         "files": [
-          "toc.yml",
+          "toc.yml", 
           "*.md"
         ]
       }
