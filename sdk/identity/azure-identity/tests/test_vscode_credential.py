@@ -157,7 +157,9 @@ def test_redeem_token():
         credential = get_credential(_client=mock_client)
         token = credential.get_token("scope")
         assert token is expected_token
-        mock_client.obtain_token_by_refresh_token.assert_called_with(("scope",), expected_value)
+        mock_client.obtain_token_by_refresh_token.assert_called_with(
+            ("scope",), expected_value, claims=None, tenant_id=None
+        )
         assert mock_client.obtain_token_by_refresh_token.call_count == 1
 
 

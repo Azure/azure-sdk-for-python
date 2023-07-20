@@ -5,7 +5,7 @@
 import os
 import logging
 from contextvars import ContextVar
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from urllib.parse import urlparse
 
