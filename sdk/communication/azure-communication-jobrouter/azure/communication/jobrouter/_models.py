@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import sys
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, overload
 
 import datetime
 from datetime import timezone
@@ -1281,24 +1281,34 @@ class JobMatchingMode:
     :ivar suspend_mode: Any object.
     :vartype suspend_mode: JSON
     """
-
-    _validation = {}
-
-    _attribute_map = {
-        "mode_type": {"key": "modeType", "type": "str"},
-        "queue_and_match_mode": {"key": "queueAndMatchMode", "type": "object"},
-        "schedule_and_suspend_mode": {"key": "scheduleAndSuspendMode", "type": "ScheduleAndSuspendMode"},
-        "suspend_mode": {"key": "suspendMode", "type": "object"},
-    }
-
+    @overload
     def __init__(
         self,
-        *,
-        mode_type: Optional[Union[str, "JobMatchModeType"]] = None,
-        queue_and_match_mode: Optional[JSON] = None,
-        schedule_and_suspend_mode: Optional["ScheduleAndSuspendMode"] = None,
-        suspend_mode: Optional[JSON] = None
+        *
+        queue_and_match_mode: JSON,
+        model_type: Literal["queueAndMatchMode"] = JobMatchModeType.QUEUE_AND_MATCH_MODE
     ) -> None:
+        ...
+
+    @overload
+    def __init__(
+        self,
+        *
+        schedule_and_suspend_mode: "ScheduleAndSuspendMode",
+        model_type: Literal["scheduleAndSuspendMode"] = JobMatchModeType.SCHEDULE_AND_SUSPEND_MODE
+    ) -> None:
+        ...
+
+    @overload
+    def __init__(
+        self,
+        *
+        suspend_mode: JSON,
+        model_type: Literal["suspendMode"] = JobMatchModeType.SUSPEND_MODE
+    ) -> None:
+        ...
+
+    def __init__(self, **kwargs) -> None:
         """
         :keyword mode_type: Known values are: "queueAndMatchMode", "scheduleAndSuspendMode", and
          "suspendMode".
@@ -1311,40 +1321,10 @@ class JobMatchingMode:
         :keyword suspend_mode: Any object.
         :paramtype suspend_mode: JSON
         """
-        super().__init__()
         self.mode_type = mode_type
         self.queue_and_match_mode = queue_and_match_mode
         self.schedule_and_suspend_mode = schedule_and_suspend_mode
         self.suspend_mode = suspend_mode
-
-    @classmethod
-    def initialize_schedule_and_suspend_mode(cls,
-                                             schedule_and_suspend_mode: "ScheduleAndSuspendMode") -> "JobMatchingMode":
-        return cls(
-            mode_type = JobMatchModeType.SCHEDULE_AND_SUSPEND_MODE,
-            schedule_and_suspend_mode = schedule_and_suspend_mode,
-            queue_and_match_mode = AzureCoreNull,
-            suspend_mode = AzureCoreNull
-        )
-
-    @classmethod
-    def initialize_queue_and_match_mode(cls) -> "JobMatchingMode":
-        return cls(
-            mode_type = JobMatchModeType.QUEUE_AND_MATCH_MODE,
-            schedule_and_suspend_mode = AzureCoreNull,
-            queue_and_match_mode = {},
-            suspend_mode = AzureCoreNull
-        )
-
-    @classmethod
-    def initialize_suspend_mode(cls) -> "JobMatchingMode":
-        return cls(
-            mode_type = JobMatchModeType.SUSPEND_MODE,
-            schedule_and_suspend_mode = AzureCoreNull,
-            queue_and_match_mode = AzureCoreNull,
-            suspend_mode = {}
-        )
-
 
 
 class LongestIdleMode(DistributionMode):
