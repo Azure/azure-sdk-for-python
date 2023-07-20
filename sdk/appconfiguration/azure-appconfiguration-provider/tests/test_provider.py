@@ -21,7 +21,6 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
     @app_config_decorator
     def test_provider_creation(self, appconfiguration_connection_string):
         client = self.build_provider(appconfiguration_connection_string)
-        breakpoint()
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
         assert (

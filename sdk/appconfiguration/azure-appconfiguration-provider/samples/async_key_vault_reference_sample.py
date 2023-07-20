@@ -5,10 +5,12 @@
 # -------------------------------------------------------------------------
 
 import asyncio
+import sys
 from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
 import os
 from sample_utilities import get_authority, get_audience, get_credential
+from azure.core.exceptions import ClientAuthenticationError
 
 
 async def main():
@@ -21,7 +23,12 @@ async def main():
     key_vault_options = AzureAppConfigurationKeyVaultOptions(credential=credential)
     selects = {SettingSelector(key_filter="*", label_filter="prod")}
 
-    config = await load(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
+    try:
+        config = await load(
+            endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects
+        )
+    except ClientAuthenticationError:
+        print("Unauthorized")
 
     print(config.get("secret"))
 
@@ -30,5 +37,6 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    if sys.platform == "win32":
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())

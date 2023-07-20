@@ -7,6 +7,7 @@
 from azure.appconfiguration.provider import load, AzureAppConfigurationKeyVaultOptions, SettingSelector
 import os
 from sample_utilities import get_authority, get_credential
+from azure.core.exceptions import ClientAuthenticationError
 
 endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
 key_vault_uri = os.environ.get("KEYVAULT_SECRET_URL")
@@ -17,6 +18,9 @@ credential = get_credential(authority)
 client_configs = {key_vault_uri: {"credential": credential}}
 selects = {SettingSelector(key_filter="*", label_filter="prod")}
 key_vault_options = AzureAppConfigurationKeyVaultOptions(client_configs=client_configs)
-config = load(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
+try:
+    config = load(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
+except ClientAuthenticationError:
+    print("Unauthorized")
 
 print(config.get("secret"))

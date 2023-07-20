@@ -7,6 +7,7 @@
 from azure.appconfiguration.provider import load, SettingSelector
 import os
 from sample_utilities import get_authority, get_audience, get_credential
+from azure.core.exceptions import ClientAuthenticationError
 
 endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
 authority = get_authority(endpoint)
@@ -14,19 +15,28 @@ audience = get_audience(authority)
 credential = get_credential(authority)
 
 # Connecting to Azure App Configuration using AAD
-config = load(endpoint=endpoint, credential=credential)
+try:
+    config = load(endpoint=endpoint, credential=credential)
+except ClientAuthenticationError:
+    print("Unauthorized")
 
 print(config.get("message"))
 
 # Connecting to Azure App Configuration using AAD and trim key prefixes
 trimmed = {"test."}
-config = load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed)
+try:
+    config = load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed)
+except ClientAuthenticationError:
+    print("Unauthorized")
 
 print(config.get("message"))
 
 # Connection to Azure App Configuration using SettingSelector
 selects = {SettingSelector(key_filter="message*")}
-config = load(endpoint=endpoint, credential=credential, selects=selects)
+try:
+    config = load(endpoint=endpoint, credential=credential, selects=selects)
+except ClientAuthenticationError:
+    print("Unauthorized")
 
 print("message found: " + str("message" in config))
 print("test.message found: " + str("test.message" in config))
