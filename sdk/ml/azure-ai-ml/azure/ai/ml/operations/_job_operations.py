@@ -675,10 +675,6 @@ class JobOperations(_ScopeDependentOperations):
     ) -> None:
         """Download logs and output of a job.
 
-        :param str name: Name of a job.
-        :param Union[PathLike, str] download_path: Local path as download destination, defaults to '.'.
-        :param str output_name: Named output to download, defaults to None.
-        :param bool all: Whether to download logs and all named outputs, defaults to False.
         :param name: Name of a job.
         :type name: str
         :param download_path: Local path as download destination, defaults to '.'.

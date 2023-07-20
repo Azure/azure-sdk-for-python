@@ -415,7 +415,6 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         """Build an output object for pipeline and copy settings from source output.
 
         :param name: Output name.
-        :param meta: Output metadata.
         :param data: Output data.
         :return: Built output object.
         """
