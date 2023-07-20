@@ -9,11 +9,14 @@ from typing import IO, AnyStr, Optional, Type, Union
 
 from marshmallow import ValidationError
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import load_yaml
+from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackage
 from azure.ai.ml.entities._assets._artifacts.code import Code
+from azure.ai.ml.entities._assets._artifacts.custom_asset import CustomAsset
 from azure.ai.ml.entities._assets._artifacts.data import Data
-from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
+from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
@@ -23,8 +26,8 @@ from azure.ai.ml.entities._compute.compute import Compute
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 from azure.ai.ml.entities._deployment.model_batch_deployment import ModelBatchDeployment
-from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
+from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
 from azure.ai.ml.entities._endpoint.online_endpoint import OnlineEndpoint
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
@@ -36,9 +39,7 @@ from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, _ValidationResultBuilder
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackage
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml._utils._experimental import experimental
 
 module_logger = logging.getLogger(__name__)
 
@@ -395,6 +396,74 @@ def load_component(
             error_type=ValidationErrorType.MISSING_FIELD,
         )
     return component_entity
+
+
+def load_asset(
+    source: Optional[Union[str, PathLike, IO[AnyStr]]] = None,
+    *,
+    relative_origin: Optional[str] = None,
+    **kwargs,
+) -> CustomAsset:
+    """Load custom asset from local or remote to a component function.
+
+    For example:
+
+    .. code-block:: python
+
+        # Load a local component to a component function.
+        component_func = load_component(source="custom_component/component_spec.yaml")
+        # Load a remote component to a component function.
+        component_func = load_component(client=ml_client, name="my_component", version=1)
+
+        # Consuming the component func
+        component = component_func(param1=xxx, param2=xxx)
+
+    :param source: The local yaml source of a component. Must be either a
+        path to a local file, or an already-open file.
+        If the source is a path, it will be open and read.
+        An exception is raised if the file does not exist.
+        If the source is an open file, the file will be read directly,
+        and an exception is raised if the file is not readable.
+    :type source: Union[PathLike, str, io.TextIOWrapper]
+    :param relative_origin: The origin to be used when deducing
+        the relative locations of files referenced in the parsed yaml.
+        Defaults to the inputted source's directory if it is a file or file path input.
+        Defaults to "./" if the source is a stream input with no name value.
+    :type relative_origin: str
+    :param params_override: Fields to overwrite on top of the yaml file.
+        Format is [{"field1": "value1"}, {"field2": "value2"}]
+    :type params_override: List[Dict]
+    :param client: An MLClient instance.
+    :type client: MLClient
+    :param name: Name of the component.
+    :type name: str
+    :param version: Version of the component.
+    :type version: str
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+
+    :return: A function that can be called with parameters to get a `azure.ai.ml.entities.Component`
+    :rtype: Union[CommandComponent, ParallelComponent, PipelineComponent]
+    """
+
+    client = kwargs.pop("client", None)
+    name = kwargs.pop("name", None)
+    version = kwargs.pop("version", None)
+
+    if source:
+        asset_entity = load_common(CustomAsset, source, relative_origin, **kwargs)
+    elif client and name and version:
+        asset_entity = client.components.get(name, version)
+    else:
+        msg = "One of (client, name, version), (source) should be provided."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.COMPONENT,
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.MISSING_FIELD,
+        )
+    return asset_entity
 
 
 def load_model(

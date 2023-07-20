@@ -8,7 +8,8 @@ import logging
 
 from marshmallow import fields, post_load, pre_dump
 
-from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField
+from azure.ai.ml._schema.component.input_output import InputPortSchema, OutputPortSchema, ParameterSchema
+from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, UnionField
 from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job import CreationContextSchema
@@ -25,6 +26,9 @@ class CustomAssetSchema(PathAwareSchema):
     type = StringTransformedEnum(
         allowed_values=[
             AssetTypes.CUSTOM_ASSET,
+            "prompt",
+            "custom",
+            "command",
             # TODO: add all the types defined in AssetTypes for CustomAsset
         ],
         metadata={"description": ""},
@@ -35,6 +39,16 @@ class CustomAssetSchema(PathAwareSchema):
     properties = fields.Dict()
     tags = fields.Dict()
     stage = fields.Str()
+    template = fields.Dict(keys=fields.Str(), values=fields.Str())
+    inputs = fields.Dict(
+        keys=fields.Str(),
+        values=UnionField(
+            [
+                NestedField(ParameterSchema),
+                NestedField(InputPortSchema),
+            ]
+        ),
+    )
     creation_context = NestedField(CreationContextSchema, dump_only=True)
     job_name = fields.Str(dump_only=True)
     latest_version = fields.Str(dump_only=True)

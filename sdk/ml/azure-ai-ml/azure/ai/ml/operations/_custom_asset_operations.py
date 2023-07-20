@@ -4,13 +4,13 @@
 
 # pylint: disable=protected-access
 
+from contextlib import contextmanager
 from os import PathLike, path
 from typing import Dict, Iterable, Optional, Union
-from contextlib import contextmanager
 
+from azure.core.exceptions import ResourceNotFoundError
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._artifacts._artifact_utilities import (
     _check_and_upload_path,
     _get_default_datastore_info,
@@ -21,39 +21,41 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
-from azure.ai.ml._utils._registry_utils import get_registry_client
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ModelVersion # TODO: will need CustomAssetVersion in restclient contract to import from here
+from azure.ai.ml._restclient.v2022_10_01.models import ListViewType
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (  # TODO: will need CustomAssetVersion in restclient contract to import from here
+    ModelVersion,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
+    OperationsContainer,
     OperationScope,
     _ScopeDependentOperations,
-    OperationsContainer,
 )
-from azure.ai.ml.entities._assets._artifacts.code import Code
-
-from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _get_latest,
-    _resolve_label_to_asset,
     _get_next_version_from_container,
+    _resolve_label_to_asset,
 )
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
     get_asset_body_for_registry_storage,
+    get_registry_client,
     get_sas_uri_for_registry_asset,
     get_storage_details_for_registry_assets,
 )
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
 from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
-from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, AzureMLResourceType
+from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._assets._artifacts.custom_asset import CustomAsset
 from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
@@ -64,8 +66,8 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
-from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
@@ -91,8 +93,9 @@ class CustomAssetOperations(_ScopeDependentOperations):
     ):
         super(CustomAssetOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._custom_asset_versions_operation = service_client.custom_asset_versions
-        self._custom_asset_container_operation = service_client.custom_asset_containers
+        # todo
+        # self._custom_asset_versions_operation = service_client.custom_asset_versions
+        # self._custom_asset_container_operation = service_client.custom_asset_containers
         self._service_client = service_client
         self._datastore_operation = datastore_operations
         self._all_operations = all_operations
@@ -102,9 +105,7 @@ class CustomAssetOperations(_ScopeDependentOperations):
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
     @monitor_with_activity(logger, "CustomAsset.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(
-        self, custom_asset: Union[CustomAsset, WorkspaceAssetReference]
-    ) -> CustomAsset:
+    def create_or_update(self, custom_asset: Union[CustomAsset, WorkspaceAssetReference]) -> CustomAsset:
         """Returns created or updated custom asset.
 
         :param custom_asset: Custom asset object.
@@ -139,13 +140,13 @@ class CustomAssetOperations(_ScopeDependentOperations):
         """
         return self._get(name=name, version=version, label=label)
 
-
     @monitor_with_activity(logger, "CustomAsset.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
         stage: Optional[str] = None,
         *,
+        list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
     ) -> Iterable[CustomAsset]:
         """List all custom assets in workspace.
 
@@ -156,8 +157,7 @@ class CustomAssetOperations(_ScopeDependentOperations):
         """
         return NotImplementedError
 
-
-    def _get_latest_version(self, name: str) -> Model:
+    def _get_latest_version(self, name: str) -> ModelVersion:
         """Returns the latest version of the asset with the given name.
 
         Latest is defined as the most recently created, not the most recently updated.

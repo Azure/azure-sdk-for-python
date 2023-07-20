@@ -17,6 +17,7 @@ from .entities._builders.spark_func import spark
 from .entities._credentials import AmlTokenConfiguration, ManagedIdentityConfiguration, UserIdentityConfiguration
 from .entities._job.distribution import MpiDistribution, PyTorchDistribution, RayDistribution, TensorFlowDistribution
 from .entities._load_functions import (
+    load_asset,
     load_batch_deployment,
     load_batch_endpoint,
     load_component,
@@ -54,6 +55,7 @@ __all__ = [
     "load_batch_deployment",
     "load_batch_endpoint",
     "load_component",
+    "load_asset",
     "load_compute",
     "load_data",
     "load_datastore",

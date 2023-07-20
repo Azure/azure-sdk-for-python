@@ -5,8 +5,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-
-from azure.ai.ml._schema import ModelSchema
+from azure.ai.ml._schema import CustomAssetSchema, ModelSchema
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, AMLVersionedArmId
 from azure.ai.ml._utils._asset_utils import get_ignore_file, get_object_hash
 from azure.ai.ml.constants._common import (
@@ -17,9 +16,9 @@ from azure.ai.ml.constants._common import (
     AssetTypes,
 )
 from azure.ai.ml.entities._assets import Artifact
+from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import get_md5_string, load_from_dict
-from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 
 from .artifact import ArtifactStorageInfo
 
@@ -63,6 +62,8 @@ class CustomAsset(Artifact):  # pylint: disable=too-many-instance-attributes
     ):
         self.job_name = kwargs.pop("job_name", None)
         self._intellectual_property = kwargs.pop("intellectual_property", None)
+        self.inputs = kwargs.pop("inputs", None)
+        self.template = kwargs.pop("template", None)
         super().__init__(
             name=name,
             version=version,
@@ -88,19 +89,18 @@ class CustomAsset(Artifact):  # pylint: disable=too-many-instance-attributes
         params_override: Optional[list] = None,
         **kwargs,
     ) -> "CustomAsset":
-        # params_override = params_override or []
-        # data = data or {}
-        # context = {
-        #     BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
-        #     PARAMS_OVERRIDE_KEY: params_override,
-        # }
-        # return load_from_dict(CustomAssetSchema, data, context, **kwargs)
-        return NotImplementedError
+        params_override = params_override or []
+        data = data or {}
+        context = {
+            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
+            PARAMS_OVERRIDE_KEY: params_override,
+        }
+        return load_from_dict(CustomAssetSchema, data, context, **kwargs)
+        # return NotImplementedError
 
     def _to_dict(self) -> Dict:
-        # return CustomAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
-        # TODO: Create CustomAssetSchema class in _schema folder
-        return NotImplementedError
+        return CustomAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        # return NotImplementedError
 
     @classmethod
     def _from_rest_object(cls, custom_asset_rest_object: "CustomAssetVersion") -> "CustomAsset":
