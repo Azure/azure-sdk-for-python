@@ -21,7 +21,10 @@ from ._models import (
     TransferCallResult,
     MediaStreamingConfiguration,
     ChannelAffinity,
-    MuteParticipantsResult
+    MuteParticipantsResult,
+    SIPCustomHeader,
+    SIPUUIHeader,
+    VoipHeader,
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -62,6 +65,9 @@ __all__ = [
     "SsmlSource",
     "ChannelAffinity",
     "MediaStreamingConfiguration",
+    "SIPCustomHeader",
+    "SIPUUIHeader",
+    "VoipHeader",
 
     # models for output
     "CallConnectionProperties",

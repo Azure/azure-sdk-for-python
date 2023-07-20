@@ -173,9 +173,9 @@ class CallAutomationClient(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers,
-            sip_headers=target_participant.sip_headers
-            ) if target_participant.sip_headers or target_participant.voip_headers else None
+            voip_headers=target_participant.custom_context.voip_headers,
+            sip_headers=target_participant.custom_context.sip_headers
+            ) if target_participant.custom_context.sip_headers or target_participant.custom_context.voip_headers else None
         create_call_request = CreateCallRequest(
             targets=[serialize_identifier(target_participant.target)],
             callback_uri=callback_url,
@@ -334,9 +334,9 @@ class CallAutomationClient(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers,
-            sip_headers=target_participant.sip_headers
-            ) if target_participant.sip_headers or target_participant.voip_headers else None
+            voip_headers=target_participant.custom_context.voip_headers,
+            sip_headers=target_participant.custom_context.sip_headers
+            ) if target_participant.custom_context.sip_headers or target_participant.custom_context.voip_headers else None
 
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,

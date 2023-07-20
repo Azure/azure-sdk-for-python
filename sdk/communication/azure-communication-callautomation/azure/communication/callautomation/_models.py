@@ -18,6 +18,7 @@ from ._shared.models import (
     CommunicationIdentifier,
     CommunicationUserIdentifier,
     PhoneNumberIdentifier,
+    MicrosoftTeamsUserIdentifier,
 )
 from ._generated.models._enums import PlaySourceType
 from ._utils import (
@@ -68,10 +69,6 @@ class CallInvite(object):
     """ Caller's phone number identifier. Required for PSTN outbound call."""
     source_display_name: Optional[str]
     """Display name for caller"""
-    sip_headers: Optional[Dict[str, str]]
-    """Custom context for PSTN"""
-    voip_headers: Optional[Dict[str, str]]
-    """Custom context for VOIP"""
 
     def __init__(
         self,
@@ -79,16 +76,147 @@ class CallInvite(object):
         *,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         super().__init__(**kwargs)
         self.target = target
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
+        if(isinstance(self.target, CommunicationUserIdentifier)):
+            self.custom_context = CustomContext(sip_headers=None, voip_headers={})
+        elif(isinstance(self.target, PhoneNumberIdentifier)):
+            self.custom_context = CustomContext(sip_headers={}, voip_headers=None)
+        elif(isinstance(self.target, MicrosoftTeamsUserIdentifier)):
+            self.custom_context = CustomContext(sip_headers=None, voip_headers={})
+        else:
+            raise ValueError("Invalid target type")
+
+class CustomContext(object):
+    """Details of custom context.
+
+    :param sip_headers: Custom context headers for PSTN
+    :type sip_headers: dict[str, str]
+    :param voip_headers: Custom context headers for VOIP
+    :type voip_headers: dict[str, str]
+    """
+
+    sip_headers: Dict[str, str]
+    """Custom context SIP headers for PSTN"""
+    voip_headers: Dict[str, str]
+    """Custom context VOIP headers for VOIP"""
+
+    def __init__(
+        self,
+        sip_headers: Dict[str, str],
+        voip_headers: Dict[str, str],
+        **kwargs
+    ):
+        super().__init__(**kwargs)
         self.sip_headers = sip_headers
         self.voip_headers = voip_headers
+
+    def add(
+        self,
+        header: Union['SIPCustomHeader', 'SIPUUIHeader', 'VoipHeader']
+    ) -> None:
+        """Add a custom context header to the custom context.
+
+        :param header: Custom context header to be added.
+        :type header: ~azure.communication.callautomation.SIPCustomHeader or
+         ~azure.communication.callautomation.SIPUUIHeader or
+         ~azure.communication.callautomation.VoipHeader
+        :return: None
+        :rtype: None
+        :raises ValueError if header is not of type SIPCustomHeader or SIPUUIHeader or VoipHeader
+        """
+
+        if isinstance(header, SIPUUIHeader):
+            if self.sip_headers is None:
+                raise ValueError("Cannot add sip header, SipHeaders is None.")
+            self.sip_headers[header.Key] = header.Value
+        elif isinstance(header, SIPCustomHeader):
+            if self.sip_headers is None:
+                raise ValueError("Cannot add sip header, SipHeaders is None.")
+            self.sip_headers[header.Key] = header.Value
+        elif isinstance(header, VoipHeader):
+            if self.voip_headers is None:
+                raise ValueError("Cannot add voip header, VoipHeaders is None.")
+            self.voip_headers[header.Key] = header.Value
+        else:
+            raise ValueError("Unknown custom context header type.")
+
+class CustomContextHeader(object):
+    """Base class for custom context headers.
+
+    :param key: The key of the custom context header.
+    :type key: str
+    :param value: The value of the custom context header.
+    :type value: str
+    """
+
+    def __init__(
+        self,
+        key: str,
+        value: str
+    ):
+        """Initializes a custom context header.
+        :param key: The key of the custom context header.
+        :type key: str
+        :param value: The value of the custom context header.
+        :type value: str
+        :raises TypeError if CustomContextHeader is initialized directly.
+        """
+
+        if type(self) == CustomContextHeader:
+            raise TypeError("CustomContextHeader must be subclassed.")
+        self.Key = key
+        self.Value = value
+
+class SIPCustomHeader(CustomContextHeader):
+    """Custom context header for SIP.
+
+    :param key: The postfix of the custom context SIP custom header key.
+     The final custom header key name will be converted to "X-MS-Custom-<key>".
+    :type key: str
+    :param value: The value of the custom context header.
+    :type value: str
+    """
+
+    def __init__(
+        self,
+        key: str,
+        value: str
+    ):
+        super().__init__("X-MS-Custom-" + key, value)
+
+class SIPUUIHeader(CustomContextHeader):
+    """Custom context header for SIP User-to-User.
+
+    :param value: The value of the custom context SIP User-to-User header.
+    :type value: str
+    """
+
+    def __init__(
+        self,
+        value: str
+    ):
+        super().__init__("User-to-User", value)
+
+class VoipHeader(CustomContextHeader):
+    """Custom context header for VOIP.
+
+    :pram key: The custom context VOIP custom header key.
+    :type key: str
+    :param value: The value of the custom context voip header.
+    :type value: str
+    """
+
+    def __init__(
+        self,
+        key: str,
+        value: str
+    ):
+        super().__init__(key, value)
 
 class ServerCallLocator(object):
     """The locator to locate ongoing call, using server call id.
