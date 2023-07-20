@@ -68,7 +68,7 @@ You can learn more about Azure Digital Twins by visiting [Azure Digital Twins Do
 
 ## Examples
 
-You can explore the digital twins APIs (using the client library) using the samples project. More samples on DigitalTwins are available [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/digitaltwins/azure-mgmt-digitaltwins/generated_samples).
+You can explore the digital twins APIs (using the client library) using the samples project.
 
 The samples project demonstrates the following:
 
