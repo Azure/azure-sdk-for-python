@@ -441,6 +441,7 @@ class PolicyAssignmentsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def delete(self, scope: str, policy_assignment_name: str, **kwargs: Any) -> _models.PolicyAssignment:
@@ -466,7 +467,9 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2015-10-01-preview")
+        )
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
         request = build_policy_assignments_delete_request(
@@ -595,7 +598,9 @@ class PolicyAssignmentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2015-10-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
@@ -665,7 +670,9 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2015-10-01-preview")
+        )
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
         request = build_policy_assignments_get_request(
@@ -719,7 +726,9 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2015-10-01-preview")
+        )
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -826,7 +835,9 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2015-10-01-preview")
+        )
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -917,7 +928,9 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2015-10-01-preview")
+        )
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1016,7 +1029,9 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2015-10-01-preview")
+        )
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
         request = build_policy_assignments_delete_by_id_request(
@@ -1152,7 +1167,9 @@ class PolicyAssignmentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2015-10-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
@@ -1227,7 +1244,9 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2015-10-01-preview")
+        )
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
         request = build_policy_assignments_get_by_id_request(
@@ -1279,6 +1298,7 @@ class PolicyDefinitionsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @overload
     def create_or_update(
@@ -1353,7 +1373,9 @@ class PolicyDefinitionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2015-10-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
 
@@ -1425,7 +1447,9 @@ class PolicyDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2015-10-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_policy_definitions_delete_request(
@@ -1479,7 +1503,9 @@ class PolicyDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2015-10-01-preview")
+        )
         cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
 
         request = build_policy_definitions_get_request(
@@ -1530,7 +1556,9 @@ class PolicyDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2015-10-01-preview")
+        )
         cls: ClsType[_models.PolicyDefinitionListResult] = kwargs.pop("cls", None)
 
         error_map = {

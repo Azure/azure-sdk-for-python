@@ -61,13 +61,13 @@ class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.policy_assignments = PolicyAssignmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-06-01"
         )
         self.policy_definitions = PolicyDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-06-01"
         )
         self.policy_set_definitions = PolicySetDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-06-01"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:

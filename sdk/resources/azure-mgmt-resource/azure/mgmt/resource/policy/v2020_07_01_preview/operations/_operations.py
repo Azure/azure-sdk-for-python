@@ -282,6 +282,7 @@ class PolicyExemptionsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -318,7 +319,9 @@ class PolicyExemptionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2020-07-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_policy_exemptions_delete_request(
@@ -464,7 +467,9 @@ class PolicyExemptionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2020-07-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PolicyExemption] = kwargs.pop("cls", None)
 
@@ -548,7 +553,9 @@ class PolicyExemptionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2020-07-01-preview")
+        )
         cls: ClsType[_models.PolicyExemption] = kwargs.pop("cls", None)
 
         request = build_policy_exemptions_get_request(
@@ -615,7 +622,9 @@ class PolicyExemptionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2020-07-01-preview")
+        )
         cls: ClsType[_models.PolicyExemptionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -721,7 +730,9 @@ class PolicyExemptionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2020-07-01-preview")
+        )
         cls: ClsType[_models.PolicyExemptionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -861,7 +872,9 @@ class PolicyExemptionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2020-07-01-preview")
+        )
         cls: ClsType[_models.PolicyExemptionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -973,7 +986,9 @@ class PolicyExemptionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2020-07-01-preview")
+        )
         cls: ClsType[_models.PolicyExemptionListResult] = kwargs.pop("cls", None)
 
         error_map = {

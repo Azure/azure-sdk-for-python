@@ -533,6 +533,7 @@ class VariablesOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def delete(self, variable_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -560,7 +561,9 @@ class VariablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_variables_delete_request(
@@ -669,7 +672,9 @@ class VariablesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
 
@@ -746,7 +751,9 @@ class VariablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
 
         request = build_variables_get_request(
@@ -810,7 +817,9 @@ class VariablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_variables_delete_at_management_group_request(
@@ -937,7 +946,9 @@ class VariablesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
 
@@ -1016,7 +1027,9 @@ class VariablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
 
         request = build_variables_get_at_management_group_request(
@@ -1067,7 +1080,9 @@ class VariablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.VariableListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1152,7 +1167,9 @@ class VariablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.VariableListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1241,6 +1258,7 @@ class VariableValuesOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -1272,7 +1290,9 @@ class VariableValuesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_variable_values_delete_request(
@@ -1400,7 +1420,9 @@ class VariableValuesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
 
@@ -1480,7 +1502,9 @@ class VariableValuesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
 
         request = build_variable_values_get_request(
@@ -1535,7 +1559,9 @@ class VariableValuesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.VariableValueListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1628,7 +1654,9 @@ class VariableValuesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.VariableValueListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1731,7 +1759,9 @@ class VariableValuesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_variable_values_delete_at_management_group_request(
@@ -1872,7 +1902,9 @@ class VariableValuesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
 
@@ -1956,7 +1988,9 @@ class VariableValuesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-08-01-preview")
+        )
         cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
 
         request = build_variable_values_get_at_management_group_request(

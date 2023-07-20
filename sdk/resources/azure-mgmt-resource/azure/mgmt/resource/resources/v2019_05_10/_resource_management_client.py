@@ -79,14 +79,22 @@ class ResourceManagementClient:  # pylint: disable=client-accepts-api-version-ke
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.providers = ProvidersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resources = ResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resource_groups = ResourceGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.tags = TagsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2019-05-10")
+        self.deployments = DeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-05-10"
+        )
+        self.providers = ProvidersOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-05-10"
+        )
+        self.resources = ResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-05-10"
+        )
+        self.resource_groups = ResourceGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-05-10"
+        )
+        self.tags = TagsOperations(self._client, self._config, self._serialize, self._deserialize, "2019-05-10")
         self.deployment_operations = DeploymentOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-05-10"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:

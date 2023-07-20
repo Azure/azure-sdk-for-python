@@ -68,6 +68,8 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
         profile: KnownProfiles=KnownProfiles.default,
         **kwargs: Any
     ):
+        if api_version:
+            kwargs.setdefault('api_version', api_version)
         self._config = SubscriptionClientConfiguration(credential, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(SubscriptionClient, self).__init__(
@@ -134,7 +136,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def subscriptions(self):
@@ -163,7 +165,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
         else:
             raise ValueError("API version {} does not have operation group 'subscriptions'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def tenants(self):
@@ -192,7 +194,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
         else:
             raise ValueError("API version {} does not have operation group 'tenants'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     def close(self):
         self._client.close()

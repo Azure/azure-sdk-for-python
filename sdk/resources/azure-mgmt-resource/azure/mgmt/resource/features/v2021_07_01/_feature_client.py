@@ -58,9 +58,9 @@ class FeatureClient(FeatureClientOperationsMixin):  # pylint: disable=client-acc
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.features = FeaturesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.features = FeaturesOperations(self._client, self._config, self._serialize, self._deserialize, "2021-07-01")
         self.subscription_feature_registrations = SubscriptionFeatureRegistrationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-07-01"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
