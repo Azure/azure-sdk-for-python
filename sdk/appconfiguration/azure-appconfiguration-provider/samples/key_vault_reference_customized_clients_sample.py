@@ -20,7 +20,6 @@ selects = {SettingSelector(key_filter="*", label_filter="prod")}
 key_vault_options = AzureAppConfigurationKeyVaultOptions(client_configs=client_configs)
 try:
     config = load(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
+    print(config.get("secret"))
 except ClientAuthenticationError:
     print("Unauthorized")
-
-print(config.get("secret"))

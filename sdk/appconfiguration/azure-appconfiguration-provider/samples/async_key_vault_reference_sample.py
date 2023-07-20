@@ -27,10 +27,9 @@ async def main():
         config = await load(
             endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects
         )
+        print(config.get("secret"))
     except ClientAuthenticationError:
         print("Unauthorized")
-
-    print(config.get("secret"))
 
     await credential.close()
     await config.close()

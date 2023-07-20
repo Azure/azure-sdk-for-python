@@ -17,26 +17,24 @@ credential = get_credential(authority)
 # Connecting to Azure App Configuration using AAD
 try:
     config = load(endpoint=endpoint, credential=credential)
+    print(config.get("message"))
 except ClientAuthenticationError:
     print("Unauthorized")
-
-print(config.get("message"))
 
 # Connecting to Azure App Configuration using AAD and trim key prefixes
 trimmed = {"test."}
 try:
     config = load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed)
+    print(config.get("message"))
 except ClientAuthenticationError:
     print("Unauthorized")
 
-print(config.get("message"))
 
 # Connection to Azure App Configuration using SettingSelector
 selects = {SettingSelector(key_filter="message*")}
 try:
     config = load(endpoint=endpoint, credential=credential, selects=selects)
+    print("message found: " + str("message" in config))
+    print("test.message found: " + str("test.message" in config))
 except ClientAuthenticationError:
     print("Unauthorized")
-
-print("message found: " + str("message" in config))
-print("test.message found: " + str("test.message" in config))
