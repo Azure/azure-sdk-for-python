@@ -82,11 +82,11 @@ class CallInvite(object):
         self.target = target
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
-        if(isinstance(self.target, CommunicationUserIdentifier)):
+        if isinstance(self.target, CommunicationUserIdentifier):
             self.custom_context = CustomContext(sip_headers=None, voip_headers={})
-        elif(isinstance(self.target, PhoneNumberIdentifier)):
+        elif isinstance(self.target, PhoneNumberIdentifier):
             self.custom_context = CustomContext(sip_headers={}, voip_headers=None)
-        elif(isinstance(self.target, MicrosoftTeamsUserIdentifier)):
+        elif isinstance(self.target, MicrosoftTeamsUserIdentifier):
             self.custom_context = CustomContext(sip_headers=None, voip_headers={})
         else:
             raise ValueError("Invalid target type")
@@ -167,7 +167,7 @@ class CustomContextHeader(object):
         :raises TypeError if CustomContextHeader is initialized directly.
         """
 
-        if type(self) == CustomContextHeader:
+        if isinstance(self, CustomContextHeader):
             raise TypeError("CustomContextHeader must be subclassed.")
         self.Key = key
         self.Value = value
@@ -210,13 +210,6 @@ class VoipHeader(CustomContextHeader):
     :param value: The value of the custom context voip header.
     :type value: str
     """
-
-    def __init__(
-        self,
-        key: str,
-        value: str
-    ):
-        super().__init__(key, value)
 
 class ServerCallLocator(object):
     """The locator to locate ongoing call, using server call id.

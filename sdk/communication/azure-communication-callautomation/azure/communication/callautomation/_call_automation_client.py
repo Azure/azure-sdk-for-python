@@ -172,10 +172,13 @@ class CallAutomationClient(object):
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
+        user_custom_context = (CustomContext(
             voip_headers=target_participant.custom_context.voip_headers,
             sip_headers=target_participant.custom_context.sip_headers
-            ) if target_participant.custom_context.sip_headers or target_participant.custom_context.voip_headers else None
+            )
+            if target_participant.custom_context.sip_headers or target_participant.custom_context.voip_headers
+            else None
+            )
         create_call_request = CreateCallRequest(
             targets=[serialize_identifier(target_participant.target)],
             callback_uri=callback_url,
@@ -333,10 +336,14 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
+
+        user_custom_context = (CustomContext(
             voip_headers=target_participant.custom_context.voip_headers,
             sip_headers=target_participant.custom_context.sip_headers
-            ) if target_participant.custom_context.sip_headers or target_participant.custom_context.voip_headers else None
+            )
+            if target_participant.custom_context.sip_headers or target_participant.custom_context.voip_headers
+            else None
+            )
 
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,

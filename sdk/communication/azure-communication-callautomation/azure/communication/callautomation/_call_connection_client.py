@@ -271,10 +271,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: ~azure.communication.callautomation.AddParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
+        user_custom_context = (CustomContext(
             voip_headers=target_participant.custom_context.voip_headers,
             sip_headers=target_participant.custom_context.sip_headers
-            ) if target_participant.custom_context.sip_headers or target_participant.custom_context.voip_headers else None
+            ) if target_participant.custom_context.sip_headers or target_participant.custom_context.voip_headers
+            else None
+            )
+
         add_participant_request = AddParticipantRequest(
             participant_to_add=serialize_identifier(target_participant.target),
             source_caller_id_number=serialize_phone_identifier(
