@@ -164,11 +164,8 @@ class CustomContextHeader(object):
         :type key: str
         :param value: The value of the custom context header.
         :type value: str
-        :raises TypeError if CustomContextHeader is initialized directly.
         """
 
-        if isinstance(self, CustomContextHeader):
-            raise TypeError("CustomContextHeader must be subclassed.")
         self.Key = key
         self.Value = value
 
