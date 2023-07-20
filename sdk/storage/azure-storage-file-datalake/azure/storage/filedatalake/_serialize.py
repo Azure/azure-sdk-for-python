@@ -43,6 +43,17 @@ def get_api_version(kwargs):
     return api_version or _SUPPORTED_API_VERSIONS[-1]
 
 
+def compare_api_versions(version1: str, version2: str) -> int:
+    v1 = _SUPPORTED_API_VERSIONS.index(version1)
+    v2 = _SUPPORTED_API_VERSIONS.index(version2)
+    if v1 == v2:
+        return 0
+    if v1 < v2:
+        return -1
+    if v1 > v2:
+        return 1
+
+
 def convert_dfs_url_to_blob_url(dfs_account_url):
     return dfs_account_url.replace('.dfs.', '.blob.', 1)
 
