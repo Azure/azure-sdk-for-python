@@ -90,7 +90,7 @@ def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> An
 
     :param Callable func: Name of the endpoint.
     :param str message: Message to print out before starting operation write-out.
-    :param dict kwargs: kwargs to be passed to the func
+    :keyword dict kwargs: kwargs to be passed to the func
     :return: The type returned by Func
     """
     pool = concurrent.futures.ThreadPoolExecutor()

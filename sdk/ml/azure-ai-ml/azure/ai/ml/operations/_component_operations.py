@@ -129,7 +129,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param name: Component name, if not set, list all components of the workspace
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived components.
+        :keyword list_view_type: View type for including/excluding (for example) archived components.
             Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of component objects
@@ -323,7 +323,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :type component: Union[Component, types.FunctionType]
         :param version: The component version to override.
         :type version: str
-        :param skip_validation: whether to skip validation before creating/updating the component
+        :keyword skip_validation: whether to skip validation before creating/updating the component
         :type skip_validation: bool
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
             Details will be provided in the error message.
@@ -799,7 +799,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :type component: Union[Component, str]
         :param resolver: The resolver to resolve the dependencies.
         :type resolver: Callable
-        :param resolve_inputs: Whether to resolve inputs.
+        :keyword resolve_inputs: Whether to resolve inputs.
         :type resolve_inputs: bool
         """
         if not isinstance(component, PipelineComponent) or not component.jobs:

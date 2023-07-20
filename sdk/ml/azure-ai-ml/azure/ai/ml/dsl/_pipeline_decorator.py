@@ -93,21 +93,21 @@ def pipeline(
                 ml_client.jobs.create_or_update(pipeline_job, experiment_name="pipeline_samples")
 
     :param func: The user pipeline function to be decorated.
-    :param func: types.FunctionType
-    :param name: The name of pipeline component, defaults to function name.
+    :type func: types.FunctionType
+    :keyword name: The name of pipeline component, defaults to function name.
     :type name: str
-    :param version: The version of pipeline component, defaults to "1".
+    :keyword version: The version of pipeline component, defaults to "1".
     :type version: str
-    :param display_name: The display name of pipeline component, defaults to function name.
+    :keyword display_name: The display name of pipeline component, defaults to function name.
     :type display_name: str
-    :param description: The description of the built pipeline.
+    :keyword description: The description of the built pipeline.
     :type description: str
-    :param experiment_name: Name of the experiment the job will be created under, \
+    :keyword experiment_name: Name of the experiment the job will be created under, \
                 if None is provided, experiment will be set to current directory.
     :type experiment_name: str
-    :param tags: The tags of pipeline component.
+    :keyword tags: The tags of pipeline component.
     :type tags: dict[str, str]
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
 
