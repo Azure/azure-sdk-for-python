@@ -617,6 +617,33 @@ class DataOperations(_ScopeDependentOperations):
         with self._set_registry_client(registry_name):
             return self.create_or_update(data_ref)
 
+    @monitor_with_activity(logger, "data.Mount", ActivityType.PUBLICAPI)
+    @experimental
+    def mount(
+        self,
+        path,
+        mount_point='/home/azureuser/mount/data',
+        mode='ro_mount',
+        **kwargs,
+    ) -> None:
+        """Mount a data asset to a local path.
+
+        :param path: The data asset path to mount, in the form of `azureml:<name>` or `azureml:<name>:<version>`.
+        :type name: str
+        :param mount_point: A local path used as mount point.
+        :type version: str
+        :param mode: Mount mode. Only `ro_mount` (read-only) is supported for data asset mount.
+        :return: None
+        """
+
+        assert mode in ['ro_mount', 'rw_mount'], 'mode should be either `ro_mount` or `rw_mount`'
+        read_only = mode == 'ro_mount'
+        assert read_only, 'read-write mount for data asset is not supported yet'
+
+        from azureml.dataprep.rslex import fuse_cli
+        uri = fuse_cli.get_data_asset_url(self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path)
+        fuse_cli.call_rslex_fuse_cli(uri, mount_point, read_only)
+
     @contextmanager
     def _set_registry_client(self, registry_name: str) -> None:
         """Sets the registry client for the data operations.
