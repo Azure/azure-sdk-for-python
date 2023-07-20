@@ -41,7 +41,8 @@ async def main():
         print("message found: " + str("message" in config))
         print("test.message found: " + str("test.message" in config))
 
-        await credential.close()
+        if not credential:
+            await credential.close()
         await config.close()
     except ClientAuthenticationError:
         print("Unauthorized")

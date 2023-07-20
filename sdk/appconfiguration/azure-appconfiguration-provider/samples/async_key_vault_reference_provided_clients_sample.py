@@ -29,7 +29,8 @@ async def main():
 
         print(config.get("secret"))
 
-        await credential.close()
+        if not credential:
+            await credential.close()
         await config.close()
     except ClientAuthenticationError:
         print("Unauthorized")
