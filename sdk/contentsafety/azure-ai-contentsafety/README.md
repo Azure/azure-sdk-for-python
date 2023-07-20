@@ -4,13 +4,13 @@
 
 ## Getting started
 
-### Prequisites
+### Prerequisites
 
 - Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing [Azure AI Content Safety][contentsafety_overview] instance.
 
-### Installating the package
+### Install the package
 
 ```bash
 pip install azure-ai-contentsafety
