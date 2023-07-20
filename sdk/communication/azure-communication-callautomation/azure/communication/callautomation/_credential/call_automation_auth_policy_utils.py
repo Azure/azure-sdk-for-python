@@ -13,14 +13,13 @@ from azure.core.pipeline.policies import (
 )
 from .._credential.call_automation_policy import CallAutomationHMACCredentialsPolicy
 
-def get_call_automation_authentication_policy(
+def get_call_automation_auth_policy(
     endpoint: str,
     credential: Union[TokenCredential, AsyncTokenCredential, AzureKeyCredential, str],
     acs_url: str,
     decode_url: bool = False,
     is_async: bool = False
 ):
-    # type: (...) -> Union[AsyncBearerTokenCredentialPolicy, BearerTokenCredentialPolicy, CallAutomationHMACCredentialsPolicy]
     """Returns the correct authentication policy based on which credential is being passed.
 
     :param endpoint: The endpoint to which we are authenticating to.
@@ -32,7 +31,8 @@ def get_call_automation_authentication_policy(
     :param bool decode_url: `True` if there is a need to decode the url. Default value is `False`
     :param bool is_async: For async clients there is a need to decode the url
 
-    :return: Either AsyncBearerTokenCredentialPolicy or BearerTokenCredentialPolicy or CallAutomationHMACCredentialsPolicy
+    :return: Either AsyncBearerTokenCredentialPolicy or BearerTokenCredentialPolicy
+     or CallAutomationHMACCredentialsPolicy
     :rtype: ~azure.core.pipeline.policies.AsyncBearerTokenCredentialPolicy or
     ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or
     ~azure.communication.callautomation.credential.callautomationpolicy.CallAutomationHMACCredentialsPolicy

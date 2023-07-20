@@ -34,7 +34,9 @@ def get_environment_variable(variable_name):
     """From environment variable, from variable name.
     This is only for development purposes
 
-    :return: environment variable
+    :param variable_name: key of the environment variable
+    :type variable_name: str
+    :return: environment variable value
     :rtype: str
     """
     return os.environ.get(variable_name)
