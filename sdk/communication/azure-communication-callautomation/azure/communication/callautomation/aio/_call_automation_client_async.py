@@ -19,8 +19,7 @@ from .._generated.models import (
     RedirectCallRequest,
     RejectCallRequest,
     StartCallRecordingRequest,
-    CustomContext,
-    CallLocator
+    CustomContext
 )
 from .._models import (
     CallConnectionProperties,

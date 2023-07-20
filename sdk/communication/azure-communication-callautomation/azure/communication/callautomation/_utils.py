@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Dict, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Dict, Any, List, Optional, Union
 from ._shared.models import (
     CommunicationIdentifier,
     CommunicationUserIdentifier,
@@ -18,12 +18,13 @@ from ._generated.models import (
     PhoneNumberIdentifierModel,
     CallLocator
 )
-from ._models import ServerCallLocator, GroupCallLocator
+if TYPE_CHECKING:
+    from ._models import ServerCallLocator, GroupCallLocator
 
 
-def build_call_locator(args: List[Union[ServerCallLocator, GroupCallLocator]], kwargs: Dict[str, Any]) -> CallLocator:
+def build_call_locator(args: List[Union['ServerCallLocator', 'GroupCallLocator']], kwargs: Dict[str, Any]) -> CallLocator:
     """Build the generated callLocator object from args in kwargs with support for legacy models.
-    
+
     :param args: Any positional parameters provided. This may include the legacy model. The new method signature
      does not support positional params, so if there's anything here, it's the old model.
     :type args: list[ServerCallLocator or GroupCallLocator]
@@ -35,7 +36,7 @@ def build_call_locator(args: List[Union[ServerCallLocator, GroupCallLocator]], k
     if args:
         if len(args) > 1:
             raise TypeError(f"Unexpected positional arguments: {args[1:]}")
-        call_locator = args[0]._to_generated()
+        call_locator = args[0]._to_generated()  # pylint:disable=protected-access
 
     if "call_locator" in kwargs:
         if call_locator is not None:
@@ -43,7 +44,7 @@ def build_call_locator(args: List[Union[ServerCallLocator, GroupCallLocator]], k
                 "Received multiple values for call_locator. "
                 "Please provide either 'group_call_id' or 'server_call_id'."
             )
-        call_locator = kwargs.pop("call_locator")._to_generated()
+        call_locator = kwargs.pop("call_locator")._to_generated()  # pylint:disable=protected-access
     if "group_call_id" in kwargs:
         if call_locator is not None:
             raise ValueError(
