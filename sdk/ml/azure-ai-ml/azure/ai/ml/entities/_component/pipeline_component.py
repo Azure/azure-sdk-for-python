@@ -27,7 +27,7 @@ from azure.ai.ml.entities._inputs_outputs import GroupInput, Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.pipeline._attr_dict import (
     has_attr_safe,
-    try_get_non_arbitrary_attr_for_potential_attr_dict,
+    try_get_non_arbitrary_attr,
 )
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._validation import MutableValidationResult
@@ -363,11 +363,7 @@ class PipelineComponent(Component):
             "settings": lambda val: val is not None and any(v is not None for v in val._to_dict().values()),
         }
         # Avoid new attr added by use `try_get_non...` instead of `hasattr` or `getattr` directly.
-        return [
-            k
-            for k, has_set in examine_mapping.items()
-            if has_set(try_get_non_arbitrary_attr_for_potential_attr_dict(obj, k))
-        ]
+        return [k for k, has_set in examine_mapping.items() if has_set(try_get_non_arbitrary_attr(obj, k))]
 
     def _get_telemetry_values(self, *args, **kwargs):
         telemetry_values = super()._get_telemetry_values()
