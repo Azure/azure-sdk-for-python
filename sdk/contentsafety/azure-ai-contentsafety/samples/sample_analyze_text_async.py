@@ -13,7 +13,8 @@ from azure.core.exceptions import HttpResponseError
 from azure.ai.contentsafety.models import AnalyzeTextOptions
 
 async def analyze_text_async():
-    # analyze text async
+    # [START analyze_text_async]
+
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
@@ -44,6 +45,8 @@ async def analyze_text_async():
         print(f"Sexual severity: {response.sexual_result.severity}")
     if response.violence_result:
         print(f"Violence severity: {response.violence_result.severity}")
+
+    # [END analyze_text_async]
 
 async def main():
     await analyze_text_async()

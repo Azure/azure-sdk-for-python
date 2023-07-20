@@ -7,7 +7,8 @@
 # --------------------------------------------------------------------------
 
 def create_or_update_text_blocklist():
-    # create or update text blocklist
+    # [START create_or_update_text_blocklist]
+
     import os
     from azure.ai.contentsafety import ContentSafetyClient
     from azure.core.credentials import AzureKeyCredential
@@ -36,8 +37,11 @@ def create_or_update_text_blocklist():
         print(e)
         raise
 
+    # [END create_or_update_text_blocklist]
+
 def add_block_items():
-    # add block items
+    # [START add_block_items]
+
     import os
     from azure.ai.contentsafety import ContentSafetyClient
     from azure.core.credentials import AzureKeyCredential
@@ -76,8 +80,11 @@ def add_block_items():
         print(e)
         raise
 
+    # [END add_block_items]
+
 def analyze_text_with_blocklists():
-    # analyze text with blocklists
+    # [START analyze_text_with_blocklists]
+
     import os
     from azure.ai.contentsafety import ContentSafetyClient
     from azure.core.credentials import AzureKeyCredential
@@ -110,8 +117,11 @@ def analyze_text_with_blocklists():
         print(e)
         raise
 
+    # [END analyze_text_with_blocklists]
+
 def list_text_blocklists():
-    # list text blocklists
+    # [START list_text_blocklists]
+
     import os
     from azure.ai.contentsafety import ContentSafetyClient
     from azure.core.credentials import AzureKeyCredential
@@ -138,8 +148,11 @@ def list_text_blocklists():
         print(e)
         raise
 
+    # [END list_text_blocklists]
+
 def get_text_blocklist():
-    # get text blocklist
+    # [START get_text_blocklist]
+
     import os
     from azure.ai.contentsafety import ContentSafetyClient
     from azure.core.credentials import AzureKeyCredential
@@ -167,8 +180,11 @@ def get_text_blocklist():
         print(e)
         raise
 
+    # [END get_text_blocklist]
+
 def list_block_items():
-    # list block items
+    # [START list_block_items]
+
     import os
     from azure.ai.contentsafety import ContentSafetyClient
     from azure.core.credentials import AzureKeyCredential
@@ -197,8 +213,11 @@ def list_block_items():
         print(e)
         raise
 
+    # [END list_block_items]
+
 def get_block_item():
-    # get block item
+    # [START get_block_item]
+
     import os
     from azure.ai.contentsafety import ContentSafetyClient
     from azure.core.credentials import AzureKeyCredential
@@ -240,8 +259,11 @@ def get_block_item():
         print(e)
         raise
 
+    # [END get_block_item]
+
 def remove_block_items():
-    # remove block items
+    # [START remove_block_items]
+
     import os
     from azure.ai.contentsafety import ContentSafetyClient
     from azure.core.credentials import AzureKeyCredential
@@ -286,8 +308,11 @@ def remove_block_items():
         print(e)
         raise
 
+    # [END remove_block_items]
+
 def delete_blocklist():
-    # delete blocklist
+    # [START delete_blocklist]
+
     import os
     from azure.ai.contentsafety import ContentSafetyClient
     from azure.core.credentials import AzureKeyCredential
@@ -312,6 +337,8 @@ def delete_blocklist():
             raise
         print(e)
         raise
+
+    # [END delete_blocklist]
 
 if __name__ == "__main__":
     create_or_update_text_blocklist()
