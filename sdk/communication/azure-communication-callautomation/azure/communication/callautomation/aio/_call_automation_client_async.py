@@ -447,7 +447,6 @@ class CallAutomationClient:
         :rtype: ~azure.communication.callautomation.RecordingProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        ...
 
     @overload
     async def start_recording(
@@ -497,7 +496,6 @@ class CallAutomationClient:
         :rtype: ~azure.communication.callautomation.RecordingProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        ...
 
     @distributed_trace_async
     async def start_recording(

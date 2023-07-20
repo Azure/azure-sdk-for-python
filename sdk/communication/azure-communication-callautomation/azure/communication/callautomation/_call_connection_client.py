@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Optional, List, Union, Dict
 import warnings
+from typing import TYPE_CHECKING, Optional, List, Union, Dict
 try:
     from typing import Literal
 except ImportError:

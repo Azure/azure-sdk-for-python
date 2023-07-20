@@ -22,7 +22,10 @@ if TYPE_CHECKING:
     from ._models import ServerCallLocator, GroupCallLocator
 
 
-def build_call_locator(args: List[Union['ServerCallLocator', 'GroupCallLocator']], kwargs: Dict[str, Any]) -> CallLocator:
+def build_call_locator(
+        args: List[Union['ServerCallLocator', 'GroupCallLocator']],
+        kwargs: Dict[str, Any]
+    ) -> CallLocator:
     """Build the generated callLocator object from args in kwargs with support for legacy models.
 
     :param args: Any positional parameters provided. This may include the legacy model. The new method signature

@@ -29,8 +29,9 @@ class TestCallAutomationClient(unittest.TestCase):
 
     def test_create_call(self):
         def mock_send(request, **kwargs):
+            kwargs.pop("stream", None)
             if kwargs:
-                raise ValueError("Received unexpected kwargs in transport.")
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             body = json.loads(request.content)
             assert body["sourceDisplayName"] == "baz", "Parameter value not as expected"
             return mock_response(status_code=201, json_payload={
@@ -88,8 +89,9 @@ class TestCallAutomationClient(unittest.TestCase):
 
     def test_create_group_call(self):
         def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
             if kwargs:
-                raise ValueError("Received unexpected kwargs in transport.")
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=201, json_payload={
                 "callConnectionId": self.call_connection_id,
                 "serverCallId": self.server_callI_id,
@@ -111,8 +113,9 @@ class TestCallAutomationClient(unittest.TestCase):
 
     def test_create_group_call_back_compat(self):
         def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
             if kwargs:
-                raise ValueError("Received unexpected kwargs in transport.")
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=201, json_payload={
                 "callConnectionId": self.call_connection_id,
                 "serverCallId": self.server_callI_id,
@@ -136,8 +139,9 @@ class TestCallAutomationClient(unittest.TestCase):
 
     def test_answer_call(self):
         def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
             if kwargs:
-                raise ValueError("Received unexpected kwargs in transport.")
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=200, json_payload={
                 "callConnectionId": self.call_connection_id,
                 "serverCallId": self.server_callI_id,
@@ -158,8 +162,9 @@ class TestCallAutomationClient(unittest.TestCase):
 
     def test_redirect_call(self):
         def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
             if kwargs:
-                raise ValueError("Received unexpected kwargs in transport.")
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=204)
 
         # target endpoint for ACS User
@@ -184,12 +189,13 @@ class TestCallAutomationClient(unittest.TestCase):
                 voip_headers={"foo": "bar"},
                 source_display_name="baz"
             )
-        assert "unexpected kwargs" in str(e.error)
+        assert "unexpected kwargs" in str(e.value)
 
     def test_reject_call(self):
         def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
             if kwargs:
-                raise ValueError("Received unexpected kwargs in transport.")
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=204)
 
         call_automation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="),

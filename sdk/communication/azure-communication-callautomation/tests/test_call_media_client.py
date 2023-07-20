@@ -220,7 +220,7 @@ class TestCallMediaClient(unittest.TestCase):
                 target_participant=self.target_user,
                 input_type="foo"
             )
-        assert "'foo' is not supported." in str(e.error)
+        assert "'foo' is not supported." in str(e.value)
 
     def test_recognize_choices(self):
         mock_recognize = Mock()

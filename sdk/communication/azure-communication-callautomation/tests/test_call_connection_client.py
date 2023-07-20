@@ -31,8 +31,9 @@ class TestCallConnectionClient(unittest.TestCase):
 
     def test_hangup(self):
         def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
             if kwargs:
-                raise ValueError("Received unexpected kwargs in transport.")
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=204)
 
         call_connection = CallConnectionClient(
@@ -44,8 +45,9 @@ class TestCallConnectionClient(unittest.TestCase):
 
     def test_terminate(self):
         def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
             if kwargs:
-                raise ValueError("Received unexpected kwargs in transport.")
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=204)
 
         call_connection = CallConnectionClient(
@@ -57,8 +59,9 @@ class TestCallConnectionClient(unittest.TestCase):
 
     def test_transfer_call_to_participant(self):
         def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
             if kwargs:
-                raise ValueError("Received unexpected kwargs in transport.")
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=202, json_payload={
                 "operationContext": self.operation_context})
 
@@ -75,8 +78,9 @@ class TestCallConnectionClient(unittest.TestCase):
 
     def test_list_participants(self):
         def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
             if kwargs:
-                raise ValueError("Received unexpected kwargs in transport.")
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=200, json_payload={
                 "values": [self.call_participant],
                 "nextLink": ""})
@@ -94,8 +98,9 @@ class TestCallConnectionClient(unittest.TestCase):
 
     def test_get_participants(self):
         def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
             if kwargs:
-                raise ValueError("Received unexpected kwargs in transport.")
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=200, json_payload=self.call_participant)
 
         call_connection = CallConnectionClient(
@@ -108,10 +113,11 @@ class TestCallConnectionClient(unittest.TestCase):
 
     def test_add_participant(self):
         def mock_send(request, **kwargs):
+            kwargs.pop("stream", None)
             body = json.loads(request.content)
             assert body["sourceDisplayName"] == "baz", "Parameter value not as expected"
             if kwargs:
-                raise ValueError("Received unexpected kwargs in transport.")
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=202, json_payload={
                 "participant": self.call_participant,
                 "operationContext": self.operation_context})
@@ -154,8 +160,9 @@ class TestCallConnectionClient(unittest.TestCase):
 
     def test_remove_participant(self):
         def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
             if kwargs:
-                raise ValueError("Received unexpected kwargs in transport.")
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=202, json_payload={
                 "operationContext": self.operation_context})
 
@@ -170,8 +177,9 @@ class TestCallConnectionClient(unittest.TestCase):
 
     def test_mute_participants(self):
         def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
             if kwargs:
-                raise ValueError("Received unexpected kwargs in transport.")
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=202, json_payload={
                 "operationContext": self.operation_context})
 
