@@ -117,20 +117,20 @@ class CustomContext(object):
 
     def add(
         self,
-        header: Union['SIPCustomHeader', 'SIPUUIHeader', 'VoipHeader']
+        header: Union['SIPCustomHeader', 'SIPUserToUserHeader', 'VoipHeader']
     ) -> None:
         """Add a custom context header to the custom context.
 
         :param header: Custom context header to be added.
         :type header: ~azure.communication.callautomation.SIPCustomHeader or
-         ~azure.communication.callautomation.SIPUUIHeader or
+         ~azure.communication.callautomation.SIPUserToUserHeader or
          ~azure.communication.callautomation.VoipHeader
         :return: None
         :rtype: None
-        :raises ValueError if header is not of type SIPCustomHeader or SIPUUIHeader or VoipHeader
+        :raises ValueError if header is not of type SIPCustomHeader or SIPUserToUserHeader or VoipHeader
         """
 
-        if isinstance(header, SIPUUIHeader):
+        if isinstance(header, SIPUserToUserHeader):
             if self.sip_headers is None:
                 raise ValueError("Cannot add sip header, SipHeaders is None.")
             self.sip_headers[header.Key] = header.Value
@@ -189,7 +189,7 @@ class SIPCustomHeader(CustomContextHeader):
     ):
         super().__init__("X-MS-Custom-" + key, value)
 
-class SIPUUIHeader(CustomContextHeader):
+class SIPUserToUserHeader(CustomContextHeader):
     """Custom context header for SIP User-to-User.
 
     :param value: The value of the custom context SIP User-to-User header.

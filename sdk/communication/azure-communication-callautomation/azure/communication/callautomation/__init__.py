@@ -23,7 +23,7 @@ from ._models import (
     ChannelAffinity,
     MuteParticipantsResult,
     SIPCustomHeader,
-    SIPUUIHeader,
+    SIPUserToUserHeader,
     VoipHeader,
 )
 from ._shared.models import (
@@ -66,7 +66,7 @@ __all__ = [
     "ChannelAffinity",
     "MediaStreamingConfiguration",
     "SIPCustomHeader",
-    "SIPUUIHeader",
+    "SIPUserToUserHeader",
     "VoipHeader",
 
     # models for output
