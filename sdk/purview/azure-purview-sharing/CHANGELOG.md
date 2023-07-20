@@ -9,7 +9,7 @@
 
 ### Breaking Changes
 
-- In _operations.py, the `skip_token` parameter was removed from list definitions in favor of placing it within `nextLink`. 
+- In _operations.py, the `skip_token` parameter was removed from list definitions in favor of placing it within `nextLink` 
 - The `orderby` parameter in all definitions that relate to listing shares has been renamed to `order_by`
 
 ### Bugs Fixed
