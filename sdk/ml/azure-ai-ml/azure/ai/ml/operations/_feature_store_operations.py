@@ -272,7 +272,11 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         if offline_store and offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
             raise ValidationError("offline store type should be azure_data_lake_gen2")
 
-        if offline_store and rest_workspace_obj.feature_store_settings.offline_store_connection_name:
+        if (
+            offline_store
+            and rest_workspace_obj.feature_store_settings
+            and rest_workspace_obj.feature_store_settings.offline_store_connection_name
+        ):
             existing_offline_store_connection = self._workspace_connection_operation.get(
                 resource_group,
                 feature_store.name,
@@ -293,7 +297,11 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         if online_store and online_store.type != ONLINE_MATERIALIZATION_STORE_TYPE:
             raise ValidationError("online store type should be redis")
 
-        if online_store and rest_workspace_obj.feature_store_settings.online_store_connection_name:
+        if (
+            online_store
+            and rest_workspace_obj.feature_store_settings
+            and rest_workspace_obj.feature_store_settings.online_store_connection_name
+        ):
             existing_online_store_connection = self._workspace_connection_operation.get(
                 resource_group,
                 feature_store.name,
@@ -337,7 +345,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             else:
                 raise ValidationError("Materialization identity is required to setup offline store connection")
 
-        if online_store and materialization_identity:
+        if online_store:
             if materialization_identity:
                 online_store_connection_name = (
                     feature_store_settings.online_store_connection_name
@@ -359,7 +367,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                 )
                 feature_store_settings.online_store_connection_name = online_store_connection_name
             else:
-                raise ValidationError("Materialization identity is required to setup offline store connection")
+                raise ValidationError("Materialization identity is required to setup online store connection")
 
         identity = kwargs.pop("identity", feature_store.identity)
         if materialization_identity:

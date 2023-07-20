@@ -50,4 +50,4 @@ class SourceMetadata(object):
         self.timestamp_column = timestamp_column
         self.source_delay = source_delay
         self.source_process_code = source_process_code
-        self.dict = dict
+        self.kwargs = dict
