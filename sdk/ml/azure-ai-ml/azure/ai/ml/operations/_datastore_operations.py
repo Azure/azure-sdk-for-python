@@ -17,6 +17,7 @@ from azure.ai.ml._restclient.v2022_10_01.models import (
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._datastore.datastore import Datastore
@@ -170,3 +171,29 @@ class DatastoreOperations(_ScopeDependentOperations):
                 log_and_raise_error(ex)
             else:
                 raise ex
+            
+    @monitor_with_activity(logger, "Datastore.Mount", ActivityType.PUBLICAPI)
+    @experimental
+    def mount(
+        self,
+        path,
+        mount_point='/home/azureuser/mount/data',
+        mode='ro_mount',
+        **kwargs,
+    ) -> None:
+        """Mount a data asset to a local path.
+
+        :param path: The data asset path to mount, in the form of `azureml:<name>` or `azureml:<name>:<version>`.
+        :type name: str
+        :param mount_point: A local path used as mount point.
+        :type version: str
+        :param mode: Mount mode. Only `ro_mount` (read-only) is supported for data asset mount.
+        :return: None
+        """
+
+        assert mode in ['ro_mount', 'rw_mount'], 'mode should be either `ro_mount` or `rw_mount`'
+        read_only = mode == 'ro_mount'
+
+        from azureml.dataprep.rslex import fuse_cli
+        uri = fuse_cli.build_datastore_uri(self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path)
+        fuse_cli.call_rslex_fuse_cli(uri, mount_point, read_only)
