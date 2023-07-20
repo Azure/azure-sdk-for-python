@@ -6,16 +6,14 @@
 # license information.
 # --------------------------------------------------------------------------
 import asyncio
+import os
+from azure.ai.contentsafety.aio import ContentSafetyClient
+from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
+from azure.ai.contentsafety.models import AnalyzeImageOptions, ImageData
 
 async def analyze_image_async():
-    # [START analyze_image_async]
-
-    import os
-    from azure.ai.contentsafety.aio import ContentSafetyClient
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.exceptions import HttpResponseError
-    from azure.ai.contentsafety.models import AnalyzeImageOptions, ImageData
-
+    # analyze image async
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
     image_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_data/image.jpg"))
@@ -48,8 +46,6 @@ async def analyze_image_async():
         print(f"Sexual severity: {response.sexual_result.severity}")
     if response.violence_result:
         print(f"Violence severity: {response.violence_result.severity}")
-
-    # [END analyze_image_async]
 
 async def main():
     await analyze_image_async()
