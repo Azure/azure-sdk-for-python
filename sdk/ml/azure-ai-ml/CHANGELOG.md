@@ -1,5 +1,19 @@
 # Release History
 
+
+## 1.10.0 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
+- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
+  (instead of the default behavior for python < 3.15, which uses locale specific encodings)
+
 ## 1.9.0 (Unreleased)
 
 ### Features Added
