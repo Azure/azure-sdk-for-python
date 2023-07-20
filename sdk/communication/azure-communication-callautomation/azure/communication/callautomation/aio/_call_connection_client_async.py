@@ -247,8 +247,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             target_participant=serialize_identifier(target_participant),
             custom_context=user_custom_context, operation_context=operation_context,
             callback_uri_override=callback_url_override)
-        
-        if (transferee != None):
+
+        if transferee is not None:
             request.transferee = serialize_identifier(transferee)
 
         return await self._call_connection_client.transfer_to_participant(
