@@ -3,10 +3,8 @@ from ._router_client import JobRouterClient
 from ._router_administration_client import JobRouterAdministrationClient
 from ._enums import (
     ScoringRuleParameterSelector,
-    RouterWorkerStateSelector,
     RouterWorkerState,
     RouterWorkerSelectorStatus,
-    RouterJobStatusSelector,
     RouterJobStatus,
     LabelOperator,
     JobMatchModeType,
@@ -108,7 +106,6 @@ __all__ = [
     'RouterJobOffer',
     'RouterJobPositionDetails',
     'RouterJobStatus',
-    'RouterJobStatusSelector',
     'RouterQueue',
     'RouterQueueItem',
     'RouterQueueSelector',
@@ -119,7 +116,6 @@ __all__ = [
     'RouterWorkerSelector',
     'RouterWorkerSelectorStatus',
     'RouterWorkerState',
-    'RouterWorkerStateSelector',
     'RuleEngineQueueSelectorAttachment',
     'RuleEngineWorkerSelectorAttachment',
     'ScheduleAndSuspendMode',

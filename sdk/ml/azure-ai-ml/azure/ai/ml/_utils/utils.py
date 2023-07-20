@@ -39,6 +39,7 @@ from azure.ai.ml.constants._common import (
     AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    DefaultOpenEncoding,
 )
 
 module_logger = logging.getLogger(__name__)
@@ -196,7 +197,7 @@ def load_file(file_path: str) -> str:
     # exceptions.py via _get_mfe_url_override
 
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
             cfg = f.read()
     except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
@@ -225,7 +226,7 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
     # exceptions.py via _get_mfe_url_override
 
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
             cfg = json.load(f)
     except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
@@ -262,7 +263,7 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
 
     if isinstance(source, (str, os.PathLike)):
         try:
-            cm = open(source, "r")
+            cm = open(source, "r", encoding=DefaultOpenEncoding.READ)
         except OSError as e:
             msg = "No such file or directory: {}"
             raise ValidationException(
@@ -361,7 +362,7 @@ def dump_yaml_to_file(
 
     if isinstance(dest, (str, os.PathLike)):
         try:
-            cm = open(dest, "w")
+            cm = open(dest, "w", encoding=DefaultOpenEncoding.WRITE)
         except OSError as e:  # FileNotFoundError introduced in Python 3
             msg = "No such file or directory: {}"
             raise ValidationException(
@@ -896,7 +897,7 @@ def write_to_shared_file(file_path: Union[str, PathLike], content: str):
     :param file_path: Path to the file.
     :param content: Content to write to the file.
     """
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         f.write(content)
 
     # share_mode means read/write for owner, group and others
