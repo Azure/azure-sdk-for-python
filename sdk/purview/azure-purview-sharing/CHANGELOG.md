@@ -1,18 +1,6 @@
 # Release History
 
-## 1.0.0b3 (2023-07-14)
-
-### Bugs Fixed
-
-- Updated broken link in samples README to point to Azure/azure-python-sdk instead of developer fork
-
-### Other Changes
-
-- Migrated test recordings to the azure-sdk-assets repo
-- Added more sanitizers to conftest.py
-
-
-## 1.0.0b3 (2023-06-29)
+## 1.0.0b3 (2023-07-18)
 
 ### Features Added
 
@@ -21,15 +9,19 @@
 
 ### Breaking Changes
 
-- In _operations.py, under the list_attached definition, the `skip_token` parameter was removed list definitions in favor of placing it within `nextLink`. 
+- In _operations.py, the `skip_token` parameter was removed from list definitions in favor of placing it within `nextLink` 
+- The `orderby` parameter in all definitions that relate to listing shares has been renamed to `order_by`
 
 ### Bugs Fixed
 
 - Fixed Samples and Tests
+- Updated broken link in samples README to point to Azure/azure-python-sdk instead of developer fork
 
 ### Other Changes
 
-- Updated and fixed README
+- Updated and fixed README according to feedback
+- Migrated test recordings to the azure-sdk-assets repo
+- Added more sanitizers to conftest.py
 
 ## 1.0.0b2 (2023-06-05)
 
