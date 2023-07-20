@@ -207,7 +207,7 @@ class PipelineComponent(Component):
                     component_binding_input = component_binding_input.path
                 if is_data_binding_expression(component_binding_input, ["parent"]):
                     # data binding may have more than one PipelineInput now
-                    for pipeline_input_name in PipelineExpression.parse_pipeline_input_names_from_data_binding(
+                    for pipeline_input_name in PipelineExpression.parse_pipeline_inputs_from_data_binding(
                         component_binding_input
                     ):
                         if pipeline_input_name not in self.inputs:
