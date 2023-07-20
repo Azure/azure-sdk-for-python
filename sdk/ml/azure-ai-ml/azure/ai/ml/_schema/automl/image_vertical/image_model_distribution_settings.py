@@ -126,6 +126,7 @@ class ImageModelDistributionSettingsSchema(metaclass=PatchedSchemaMeta):
     weight_decay = FLOAT_SEARCH_SPACE_DISTRIBUTION_FIELD
 
 
+# pylint: disable-next=name-too-long
 class ImageModelDistributionSettingsClassificationSchema(ImageModelDistributionSettingsSchema):
     model_name = STRING_SEARCH_SPACE_DISTRIBUTION_FIELD
     training_crop_size = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
@@ -161,6 +162,7 @@ class ImageModelDistributionSettingsClassificationSchema(ImageModelDistributionS
         return ImageClassificationSearchSpace(**data)
 
 
+# pylint: disable-next=name-too-long
 class ImageModelDistributionSettingsDetectionCommonSchema(ImageModelDistributionSettingsSchema):
     box_detections_per_image = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
     box_score_threshold = FLOAT_SEARCH_SPACE_DISTRIBUTION_FIELD
@@ -204,9 +206,11 @@ class ImageModelDistributionSettingsDetectionCommonSchema(ImageModelDistribution
         return ImageObjectDetectionSearchSpace(**data)
 
 
+# pylint: disable-next=name-too-long
 class ImageModelDistributionSettingsObjectDetectionSchema(ImageModelDistributionSettingsDetectionCommonSchema):
     model_name = STRING_SEARCH_SPACE_DISTRIBUTION_FIELD
 
 
+# pylint: disable-next=name-too-long
 class ImageModelDistributionSettingsInstanceSegmentationSchema(ImageModelDistributionSettingsObjectDetectionSchema):
     model_name = STRING_SEARCH_SPACE_DISTRIBUTION_FIELD

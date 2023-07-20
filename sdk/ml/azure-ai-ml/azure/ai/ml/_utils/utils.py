@@ -762,7 +762,7 @@ def is_on_disk_cache_enabled():
     return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True]
 
 
-def is_concurrent_component_registration_enabled():
+def is_concurrent_component_registration_enabled():  # pylint: disable=name-too-long
     return os.getenv(AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION) not in ["True", "true", True]
 
 
