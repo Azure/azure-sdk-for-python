@@ -97,8 +97,8 @@ class _LocalEndpointHelper(object):
     def get(self, endpoint_name: str) -> OnlineEndpoint:
         """Get a local endpoint.
 
-        :param name: Name of endpoint.
-        :type name: str
+        :param endpoint_name: Name of endpoint.
+        :type endpoint_name: str
         :return OnlineEndpoint:
         """
         endpoint = self._endpoint_stub.get(endpoint_name=endpoint_name)

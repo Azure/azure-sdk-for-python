@@ -181,8 +181,8 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
         Returns the feature store if already exists.
 
-        :param feature store: FeatureStore definition.
-        :type feature store: FeatureStore
+        :param feature_store: FeatureStore definition.
+        :type feature_store: FeatureStore
         :type update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
@@ -232,7 +232,8 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     ) -> LROPoller[FeatureStore]:
         """Update friendly name, description, materialization identities or tags of a feature store.
 
-        :param feature store: FeatureStore resource.
+        :param feature_store: FeatureStore resource.
+        :type feature_store: FeatureStore
         :param update_dependent_resources: gives your consent to update the feature store dependent resources.
             Note that updating the feature store attached Azure Container Registry resource may break lineage
             of previous jobs or your ability to rerun earlier jobs in this feature store.
@@ -242,7 +243,6 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             Azure Container Registry and Azure Application Insights will fail.
         :param application_insights: Application insights resource for feature store.
         :param container_registry: Container registry resource for feature store.
-        :type feature store: FeatureStore
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
