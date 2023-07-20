@@ -5,14 +5,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import os
-from azure.ai.contentsafety import ContentSafetyClient
-from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import HttpResponseError
-from azure.ai.contentsafety.models import AnalyzeImageOptions, ImageData
 
 def analyze_image():
     # [START analyze_image]
+    
+    import os
+    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.core.credentials import AzureKeyCredential
+    from azure.core.exceptions import HttpResponseError
+    from azure.ai.contentsafety.models import AnalyzeImageOptions, ImageData
 
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
@@ -47,6 +48,7 @@ def analyze_image():
         print(f"Violence severity: {response.violence_result.severity}")
 
     # [END analyze_image]
+
 
 if __name__ == "__main__":
     analyze_image()
