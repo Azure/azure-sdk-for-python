@@ -30,6 +30,12 @@ if sys.version_info >= (3, 9):
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
+
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -147,7 +153,7 @@ class DistributionMode:
         :paramtype bypass_selectors: bool
         """
         super().__init__(**kwargs)
-        self.kind: Optional[str] = None
+        self.kind: Optional[Literal["best-worker", "longest-idle", "round-robin"]] = None
         self.min_concurrent_offers = min_concurrent_offers
         self.max_concurrent_offers = max_concurrent_offers
         self.bypass_selectors = bypass_selectors
@@ -159,7 +165,7 @@ class BestWorkerMode(DistributionMode):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing a sub-type of Mode. Required.
-    :vartype kind: str
+    :vartype kind: Literal["best-worker"]
     :ivar min_concurrent_offers: Governs the minimum desired number of active concurrent offers a
      job can have.
     :vartype min_concurrent_offers: int
@@ -247,7 +253,7 @@ class BestWorkerMode(DistributionMode):
             bypass_selectors=bypass_selectors,
             **kwargs
         )
-        self.kind: str = "best-worker"
+        self.kind: Literal["best-worker"] = "best-worker"
         self.scoring_rule = scoring_rule
         self.scoring_rule_options = scoring_rule_options
 
@@ -283,7 +289,7 @@ class ExceptionAction:
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind: Optional[str] = None
+        self.kind: Optional[Literal["cancel", "manual-reclassify", "reclassify"]] = None
 
 
 class CancelExceptionAction(ExceptionAction):
@@ -292,7 +298,7 @@ class CancelExceptionAction(ExceptionAction):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required.
-    :vartype kind: str
+    :vartype kind: Literal["cancel"]
     :ivar note: (Optional) A note that will be appended to the jobs' Notes collection with th
      current timestamp.
     :vartype note: str
@@ -323,7 +329,7 @@ class CancelExceptionAction(ExceptionAction):
         :paramtype disposition_code: str
         """
         super().__init__(**kwargs)
-        self.kind: str = "cancel"
+        self.kind: Literal["cancel"] = "cancel"
         self.note = note
         self.disposition_code = disposition_code
 
@@ -649,7 +655,8 @@ class QueueSelectorAttachment:
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind: Optional[str] = None
+        self.kind: Optional[Literal[
+            "conditional", "pass-through", "rule-engine", "static", "weighted-allocation-queue-selector"]] = None
 
 
 class ConditionalQueueSelectorAttachment(QueueSelectorAttachment):
@@ -659,7 +666,7 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing the type of queue selector attachment. Required.
-    :vartype kind: str
+    :vartype kind: Literal["conditional"]
     :ivar condition: A rule of one of the following types:
 
      StaticRule:  A rule providing static rules that always return the same result, regardless of
@@ -704,7 +711,7 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment):
         :paramtype queue_selectors: list[~azure.communication.jobrouter.models.RouterQueueSelector]
         """
         super().__init__(**kwargs)
-        self.kind: str = "conditional"
+        self.kind: Literal["conditional"] = "conditional"
         self.condition = condition
         self.queue_selectors = queue_selectors
 
@@ -744,7 +751,8 @@ class WorkerSelectorAttachment:
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind: Optional[str] = None
+        self.kind: Optional[Literal[
+            "conditional", "pass-through", "rule-engine", "static", "weighted-allocation-worker-selector"]] = None
 
 
 class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment):
@@ -754,7 +762,7 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing the type of worker selector attachment. Required.
-    :vartype kind: str
+    :vartype kind: Literal["conditional"]
     :ivar condition: A rule of one of the following types:
 
      StaticRule:  A rule providing static rules that always return the same result, regardless of
@@ -799,7 +807,7 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment):
         :paramtype worker_selectors: list[~azure.communication.jobrouter.models.RouterWorkerSelector]
         """
         super().__init__(**kwargs)
-        self.kind: str = "conditional"
+        self.kind: Literal["conditional"] = "conditional"
         self.condition = condition
         self.worker_selectors = worker_selectors
 
@@ -878,7 +886,8 @@ class RouterRule:
     def __init__(self) -> None:
         """ """
         super().__init__()
-        self.kind: Optional[str] = None
+        self.kind: Optional[
+            Literal["azure-function-rule", "direct-map-rule", "expression-rule", "static-rule", "webhook-rule"]] = None
 
 
 class DirectMapRouterRule(RouterRule):
@@ -887,7 +896,7 @@ class DirectMapRouterRule(RouterRule):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing a sub-type of Rule. Required.
-    :vartype kind: str
+    :vartype kind: Literal["direct-map-rule"]
     """
 
     _validation = {
@@ -901,7 +910,7 @@ class DirectMapRouterRule(RouterRule):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind: str = "direct-map-rule"
+        self.kind: Literal["direct-map-rule"] = "direct-map-rule"
 
 
 class DistributionPolicy:
@@ -1123,7 +1132,7 @@ class ExceptionTrigger:
     def __init__(self) -> None:
         """ """
         super().__init__()
-        self.kind: Optional[str] = None
+        self.kind: Optional[Literal["queue-length", "wait-time"]] = None
 
 
 class ExpressionRouterRule(RouterRule):
@@ -1132,7 +1141,7 @@ class ExpressionRouterRule(RouterRule):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing a sub-type of Rule. Required.
-    :vartype kind: str
+    :vartype kind: Literal["expression-rule"]
     :ivar language: The expression language to compile to and execute. "powerFx"
     :vartype language: str or ~azure.communication.jobrouter.models.ExpressionRouterRuleLanguage
     :ivar expression: The string containing the expression to evaluate. Should contain return
@@ -1166,7 +1175,7 @@ class ExpressionRouterRule(RouterRule):
         :paramtype expression: str
         """
         super().__init__(**kwargs)
-        self.kind: str = "expression-rule"
+        self.kind: Literal["expression-rule"] = "expression-rule"
         self.language = language
         self.expression = expression
 
@@ -1177,7 +1186,7 @@ class FunctionRouterRule(RouterRule):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing a sub-type of Rule. Required.
-    :vartype kind: str
+    :vartype kind: Literal["azure-function-rule"]
     :ivar function_uri: URL for Azure Function. Required.
     :vartype function_uri: str
     :ivar credential: Credentials used to access Azure function rule.
@@ -1205,7 +1214,7 @@ class FunctionRouterRule(RouterRule):
         :paramtype credential: ~azure.communication.jobrouter.models.FunctionRouterRuleCredential
         """
         super().__init__(**kwargs)
-        self.kind: str = "azure-function-rule"
+        self.kind: Literal["azure-function-rule"] = "azure-function-rule"
         self.function_uri = function_uri
         self.credential = credential
 
@@ -1344,7 +1353,7 @@ class LongestIdleMode(DistributionMode):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing a sub-type of Mode. Required.
-    :vartype kind: str
+    :vartype kind: Literal["longest-idle"]
     :ivar min_concurrent_offers: Governs the minimum desired number of active concurrent offers a
      job can have.
     :vartype min_concurrent_offers: int
@@ -1402,7 +1411,7 @@ class LongestIdleMode(DistributionMode):
             bypass_selectors=bypass_selectors,
             **kwargs
         )
-        self.kind: str = "longest-idle"
+        self.kind: Literal["longest-idle"] = "longest-idle"
 
 
 class ManualReclassifyExceptionAction(ExceptionAction):
@@ -1412,7 +1421,7 @@ class ManualReclassifyExceptionAction(ExceptionAction):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required.
-    :vartype kind: str
+    :vartype kind: Literal["manual-reclassify"]
     :ivar queue_id: Updated QueueId.
     :vartype queue_id: str
     :ivar priority: Updated Priority.
@@ -1450,7 +1459,7 @@ class ManualReclassifyExceptionAction(ExceptionAction):
         :paramtype worker_selectors: list[~azure.communication.jobrouter.models.RouterWorkerSelector]
         """
         super().__init__(**kwargs)
-        self.kind: str = "manual-reclassify"
+        self.kind: Literal["manual-reclassify"] = "manual-reclassify"
         self.queue_id = queue_id
         self.priority = priority
         self.worker_selectors = worker_selectors
@@ -1495,7 +1504,7 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing the type of queue selector attachment. Required.
-    :vartype kind: str
+    :vartype kind: Literal["pass-through"]
     :ivar key: The label key to query against. Required.
     :vartype key: str
     :ivar label_operator: Describes how the value of the label is compared to the value pass
@@ -1526,7 +1535,7 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment):
         :paramtype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
         """
         super().__init__(**kwargs)
-        self.kind: str = "pass-through"
+        self.kind: Literal["pass-through"] = "pass-through"
         self.key = key
         self.label_operator = label_operator
 
@@ -1538,7 +1547,7 @@ class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing the type of worker selector attachment. Required.
-    :vartype kind: str
+    :vartype kind: Literal["pass-through"]
     :ivar key: The label key to query against. Required.
     :vartype key: str
     :ivar label_operator: Describes how the value of the label is compared to the value pass
@@ -1583,7 +1592,7 @@ class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment):
         :paramtype expires_after_seconds: float
         """
         super().__init__(**kwargs)
-        self.kind: str = "pass-through"
+        self.kind: Literal["pass-through"] = "pass-through"
         self.key = key
         self.label_operator = label_operator
         self.expires_after_seconds = expires_after_seconds
@@ -1595,7 +1604,7 @@ class QueueLengthExceptionTrigger(ExceptionTrigger):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing a sub-type of ExceptionTrigger. Required.
-    :vartype kind: str
+    :vartype kind: Literal["queue-length"]
     :ivar threshold: Threshold of number of jobs ahead in the queue to for this trigger to fire.
      Required.
     :vartype threshold: int
@@ -1618,7 +1627,7 @@ class QueueLengthExceptionTrigger(ExceptionTrigger):
         :paramtype threshold: int
         """
         super().__init__(**kwargs)
-        self.kind: str = "queue-length"
+        self.kind: Literal["queue-length"] = "queue-length"
         self.threshold = threshold
 
 
@@ -1664,7 +1673,7 @@ class ReclassifyExceptionAction(ExceptionAction):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required.
-    :vartype kind: str
+    :vartype kind: Literal["reclassify"]
     :ivar classification_policy_id: (optional) The new classification policy that will determine
      queue, priority and worker selectors.
     :vartype classification_policy_id: str
@@ -1700,7 +1709,7 @@ class ReclassifyExceptionAction(ExceptionAction):
         :paramtype labels_to_upsert: dict[str, any]
         """
         super().__init__(**kwargs)
-        self.kind: str = "reclassify"
+        self.kind: Literal["reclassify"] = "reclassify"
         self.classification_policy_id = classification_policy_id
         self.labels_to_upsert = labels_to_upsert
 
@@ -1712,7 +1721,7 @@ class RoundRobinMode(DistributionMode):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing a sub-type of Mode. Required.
-    :vartype kind: str
+    :vartype kind: Literal["round-robin"]
     :ivar min_concurrent_offers: Governs the minimum desired number of active concurrent offers a
      job can have.
     :vartype min_concurrent_offers: int
@@ -1770,7 +1779,7 @@ class RoundRobinMode(DistributionMode):
             bypass_selectors=bypass_selectors,
             **kwargs
         )
-        self.kind: str = "round-robin"
+        self.kind: Literal["round-robin"] = "round-robin"
 
 
 class RouterJob:  # pylint: disable=too-many-instance-attributes
@@ -2595,7 +2604,7 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing the type of queue selector attachment. Required.
-    :vartype kind: str
+    :vartype kind: Literal["rule-engine"]
     :ivar rule: A rule of one of the following types:
 
      StaticRule:  A rule providing static rules that always return the same result, regardless of
@@ -2632,7 +2641,7 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment):
         :paramtype rule: ~azure.communication.jobrouter.models.RouterRule
         """
         super().__init__(**kwargs)
-        self.kind: str = "rule-engine"
+        self.kind: Literal["rule-engine"] = "rule-engine"
         self.rule = rule
 
 
@@ -2642,7 +2651,7 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing the type of worker selector attachment. Required.
-    :vartype kind: str
+    :vartype kind: Literal["rule-engine"]
     :ivar rule: A rule of one of the following types:
 
      StaticRule:  A rule providing static rules that always return the same result, regardless of
@@ -2679,7 +2688,7 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment):
         :paramtype rule: ~azure.communication.jobrouter.models.RouterRule
         """
         super().__init__(**kwargs)
-        self.kind: str = "rule-engine"
+        self.kind: Literal["rule-engine"] = "rule-engine"
         self.rule = rule
 
 
@@ -2784,7 +2793,7 @@ class StaticQueueSelectorAttachment(QueueSelectorAttachment):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing the type of queue selector attachment. Required.
-    :vartype kind: str
+    :vartype kind: Literal["static"]
     :ivar queue_selector: Describes a condition that must be met against a set of labels for queue
      selection. Required.
     :vartype queue_selector: ~azure.communication.jobrouter.models.RouterQueueSelector
@@ -2807,7 +2816,7 @@ class StaticQueueSelectorAttachment(QueueSelectorAttachment):
         :paramtype queue_selector: ~azure.communication.jobrouter.models.RouterQueueSelector
         """
         super().__init__(**kwargs)
-        self.kind: str = "static"
+        self.kind: Literal["static"] = "static"
         self.queue_selector = queue_selector
 
 
@@ -2817,7 +2826,7 @@ class StaticRouterRule(RouterRule):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing a sub-type of Rule. Required.
-    :vartype kind: str
+    :vartype kind: Literal["static-rule"]
     :ivar value: The static value this rule always returns.
     :vartype value: JSON
     """
@@ -2837,7 +2846,7 @@ class StaticRouterRule(RouterRule):
         :paramtype value: JSON
         """
         super().__init__(**kwargs)
-        self.kind: str = "static-rule"
+        self.kind: Literal["static-rule"] = "static-rule"
         self.value = value
 
 
@@ -2847,7 +2856,7 @@ class StaticWorkerSelectorAttachment(WorkerSelectorAttachment):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing the type of worker selector attachment. Required.
-    :vartype kind: str
+    :vartype kind: Literal["static"]
     :ivar worker_selector: Describes a condition that must be met against a set of labels for
      worker selection. Required.
     :vartype worker_selector: ~azure.communication.jobrouter.models.RouterWorkerSelector
@@ -2870,7 +2879,7 @@ class StaticWorkerSelectorAttachment(WorkerSelectorAttachment):
         :paramtype worker_selector: ~azure.communication.jobrouter.models.RouterWorkerSelector
         """
         super().__init__(**kwargs)
-        self.kind: str = "static"
+        self.kind: Literal["static"] = "static"
         self.worker_selector = worker_selector
 
 
@@ -2937,7 +2946,7 @@ class WaitTimeExceptionTrigger(ExceptionTrigger):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing a sub-type of ExceptionTrigger. Required.
-    :vartype kind: str
+    :vartype kind: Literal["wait-time"]
     :ivar threshold_seconds: Threshold for wait time for this trigger. Required.
     :vartype threshold_seconds: float
     """
@@ -2958,7 +2967,7 @@ class WaitTimeExceptionTrigger(ExceptionTrigger):
         :paramtype threshold_seconds: float
         """
         super().__init__(**kwargs)
-        self.kind: str = "wait-time"
+        self.kind: Literal["wait-time"] = "wait-time"
         self.threshold_seconds = threshold_seconds
 
 
@@ -2968,7 +2977,7 @@ class WebhookRouterRule(RouterRule):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing a sub-type of Rule. Required.
-    :vartype kind: str
+    :vartype kind: Literal["webhook-rule"]
     :ivar authorization_server_uri: Uri for Authorization Server.
     :vartype authorization_server_uri: str
     :ivar client_credential: OAuth2.0 Credentials used to Contoso's Authorization server.
@@ -3007,7 +3016,7 @@ class WebhookRouterRule(RouterRule):
         :paramtype webhook_uri: str
         """
         super().__init__(**kwargs)
-        self.kind: str = "webhook-rule"
+        self.kind: Literal["webhook-rule"] = "webhook-rule"
         self.authorization_server_uri = authorization_server_uri
         self.client_credential = client_credential
         self.webhook_uri = webhook_uri
@@ -3020,7 +3029,7 @@ class WeightedAllocationQueueSelectorAttachment(QueueSelectorAttachment): # pyli
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing the type of queue selector attachment. Required.
-    :vartype kind: str
+    :vartype kind: Literal["weighted-allocation-queue-selector"]
     :ivar allocations: A collection of percentage based weighted allocations. Required.
     :vartype allocations: list[~azure.communication.jobrouter.models.QueueWeightedAllocation]
     """
@@ -3041,7 +3050,7 @@ class WeightedAllocationQueueSelectorAttachment(QueueSelectorAttachment): # pyli
         :paramtype allocations: list[~azure.communication.jobrouter.models.QueueWeightedAllocation]
         """
         super().__init__(**kwargs)
-        self.kind: str = "weighted-allocation-queue-selector"
+        self.kind: Literal["weighted-allocation-queue-selector"] = "weighted-allocation-queue-selector"
         self.allocations = allocations
 
 
@@ -3052,7 +3061,7 @@ class WeightedAllocationWorkerSelectorAttachment(WorkerSelectorAttachment): # py
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: The type discriminator describing the type of worker selector attachment. Required.
-    :vartype kind: str
+    :vartype kind: Literal["weighted-allocation-worker-selector"]
     :ivar allocations: A collection of percentage based weighted allocations. Required.
     :vartype allocations: list[~azure.communication.jobrouter.models.WorkerWeightedAllocation]
     """
@@ -3073,7 +3082,7 @@ class WeightedAllocationWorkerSelectorAttachment(WorkerSelectorAttachment): # py
         :paramtype allocations: list[~azure.communication.jobrouter.models.WorkerWeightedAllocation]
         """
         super().__init__(**kwargs)
-        self.kind: str = "weighted-allocation-worker-selector"
+        self.kind: Literal["weighted-allocation-worker-selector"] = "weighted-allocation-worker-selector"
         self.allocations = allocations
 
 

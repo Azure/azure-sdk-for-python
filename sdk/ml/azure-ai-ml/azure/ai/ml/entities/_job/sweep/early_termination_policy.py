@@ -75,10 +75,10 @@ class BanditPolicy(EarlyTerminationPolicy):
     def __init__(
         self,
         *,
-        delay_evaluation: Optional[int] = 0,
-        evaluation_interval: Optional[int] = 0,
-        slack_amount: Optional[float] = 0,
-        slack_factor: Optional[float] = 0,
+        delay_evaluation: int = 0,
+        evaluation_interval: int = 0,
+        slack_amount: float = 0,
+        slack_factor: float = 0,
     ) -> None:
         """Defines an early termination policy based on slack criteria and a frequency and delay interval
         for evaluation.
@@ -137,8 +137,8 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
     def __init__(
         self,
         *,
-        delay_evaluation: Optional[int] = 0,
-        evaluation_interval: Optional[int] = 1,
+        delay_evaluation: int = 0,
+        evaluation_interval: int = 1,
     ) -> None:
         """Defines an early termination policy based on a running average of the primary metric of all runs.
 
@@ -188,9 +188,9 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
     def __init__(
         self,
         *,
-        delay_evaluation: Optional[int] = 0,
-        evaluation_interval: Optional[int] = 0,
-        truncation_percentage: Optional[int] = 0,
+        delay_evaluation: int = 0,
+        evaluation_interval: int = 0,
+        truncation_percentage: int = 0,
     ) -> None:
         """Defines an early termination policy that cancels a given percentage of runs at each evaluation interval.
 
