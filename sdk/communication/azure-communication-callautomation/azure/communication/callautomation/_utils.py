@@ -33,9 +33,13 @@ def build_call_locator(
     :param args: Any positional parameters provided. This may include the legacy model. The new method signature
      does not support positional params, so if there's anything here, it's the old model.
     :type args: list[ServerCallLocator or GroupCallLocator]
-    :param kwargs: Any keyword-only parameters provided. This could include the legacy model (call_locator) or the
-     new flattened args (group_call_id, server_call_id). Only one value can be provided.
-    :type kwargs: dict[str, any]
+    :param call_locator: If the legacy call_locator was provided via keyword arg.
+    :type call_locator: ServerCallLocator or GroupCallLocator or None
+    :param server_call_id: If the new server_call_id was provided via keyword arg.
+    :type server_call_id: str or None
+    :param group_call_id: If the new group_call_id was provided via keyword arg.
+    :type group_call_id: str or None
+    :return: Generated CallLocator for the request body.
     """
     request: Optional[CallLocator] = None
     if args:
