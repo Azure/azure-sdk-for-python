@@ -13,7 +13,6 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
-from .._internal import InteractiveCredential, wrap_exceptions
 from .._internal import AuthCodeRedirectServer, InteractiveCredential, wrap_exceptions
 
 
@@ -92,11 +91,11 @@ class InteractiveBrowserCredential(InteractiveCredential):
         if self._client_credential:
             server = None
             if self._parsed_url:
+                redirect_uri = "http://{}:{}".format(self._parsed_url.hostname, self._parsed_url.port)
                 try:
-                    redirect_uri = "http://{}:{}".format(self._parsed_url.hostname, self._parsed_url.port)
                     server = self._server_class(self._parsed_url.hostname, self._parsed_url.port, timeout=self._timeout)
-                except socket.error:
-                    raise CredentialUnavailableError(message="Couldn't start an HTTP server on " + redirect_uri)
+                except socket.error as ex:
+                    raise CredentialUnavailableError(message="Couldn't start an HTTP server on " + redirect_uri) from ex
             else:
                 for port in range(8400, 9000):
                     try:
