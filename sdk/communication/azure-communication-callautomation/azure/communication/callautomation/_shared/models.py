@@ -2,12 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: skip-file
-
 from enum import Enum
 from typing import Mapping, Optional, Union, Any
-from azure.core import CaseInsensitiveEnumMeta
+
 from typing_extensions import TypedDict, Protocol
+from azure.core import CaseInsensitiveEnumMeta
 
 
 class CommunicationIdentifierKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):

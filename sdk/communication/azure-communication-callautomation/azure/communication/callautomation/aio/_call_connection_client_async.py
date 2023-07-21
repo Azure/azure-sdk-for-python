@@ -4,13 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING, Optional, List, Union, Dict
-try:
-    from typing import Literal
-except ImportError:
-    from typing_extensions import Literal
-
 from urllib.parse import urlparse
 import warnings
+
+from typing_extensions import Literal
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -292,21 +289,21 @@ class CallConnectionClient:
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword invitation_timeout: Timeout to wait for the invited participant to pickup.
          The maximum value of this is 180 seconds.
-        :paramtype invitation_timeout: int
+        :paramtype invitation_timeout: int or None
         :keyword operation_context: Value that can be used to track the call and its associated events.
-        :paramtype operation_context: str
+        :paramtype operation_context: str or None
         :keyword sip_headers: Sip Headers for PSTN Call
-        :paramtype sip_headers: Dict[str, str]
+        :paramtype sip_headers: Dict[str, str] or None
         :keyword voip_headers: Voip Headers for Voip Call
-        :paramtype voip_headers: Dict[str, str]
+        :paramtype voip_headers: Dict[str, str] or None
         :keyword source_caller_id_number: The source caller Id, a phone number,
          that's shown to the PSTN participant being invited.
          Required only when calling a PSTN callee.
-        :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
+        :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier or None
         :keyword source_display_name: Display name of the caller.
-        :paramtype source_display_name: str
+        :paramtype source_display_name: str or None
         :keyword callback_url_override: Url that overrides original callback URI for this request.
-        :paramtype callback_url_override: str
+        :paramtype callback_url_override: str or None
         :return: AddParticipantResult
         :rtype: ~azure.communication.callautomation.AddParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -399,7 +396,7 @@ class CallConnectionClient:
         :keyword loop: Whether the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
-        :paramtype operation_context: str
+        :paramtype operation_context: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -438,7 +435,7 @@ class CallConnectionClient:
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
-        :paramtype operation_context: str
+        :paramtype operation_context: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

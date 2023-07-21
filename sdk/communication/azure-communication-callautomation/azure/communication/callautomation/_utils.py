@@ -23,9 +23,11 @@ if TYPE_CHECKING:
 
 
 def build_call_locator(
-        args: List[Union['ServerCallLocator', 'GroupCallLocator']],
-        kwargs: Dict[str, Any]
-    ) -> CallLocator:
+    args: List[Union['ServerCallLocator', 'GroupCallLocator']],
+    call_locator: Optional[Union['ServerCallLocator', 'GroupCallLocator']],
+    server_call_id: Optional[str],
+    group_call_id: Optional[str]
+) -> CallLocator:
     """Build the generated callLocator object from args in kwargs with support for legacy models.
 
     :param args: Any positional parameters provided. This may include the legacy model. The new method signature
@@ -35,36 +37,36 @@ def build_call_locator(
      new flattened args (group_call_id, server_call_id). Only one value can be provided.
     :type kwargs: dict[str, any]
     """
-    call_locator: Optional[CallLocator] = None
+    request: Optional[CallLocator] = None
     if args:
         if len(args) > 1:
             raise TypeError(f"Unexpected positional arguments: {args[1:]}")
-        call_locator = args[0]._to_generated()  # pylint:disable=protected-access
+        request = args[0]._to_generated()  # pylint:disable=protected-access
 
-    if "call_locator" in kwargs:
-        if call_locator is not None:
+    if call_locator:
+        if request is not None:
             raise ValueError(
                 "Received multiple values for call_locator. "
                 "Please provide either 'group_call_id' or 'server_call_id'."
             )
-        call_locator = kwargs.pop("call_locator")._to_generated()  # pylint:disable=protected-access
-    if "group_call_id" in kwargs:
-        if call_locator is not None:
+        request = call_locator._to_generated()  # pylint:disable=protected-access
+    if group_call_id:
+        if request is not None:
             raise ValueError(
                 "Received multiple values for call locator. "
                 "Please provide either 'group_call_id' or 'server_call_id'."
             )
-        call_locator = CallLocator(group_call_id=kwargs.pop("group_call_id"), kind="groupCallLocator")
-    if "server_call_id" in kwargs:
-        if call_locator is not None:
+        request = CallLocator(group_call_id=group_call_id, kind="groupCallLocator")
+    if server_call_id:
+        if request is not None:
             raise ValueError(
                 "Received multiple values for call locator. "
                 "Please provide either 'group_call_id' or 'server_call_id'."
             )
-        call_locator = CallLocator(server_call_id=kwargs.pop("server_call_id"), kind="serverCallLocator")
-    if call_locator is None:
+        request = CallLocator(server_call_id=server_call_id, kind="serverCallLocator")
+    if request is None:
         raise ValueError("Call locator required. Please provide either 'group_call_id' or 'server_call_id'.")
-    return call_locator
+    return request
 
 
 def serialize_identifier(identifier:CommunicationIdentifier) -> Dict[str, Any]:

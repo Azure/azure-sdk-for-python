@@ -168,25 +168,27 @@ class CallAutomationClient:
 
         :param target_participant: Call invitee's information.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+         or list[~azure.communication.callautomation.CommunicationIdentifier]
         :param callback_url: The call back url where callback events are sent.
         :type callback_url: str
         :keyword operation_context: Value that can be used to track the call and its associated events.
-        :paramtype operation_context: str
+        :paramtype operation_context: str or None
         :keyword source_caller_id_number: The source caller Id, a phone number,
          that's shown to the PSTN participant being invited.
          Required only when calling a PSTN callee.
-        :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
+        :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier or None
         :keyword source_display_name: Display name of the caller.
-        :paramtype source_display_name: str
+        :paramtype source_display_name: str or None
         :keyword sip_headers: Sip Headers for PSTN Call
-        :paramtype sip_headers: Dict[str, str]
+        :paramtype sip_headers: Dict[str, str] or None
         :keyword voip_headers: Voip Headers for Voip Call
-        :paramtype voip_headers: Dict[str, str]
+        :paramtype voip_headers: Dict[str, str] or None
         :keyword media_streaming_configuration: Media Streaming Configuration.
         :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
+         or None
         :keyword azure_cognitive_services_endpoint_url:
          The identifier of the Cognitive Service resource assigned to this call.
-        :paramtype azure_cognitive_services_endpoint_url: str
+        :paramtype azure_cognitive_services_endpoint_url: str or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -343,9 +345,9 @@ class CallAutomationClient:
         :param target_participant: The target identity to redirect the call to.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword sip_headers: Sip Headers for PSTN Call
-        :paramtype sip_headers: Dict[str, str]
+        :paramtype sip_headers: Dict[str, str] or None
         :keyword voip_headers: Voip Headers for Voip Call
-        :paramtype voip_headers: Dict[str, str]
+        :paramtype voip_headers: Dict[str, str] or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -420,31 +422,32 @@ class CallAutomationClient:
 
         :keyword str server_call_id: The server call ID to locate ongoing call.
         :keyword recording_state_callback_url: The url to send notifications to.
-        :paramtype recording_state_callback_url: str
+        :paramtype recording_state_callback_url: str or None
         :keyword recording_content_type: The content type of call recording.
-        :paramtype recording_content_type: str or ~azure.communication.callautomation.RecordingContent
+        :paramtype recording_content_type: str or ~azure.communication.callautomation.RecordingContent or None
         :keyword recording_channel_type: The channel type of call recording.
-        :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel
+        :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel or None
         :keyword recording_format_type: The format type of call recording.
-        :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat
+        :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat or None
         :keyword audio_channel_participant_ordering:
          The sequential order in which audio channels are assigned to participants in the unmixed recording.
          When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not specified,
          the audio channel to participant mapping will be automatically assigned based on the order in
          which participant first audio was detected.
          Channel to participant mapping details can be found in the metadata of the recording.
-        :paramtype audio_channel_participant_ordering: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :paramtype audio_channel_participant_ordering:
+         list[~azure.communication.callautomation.CommunicationIdentifier] or None
         :keyword recording_storage_type: Recording storage mode.
          ``External`` enables bring your own storage.
-        :paramtype recording_storage_type: str
+        :paramtype recording_storage_type: str or None
         :keyword channel_affinity: The channel affinity of call recording
          When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
-        :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity]
+        :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
         :keyword external_storage_location: The location where recording is stored,
          when RecordingStorageType is set to 'BlobStorage'.
-        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage
+        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
         :return: RecordingProperties
         :rtype: ~azure.communication.callautomation.RecordingProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -469,31 +472,32 @@ class CallAutomationClient:
 
         :keyword str group_call_id: The group call ID to locate ongoing call.
         :keyword recording_state_callback_url: The url to send notifications to.
-        :paramtype recording_state_callback_url: str
+        :paramtype recording_state_callback_url: str or None
         :keyword recording_content_type: The content type of call recording.
-        :paramtype recording_content_type: str or ~azure.communication.callautomation.RecordingContent
+        :paramtype recording_content_type: str or ~azure.communication.callautomation.RecordingContent or None
         :keyword recording_channel_type: The channel type of call recording.
-        :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel
+        :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel or None
         :keyword recording_format_type: The format type of call recording.
-        :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat
+        :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat or None
         :keyword audio_channel_participant_ordering:
          The sequential order in which audio channels are assigned to participants in the unmixed recording.
          When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not specified,
          the audio channel to participant mapping will be automatically assigned based on the order in
          which participant first audio was detected.
          Channel to participant mapping details can be found in the metadata of the recording.
-        :paramtype audio_channel_participant_ordering: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :paramtype audio_channel_participant_ordering:
+         list[~azure.communication.callautomation.CommunicationIdentifier] or None
         :keyword recording_storage_type: Recording storage mode.
          ``External`` enables bring your own storage.
-        :paramtype recording_storage_type: str
+        :paramtype recording_storage_type: str or None
         :keyword channel_affinity: The channel affinity of call recording
          When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
-        :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity]
+        :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
         :keyword external_storage_location: The location where recording is stored,
          when RecordingStorageType is set to 'BlobStorage'.
-        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage
+        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
         :return: RecordingProperties
         :rtype: ~azure.communication.callautomation.RecordingProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -508,18 +512,23 @@ class CallAutomationClient:
         # pylint:disable=protected-access
         channel_affinity: List[ChannelAffinity] = kwargs.pop("channel_affinity", None) or []
         channel_affinity_internal = [c._to_generated() for c in channel_affinity]
-        call_locator = build_call_locator(args, kwargs)
+        call_locator = build_call_locator(
+            args,
+            kwargs.pop("call_locator", None),
+            kwargs.pop("server_call_id", None),
+            kwargs.pop("group_call_id", None)
+        )
 
         start_recording_request = StartCallRecordingRequest(
             call_locator=call_locator,
-            recording_state_callback_uri = kwargs.pop("recording_state_callback_url", None),
-            recording_content_type = kwargs.pop("recording_content_type", None),
-            recording_channel_type = kwargs.pop("recording_channel_type", None),
-            recording_format_type = kwargs.pop("recording_format_type", None),
-            audio_channel_participant_ordering = kwargs.pop("audio_channel_participant_ordering", None),
-            recording_storage_type = kwargs.pop("recording_storage_type", None),
-            external_storage_location = kwargs.pop("external_storage_location", None),
-            channel_affinity = channel_affinity_internal
+            recording_state_callback_uri=kwargs.pop("recording_state_callback_url", None),
+            recording_content_type=kwargs.pop("recording_content_type", None),
+            recording_channel_type=kwargs.pop("recording_channel_type", None),
+            recording_format_type=kwargs.pop("recording_format_type", None),
+            audio_channel_participant_ordering=kwargs.pop("audio_channel_participant_ordering", None),
+            recording_storage_type=kwargs.pop("recording_storage_type", None),
+            external_storage_location=kwargs.pop("external_storage_location", None),
+            channel_affinity=channel_affinity_internal
         )
         recording_state_result = self._call_recording_client.start_recording(
             start_call_recording=start_recording_request,
