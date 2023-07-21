@@ -23,11 +23,11 @@ except ImportError:  # python < 3.3
 
 BASE_CLASS_METHODS = [
     ("_get_auth_code_request", ("code", "redirect_uri")),
-    ("_get_client_secret_request", ("secret", )),
-    ("_get_jwt_assertion_request", ("assertion", )),
-    ("_get_refresh_token_request", ("refresh_token", )),
+    ("_get_client_secret_request", ("secret",)),
+    ("_get_jwt_assertion_request", ("assertion",)),
+    ("_get_refresh_token_request", ("refresh_token",)),
     ("_get_on_behalf_of_request", ("client_credential", "user_assertion")),
-    ("_get_refresh_token_on_behalf_of_request", ("client_credential", "refresh_token"))
+    ("_get_refresh_token_on_behalf_of_request", ("client_credential", "refresh_token")),
 ]
 
 
@@ -53,6 +53,7 @@ def test_error_reporting():
         assert error_name in message and error_description in message
         assert transport.send.call_count == 1
         transport.send.reset_mock()
+
 
 @pytest.mark.skip(reason="Adding body to HttpResponseError str. Not an issue bc we don't automatically log errors")
 def test_exceptions_do_not_expose_secrets():
@@ -316,7 +317,7 @@ def test_multitenant_cache():
     assert client_b.get_cached_access_token([scope]) is None
 
     # but C allows multitenant auth and should therefore return the token from tenant_a when appropriate
-    client_c = AadClient(tenant_id=tenant_c, additionally_allowed_tenants=['*'], **common_args)
+    client_c = AadClient(tenant_id=tenant_c, additionally_allowed_tenants=["*"], **common_args)
     assert client_c.get_cached_access_token([scope]) is None
     token = client_c.get_cached_access_token([scope], tenant_id=tenant_a)
     assert token.token == expected_token

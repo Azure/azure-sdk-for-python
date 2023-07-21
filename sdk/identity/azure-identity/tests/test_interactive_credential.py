@@ -309,7 +309,7 @@ def test_multitenant_authentication():
         tenant_id=first_tenant,
         request_token=request_token,
         transport=Mock(send=send),
-        additionally_allowed_tenants = ['*']
+        additionally_allowed_tenants=["*"],
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -323,6 +323,7 @@ def test_multitenant_authentication():
     # should still default to the first tenant
     token = credential.get_token("scope")
     assert token.token == first_token
+
 
 def test_multitenant_authentication_not_allowed():
     expected_tenant = "expected-tenant"
