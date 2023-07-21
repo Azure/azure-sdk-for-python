@@ -476,9 +476,9 @@ class Serializer:
         )
 
     def _get_file_path_from_module(self, module_name: str, strip_api_version: bool) -> Path:
-        module_stem = module_name.strip(f"{self.code_model.module_name}.")
+        module_stem = module_name.replace(f"{self.code_model.module_name}.", "")
         if strip_api_version:
-            module_stem = module_stem.strip(f"{self.code_model.default_folder_api_version}.")
+            module_stem = module_stem.replace(f"{self.code_model.default_folder_api_version}.", "")
         return self.code_model.get_root_of_code(False) / Path(module_stem.replace(".", "/"))
 
     def _get_operations_folder_module(self, async_mode: bool, *, api_version: Optional[str] = None) -> str:
@@ -667,7 +667,6 @@ class Serializer:
             remove_file(f"{self.code_model.get_root_of_code(async_mode)}/{file}.py")
 
     def remove_old_code(self):
-        self.remove_versioned_files()
         self.remove_top_level_files(async_mode=False)
         self.remove_top_level_files(async_mode=True)
 
