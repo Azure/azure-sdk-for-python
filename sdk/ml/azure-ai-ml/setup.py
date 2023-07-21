@@ -69,7 +69,7 @@ setup(
         "msrest>=0.6.18",
         "azure-core<2.0.0,>=1.23.0",
         "azure-mgmt-core<2.0.0,>=1.3.0",
-        "marshmallow<4.0.0,>=3.5",
+        "marshmallow<3.20.0,>=3.5",
         "jsonschema<5.0.0,>=4.0.0",
         "tqdm<5.0.0",
         # Used for PR 825138
