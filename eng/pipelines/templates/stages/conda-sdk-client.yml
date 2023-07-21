@@ -1,0 +1,22 @@
+parameters:
+- name: CondaArtifacts
+  type: object
+  default: []
+variables:
+  - template: /eng/pipelines/templates/variables/globals.yml
+
+stages:
+  - stage: Build
+    displayName: Build Conda Artifacts
+    jobs:
+    - template: ../steps/build-conda-artifacts.yml
+      parameters:
+        CondaArtifacts: ${{ parameters.CondaArtifacts }}
+
+  - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
+    - template: archetype-conda-release.yml
+      parameters:
+        DependsOn: Build
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        CondaArtifacts: ${{ parameters.CondaArtifacts }}
+
