@@ -2909,6 +2909,102 @@
         "x-ms-long-running-operation": true
       }
     },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}/versions/{version}/package": {
+      "post": {
+        "tags": [
+          "ModelVersion"
+        ],
+        "summary": "Model Version Package operation.",
+        "operationId": "ModelVersions_Package",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Container name. This is case-sensitive.",
+            "required": true,
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "description": "Version identifier. This is case-sensitive.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "registryName",
+            "description": "Name of Azure Machine Learning registry.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Package operation request body.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PackageRequest"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/PackageResponse"
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              },
+              "Retry-After": {
+                "description": "Duration the client should wait between requests, in seconds.",
+                "type": "integer",
+                "format": "int32",
+                "maximum": 600,
+                "minimum": 10
+              }
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Package Model Version.": {
+            "$ref": "./examples/ModelVersion/package.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
+      }
+    },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/tempdatarefs/{name}/versions/{version}": {
       "put": {
         "tags": [
@@ -3070,12 +3166,6 @@
     },
     "AnonymousAccessCredentialDto": {
       "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/DataReferenceCredentialDto"
-        }
-      ],
-      "x-ms-discriminator-value": "NoCredentials",
       "additionalProperties": false
     },
     "AssetBase": {
@@ -3383,6 +3473,42 @@
       "x-ms-discriminator-value": "AzureFile",
       "additionalProperties": false
     },
+    "AzureMLBatchInferencingServer": {
+      "description": "Azure ML batch inferencing server configurations.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/InferencingServer"
+        }
+      ],
+      "properties": {
+        "codeConfiguration": {
+          "description": "Code configuration for AML batch inferencing server.",
+          "$ref": "#/definitions/CodeConfiguration",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "AzureMLBatch",
+      "additionalProperties": false
+    },
+    "AzureMLOnlineInferencingServer": {
+      "description": "Azure ML online inferencing configurations.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/InferencingServer"
+        }
+      ],
+      "properties": {
+        "codeConfiguration": {
+          "description": "Code configuration for AML inferencing server.",
+          "$ref": "#/definitions/CodeConfiguration",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "AzureMLOnline",
+      "additionalProperties": false
+    },
     "BanditPolicy": {
       "description": "Defines an early termination policy based on slack criteria, and a frequency and delay interval for evaluation",
       "type": "object",
@@ -3406,6 +3532,52 @@
         }
       },
       "x-ms-discriminator-value": "Bandit",
+      "additionalProperties": false
+    },
+    "BaseEnvironmentId": {
+      "description": "Base environment type.",
+      "required": [
+        "resourceId"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseEnvironmentSource"
+        }
+      ],
+      "properties": {
+        "resourceId": {
+          "description": "Resource id accepting ArmId or AzureMlId.",
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string"
+        }
+      },
+      "x-ms-discriminator-value": "EnvironmentAsset",
+      "additionalProperties": false
+    },
+    "BaseEnvironmentSource": {
+      "required": [
+        "baseEnvironmentSourceType"
+      ],
+      "type": "object",
+      "properties": {
+        "baseEnvironmentSourceType": {
+          "description": "Base environment type.",
+          "$ref": "#/definitions/BaseEnvironmentSourceType"
+        }
+      },
+      "discriminator": "baseEnvironmentSourceType"
+    },
+    "BaseEnvironmentSourceType": {
+      "description": "Base environment type.",
+      "enum": [
+        "EnvironmentAsset"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "BaseEnvironmentSourceType",
+        "modelAsString": true
+      },
       "additionalProperties": false
     },
     "BasicBinding": {
@@ -3604,6 +3776,35 @@
         }
       },
       "x-ms-discriminator-value": "Certificate",
+      "additionalProperties": false
+    },
+    "CodeConfiguration": {
+      "description": "Configuration for a scoring code asset.",
+      "required": [
+        "scoringScript"
+      ],
+      "type": "object",
+      "properties": {
+        "codeId": {
+          "description": "ARM resource ID of the code asset.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "scoringScript": {
+          "description": "The script to execute on startup. eg. \"score.py\"",
+          "minLength": 1,
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
       "additionalProperties": false
     },
     "CodeContainer": {
@@ -4051,6 +4252,24 @@
       },
       "additionalProperties": false
     },
+    "CustomInferencingServer": {
+      "description": "Custom inference server configurations.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/InferencingServer"
+        }
+      ],
+      "properties": {
+        "inferenceConfiguration": {
+          "description": "Inference configuration for custom inferencing.",
+          "$ref": "#/definitions/OnlineInferenceConfiguration",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "Custom",
+      "additionalProperties": false
+    },
     "DataContainer": {
       "description": "Container for data asset versions.",
       "required": [
@@ -4151,7 +4370,8 @@
           "$ref": "#/definitions/DataReferenceCredentialType"
         }
       },
-      "discriminator": "credentialType"
+      "discriminator": "credentialType",
+      "x-ms-discriminator-value": "SAS"
     },
     "DataReferenceCredentialType": {
       "enum": [
@@ -4371,11 +4591,6 @@
     },
     "DockerCredentialDto": {
       "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/DataReferenceCredentialDto"
-        }
-      ],
       "properties": {
         "password": {
           "type": "string",
@@ -4386,7 +4601,6 @@
           "x-nullable": true
         }
       },
-      "x-ms-discriminator-value": "DockerCredentials",
       "additionalProperties": false
     },
     "EarlyTerminationPolicy": {
@@ -4733,6 +4947,34 @@
       },
       "additionalProperties": false
     },
+    "InferencingServer": {
+      "required": [
+        "serverType"
+      ],
+      "type": "object",
+      "properties": {
+        "serverType": {
+          "description": "Inferencing server type for various targets.",
+          "$ref": "#/definitions/InferencingServerType"
+        }
+      },
+      "discriminator": "serverType"
+    },
+    "InferencingServerType": {
+      "description": "Inferencing server type for various targets.",
+      "enum": [
+        "AzureMLOnline",
+        "AzureMLBatch",
+        "Triton",
+        "Custom"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "InferencingServerType",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
     "InputDataDeliveryMode": {
       "description": "Enum to determine the input data delivery mode.",
       "enum": [
@@ -4743,6 +4985,20 @@
       "type": "string",
       "x-ms-enum": {
         "name": "InputDataDeliveryMode",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "InputPathType": {
+      "description": "Input path type for package inputs.",
+      "enum": [
+        "Url",
+        "PathId",
+        "PathVersion"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "InputPathType",
         "modelAsString": true
       },
       "additionalProperties": false
@@ -5298,11 +5554,6 @@
     },
     "ManagedIdentityCredentialDto": {
       "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/DataReferenceCredentialDto"
-        }
-      ],
       "properties": {
         "managedIdentityType": {
           "type": "string",
@@ -5329,7 +5580,6 @@
           "x-nullable": true
         }
       },
-      "x-ms-discriminator-value": "ManagedIdentity",
       "additionalProperties": false
     },
     "MedianStoppingPolicy": {
@@ -5341,6 +5591,23 @@
         }
       ],
       "x-ms-discriminator-value": "MedianStopping",
+      "additionalProperties": false
+    },
+    "ModelConfiguration": {
+      "description": "Model configuration options.",
+      "type": "object",
+      "properties": {
+        "mode": {
+          "description": "Input delivery mode for the model.",
+          "default": "Download",
+          "$ref": "#/definitions/PackageInputDeliveryMode"
+        },
+        "mountPath": {
+          "description": "Relative mounting path of the model in the target image.",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
       "additionalProperties": false
     },
     "ModelContainer": {
@@ -5387,6 +5654,35 @@
           "items": {
             "$ref": "#/definitions/ModelContainerResource"
           }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ModelPackageInput": {
+      "description": "Model package input options.",
+      "required": [
+        "inputType",
+        "path"
+      ],
+      "type": "object",
+      "properties": {
+        "inputType": {
+          "description": "Type of the input included in the target image.",
+          "$ref": "#/definitions/PackageInputType"
+        },
+        "mode": {
+          "description": "Input delivery mode of the input.",
+          "default": "Copy",
+          "$ref": "#/definitions/PackageInputDeliveryMode"
+        },
+        "mountPath": {
+          "description": "Relative mount path of the input in the target image.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "path": {
+          "description": "Location of the input.",
+          "$ref": "#/definitions/PackageInputPathBase"
         }
       },
       "additionalProperties": false
@@ -5534,6 +5830,42 @@
       },
       "additionalProperties": false
     },
+    "OnlineInferenceConfiguration": {
+      "description": "Online inference configuration options.",
+      "type": "object",
+      "properties": {
+        "configurations": {
+          "description": "Additional configurations",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "x-nullable": true
+        },
+        "entryScript": {
+          "description": "Entry script or command to invoke.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "livenessRoute": {
+          "description": "The route to check the liveness of the inference server container.",
+          "$ref": "#/definitions/Route",
+          "x-nullable": true
+        },
+        "readinessRoute": {
+          "description": "The route to check the readiness of the inference server container.",
+          "$ref": "#/definitions/Route",
+          "x-nullable": true
+        },
+        "scoringRoute": {
+          "description": "The port to send the scoring requests to, within the inference server container.",
+          "$ref": "#/definitions/Route",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "OperatingSystemType": {
       "description": "The type of operating system.",
       "enum": [
@@ -5581,6 +5913,314 @@
         }
       },
       "x-ms-discriminator-value": "OutputPath",
+      "additionalProperties": false
+    },
+    "PackageBuildState": {
+      "description": "Package build state returned in package response.",
+      "enum": [
+        "NotStarted",
+        "Running",
+        "Succeeded",
+        "Failed"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "PackageBuildState",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "PackageInputDeliveryMode": {
+      "description": "Mounting type of the model or the inputs",
+      "enum": [
+        "Copy",
+        "Download"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "PackageInputDeliveryMode",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "PackageInputPathBase": {
+      "required": [
+        "inputPathType"
+      ],
+      "type": "object",
+      "properties": {
+        "inputPathType": {
+          "description": "Input path type for package inputs.",
+          "$ref": "#/definitions/InputPathType"
+        }
+      },
+      "discriminator": "inputPathType"
+    },
+    "PackageInputPathId": {
+      "description": "Package input path specified with a resource id.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PackageInputPathBase"
+        }
+      ],
+      "properties": {
+        "resourceId": {
+          "description": "Input resource id.",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "PathId",
+      "additionalProperties": false
+    },
+    "PackageInputPathUrl": {
+      "description": "Package input path specified as an url.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PackageInputPathBase"
+        }
+      ],
+      "properties": {
+        "url": {
+          "description": "Input path url.",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "Url",
+      "additionalProperties": false
+    },
+    "PackageInputPathVersion": {
+      "description": "Package input path specified with name and version.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PackageInputPathBase"
+        }
+      ],
+      "properties": {
+        "resourceName": {
+          "description": "Input resource name.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "resourceVersion": {
+          "description": "Input resource version.",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "PathVersion",
+      "additionalProperties": false
+    },
+    "PackageInputType": {
+      "description": "Type of the inputs.",
+      "enum": [
+        "UriFile",
+        "UriFolder"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "PackageInputType",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "PackageRequest": {
+      "description": "Model package operation request properties.",
+      "required": [
+        "inferencingServer",
+        "targetEnvironmentId"
+      ],
+      "type": "object",
+      "properties": {
+        "baseEnvironmentSource": {
+          "description": "Base environment to start with.",
+          "$ref": "#/definitions/BaseEnvironmentSource",
+          "x-nullable": true
+        },
+        "environmentVariables": {
+          "description": "Collection of environment variables.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "x-nullable": true
+        },
+        "inferencingServer": {
+          "description": "Inferencing server configurations.",
+          "$ref": "#/definitions/InferencingServer"
+        },
+        "inputs": {
+          "description": "Collection of inputs.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ModelPackageInput"
+          },
+          "x-nullable": true
+        },
+        "modelConfiguration": {
+          "description": "Model configuration including the mount mode.",
+          "$ref": "#/definitions/ModelConfiguration",
+          "x-nullable": true
+        },
+        "properties": {
+          "description": "Properties dictionary.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "x-nullable": true
+        },
+        "skuArchitectureType": {
+          "description": "The sku architecture type.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "tags": {
+          "description": "Tag dictionary. Tags can be added, removed, and updated.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "x-nullable": true
+        },
+        "targetEnvironmentId": {
+          "description": "Arm ID of the target environment to be created by package operation.",
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "PackageResponse": {
+      "description": "Package response returned after async package operation completes successfully.",
+      "type": "object",
+      "properties": {
+        "baseEnvironmentSource": {
+          "description": "Base environment to start with.",
+          "$ref": "#/definitions/BaseEnvironmentSource",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "buildId": {
+          "description": "Build id of the image build operation.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "buildState": {
+          "description": "Build state of the image build operation.",
+          "$ref": "#/definitions/PackageBuildState",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ]
+        },
+        "environmentVariables": {
+          "description": "Collection of environment variables.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "inferencingServer": {
+          "description": "Inferencing server configurations.",
+          "$ref": "#/definitions/InferencingServer",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "inputs": {
+          "description": "Collection of inputs.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ModelPackageInput"
+          },
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "logUrl": {
+          "description": "Log url of the image build operation.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "modelConfiguration": {
+          "description": "Model configuration including the mount mode.",
+          "$ref": "#/definitions/ModelConfiguration",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "properties": {
+          "description": "Properties dictionary.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "x-nullable": true
+        },
+        "skuArchitectureType": {
+          "description": "The sku architecture type.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "tags": {
+          "description": "Tag dictionary. Tags can be added, removed, and updated.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "targetEnvironmentId": {
+          "description": "Asset ID of the target environment created by package operation.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
       "additionalProperties": false
     },
     "PipelineJob": {
@@ -5845,11 +6485,6 @@
     },
     "SASCredentialDto": {
       "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/DataReferenceCredentialDto"
-        }
-      ],
       "properties": {
         "sasUri": {
           "format": "uri",
@@ -5858,7 +6493,6 @@
           "x-nullable": true
         }
       },
-      "x-ms-discriminator-value": "SAS",
       "additionalProperties": false
     },
     "SamplingAlgorithm": {
@@ -6269,6 +6903,24 @@
           "x-nullable": true
         }
       },
+      "additionalProperties": false
+    },
+    "TritonInferencingServer": {
+      "description": "Triton inferencing server configurations.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/InferencingServer"
+        }
+      ],
+      "properties": {
+        "inferenceConfiguration": {
+          "description": "Inference configuration for Triton.",
+          "$ref": "#/definitions/OnlineInferenceConfiguration",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "Triton",
       "additionalProperties": false
     },
     "TruncationSelectionPolicy": {

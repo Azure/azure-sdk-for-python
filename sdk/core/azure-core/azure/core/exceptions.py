@@ -34,6 +34,7 @@ _LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport._base import _HttpResponseBase
+    from azure.core.pipeline.policies import RequestHistory
 
 
 __all__ = [
@@ -62,22 +63,24 @@ def raise_with_traceback(exception: Callable, *args, **kwargs) -> None:
     """Raise exception with a specified traceback.
     This MUST be called inside a "except" clause.
 
+    .. note:: This method is deprecated since we don't support Python 2 anymore. Use raise/from instead.
+
     :param Exception exception: Error type to be raised.
-    :param args: Any additional args to be included with exception.
+    :param any args: Any additional args to be included with exception.
     :keyword str message: Message to be associated with the exception. If omitted, defaults to an empty string.
     """
     message = kwargs.pop("message", "")
     exc_type, exc_value, exc_traceback = sys.exc_info()
-    # If not called inside a "except", exc_type will be None. Assume it will not happen
+    # If not called inside an "except", exc_type will be None. Assume it will not happen
     if exc_type is None:
         raise ValueError("raise_with_traceback can only be used in except clauses")
     exc_msg = "{}, {}: {}".format(message, exc_type.__name__, exc_value)
     error = exception(exc_msg, *args, **kwargs)
     try:
-        raise error.with_traceback(exc_traceback)
-    except AttributeError:
+        raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+    except AttributeError:  # Python 2
         error.__traceback__ = exc_traceback
-        raise error
+        raise error  # pylint: disable=raise-missing-from
 
 
 class ErrorMap:
@@ -193,7 +196,11 @@ class ODataV4Format:
         return "({}) {}\n{}".format(self.code, self.message, self.message_details())
 
     def message_details(self) -> str:
-        """Return a detailled string of the error."""
+        """Return a detailed string of the error.
+
+        :return: A string with the details of the error.
+        :rtype: str
+        """
         error_str = "Code: {}".format(self.code)
         error_str += "\nMessage: {}".format(self.message)
         if self.target:
@@ -238,11 +245,16 @@ class AzureError(Exception):
         super(AzureError, self).__init__(self.message, *args)
 
     def raise_with_traceback(self):
+        """Raise the exception with the existing traceback.
+
+        .. deprecated:: 1.22.0
+           This method is deprecated as we don't support Python 2 anymore. Use raise/from instead.
+        """
         try:
-            raise super(AzureError, self).with_traceback(self.exc_traceback)
+            raise super(AzureError, self).with_traceback(self.exc_traceback)  # pylint: disable=raise-missing-from
         except AttributeError:
             self.__traceback__ = self.exc_traceback
-            raise self
+            raise self  # pylint: disable=raise-missing-from
 
 
 class ServiceRequestError(AzureError):
@@ -370,7 +382,11 @@ class ResourceNotModifiedError(HttpResponseError):
 
 
 class TooManyRedirectsError(HttpResponseError):
-    """Reached the maximum number of redirect attempts."""
+    """Reached the maximum number of redirect attempts.
+
+    :param history: The history of requests made while trying to fulfill the request.
+    :type history: list[~azure.core.pipeline.policies.RequestHistory]
+    """
 
     def __init__(self, history, *args, **kwargs):
         self.history = history
@@ -383,6 +399,7 @@ class ODataV4Error(HttpResponseError):
 
     http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Toc372793091
 
+    :param ~azure.core.rest.HttpResponse response: The response object.
     :ivar dict odata_json: The parsed JSON body as attribute for convenience.
     :ivar str ~.code: Its value is a service-defined error code.
      This code serves as a sub-status for the HTTP error code specified in the response.
@@ -439,6 +456,9 @@ class StreamConsumedError(AzureError):
 
     It is thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
     ~azure.core.rest.AsyncHttpResponse once the response's stream has been consumed.
+
+    :param response: The response that triggered the exception.
+    :type response: ~azure.core.rest.HttpResponse or ~azure.core.rest.AsyncHttpResponse
     """
 
     def __init__(self, response):
@@ -454,6 +474,9 @@ class StreamClosedError(AzureError):
 
     It is thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
     ~azure.core.rest.AsyncHttpResponse once the response's stream has been closed.
+
+    :param response: The response that triggered the exception.
+    :type response: ~azure.core.rest.HttpResponse or ~azure.core.rest.AsyncHttpResponse
     """
 
     def __init__(self, response):
@@ -469,6 +492,9 @@ class ResponseNotReadError(AzureError):
 
     It is thrown if you try to access an ~azure.core.rest.HttpResponse or
     ~azure.core.rest.AsyncHttpResponse's content without first reading the response's bytes in first.
+
+    :param response: The response that triggered the exception.
+    :type response: ~azure.core.rest.HttpResponse or ~azure.core.rest.AsyncHttpResponse
     """
 
     def __init__(self, response):
@@ -482,10 +508,6 @@ class ResponseNotReadError(AzureError):
 class SerializationError(ValueError):
     """Raised if an error is encountered during serialization."""
 
-    ...
-
 
 class DeserializationError(ValueError):
     """Raised if an error is encountered during deserialization."""
-
-    ...

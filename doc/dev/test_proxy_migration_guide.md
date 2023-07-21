@@ -3,8 +3,8 @@
 This guide describes the changes that service SDKs should make to their test frameworks in order to take advantage of
 the Azure SDK test proxy.
 
-Documentation of the motivations and goals of the test proxy can be found [here][general_docs] in the azure-sdk-tools
-GitHub repository, and documentation of how to set up and use the proxy can be found [here][detailed_docs].
+Documentation of test proxy's underlying functionality can be found [here][detailed_docs] in the `azure-sdk-tools`
+GitHub repository, but this isn't necessary to read for Python testing.
 
 Please refer to the [troubleshooting guide][troubleshooting] if you have any issues migrating a package.
 
@@ -465,8 +465,6 @@ client to the test.
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
-
-[general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 

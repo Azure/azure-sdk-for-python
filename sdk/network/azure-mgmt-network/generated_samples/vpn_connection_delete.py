@@ -29,12 +29,11 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.vpn_connections.begin_delete(
+    client.vpn_connections.begin_delete(
         resource_group_name="rg1",
         gateway_name="gateway1",
         connection_name="vpnConnection1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/VpnConnectionDelete.json

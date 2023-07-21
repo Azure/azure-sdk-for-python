@@ -5169,6 +5169,165 @@ class ResourceGuardOperation(_serialization.Model):
         self.request_resource_type = None
 
 
+class ResourceGuardOperationDetail(_serialization.Model):
+    """VaultCritical Operation protected by a resource guard.
+
+    :ivar vault_critical_operation:
+    :vartype vault_critical_operation: str
+    :ivar default_resource_request:
+    :vartype default_resource_request: str
+    """
+
+    _attribute_map = {
+        "vault_critical_operation": {"key": "vaultCriticalOperation", "type": "str"},
+        "default_resource_request": {"key": "defaultResourceRequest", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        vault_critical_operation: Optional[str] = None,
+        default_resource_request: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword vault_critical_operation:
+        :paramtype vault_critical_operation: str
+        :keyword default_resource_request:
+        :paramtype default_resource_request: str
+        """
+        super().__init__(**kwargs)
+        self.vault_critical_operation = vault_critical_operation
+        self.default_resource_request = default_resource_request
+
+
+class ResourceGuardProxyBase(_serialization.Model):
+    """ResourceGuardProxyBase object, used in ResourceGuardProxyBaseResource.
+
+    :ivar resource_guard_resource_id:
+    :vartype resource_guard_resource_id: str
+    :ivar resource_guard_operation_details:
+    :vartype resource_guard_operation_details:
+     list[~azure.mgmt.dataprotection.models.ResourceGuardOperationDetail]
+    :ivar last_updated_time:
+    :vartype last_updated_time: str
+    :ivar description:
+    :vartype description: str
+    """
+
+    _attribute_map = {
+        "resource_guard_resource_id": {"key": "resourceGuardResourceId", "type": "str"},
+        "resource_guard_operation_details": {
+            "key": "resourceGuardOperationDetails",
+            "type": "[ResourceGuardOperationDetail]",
+        },
+        "last_updated_time": {"key": "lastUpdatedTime", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_guard_resource_id: Optional[str] = None,
+        resource_guard_operation_details: Optional[List["_models.ResourceGuardOperationDetail"]] = None,
+        last_updated_time: Optional[str] = None,
+        description: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_guard_resource_id:
+        :paramtype resource_guard_resource_id: str
+        :keyword resource_guard_operation_details:
+        :paramtype resource_guard_operation_details:
+         list[~azure.mgmt.dataprotection.models.ResourceGuardOperationDetail]
+        :keyword last_updated_time:
+        :paramtype last_updated_time: str
+        :keyword description:
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
+        self.resource_guard_resource_id = resource_guard_resource_id
+        self.resource_guard_operation_details = resource_guard_operation_details
+        self.last_updated_time = last_updated_time
+        self.description = description
+
+
+class ResourceGuardProxyBaseResource(DppResource):
+    """ResourceGuardProxyBaseResource object, used for response and request bodies for
+    ResourceGuardProxy APIs.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.dataprotection.models.SystemData
+    :ivar properties: ResourceGuardProxyBaseResource properties.
+    :vartype properties: ~azure.mgmt.dataprotection.models.ResourceGuardProxyBase
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ResourceGuardProxyBase"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.ResourceGuardProxyBase"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: ResourceGuardProxyBaseResource properties.
+        :paramtype properties: ~azure.mgmt.dataprotection.models.ResourceGuardProxyBase
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ResourceGuardProxyBaseResourceList(DppResourceList):
+    """List of ResourceGuardProxyBase resources.
+
+    :ivar next_link: The uri to fetch the next page of resources. Call ListNext() fetches next page
+     of resources.
+    :vartype next_link: str
+    :ivar value: List of resources.
+    :vartype value: list[~azure.mgmt.dataprotection.models.ResourceGuardProxyBaseResource]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ResourceGuardProxyBaseResource]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["_models.ResourceGuardProxyBaseResource"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
+         page of resources.
+        :paramtype next_link: str
+        :keyword value: List of resources.
+        :paramtype value: list[~azure.mgmt.dataprotection.models.ResourceGuardProxyBaseResource]
+        """
+        super().__init__(next_link=next_link, **kwargs)
+        self.value = value
+
+
 class ResourceGuardResource(DppBaseTrackedResource):
     """ResourceGuardResource.
 
@@ -6211,6 +6370,60 @@ class TriggerBackupRequest(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.backup_rule_options = backup_rule_options
+
+
+class UnlockDeleteRequest(_serialization.Model):
+    """Request body of unlock delete API.
+
+    :ivar resource_guard_operation_requests:
+    :vartype resource_guard_operation_requests: list[str]
+    :ivar resource_to_be_deleted:
+    :vartype resource_to_be_deleted: str
+    """
+
+    _attribute_map = {
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+        "resource_to_be_deleted": {"key": "resourceToBeDeleted", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_guard_operation_requests: Optional[List[str]] = None,
+        resource_to_be_deleted: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_guard_operation_requests:
+        :paramtype resource_guard_operation_requests: list[str]
+        :keyword resource_to_be_deleted:
+        :paramtype resource_to_be_deleted: str
+        """
+        super().__init__(**kwargs)
+        self.resource_guard_operation_requests = resource_guard_operation_requests
+        self.resource_to_be_deleted = resource_to_be_deleted
+
+
+class UnlockDeleteResponse(_serialization.Model):
+    """Response of Unlock Delete API.
+
+    :ivar unlock_delete_expiry_time: This is the time when unlock delete privileges will get
+     expired.
+    :vartype unlock_delete_expiry_time: str
+    """
+
+    _attribute_map = {
+        "unlock_delete_expiry_time": {"key": "unlockDeleteExpiryTime", "type": "str"},
+    }
+
+    def __init__(self, *, unlock_delete_expiry_time: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword unlock_delete_expiry_time: This is the time when unlock delete privileges will get
+         expired.
+        :paramtype unlock_delete_expiry_time: str
+        """
+        super().__init__(**kwargs)
+        self.unlock_delete_expiry_time = unlock_delete_expiry_time
 
 
 class UserFacingError(_serialization.Model):

@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.scope_connections.delete(
+    client.scope_connections.delete(
         resource_group_name="rg1",
         network_manager_name="testNetworkManager",
         scope_connection_name="TestScopeConnection",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkManagerScopeConnectionDelete.json

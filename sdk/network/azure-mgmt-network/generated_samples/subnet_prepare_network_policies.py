@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.subnets.begin_prepare_network_policies(
+    client.subnets.begin_prepare_network_policies(
         resource_group_name="rg1",
         virtual_network_name="test-vnet",
         subnet_name="subnet1",
         prepare_network_policies_request_parameters={"serviceName": "Microsoft.Sql/managedInstances"},
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/SubnetPrepareNetworkPolicies.json

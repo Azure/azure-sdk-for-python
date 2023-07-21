@@ -26,8 +26,6 @@ USAGE:
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
-    5) CONTAINERREGISTRY_RESOURCE_GROUP - The resource group name
-    6) CONTAINERREGISTRY_REGISTRY_NAME - The registry name
 """
 import os
 from dotenv import find_dotenv, load_dotenv
@@ -43,7 +41,7 @@ class SetImageProperties(object):
         self.credential = get_credential(self.authority)
 
     def set_image_properties(self):
-        load_registry()
+        load_registry(self.endpoint)
         # [START update_manifest_properties]
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Set permissions on image "library/hello-world:v1"

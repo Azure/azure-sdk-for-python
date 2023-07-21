@@ -451,70 +451,60 @@ with open(path_to_sample_documents, "rb") as f:
 receipts = poller.result()
 
 for idx, receipt in enumerate(receipts.documents):
-    print("--------Analysis of receipt #{}--------".format(idx + 1))
-    print("Receipt type: {}".format(receipt.doc_type or "N/A"))
+    print(f"--------Analysis of receipt #{idx + 1}--------")
+    print(f"Receipt type: {receipt.doc_type if receipt.doc_type else 'N/A'}")
     merchant_name = receipt.fields.get("MerchantName")
     if merchant_name:
         print(
-            "Merchant Name: {} has confidence: {}".format(
-                merchant_name.value, merchant_name.confidence
-            )
+            f"Merchant Name: {merchant_name.value} has confidence: "
+            f"{merchant_name.confidence}"
         )
     transaction_date = receipt.fields.get("TransactionDate")
     if transaction_date:
         print(
-            "Transaction Date: {} has confidence: {}".format(
-                transaction_date.value, transaction_date.confidence
-            )
+            f"Transaction Date: {transaction_date.value} has confidence: "
+            f"{transaction_date.confidence}"
         )
     if receipt.fields.get("Items"):
         print("Receipt items:")
         for idx, item in enumerate(receipt.fields.get("Items").value):
-            print("...Item #{}".format(idx + 1))
+            print(f"...Item #{idx + 1}")
             item_description = item.value.get("Description")
             if item_description:
                 print(
-                    "......Item Description: {} has confidence: {}".format(
-                        item_description.value, item_description.confidence
-                    )
+                    f"......Item Description: {item_description.value} has confidence: "
+                    f"{item_description.confidence}"
                 )
             item_quantity = item.value.get("Quantity")
             if item_quantity:
                 print(
-                    "......Item Quantity: {} has confidence: {}".format(
-                        item_quantity.value, item_quantity.confidence
-                    )
+                    f"......Item Quantity: {item_quantity.value} has confidence: "
+                    f"{item_quantity.confidence}"
                 )
             item_price = item.value.get("Price")
             if item_price:
                 print(
-                    "......Individual Item Price: {} has confidence: {}".format(
-                        item_price.value, item_price.confidence
-                    )
+                    f"......Individual Item Price: {item_price.value} has confidence: "
+                    f"{item_price.confidence}"
                 )
             item_total_price = item.value.get("TotalPrice")
             if item_total_price:
                 print(
-                    "......Total Item Price: {} has confidence: {}".format(
-                        item_total_price.value, item_total_price.confidence
-                    )
+                    f"......Total Item Price: {item_total_price.value} has confidence: "
+                    f"{item_total_price.confidence}"
                 )
     subtotal = receipt.fields.get("Subtotal")
     if subtotal:
-        print(
-            "Subtotal: {} has confidence: {}".format(
-                subtotal.value, subtotal.confidence
-            )
-        )
+        print(f"Subtotal: {subtotal.value} has confidence: {subtotal.confidence}")
     tax = receipt.fields.get("TotalTax")
     if tax:
-        print("Total tax: {} has confidence: {}".format(tax.value, tax.confidence))
+        print(f"Total tax: {tax.value} has confidence: {tax.confidence}")
     tip = receipt.fields.get("Tip")
     if tip:
-        print("Tip: {} has confidence: {}".format(tip.value, tip.confidence))
+        print(f"Tip: {tip.value} has confidence: {tip.confidence}")
     total = receipt.fields.get("Total")
     if total:
-        print("Total: {} has confidence: {}".format(total.value, total.confidence))
+        print(f"Total: {total.value} has confidence: {total.confidence}")
     print("--------------------------------------")
 ```
 
@@ -532,29 +522,40 @@ More details on setting up a container and required file structure can be found 
 <!-- SNIPPET:sample_build_model.build_model -->
 
 ```python
-from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
+from azure.ai.formrecognizer import (
+    DocumentModelAdministrationClient,
+    ModelBuildMode,
+)
 from azure.core.credentials import AzureKeyCredential
 
 endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
 key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
-document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
+document_model_admin_client = DocumentModelAdministrationClient(
+    endpoint, AzureKeyCredential(key)
+)
 poller = document_model_admin_client.begin_build_document_model(
-    ModelBuildMode.TEMPLATE, blob_container_url=container_sas_url, description="my model description"
+    ModelBuildMode.TEMPLATE,
+    blob_container_url=container_sas_url,
+    description="my model description",
 )
 model = poller.result()
 
-print("Model ID: {}".format(model.model_id))
-print("Description: {}".format(model.description))
-print("Model created on: {}\n".format(model.created_on))
+print(f"Model ID: {model.model_id}")
+print(f"Description: {model.description}")
+print(f"Model created on: {model.created_on}")
+print(f"Model expires on: {model.expires_on}")
 print("Doc types the model can recognize:")
 for name, doc_type in model.doc_types.items():
-    print("\nDoc Type: '{}' built with '{}' mode which has the following fields:".format(name, doc_type.build_mode))
+    print(
+        f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:"
+    )
     for field_name, field in doc_type.field_schema.items():
-        print("Field: '{}' has type '{}' and confidence score {}".format(
-            field_name, field["type"], doc_type.field_confidence[field_name]
-        ))
+        print(
+            f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+            f"{doc_type.field_confidence[field_name]}"
+        )
 ```
 
 <!-- END SNIPPET -->
@@ -586,42 +587,37 @@ with open(path_to_sample_documents, "rb") as f:
 result = poller.result()
 
 for idx, document in enumerate(result.documents):
-    print("--------Analyzing document #{}--------".format(idx + 1))
-    print("Document has type {}".format(document.doc_type))
-    print("Document has confidence {}".format(document.confidence))
-    print("Document was analyzed by model with ID {}".format(result.model_id))
+    print(f"--------Analyzing document #{idx + 1}--------")
+    print(f"Document has type {document.doc_type}")
+    print(f"Document has document type confidence {document.confidence}")
+    print(f"Document was analyzed with model with ID {result.model_id}")
     for name, field in document.fields.items():
         field_value = field.value if field.value else field.content
-        print("......found field of type '{}' with value '{}' and with confidence {}".format(field.value_type, field_value, field.confidence))
-
+        print(
+            f"......found field of type '{field.value_type}' with value '{field_value}' and with confidence {field.confidence}"
+        )
 
 # iterate over tables, lines, and selection marks on each page
 for page in result.pages:
-    print("\nLines found on page {}".format(page.page_number))
+    print(f"\nLines found on page {page.page_number}")
     for line in page.lines:
-        print("...Line '{}'".format(line.content))
+        print(f"...Line '{line.content}'")
     for word in page.words:
-        print(
-            "...Word '{}' has a confidence of {}".format(
-                word.content, word.confidence
+        print(f"...Word '{word.content}' has a confidence of {word.confidence}")
+    if page.selection_marks:
+        print(f"\nSelection marks found on page {page.page_number}")
+        for selection_mark in page.selection_marks:
+            print(
+                f"...Selection mark is '{selection_mark.state}' and has a confidence of {selection_mark.confidence}"
             )
-        )
-    for selection_mark in page.selection_marks:
-        print(
-            "...Selection mark is '{}' and has a confidence of {}".format(
-                selection_mark.state, selection_mark.confidence
-            )
-        )
 
 for i, table in enumerate(result.tables):
-    print("\nTable {} can be found on page:".format(i + 1))
+    print(f"\nTable {i + 1} can be found on page:")
     for region in table.bounding_regions:
-        print("...{}".format(region.page_number))
+        print(f"...{region.page_number}")
     for cell in table.cells:
         print(
-            "...Cell[{}][{}] has content '{}'".format(
-                cell.row_index, cell.column_index, cell.content
-            )
+            f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'"
         )
 print("-----------------------------------")
 ```

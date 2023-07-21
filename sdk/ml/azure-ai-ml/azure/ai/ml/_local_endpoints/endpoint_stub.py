@@ -8,6 +8,7 @@ import shutil
 from pathlib import Path
 from typing import Iterable
 
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.entities import OnlineEndpoint
 from azure.ai.ml.entities._load_functions import load_online_endpoint
 
@@ -53,7 +54,6 @@ class EndpointStub:
         build_directory = self._get_build_directory(endpoint_name=endpoint_name)
         shutil.rmtree(build_directory)
 
-    # pylint: disable=no-self-use
     def invoke(self):
         """Invoke a local endpoint.
 
@@ -71,7 +71,7 @@ class EndpointStub:
         """
         endpoint_cache_path = self._get_endpoint_cache_file(endpoint_name=endpoint.name)
         endpoint_metadata = json.dumps(endpoint.dump())
-        endpoint_cache_path.write_text(endpoint_metadata)
+        endpoint_cache_path.write_text(endpoint_metadata, encoding=DefaultOpenEncoding.WRITE)
         return endpoint_cache_path
 
     def _get_endpoint_cache_file(self, endpoint_name: str) -> Path:

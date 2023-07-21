@@ -29,7 +29,7 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.vpn_sites_configuration.begin_download(
+    client.vpn_sites_configuration.begin_download(
         resource_group_name="rg1",
         virtual_wan_name="wan1",
         request={
@@ -37,7 +37,6 @@ def main():
             "vpnSites": ["/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/vpnSites/abc"],
         },
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/VpnSitesConfigurationDownload.json

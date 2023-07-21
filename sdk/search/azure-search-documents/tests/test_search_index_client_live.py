@@ -7,13 +7,13 @@
 import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
-from azure.search.documents.indexes.models import(
+from azure.search.documents.indexes.models import (
     AnalyzeTextOptions,
     CorsOptions,
     SearchIndex,
     ScoringProfile,
     SimpleField,
-    SearchFieldDataType
+    SearchFieldDataType,
 )
 from azure.search.documents.indexes import SearchIndexClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
@@ -21,7 +21,6 @@ from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 
 class TestSearchIndexClient(AzureRecordedTestCase):
-
     @SearchEnvVarPreparer()
     @search_decorator(schema=None, index_batch=None)
     @recorded_by_proxy
@@ -64,24 +63,20 @@ class TestSearchIndexClient(AzureRecordedTestCase):
 
     def _test_get_index_statistics(self, client, index_name):
         result = client.get_index_statistics(index_name)
-        assert set(result.keys()) == {'document_count', 'storage_size'}
+        assert set(result.keys()) == {"document_count", "storage_size"}
 
     def _test_create_index(self, client, index_name):
         fields = [
             SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-            SimpleField(name="baseRate", type=SearchFieldDataType.Double)
+            SimpleField(name="baseRate", type=SearchFieldDataType.Double),
         ]
-        scoring_profile = ScoringProfile(
-            name="MyProfile"
-        )
+        scoring_profile = ScoringProfile(name="MyProfile")
         scoring_profiles = []
         scoring_profiles.append(scoring_profile)
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
         index = SearchIndex(
-            name=index_name,
-            fields=fields,
-            scoring_profiles=scoring_profiles,
-            cors_options=cors_options)
+            name=index_name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options
+        )
         result = client.create_index(index)
         assert result.name == index_name
         assert result.scoring_profiles[0].name == scoring_profile.name
@@ -92,29 +87,19 @@ class TestSearchIndexClient(AzureRecordedTestCase):
         name = "hotels-cou"
         fields = [
             SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-            SimpleField(name="baseRate", type=SearchFieldDataType.Double)
+            SimpleField(name="baseRate", type=SearchFieldDataType.Double),
         ]
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
         scoring_profiles = []
-        index = SearchIndex(
-            name=name,
-            fields=fields,
-            scoring_profiles=scoring_profiles,
-            cors_options=cors_options)
+        index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
         result = client.create_or_update_index(index=index)
         assert len(result.scoring_profiles) == 0
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
         assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
-        scoring_profile = ScoringProfile(
-            name="MyProfile"
-        )
+        scoring_profile = ScoringProfile(name="MyProfile")
         scoring_profiles = []
         scoring_profiles.append(scoring_profile)
-        index = SearchIndex(
-            name=name,
-            fields=fields,
-            scoring_profiles=scoring_profiles,
-            cors_options=cors_options)
+        index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
         result = client.create_or_update_index(index=index)
         assert result.scoring_profiles[0].name == scoring_profile.name
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
@@ -124,27 +109,14 @@ class TestSearchIndexClient(AzureRecordedTestCase):
         # First create an index
         name = "hotels-coa-unchanged"
         fields = [
-        {
-          "name": "hotelId",
-          "type": "Edm.String",
-          "key": True,
-          "searchable": False
-        },
-        {
-          "name": "baseRate",
-          "type": "Edm.Double"
-        }]
-        scoring_profile = ScoringProfile(
-            name="MyProfile"
-        )
+            {"name": "hotelId", "type": "Edm.String", "key": True, "searchable": False},
+            {"name": "baseRate", "type": "Edm.Double"},
+        ]
+        scoring_profile = ScoringProfile(name="MyProfile")
         scoring_profiles = []
         scoring_profiles.append(scoring_profile)
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-        index = SearchIndex(
-            name=name,
-            fields=fields,
-            scoring_profiles=scoring_profiles,
-            cors_options=cors_options)
+        index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
         result = client.create_index(index)
         etag = result.e_tag
         # get e tag  and update
@@ -164,27 +136,14 @@ class TestSearchIndexClient(AzureRecordedTestCase):
         # First create an index
         name = "hotels-del-unchanged"
         fields = [
-        {
-          "name": "hotelId",
-          "type": "Edm.String",
-          "key": True,
-          "searchable": False
-        },
-        {
-          "name": "baseRate",
-          "type": "Edm.Double"
-        }]
-        scoring_profile = ScoringProfile(
-            name="MyProfile"
-        )
+            {"name": "hotelId", "type": "Edm.String", "key": True, "searchable": False},
+            {"name": "baseRate", "type": "Edm.Double"},
+        ]
+        scoring_profile = ScoringProfile(name="MyProfile")
         scoring_profiles = []
         scoring_profiles.append(scoring_profile)
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-        index = SearchIndex(
-            name=name,
-            fields=fields,
-            scoring_profiles=scoring_profiles,
-            cors_options=cors_options)
+        index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
         result = client.create_index(index)
         etag = result.e_tag
         # get e tag  and update

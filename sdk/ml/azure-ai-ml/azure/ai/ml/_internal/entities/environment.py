@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 
 from ..._utils.utils import load_yaml
-from ...constants._common import FILE_PREFIX
+from ...constants._common import DefaultOpenEncoding, FILE_PREFIX
 from ...entities._validation import MutableValidationResult, _ValidationResultBuilder
 
 
@@ -111,7 +111,7 @@ class InternalEnvironment:
             return
         if self.conda.get(self.PIP_REQUIREMENTS_FILE):
             pip_requirements_file = self.conda.pop(self.PIP_REQUIREMENTS_FILE)
-            with open(Path(base_path) / pip_requirements_file) as f:
+            with open(Path(base_path) / pip_requirements_file, encoding=DefaultOpenEncoding.READ) as f:
                 pip_requirements = f.read().splitlines()
                 self.conda = {
                     self.CONDA_DEPENDENCIES: {
@@ -135,7 +135,7 @@ class InternalEnvironment:
         if not dockerfile_file.startswith(FILE_PREFIX):
             return
         dockerfile_file = self._parse_file_path(dockerfile_file)
-        with open(Path(base_path) / dockerfile_file, "r") as f:
+        with open(Path(base_path) / dockerfile_file, "r", encoding=DefaultOpenEncoding.READ) as f:
             self.docker[self.BUILD][self.DOCKERFILE] = f.read()
             self._docker_file_resolved = True
         return

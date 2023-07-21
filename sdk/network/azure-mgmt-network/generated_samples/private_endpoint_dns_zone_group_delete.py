@@ -29,12 +29,11 @@ def main():
         subscription_id="subId",
     )
 
-    response = client.private_dns_zone_groups.begin_delete(
+    client.private_dns_zone_groups.begin_delete(
         resource_group_name="rg1",
         private_endpoint_name="testPe",
         private_dns_zone_group_name="testPdnsgroup",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/PrivateEndpointDnsZoneGroupDelete.json

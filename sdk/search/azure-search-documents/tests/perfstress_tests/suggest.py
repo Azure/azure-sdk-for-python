@@ -28,19 +28,24 @@ class SuggestTest(PerfStressTest):
     @staticmethod
     def add_arguments(parser):
         super(SuggestTest, SuggestTest).add_arguments(parser)
-        parser.add_argument('--num-documents', nargs='?', type=int,
-                            help='The number of results expect to be returned.',
-                            default=-1)
+        parser.add_argument(
+            "--num-documents", nargs="?", type=int, help="The number of results expect to be returned.", default=-1
+        )
 
     def run_sync(self):
         if self.args.num_documents == -1:
             results = len(self.service_client.suggest(search_text="mot", suggester_name="sg"))
         else:
-            results = len(self.service_client.suggest(search_text="mot", suggester_name="sg", top=self.args.num_documents))
+            results = len(
+                self.service_client.suggest(search_text="mot", suggester_name="sg", top=self.args.num_documents)
+            )
 
     async def run_async(self):
         if self.args.num_documents == -1:
             results = len(await self.async_service_client.suggest(search_text="mot", suggester_name="sg"))
         else:
-            results = len(await self.async_service_client.suggest(search_text="mot", suggester_name="sg", top=self.args.num_documents))
-
+            results = len(
+                await self.async_service_client.suggest(
+                    search_text="mot", suggester_name="sg", top=self.args.num_documents
+                )
+            )

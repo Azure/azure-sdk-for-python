@@ -17,7 +17,13 @@ within_credential_chain = ContextVar("within_credential_chain", default=False)
 _LOGGER = logging.getLogger(__name__)
 
 def normalize_authority(authority: str) -> str:
-    """Ensure authority uses https, strip trailing spaces and /"""
+    """Ensure authority uses https, strip trailing spaces and /.
+
+    :param str authority: authority to normalize
+    :return: normalized authority
+    :rtype: str
+    :raises: ValueError if authority is not a valid https URL
+    """
 
     parsed = urlparse(authority)
     if not parsed.scheme:
@@ -39,7 +45,11 @@ VALID_TENANT_ID_CHARACTERS = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmn
 
 
 def validate_tenant_id(tenant_id: str) -> None:
-    """Raise ValueError if tenant_id is empty or contains a character invalid for a tenant id"""
+    """Raise ValueError if tenant_id is empty or contains a character invalid for a tenant ID.
+
+    :param str tenant_id: tenant id to validate
+    :raises: ValueError if tenant_id is empty or contains a character invalid for a tenant ID.
+    """
     if not tenant_id or any(c not in VALID_TENANT_ID_CHARACTERS for c in tenant_id):
         raise ValueError(
             "Invalid tenant id provided. You can locate your tenant id by following the instructions here: "
@@ -53,7 +63,15 @@ def resolve_tenant(
         *,
         additionally_allowed_tenants: List[str] = [],
         **_) -> str:
-    """Returns the correct tenant for a token request given a credential's configuration"""
+    """Returns the correct tenant for a token request given a credential's configuration.
+
+    :param str default_tenant: The tenant ID configured on the credential.
+    :param str tenant_id: The tenant ID requested by the user.
+    :keyword list[str] additionally_allowed_tenants: The list of additionally allowed tenants.
+    :return: The tenant ID to use for the token request.
+    :rtype: str
+    :raises: ~azure.core.exceptions.ClientAuthenticationError
+    """
     if tenant_id is None or tenant_id == default_tenant:
         return default_tenant
     if (

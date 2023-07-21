@@ -29,11 +29,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.load_balancers.begin_delete(
+    client.load_balancers.begin_delete(
         resource_group_name="rg1",
         load_balancer_name="lb",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/LoadBalancerDelete.json

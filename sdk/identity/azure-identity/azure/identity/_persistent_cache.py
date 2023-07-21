@@ -76,6 +76,10 @@ def _get_persistence(allow_unencrypted, account_name, cache_name):
 
     :param bool allow_unencrypted: when True, the cache will be kept in plaintext should encryption be impossible in the
         current environment
+    :param str account_name: the name of the account for which the cache is storing tokens
+    :param str cache_name: the name of the cache
+    :return: an msal_extensions persistence instance
+    :rtype: ~msal_extensions.persistence.BasePersistence
     """
     import msal_extensions
 

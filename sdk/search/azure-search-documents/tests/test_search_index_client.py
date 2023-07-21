@@ -38,7 +38,7 @@ class TestSearchIndexClient:
     def test_get_search_client(self):
         credential = AzureKeyCredential(key="old_api_key")
         client = SearchIndexClient("endpoint", credential)
-        search_client = client.get_search_client('index')
+        search_client = client.get_search_client("index")
         assert isinstance(search_client, SearchClient)
 
     @mock.patch(
@@ -64,10 +64,10 @@ class TestSearchIndexClient:
     def test_index_endpoint_https(self):
         credential = AzureKeyCredential(key="old_api_key")
         client = SearchIndexClient("endpoint", credential)
-        assert client._endpoint.startswith('https')
+        assert client._endpoint.startswith("https")
 
         client = SearchIndexClient("https://endpoint", credential)
-        assert client._endpoint.startswith('https')
+        assert client._endpoint.startswith("https")
 
         with pytest.raises(ValueError):
             client = SearchIndexClient("http://endpoint", credential)
@@ -100,10 +100,10 @@ class TestSearchIndexerClient:
     def test_indexer_endpoint_https(self):
         credential = AzureKeyCredential(key="old_api_key")
         client = SearchIndexerClient("endpoint", credential)
-        assert client._endpoint.startswith('https')
+        assert client._endpoint.startswith("https")
 
         client = SearchIndexerClient("https://endpoint", credential)
-        assert client._endpoint.startswith('https')
+        assert client._endpoint.startswith("https")
 
         with pytest.raises(ValueError):
             client = SearchIndexerClient("http://endpoint", credential)
@@ -112,12 +112,9 @@ class TestSearchIndexerClient:
             client = SearchIndexerClient(12345, credential)
 
     def test_datasource_with_empty_connection_string(self):
-        container = SearchIndexerDataContainer(name='searchcontainer')
+        container = SearchIndexerDataContainer(name="searchcontainer")
         data_source_connection = SearchIndexerDataSourceConnection(
-            name="test",
-            type="azureblob",
-            connection_string="",
-            container=container
+            name="test", type="azureblob", connection_string="", container=container
         )
         packed_data_source_connection = data_source_connection._to_generated()
         assert packed_data_source_connection.credentials.connection_string == "<unchanged>"

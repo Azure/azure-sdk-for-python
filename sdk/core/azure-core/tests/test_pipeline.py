@@ -48,6 +48,7 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     HTTPPolicy,
     SansIOHTTPPolicy,
+    SensitiveHeaderCleanupPolicy,
 )
 from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
@@ -405,6 +406,15 @@ def test_add_custom_policy():
         client = PipelineClient(base_url="test", policies=policies, per_retry_policies=foo_policy)
     with pytest.raises(ValueError):
         client = PipelineClient(base_url="test", policies=policies, per_retry_policies=[foo_policy])
+
+
+def test_no_cleanup_policy_when_redirect_policy_is_empty():
+    config = Configuration()
+    client = PipelineClient(base_url="test", config=config)
+    policies = client._pipeline._impl_policies
+    for policy in policies:
+        if isinstance(policy, SensitiveHeaderCleanupPolicy):
+            assert False
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

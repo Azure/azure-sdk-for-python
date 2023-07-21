@@ -60,6 +60,8 @@ class _VSCodeCredentialBase(abc.ABC):
 
         The first stable version of this credential defaulted to Public Cloud and the "organizations"
         tenant when it failed to read VS Code user settings. That behavior is preserved here.
+
+        :param dict vscode_user_settings: VS Code user settings
         """
 
         # Precedence for authority:
@@ -145,7 +147,9 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
           Studio Code
         """

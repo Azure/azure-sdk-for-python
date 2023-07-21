@@ -29,12 +29,11 @@ def main():
         subscription_id="subId",
     )
 
-    response = client.private_link_services.begin_delete_private_endpoint_connection(
+    client.private_link_services.begin_delete_private_endpoint_connection(
         resource_group_name="rg1",
         service_name="testPls",
         pe_connection_name="testPlePeConnection",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/PrivateLinkServiceDeletePrivateEndpointConnection.json

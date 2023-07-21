@@ -18,8 +18,8 @@
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "validFrom": "2023-06-08T15:43:55.906279Z",
-        "validUntil": "2023-07-06T15:43:55.906279Z",
+        "validFrom": "2023-07-08T15:17:43.120726Z",
+        "validUntil": "2023-08-05T15:17:43.120726Z",
         "participants": {
           "8:acs:sanitized1": {
             "role": "Presenter"
@@ -28,28 +28,27 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "api-deprecated-versions": "2021-04-07",
-        "api-supported-versions": "2022-02-01, 2023-03-31-preview, 2023-06-14",
-        "Connection": "keep-alive",
+        "api-deprecated-versions": "2021-04-07, 2022-02-01",
+        "api-supported-versions": "2023-03-31-preview, 2023-06-14",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "99476664491042802",
+        "Location": "99459575762264685",
         "MS-CV": "sanitized",
         "Repeatability-Result": "accepted",
         "Request-Context": "appId=",
         "Transfer-Encoding": "chunked",
-        "x-azure-ref": "sanitized",
+        "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
-        "id": "99476664491042802",
-        "createdAt": "2023-06-05T22:43:54.6754314\u002B00:00",
-        "validFrom": "2023-06-08T15:43:55.906279\u002B00:00",
-        "validUntil": "2023-07-06T15:43:55.906279\u002B00:00"
+        "id": "99459575762264685",
+        "createdAt": "2023-07-05T22:17:43.3242077\u002B00:00",
+        "validFrom": "2023-07-08T15:17:43.120726\u002B00:00",
+        "validUntil": "2023-08-05T15:17:43.120726\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99476664491042802?api-version=2023-06-14",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99459575762264685?api-version=2023-06-14",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -65,13 +64,12 @@
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "api-deprecated-versions": "2021-04-07",
-        "api-supported-versions": "2022-02-01, 2023-03-31-preview, 2023-06-14",
-        "Connection": "keep-alive",
+        "api-deprecated-versions": "2021-04-07, 2022-02-01",
+        "api-supported-versions": "2023-03-31-preview, 2023-06-14",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Request-Context": "appId=",
-        "x-azure-ref": "sanitized",
+        "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": null

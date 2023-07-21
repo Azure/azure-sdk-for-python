@@ -29,12 +29,11 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.hub_route_tables.begin_delete(
+    client.hub_route_tables.begin_delete(
         resource_group_name="rg1",
         virtual_hub_name="virtualHub1",
         route_table_name="hubRouteTable1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/HubRouteTableDelete.json

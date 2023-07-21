@@ -83,7 +83,6 @@ class AadClient(AadClientBase):
         # no need for an implementation, non-async OnBehalfOfCredential acquires tokens through MSAL
         raise NotImplementedError()
 
-    # pylint:disable=no-self-use
     def _build_pipeline(self, **kwargs: Any) -> Pipeline:
         return build_pipeline(**kwargs)
 

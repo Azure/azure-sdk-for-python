@@ -29,11 +29,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.ddos_protection_plans.begin_delete(
+    client.ddos_protection_plans.begin_delete(
         resource_group_name="rg1",
         ddos_protection_plan_name="test-plan",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/DdosProtectionPlanDelete.json

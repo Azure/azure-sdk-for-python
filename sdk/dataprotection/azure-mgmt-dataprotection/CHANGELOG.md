@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0 (2023-06-16)
+
+### Features Added
+
+  - Added operation group DppResourceGuardProxyOperations
+
 ## 1.0.0 (2023-02-15)
 
 ### Features Added

@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.record_sets.delete(
+    client.record_sets.delete(
         resource_group_name="rg1",
         zone_name="0.0.127.in-addr.arpa",
         relative_record_set_name="1",
         record_type="PTR",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/dns/resource-manager/Microsoft.Network/stable/2018-05-01/examples/DeletePTRRecordset.json

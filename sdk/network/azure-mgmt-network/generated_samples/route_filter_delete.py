@@ -29,11 +29,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.route_filters.begin_delete(
+    client.route_filters.begin_delete(
         resource_group_name="rg1",
         route_filter_name="filterName",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/RouteFilterDelete.json

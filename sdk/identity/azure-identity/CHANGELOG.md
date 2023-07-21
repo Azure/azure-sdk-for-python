@@ -1,6 +1,6 @@
 # Release History
 
-## 1.14.0b2 (Unreleased)
+## 1.14.0b3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.14.0b2 (2023-07-11)
+
+### Features Added
+
+- Added `workload_identity_tenant_id` support in `DefaultAzureCredential`.
 
 ## 1.14.0b1 (2023-06-06)
 

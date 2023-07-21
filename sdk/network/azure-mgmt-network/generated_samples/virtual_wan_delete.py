@@ -29,11 +29,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.virtual_wans.begin_delete(
+    client.virtual_wans.begin_delete(
         resource_group_name="rg1",
         virtual_wan_name="virtualWan1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/VirtualWANDelete.json

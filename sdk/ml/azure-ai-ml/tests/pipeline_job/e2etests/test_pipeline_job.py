@@ -6,18 +6,10 @@ import pydash
 import pytest
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import (
-    _PYTEST_TIMEOUT_METHOD,
-    assert_job_cancel,
-    sleep_if_live,
-    wait_until_done,
-)
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, sleep_if_live, wait_until_done
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
-from azure.ai.ml._utils._arm_id_utils import (
-    AMLVersionedArmId,
-    is_singularity_id_for_resource,
-)
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, is_singularity_id_for_resource
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants import InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -36,12 +28,7 @@ from .._util import (
 
 
 def assert_job_input_output_types(job: PipelineJob):
-    from azure.ai.ml.entities._job.pipeline._io import (
-        NodeInput,
-        NodeOutput,
-        PipelineInput,
-        PipelineOutput,
-    )
+    from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput, PipelineOutput
 
     for _, input in job.inputs.items():
         assert isinstance(input, PipelineInput)
@@ -1945,6 +1932,21 @@ jobs:
         assert rest_obj.properties.jobs["full_name"]["computeId"].endswith(singularity_vc.name)
         assert is_singularity_id_for_resource(rest_obj.properties.jobs["short_name"]["computeId"])
         assert rest_obj.properties.jobs["short_name"]["computeId"].endswith(singularity_vc.name)
+
+    def test_pipeline_with_param_group_in_command_component(
+        self,
+        client,
+        randstr: Callable[[str], str],
+    ):
+        pipeline_job = load_job("./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_group_input_for_node.yml")
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        assert created_pipeline_job.jobs["dot_input_name"]._to_dict()["inputs"] == {
+            "component_in_group.number": "10.99",
+            "component_in_group.sub1.integer": "10",
+            "component_in_group.sub1.number": "10.99",
+            "component_in_group.sub2.number": "10.99",
+            "component_in_path": {"path": "${{parent.inputs.job_in_path}}"},
+        }
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")

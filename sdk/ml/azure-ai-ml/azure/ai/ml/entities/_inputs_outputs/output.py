@@ -10,8 +10,8 @@ from typing_extensions import Literal
 
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import IOConstants
-from azure.ai.ml.exceptions import UserErrorException
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
+from azure.ai.ml.exceptions import UserErrorException
 
 from .base import _InputOutputBase
 from .utils import _remove_empty_values
@@ -38,6 +38,8 @@ class Output(_InputOutputBase):
         Version can be set only when name is set.
     :type version: str
     """
+
+    _IO_KEYS = ["name", "version", "path", "type", "mode", "description", "is_control", "early_available"]
 
     @overload
     def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None):
@@ -117,7 +119,7 @@ class Output(_InputOutputBase):
 
     def _to_dict(self):
         """Convert the Output object to a dict."""
-        keys = ["name", "version", "path", "type", "mode", "description", "is_control", "early_available"]
+        keys = self._IO_KEYS
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 

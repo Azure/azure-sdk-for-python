@@ -30,3 +30,5 @@ extends:
     Artifacts:
     - name: azure-mgmt-containerservice
       safeName: azuremgmtcontainerservice
+    - name: azure-mgmt-containerservicefleet
+      safeName: azuremgmtcontainerservicefleet

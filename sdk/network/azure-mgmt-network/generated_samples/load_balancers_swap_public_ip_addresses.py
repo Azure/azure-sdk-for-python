@@ -29,7 +29,7 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.load_balancers.begin_swap_public_ip_addresses(
+    client.load_balancers.begin_swap_public_ip_addresses(
         location="westus",
         parameters={
             "frontendIPConfigurations": [
@@ -52,7 +52,6 @@ def main():
             ]
         },
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/LoadBalancersSwapPublicIpAddresses.json

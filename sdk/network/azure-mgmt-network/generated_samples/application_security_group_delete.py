@@ -29,11 +29,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.application_security_groups.begin_delete(
+    client.application_security_groups.begin_delete(
         resource_group_name="rg1",
         application_security_group_name="test-asg",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/ApplicationSecurityGroupDelete.json

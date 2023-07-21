@@ -1,5 +1,20 @@
 # Release History
 
+## 24.0.0 (2023-06-21)
+
+### Features Added
+
+  - Model ContainerServiceNetworkProfile has a new parameter monitoring
+  - Model OrchestratorProfile has a new parameter is_preview
+
+### Breaking Changes
+
+  - Removed operation ContainerServicesOperations.begin_create_or_update
+  - Removed operation ContainerServicesOperations.begin_delete
+  - Removed operation ContainerServicesOperations.get
+  - Removed operation ContainerServicesOperations.list
+  - Removed operation ContainerServicesOperations.list_by_resource_group
+
 ## 23.0.0 (2023-05-16)
 
 ### Breaking Changes

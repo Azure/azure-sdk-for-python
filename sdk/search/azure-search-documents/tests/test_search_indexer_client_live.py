@@ -9,15 +9,17 @@ from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 from azure.search.documents.indexes.models import (
-    SearchIndex, SearchIndexer, SearchIndexerDataContainer,
-    SearchIndexerDataSourceConnection)
+    SearchIndex,
+    SearchIndexer,
+    SearchIndexerDataContainer,
+    SearchIndexerDataSourceConnection,
+)
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 
 class TestSearchIndexerClientTest(AzureRecordedTestCase):
-
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
@@ -42,17 +44,11 @@ class TestSearchIndexerClientTest(AzureRecordedTestCase):
             name=f"{name}-ds",
             type="azureblob",
             connection_string=storage_cs,
-            container=SearchIndexerDataContainer(name=container_name)
+            container=SearchIndexerDataContainer(name=container_name),
         )
         ds = client.create_data_source_connection(data_source_connection)
 
-        fields = [
-        {
-          "name": "hotelId",
-          "type": "Edm.String",
-          "key": True,
-          "searchable": False
-        }]
+        fields = [{"name": "hotelId", "type": "Edm.String", "key": True, "searchable": False}]
         index = SearchIndex(name=f"{name}-hotels", fields=fields)
         ind = index_client.create_index(index)
         return SearchIndexer(name=name, data_source_name=ds.name, target_index_name=ind.name)
@@ -108,14 +104,14 @@ class TestSearchIndexerClientTest(AzureRecordedTestCase):
         indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
         client.create_indexer(indexer)
         client.reset_indexer(name)
-        assert (client.get_indexer_status(name)).last_result.status.lower() in ('inprogress', 'reset')
+        assert (client.get_indexer_status(name)).last_result.status.lower() in ("inprogress", "reset")
 
     def _test_run_indexer(self, client, index_client, storage_cs, container_name):
         name = "run"
         indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
         client.create_indexer(indexer)
         client.run_indexer(name)
-        assert (client.get_indexer_status(name)).status == 'running'
+        assert (client.get_indexer_status(name)).status == "running"
 
     def _test_get_indexer_status(self, client, index_client, storage_cs, container_name):
         name = "get-status"

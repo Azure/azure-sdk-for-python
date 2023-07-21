@@ -28,7 +28,6 @@ from azure.communication.jobrouter import (
     ReclassifyExceptionAction,
     ManualReclassifyExceptionAction,
     CancelExceptionAction,
-    QueueAssignment,
     ChannelConfiguration,
     RouterWorker,
     RouterWorkerState,
@@ -45,11 +44,12 @@ from azure.communication.jobrouter import (
     PassThroughQueueSelectorAttachment,
     QueueWeightedAllocation,
     WeightedAllocationQueueSelectorAttachment,
-    WorkerSelector,
-    FunctionRule,
-    FunctionRuleCredential,
-    StaticRule,
-    QueueSelector
+    RouterWorkerSelector,
+    FunctionRouterRule,
+    FunctionRouterRuleCredential,
+    StaticRouterRule,
+    RouterQueueSelector,
+    ExpressionRouterRule
 )
 
 
@@ -76,7 +76,7 @@ class DistributionPolicyValidator(object):
             offer_ttl_seconds,
             **kwargs
     ):
-        assert distribution_policy.offer_ttl_seconds == offer_ttl_seconds
+        assert distribution_policy.offer_expires_after_seconds == offer_ttl_seconds
 
     @staticmethod
     def validate_longest_idle_mode(distribution_policy, mode, **kwargs):
@@ -119,8 +119,8 @@ class DistributionPolicyValidator(object):
         if not kwargs.get("name", None):
             DistributionPolicyValidator.validate_name(distribution_policy, kwargs.pop("name"))
 
-        if not kwargs.get("offer_ttl_seconds", None):
-            DistributionPolicyValidator.validate_offer_ttl(distribution_policy, kwargs.pop("offer_ttl_seconds"))
+        if not kwargs.get("offer_expires_after_seconds", None):
+            DistributionPolicyValidator.validate_offer_ttl(distribution_policy, kwargs.pop("offer_expires_after_seconds"))
 
         if not kwargs.get("mode", None):
             DistributionPolicyValidator.validate_distribution_mode(distribution_policy, kwargs.pop("mode"))
@@ -197,14 +197,14 @@ class JobQueueValidator(object):
 class WorkerSelectorValidator(object):
     @staticmethod
     def validate_worker_selector(
-            actual,  # type: WorkerSelector
-            expected,  # type: WorkerSelector
+            actual,  # type: RouterWorkerSelector
+            expected,  # type: RouterWorkerSelector
             **kwargs,  # type: Any
     ):
         assert actual.key == expected.key
         assert actual.label_operator == expected.label_operator
         assert actual.value == expected.value
-        assert actual.ttl_seconds == expected.ttl_seconds
+        assert actual.expires_at == expected.expires_at
 
         if expected.expedite is None:
             assert actual.expedite is False
@@ -225,8 +225,8 @@ class QueueSelectorValidator(object):
 class RouterRuleValidator(object):
     @staticmethod
     def validate_function_rule(
-            actual: FunctionRule,
-            expected: FunctionRule,
+            actual: FunctionRouterRule,
+            expected: FunctionRouterRule,
             **kwargs: Any
     ):
         assert actual.kind == expected.kind
@@ -234,7 +234,7 @@ class RouterRuleValidator(object):
         if actual.credential:
             assert expected.credential is not None
 
-            actual_credential: FunctionRuleCredential = actual.credential
+            actual_credential: FunctionRouterRuleCredential = actual.credential
             if actual_credential.function_key:
                 assert actual_credential.function_key == actual.credential.function_key \
                        or actual_credential.function_key == SANITIZED
@@ -245,18 +245,28 @@ class RouterRuleValidator(object):
                 assert actual_credential.client_id == actual.credential.client_id \
                        or actual_credential.client_id == SANITIZED
 
+    @staticmethod
     def validate_static_rule(
-            actual: StaticRule,
-            expected: StaticRule,
+            actual: StaticRouterRule,
+            expected: StaticRouterRule,
             **kwargs: Any
     ):
         assert actual.kind == expected.kind
         if (type(actual.value) == list):
             for i, j in zip(actual.value, expected.value):
-                if type(i) == WorkerSelector:
+                if type(i) == RouterWorkerSelector:
                     WorkerSelectorValidator.validate_worker_selector(i, j)
-                if type(i) == QueueSelector:
+                if type(i) == RouterQueueSelector:
                     QueueSelectorValidator.validate_queue_selector(i, j)
+
+    @staticmethod
+    def validate_expression_rule(
+            actual: ExpressionRouterRule,
+            expected: ExpressionRouterRule,
+            **kwargs: Any
+    ):
+        assert actual.kind == expected.kind
+        assert actual.expression == expected.expression
 
     @staticmethod
     def validate_router_rule(
@@ -266,10 +276,12 @@ class RouterRuleValidator(object):
     ):
         assert type(actual) == type(expected)
 
-        if type(actual) == FunctionRule:
+        if type(actual) == FunctionRouterRule:
             RouterRuleValidator.validate_function_rule(actual, expected)
-        elif type(actual) == StaticRule:
+        elif type(actual) == StaticRouterRule:
             RouterRuleValidator.validate_static_rule(actual, expected)
+        elif type(actual) == ExpressionRouterRule:
+            RouterRuleValidator.validate_expression_rule(actual, expected)
         else:
             assert actual == expected
 
@@ -314,16 +326,16 @@ class ClassificationPolicyValidator(object):
                 expected,  # type: StaticQueueSelectorAttachment
                 **kwargs
             ):
-                QueueSelectorValidator.validate_queue_selector(actual.label_selector, expected.label_selector)
+                QueueSelectorValidator.validate_queue_selector(actual.queue_selector, expected.queue_selector)
 
             def validate_conditional_queue_selector_attachment(
                     actual,  # type: ConditionalQueueSelectorAttachment
                     expected,  # type: ConditionalQueueSelectorAttachment
                     **kwargs,  # type: Any
             ):
-                assert actual.condition == expected.condition
+                RouterRuleValidator.validate_router_rule(actual.condition, expected.condition)
 
-                for i,j in zip(actual.label_selectors, expected.label_selectors):
+                for i,j in zip(actual.queue_selectors, expected.queue_selectors):
                     QueueSelectorValidator.validate_queue_selector(i, j)
 
             def validate_rule_engine_selector_attachment(
@@ -340,8 +352,17 @@ class ClassificationPolicyValidator(object):
             ):
                 for i, j in zip(actual.allocations, expected.allocations):
                     assert i.weight == j.weight
-                    for ac_qs, ex_qs in zip(i.label_selectors, j.label_selectors):
+                    for ac_qs, ex_qs in zip(i.queue_selectors, j.queue_selectors):
                         QueueSelectorValidator.validate_queue_selector(ac_qs, ex_qs)
+
+            def validate_passthrough_attachment(
+                    actual,  # type: PassThroughQueueSelectorAttachment
+                    expected,  # type: PassThroughQueueSelectorAttachment
+                    **kwargs,  # type: Any
+            ):
+                assert actual.kind == expected.kind
+                assert actual.key == expected.key
+                assert actual.label_operator == expected.label_operator
 
             assert len(entity.queue_selectors) == len(queue_selectors)
 
@@ -356,6 +377,8 @@ class ClassificationPolicyValidator(object):
                     validate_weighted_allocation_selector_attachment(actual, expected)
                 elif type(actual) == RuleEngineQueueSelectorAttachment:
                     validate_rule_engine_selector_attachment(actual, expected)
+                elif type(actual) == PassThroughQueueSelectorAttachment:
+                    validate_passthrough_attachment(actual, expected)
                 else:
                     assert actual == expected
 
@@ -379,16 +402,16 @@ class ClassificationPolicyValidator(object):
                 expected,  # type: StaticWorkerSelectorAttachment
                 **kwargs
         ):
-            WorkerSelectorValidator.validate_worker_selector(actual.label_selector, expected.label_selector)
+            WorkerSelectorValidator.validate_worker_selector(actual.worker_selector, expected.worker_selector)
 
         def validate_conditional_worker_selector_attachment(
                 actual,  # type: ConditionalWorkerSelectorAttachment
                 expected,  # type: ConditionalWorkerSelectorAttachment
                 **kwargs,  # type: Any
         ):
-            assert actual.condition == expected.condition
+            RouterRuleValidator.validate_router_rule(actual.condition, expected.condition)
 
-            for i,j in zip(actual.label_selectors, expected.label_selectors):
+            for i,j in zip(actual.worker_selectors, expected.worker_selectors):
                 WorkerSelectorValidator.validate_worker_selector(i, j)
 
         def validate_rule_engine_selector_attachment(
@@ -405,8 +428,17 @@ class ClassificationPolicyValidator(object):
         ):
             for i, j in zip(actual.allocations, expected.allocations):
                 assert i.weight == j.weight
-                for ac_ws, ex_ws in zip(i.label_selectors, j.label_selectors):
+                for ac_ws, ex_ws in zip(i.worker_selectors, j.worker_selectors):
                     WorkerSelectorValidator.validate_worker_selector(ac_ws, ex_ws)
+
+        def validate_passthrough_attachment(
+                actual,  # type: PassThroughWorkerSelectorAttachment
+                expected,  # type: PassThroughWorkerSelectorAttachment
+                **kwargs,  # type: Any
+        ):
+            assert actual.kind == expected.kind
+            assert actual.key == expected.key
+            assert actual.label_operator == expected.label_operator
 
         assert len(entity.worker_selectors) == len(worker_selectors)
 
@@ -421,6 +453,8 @@ class ClassificationPolicyValidator(object):
                 validate_weighted_allocation_selector_attachment(actual, expected)
             elif type(actual) == RuleEngineWorkerSelectorAttachment:
                 validate_rule_engine_selector_attachment(actual, expected)
+            elif type(actual) == PassThroughWorkerSelectorAttachment:
+                validate_passthrough_attachment(actual, expected)
             else:
                 assert actual == expected
 
@@ -471,8 +505,29 @@ class ExceptionPolicyValidator(object):
             expected,  # type: Union[QueueLengthExceptionTrigger, WaitTimeExceptionTrigger]
             **kwargs,  # type: Any
     ):
+        def validate_queue_length_exception_trigger(
+                actual, # type: QueueLengthExceptionTrigger
+                expected, # type: QueueLengthExceptionTrigger
+                **kwargs,  # type: Any
+        ):
+            assert actual.kind == expected.kind
+            assert actual.threshold == expected.threshold
+
+        def validate_wait_time_exception_trigger(
+                actual, # type: WaitTimeExceptionTrigger
+                expected, # type: WaitTimeExceptionTrigger
+                **kwargs,  # type: Any
+        ):
+            assert actual.kind == expected.kind
+            assert actual.threshold_seconds == expected.threshold_seconds
+
         assert isinstance(actual, type(expected))
-        assert actual == expected
+        if type(actual) == QueueLengthExceptionTrigger:
+            validate_queue_length_exception_trigger(actual, expected)
+        elif type(actual) == WaitTimeExceptionTrigger:
+            validate_wait_time_exception_trigger(actual, expected)
+        else:
+            raise AssertionError("Unable to determine ExceptionTrigger type")
 
     @staticmethod
     def validate_exception_actions(
@@ -510,7 +565,9 @@ class ExceptionPolicyValidator(object):
                            Counter(expected_exception_action.labels_to_upsert)
 
             elif isinstance(actual_exception_action, CancelExceptionAction):
-                assert actual_exception_action == expected_exception_action
+                assert actual_exception_action.kind == expected_exception_action.kind
+                assert actual_exception_action.note == expected_exception_action.note
+                assert actual_exception_action.disposition_code == expected_exception_action.disposition_code
 
             else:
                 raise AssertionError("Unable to determine ExceptionAction type")
@@ -617,7 +674,8 @@ class RouterWorkerValidator(object):
         assert len(entity.channel_configurations) == len(channel_configurations)
         for k, v in channel_configurations.items():
             assert k in entity.channel_configurations
-            assert entity.channel_configurations[k] == v
+            assert entity.channel_configurations[k].max_number_of_jobs == v.max_number_of_jobs
+            assert entity.channel_configurations[k].capacity_cost_per_job == v.capacity_cost_per_job
 
     @staticmethod
     def validate_worker_availability(

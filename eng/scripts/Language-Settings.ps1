@@ -302,6 +302,7 @@ $PackageExclusions = @{
   'azure-mgmt-netapp' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
   'azure-synapse-artifacts' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
   'azure-mgmt-streamanalytics' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-ai-ml' = 'Docs CI build issues https://github.com/Azure/azure-sdk-for-python/issues/30774';
 
   'azure-keyvault' = 'Metapackages should not be documented';
 }

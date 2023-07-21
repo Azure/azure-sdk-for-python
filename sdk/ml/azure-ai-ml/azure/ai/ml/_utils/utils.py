@@ -16,7 +16,7 @@ import tempfile
 import time
 import warnings
 from collections import OrderedDict
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from datetime import timedelta
 from functools import singledispatch, wraps
 from os import PathLike
@@ -39,6 +39,7 @@ from azure.ai.ml.constants._common import (
     AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    DefaultOpenEncoding,
 )
 
 module_logger = logging.getLogger(__name__)
@@ -59,15 +60,13 @@ def _is_https_url(url: str) -> Union[bool, str]:
     return False
 
 
-def _csv_parser(text: Optional[str], convert: Callable) -> str:
-    if text:
-        if "," in text:
-            txts = []
-            for t in text.split(","):
-                t = convert(t.strip())
-                txts.append(t)
-            return ",".join(txts)
-        return convert(text)
+def _csv_parser(text: Optional[str], convert: Callable) -> Optional[str]:
+    if not text:
+        return None
+    if "," in text:
+        return ",".join(convert(t.strip()) for t in text.split(","))
+
+    return convert(text)
 
 
 def _snake_to_pascal_convert(text: str) -> str:
@@ -81,6 +80,7 @@ def snake_to_pascal(text: Optional[str]) -> str:
 def snake_to_kebab(text: Optional[str]) -> Optional[str]:
     if text:
         return re.sub("_", "-", text)
+    return None
 
 
 # https://stackoverflow.com/questions/1175208
@@ -100,6 +100,7 @@ def snake_to_camel(text: Optional[str]) -> Optional[str]:
     """convert snake name to camel."""
     if text:
         return re.sub("_([a-zA-Z0-9])", lambda m: m.group(1).upper(), text)
+    return None
 
 
 # This is real snake to camel
@@ -196,7 +197,7 @@ def load_file(file_path: str) -> str:
     # exceptions.py via _get_mfe_url_override
 
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
             cfg = f.read()
     except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
@@ -225,7 +226,7 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
     # exceptions.py via _get_mfe_url_override
 
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
             cfg = json.load(f)
     except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
@@ -260,30 +261,10 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     if source is None:
         return {}
 
-    # pylint: disable=redefined-builtin
-    input = None  # type: IOBase
-    must_open_file = False
-    try:  # check source type by duck-typing it as an IOBase
-        readable = source.readable()
-        if not readable:  # source is misformatted stream or file
-            msg = "File Permissions Error: The already-open \n\n inputted file is not readable."
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message="File Permissions error",
-                error_category=ErrorCategory.USER_ERROR,
-                target=ErrorTarget.GENERAL,
-                error_type=ValidationErrorType.INVALID_VALUE,
-            )
-        # source is an already-open stream or file, we can read() from it directly.
-        input = source
-    except AttributeError:
-        # source has no writable() function, assume it's a string or file path.
-        must_open_file = True
-
-    if must_open_file:  # If supplied a file path, open it.
+    if isinstance(source, (str, os.PathLike)):
         try:
-            input = open(source, "r")
-        except OSError as e:  # FileNotFoundError introduced in Python 3
+            cm = open(source, "r", encoding=DefaultOpenEncoding.READ)
+        except OSError as e:
             msg = "No such file or directory: {}"
             raise ValidationException(
                 message=msg.format(source),
@@ -292,23 +273,32 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
                 target=ErrorTarget.GENERAL,
                 error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
             ) from e
-    # input should now be an readable file or stream. Parse it.
-    cfg = {}
-    try:
-        cfg = yaml.safe_load(input)
-    except yaml.YAMLError as e:
-        msg = f"Error while parsing yaml file: {source} \n\n {str(e)}"
-        raise ValidationException(
-            message=msg,
-            no_personal_data_message="Error while parsing yaml file",
-            error_category=ErrorCategory.USER_ERROR,
-            target=ErrorTarget.GENERAL,
-            error_type=ValidationErrorType.CANNOT_PARSE,
-        ) from e
-    finally:
-        if must_open_file:
-            input.close()
-    return cfg
+    else:
+        # source is a subclass of IO
+        if not source.readable():
+            msg = "File Permissions Error: The already-open \n\n inputted file is not readable."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message="File Permissions error",
+                error_category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+
+        cm = nullcontext(enter_result=source)
+
+    with cm as f:
+        try:
+            return yaml.safe_load(f)
+        except yaml.YAMLError as e:
+            msg = f"Error while parsing yaml file: {source} \n\n {str(e)}"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message="Error while parsing yaml file",
+                error_category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.CANNOT_PARSE,
+            ) from e
 
 
 def dump_yaml(*args, **kwargs):
@@ -370,29 +360,9 @@ def dump_yaml_to_file(
                 error_type=ValidationErrorType.MISSING_FIELD,
             )
 
-    # Check inputs
-    output = None  # type: IOBase
-    must_open_file = False
-    try:  # check dest type by duck-typing it as an IOBase
-        writable = dest.writable()
-        if not writable:  # dest is misformatted stream or file
-            msg = "File Permissions Error: The already-open \n\n inputted file is not writable."
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message="File Permissions error",
-                error_category=ErrorCategory.USER_ERROR,
-                target=ErrorTarget.GENERAL,
-                error_type=ValidationErrorType.CANNOT_PARSE,
-            )
-        # dest is an already-open stream or file, we can write() to it directly.
-        output = dest
-    except AttributeError:
-        # dest has no writable() function, assume it's a string or file path.
-        must_open_file = True
-
-    if must_open_file:  # If supplied a file path, open it.
+    if isinstance(dest, (str, os.PathLike)):
         try:
-            output = open(dest, "w")
+            cm = open(dest, "w", encoding=DefaultOpenEncoding.WRITE)
         except OSError as e:  # FileNotFoundError introduced in Python 3
             msg = "No such file or directory: {}"
             raise ValidationException(
@@ -402,23 +372,31 @@ def dump_yaml_to_file(
                 target=ErrorTarget.GENERAL,
                 error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
             ) from e
+    else:
+        # dest is a subclass of IO
+        if not dest.writable():  # dest is misformatted stream or file
+            msg = "File Permissions Error: The already-open \n\n inputted file is not writable."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message="File Permissions error",
+                error_category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.CANNOT_PARSE,
+            )
+        cm = nullcontext(enter_result=dest)
 
-    # Once we have an open file pointer through either method, dump.
-    try:
-        dump_yaml(data_dict, output, default_flow_style=default_flow_style)
-    except yaml.YAMLError as e:
-        msg = f"Error while parsing yaml file \n\n {str(e)}"
-        raise ValidationException(
-            message=msg,
-            no_personal_data_message="Error while parsing yaml file",
-            error_category=ErrorCategory.USER_ERROR,
-            target=ErrorTarget.GENERAL,
-            error_type=ValidationErrorType.CANNOT_PARSE,
-        ) from e
-    finally:
-        # close the file only if we opened it as part of this function.
-        if must_open_file:
-            output.close()
+    with cm as f:
+        try:
+            dump_yaml(data_dict, f, default_flow_style=default_flow_style)
+        except yaml.YAMLError as e:
+            msg = f"Error while parsing yaml file \n\n {str(e)}"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message="Error while parsing yaml file",
+                error_category=ErrorCategory.USER_ERROR,
+                target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.CANNOT_PARSE,
+            ) from e
 
 
 def dict_eq(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> bool:
@@ -475,8 +453,7 @@ def resolve_short_datastore_url(value: Union[PathLike, str], workspace: Operatio
 
 def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
     try:
-        if urlparse(str(value)).scheme == "runs":
-            return value
+        return urlparse(str(value)).scheme == "runs"
     except ValueError:
         return False
 
@@ -888,12 +865,11 @@ def _str_to_bool(s):
     return s.lower() == "true"
 
 
-def _is_user_error_from_exception_type(e: Union[Exception, None]):
+def _is_user_error_from_exception_type(e: Optional[Exception]) -> bool:
     """Determine whether if an exception is user error from it's exception type."""
     # Connection error happens on user's network failure, should be user error.
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
-    if isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28):
-        return True
+    return isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28)
 
 
 class DockerProxy:
@@ -921,7 +897,7 @@ def write_to_shared_file(file_path: Union[str, PathLike], content: str):
     :param file_path: Path to the file.
     :param content: Content to write to the file.
     """
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         f.write(content)
 
     # share_mode means read/write for owner, group and others

@@ -29,11 +29,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.network_watchers.begin_delete(
+    client.network_watchers.begin_delete(
         resource_group_name="rg1",
         network_watcher_name="nw1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkWatcherDelete.json

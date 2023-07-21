@@ -29,11 +29,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.application_gateways.begin_start(
+    client.application_gateways.begin_start(
         resource_group_name="rg1",
         application_gateway_name="appgw",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/ApplicationGatewayStart.json

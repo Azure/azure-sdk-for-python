@@ -29,10 +29,9 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.subscription_network_manager_connections.delete(
+    client.subscription_network_manager_connections.delete(
         network_manager_connection_name="TestNMConnection",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkManagerConnectionSubscriptionDelete.json

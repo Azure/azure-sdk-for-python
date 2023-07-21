@@ -29,12 +29,11 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.application_gateway_private_endpoint_connections.begin_delete(
+    client.application_gateway_private_endpoint_connections.begin_delete(
         resource_group_name="rg1",
         application_gateway_name="appgw",
         connection_name="connection1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/ApplicationGatewayPrivateEndpointConnectionDelete.json

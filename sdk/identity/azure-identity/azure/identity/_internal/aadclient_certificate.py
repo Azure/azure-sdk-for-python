@@ -33,9 +33,17 @@ class AadClientCertificate:
 
     @property
     def thumbprint(self) -> str:
-        """The certificate's SHA1 thumbprint as a base64url-encoded string"""
+        """The certificate's SHA1 thumbprint as a base64url-encoded string.
+
+        :rtype: str
+        """
         return self._thumbprint
 
     def sign(self, plaintext: bytes) -> bytes:
-        """Sign bytes using RS256"""
+        """Sign bytes using RS256.
+
+        :param bytes plaintext: Bytes to sign.
+        :return: The signature.
+        :rtype: bytes
+        """
         return self._private_key.sign(plaintext, padding.PKCS1v15(), hashes.SHA256())

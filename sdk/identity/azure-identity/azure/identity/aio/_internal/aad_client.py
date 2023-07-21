@@ -66,7 +66,7 @@ class AadClient(AadClientBase):
         request = self._get_refresh_token_request(scopes, refresh_token, **kwargs)
         return await self._run_pipeline(request, **kwargs)
 
-    async def obtain_token_by_refresh_token_on_behalf_of(
+    async def obtain_token_by_refresh_token_on_behalf_of(  # pylint: disable=name-too-long
         self,
         scopes: Iterable[str],
         client_credential: Union[str, AadClientCertificate],
@@ -92,7 +92,6 @@ class AadClient(AadClientBase):
         )
         return await self._run_pipeline(request, **kwargs)
 
-    # pylint:disable=no-self-use
     def _build_pipeline(self, **kwargs) -> AsyncPipeline:
         return build_async_pipeline(**kwargs)
 

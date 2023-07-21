@@ -26,7 +26,12 @@ from azure.ai.ml._artifacts._constants import (
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023_preview
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -97,6 +102,7 @@ class DataOperations(_ScopeDependentOperations):
         self._service_client = service_client
         self._init_kwargs = kwargs
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
+        self._all_operations: OperationsContainer = kwargs.pop("all_operations")
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
@@ -411,7 +417,9 @@ class DataOperations(_ScopeDependentOperations):
             jobs={experiment_name: import_job},
         )
         import_pipeline.properties["azureml.materializationAssetName"] = data_import.name
-        return self._job_operation.create_or_update(job=import_pipeline, skip_validation=True, **kwargs)
+        return self._all_operations.all_operations[AzureMLResourceType.JOB].create_or_update(
+            job=import_pipeline, skip_validation=True, **kwargs
+        )
 
     @monitor_with_activity(logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)
     @experimental
@@ -432,7 +440,9 @@ class DataOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.paging.ItemPaged[PipelineJob]
         """
 
-        return self._job_operation.list(job_type="Pipeline", asset_name=name, list_view_type=list_view_type, **kwargs)
+        return self._all_operations.all_operations[AzureMLResourceType.JOB].list(
+            job_type="Pipeline", asset_name=name, list_view_type=list_view_type, **kwargs
+        )
 
     @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
     def _validate(self, data: Data) -> Union[List[str], None]:
@@ -462,7 +472,7 @@ class DataOperations(_ScopeDependentOperations):
                 except Exception:  # pylint: disable=broad-except
                     # skip validation for remote MLTable when the contents cannot be read
                     module_logger.info("Unable to access MLTable metadata at path %s", asset_path)
-                    return
+                    return None
             else:
                 metadata_contents = read_local_mltable_metadata_contents(path=asset_path)
                 metadata_yaml_path = Path(asset_path, "MLTable")
@@ -477,13 +487,14 @@ class DataOperations(_ScopeDependentOperations):
 
         if is_url(asset_path):
             # skip validation for remote URI_FILE or URI_FOLDER
-            return
-
-        if os.path.isabs(asset_path):
+            pass
+        elif os.path.isabs(asset_path):
             _assert_local_path_matches_asset_type(asset_path, asset_type)
         else:
             abs_path = Path(base_path, asset_path).resolve()
             _assert_local_path_matches_asset_type(abs_path, asset_type)
+
+        return None
 
     def _try_get_mltable_metadata_jsonschema(self, mltable_schema_url: str) -> Union[Dict, None]:
         if mltable_schema_url is None:

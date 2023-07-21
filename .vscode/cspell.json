@@ -215,6 +215,7 @@
     "ints",
     "iohttp",
     "IOHTTP",
+    "IOLRO",
     "inprogress",
     "ipconfiguration",
     "ipconfigurations",
@@ -244,6 +245,8 @@
     "livekvtestgetkeyperfkey",
     "livekvtestsignperfkey",
     "livekvtestunwrapperfkey",
+    "lrobasepollingasynclrobasepolling",
+    "lropollerasynclropoller",
     "lmazuel",
     "logz",
     "LPCWSTR",
@@ -264,6 +267,7 @@
     "mydirectory",
     "myfile",
     "myvault",
+    "mytable",
     "nazsdk",
     "nbytes",
     "nbsp",
@@ -401,7 +405,8 @@
     "SDDL",
     "dacl",
     "whls",
-    "aiter"
+    "aiter",
+    "solft"
   ],
   "overrides": [
     {
@@ -1332,6 +1337,13 @@
     },
     {
       "filename": "sdk/purview/azure-purview-workflow/azure/purview/workflow/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-sharing/azure/purview/sharing/_serialization.py",
       "words": [
         "ctxt",
         "wday"

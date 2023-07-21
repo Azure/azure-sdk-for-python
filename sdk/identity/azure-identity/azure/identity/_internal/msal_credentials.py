@@ -14,7 +14,12 @@ from .._persistent_cache import _load_persistent_cache
 
 
 class MsalCredential:   # pylint: disable=too-many-instance-attributes
-    """Base class for credentials wrapping MSAL applications"""
+    """Base class for credentials wrapping MSAL applications.
+
+    :param str client_id: the principal's client ID
+    :param client_credential: client credential data for the application
+    :type client_credential: dict
+    """
 
     def __init__(
             self,
@@ -23,6 +28,7 @@ class MsalCredential:   # pylint: disable=too-many-instance-attributes
             *,
             additionally_allowed_tenants: Optional[List[str]] = None,
             allow_broker: Optional[bool] = None,
+            parent_window_handle: Optional[int] = None,
             authority: Optional[str] = None,
             disable_instance_discovery: Optional[bool] = None,
             tenant_id: Optional[str] = None,
@@ -41,6 +47,7 @@ class MsalCredential:   # pylint: disable=too-many-instance-attributes
         self._client_credential = client_credential
         self._client_id = client_id
         self._allow_broker = allow_broker
+        self._parent_window_handle = parent_window_handle
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
         self._cache = kwargs.pop("_cache", None)

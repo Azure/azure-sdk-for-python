@@ -29,12 +29,11 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.flow_logs.begin_delete(
+    client.flow_logs.begin_delete(
         resource_group_name="rg1",
         network_watcher_name="nw1",
         flow_log_name="fl",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkWatcherFlowLogDelete.json

@@ -29,11 +29,10 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.management_group_network_manager_connections.delete(
+    client.management_group_network_manager_connections.delete(
         management_group_id="managementGroupA",
         network_manager_connection_name="TestNMConnection",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkManagerConnectionManagementGroupDelete.json
