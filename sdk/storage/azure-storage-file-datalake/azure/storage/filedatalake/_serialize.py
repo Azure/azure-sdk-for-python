@@ -50,8 +50,7 @@ def compare_api_versions(version1: str, version2: str) -> int:
         return 0
     if v1 < v2:
         return -1
-    if v1 > v2:
-        return 1
+    return 1
 
 
 def convert_dfs_url_to_blob_url(dfs_account_url):
