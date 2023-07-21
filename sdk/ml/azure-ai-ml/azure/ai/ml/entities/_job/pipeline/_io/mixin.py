@@ -3,14 +3,14 @@
 # ---------------------------------------------------------
 
 import copy
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
 from azure.ai.ml.entities._util import copy_output_setting
-from azure.ai.ml.exceptions import ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
 from ..._input_output_helpers import (
     from_rest_data_outputs,
@@ -27,84 +27,118 @@ class NodeIOMixin:
     """Provides ability to wrap node inputs/outputs and build data bindings
     dynamically."""
 
+    @classmethod
+    def _get_supported_inputs_types(cls):
+        return None
+
+    @classmethod
+    def _get_supported_outputs_types(cls):
+        return None
+
+    @classmethod
+    def _validate_io(cls, value: dict, allowed_types: Optional[tuple], *, key: str = None):
+        if allowed_types is None:
+            return
+
+        if value is None or isinstance(value, allowed_types):
+            pass
+        else:
+            msg = "Expecting {} for input/output {}, got {} instead."
+            raise ValidationException(
+                message=msg.format(allowed_types, key, type(value)),
+                no_personal_data_message=msg.format(allowed_types, "[key]", type(value)),
+                target=ErrorTarget.PIPELINE,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+
     def _build_input(self, name, meta: Input, data) -> NodeInput:
+        # output mode of last node should not affect input mode of next node
+        if isinstance(data, NodeOutput):
+            # Decoupled input and output
+            # value = copy.deepcopy(value)
+            data = data._deepcopy()  # pylint: disable=protected-access
+            data.mode = None
+        elif isinstance(data, dict):
+            # Use type comparison instead of is_instance to skip _GroupAttrDict
+            # when loading from yaml io will be a dict,
+            # like {'job_data_path': '${{parent.inputs.pipeline_job_data_path}}'}
+            # parse dict to allowed type
+            data = Input(**data)
+
+        # parameter group can be of custom type, so we don't check it here
+        if meta is not None and not isinstance(meta, GroupInput):
+            self._validate_io(data, self._get_supported_inputs_types(), key=name)
         return NodeInput(port_name=name, meta=meta, data=data, owner=self)
 
     def _build_output(self, name, meta: Output, data) -> NodeOutput:
+        if isinstance(data, dict):
+            data = Output(**data)
+
+        self._validate_io(data, self._get_supported_outputs_types(), key=name)
         # For un-configured outputs, settings it to None, so we won't pass extra fields(eg: default mode)
         return NodeOutput(port_name=name, meta=meta, data=data, owner=self)
 
-    def _get_default_input_val(self, val):  # pylint: disable=unused-argument, no-self-use
+    def _get_default_input_val(self, val):  # pylint: disable=unused-argument
         # use None value as data placeholder for unfilled inputs.
         # server side will fill the default value
         return None
 
     def _build_inputs_dict(
         self,
-        input_definition_dict: dict,
         inputs: Dict[str, Union[Input, str, bool, int, float]],
+        *,
+        input_definition_dict: dict = None,
     ) -> InputsAttrDict:
         """Build an input attribute dict so user can get/set inputs by
         accessing attribute, eg: node1.inputs.xxx.
 
-        :param input_definition_dict: Static input definition dict.
         :param inputs: Provided kwargs when parameterizing component func.
+        :param input_definition_dict: Static input definition dict. If not provided, will build inputs without meta.
         :return: Built dynamic input attribute dict.
         """
-        # TODO: validate inputs.keys() in input_definitions.keys()
-        input_dict = {}
-        for key, val in input_definition_dict.items():
-            if key in inputs.keys():
-                # If input is set through component functions' kwargs, create an input object with real value.
-                data = inputs[key]
-            else:
-                data = self._get_default_input_val(val)  # pylint: disable=assignment-from-none
+        if input_definition_dict is not None:
+            # TODO: validate inputs.keys() in input_definitions.keys()
+            input_dict = {}
+            for key, val in input_definition_dict.items():
+                if key in inputs.keys():
+                    # If input is set through component functions' kwargs, create an input object with real value.
+                    data = inputs[key]
+                else:
+                    data = self._get_default_input_val(val)  # pylint: disable=assignment-from-none
 
-            val = self._build_input(name=key, meta=val, data=data)
-            input_dict[key] = val
+                val = self._build_input(name=key, meta=val, data=data)
+                input_dict[key] = val
+        else:
+            input_dict = {key: self._build_input(name=key, meta=None, data=val) for key, val in inputs.items()}
         return InputsAttrDict(input_dict)
 
-    def _build_outputs_dict(self, output_definition_dict: dict, outputs: Dict[str, Output]) -> OutputsAttrDict:
+    def _build_outputs_dict(
+        self, outputs: Dict[str, Output], *, output_definition_dict: dict = None, none_data=False
+    ) -> OutputsAttrDict:
         """Build an output attribute dict so user can get/set outputs by
         accessing attribute, eg: node1.outputs.xxx.
 
-        :param output_definition_dict: Static output definition dict.
-        :return: Built dynamic output attribute dict.
+        : param outputs: Provided kwargs when parameterizing component func.
+        : param output_definition_dict: Static output definition dict.
+        : param none_data: If True, will set output data to None.
+        : return: Built dynamic output attribute dict.
         """
-        # TODO: check if we need another way to mark a un-configured output instead of just set None.
-        # Create None as data placeholder for all outputs.
-        output_dict = {}
-        for key, val in output_definition_dict.items():
-            if key in outputs.keys():
-                # If output has given value, create an output object with real value.
-                val = self._build_output(name=key, meta=val, data=outputs[key])
-            else:
-                val = self._build_output(name=key, meta=val, data=None)
-            output_dict[key] = val
-        return OutputsAttrDict(output_dict)
-
-    def _build_inputs_dict_without_meta(self, inputs: Dict[str, Union[Input, str, bool, int, float]]) -> InputsAttrDict:
-        """Build an input attribute dict without input definition metadata, so user can get/set inputs by
-        accessing attribute, eg: node1.inputs.xxx.
-
-        :param inputs: Static input definition dict.
-        :return: Built dynamic input attribute dict.
-        """
-        input_dict = {key: self._build_input(name=key, meta=None, data=val) for key, val in inputs.items()}
-        return InputsAttrDict(input_dict)
-
-    def _build_outputs_dict_without_meta(self, outputs: Dict[str, Output], none_data=False) -> OutputsAttrDict:
-        """Build an output attribute dict without output definition metadata, so user can get/set outputs by
-        accessing attribute, eg: node1.outputs.xxx.
-
-        :param outputs: Static output definition dict.
-        :param none_data: Set data to None if True.
-        :return: Built dynamic output attribute dict.
-        """
-        output_dict = {}
-        for key, val in outputs.items():
-            output_val = self._build_output(name=key, meta=None, data=val if not none_data else None)
-            output_dict[key] = output_val
+        if output_definition_dict is not None:
+            # TODO: check if we need another way to mark a un-configured output instead of just set None.
+            # Create None as data placeholder for all outputs.
+            output_dict = {}
+            for key, val in output_definition_dict.items():
+                if key in outputs.keys():
+                    # If output has given value, create an output object with real value.
+                    val = self._build_output(name=key, meta=val, data=outputs[key])
+                else:
+                    val = self._build_output(name=key, meta=val, data=None)
+                output_dict[key] = val
+        else:
+            output_dict = {}
+            for key, val in outputs.items():
+                output_val = self._build_output(name=key, meta=None, data=val if not none_data else None)
+                output_dict[key] = output_val
         return OutputsAttrDict(output_dict)
 
     def _build_inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
@@ -255,10 +289,37 @@ class NodeIOMixin:
                     rest_output["job_output_type"] = "uri_file"
 
 
-class PipelineNodeIOMixin(NodeIOMixin):
-    """This class provide build_inputs_dict for Pipeline and PipelineJob to support ParameterGroup."""
+def _flatten_dict(dictionary, parent_key="", separator="."):
+    items = []
+    for key, value in dictionary.items():
+        new_key = parent_key + separator + key if parent_key else key
+        if isinstance(value, dict):
+            items.extend(_flatten_dict(value, new_key, separator=separator).items())
+        else:
+            items.append((new_key, value))
+    return dict(items)
 
-    def _validate_group_input_type(  # pylint: disable=no-self-use
+
+def flatten_dict(dct, _type, *, allow_dict_fields=None):
+    """Flatten inputs/input_definitions dict for inputs dict build."""
+    _result = {}
+    for key, val in dct.items():
+        # to support passing dict value as parameter group
+        if allow_dict_fields and key in allow_dict_fields and isinstance(val, dict):
+            _result.update(_flatten_dict(val, parent_key=key))
+            continue
+        val = GroupInput.custom_class_value_to_attr_dict(val)
+        if isinstance(val, _type):
+            _result.update(val.flatten(group_parameter_name=key))
+            continue
+        _result[key] = val
+    return _result
+
+
+class NodeWithGroupInputMixin(NodeIOMixin):
+    """This class provide build_inputs_dict for a node to use ParameterGroup as an input."""
+
+    def _validate_group_input_type(
         self,
         input_definition_dict: dict,
         inputs: Dict[str, Union[Input, str, bool, int, float]],
@@ -274,11 +335,12 @@ class PipelineNodeIOMixin(NodeIOMixin):
             if val is None:
                 continue
             # 1. inputs.group = 'a string'
-            if isinstance(definition, GroupInput) and not isinstance(val, _GroupAttrDict):
+            if isinstance(definition, GroupInput) and not isinstance(val, (_GroupAttrDict, dict)):
                 raise ValidationException(
                     message=group_msg % (key, val, type(val)),
                     no_personal_data_message=group_msg % ("[key]", "[val]", "[type(val)]"),
                     target=ErrorTarget.PIPELINE,
+                    type=ValidationErrorType.INVALID_VALUE,
                 )
             # 2. inputs.str_param = group
             if not isinstance(definition, GroupInput) and isinstance(val, _GroupAttrDict):
@@ -286,12 +348,14 @@ class PipelineNodeIOMixin(NodeIOMixin):
                     message=non_group_msg % key,
                     no_personal_data_message=non_group_msg % "[key]",
                     target=ErrorTarget.PIPELINE,
+                    type=ValidationErrorType.INVALID_VALUE,
                 )
 
     def _build_inputs_dict(
         self,
-        input_definition_dict: dict,
         inputs: Dict[str, Union[Input, str, bool, int, float]],
+        *,
+        input_definition_dict: dict = None,
     ) -> InputsAttrDict:
         """Build an input attribute dict so user can get/set inputs by
         accessing attribute, eg: node1.inputs.xxx.
@@ -301,29 +365,23 @@ class PipelineNodeIOMixin(NodeIOMixin):
         :return: Built input attribute dict.
         """
 
-        def flatten_dict(dct, _type):
-            """Flatten inputs/input_definitions dict for inputs dict build."""
-            _result = {}
-            for key, val in dct.items():
-                val = GroupInput.custom_class_value_to_attr_dict(val)
-                if isinstance(val, _type):
-                    _result.update(val.flatten(group_parameter_name=key))
-                    continue
-                _result[key] = val
-            return _result
+        # TODO: should we support group input when there is no local input definition?
+        if input_definition_dict is not None:
+            # Validate group mismatch
+            self._validate_group_input_type(input_definition_dict, inputs)
 
-        # Validate group mismatch
-        self._validate_group_input_type(input_definition_dict, inputs)
-        # Flatten all GroupInput(definition) and GroupAttrDict.
-        flattened_inputs = flatten_dict(inputs, _GroupAttrDict)
-        flattened_definition_dict = flatten_dict(input_definition_dict, GroupInput)
-        # Build: zip all flattened parameter with definition
-        inputs = super()._build_inputs_dict(flattened_definition_dict, flattened_inputs)
-        return InputsAttrDict(GroupInput.restore_flattened_inputs(inputs))
+            allow_dict_fields = [key for key, val in input_definition_dict.items() if isinstance(val, GroupInput)]
+            # Flatten all GroupInput(definition) and GroupAttrDict.
+            flattened_inputs = flatten_dict(inputs, _GroupAttrDict, allow_dict_fields=allow_dict_fields)
+            flattened_definition_dict = flatten_dict(input_definition_dict, GroupInput)
+            # Build: zip all flattened parameter with definition
+            inputs = super()._build_inputs_dict(flattened_inputs, input_definition_dict=flattened_definition_dict)
+            return InputsAttrDict(GroupInput.restore_flattened_inputs(inputs))
+        return super()._build_inputs_dict(inputs)
 
 
-class PipelineIOMixin(PipelineNodeIOMixin):
-    """Provides ability to wrap pipeline inputs/outputs and build data bindings
+class PipelineJobIOMixin(NodeWithGroupInputMixin):
+    """Provides ability to wrap pipeline job inputs/outputs and build data bindings
     dynamically."""
 
     def _build_input(self, name, meta: Input, data) -> "PipelineInput":
@@ -334,10 +392,24 @@ class PipelineIOMixin(PipelineNodeIOMixin):
         result = PipelineOutput(port_name=name, meta=meta, data=data, owner=self)
         return result
 
-    def _build_inputs_dict_without_meta(self, inputs: Dict[str, Union[Input, str, bool, int, float]]) -> InputsAttrDict:
-        input_dict = {key: self._build_input(name=key, meta=None, data=val) for key, val in inputs.items()}
-        input_dict = GroupInput.restore_flattened_inputs(input_dict)
-        return InputsAttrDict(input_dict)
+    def _build_inputs_dict(
+        self,
+        inputs: Dict[str, Union[Input, str, bool, int, float]],
+        *,
+        input_definition_dict: dict = None,
+    ) -> InputsAttrDict:
+        """Build an input attribute dict so user can get/set inputs by
+        accessing attribute, eg: node1.inputs.xxx.
+
+        :param input_definition_dict: Input definition dict from component entity.
+        :param inputs: Provided kwargs when parameterizing component func.
+        :return: Built input attribute dict.
+        """
+        input_dict = super()._build_inputs_dict(inputs, input_definition_dict=input_definition_dict)
+        # TODO: should we do this when input_definition_dict is not None?
+        if input_definition_dict is None:
+            return InputsAttrDict(GroupInput.restore_flattened_inputs(input_dict))
+        return input_dict
 
     def _build_output_for_pipeline(self, name, data) -> "PipelineOutput":
         """Build an output object for pipeline and copy settings from source output.
@@ -414,4 +486,4 @@ class AutoMLNodeIOMixin(NodeIOMixin):
         self.inputs = {}
         super(AutoMLNodeIOMixin, self).__init__(**kwargs)
         if getattr(self, "outputs", None):
-            self._outputs = self._build_outputs_dict_without_meta(self.outputs or {})
+            self._outputs = self._build_outputs_dict(self.outputs or {})

@@ -127,7 +127,7 @@ Almost anything can be used as a type in annotations.
    like [collections](https://docs.python.org/3/library/collections.html)
    or [collections.abc](https://docs.python.org/3/library/collections.abc.html), or external packages
 3) Types from the [typing](https://docs.python.org/3/library/typing.html)
-   or [typing_extensions](https://github.com/python/typing/tree/master/typing_extensions) modules
+   or [typing_extensions](https://github.com/python/typing_extensions) modules
 4) Built-in generic types, like `list` or `dict`*.
    > *Note: Supported in Python 3.9+. For <3.9, You must include `from __future__ import annotations` import to be able to pass in generic `list[str]` as a type hint rather than `typing.List[str]`.
 
@@ -245,7 +245,7 @@ Full documentation on pyright config options can be found here: https://github.c
 a py.typed library. It analyzes all the symbols that are part of the public interface and reports whether that symbol is known (fully typed), unknown, or ambiguous.
 The report can be used to view where type hints and docstrings are missing in a library, but differs from mypy/pyright in that it does not judge whether the provided type hints are accurate.
 verifytypes also reports a type completeness score which is the percentage of known types in the library. This score is used in the CI check to fail if the type completeness of the library worsens
-from the code in the PR vs. the latest release on PyPi.
+from the code in the PR vs. the code in main.
 
 To run verifytypes on your library, run the tox verifytypes env at the package level:
 

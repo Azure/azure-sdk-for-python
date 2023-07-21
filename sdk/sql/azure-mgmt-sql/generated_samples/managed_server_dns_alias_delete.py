@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.managed_server_dns_aliases.begin_delete(
+    client.managed_server_dns_aliases.begin_delete(
         resource_group_name="Default",
         managed_instance_name="dns-mi",
         dns_alias_name="dns-alias-mi",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2021-11-01-preview/examples/ManagedServerDnsAliasDelete.json

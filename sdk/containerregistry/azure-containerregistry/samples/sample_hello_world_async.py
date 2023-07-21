@@ -25,8 +25,6 @@ USAGE:
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
-    5) CONTAINERREGISTRY_RESOURCE_GROUP - The resource group name
-    6) CONTAINERREGISTRY_REGISTRY_NAME - The registry name
 """
 import asyncio
 import os
@@ -43,7 +41,7 @@ class HelloWorldAsync(object):
         self.credential = get_credential(self.authority, is_async=True)
 
     async def basic_sample(self):
-        load_registry()
+        load_registry(self.endpoint)
         # Instantiate an instance of ContainerRegistryClient
         # [START create_registry_client]
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:

@@ -6,9 +6,7 @@
 
 from ._communication_identity_client import CommunicationIdentityClient
 
-from ._generated.models import (
-    CommunicationTokenScope
-)
+from ._generated.models import CommunicationTokenScope
 
 from ._shared.models import (
     CommunicationCloudEnvironment,
@@ -23,27 +21,25 @@ from ._shared.models import (
     MicrosoftBotIdentifier,
     PhoneNumberIdentifier,
     PhoneNumberProperties,
-    UnknownIdentifier
+    UnknownIdentifier,
 )
 
 __all__ = [
-    'CommunicationIdentityClient',
-
+    "CommunicationIdentityClient",
     # from _identity
-    'CommunicationTokenScope',
-
+    "CommunicationTokenScope",
     # from _shared
-    'CommunicationCloudEnvironment',
-    'CommunicationIdentifier',
-    'CommunicationIdentifierKind',
-    'CommunicationUserIdentifier',
-    'CommunicationUserProperties',
-    'identifier_from_raw_id',
-    'MicrosoftTeamsUserIdentifier',
-    'MicrosoftTeamsUserProperties',
-    'MicrosoftBotIdentifier',
-    'MicrosoftBotProperties',
-    'PhoneNumberIdentifier',
-    'PhoneNumberProperties',
-    'UnknownIdentifier'
+    "CommunicationCloudEnvironment",
+    "CommunicationIdentifier",
+    "CommunicationIdentifierKind",
+    "CommunicationUserIdentifier",
+    "CommunicationUserProperties",
+    "identifier_from_raw_id",
+    "MicrosoftTeamsUserIdentifier",
+    "MicrosoftTeamsUserProperties",
+    "MicrosoftBotIdentifier",
+    "MicrosoftBotProperties",
+    "PhoneNumberIdentifier",
+    "PhoneNumberProperties",
+    "UnknownIdentifier",
 ]

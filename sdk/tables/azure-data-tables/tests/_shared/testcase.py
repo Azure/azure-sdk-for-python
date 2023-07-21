@@ -6,8 +6,7 @@
 # --------------------------------------------------------------------------
 from __future__ import division
 from base64 import b64encode
-from datetime import datetime, timedelta
-from dateutil.tz import tzutc
+from datetime import datetime, timedelta, timezone
 import uuid
 import os
 
@@ -171,8 +170,8 @@ class TableTestCase(object):
             "evenratio": 3.0,
             "double": (5, EdmType.DOUBLE),
             "large": 933311100,
-            "Birthday": datetime(1973, 10, 4, tzinfo=tzutc()),
-            "birthday": datetime(1970, 10, 4, tzinfo=tzutc()),
+            "Birthday": datetime(1973, 10, 4, tzinfo=timezone.utc),
+            "birthday": datetime(1970, 10, 4, tzinfo=timezone.utc),
             "binary": b"binary",
             "other": EntityProperty(20, EdmType.INT32),
             "clsid": uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833"),
@@ -192,7 +191,7 @@ class TableTestCase(object):
             "age": u"abc",
             "sex": u"female",
             "sign": u"aquarius",
-            "birthday": datetime(1991, 10, 4, tzinfo=tzutc()),
+            "birthday": datetime(1991, 10, 4, tzinfo=timezone.utc),
         }
 
     def _assert_default_entity(self, entity):
@@ -208,8 +207,8 @@ class TableTestCase(object):
         assert entity["evenratio"] == 3.0
         assert entity["double"] == 5.0
         assert entity["large"] == 933311100
-        assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=tzutc())
+        assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=timezone.utc)
+        assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=timezone.utc)
         assert entity["binary"] == b"binary"
         assert entity["other"] == 20
         assert entity["clsid"] == uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833")
@@ -231,8 +230,8 @@ class TableTestCase(object):
         assert entity["evenratio"] == 3.0
         assert entity["double"] == 5.0
         assert entity["large"] == 933311100
-        assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=tzutc())
+        assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=timezone.utc)
+        assert entity["birthday"] == datetime(1970, 10, 4, tzinfo=timezone.utc)
         assert entity["binary"] == b"binary"
         assert entity["other"] == 20
         assert entity["clsid"] == uuid.UUID("c9da6455-213d-42c9-9a79-3e9149a57833")
@@ -280,7 +279,7 @@ class TableTestCase(object):
         assert not "double" in entity
         assert not "large" in entity
         assert not "Birthday" in entity
-        assert entity["birthday"] == datetime(1991, 10, 4, tzinfo=tzutc())
+        assert entity["birthday"] == datetime(1991, 10, 4, tzinfo=timezone.utc)
         assert not "other" in entity
         assert not "clsid" in entity
         assert entity.metadata["etag"]
@@ -300,8 +299,8 @@ class TableTestCase(object):
         assert entity["evenratio"] == 3.0
         assert entity["double"] == 5.0
         assert entity["large"] == 933311100
-        assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity["birthday"] == datetime(1991, 10, 4, tzinfo=tzutc())
+        assert entity["Birthday"] == datetime(1973, 10, 4, tzinfo=timezone.utc)
+        assert entity["birthday"] == datetime(1991, 10, 4, tzinfo=timezone.utc)
         assert entity["other"] == 20
         assert isinstance(entity["clsid"], uuid.UUID)
         assert str(entity["clsid"]) == "c9da6455-213d-42c9-9a79-3e9149a57833"
@@ -437,8 +436,8 @@ class TableTestCase(object):
             "ratio": 5.2,
             "evenratio": 6.0,
             "large": 39999011,
-            "Birthday": datetime(1993, 4, 1, tzinfo=tzutc()),
-            "birthday": datetime(1990, 4, 1, tzinfo=tzutc()),
+            "Birthday": datetime(1993, 4, 1, tzinfo=timezone.utc),
+            "birthday": datetime(1990, 4, 1, tzinfo=timezone.utc),
             "binary": b"binary-binary",
             "other": EntityProperty(40, EdmType.INT32),
             "clsid": uuid.UUID("c8da6455-213e-42d9-9b79-3f9149a57833"),

@@ -81,7 +81,12 @@ class CertificateCredential(ClientCredentialBase):
 
 
 def extract_cert_chain(pem_bytes: bytes) -> bytes:
-    """Extract a certificate chain from a PEM file's bytes, removing line breaks."""
+    """Extract a certificate chain from a PEM file's bytes, removing line breaks.
+
+    :param bytes pem_bytes: The PEM file's bytes
+    :return: The certificate chain
+    :rtype: bytes
+    """
 
     # if index raises ValueError, there's no PEM-encoded cert
     start = pem_bytes.index(b"-----BEGIN CERTIFICATE-----")
@@ -142,7 +147,16 @@ def get_client_credential(
         send_certificate_chain: bool = False,
         **_: Any
 ) -> Dict:
-    """Load a certificate from a filesystem path or bytes, return it as a dict suitable for msal.ClientApplication"""
+    """Load a certificate from a filesystem path or bytes, return it as a dict suitable for msal.ClientApplication.
+
+    :param str certificate_path: Path to a PEM or PKCS12 certificate file.
+    :param bytes password: The certificate's password, if any.
+    :param bytes certificate_data: The PEM or PKCS12 certificate's bytes.
+    :param bool send_certificate_chain: Whether to send the certificate chain. Defaults to False.
+
+    :return: The certificate as a dict
+    :rtype: dict
+    """
 
     if certificate_path:
         if certificate_data:

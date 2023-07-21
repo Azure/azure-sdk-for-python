@@ -16,8 +16,14 @@ from .utils import (
 )
 
 
-def _scopes_to_resource(*scopes):
-    """Convert an AADv2 scope to an AADv1 resource"""
+def _scopes_to_resource(*scopes) -> str:
+    """Convert a AADv2 scope to an AADv1 resource.
+
+    :param str scopes: scope to convert
+    :return: the first scope, converted to an AADv1 resource
+    :rtype: str
+    :raises: ValueError if scopes is empty or contains more than one scope
+    """
 
     if len(scopes) != 1:
         raise ValueError("This credential requires exactly one scope per token request.")

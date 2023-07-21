@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import abc
-from collections.abc import MutableMapping
 from contextlib import AbstractContextManager
 from email.message import Message
 import json
@@ -47,6 +46,8 @@ from typing import (
     Type,
     Dict,
     List,
+    Sequence,
+    MutableMapping,
 )
 
 from http.client import HTTPResponse as _HTTPResponse
@@ -68,7 +69,7 @@ from ...utils._pipeline_transport_rest_shared import (
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 PipelineType = TypeVar("PipelineType")
-DataType = Optional[Union[bytes, Dict[str, Union[str, int]]]]
+DataType = Union[bytes, str, Dict[str, Union[str, int]]]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -84,7 +85,7 @@ def _format_url_section(template, **kwargs):
     This is used for API like Storage, where when Swagger has template section not defined as parameter.
 
     :param str template: a string template to fill
-    :param dict[str,str] kwargs: Template values as string
+    :keyword dict[str,str] kwargs: Template values as string
     :rtype: str
     :returns: Template completed
     """
@@ -132,7 +133,7 @@ class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HT
     """An http sender ABC."""
 
     @abc.abstractmethod
-    def send(self, request: HTTPRequestType, **kwargs) -> HTTPResponseType:
+    def send(self, request: HTTPRequestType, **kwargs: Any) -> HTTPResponseType:
         """Send the request using this HTTP sender.
 
         :param request: The pipeline request object
@@ -142,26 +143,43 @@ class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HT
         """
 
     @abc.abstractmethod
-    def open(self):
+    def open(self) -> None:
         """Assign new session if one does not already exist."""
 
     @abc.abstractmethod
-    def close(self):
+    def close(self) -> None:
         """Close the session if it is not externally owned."""
 
-    def sleep(self, duration):  # pylint: disable=no-self-use
+    def sleep(self, duration: float) -> None:
+        """Sleep for the specified duration.
+
+        You should always ask the transport to sleep, and not call directly
+        the stdlib. This is mostly important in async, as the transport
+        may not use asyncio but other implementations like trio and they have their own
+        way to sleep, but to keep design
+        consistent, it's cleaner to always ask the transport to sleep and let the transport
+        implementor decide how to do it.
+
+        :param float duration: The number of seconds to sleep.
+        """
         time.sleep(duration)
 
 
 class HttpRequest:
-    """Represents a HTTP request.
+    """Represents an HTTP request.
 
     URL can be given without query parameters, to be added later using "format_parameters".
 
     :param str method: HTTP method (GET, HEAD, etc.)
     :param str url: At least complete scheme/host/path
     :param dict[str,str] headers: HTTP headers
-    :param files: Files list.
+    :param files: Dictionary of ``'name': file-like-objects`` (or ``{'name': file-tuple}``) for multipart
+        encoding upload. ``file-tuple`` can be a 2-tuple ``('filename', fileobj)``, 3-tuple
+        ``('filename', fileobj, 'content_type')`` or a 4-tuple
+        ``('filename', fileobj, 'content_type', custom_headers)``, where ``'content_type'`` is a string
+        defining the content type of the given file and ``custom_headers``
+        a dict-like object containing additional headers to add for the file.
+    :type files: dict[str, tuple[str, IO, str, dict]] or dict[str, IO]
     :param data: Body to be sent.
     :type data: bytes or dict (for form)
     """
@@ -176,15 +194,15 @@ class HttpRequest:
     ) -> None:
         self.method = method
         self.url = url
-        self.headers = case_insensitive_dict(headers)
-        self.files = files
-        self.data = data
-        self.multipart_mixed_info: Optional[Tuple] = None
+        self.headers: MutableMapping[str, str] = case_insensitive_dict(headers)
+        self.files: Optional[Any] = files
+        self.data: Optional[DataType] = data
+        self.multipart_mixed_info: Optional[Tuple[Sequence[Any], Sequence[Any], str, Dict[str, Any]]] = None
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
 
-    def __deepcopy__(self, memo=None):
+    def __deepcopy__(self, memo: Optional[Dict[int, Any]] = None) -> "HttpRequest":
         try:
             data = copy.deepcopy(self.body, memo)
             files = copy.deepcopy(self.files, memo)
@@ -199,6 +217,7 @@ class HttpRequest:
         """The query parameters of the request as a dict.
 
         :rtype: dict[str, str]
+        :return: The query parameters of the request as a dict.
         """
         query = urlparse(self.url).query
         if query:
@@ -206,15 +225,16 @@ class HttpRequest:
         return {}
 
     @property
-    def body(self) -> DataType:
+    def body(self) -> Optional[DataType]:
         """Alias to data.
 
-        :rtype: bytes or dict
+        :rtype: bytes or str or dict or None
+        :return: The body of the request.
         """
         return self.data
 
     @body.setter
-    def body(self, value: DataType):
+    def body(self, value: Optional[DataType]) -> None:
         self.data = value
 
     @staticmethod
@@ -224,6 +244,8 @@ class HttpRequest:
 
         :param data: The request field data.
         :type data: str or file-like object.
+        :rtype: tuple[str, IO, str] or tuple[None, str]
+        :return: A tuple of (data name, data IO, "application/octet-stream") or (None, data str)
         """
         return _format_data_helper(data)
 
@@ -236,7 +258,7 @@ class HttpRequest:
         """
         return _format_parameters_helper(self, params)
 
-    def set_streamed_data_body(self, data):
+    def set_streamed_data_body(self, data: Any) -> None:
         """Set a streamable data body.
 
         :param data: The request field data.
@@ -249,7 +271,7 @@ class HttpRequest:
         self.data = data
         self.files = None
 
-    def set_text_body(self, data):
+    def set_text_body(self, data: str) -> None:
         """Set a text as body of the request.
 
         :param data: A text to send as body.
@@ -262,7 +284,7 @@ class HttpRequest:
             self.headers["Content-Length"] = str(len(self.data))
         self.files = None
 
-    def set_xml_body(self, data):
+    def set_xml_body(self, data: Any) -> None:
         """Set an XML element tree as the body of the request.
 
         :param data: The request field data.
@@ -271,15 +293,16 @@ class HttpRequest:
         if data is None:
             self.data = None
         else:
-            bytes_data = ET.tostring(data, encoding="utf8")
+            bytes_data: bytes = ET.tostring(data, encoding="utf8")
             self.data = bytes_data.replace(b"encoding='utf8'", b"encoding='utf-8'")
             self.headers["Content-Length"] = str(len(self.data))
         self.files = None
 
-    def set_json_body(self, data):
+    def set_json_body(self, data: Any) -> None:
         """Set a JSON-friendly object as the body of the request.
 
         :param data: A JSON serializable object
+        :type data: dict
         """
         if data is None:
             self.data = None
@@ -288,7 +311,7 @@ class HttpRequest:
             self.headers["Content-Length"] = str(len(self.data))
         self.files = None
 
-    def set_formdata_body(self, data=None):
+    def set_formdata_body(self, data: Optional[Dict[str, str]] = None) -> None:
         """Set form-encoded data as the body of the request.
 
         :param data: The request field data.
@@ -305,7 +328,7 @@ class HttpRequest:
             self.files = {f: self._format_data(d) for f, d in data.items() if d is not None}
             self.data = None
 
-    def set_bytes_body(self, data):
+    def set_bytes_body(self, data: bytes) -> None:
         """Set generic bytes as the body of the request.
 
         Will set content-length.
@@ -318,7 +341,7 @@ class HttpRequest:
         self.data = data
         self.files = None
 
-    def set_multipart_mixed(self, *requests: "HttpRequest", **kwargs) -> None:
+    def set_multipart_mixed(self, *requests: "HttpRequest", **kwargs: Any) -> None:
         """Set the part of a multipart/mixed.
 
         Only supported args for now are HttpRequest objects.
@@ -330,9 +353,10 @@ class HttpRequest:
         Any additional kwargs will be passed into the pipeline context for per-request policy
         configuration.
 
+        :param requests: The requests to add to the multipart/mixed
+        :type requests: ~azure.core.pipeline.transport.HttpRequest
         :keyword list[SansIOHTTPPolicy] policies: SansIOPolicy to apply at preparation time
         :keyword str boundary: Optional boundary
-        :param requests: HttpRequests object
         """
         self.multipart_mixed_info = (
             requests,
@@ -359,6 +383,7 @@ class HttpRequest:
         """Serialize this request using application/http spec.
 
         :rtype: bytes
+        :return: The requests serialized as HTTP low-level message in bytes.
         """
         return _serialize_request(self)
 
@@ -373,6 +398,7 @@ class _HttpResponseBase:
     :param request: The request.
     :type request: ~azure.core.pipeline.transport.HttpRequest
     :param internal_response: The object returned from the HTTP library.
+    :type internal_response: any
     :param int block_size: Defaults to 4096 bytes.
     """
 
@@ -382,7 +408,7 @@ class _HttpResponseBase:
         internal_response: Any,
         block_size: Optional[int] = None,
     ) -> None:
-        self.request = request
+        self.request: HttpRequest = request
         self.internal_response = internal_response
         self.status_code: Optional[int] = None
         self.headers: MutableMapping[str, str] = {}
@@ -391,14 +417,25 @@ class _HttpResponseBase:
         self.block_size: int = block_size or 4096  # Default to same as Requests
 
     def body(self) -> bytes:
-        """Return the whole body as bytes in memory."""
+        """Return the whole body as bytes in memory.
+
+        Sync implementer should load the body in memory if they can.
+        Async implementer should rely on async load_body to have been called first.
+
+        :rtype: bytes
+        :return: The whole body as bytes in memory.
+        """
         raise NotImplementedError()
 
     def text(self, encoding: Optional[str] = None) -> str:
         """Return the whole body as a string.
 
+        .. seealso:: ~body()
+
         :param str encoding: The encoding to apply. If None, use "utf-8" with BOM parsing (utf-8-sig).
          Implementation can be smarter if they want (using headers or chardet).
+        :rtype: str
+        :return: The whole body as a string.
         """
         if encoding == "utf-8" or encoding is None:
             encoding = "utf-8-sig"
@@ -408,9 +445,16 @@ class _HttpResponseBase:
         self,
         message: Message,
         http_response_type: Type["_HttpResponseBase"],
-        requests: List[HttpRequest],
+        requests: Sequence[HttpRequest],
     ) -> List["HttpResponse"]:
-        """Rebuild an HTTP response from pure string."""
+        """Rebuild an HTTP response from pure string.
+
+        :param ~email.message.Message message: The HTTP message as an email object
+        :param type http_response_type: The type of response to return
+        :param list[HttpRequest] requests: The requests that were batched together
+        :rtype: list[HttpResponse]
+        :return: The list of HttpResponse
+        """
         return _decode_parts_helper(self, message, http_response_type, requests, _deserialize_response)
 
     def _get_raw_parts(
@@ -420,6 +464,10 @@ class _HttpResponseBase:
 
         If parts are application/http use http_response_type or HttpClientTransportResponse
         as envelope.
+
+        :param type http_response_type: The type of response to return
+        :rtype: iterator[HttpResponse]
+        :return: The iterator of HttpResponse
         """
         return _get_raw_parts_helper(self, http_response_type or HttpClientTransportResponse)
 
@@ -430,20 +478,22 @@ class _HttpResponseBase:
         if not self.status_code or self.status_code >= 400:
             raise HttpResponseError(response=self)
 
-    def __repr__(self):
-        # there doesn't have to be a content type
+    def __repr__(self) -> str:
         content_type_str = ", Content-Type: {}".format(self.content_type) if self.content_type else ""
         return "<{}: {} {}{}>".format(type(self).__name__, self.status_code, self.reason, content_type_str)
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
-    def stream_download(self, pipeline: PipelineType, **kwargs) -> Iterator[bytes]:
+    def stream_download(self, pipeline: PipelineType, **kwargs: Any) -> Iterator[bytes]:
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download
         is supported.
 
+        :param pipeline: The pipeline object
+        :type pipeline: ~azure.core.pipeline.Pipeline
         :rtype: iterator[bytes]
+        :return: The generator of bytes connected to the socket
         """
         raise NotImplementedError("stream_download is not implemented.")
 
@@ -451,6 +501,7 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
         """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
         :rtype: iterator[HttpResponse]
+        :return: The iterator of HttpResponse if request was multipart/mixed
         :raises ValueError: If the content is not multipart/mixed
         """
         return _parts_helper(self)
@@ -463,6 +514,7 @@ class _HttpClientTransportResponse(_HttpResponseBase):
 
     :param HttpRequest request: The request.
     :param httpclient_response: The object returned from an HTTP(S)Connection from http.client
+    :type httpclient_response: http.client.HTTPResponse
     """
 
     def __init__(self, request, httpclient_response):
@@ -487,6 +539,14 @@ class HttpClientTransportResponse(_HttpClientTransportResponse, HttpResponse):  
 
 
 def _deserialize_response(http_response_as_bytes, http_request, http_response_type=HttpClientTransportResponse):
+    """Deserialize a HTTPResponse from a string.
+
+    :param bytes http_response_as_bytes: The HTTP response as bytes.
+    :param HttpRequest http_request: The request to store in the response.
+    :param type http_response_type: The type of response to return
+    :rtype: HttpResponse
+    :return: The HTTP response from those low-level bytes.
+    """
     local_socket = BytesIOSocket(http_response_as_bytes)
     response = _HTTPResponse(local_socket, method=http_request.method)
     response.begin()
@@ -499,7 +559,7 @@ class PipelineClientBase:
     :param str base_url: URL for the request.
     """
 
-    def __init__(self, base_url):
+    def __init__(self, base_url: str):
         self._base_url = base_url
 
     def _request(
@@ -524,7 +584,10 @@ class PipelineClientBase:
         :param dict params: URL query parameters.
         :param dict headers: Headers
         :param content: The body content
+        :type content: bytes or str or dict
         :param dict form_content: Form content
+        :param stream_content: The body content as a stream
+        :type stream_content: stream or generator or asyncgenerator
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
@@ -566,6 +629,8 @@ class PipelineClientBase:
         Note that both the base url and the template url can contain query parameters.
 
         :param str url_template: The request URL to be formatted if necessary.
+        :rtype: str
+        :return: The formatted URL.
         """
         url = _format_url_section(url_template, **kwargs)
         if url:
@@ -576,7 +641,7 @@ class PipelineClientBase:
                     base = self._base_url.format(**kwargs).rstrip("/")
                 except KeyError as key:
                     err_msg = "The value provided for the url part {} was incorrect, and resulted in an invalid url"
-                    raise ValueError(err_msg.format(key.args[0]))
+                    raise ValueError(err_msg.format(key.args[0])) from key
 
                 url = _urljoin(base, url)
         else:
@@ -597,6 +662,7 @@ class PipelineClientBase:
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param content: The body content
+        :type content: bytes or str or dict
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -620,7 +686,10 @@ class PipelineClientBase:
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param content: The body content
+        :type content: bytes or str or dict
         :param dict form_content: Form content
+        :param stream_content: The body content as a stream
+        :type stream_content: stream or generator or asyncgenerator
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
@@ -642,7 +711,10 @@ class PipelineClientBase:
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param content: The body content
+        :type content: bytes or str or dict
         :param dict form_content: Form content
+        :param stream_content: The body content as a stream
+        :type stream_content: stream or generator or asyncgenerator
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
@@ -664,7 +736,10 @@ class PipelineClientBase:
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param content: The body content
+        :type content: bytes or str or dict
         :param dict form_content: Form content
+        :param stream_content: The body content as a stream
+        :type stream_content: stream or generator or asyncgenerator
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
@@ -686,7 +761,10 @@ class PipelineClientBase:
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param content: The body content
+        :type content: bytes or str or dict
         :param dict form_content: Form content
+        :param stream_content: The body content as a stream
+        :type stream_content: stream or generator or asyncgenerator
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
@@ -707,6 +785,7 @@ class PipelineClientBase:
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param content: The body content
+        :type content: bytes or str or dict
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -728,6 +807,7 @@ class PipelineClientBase:
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param content: The body content
+        :type content: bytes or str or dict
         :param dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
@@ -744,6 +824,7 @@ class PipelineClientBase:
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :keyword content: The body content
+        :type content: bytes or str or dict
         :keyword dict form_content: Form content
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest

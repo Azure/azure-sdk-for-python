@@ -16,9 +16,17 @@ module_logger = logging.getLogger(__name__)
 
 
 class JobLimits(RestTranslatableMixin, ABC):
+    """Base class for Job limits.
+
+    This class should not be instantiated directly. Instead, one of its child classes should be used.
+
+    :param type: The job type.
+    :type type: ~azure.ai.ml.constants.JobType
+    """
+
     def __init__(
         self,
-    ):
+    ) -> None:
         self.type = None
 
     def __eq__(self, other) -> bool:
@@ -28,16 +36,23 @@ class JobLimits(RestTranslatableMixin, ABC):
 
 
 class CommandJobLimits(JobLimits):
-    """Command Job limit class.
+    """Limits for Command Jobs.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param timeout: The max run duration in seconds, after which the job will be cancelled.
-     Only supports duration with precision as low as Seconds.
+    :param timeout: The maximum run duration, in seconds, after which the job will be cancelled.
     :type timeout: int
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_command_configurations.py
+            :start-after: [START command_job_definition]
+            :end-before: [END command_job_definition]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a CommandJob with CommandJobLimits.
     """
 
-    def __init__(self, *, timeout: Union[int, str, None] = None):
+    def __init__(self, *, timeout: Union[int, str, None] = None) -> None:
         super().__init__()
         self.type = JobType.COMMAND
         self.timeout = timeout
@@ -62,18 +77,15 @@ class CommandJobLimits(JobLimits):
 
 
 class SweepJobLimits(JobLimits):
-    """Sweep Job limit class.
+    """Limits for Sweep Jobs.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param max_concurrent_trials: Sweep Job max concurrent trials.
+    :param max_concurrent_trials: The maximum number of concurrent trials for the Sweep Job.
     :type max_concurrent_trials: int
-    :param max_total_trials: Sweep Job max total trials.
+    :param max_total_trials: The maximum number of total trials for the Sweep Job.
     :type max_total_trials: int
-    :param timeout: The max run duration in seconds , after which the job will be cancelled.
-     Only supports duration with precision as low as Seconds.
+    :param timeout: The maximum run duration, in seconds, after which the job will be cancelled.
     :type timeout: int
-    :param trial_timeout: Sweep Job Trial timeout value in seconds.
+    :param trial_timeout: The timeout value, in seconds, for each Sweep Job trial.
     :type trial_timeout: int
 
     .. admonition:: Example:
@@ -95,18 +107,6 @@ class SweepJobLimits(JobLimits):
         timeout: Optional[int] = None,
         trial_timeout: Optional[int] = None,
     ) -> None:
-        """Sweep Job limit class.
-
-        :param max_concurrent_trials: Sweep Job max concurrent trials.
-        :type max_concurrent_trials: int
-        :param max_total_trials: Sweep Job max total trials.
-        :type max_total_trials: int
-        :param timeout: The max run duration in seconds , after which the job will be cancelled.
-        Only supports duration with precision as low as Seconds.
-        :type timeout: int
-        :param trial_timeout: Sweep Job Trial timeout value in seconds.
-        :type trial_timeout: int
-        """
         super().__init__()
         self.type = JobType.SWEEP
         self.max_concurrent_trials = max_concurrent_trials
@@ -116,18 +116,36 @@ class SweepJobLimits(JobLimits):
 
     @property
     def timeout(self) -> int:
+        """The maximum run duration, in seconds, after which the job will be cancelled.
+
+        :rtype: int
+        """
         return self._timeout
 
     @timeout.setter
     def timeout(self, value: int) -> None:
+        """Sets the maximum run duration.
+
+        :param value: The maximum run duration, in seconds, after which the job will be cancelled.
+        :type value: int
+        """
         self._timeout = _get_floored_timeout(value)
 
     @property
     def trial_timeout(self) -> int:
+        """The timeout value, in seconds, for each Sweep Job trial.
+
+        :rtype: int
+        """
         return self._trial_timeout
 
     @trial_timeout.setter
     def trial_timeout(self, value: int) -> None:
+        """Sets the timeout value for each Sweep Job trial.
+
+        :param value: The timeout value, in seconds, for each Sweep Job trial.
+        :type value: int
+        """
         self._trial_timeout = _get_floored_timeout(value)
 
     def _to_rest_object(self) -> RestSweepJobLimits:
@@ -159,8 +177,6 @@ def _get_floored_timeout(value: int) -> int:
 
 class DoWhileJobLimits(JobLimits):
     """DoWhile Job limit class.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     :param max_iteration_count:
     :type max_iteration_count: int

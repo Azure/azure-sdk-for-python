@@ -33,43 +33,65 @@ from .component import Component
 
 
 class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin):
-    """Command component version, used to define a command component.
+    """Command component version, used to define a Command Component or Job.
 
-    :param name: Name of the component.
+    :param name: The name of the Command job or component.
     :type name: str
-    :param version: Version of the component.
+    :param version: The version of the Command job or component.
     :type version: str
-    :param description: Description of the component.
+    :param description: The description of the component.
     :type description: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
-    :param display_name: Display name of the component.
+    :param display_name: The display name of the component.
     :type display_name: str
-    :param command: Command to be executed in component.
+    :param command: The command to be executed.
     :type command: str
-    :param code: Code file or folder that will be uploaded to the cloud for component execution.
+    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
+        to a remote location.
     :type code: str
-    :param environment: Environment that component will run in.
-    :type environment: Union[Environment, str]
-    :param distribution: Distribution configuration for distributed training.
-    :type distribution: Union[dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
-    :param resources: Compute Resource configuration for the component.
-    :type resources: Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]
-    :param inputs: Inputs of the component.
-    :type inputs: dict
-    :param outputs: Outputs of the component.
-    :type outputs: dict
-    :param instance_count: promoted property from resources.instance_count
+    :param environment: The environment that the job will run in.
+    :type environment: Union[str, ~azure.ai.ml.entities.Environment]
+    :param distribution: The configuration for distributed jobs.
+    :type distribution: Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
+    :param resources: The compute resource configuration for the command.
+    :type resources: ~azure.ai.ml.entities.JobResourceConfiguration
+    :param inputs: A mapping of input names to input data sources used in the job.
+    :type inputs: dict[str, Union[
+        ~azure.ai.ml.Input,
+        str,
+        bool,
+        int,
+        float,
+        Enum,
+        ]
+    ]
+    :param outputs: A mapping of output names to output data sources used in the job.
+    :type outputs: dict[str, Union[str, ~azure.ai.ml.Output]]
+    :param instance_count: The number of instances or nodes to be used by the compute target. Defaults to 1.
     :type instance_count: int
-    :param is_deterministic: Whether the command component is deterministic.
+    :param is_deterministic: Specifies whether the Command will return the same output given the same input.
+        Defaults to True. When True, if a Command (component) is deterministic and has been run before in the
+        current workspace with the same input and settings, it will reuse results from a previous submitted job
+        when used as a node or step in a pipeline. In that scenario, no compute resources will be used.
     :type is_deterministic: bool
     :param additional_includes: A list of shared additional files to be included in the component.
-    :type additional_includes: list
-    :param properties: Properties of the component. Contents inside will pass through to backend as a dictionary.
-    :type properties: dict
-
+    :type additional_includes: list[str]
+    :param properties: The job property dictionary.
+    :type properties: dict[str, str]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
         Details will be provided in the error message.
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../samples/ml_samples_command_configurations.py
+            :start-after: [START command_component_definition]
+            :end-before: [END command_component_definition]
+            :language: python
+            :dedent: 8
+            :caption: Creating a CommandComponent.
     """
 
     def __init__(
@@ -94,7 +116,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         additional_includes: Optional[List] = None,
         properties: Optional[Dict] = None,
         **kwargs,
-    ):
+    ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
@@ -151,15 +173,19 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
 
     @property
     def instance_count(self) -> int:
-        """Return value of promoted property resources.instance_count.
+        """The number of instances or nodes to be used by the compute target.
 
-        :return: Value of resources.instance_count.
-        :rtype: Optional[int]
+        :rtype: int
         """
         return self.resources.instance_count if self.resources else None
 
     @instance_count.setter
-    def instance_count(self, value: int):
+    def instance_count(self, value: int) -> None:
+        """Sets the number of instances or nodes to be used by the compute target.
+
+        :param value: The number of instances of nodes to be used by the compute target. Defaults to 1.
+        :type instance_count: int
+        """
         if not value:
             return
         if not self.resources:
@@ -227,8 +253,11 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     def _validate_early_available_output(self) -> MutableValidationResult:
         validation_result = self._create_empty_validation_result()
         for name, output in self.outputs.items():
-            if output.early_available is True and output.is_control is not True:
-                msg = f"Early available output {name!r} requires is_control as True, got {output.is_control!r}."
+            if output.early_available is True and output._is_control_or_primitive_type is not True:
+                msg = (
+                    f"Early available output {name!r} requires is_control as True or output is primitive type, "
+                    f"got {output._is_control_or_primitive_type!r}."
+                )
                 validation_result.append_error(message=msg, yaml_path=f"outputs.{name}")
         return validation_result
 

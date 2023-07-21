@@ -21,7 +21,6 @@ from azure.communication.jobrouter import (
     JobRouterAdministrationClient,
     RoundRobinMode,
     RouterWorker,
-    QueueAssignment,
     ChannelConfiguration, DistributionPolicy, RouterQueue,
 )
 
@@ -125,7 +124,7 @@ class TestRouterWorker(RouterRecordedTestCase):
     def test_create_worker(self):
         w_identifier = "tst_create_w"
         router_client: JobRouterClient = self.create_client()
-        worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
+        worker_queue_assignments = {self.get_job_queue_id(): {}}
 
         router_worker: RouterWorker = RouterWorker(
             total_capacity = worker_total_capacity,
@@ -165,7 +164,7 @@ class TestRouterWorker(RouterRecordedTestCase):
     def test_update_worker(self):
         w_identifier = "tst_update_w"
         router_client: JobRouterClient = self.create_client()
-        worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
+        worker_queue_assignments = {self.get_job_queue_id(): {}}
 
         router_worker: RouterWorker = RouterWorker(
             total_capacity = worker_total_capacity,
@@ -226,7 +225,7 @@ class TestRouterWorker(RouterRecordedTestCase):
     def test_update_worker_w_kwargs(self):
         w_identifier = "tst_update_w_kwargs"
         router_client: JobRouterClient = self.create_client()
-        worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
+        worker_queue_assignments = {self.get_job_queue_id(): {}}
 
         router_worker: RouterWorker = RouterWorker(
             total_capacity = worker_total_capacity,
@@ -286,7 +285,7 @@ class TestRouterWorker(RouterRecordedTestCase):
     def test_get_worker(self):
         w_identifier = "tst_get_w"
         router_client: JobRouterClient = self.create_client()
-        worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
+        worker_queue_assignments = {self.get_job_queue_id(): {}}
 
         router_worker: RouterWorker = RouterWorker(
             total_capacity = worker_total_capacity,
@@ -340,7 +339,7 @@ class TestRouterWorker(RouterRecordedTestCase):
     def test_delete_worker(self):
         w_identifier = "tst_delete_w"
         router_client: JobRouterClient = self.create_client()
-        worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
+        worker_queue_assignments = {self.get_job_queue_id(): {}}
 
         router_worker: RouterWorker = RouterWorker(
             total_capacity = worker_total_capacity,
@@ -382,7 +381,7 @@ class TestRouterWorker(RouterRecordedTestCase):
     def test_list_workers(self):
         router_client: JobRouterClient = self.create_client()
         w_identifiers = ["tst_list_w_1", "tst_list_w_2", "tst_list_w_3"]
-        worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
+        worker_queue_assignments = {self.get_job_queue_id(): {}}
         created_w_response = {}
         w_count = len(w_identifiers)
         self.worker_ids[self._testMethodName] = []

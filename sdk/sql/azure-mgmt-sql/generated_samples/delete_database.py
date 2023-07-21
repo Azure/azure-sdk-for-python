@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.databases.begin_delete(
+    client.databases.begin_delete(
         resource_group_name="Default-SQL-SouthEastAsia",
         server_name="testsvr",
         database_name="testdb",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/DeleteDatabase.json

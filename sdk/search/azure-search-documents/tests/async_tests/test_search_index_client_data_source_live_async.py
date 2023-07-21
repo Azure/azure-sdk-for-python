@@ -11,7 +11,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
-from azure.search.documents.indexes.models import(
+from azure.search.documents.indexes.models import (
     SearchIndexerDataSourceConnection,
     SearchIndexerDataContainer,
 )
@@ -19,14 +19,10 @@ from azure.search.documents.indexes.aio import SearchIndexerClient
 
 
 class TestSearchClientDataSourcesAsync(AzureRecordedTestCase):
-
     def _create_data_source_connection(self, cs, name):
-        container = SearchIndexerDataContainer(name='searchcontainer')
+        container = SearchIndexerDataContainer(name="searchcontainer")
         data_source_connection = SearchIndexerDataSourceConnection(
-            name=name,
-            type="azureblob",
-            connection_string=cs,
-            container=container
+            name=name, type="azureblob", connection_string=cs, container=container
         )
         return data_source_connection
 
@@ -99,10 +95,12 @@ class TestSearchClientDataSourcesAsync(AzureRecordedTestCase):
         await client.create_or_update_data_source_connection(data_source_connection)
 
         # prepare data source connection
-        data_source_connection.e_tag = etag # reset to the original data source connection
+        data_source_connection.e_tag = etag  # reset to the original data source connection
         data_source_connection.description = "changed"
         with pytest.raises(HttpResponseError):
-            await client.create_or_update_data_source_connection(data_source_connection, match_condition=MatchConditions.IfNotModified)
+            await client.create_or_update_data_source_connection(
+                data_source_connection, match_condition=MatchConditions.IfNotModified
+            )
 
     async def _test_delete_datasource_if_unchanged(self, client, storage_cs):
         ds_name = "delunch"
@@ -115,6 +113,8 @@ class TestSearchClientDataSourcesAsync(AzureRecordedTestCase):
         await client.create_or_update_data_source_connection(data_source_connection)
 
         # prepare data source connection
-        data_source_connection.e_tag = etag # reset to the original data source connection
+        data_source_connection.e_tag = etag  # reset to the original data source connection
         with pytest.raises(HttpResponseError):
-            await client.delete_data_source_connection(data_source_connection, match_condition=MatchConditions.IfNotModified)
+            await client.delete_data_source_connection(
+                data_source_connection, match_condition=MatchConditions.IfNotModified
+            )

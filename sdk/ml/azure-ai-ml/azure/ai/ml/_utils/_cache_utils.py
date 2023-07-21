@@ -20,7 +20,11 @@ from azure.ai.ml._utils.utils import (
     is_private_preview_enabled,
     write_to_shared_file,
 )
-from azure.ai.ml.constants._common import AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS, AzureMLResourceType
+from azure.ai.ml.constants._common import (
+    AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS,
+    AzureMLResourceType,
+    DefaultOpenEncoding,
+)
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._component.code import ComponentCodeMixin
@@ -215,7 +219,7 @@ class CachedNodeResolver(object):
         on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
         if on_disk_cache_path.is_file() and time.time() - on_disk_cache_path.stat().st_ctime < EXPIRE_TIME_IN_SECONDS:
             try:
-                return on_disk_cache_path.read_text().strip()
+                return on_disk_cache_path.read_text(encoding=DefaultOpenEncoding.READ).strip()
             except (OSError, PermissionError) as e:
                 logger.warning(
                     "Failed to read on-disk cache for component due to %s. "

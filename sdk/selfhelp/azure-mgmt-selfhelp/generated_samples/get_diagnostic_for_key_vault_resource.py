@@ -35,6 +35,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/preview/2023-01-01-preview/examples/GetDiagnosticForKeyVaultResource.json
+# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/stable/2023-06-01/examples/GetDiagnosticForKeyVaultResource.json
 if __name__ == "__main__":
     main()

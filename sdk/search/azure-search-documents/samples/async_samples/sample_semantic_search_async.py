@@ -22,6 +22,7 @@ USAGE:
 import os
 import asyncio
 
+
 async def speller():
     # [START speller_async]
     from azure.core.credentials import AzureKeyCredential
@@ -32,14 +33,13 @@ async def speller():
     api_key = os.getenv("AZURE_SEARCH_API_KEY")
 
     credential = AzureKeyCredential(api_key)
-    client = SearchClient(endpoint=endpoint,
-                          index_name=index_name,
-                          credential=credential)
+    client = SearchClient(endpoint=endpoint, index_name=index_name, credential=credential)
     results = await client.search(search_text="luxury", query_language="en-us", query_speller="lexicon")
 
     async for result in results:
-        print("{}\n{}\n)".format(result["HotelId"], result["HotelName"]))
+        print("{}\n{}\n)".format(result["hotelId"], result["hotelName"]))
     # [END speller_async]
+
 
 async def semantic_ranking():
     # [START semantic_ranking_async]
@@ -51,16 +51,14 @@ async def semantic_ranking():
     api_key = os.getenv("AZURE_SEARCH_API_KEY")
 
     credential = AzureKeyCredential(api_key)
-    client = SearchClient(endpoint=endpoint,
-                          index_name=index_name,
-                          credential=credential)
+    client = SearchClient(endpoint=endpoint, index_name=index_name, credential=credential)
     results = list(client.search(search_text="luxury", query_type="semantic", query_language="en-us"))
 
     for result in results:
-        print("{}\n{}\n)".format(result["HotelId"], result["HotelName"]))
+        print("{}\n{}\n)".format(result["hotelId"], result["hotelName"]))
     # [END semantic_ranking_async]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(speller())
     asyncio.run(semantic_ranking())

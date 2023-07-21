@@ -48,6 +48,8 @@ class _FixedOffset(datetime.tzinfo):
 def _convert_to_isoformat(date_time):
     """Deserialize a date in RFC 3339 format to datetime object.
     Check https://tools.ietf.org/html/rfc3339#section-5.8 for examples.
+
+    :param str date_time: The date in RFC 3339 format.
     """
     if not date_time:
         return None
@@ -84,9 +86,13 @@ def _convert_to_isoformat(date_time):
     return deserialized
 
 
-def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
+def case_insensitive_dict(
+    *args: Optional[Union[Mapping[str, Any], Iterable[Tuple[str, Any]]]], **kwargs: Any
+) -> MutableMapping[str, Any]:
     """Return a case-insensitive mutable mapping from an inputted mapping structure.
 
+    :param args: The positional arguments to pass to the dict.
+    :type args: Mapping[str, Any] or Iterable[Tuple[str, Any]
     :return: A case-insensitive mutable mapping object.
     :rtype: ~collections.abc.MutableMapping
     """
@@ -102,6 +108,9 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
     case_insensitive_dict = CaseInsensitiveDict()
     case_insensitive_dict['Key'] = 'some_value'
     case_insensitive_dict['key'] == 'some_value' #True
+
+    :param data: Initial data to store in the dictionary.
+    :type data: Mapping[str, Any] or Iterable[Tuple[str, Any]]
     """
 
     def __init__(
@@ -117,8 +126,13 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
         return CaseInsensitiveDict(self._store.values())
 
     def __setitem__(self, key: str, value: Any) -> None:
-        """
-        Set the `key` to `value`. The original key will be stored with the value
+        """Set the `key` to `value`.
+
+        The original key will be stored with the value
+
+        :param str key: The key to set.
+        :param value: The value to set the key to.
+        :type value: any
         """
         self._store[key.lower()] = (key, value)
 

@@ -36,7 +36,7 @@ class ChainedTokenCredential:
     valid token received.
 
     :param credentials: credential instances to form the chain
-    :type credentials: :class:`azure.core.credentials.TokenCredential`
+    :type credentials: ~azure.core.credentials.TokenCredential
 
     .. admonition:: Example:
 
@@ -77,6 +77,9 @@ class ChainedTokenCredential:
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
         within_credential_chain.set(True)

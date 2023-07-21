@@ -39,6 +39,7 @@ from azure.ai.ml.constants._common import (
     AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    DefaultOpenEncoding,
 )
 
 module_logger = logging.getLogger(__name__)
@@ -59,15 +60,13 @@ def _is_https_url(url: str) -> Union[bool, str]:
     return False
 
 
-def _csv_parser(text: Optional[str], convert: Callable) -> str:
-    if text:
-        if "," in text:
-            txts = []
-            for t in text.split(","):
-                t = convert(t.strip())
-                txts.append(t)
-            return ",".join(txts)
-        return convert(text)
+def _csv_parser(text: Optional[str], convert: Callable) -> Optional[str]:
+    if not text:
+        return None
+    if "," in text:
+        return ",".join(convert(t.strip()) for t in text.split(","))
+
+    return convert(text)
 
 
 def _snake_to_pascal_convert(text: str) -> str:
@@ -81,6 +80,7 @@ def snake_to_pascal(text: Optional[str]) -> str:
 def snake_to_kebab(text: Optional[str]) -> Optional[str]:
     if text:
         return re.sub("_", "-", text)
+    return None
 
 
 # https://stackoverflow.com/questions/1175208
@@ -100,6 +100,7 @@ def snake_to_camel(text: Optional[str]) -> Optional[str]:
     """convert snake name to camel."""
     if text:
         return re.sub("_([a-zA-Z0-9])", lambda m: m.group(1).upper(), text)
+    return None
 
 
 # This is real snake to camel
@@ -196,7 +197,7 @@ def load_file(file_path: str) -> str:
     # exceptions.py via _get_mfe_url_override
 
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
             cfg = f.read()
     except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
@@ -225,7 +226,7 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
     # exceptions.py via _get_mfe_url_override
 
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
             cfg = json.load(f)
     except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
@@ -262,7 +263,7 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
 
     if isinstance(source, (str, os.PathLike)):
         try:
-            cm = open(source, "r")
+            cm = open(source, "r", encoding=DefaultOpenEncoding.READ)
         except OSError as e:
             msg = "No such file or directory: {}"
             raise ValidationException(
@@ -361,7 +362,7 @@ def dump_yaml_to_file(
 
     if isinstance(dest, (str, os.PathLike)):
         try:
-            cm = open(dest, "w")
+            cm = open(dest, "w", encoding=DefaultOpenEncoding.WRITE)
         except OSError as e:  # FileNotFoundError introduced in Python 3
             msg = "No such file or directory: {}"
             raise ValidationException(
@@ -452,8 +453,7 @@ def resolve_short_datastore_url(value: Union[PathLike, str], workspace: Operatio
 
 def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
     try:
-        if urlparse(str(value)).scheme == "runs":
-            return value
+        return urlparse(str(value)).scheme == "runs"
     except ValueError:
         return False
 
@@ -865,12 +865,11 @@ def _str_to_bool(s):
     return s.lower() == "true"
 
 
-def _is_user_error_from_exception_type(e: Union[Exception, None]):
+def _is_user_error_from_exception_type(e: Optional[Exception]) -> bool:
     """Determine whether if an exception is user error from it's exception type."""
     # Connection error happens on user's network failure, should be user error.
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
-    if isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28):
-        return True
+    return isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28)
 
 
 class DockerProxy:
@@ -898,7 +897,7 @@ def write_to_shared_file(file_path: Union[str, PathLike], content: str):
     :param file_path: Path to the file.
     :param content: Content to write to the file.
     """
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         f.write(content)
 
     # share_mode means read/write for owner, group and others

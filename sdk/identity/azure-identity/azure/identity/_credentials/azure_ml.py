@@ -52,9 +52,12 @@ def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
 
 def _parse_expires_on(content: Dict) -> None:
     """Parse an App Service MSI version 2017-09-01 expires_on value to epoch seconds.
+
     This version of the API returns expires_on as a UTC datetime string rather than epoch seconds. The string's
     format depends on the OS. Responses on Windows include AM/PM, for example "1/16/2020 5:24:12 AM +00:00".
     Responses on Linux do not, for example "06/20/2019 02:57:58 +00:00".
+
+    :param dict content: a deserialized response from an App Service MSI.
     :raises ValueError: ``expires_on`` didn't match an expected format
     """
 

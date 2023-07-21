@@ -12,7 +12,6 @@ import re
 import sys
 from math import isnan
 
-import six
 
 try:
     # 3.8 and up
@@ -65,7 +64,7 @@ def flatten(nested_dict, separator="_", root_keys_to_ignore=None, replace_separa
     :return: flattened dictionary
     """
     assert isinstance(nested_dict, dict), "flatten requires a dictionary input"
-    assert isinstance(separator, six.string_types), "separator must be string"
+    assert isinstance(separator, str), "separator must be string"
 
     if root_keys_to_ignore is None:
         root_keys_to_ignore = set()
@@ -136,7 +135,7 @@ def flatten_preserve_lists(
     """
 
     assert isinstance(nested_dict, dict), "flatten requires a dictionary input"
-    assert isinstance(separator, six.string_types), "separator must be a string"
+    assert isinstance(separator, str), "separator must be a string"
 
     if root_keys_to_ignore is None:
         root_keys_to_ignore = set()
@@ -313,12 +312,9 @@ def flatten_preserve_lists(
 
 def _unflatten_asserts(flat_dict, separator):
     assert isinstance(flat_dict, dict), "un_flatten requires dictionary input"
-    assert isinstance(separator, six.string_types), "separator must be string"
+    assert isinstance(separator, str), "separator must be string"
     assert all(
-        (
-            not value or not isinstance(value, Iterable) or isinstance(value, six.string_types)
-            for value in flat_dict.values()
-        )
+        (not value or not isinstance(value, Iterable) or isinstance(value, str) for value in flat_dict.values())
     ), "provided dict is not flat"
 
 

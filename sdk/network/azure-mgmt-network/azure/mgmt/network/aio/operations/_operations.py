@@ -1608,7 +1608,7 @@ class ApplicationGatewaysOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_backend_health(
@@ -1684,7 +1684,7 @@ class ApplicationGatewaysOperations:
     begin_backend_health.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}/backendhealth'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -1767,7 +1767,7 @@ class ApplicationGatewaysOperations:
     begin_update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def get_ssl_predefined_policy(
@@ -1828,7 +1828,7 @@ class ApplicationGatewaysOperations:
     get_ssl_predefined_policy.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGatewayAvailableSslOptions/default/predefinedPolicies/{predefinedPolicyName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def list_available_ssl_options(self, **kwargs: Any) -> _models.ApplicationGatewayAvailableSslOptions:
@@ -1884,7 +1884,7 @@ class ApplicationGatewaysOperations:
     list_available_ssl_options.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGatewayAvailableSslOptions/default'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace
     def list_available_ssl_predefined_policies(
@@ -1960,7 +1960,7 @@ class ApplicationGatewaysOperations:
     list_available_ssl_predefined_policies.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGatewayAvailableSslOptions/default/predefinedPolicies'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def list_available_waf_rule_sets(self, **kwargs: Any) -> _models.ApplicationGatewayAvailableWafRuleSetsResult:
@@ -2016,7 +2016,7 @@ class ApplicationGatewaysOperations:
     list_available_waf_rule_sets.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGatewayAvailableWafRuleSets'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def list_available_request_headers(self, **kwargs: Any) -> List[str]:
@@ -2073,7 +2073,7 @@ class ApplicationGatewaysOperations:
     list_available_request_headers.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGatewayAvailableRequestHeaders'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def list_available_response_headers(self, **kwargs: Any) -> List[str]:
@@ -2130,7 +2130,7 @@ class ApplicationGatewaysOperations:
     list_available_response_headers.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGatewayAvailableResponseHeaders'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def list_available_server_variables(self, **kwargs: Any) -> List[str]:
@@ -2257,7 +2257,7 @@ class ApplicationGatewaysOperations:
     _backend_health_on_demand_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}/getBackendHealthOnDemand'}
 
     @api_version_validation(
-        api_versions=['2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_backend_health_on_demand(
@@ -2350,7 +2350,7 @@ class ApplicationGatewaysOperations:
     begin_backend_health_on_demand.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}/getBackendHealthOnDemand'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -3791,7 +3791,7 @@ class ExpressRouteCircuitsOperations:
     list_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/expressRouteCircuits'}
 
     @api_version_validation(
-        api_versions=['2015-06-15'],
+       method_valid_on=['2015-06-15'],
     )
     @distributed_trace
     def list_arp_table(
@@ -3885,7 +3885,7 @@ class ExpressRouteCircuitsOperations:
     list_arp_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/arpTable'}
 
     @api_version_validation(
-        api_versions=['2015-06-15'],
+       method_valid_on=['2015-06-15'],
     )
     @distributed_trace
     def list_routes_table(
@@ -3979,7 +3979,7 @@ class ExpressRouteCircuitsOperations:
     list_routes_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/routesTable'}
 
     @api_version_validation(
-        api_versions=['2015-06-15'],
+       method_valid_on=['2015-06-15'],
     )
     @distributed_trace
     def list_stats(
@@ -4293,7 +4293,7 @@ class ExpressRouteCircuitsOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_list_arp_table(
@@ -4372,7 +4372,7 @@ class ExpressRouteCircuitsOperations:
     begin_list_arp_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/arpTables/{devicePath}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_list_routes_table(
@@ -4451,7 +4451,7 @@ class ExpressRouteCircuitsOperations:
     begin_list_routes_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/routeTables/{devicePath}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_list_routes_table_summary(
@@ -4530,7 +4530,7 @@ class ExpressRouteCircuitsOperations:
     begin_list_routes_table_summary.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/routeTablesSummary/{devicePath}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -4609,7 +4609,7 @@ class ExpressRouteCircuitsOperations:
     begin_update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def get_peering_stats(
@@ -4676,7 +4676,7 @@ class ExpressRouteCircuitsOperations:
     get_peering_stats.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/stats'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def get_stats(
@@ -4740,7 +4740,7 @@ class ExpressRouteCircuitsOperations:
     get_stats.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/stats'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -5466,7 +5466,7 @@ class LoadBalancersOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -5548,7 +5548,7 @@ class LoadBalancersOperations:
     begin_update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -5690,7 +5690,7 @@ class LoadBalancersOperations:
     _swap_public_ip_addresses_initial.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/setLoadBalancerFrontendPublicIpAddresses'}
 
     @api_version_validation(
-        api_versions=['2021-02-01', '2022-11-01'],
+       method_valid_on=['2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_swap_public_ip_addresses(
@@ -5835,7 +5835,7 @@ class LoadBalancersOperations:
     _list_inbound_nat_rule_port_mappings_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/backendAddressPools/{backendPoolName}/queryInboundNatRulePortMapping'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def begin_list_inbound_nat_rule_port_mappings(
@@ -6406,7 +6406,7 @@ class LocalNetworkGatewaysOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -6489,7 +6489,7 @@ class LocalNetworkGatewaysOperations:
     begin_update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -7468,7 +7468,7 @@ class NetworkInterfacesOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_effective_route_table(
@@ -7540,7 +7540,7 @@ class NetworkInterfacesOperations:
     begin_get_effective_route_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}/effectiveRouteTable'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_list_effective_network_security_groups(
@@ -7612,7 +7612,7 @@ class NetworkInterfacesOperations:
     begin_list_effective_network_security_groups.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}/effectiveNetworkSecurityGroups'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -7695,7 +7695,7 @@ class NetworkInterfacesOperations:
     begin_update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def get_virtual_machine_scale_set_ip_configuration(
@@ -7779,7 +7779,7 @@ class NetworkInterfacesOperations:
     get_virtual_machine_scale_set_ip_configuration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces/{networkInterfaceName}/ipConfigurations/{ipConfigurationName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace
     def list_virtual_machine_scale_set_ip_configurations(
@@ -7877,7 +7877,7 @@ class NetworkInterfacesOperations:
     list_virtual_machine_scale_set_ip_configurations.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces/{networkInterfaceName}/ipConfigurations'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -7963,7 +7963,7 @@ class NetworkInterfacesOperations:
     update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'}
 
     @api_version_validation(
-        api_versions=['2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def get_cloud_service_network_interface(
@@ -8043,7 +8043,7 @@ class NetworkInterfacesOperations:
     get_cloud_service_network_interface.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/cloudServices/{cloudServiceName}/roleInstances/{roleInstanceName}/networkInterfaces/{networkInterfaceName}'}
 
     @api_version_validation(
-        api_versions=['2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace
     def list_cloud_service_network_interfaces(
@@ -8124,7 +8124,7 @@ class NetworkInterfacesOperations:
     list_cloud_service_network_interfaces.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/cloudServices/{cloudServiceName}/networkInterfaces'}
 
     @api_version_validation(
-        api_versions=['2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace
     def list_cloud_service_role_instance_network_interfaces(
@@ -8764,7 +8764,7 @@ class NetworkSecurityGroupsOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -8847,7 +8847,7 @@ class NetworkSecurityGroupsOperations:
     begin_update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -9491,7 +9491,7 @@ class PublicIPAddressesOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -9574,7 +9574,7 @@ class PublicIPAddressesOperations:
     begin_update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def get_virtual_machine_scale_set_public_ip_address(
@@ -9662,7 +9662,7 @@ class PublicIPAddressesOperations:
     get_virtual_machine_scale_set_public_ip_address.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces/{networkInterfaceName}/ipconfigurations/{ipConfigurationName}/publicipaddresses/{publicIpAddressName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace
     def list_virtual_machine_scale_set_public_ip_addresses(
@@ -9743,7 +9743,7 @@ class PublicIPAddressesOperations:
     list_virtual_machine_scale_set_public_ip_addresses.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/publicipaddresses'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace
     def list_virtual_machine_scale_set_vm_public_ip_addresses(
@@ -9840,7 +9840,7 @@ class PublicIPAddressesOperations:
     list_virtual_machine_scale_set_vm_public_ip_addresses.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces/{networkInterfaceName}/ipconfigurations/{ipConfigurationName}/publicipaddresses'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -9926,7 +9926,7 @@ class PublicIPAddressesOperations:
     update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}'}
 
     @api_version_validation(
-        api_versions=['2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def get_cloud_service_public_ip_address(
@@ -10014,7 +10014,7 @@ class PublicIPAddressesOperations:
     get_cloud_service_public_ip_address.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/cloudServices/{cloudServiceName}/roleInstances/{roleInstanceName}/networkInterfaces/{networkInterfaceName}/ipconfigurations/{ipConfigurationName}/publicipaddresses/{publicIpAddressName}'}
 
     @api_version_validation(
-        api_versions=['2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace
     def list_cloud_service_public_ip_addresses(
@@ -10095,7 +10095,7 @@ class PublicIPAddressesOperations:
     list_cloud_service_public_ip_addresses.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/cloudServices/{cloudServiceName}/publicipaddresses'}
 
     @api_version_validation(
-        api_versions=['2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace
     def list_cloud_service_role_instance_public_ip_addresses(
@@ -10247,7 +10247,7 @@ class PublicIPAddressesOperations:
     _ddos_protection_status_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}/ddosProtectionStatus'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def begin_ddos_protection_status(
@@ -10860,7 +10860,7 @@ class RouteTablesOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -10938,7 +10938,7 @@ class RouteTablesOperations:
     begin_update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -12386,7 +12386,7 @@ class SubnetsOperations:
     _prepare_network_policies_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}/PrepareNetworkPolicies'}
 
     @api_version_validation(
-        api_versions=['2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_prepare_network_policies(
@@ -12538,7 +12538,7 @@ class SubnetsOperations:
     _unprepare_network_policies_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}/UnprepareNetworkPolicies'}
 
     @api_version_validation(
-        api_versions=['2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_unprepare_network_policies(
@@ -13577,7 +13577,7 @@ class VirtualNetworkGatewayConnectionsOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -13803,7 +13803,7 @@ class VirtualNetworkGatewayConnectionsOperations:
     _stop_packet_capture_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}/stopPacketCapture'}
 
     @api_version_validation(
-        api_versions=['2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_start_packet_capture(
@@ -13888,7 +13888,7 @@ class VirtualNetworkGatewayConnectionsOperations:
     begin_start_packet_capture.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}/startPacketCapture'}
 
     @api_version_validation(
-        api_versions=['2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_stop_packet_capture(
@@ -14025,7 +14025,7 @@ class VirtualNetworkGatewayConnectionsOperations:
     _get_ike_sas_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}/getikesas'}
 
     @api_version_validation(
-        api_versions=['2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_ike_sas(
@@ -14143,7 +14143,7 @@ class VirtualNetworkGatewayConnectionsOperations:
     _reset_connection_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}/resetconnection'}
 
     @api_version_validation(
-        api_versions=['2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_reset_connection(
@@ -14699,7 +14699,7 @@ class VirtualNetworkGatewaysOperations:
     begin_generatevpnclientpackage.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/generatevpnclientpackage'}
 
     @api_version_validation(
-        params={
+        params_valid_on={
             "parameters": ['2015-06-15'],
             "gateway_vip": ['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
         }
@@ -15258,7 +15258,7 @@ class VirtualNetworkGatewaysOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_generate_vpn_profile(
@@ -15342,7 +15342,7 @@ class VirtualNetworkGatewaysOperations:
     begin_generate_vpn_profile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/generatevpnprofile'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_advertised_routes(
@@ -15418,7 +15418,7 @@ class VirtualNetworkGatewaysOperations:
     begin_get_advertised_routes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/getAdvertisedRoutes'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_bgp_peer_status(
@@ -15493,7 +15493,7 @@ class VirtualNetworkGatewaysOperations:
     begin_get_bgp_peer_status.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/getBgpPeerStatus'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_learned_routes(
@@ -15566,7 +15566,7 @@ class VirtualNetworkGatewaysOperations:
     begin_get_learned_routes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/getLearnedRoutes'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_vpn_profile_package_url(
@@ -15637,7 +15637,7 @@ class VirtualNetworkGatewaysOperations:
     begin_get_vpn_profile_package_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/getvpnprofilepackageurl'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -15723,7 +15723,7 @@ class VirtualNetworkGatewaysOperations:
     begin_update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace
     def list_connections(
@@ -15805,7 +15805,7 @@ class VirtualNetworkGatewaysOperations:
     list_connections.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/connections'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def supported_vpn_devices(
@@ -15869,7 +15869,7 @@ class VirtualNetworkGatewaysOperations:
     supported_vpn_devices.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/supportedvpndevices'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def vpn_device_configuration_script(
@@ -16072,7 +16072,7 @@ class VirtualNetworkGatewaysOperations:
     _set_vpnclient_ipsec_parameters_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/setvpnclientipsecparameters'}
 
     @api_version_validation(
-        api_versions=['2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_vpnclient_ipsec_parameters(
@@ -16146,7 +16146,7 @@ class VirtualNetworkGatewaysOperations:
     begin_get_vpnclient_ipsec_parameters.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/getvpnclientipsecparameters'}
 
     @api_version_validation(
-        api_versions=['2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_set_vpnclient_ipsec_parameters(
@@ -16279,7 +16279,7 @@ class VirtualNetworkGatewaysOperations:
     _reset_vpn_client_shared_key_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/resetvpnclientsharedkey'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_reset_vpn_client_shared_key(
@@ -16399,7 +16399,7 @@ class VirtualNetworkGatewaysOperations:
     _get_vpnclient_connection_health_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/getVpnClientConnectionHealth'}
 
     @api_version_validation(
-        api_versions=['2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_vpnclient_connection_health(
@@ -16611,7 +16611,7 @@ class VirtualNetworkGatewaysOperations:
     _stop_packet_capture_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/stopPacketCapture'}
 
     @api_version_validation(
-        api_versions=['2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_start_packet_capture(
@@ -16695,7 +16695,7 @@ class VirtualNetworkGatewaysOperations:
     begin_start_packet_capture.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/startPacketCapture'}
 
     @api_version_validation(
-        api_versions=['2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_stop_packet_capture(
@@ -16839,7 +16839,7 @@ class VirtualNetworkGatewaysOperations:
     _disconnect_virtual_network_gateway_vpn_connections_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/disconnectVirtualNetworkGatewayVpnConnections'}
 
     @api_version_validation(
-        api_versions=['2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_disconnect_virtual_network_gateway_vpn_connections(
@@ -17474,7 +17474,7 @@ class VirtualNetworksOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -17557,7 +17557,7 @@ class VirtualNetworksOperations:
     begin_update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def check_ip_address_availability(
@@ -17624,7 +17624,7 @@ class VirtualNetworksOperations:
     check_ip_address_availability.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/CheckIPAddressAvailability'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace
     def list_usage(
@@ -17705,7 +17705,7 @@ class VirtualNetworksOperations:
     list_usage.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/usages'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -17791,7 +17791,7 @@ class VirtualNetworksOperations:
     update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}'}
 
     @api_version_validation(
-        api_versions=['2020-05-01'],
+       method_valid_on=['2020-05-01'],
     )
     @distributed_trace_async
     async def get_bastion_hosts(
@@ -17914,7 +17914,7 @@ class VirtualNetworksOperations:
     _list_ddos_protection_status_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/ddosProtectionStatus'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def begin_list_ddos_protection_status(
@@ -18609,7 +18609,7 @@ class ApplicationSecurityGroupsOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationSecurityGroups/{applicationSecurityGroupName}'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -18692,7 +18692,7 @@ class ApplicationSecurityGroupsOperations:
     begin_update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationSecurityGroups/{applicationSecurityGroupName}'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -19253,7 +19253,7 @@ class ConnectionMonitorsOperations:
     _stop_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/connectionMonitors/{connectionMonitorName}/stop'}
 
     @api_version_validation(
-        params={
+        params_valid_on={
             "migrate": ['2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
         }
     )
@@ -19779,7 +19779,7 @@ class ConnectionMonitorsOperations:
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/connectionMonitors'}
 
     @api_version_validation(
-        api_versions=['2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -20754,7 +20754,7 @@ class LoadBalancerBackendAddressPoolsOperations:
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/backendAddressPools/{backendAddressPoolName}'}
 
     @api_version_validation(
-        api_versions=['2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_create_or_update(
@@ -20844,7 +20844,7 @@ class LoadBalancerBackendAddressPoolsOperations:
     begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/backendAddressPools/{backendAddressPoolName}'}
 
     @api_version_validation(
-        api_versions=['2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_delete(
@@ -23945,7 +23945,7 @@ class NetworkWatchersOperations:
     _get_network_configuration_diagnostic_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/networkConfigurationDiagnostic'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_network_configuration_diagnostic(
@@ -25160,7 +25160,7 @@ class RouteFilterRulesOperations:
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeFilters/{routeFilterName}/routeFilterRules/{ruleName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update(
@@ -25736,7 +25736,7 @@ class RouteFiltersOperations:
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeFilters/{routeFilterName}'}
 
     @api_version_validation(
-        api_versions=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update(
@@ -26025,7 +26025,7 @@ class RouteFiltersOperations:
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeFilters'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -26247,7 +26247,7 @@ class VirtualNetworkPeeringsOperations:
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/virtualNetworkPeerings/{virtualNetworkPeeringName}'}
 
     @api_version_validation(
-        params={
+        params_valid_on={
             "sync_remote_address_space": ['2021-02-01', '2022-11-01'],
         }
     )
@@ -27042,7 +27042,7 @@ class AzureFirewallsOperations:
     list_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/azureFirewalls'}
 
     @api_version_validation(
-        api_versions=['2019-06-01', '2019-07-01', '2019-08-01', '2019-11-01', '2019-12-01'],
+       method_valid_on=['2019-06-01', '2019-07-01', '2019-08-01', '2019-11-01', '2019-12-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -27195,7 +27195,7 @@ class AzureFirewallsOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/azureFirewalls/{azureFirewallName}'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -27396,7 +27396,7 @@ class AzureFirewallsOperations:
     _packet_capture_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/azureFirewalls/{azureFirewallName}/packetCapture'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def begin_list_learned_prefixes(
@@ -27468,7 +27468,7 @@ class AzureFirewallsOperations:
     begin_list_learned_prefixes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/azureFirewalls/{azureFirewallName}/learnedIPPrefixes'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def begin_packet_capture(
@@ -28106,7 +28106,7 @@ class DdosProtectionPlansOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/ddosProtectionPlans/{ddosProtectionPlanName}'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -28189,7 +28189,7 @@ class DdosProtectionPlansOperations:
     begin_update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/ddosProtectionPlans/{ddosProtectionPlanName}'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -28647,7 +28647,7 @@ class ExpressRouteCircuitConnectionsOperations:
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/connections/{connectionName}'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace
     def list(
@@ -29796,7 +29796,7 @@ class ExpressRouteCrossConnectionsOperations:
     begin_list_routes_table_summary.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCrossConnections/{crossConnectionName}/peerings/{peeringName}/routeTablesSummary/{devicePath}'}
 
     @api_version_validation(
-        api_versions=['2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -30089,7 +30089,7 @@ class ExpressRouteCrossConnectionsOperations:
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCrossConnections'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -30455,7 +30455,7 @@ class HubVirtualNetworkConnectionsOperations:
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualHubs/{virtualHubName}/hubVirtualNetworkConnections/{connectionName}'}
 
     @api_version_validation(
-        api_versions=['2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_create_or_update(
@@ -30548,7 +30548,7 @@ class HubVirtualNetworkConnectionsOperations:
     begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualHubs/{virtualHubName}/hubVirtualNetworkConnections/{connectionName}'}
 
     @api_version_validation(
-        api_versions=['2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_delete(
@@ -30969,7 +30969,7 @@ class VirtualHubsOperations:
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualHubs/{virtualHubName}'}
 
     @api_version_validation(
-        api_versions=['2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -31253,7 +31253,7 @@ class VirtualHubsOperations:
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualHubs'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -31409,7 +31409,7 @@ class VirtualHubsOperations:
     _get_effective_virtual_hub_routes_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualHubs/{virtualHubName}/effectiveRoutes'}
 
     @api_version_validation(
-        api_versions=['2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_effective_virtual_hub_routes(
@@ -31630,7 +31630,7 @@ class VirtualHubsOperations:
     _get_outbound_routes_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualHubs/{virtualHubName}/outboundRoutes'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_inbound_routes(
@@ -31716,7 +31716,7 @@ class VirtualHubsOperations:
     begin_get_inbound_routes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualHubs/{virtualHubName}/inboundRoutes'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_outbound_routes(
@@ -33013,7 +33013,7 @@ class VpnConnectionsOperations:
     _stop_packet_capture_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/vpnConnections/{vpnConnectionName}/stoppacketcapture'}
 
     @api_version_validation(
-        api_versions=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_start_packet_capture(
@@ -33102,7 +33102,7 @@ class VpnConnectionsOperations:
     begin_start_packet_capture.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/vpnConnections/{vpnConnectionName}/startpacketcapture'}
 
     @api_version_validation(
-        api_versions=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_stop_packet_capture(
@@ -33537,7 +33537,7 @@ class VpnGatewaysOperations:
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}'}
 
     @api_version_validation(
-        api_versions=['2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -33876,8 +33876,8 @@ class VpnGatewaysOperations:
     _reset_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/reset'}
 
     @api_version_validation(
-        api_versions=['2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
-        params={
+       method_valid_on=['2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+        params_valid_on={
             "ip_configuration_id": ['2022-11-01'],
         }
     )
@@ -33954,7 +33954,7 @@ class VpnGatewaysOperations:
     begin_reset.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/reset'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -34180,7 +34180,7 @@ class VpnGatewaysOperations:
     _stop_packet_capture_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/stoppacketcapture'}
 
     @api_version_validation(
-        api_versions=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_start_packet_capture(
@@ -34265,7 +34265,7 @@ class VpnGatewaysOperations:
     begin_start_packet_capture.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/startpacketcapture'}
 
     @api_version_validation(
-        api_versions=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_stop_packet_capture(
@@ -34858,7 +34858,7 @@ class VpnSitesOperations:
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnSites/{vpnSiteName}'}
 
     @api_version_validation(
-        api_versions=['2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -35140,7 +35140,7 @@ class VpnSitesOperations:
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnSites'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -35855,7 +35855,7 @@ class DdosCustomPoliciesOperations:
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/ddosCustomPolicies/{ddosCustomPolicyName}'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -35999,7 +35999,7 @@ class DdosCustomPoliciesOperations:
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/ddosCustomPolicies/{ddosCustomPolicyName}'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -37025,7 +37025,7 @@ class ExpressRouteGatewaysOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteGateways/{expressRouteGatewayName}'}
 
     @api_version_validation(
-        api_versions=['2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -37770,7 +37770,7 @@ class ExpressRoutePortsOperations:
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/ExpressRoutePorts/{expressRoutePortName}'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -38059,7 +38059,7 @@ class ExpressRoutePortsOperations:
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/ExpressRoutePorts'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -38145,7 +38145,7 @@ class ExpressRoutePortsOperations:
     update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/ExpressRoutePorts/{expressRoutePortName}'}
 
     @api_version_validation(
-        api_versions=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def generate_loa(
@@ -40322,7 +40322,7 @@ class P2SVpnGatewaysOperations:
     begin_generate_vpn_profile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}/generatevpnprofile'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -40661,7 +40661,7 @@ class P2SVpnGatewaysOperations:
     _get_p2_s_vpn_connection_health_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}/getP2sVpnConnectionHealth'}
 
     @api_version_validation(
-        api_versions=['2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_p2_s_vpn_connection_health(
@@ -40801,7 +40801,7 @@ class P2SVpnGatewaysOperations:
     _get_p2_s_vpn_connection_health_detailed_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}/getP2sVpnConnectionHealthDetailed'}
 
     @api_version_validation(
-        api_versions=['2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_p2_s_vpn_connection_health_detailed(
@@ -40887,7 +40887,7 @@ class P2SVpnGatewaysOperations:
     begin_get_p2_s_vpn_connection_health_detailed.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}/getP2sVpnConnectionHealthDetailed'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -41034,7 +41034,7 @@ class P2SVpnGatewaysOperations:
     _disconnect_p2_s_vpn_connections_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{p2sVpnGatewayName}/disconnectP2sVpnConnections'}
 
     @api_version_validation(
-        api_versions=['2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_disconnect_p2_s_vpn_connections(
@@ -41167,7 +41167,7 @@ class P2SVpnGatewaysOperations:
     _reset_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/p2svpnGateways/{gatewayName}/reset'}
 
     @api_version_validation(
-        api_versions=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_reset(
@@ -42026,7 +42026,7 @@ class PublicIPPrefixesOperations:
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIpPrefixName}'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -42316,7 +42316,7 @@ class PublicIPPrefixesOperations:
     list_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/publicIPPrefixes'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -42749,7 +42749,7 @@ class ServiceEndpointPoliciesOperations:
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/serviceEndpointPolicies/{serviceEndpointPolicyName}'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update(
@@ -43048,7 +43048,7 @@ class ServiceEndpointPoliciesOperations:
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/serviceEndpointPolicies'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -43920,7 +43920,7 @@ class VirtualNetworkTapsOperations:
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkTaps/{tapName}'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -44203,7 +44203,7 @@ class VirtualNetworkTapsOperations:
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkTaps'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -44635,7 +44635,7 @@ class VirtualWansOperations:
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans/{VirtualWANName}'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -44919,7 +44919,7 @@ class VirtualWansOperations:
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -46177,7 +46177,7 @@ class ResourceNavigationLinksOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
     @api_version_validation(
-        api_versions=['2019-02-01'],
+       method_valid_on=['2019-02-01'],
     )
     @distributed_trace_async
     async def get(
@@ -46244,7 +46244,7 @@ class ResourceNavigationLinksOperations:
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}/ResourceNavigationLinks'}
 
     @api_version_validation(
-        api_versions=['2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def list(
@@ -46331,7 +46331,7 @@ class ServiceAssociationLinksOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
     @api_version_validation(
-        api_versions=['2019-02-01'],
+       method_valid_on=['2019-02-01'],
     )
     @distributed_trace_async
     async def get(
@@ -46398,7 +46398,7 @@ class ServiceAssociationLinksOperations:
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}/ServiceAssociationLinks'}
 
     @api_version_validation(
-        api_versions=['2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def list(
@@ -47186,8 +47186,8 @@ class BastionHostsOperations:
     _update_tags_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/bastionHosts/{bastionHostName}'}
 
     @api_version_validation(
-        api_versions=['2019-06-01', '2022-11-01'],
-        params={
+       method_valid_on=['2019-06-01', '2022-11-01'],
+        params_valid_on={
             "bastion_host_parameters": ['2019-06-01'],
             "parameters": ['2022-11-01'],
         }
@@ -48908,7 +48908,7 @@ class PrivateLinkServicesOperations:
     update_private_endpoint_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateLinkServices/{serviceName}/privateEndpointConnections/{peConnectionName}'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def get_private_endpoint_connection(
@@ -48986,7 +48986,7 @@ class PrivateLinkServicesOperations:
     get_private_endpoint_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateLinkServices/{serviceName}/privateEndpointConnections/{peConnectionName}'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace
     def list_private_endpoint_connections(
@@ -49636,8 +49636,8 @@ class FirewallPoliciesOperations:
     list_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/firewallPolicies'}
 
     @api_version_validation(
-        api_versions=['2019-06-01', '2019-07-01', '2019-08-01', '2022-11-01'],
-        params={
+       method_valid_on=['2019-06-01', '2019-07-01', '2019-08-01', '2022-11-01'],
+        params_valid_on={
             "firewall_policy_parameters": ['2019-06-01', '2019-07-01', '2019-08-01'],
             "parameters": ['2022-11-01'],
         }
@@ -50376,7 +50376,7 @@ class VpnLinkConnectionsOperations:
     _reset_connection_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/vpnConnections/{connectionName}/vpnLinkConnections/{linkConnectionName}/resetconnection'}
 
     @api_version_validation(
-        api_versions=['2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_ike_sas(
@@ -50457,7 +50457,7 @@ class VpnLinkConnectionsOperations:
     begin_get_ike_sas.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/vpnConnections/{connectionName}/vpnLinkConnections/{linkConnectionName}/getikesas'}
 
     @api_version_validation(
-        api_versions=['2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_reset_connection(
@@ -51229,7 +51229,7 @@ class VirtualRouterPeeringsOperations:
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualRouters/{virtualRouterName}/peerings'}
 
     @api_version_validation(
-        api_versions=['2019-07-01', '2019-08-01'],
+       method_valid_on=['2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def update(
@@ -51814,7 +51814,7 @@ class VirtualRoutersOperations:
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualRouters'}
 
     @api_version_validation(
-        api_versions=['2019-07-01', '2019-08-01'],
+       method_valid_on=['2019-07-01', '2019-08-01'],
     )
     @distributed_trace_async
     async def update(
@@ -52570,7 +52570,7 @@ class VpnServerConfigurationsOperations:
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnServerConfigurations/{vpnServerConfigurationName}'}
 
     @api_version_validation(
-        api_versions=['2019-08-01'],
+       method_valid_on=['2019-08-01'],
     )
     @distributed_trace_async
     async def begin_update_tags(
@@ -52867,7 +52867,7 @@ class VpnServerConfigurationsOperations:
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnServerConfigurations'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -54394,7 +54394,7 @@ class FlowLogsOperations:
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/flowLogs'}
 
     @api_version_validation(
-        api_versions=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def update_tags(
@@ -59202,7 +59202,7 @@ class VirtualHubBgpConnectionsOperations:
     _list_learned_routes_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualHubs/{hubName}/bgpConnections/{connectionName}/learnedRoutes'}
 
     @api_version_validation(
-        api_versions=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_list_advertised_routes(
@@ -59277,7 +59277,7 @@ class VirtualHubBgpConnectionsOperations:
     begin_list_advertised_routes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualHubs/{hubName}/bgpConnections/{connectionName}/advertisedRoutes'}
 
     @api_version_validation(
-        api_versions=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_list_learned_routes(
@@ -62478,7 +62478,7 @@ class AdminRuleCollectionsOperations:
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}/securityAdminConfigurations/{configurationName}/ruleCollections/{ruleCollectionName}'}
 
     @api_version_validation(
-        api_versions=['2021-02-01-preview'],
+       method_valid_on=['2021-02-01-preview'],
     )
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -62782,7 +62782,7 @@ class AdminRuleCollectionsOperations:
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}/securityAdminConfigurations/{configurationName}/ruleCollections/{ruleCollectionName}'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def begin_delete(
@@ -62989,7 +62989,7 @@ class AdminRulesOperations:
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}/securityAdminConfigurations/{configurationName}/ruleCollections/{ruleCollectionName}/rules/{ruleName}'}
 
     @api_version_validation(
-        api_versions=['2021-02-01-preview'],
+       method_valid_on=['2021-02-01-preview'],
     )
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -63308,7 +63308,7 @@ class AdminRulesOperations:
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}/securityAdminConfigurations/{configurationName}/ruleCollections/{ruleCollectionName}/rules/{ruleName}'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def begin_delete(
@@ -63512,7 +63512,7 @@ class ConnectivityConfigurationsOperations:
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}/connectivityConfigurations/{configurationName}'}
 
     @api_version_validation(
-        api_versions=['2021-02-01-preview'],
+       method_valid_on=['2021-02-01-preview'],
     )
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -63797,7 +63797,7 @@ class ConnectivityConfigurationsOperations:
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}/connectivityConfigurations/{configurationName}'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def begin_delete(
@@ -64321,7 +64321,7 @@ class NetworkGroupsOperations:
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}/networkGroups/{networkGroupName}'}
 
     @api_version_validation(
-        api_versions=['2021-02-01-preview'],
+       method_valid_on=['2021-02-01-preview'],
     )
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -64601,7 +64601,7 @@ class NetworkGroupsOperations:
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}/networkGroups/{networkGroupName}'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def begin_delete(
@@ -64703,7 +64703,7 @@ class NetworkManagerCommitsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
     @api_version_validation(
-        api_versions=['2021-02-01-preview'],
+       method_valid_on=['2021-02-01-preview'],
     )
     @distributed_trace_async
     async def post(
@@ -64863,7 +64863,7 @@ class NetworkManagerCommitsOperations:
     _post_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}/commit'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def begin_post(
@@ -64968,7 +64968,7 @@ class NetworkManagerDeploymentStatusOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
     @api_version_validation(
-        params={
+        params_valid_on={
             "top": ['2022-11-01'],
         }
     )
@@ -65276,7 +65276,7 @@ class NetworkManagersOperations:
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}'}
 
     @api_version_validation(
-        api_versions=['2021-02-01-preview'],
+       method_valid_on=['2021-02-01-preview'],
     )
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -65564,7 +65564,7 @@ class NetworkManagersOperations:
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/networkManagers'}
 
     @api_version_validation(
-        api_versions=['2021-02-01-preview'],
+       method_valid_on=['2021-02-01-preview'],
     )
     @distributed_trace_async
     async def patch_tags(
@@ -65702,7 +65702,7 @@ class NetworkManagersOperations:
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def begin_delete(
@@ -65775,7 +65775,7 @@ class NetworkManagersOperations:
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def patch(
@@ -68720,7 +68720,7 @@ class SecurityAdminConfigurationsOperations:
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}/securityAdminConfigurations/{configurationName}'}
 
     @api_version_validation(
-        api_versions=['2021-02-01-preview'],
+       method_valid_on=['2021-02-01-preview'],
     )
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -69002,7 +69002,7 @@ class SecurityAdminConfigurationsOperations:
     _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}/securityAdminConfigurations/{configurationName}'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def begin_delete(
@@ -74848,7 +74848,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
        return self._get_api_version(op_name)
 
     @api_version_validation(
-        api_versions=['2015-06-15', '2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2015-06-15', '2017-10-01', '2018-04-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def check_dns_name_availability(
@@ -74915,7 +74915,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
     check_dns_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability'}
 
     @api_version_validation(
-        api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def supported_security_providers(
@@ -75055,7 +75055,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
     _generatevirtualwanvpnserverconfigurationvpnprofile_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualWans/{virtualWANName}/GenerateVpnProfile'}
 
     @api_version_validation(
-        api_versions=['2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_generatevirtualwanvpnserverconfigurationvpnprofile(
@@ -75336,7 +75336,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
     _put_bastion_shareable_link_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/bastionHosts/{bastionHostName}/createShareableLinks'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_delete_bastion_shareable_link(
@@ -75420,7 +75420,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
     begin_delete_bastion_shareable_link.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/bastionHosts/{bastionHostName}/deleteShareableLinks'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_get_active_sessions(
@@ -75550,7 +75550,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
     begin_get_active_sessions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/bastionHosts/{bastionHostName}/getActiveSessions'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace_async
     async def begin_put_bastion_shareable_link(
@@ -75703,7 +75703,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
     begin_put_bastion_shareable_link.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/bastionHosts/{bastionHostName}/createShareableLinks'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace
     def disconnect_active_sessions(
@@ -75807,7 +75807,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
     disconnect_active_sessions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/bastionHosts/{bastionHostName}/disconnectActiveSessions'}
 
     @api_version_validation(
-        api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
+       method_valid_on=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-11-01'],
     )
     @distributed_trace
     def get_bastion_shareable_link(
@@ -75912,7 +75912,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
     get_bastion_shareable_link.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/bastionHosts/{bastionHostName}/getShareableLinks'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def express_route_provider_port(self, providerport: str, **kwargs: Any) -> _models.ExpressRouteProviderPort:
@@ -75973,7 +75973,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
     express_route_provider_port.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/expressRouteProviderPorts/{providerport}'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def list_active_connectivity_configurations(
@@ -76068,7 +76068,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
     list_active_connectivity_configurations.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}/listActiveConnectivityConfigurations'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def list_active_security_admin_rules(
@@ -76163,7 +76163,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
     list_active_security_admin_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}/listActiveSecurityAdminRules'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def list_network_manager_effective_connectivity_configurations(
@@ -76265,7 +76265,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
     list_network_manager_effective_connectivity_configurations.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/listNetworkManagerEffectiveConnectivityConfigurations'}
 
     @api_version_validation(
-        api_versions=['2022-11-01'],
+       method_valid_on=['2022-11-01'],
     )
     @distributed_trace_async
     async def list_network_manager_effective_security_admin_rules(

@@ -75,7 +75,7 @@ class AadClientBase(abc.ABC):
         return None
 
     def get_cached_refresh_tokens(self, scopes: Iterable[str]) -> List[Dict]:
-        """Assumes all cached refresh tokens belong to the same user"""
+        # Assumes all cached refresh tokens belong to the same user.
         return self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
 
     @abc.abstractmethod
