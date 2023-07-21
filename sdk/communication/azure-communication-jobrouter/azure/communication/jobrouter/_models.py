@@ -1283,8 +1283,7 @@ class JobMatchingMode:
             self,
             *,
             queue_and_match_mode: JSON,
-            mode_type: Literal["queueAndMatchMode"] = JobMatchModeType.QUEUE_AND_MATCH_MODE,
-            **kwargs: Any
+            mode_type: Literal["queueAndMatchMode"] = JobMatchModeType.QUEUE_AND_MATCH_MODE
     ) -> None:
         """
         Create JobMatchingMode for QueueAndMatchMode
@@ -1301,8 +1300,7 @@ class JobMatchingMode:
             self,
             *,
             schedule_and_suspend_mode: "ScheduleAndSuspendMode",
-            mode_type: Literal["scheduleAndSuspendMode"] = JobMatchModeType.SCHEDULE_AND_SUSPEND_MODE,
-            **kwargs: Any
+            mode_type: Literal["scheduleAndSuspendMode"] = JobMatchModeType.SCHEDULE_AND_SUSPEND_MODE
     ) -> None:
         """
         Create JobMatchingMode for ScheduleAndSuspendMode
@@ -1320,8 +1318,7 @@ class JobMatchingMode:
             self,
             *,
             suspend_mode: JSON,
-            mode_type: Literal["suspendMode"] = JobMatchModeType.SUSPEND_MODE,
-            **kwargs: Any
+            mode_type: Literal["suspendMode"] = JobMatchModeType.SUSPEND_MODE
     ) -> None:
         """
         Create JobMatchingMode for SuspendMode
