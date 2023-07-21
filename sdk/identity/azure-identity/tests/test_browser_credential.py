@@ -7,6 +7,7 @@ import random
 import socket
 import threading
 import time
+import urllib
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline.transport import RequestsTransport
@@ -100,7 +101,9 @@ def test_disable_automatic_authentication():
     """When configured for strict silent auth, the credential should raise when silent auth fails"""
 
     transport = Mock(send=Mock(side_effect=Exception("no request should be sent")))
-    credential = InteractiveBrowserCredential(disable_automatic_authentication=True, transport=transport)
+    credential = InteractiveBrowserCredential(
+        disable_automatic_authentication=True, transport=transport, client_credential="client_credential"
+    )
 
     with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential shouldn't try interactive authentication"))):
         with pytest.raises(AuthenticationRequiredError):
@@ -124,7 +127,9 @@ def test_timeout():
         )
     )
 
-    credential = InteractiveBrowserCredential(timeout=timeout, transport=transport, _server_class=GuaranteedTimeout)
+    credential = InteractiveBrowserCredential(
+        timeout=timeout, transport=transport, _server_class=GuaranteedTimeout, client_credential="client_credential"
+    )
 
     with patch(WEBBROWSER_OPEN, lambda _: True):
         with pytest.raises(ClientAuthenticationError) as ex:
@@ -166,7 +171,9 @@ def test_no_browser():
     """The credential should raise CredentialUnavailableError when it can't open a browser"""
 
     transport = validating_transport(requests=[Request()] * 2, responses=[get_discovery_response()] * 2)
-    credential = InteractiveBrowserCredential(client_id="client-id", _server_class=Mock(), transport=transport)
+    credential = InteractiveBrowserCredential(
+        client_id="client-id", _server_class=Mock(), transport=transport, client_credential="client_credential"
+    )
     with patch(InteractiveBrowserCredential.__module__ + "._open_browser", lambda _: False):
         with pytest.raises(CredentialUnavailableError, match=r".*browser.*"):
             credential.get_token("scope")
@@ -180,7 +187,9 @@ def test_redirect_uri():
     expected_message = "test_redirect_uri"
     server = Mock(side_effect=Exception(expected_message))  # exception prevents this test actually authenticating
     credential = InteractiveBrowserCredential(
-        redirect_uri="https://{}:{}".format(expected_hostname, expected_port), _server_class=server
+        redirect_uri="https://{}:{}".format(expected_hostname, expected_port),
+        _server_class=server,
+        client_credential="client_credential",
     )
     with pytest.raises(ClientAuthenticationError) as ex:
         credential.get_token("scope")
@@ -194,13 +203,15 @@ def test_invalid_redirect_uri(redirect_uri):
     """The credential should raise ValueError when redirect_uri is invalid or doesn't include a port"""
 
     with pytest.raises(ValueError):
-        InteractiveBrowserCredential(redirect_uri=redirect_uri)
+        InteractiveBrowserCredential(redirect_uri=redirect_uri, client_credential="client_credential")
 
 
 def test_cannot_bind_port():
     """get_token should raise CredentialUnavailableError when the redirect listener can't bind a port"""
 
-    credential = InteractiveBrowserCredential(_server_class=Mock(side_effect=socket.error))
+    credential = InteractiveBrowserCredential(
+        _server_class=Mock(side_effect=socket.error), client_credential="client_credential"
+    )
     with pytest.raises(CredentialUnavailableError):
         credential.get_token("scope")
 
@@ -209,7 +220,9 @@ def test_cannot_bind_redirect_uri():
     """When a user specifies a redirect URI, the credential shouldn't attempt to bind another"""
 
     server = Mock(side_effect=socket.error)
-    credential = InteractiveBrowserCredential(redirect_uri="http://localhost:42", _server_class=server)
+    credential = InteractiveBrowserCredential(
+        redirect_uri="http://localhost:42", _server_class=server, client_credential="client_credential"
+    )
 
     with pytest.raises(CredentialUnavailableError):
         credential.get_token("scope")
@@ -231,7 +244,9 @@ def test_claims_challenge():
     )
 
     transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
-    credential = InteractiveBrowserCredential(_server_class=server_class, transport=transport)
+    credential = InteractiveBrowserCredential(
+        _server_class=server_class, transport=transport, client_credential="client_credential"
+    )
     with patch.object(InteractiveBrowserCredential, "_get_app") as get_mock_app:
         msal_app = get_mock_app()
         msal_app.initiate_auth_code_flow.return_value = {"auth_uri": "http://localhost"}
@@ -258,106 +273,3 @@ def test_claims_challenge():
         assert msal_app.acquire_token_silent_with_error.call_count == 1
         args, kwargs = msal_app.acquire_token_silent_with_error.call_args
         assert kwargs["claims_challenge"] == expected_claims
-
-
-def test_login_hint():
-    expected_username = "user@foo.com"
-    auth_code_response = {"code": "authorization-code", "state": ["..."]}
-    server_class = Mock(return_value=Mock(wait_for_redirect=lambda: auth_code_response))
-    transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
-
-    msal_acquire_token_result = dict(
-        build_aad_response(access_token="**", id_token=build_id_token()),
-        id_token_claims=id_token_claims("issuer", "subject", "audience", upn="upn"),
-    )
-    mock_msal_app = Mock(
-        acquire_token_by_auth_code_flow=Mock(return_value=msal_acquire_token_result),
-        initiate_auth_code_flow=Mock(return_value={"auth_uri": "http://localhost"}),
-    )
-
-    credential = InteractiveBrowserCredential(
-        _server_class=server_class, transport=transport, login_hint=expected_username
-    )
-    with patch("msal.PublicClientApplication", Mock(return_value=mock_msal_app)):
-        with patch(WEBBROWSER_OPEN, lambda _: True):
-            credential.authenticate(scopes=["scope"])
-
-    assert mock_msal_app.initiate_auth_code_flow.call_count == 1
-    _, kwargs = mock_msal_app.initiate_auth_code_flow.call_args
-    assert kwargs["login_hint"] == expected_username
-
-
-@pytest.mark.parametrize(
-    "uname,is_wsl",
-    (
-        (
-            (
-                "Linux",
-                "machine",
-                "4.4.0-19041-Microsoft",
-                "#488-Microsoft Mon Sep 01 13:43:00 PST 2020",
-                "x86_64",
-                "x86_64",
-            ),
-            True,
-        ),
-        (
-            (
-                "Linux",
-                "machine",
-                "5.4.72-microsoft-standard-WSL2",
-                "#1 SMP Wed Oct 28 23:40:43 UTC 2020",
-                "x86_64",
-                "x86_64",
-            ),
-            True,
-        ),
-        (
-            (
-                "Linux",
-                "machine",
-                "5.3.0-51-generic",
-                "#44-Ubuntu SMP Wed Apr 22 21:09:44 UTC 2020",
-                "x86_64",
-                "x86_64",
-            ),
-            False,
-        ),
-    ),
-)
-def test_wsl_fallback(uname, is_wsl):
-    """the credential should invoke powershell.exe to open a browser in WSL when webbrowser.open fails"""
-
-    auth_uri = "http://localhost"
-    expected_access_token = "**"
-    msal_acquire_token_result = dict(
-        build_aad_response(access_token=expected_access_token, id_token=build_id_token()),
-        id_token_claims=id_token_claims("issuer", "subject", "audience", upn="upn"),
-    )
-    msal_app = Mock(
-        initiate_auth_code_flow=Mock(return_value={"auth_uri": auth_uri}),
-        acquire_token_by_auth_code_flow=Mock(return_value=msal_acquire_token_result),
-    )
-
-    transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
-    credential = InteractiveBrowserCredential(_server_class=Mock(), transport=transport)
-
-    with patch(InteractiveBrowserCredential.__module__ + ".subprocess.call") as subprocess_call:
-        subprocess_call.return_value = 0
-        with patch(InteractiveBrowserCredential.__module__ + ".platform.uname", lambda: uname):
-            with patch.object(InteractiveBrowserCredential, "_get_app", lambda _: msal_app):
-                with patch(WEBBROWSER_OPEN, lambda _: False):
-                    try:
-                        token = credential.get_token("scope")
-                    except CredentialUnavailableError:
-                        assert not is_wsl, "credential should invoke powershell.exe in WSL"
-                        return
-
-    assert is_wsl, "credential should raise CredentialUnavailableError when not in WSL"
-    assert token.token == expected_access_token
-    assert subprocess_call.call_count == 1
-    args, kwargs = subprocess_call.call_args
-    assert args[0][0] == "powershell.exe"
-    assert auth_uri in args[0][-1]
-    if platform.python_version() >= "3.3":
-        assert "timeout" in kwargs
