@@ -15,16 +15,24 @@ stages:
   - stage: Build
     displayName: Build Conda Artifacts
     jobs:
-    - template: ../steps/build-conda-artifacts.yml
-      parameters:
-        name: CondaArtifacts
-        value:
-          - name: azure-core
-            common_root: azure
-            inBatch: ${{ parameters.release_azure_core }}
-          - name: azure-storage
-            common_root: azure
-            inBatch: ${{ parameters.release_azure_storage }}
+    - job: 'Build'
+      timeoutInMinutes: 90
+        
+      pool:
+        name: azsdk-pool-mms-ubuntu-2004-general
+        vmImage: MMSUbuntu20.04
+
+      steps:
+        - template: ../steps/build-conda-artifacts.yml
+          parameters:
+            name: CondaArtifacts
+            value:
+              - name: azure-core
+                common_root: azure
+                inBatch: ${{ parameters.release_azure_core }}
+              - name: azure-storage
+                common_root: azure
+                inBatch: ${{ parameters.release_azure_storage }}
 
   # - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
   #   - template: archetype-conda-release.yml
