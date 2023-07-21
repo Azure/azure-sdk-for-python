@@ -102,9 +102,9 @@ class AzureCliCredential:
         token = parse_token(output)
         if not token:
             sanitized_output = sanitize_output(output)
-            message = "Unexpected output from Azure CLI: '{}'. \n"
+            message = f"Unexpected output from Azure CLI: '{sanitized_output}'. \n"
             "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-            "https://aka.ms/azsdk/python/identity/azclicredential/troubleshoot.".format(sanitized_output)
+            "https://aka.ms/azsdk/python/identity/azclicredential/troubleshoot."
             if self._is_chained:
                 raise CredentialUnavailableError(message=message)
             raise ClientAuthenticationError(message=message)
