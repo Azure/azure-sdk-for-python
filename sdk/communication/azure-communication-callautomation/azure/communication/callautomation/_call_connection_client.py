@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Optional, List, Union, Dict
+from typing import TYPE_CHECKING, Optional, List, Union
 from urllib.parse import urlparse
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
