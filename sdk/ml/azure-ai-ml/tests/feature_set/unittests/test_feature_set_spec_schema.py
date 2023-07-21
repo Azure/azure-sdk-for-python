@@ -15,7 +15,7 @@ from azure.ai.ml.exceptions import ValidationException
 @pytest.mark.data_experiences_test
 class TestFeatureSetSchema:
     def test_feature_set_spec_load(self) -> None:
-        spec_path = "./tests/test_configs/feature_set/spec"
+        spec_path = "./tests/test_configs/feature_set"
         featureset_spec_contents = read_feature_set_metadata_contents(path=spec_path)
         featureset_spec_yaml_path = Path(spec_path, "FeatureSetSpec.yaml")
         fspec = FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)
