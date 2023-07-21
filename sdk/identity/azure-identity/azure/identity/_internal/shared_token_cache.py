@@ -118,16 +118,17 @@ class SharedTokenCacheBase(ABC):
         # default cache exists, the user must have created it earlier. If it's unencrypted, the user must
         # have allowed that.
         cache_options = self._cache_persistence_options or TokenCachePersistenceOptions(allow_unencrypted_storage=True)
-        is_platform_supported = self.supported()
+        if not self.supported():
+            raise CredentialUnavailableError(message="Shared token cache is not supported on this platform.")
 
-        if not self._cache and is_platform_supported and not is_cae:
+        if not self._cache and not is_cae:
             try:
                 self._cache = _load_persistent_cache(cache_options, cache_suffix=CACHE_NON_CAE_SUFFIX)
                 self._client._cache = self._cache  # pylint:disable=protected-access
             except Exception:  # pylint:disable=broad-except
                 return None
 
-        if not self._cae_cache and is_platform_supported and is_cae:
+        if not self._cae_cache and is_cae:
             try:
                 self._cae_cache = _load_persistent_cache(cache_options, cache_suffix=CACHE_CAE_SUFFIX)
                 self._client._cae_cache = self._cae_cache  # pylint:disable=protected-access
@@ -244,9 +245,9 @@ class SharedTokenCacheBase(ABC):
 
         return None
 
-    def _get_refresh_tokens(self, account, is_cae: bool = False):
+    def _get_refresh_tokens(self, account, is_cae: bool = False) -> List[str]:
         if "home_account_id" not in account:
-            return None
+            return []
 
         cache = self._cae_cache if is_cae else self._cache
         try:

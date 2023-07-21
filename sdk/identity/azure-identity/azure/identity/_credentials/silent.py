@@ -73,22 +73,24 @@ class SilentAuthenticationCredential:
 
         return self._acquire_token_silent(*scopes, **kwargs)
 
-    def _initialize_cache(self, is_cae: bool = False) -> TokenCache:
+    def _initialize_cache(self, is_cae: bool = False) -> Optional[TokenCache]:
 
         # If no cache options were provided, the default cache will be used. This credential accepts the
         # user's default cache regardless of whether it's encrypted. It doesn't create a new cache. If the
         # default cache exists, the user must have created it earlier. If it's unencrypted, the user must
         # have allowed that.
         cache_options = self._cache_persistence_options or TokenCachePersistenceOptions(allow_unencrypted_storage=True)
-        is_platform_supported = platform.system() in {"Darwin", "Linux", "Windows"}
 
-        if not self._cache and is_platform_supported and not is_cae:
+        if platform.system() not in {"Darwin", "Linux", "Windows"}:
+            raise CredentialUnavailableError(message="Shared token cache is not supported on this platform.")
+
+        if not self._cache and not is_cae:
             try:
                 self._cache = _load_persistent_cache(cache_options, cache_suffix=CACHE_NON_CAE_SUFFIX)
             except Exception:  # pylint:disable=broad-except
                 return None
 
-        if not self._cae_cache and is_platform_supported and is_cae:
+        if not self._cae_cache and is_cae:
             try:
                 self._cae_cache = _load_persistent_cache(cache_options, cache_suffix=CACHE_CAE_SUFFIX)
             except Exception:  # pylint:disable=broad-except
