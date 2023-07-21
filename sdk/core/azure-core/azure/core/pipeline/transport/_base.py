@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import abc
-from collections.abc import MutableMapping
 from contextlib import AbstractContextManager
 from email.message import Message
 import json
@@ -47,6 +46,8 @@ from typing import (
     Type,
     Dict,
     List,
+    Sequence,
+    MutableMapping,
 )
 
 from http.client import HTTPResponse as _HTTPResponse
@@ -68,7 +69,7 @@ from ...utils._pipeline_transport_rest_shared import (
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 PipelineType = TypeVar("PipelineType")
-DataType = Optional[Union[bytes, Dict[str, Union[str, int]]]]
+DataType = Union[bytes, str, Dict[str, Union[str, int]]]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -132,7 +133,7 @@ class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HT
     """An http sender ABC."""
 
     @abc.abstractmethod
-    def send(self, request: HTTPRequestType, **kwargs) -> HTTPResponseType:
+    def send(self, request: HTTPRequestType, **kwargs: Any) -> HTTPResponseType:
         """Send the request using this HTTP sender.
 
         :param request: The pipeline request object
@@ -142,11 +143,11 @@ class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HT
         """
 
     @abc.abstractmethod
-    def open(self):
+    def open(self) -> None:
         """Assign new session if one does not already exist."""
 
     @abc.abstractmethod
-    def close(self):
+    def close(self) -> None:
         """Close the session if it is not externally owned."""
 
     def sleep(self, duration: float) -> None:
@@ -193,15 +194,15 @@ class HttpRequest:
     ) -> None:
         self.method = method
         self.url = url
-        self.headers = case_insensitive_dict(headers)
-        self.files = files
-        self.data = data
-        self.multipart_mixed_info: Optional[Tuple] = None
+        self.headers: MutableMapping[str, str] = case_insensitive_dict(headers)
+        self.files: Optional[Any] = files
+        self.data: Optional[DataType] = data
+        self.multipart_mixed_info: Optional[Tuple[Sequence[Any], Sequence[Any], str, Dict[str, Any]]] = None
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
 
-    def __deepcopy__(self, memo=None):
+    def __deepcopy__(self, memo: Optional[Dict[int, Any]] = None) -> "HttpRequest":
         try:
             data = copy.deepcopy(self.body, memo)
             files = copy.deepcopy(self.files, memo)
@@ -224,16 +225,16 @@ class HttpRequest:
         return {}
 
     @property
-    def body(self) -> DataType:
+    def body(self) -> Optional[DataType]:
         """Alias to data.
 
-        :rtype: bytes or dict
+        :rtype: bytes or str or dict or None
         :return: The body of the request.
         """
         return self.data
 
     @body.setter
-    def body(self, value: DataType):
+    def body(self, value: Optional[DataType]) -> None:
         self.data = value
 
     @staticmethod
@@ -257,7 +258,7 @@ class HttpRequest:
         """
         return _format_parameters_helper(self, params)
 
-    def set_streamed_data_body(self, data):
+    def set_streamed_data_body(self, data: Any) -> None:
         """Set a streamable data body.
 
         :param data: The request field data.
@@ -270,7 +271,7 @@ class HttpRequest:
         self.data = data
         self.files = None
 
-    def set_text_body(self, data):
+    def set_text_body(self, data: str) -> None:
         """Set a text as body of the request.
 
         :param data: A text to send as body.
@@ -283,7 +284,7 @@ class HttpRequest:
             self.headers["Content-Length"] = str(len(self.data))
         self.files = None
 
-    def set_xml_body(self, data):
+    def set_xml_body(self, data: Any) -> None:
         """Set an XML element tree as the body of the request.
 
         :param data: The request field data.
@@ -292,12 +293,12 @@ class HttpRequest:
         if data is None:
             self.data = None
         else:
-            bytes_data = ET.tostring(data, encoding="utf8")
+            bytes_data: bytes = ET.tostring(data, encoding="utf8")
             self.data = bytes_data.replace(b"encoding='utf8'", b"encoding='utf-8'")
             self.headers["Content-Length"] = str(len(self.data))
         self.files = None
 
-    def set_json_body(self, data):
+    def set_json_body(self, data: Any) -> None:
         """Set a JSON-friendly object as the body of the request.
 
         :param data: A JSON serializable object
@@ -310,7 +311,7 @@ class HttpRequest:
             self.headers["Content-Length"] = str(len(self.data))
         self.files = None
 
-    def set_formdata_body(self, data=None):
+    def set_formdata_body(self, data: Optional[Dict[str, str]] = None) -> None:
         """Set form-encoded data as the body of the request.
 
         :param data: The request field data.
@@ -327,7 +328,7 @@ class HttpRequest:
             self.files = {f: self._format_data(d) for f, d in data.items() if d is not None}
             self.data = None
 
-    def set_bytes_body(self, data):
+    def set_bytes_body(self, data: bytes) -> None:
         """Set generic bytes as the body of the request.
 
         Will set content-length.
@@ -340,7 +341,7 @@ class HttpRequest:
         self.data = data
         self.files = None
 
-    def set_multipart_mixed(self, *requests: "HttpRequest", **kwargs) -> None:
+    def set_multipart_mixed(self, *requests: "HttpRequest", **kwargs: Any) -> None:
         """Set the part of a multipart/mixed.
 
         Only supported args for now are HttpRequest objects.
@@ -407,7 +408,7 @@ class _HttpResponseBase:
         internal_response: Any,
         block_size: Optional[int] = None,
     ) -> None:
-        self.request = request
+        self.request: HttpRequest = request
         self.internal_response = internal_response
         self.status_code: Optional[int] = None
         self.headers: MutableMapping[str, str] = {}
@@ -444,7 +445,7 @@ class _HttpResponseBase:
         self,
         message: Message,
         http_response_type: Type["_HttpResponseBase"],
-        requests: List[HttpRequest],
+        requests: Sequence[HttpRequest],
     ) -> List["HttpResponse"]:
         """Rebuild an HTTP response from pure string.
 
@@ -477,13 +478,13 @@ class _HttpResponseBase:
         if not self.status_code or self.status_code >= 400:
             raise HttpResponseError(response=self)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         content_type_str = ", Content-Type: {}".format(self.content_type) if self.content_type else ""
         return "<{}: {} {}{}>".format(type(self).__name__, self.status_code, self.reason, content_type_str)
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
-    def stream_download(self, pipeline: PipelineType, **kwargs) -> Iterator[bytes]:
+    def stream_download(self, pipeline: PipelineType, **kwargs: Any) -> Iterator[bytes]:
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download

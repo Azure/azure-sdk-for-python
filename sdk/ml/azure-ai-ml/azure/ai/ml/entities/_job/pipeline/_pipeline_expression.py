@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
 from azure.ai.ml._utils.utils import dump_yaml_to_file, get_all_data_binding_expressions, load_yaml
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, DefaultOpenEncoding
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 from azure.ai.ml.exceptions import UserErrorException
 
@@ -546,13 +546,13 @@ class PipelineExpression(PipelineExpressionMixin):
     def _create_component(self):
         def _generate_python_file(_folder: Path) -> None:
             _folder.mkdir()
-            with open(_folder / "expression_component.py", "w") as _f:
+            with open(_folder / "expression_component.py", "w", encoding=DefaultOpenEncoding.WRITE) as _f:
                 _f.write(self._component_code)
 
         def _generate_yaml_file(_path: Path) -> None:
             _data_folder = Path(__file__).parent / "data"
             # update YAML content from template and dump
-            with open(_data_folder / "expression_component_template.yml", "r") as _f:
+            with open(_data_folder / "expression_component_template.yml", "r", encoding=DefaultOpenEncoding.READ) as _f:
                 _data = load_yaml(_f)
             _data["display_name"] = f"Expression: {self.expression}"
             _data["inputs"] = {}
