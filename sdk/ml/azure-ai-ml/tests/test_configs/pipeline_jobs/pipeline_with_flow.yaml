@@ -1,0 +1,33 @@
+type: pipeline
+
+name: simplePipelineJobWithFlow
+description: The hello world pipeline job with flow
+
+compute: "azureml:cpu-cluster"
+
+inputs:
+  job_data:
+    type: uri_file
+    path: "../test_data/flow_input_data.jsonl"
+
+jobs:
+  # inline flow not supported to avoid letting user providing inputs/outputs port
+  anonymous_flow:
+    type: flow
+    component: ../flows/some_flow/flow.dag.yaml
+    inputs:
+      data: ${{parent.inputs.job_data}}
+      groundtruth: "${data.answer}"
+      prediction: "${run.outputs.category}"
+      connections.node_name.connection: another_connection
+      connections.node_name.deployment_name: deployment_name
+
+  registered_flow:
+    type: flow
+    component: azureml:flow_name:flow_version
+    inputs:
+      data: ${{parent.inputs.job_data}}
+      groundtruth: "${data.answer}"
+      prediction: "${run.outputs.category}"
+      connections.node_name.connection: another_connection
+      connections.node_name.deployment_name: deployment_name

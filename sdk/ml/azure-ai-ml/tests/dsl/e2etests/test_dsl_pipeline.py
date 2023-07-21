@@ -3284,3 +3284,69 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         job_res = client.jobs.create_or_update(job=pipeline_job, experiment_name="test_unknown_field")
         assert job_res.jobs["node"].unknown_field == "${{parent.inputs.input}}"
+
+    def test_flow_in_pipeline_sdk(self, client):
+        # option 1: with a component spec
+        # then  this component spec won't fit standard component schema, like user can't specify input/output ports
+        flow_component = load_component("./tests/test_configs/components/flow_component.yml")
+        # type: Flow
+
+        # option 2: no component spec
+        # then we'd better avoid extra parameters like columns_mapping
+        flow_component = load_component(
+            source="./tests/test_configs/flows/some_flow/flow.dag.yaml",
+            # name & version are optional just like in regular components
+            name="custom_name",
+            version="custom_version",
+            # we can remove this parameter if we propose that only default variant is supported in pipeline
+            # variant="custom_variant",
+            # this is just the default value, so it should be okay to not specify it here
+            # columns_mapping={
+            #     "groundtruth": "${data.answer}",
+            # }
+        )
+        # type: Flow
+
+        @dsl.pipeline
+        def pipeline_with_anonymous_flow():
+            flow_node = flow_component(
+                data=Input(path="./tests/test_data/flow_input_data.jsonl"),
+                groundtruth="${data.answer}",
+                prediction="${run.outputs.category}",
+                connections={
+                    "node_name": {
+                        "connection": "another_connection",
+                        "deployment_name": "deployment_name",
+                    }
+                }
+            )
+            # TODO: how should we specify environment variables?
+            flow_node.environment_variables = {
+                "key": "value"
+            }
+
+            flow_params = {
+                "groundtruth": "${data.answer}",
+                "prediction": "${run.outputs.category}",
+                "connections": {
+                    "node_name": {
+                        "connection": "another_connection",
+                        "deployment_name": "deployment_name",
+                    }
+                }
+            }
+            flow_node_with_the_same_settings = flow_component(**flow_params)
+            flow_node_with_the_same_settings_2 = flow_component(**flow_params)
+
+        created_flow_component = client.components.create_or_update(flow_component)
+        # can we make its type Flow?
+
+        @dsl.pipeline
+        def pipeline_with_registered_flow():
+            flow_node = created_flow_component(
+                input_data=Input(path="./tests/test_data/flow_input_data.txt"),
+            )
+
+    def test_flow_in_pipeline_yaml(self, client):
+        from azure.ai.ml import load_job
+        pipeline = load_job("./tests/test_configs/pipeline_jobs/pipeline_with_flow.yaml")
