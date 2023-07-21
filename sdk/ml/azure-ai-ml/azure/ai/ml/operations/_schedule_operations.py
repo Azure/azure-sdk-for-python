@@ -279,6 +279,9 @@ class ScheduleOperations(_ScopeDependentOperations):
         self, schedule: MonitorSchedule
     ) -> None:
         # resolve target ARM ID
+        import debugpy
+        debugpy.connect(("localhost", 5678))
+        debugpy.breakpoint()
         model_inputs_name, model_outputs_name = None, None
         model_inputs_version, model_outputs_version = None, None
         mdc_input_enabled, mdc_output_enabled = False, False
@@ -294,8 +297,8 @@ class ScheduleOperations(_ScopeDependentOperations):
                 model_inputs_version = in_reg.asset_version
                 model_outputs_name = out_reg.asset_name
                 model_outputs_version = out_reg.asset_version
-                mdc_input_enabled_str = deployment_data_collector.get("model_inputs").enabled
-                mdc_output_enabled_str = deployment_data_collector.get("model_outputs").enabled
+                mdc_input_enabled_str = deployment_data_collector.collections.get("model_inputs").enabled
+                mdc_output_enabled_str = deployment_data_collector.collections.get("model_outputs").enabled
             else:
                 model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
                 model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
@@ -332,8 +335,6 @@ class ScheduleOperations(_ScopeDependentOperations):
         # resolve ARM id for each signal and populate any defaults if needed
         for signal_name, signal in schedule.create_monitor.monitoring_signals.items():
             if signal.type == MonitorSignalType.CUSTOM:
-                if signal.data_window_size is None:
-                    signal.data_window_size = 7
                 for input_value in signal.input_datasets.values():
                     self._job_operations._resolve_job_input(input_value.input_dataset, schedule._base_path)
                     input_value.pre_processing_component = self._orchestrators.get_asset_arm_id(
