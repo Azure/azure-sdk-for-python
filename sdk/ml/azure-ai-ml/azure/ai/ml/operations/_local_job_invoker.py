@@ -292,9 +292,7 @@ class CommonRuntimeHelper:
         """Copy bootstrapper binary from the bootstrapper image to local machine.
 
         :param bootstrapper_info:
-        :type bootstrapper: Dict[str, str]
-        :return: bootstrapper binary path (.azureml-common-runtime/<job_name>/vm-bootstrapper)
-        :rtype: str
+        :type bootstrapper_info: Dict[str, str]
         """
         Path(self.common_runtime_temp_folder).mkdir(parents=True, exist_ok=True)
 
@@ -370,7 +368,7 @@ class CommonRuntimeHelper:
         """Check if bootstrapper process status is non-zero.
 
         :param bootstrapper_process: bootstrapper process
-        :type bootstrapper: subprocess.Popen
+        :type bootstrapper_process: subprocess.Popen
         :return: return_code
         :rtype: int
         """

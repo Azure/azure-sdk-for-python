@@ -107,7 +107,7 @@ class ForecastingJob(AutoMLTabular):
         :keyword time_column_name:
             The name of the time column. This parameter is required when forecasting to specify the datetime
             column in the input data used for building the time series and inferring its frequency.
-        :type time_column_name: str
+        :type time_column_name: Optional[str], optional
         :keyword forecast_horizon:
             The desired maximum forecast horizon in units of time-series frequency. The default value is 1.
 
@@ -115,13 +115,13 @@ class ForecastingJob(AutoMLTabular):
             should predict out. When task type is forecasting, this parameter is required. For more information on
             setting forecasting parameters, see `Auto-train a time-series forecast model <https://docs.microsoft.com/
             azure/machine-learning/how-to-auto-train-forecast>`_.
-        :type forecast_horizon: int or str
+        :type forecast_horizon: Optional[Union[str, int]], optional
         :keyword time_series_id_column_names:
             The names of columns used to group a timeseries.
             It can be used to create multiple series. If time series id column names is not defined or
             the identifier columns specified do not identify all the series in the dataset, the time series identifiers
             will be automatically created for your dataset.
-        :type time_series_id_column_names: str or list(str)
+        :type time_series_id_column_names: Optional[Union[str, List[str]]], optional
         :keyword target_lags:
             The number of past periods to lag from the target column. By default the lags are turned off.
 
@@ -153,9 +153,9 @@ class ForecastingJob(AutoMLTabular):
             #. We scan the PACF values from the beginning and the value before the first insignificant
                auto correlation will designate the lag. If first significant element (value correlate with
                itself) is followed by insignificant, the lag will be 0 and we will not use look back features.
-        :type target_lags: int, str, or list(int)
+        :type target_lags: Optional[Union[str, int, List[int]]], optional
         :keyword feature_lags: Flag for generating lags for the numeric features with 'auto' or None.
-        :type feature_lags: str or None
+        :type feature_lags: Optional[str], optional
         :keyword target_rolling_window_size:
             The number of past periods used to create a rolling window average of the target column.
 
@@ -164,18 +164,18 @@ class ForecastingJob(AutoMLTabular):
             when you only want to consider a certain amount of history when training the model.
             If set to 'auto', rolling window will be estimated as the last
             value where the PACF is more then the significance threshold. Please see target_lags section for details.
-        :type target_rolling_window_size: int, str or None
+        :type target_rolling_window_size: Optional[Union[int, str]], optional
         :keyword country_or_region_for_holidays: The country/region used to generate holiday features.
             These should be ISO 3166 two-letter country/region codes, for example 'US' or 'GB'.
-        :type country_or_region_for_holidays: str or None
+        :type country_or_region_for_holidays: Optional[str], optional
         :keyword use_stl: Configure STL Decomposition of the time-series target column.
                     use_stl can take three values: None (default) - no stl decomposition, 'season' - only generate
                     season component and season_trend - generate both season and trend components.
-        :type use_stl: str or None
+        :type use_stl: Optional[str], optional
         :keyword seasonality: Set time series seasonality as an integer multiple of the series frequency.
                     If seasonality is set to 'auto', it will be inferred.
                     If set to None, the time series is assumed non-seasonal which is equivalent to seasonality=1.
-        :type seasonality: int, str or None
+        :type seasonality: Optional[Union[int, str], optional
         :keyword short_series_handling_config:
             The parameter defining how if AutoML should handle short time series.
 
@@ -237,7 +237,7 @@ class ForecastingJob(AutoMLTabular):
             | False     | None                   | False              | None                             |
             +-----------+------------------------+--------------------+----------------------------------+
 
-        :type short_series_handling_config: str or None
+        :type short_series_handling_config: Optional[str], optional
         :keyword frequency: Forecast frequency.
 
             When forecasting, this parameter represents the period with which the forecast is desired,
@@ -248,7 +248,7 @@ class ForecastingJob(AutoMLTabular):
             The frequency needs to be a pandas offset alias.
             Please refer to pandas documentation for more information:
             https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#dateoffset-objects
-        :type frequency: str or None
+        :type frequency: Optional[str], optional
         :keyword target_aggregate_function: The function to be used to aggregate the time series target
                                             column to conform to a user specified frequency. If the
                                             target_aggregation_function is set, but the freq parameter
@@ -283,15 +283,15 @@ class ForecastingJob(AutoMLTabular):
                 |                |                             | aggregation function.                       |
                 +----------------+-----------------------------+---------------------------------------------+
 
-        :type target_aggregate_function: str or None
+        :type target_aggregate_function: Optional[str], optional
         :keyword cv_step_size:
             Number of periods between the origin_time of one CV fold and the next fold. For
             example, if `n_step` = 3 for daily data, the origin time for each fold will be
             three days apart.
-        :type cv_step_size: int or None
+        :type cv_step_size: Optional[int], optional
         :param features_unknown_at_forecast_time:
             The column of features/regressors that are available at training time but unknown at forecast time.
-        :type features_unknown_at_forecast_time: str or list(str)
+        :type features_unknown_at_forecast_time: Optional[Union[str, List[str]]], optional
         """
         self._forecasting_settings = self._forecasting_settings or ForecastingSettings()
 
@@ -370,17 +370,17 @@ class ForecastingJob(AutoMLTabular):
             Whether to enable or disable enforcing the ONNX-compatible models.
             The default is False. For more information about Open Neural Network Exchange (ONNX) and Azure Machine
             Learning, see this `article <https://docs.microsoft.com/azure/machine-learning/concept-onnx>`__.
-        :type: bool or None
+        :type enable_onnx_compatible: Optional[bool], optional
         :param enable_dnn_training:
             Whether to include DNN based models during model selection.
             However, the default is True for DNN NLP tasks, and it's False for all other AutoML tasks.
-        :type: bool or None
+        :type enable_dnn_training: Optional[bool], optional
         :param enable_model_explainability:
             Whether to enable explaining the best AutoML model at the end of all AutoML training iterations.
             For more information, see `Interpretability: model explanations in automated machine learning
             <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
             , defaults to None
-        :type: bool or None
+        :type enable_model_explainability: Optional[bool], optional
         :param enable_stack_ensemble:
             Whether to enable/disable StackEnsemble iteration.
             If `enable_onnx_compatible_models` flag is being set, then StackEnsemble iteration will be disabled.
@@ -389,29 +389,29 @@ class ForecastingJob(AutoMLTabular):
             For more information about ensembles, see `Ensemble configuration
             <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
             , defaults to None
-        :type: bool or None
+        :type enable_stack_ensemble: Optional[bool], optional
         :param enable_vote_ensemble:
             Whether to enable/disable VotingEnsemble iteration.
             For more information about ensembles, see `Ensemble configuration
             <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
             , defaults to None
-        :type: bool or None
+        :type enable_vote_ensemble: Optional[bool], optional
         :param stack_ensemble_settings:
             Settings for StackEnsemble iteration, defaults to None
-        :type: StackEnsembleSettings or None
+        :type stack_ensemble_settings: Optional[StackEnsembleSettings], optional
         :param ensemble_model_download_timeout:
             During VotingEnsemble and StackEnsemble model generation,
             multiple fitted models from the previous child runs are downloaded. Configure this parameter with a
             higher value than 300 secs, if more time is needed, defaults to None
-        :type: int or None
+        :type ensemble_model_download_timeout: Optional[int]
         :param allowed_training_algorithms:
             A list of model names to search for an experiment. If not specified,
             then all models supported for the task are used minus any specified in ``blocked_training_algorithms``
             or deprecated TensorFlow models, defaults to None
-        :type: list(str) or None
+        :type allowed_training_algorithms: Optional[List[str]], optional
         :param blocked_training_algorithms:
             A list of algorithms to ignore for an experiment, defaults to None
-        :type: list(str) or None
+        :type blocked_training_algorithms: Optional[List[str]], optional
         :param training_mode:
             [Experimental] The training mode to use.
             The possible values are-
@@ -423,7 +423,7 @@ class ForecastingJob(AutoMLTabular):
             * auto- Currently, it is same as non_distributed. In future, this might change.
 
             Note: This parameter is in public preview and may change in future.
-        :type: azure.ai.ml.constants.TabularTrainingMode, str or None
+        :type training_mode: Optional[Union[~azure.ai.ml.constants.TabularTrainingMode, str]], optional
         """
         super().set_training(
             enable_onnx_compatible_models=enable_onnx_compatible_models,

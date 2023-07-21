@@ -428,7 +428,7 @@ def get_arm_id_object_from_id(
     non-AzureML ARM id is passed in, an AzureResourceId will be returned.
 
     :param resource_id: the ARM Id to parse
-    :type arm_id: str
+    :type resource_id: str
     :raises ~azure.ai.ml.exceptions.ValidationException~: Raised if the ARM id is incorrectly formatted.
     :return: The parser for the given ARM Id
     :rtype: Union[AMLVersionedArmId, AMLNamedArmId, AzureResourceId]

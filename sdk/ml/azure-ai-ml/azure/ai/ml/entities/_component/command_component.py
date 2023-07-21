@@ -181,7 +181,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     def instance_count(self, value: int) -> None:
         """Sets the number of instances or nodes to be used by the compute target.
 
-        :param value: The number of instances or nodes to be used by the compute target. Defaults to 1.
+        :param value: The number of instances of nodes to be used by the compute target. Defaults to 1.
         :type value: int
         """
         if not value:

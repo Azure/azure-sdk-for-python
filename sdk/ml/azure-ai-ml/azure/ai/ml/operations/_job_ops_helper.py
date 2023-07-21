@@ -78,13 +78,13 @@ def _get_sorted_filtered_logs(
     return logs[previously_printed_index:]
 
 
-def _incremental_print(log, processed_logs, current_log_name, fileout) -> None:
+def _incremental_print(log: str, processed_logs: Dict[str, int], current_log_name: str, fileout) -> None:
     """Incremental print.
 
     :param log:
     :type log: str
     :param processed_logs: The record of how many lines have been written for each log file
-    :type log: dict[str, int]
+    :type processed_logs: dict[str, int]
     :param current_log_name: the file name being read out, used in header writing and accessing processed_logs
     :type current_log_name: str
     :param fileout:
