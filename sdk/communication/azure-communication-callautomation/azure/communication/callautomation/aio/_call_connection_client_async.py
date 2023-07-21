@@ -12,7 +12,8 @@ from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 from .._utils import (
     serialize_phone_identifier,
-    serialize_identifier
+    serialize_identifier,
+    process_repeatability_first_sent
 )
 from .._models import (
     CallParticipant,
@@ -174,6 +175,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
 
         if is_for_everyone:
+            process_repeatability_first_sent(kwargs)
             await self._call_connection_client.terminate_call(
                 self._call_connection_id,
                 **kwargs)
@@ -220,6 +222,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         voip_headers: Optional[Dict[str, str]] = None,
         operation_context: Optional[str] = None,
         callback_url_override: Optional[str] = None,
+        transferee: Optional['CommunicationIdentifier'] = None,
         **kwargs
     ) -> TransferCallResult:
         """Transfer the call to a participant.
@@ -246,6 +249,11 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             target_participant=serialize_identifier(target_participant),
             custom_context=user_custom_context, operation_context=operation_context,
             callback_uri_override=callback_url_override)
+
+        process_repeatability_first_sent(kwargs)
+
+        if transferee is not None:
+            request.transferee = serialize_identifier(transferee)
 
         return await self._call_connection_client.transfer_to_participant(
             self._call_connection_id, request,
@@ -290,6 +298,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             operation_context=operation_context,
             callback_uri_override=callback_url_override)
 
+        process_repeatability_first_sent(kwargs)
+
         response = await self._call_connection_client.add_participant(
             self._call_connection_id,
             add_participant_request,
@@ -321,6 +331,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         remove_participant_request = RemoveParticipantRequest(
             participant_to_remove=serialize_identifier(target_participant),
             operation_context=operation_context, callback_uri_override=callback_url_override)
+
+        process_repeatability_first_sent(kwargs)
 
         response = await self._call_connection_client.remove_participant(
             self._call_connection_id,
@@ -643,6 +655,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         mute_participants_request = MuteParticipantsRequest(
             target_participants=[serialize_identifier(target_participant)],
             operation_context=operation_context)
+
+        process_repeatability_first_sent(kwargs)
 
         response =  await self._call_connection_client.mute(
             self._call_connection_id,

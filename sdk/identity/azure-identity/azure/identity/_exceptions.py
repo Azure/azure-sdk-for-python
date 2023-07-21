@@ -25,11 +25,7 @@ class AuthenticationRequiredError(CredentialUnavailableError):
     """
 
     def __init__(
-            self,
-            scopes: Iterable[str],
-            message: Optional[str] = None,
-            claims: Optional[str] = None,
-            **kwargs: Any
+        self, scopes: Iterable[str], message: Optional[str] = None, claims: Optional[str] = None, **kwargs: Any
     ) -> None:
         self._claims = claims
         self._scopes = scopes

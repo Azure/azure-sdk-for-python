@@ -30,22 +30,22 @@ def import_job(
     """Create a Import object which can be used inside dsl.pipeline as a
     function and can also be created as a standalone import job.
 
-    :param name: Name of the import job or component created
+    :keyword name: Name of the import job or component created
     :type name: str
-    :param description: a friendly description of the import
+    :keyword description: a friendly description of the import
     :type description: str
-    :param tags: Tags to be attached to this import
+    :keyword tags: Tags to be attached to this import
     :type tags: Dict
-    :param display_name: a friendly name
+    :keyword display_name: a friendly name
     :type display_name: str
-    :param experiment_name:  Name of the experiment the job will be created under,
+    :keyword experiment_name:  Name of the experiment the job will be created under,
         if None is provided, default will be set to current directory name. Will be ignored as a pipeline step.
     :type experiment_name: str
-    :param source: input source parameters used by this import.
+    :keyword source: input source parameters used by this import.
     :type source: ImportSource
-    :param output: the output of this import
+    :keyword output: the output of this import
     :type output: Output
-    :param is_deterministic: Specify whether the command will return same output given same input.
+    :keyword is_deterministic: Specify whether the command will return same output given same input.
         If a command (component) is deterministic, when use it as a node/step in a pipeline,
         it will reuse results from a previous submitted job in current workspace which has same inputs and settings.
         In this case, this step will not use any compute resource.

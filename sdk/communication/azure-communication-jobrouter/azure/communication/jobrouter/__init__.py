@@ -64,6 +64,8 @@ from ._models import (
     RouterJobItem,
     JobMatchingMode,
     ScheduleAndSuspendMode,
+    QueueSelectorAttachment,
+    WorkerSelectorAttachment,
 )
 
 
@@ -98,6 +100,7 @@ __all__ = [
     'PassThroughWorkerSelectorAttachment',
     'QueueLengthExceptionTrigger',
     'QueueWeightedAllocation',
+    'QueueSelectorAttachment',
     'ReclassifyExceptionAction',
     'RoundRobinMode',
     'RouterJob',
@@ -128,7 +131,8 @@ __all__ = [
     'WaitTimeExceptionTrigger',
     'WeightedAllocationQueueSelectorAttachment',
     'WeightedAllocationWorkerSelectorAttachment',
-    'WorkerWeightedAllocation'
+    'WorkerWeightedAllocation',
+    'WorkerSelectorAttachment'
 ]
 
 __version__ = VERSION

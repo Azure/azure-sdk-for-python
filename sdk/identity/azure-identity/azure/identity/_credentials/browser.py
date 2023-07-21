@@ -74,6 +74,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
         else:
             self._parsed_url = None
 
+        self._is_chained = kwargs.pop("is_chained", False)
         self._login_hint = kwargs.pop("login_hint", None)
         self._timeout = kwargs.pop("timeout", 300)
         client_id = kwargs.pop("client_id", DEVELOPER_SIGN_ON_CLIENT_ID)
@@ -94,13 +95,17 @@ class InteractiveBrowserCredential(InteractiveCredential):
                 timeout=self._timeout,
                 prompt="select_account",
                 port=port,
-                parent_window_handle=self._parent_window_handle
+                parent_window_handle=self._parent_window_handle,
             )
         except socket.error as ex:
             raise CredentialUnavailableError(message="Couldn't start an HTTP server.") from ex
         if "access_token" not in result and "error_description" in result:
+            if self._is_chained:
+                raise CredentialUnavailableError(message=result["error_description"])
             raise ClientAuthenticationError(message=result.get("error_description"))
         if "access_token" not in result:
+            if self._is_chained:
+                raise CredentialUnavailableError(message="Failed to authenticate user")
             raise ClientAuthenticationError(message="Failed to authenticate user")
 
         # base class will raise for other errors

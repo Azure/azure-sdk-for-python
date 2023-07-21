@@ -122,8 +122,6 @@ class OperationOrchestrator(object):
         :type register_asset: Optional[bool]
         :param sub_workspace_resource:
         :type sub_workspace_resource: Optional[bool]
-        :param arm_id_cache_dict: A dict to cache the ARM id of input asset.
-        :type arm_id_cache_dict: Optional[Dict[str, str]]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if asset's ID cannot be converted
             or asset cannot be successfully registered.
         :return: The ARM Id or entity object

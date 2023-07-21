@@ -107,8 +107,12 @@ class ChainedTokenCredential:
 
         within_credential_chain.set(False)
         attempts = _get_error_message(history)
-        message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts \
-                  + "\nTo mitigate this issue, please refer to the troubleshooting guidelines here at " \
-                    "https://aka.ms/azsdk/python/identity/defaultazurecredential/troubleshoot."
+        message = (
+            self.__class__.__name__
+            + " failed to retrieve a token from the included credentials."
+            + attempts
+            + "\nTo mitigate this issue, please refer to the troubleshooting guidelines here at "
+            "https://aka.ms/azsdk/python/identity/defaultazurecredential/troubleshoot."
+        )
         _LOGGER.warning(message)
         raise ClientAuthenticationError(message=message)

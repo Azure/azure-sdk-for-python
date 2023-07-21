@@ -51,9 +51,7 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
         """Close the credential's transport session."""
         await self._client.close()
 
-    async def _acquire_token_silently(
-        self, *scopes: str, **kwargs: Any
-    ) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
