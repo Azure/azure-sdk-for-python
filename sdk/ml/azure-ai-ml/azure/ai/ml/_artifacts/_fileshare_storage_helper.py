@@ -308,7 +308,9 @@ def delete(root_client: Union[ShareDirectoryClient, ShareFileClient]) -> None:
     deleted before the upload can be re-attempted.
     """
     if isinstance(root_client, ShareFileClient):
-        return root_client.delete_file()
+        root_client.delete_file()
+        return
+
     all_contents = list(root_client.list_directories_and_files())
     len_contents = sum(1 for _ in all_contents)
     if len_contents > 0:
@@ -318,7 +320,7 @@ def delete(root_client: Union[ShareDirectoryClient, ShareFileClient]) -> None:
                 delete(f_client)
             else:
                 root_client.delete_file(f["name"])
-    return root_client.delete_directory()
+    root_client.delete_directory()
 
 
 def recursive_download(
