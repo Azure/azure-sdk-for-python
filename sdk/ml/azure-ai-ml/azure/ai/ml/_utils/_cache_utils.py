@@ -144,6 +144,9 @@ class CachedNodeResolver(object):
 
         This function assumes that there is no change in code folder among hash calculations, which is true during
         resolution of 1 root pipeline component/job.
+
+        :return: The hash of the component
+        :rtype: str
         """
         if not isinstance(component, Component):
             # this shouldn't happen; handle it in case invalid call is made outside this class
@@ -170,6 +173,9 @@ class CachedNodeResolver(object):
 
         This function will calculate the hash based on the component's code folder if the component has code, so it's
         unique even if code folder is changed.
+
+        :return: The hash of the component
+        :rtype: str
         """
         if not isinstance(component, Component):
             # this shouldn't happen; handle it in case invalid call is made outside this class
@@ -210,11 +216,19 @@ class CachedNodeResolver(object):
         )
 
     def _get_on_disk_cache_path(self, on_disk_hash: str) -> Path:
-        """Get the on disk cache path for a component."""
+        """Get the on disk cache path for a component.
+
+        :return: The path to the disk cache
+        :rtype: Path
+        """
         return self._on_disk_cache_dir.joinpath(on_disk_hash)
 
     def _load_from_on_disk_cache(self, on_disk_hash: str) -> Optional[str]:
-        """Load component arm id from on disk cache."""
+        """Load component arm id from on disk cache.
+
+        :return: The cached component arm id if reading was successful, None otherwise
+        :rtype: Optional[str]
+        """
         # on-disk cache will expire in a new SDK version
         on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
         if on_disk_cache_path.is_file() and time.time() - on_disk_cache_path.stat().st_ctime < EXPIRE_TIME_IN_SECONDS:
@@ -292,7 +306,11 @@ class CachedNodeResolver(object):
 
     def _resolve_cache_contents_from_disk(self, cache_contents_to_resolve: List[_CacheContent]) -> List[_CacheContent]:
         """Check on-disk cache to resolve cache contents in cache_contents_to_resolve and return unresolved cache
-        contents."""
+        contents.
+
+        :return: Unresolved cache contents
+        :rtype: List[_CacheContent]
+        """
         # Note that we should recalculate the hash based on code for local cache, as
         # we can't assume that the code folder won't change among dependency
         # On-disk hash calculation can be slow as it involved data copying and artifact downloading.

@@ -143,6 +143,8 @@ class _PipelineNodeFactory:
         """Get the function to create a new instance of the node.
 
         param _type: The type of the node. type _type: str
+        :return: The create instance function
+        :rtype: Callable[..., BaseNode]
         """
         return self._get_func(_type, self._create_instance_funcs)
 
@@ -152,6 +154,8 @@ class _PipelineNodeFactory:
         """Get the function to load a node from a rest object.
 
         param _type: The type of the node. type _type: str
+        :return: The `_load_from_rest_object` function
+        :rtype: Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]]
         """
         return self._get_func(_type, self._load_from_rest_object_funcs)
 
@@ -203,6 +207,8 @@ class _PipelineNodeFactory:
         :type data: dict
         :keyword _type: The type of the node. If not specified, it will be inferred from the data.
         :type _type: str
+        :return: The node
+        :rtype: Union[BaseNode, AutoMLJob]
         """
         if _type is None:
             _type = data[CommonYamlFields.TYPE] if CommonYamlFields.TYPE in data else NodeType.COMMAND
@@ -235,6 +241,8 @@ class _PipelineNodeFactory:
         :type obj: dict
         :keyword _type: The type of the node. If not specified, it will be inferred from the data.
         :type _type: str
+        :return: The node
+        :rtype: Union[BaseNode, AutoMLJob, ControlFlowNode]
         """
 
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer

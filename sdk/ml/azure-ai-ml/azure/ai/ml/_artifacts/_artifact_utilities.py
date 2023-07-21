@@ -193,7 +193,11 @@ def upload_artifact(
     ignore_file: IgnoreFile = IgnoreFile(None),
     sas_uri=None,
 ) -> ArtifactStorageInfo:
-    """Upload local file or directory to datastore."""
+    """Upload local file or directory to datastore.
+
+    :return: The artifact storage info
+    :rtype: ArtifactStorageInfo
+    """
     if sas_uri:
         storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
     else:
@@ -256,7 +260,11 @@ def download_artifact_from_storage_url(
     datastore_operation: DatastoreOperations,
     datastore_name: Optional[str],
 ) -> str:
-    """Download datastore blob URL to local file or directory."""
+    """Download datastore blob URL to local file or directory.
+
+    :return: Path that files were written to
+    :rtype: str
+    """
     datastore_name = _get_datastore_name(datastore_name=datastore_name)
     datastore_info = get_datastore_info(datastore_operation, datastore_name)
     starts_with = get_artifact_path_from_storage_url(

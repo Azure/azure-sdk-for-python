@@ -44,7 +44,11 @@ class ImportSource(ABC):
 
     @classmethod
     def _from_job_inputs(cls, job_inputs: Dict[str, str]) -> "ImportSource":
-        """Translate job inputs to import source."""
+        """Translate job inputs to import source.
+
+        :return: The import source
+        :rtype: ImportSource
+        """
         type = job_inputs.get("type")  # pylint: disable=redefined-builtin
         connection = job_inputs.get("connection")
         query = job_inputs.get("query")
@@ -99,7 +103,11 @@ class FileImportSource(ImportSource):
         self.path = path
 
     def _to_job_inputs(self) -> Dict[str, Optional[str]]:
-        """Translate source to command Inputs."""
+        """Translate source to command Inputs.
+
+        :return: The job inputs dict
+        :rtype: Dict[str, str]
+        """
         inputs = {
             "type": self.type,
             "connection": self.connection,

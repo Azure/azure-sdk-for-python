@@ -166,6 +166,8 @@ class ScheduleOperations(_ScopeDependentOperations):
 
         :param name: Schedule name.
         :type name: str
+        :return: A poller for deletion status
+        :rtype: LROPoller[None]
         """
         poller = self.service_client.begin_delete(
             resource_group_name=self._operation_scope.resource_group_name,

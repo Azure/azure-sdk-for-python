@@ -845,7 +845,11 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         return CommandSchema(context=context)
 
     def __call__(self, *args, **kwargs) -> "Command":
-        """Call Command as a function will return a new instance each time."""
+        """Call Command as a function will return a new instance each time.
+
+        :return: A Command node
+        :rtype: Command
+        """
         if isinstance(self._component, CommandComponent):
             # call this to validate inputs
             node = self._component(*args, **kwargs)

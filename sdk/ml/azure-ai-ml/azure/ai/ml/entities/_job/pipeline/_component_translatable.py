@@ -202,7 +202,11 @@ class ComponentTranslatableMixin:
         pipeline_job_dict=None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> Input:
-        """Convert a single job input value to component input."""
+        """Convert a single job input value to component input.
+
+        :return: The Component Input
+        :rtype: Input
+        """
         pipeline_job_dict = pipeline_job_dict or {}
         input_variable = {}
 
@@ -269,7 +273,11 @@ class ComponentTranslatableMixin:
         **kwargs,  # pylint: disable=unused-argument
     ) -> Output:
         """Translate output value to Output and infer component output type
-        from linked pipeline output, its original type or default type."""
+        from linked pipeline output, its original type or default type.
+
+        :return: The output object
+        :rtype: Output
+        """
         pipeline_job_dict = pipeline_job_dict or {}
         if not pipeline_job_dict or output is None:
             try:

@@ -205,7 +205,11 @@ class FileStorageClient:
                 )
 
     def exists(self, asset_id: str) -> bool:
-        """Check if file or directory already exists in fileshare directory."""
+        """Check if file or directory already exists in fileshare directory.
+
+        :return: True if the file or directory exists, False otherwise
+        :rtype: bool
+        """
         # get dictionary of asset ids and if each asset is a file or directory (e.g. {"ijd930j23d8": True})
         default_directory_items = {
             item["name"]: item["is_directory"] for item in self.directory_client.list_directories_and_files()

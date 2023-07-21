@@ -425,6 +425,8 @@ def _resolve_path(
     :type base_path: Union[str, os.PathLike]
     :param input: Input to be deserialized. Will be either dictionary of file contents or path to file.
     :type input: Union[str, os.PathLike, Dict[str, str]]
+    :return: The resolved path
+    :rtype: Path
     """
 
     path = Path(input)

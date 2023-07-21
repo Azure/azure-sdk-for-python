@@ -168,7 +168,11 @@ class InputOutputBase(ABC):
             )
 
     def _data_binding(self) -> str:
-        """Return data binding string representation for this input/output."""
+        """Return data binding string representation for this input/output.
+
+        :return: The data binding string
+        :rtype: str
+        """
         raise NotImplementedError()
 
     # Why did we have this function? It prevents the DictMixin from being applied.
@@ -346,7 +350,8 @@ class NodeInput(InputOutputBase):
         )
 
     def _get_data_owner(self) -> Optional["BaseNode"]:
-        """Return the node if Input is from another node's output. Returns None if for literal value.
+        """Gets the data owner of the node
+
         Note: This only works for @pipeline, not for YAML pipeline.
 
         Note: Inner step will be returned as the owner when node's input is from sub pipeline's output.
@@ -361,6 +366,9 @@ class NodeInput(InputOutputBase):
                 node = copy_files_component_func(input_dir=pipeline_node.outputs.output_dir)
                 owner = node.inputs.input_dir._get_data_owner()
                 assert owner == pipeline_node.nodes[0]
+
+        :return: The node if Input is from another node's output. Returns None for literal value.
+        :rtype: Optional[BaseNode]
         """
         from azure.ai.ml.entities import Pipeline
         from azure.ai.ml.entities._builders import BaseNode
@@ -607,7 +615,11 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         self._group_names = group_names if group_names else []
 
     def result(self):
-        """Return original value of pipeline input."""
+        """Return original value of pipeline input.
+
+        :return: The original value of pipeline input
+        :rtype: Any
+        """
         # example:
         #
         # @pipeline
@@ -654,7 +666,11 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         return f"${{{{parent.inputs.{full_name}}}}}"
 
     def _to_input(self) -> Input:
-        """Convert pipeline input to component input for pipeline component."""
+        """Convert pipeline input to component input for pipeline component.
+
+        :return: The component input
+        :rtype: Input
+        """
         if self._data is None:
             # None data means this input is not configured.
             return self._meta

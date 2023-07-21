@@ -263,7 +263,11 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         return validation_result
 
     def _customized_validate(self) -> MutableValidationResult:
-        """Validate that all provided inputs and parameters are valid for current pipeline and components in it."""
+        """Validate that all provided inputs and parameters are valid for current pipeline and components in it.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
+        """
         validation_result = super(PipelineJob, self)._customized_validate()
 
         if isinstance(self.component, PipelineComponent):

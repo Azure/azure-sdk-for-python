@@ -52,7 +52,11 @@ class ConditionNode(ControlFlowNode):
 
     @classmethod
     def _create_instance_from_schema_dict(cls, loaded_data: Dict) -> "ConditionNode":
-        """Create a condition node instance from schema parsed dict."""
+        """Create a condition node instance from schema parsed dict.
+
+        :return: The ConditionNode node
+        :rtype: ConditionNode
+        """
         return cls(**loaded_data)
 
     @property

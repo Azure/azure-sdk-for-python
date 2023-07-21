@@ -147,6 +147,9 @@ def try_get_non_arbitrary_attr(obj, attr):
     """Try to get non-arbitrary attribute for potential attribute dict.
 
     Will not create target attribute if it is an arbitrary attribute in _AttrDict.
+
+    :return: obj.attr
+    :rtype: Any
     """
     if has_attr_safe(obj, attr):
         return obj[attr] if isinstance(obj, dict) else getattr(obj, attr)

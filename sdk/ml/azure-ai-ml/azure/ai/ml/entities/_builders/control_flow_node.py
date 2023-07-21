@@ -74,6 +74,9 @@ class ControlFlowNode(YamlTranslatableMixin, SchemaValidatableMixin, ABC):
         """Return the error target of this resource.
 
         Should be overridden by subclass. Value should be in ErrorTarget enum.
+
+        :return: The error target
+        :rtype: ErrorTarget
         """
         return ErrorTarget.PIPELINE
 

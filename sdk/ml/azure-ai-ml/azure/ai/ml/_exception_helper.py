@@ -24,6 +24,9 @@ def _find_deepest_dictionary(data: dict) -> dict:
     """
     Find deepest dictionary in nested dictionary.
     Used here to get nested error message. Can't be in utils.py due to circular import.
+
+    :return: The deepest dictionary
+    :rtype: dict
     """
 
     for v in data.values():
@@ -34,7 +37,11 @@ def _find_deepest_dictionary(data: dict) -> dict:
 
 
 def get_entity_type(error: Union[SchemaValidationError, ValidationException]) -> Tuple[str, str]:
-    """Get entity name from schema type referenced in the error."""
+    """Get entity name from schema type referenced in the error.
+
+    :return: The entities type and additional details
+    :rtype: Tuple[str, str]
+    """
     details = ""
 
     error_name = error.exc_msg if hasattr(error, "exc_msg") else error.split(":")[0]
@@ -73,7 +80,12 @@ def get_entity_type(error: Union[SchemaValidationError, ValidationException]) ->
 def format_details_section(
     error: Union[SchemaValidationError, ValidationException], details: str, entity_type: str
 ) -> Tuple[Dict[str, bool], str]:
-    """Builds strings for details of the error message template's Details section."""
+    """Builds strings for details of the error message template's Details section.
+
+
+    :return: Error type map and formatted message
+    :rtype: Tuple[Dict[str, bool], str]
+    """
 
     error_types = {
         ValidationErrorType.INVALID_VALUE: False,
@@ -147,7 +159,11 @@ def format_details_section(
 def format_errors_and_resolutions_sections(
     entity_type: str, error_types: Dict[str, bool], cli: bool
 ) -> Tuple[str, str]:
-    """Builds strings for details of the error message template's Errors and Resolutions sections."""
+    """Builds strings for details of the error message template's Errors and Resolutions sections.
+
+    :return: Error and Resolution messages
+    :rtype: Tuple[str, str]
+    """
 
     resolutions = ""
     errors = ""
@@ -204,6 +220,9 @@ def format_create_validation_error(
 ) -> str:
     """
     Formats a detailed error message for validation errors.
+
+    :return: Formatted error message
+    :rtype: str
     """
     from azure.ai.ml._schema._datastore import (
         AzureBlobSchema,

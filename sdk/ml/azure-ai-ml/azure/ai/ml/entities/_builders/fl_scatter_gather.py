@@ -796,8 +796,9 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
     @staticmethod
     def _get_merge_component(output_type):
-        """
-        Gets the merge component to be used based on type of output
+        """Gets the merge component to be used based on type of output
+
+        :return: The merge component
         """
         return MERGE_COMPONENT_MAPPING[output_type]
 

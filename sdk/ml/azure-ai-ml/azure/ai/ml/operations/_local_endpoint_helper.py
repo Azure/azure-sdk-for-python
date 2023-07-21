@@ -110,7 +110,11 @@ class _LocalEndpointHelper(object):
         raise LocalEndpointNotFoundError(endpoint_name=endpoint_name)
 
     def list(self) -> Iterable[OnlineEndpoint]:
-        """List all local endpoints."""
+        """List all local endpoints.
+
+        :return: An iterable of local endpoints
+        :rtype: Iterable[OnlineEndpoint]
+        """
         endpoints = []
         containers = self._docker_client.list_containers()
         endpoint_stubs = self._endpoint_stub.list()

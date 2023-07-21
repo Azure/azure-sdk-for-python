@@ -105,6 +105,8 @@ def error_preprocess(activityLogger, exception):
     :type activityLogger: ActivityLoggerAdapter
     :param exception: The raised exception to be preprocessed.
     :type exception: BaseException
+    :return: The provided exception
+    :rtype: Exception
     """
 
     if isinstance(exception, HttpResponseError):

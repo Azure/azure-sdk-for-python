@@ -261,7 +261,11 @@ class DataTransferCopy(DataTransfer):
         )
 
     def __call__(self, *args, **kwargs) -> "DataTransferCopy":
-        """Call DataTransferCopy as a function will return a new instance each time."""
+        """Call DataTransferCopy as a function will return a new instance each time.
+
+        :return: A DataTransferCopy node
+        :rtype: DataTransferCopy
+        """
         if isinstance(self._component, Component):
             # call this to validate inputs
             node = self._component(*args, **kwargs)

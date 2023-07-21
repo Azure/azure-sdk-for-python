@@ -349,7 +349,11 @@ def get_git_properties() -> Dict[str, str]:
         return str(value).strip() or None
 
     def _run_git_cmd(args) -> Optional[str]:
-        """Return the output of running git with arguments, or None if it fails."""
+        """Runs git with the provided arguments
+
+        :return: The output of running git with arguments, or None if it fails.
+        :rtype: Optional[str]
+        """
         try:
             with open(os.devnull, "wb") as devnull:
                 return subprocess.check_output(["git"] + list(args), stderr=devnull).decode()

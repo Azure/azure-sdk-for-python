@@ -39,6 +39,7 @@ class _SafeLoaderWithBaseLoader(strictyaml.ruamel.SafeLoader):
 
 def yaml_safe_load_with_base_resolver(stream):
     """Load yaml string with base resolver instead of version default resolver.
+
     For example:
     1) "yes" and "no" will be loaded as "yes"(string) and "no"(string) instead of "true"(bool) and "false"(bool);
     2) "0.10" will be loaded as "0.10"(string) instead of "0.1"(float).
@@ -46,6 +47,10 @@ def yaml_safe_load_with_base_resolver(stream):
     4) "1" will be loaded as "1"(string) instead of "1"(int).
     5) "1.0" will be loaded as "1.0"(string) instead of "1.0"(float).
     6) "~" will be loaded as "~"(string) instead of "None"(NoneType).
+
     Please refer to strictyaml.ruamel.resolver.implicit_resolvers for more details.
+
+    :return: The return value of strictyaml.ruamel.load
+    :rtype: Any
     """
     return strictyaml.ruamel.load(stream, Loader=_SafeLoaderWithBaseLoader)

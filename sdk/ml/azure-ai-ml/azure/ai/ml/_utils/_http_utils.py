@@ -33,6 +33,8 @@ def _request_function(f: Callable[["HttpPipeline"], None]):
 
     :param Callable[[], None] f: A function whose name will be used as the http
                                  request method
+    :return: An HTTP request function
+    :rtype: Callable
     """
 
     # This is a hack to provide richer typing for the decorated function
@@ -141,9 +143,9 @@ class HttpPipeline(Pipeline):
 
            Accepts the same parameters as __init__
 
-        Returns:
-            Self: new Pipeline object with combined config of current object
-                  and specified overrides
+        :return: new Pipeline object with combined config of current object
+            and specified overrides
+        :rtype: Self
         """
         cls = self.__class__
         return cls(config=self._config, transport=kwargs.pop("transport", self._transport), **kwargs)

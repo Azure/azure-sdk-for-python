@@ -267,7 +267,11 @@ class Component(
 
     @classmethod
     def _validate_io_names(cls, io_dict: Dict, raise_error=False) -> MutableValidationResult:
-        """Validate input/output names, raise exception if invalid."""
+        """Validate input/output names, raise exception if invalid.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
+        """
         validation_result = cls._create_empty_validation_result()
         lower2original_kwargs = {}
 
@@ -435,16 +439,23 @@ class Component(
         return {k: v for k, v in init_kwargs.items() if v is not None and not (isinstance(v, dict) and not v)}
 
     def _get_anonymous_hash(self) -> str:
-        """Return the name of anonymous component.
+        """Return the hash of anonymous component.
 
-        same anonymous component(same code and interface) will have same name.
+        Anonymous Components (same code and interface) will have same hash.
+
+        :return: The component hash
+        :rtype: str
         """
         # omit version since anonymous component's version is random guid
         # omit name since name doesn't impact component's uniqueness
         return self._get_component_hash(keys_to_omit=["name", "id", "version"])
 
     def _get_component_hash(self, keys_to_omit=None) -> str:
-        """Return the hash of component."""
+        """Return the hash of component.
+
+        :return: The component hash
+        :rtype: str
+        """
         component_interface_dict = self._to_dict()
         return hash_dict(component_interface_dict, keys_to_omit=keys_to_omit)
 

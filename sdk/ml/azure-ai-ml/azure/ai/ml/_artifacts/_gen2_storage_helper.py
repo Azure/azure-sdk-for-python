@@ -212,10 +212,18 @@ class Gen2StorageClient:
 
     def list(self, starts_with: str) -> List[str]:
         """Lists all file names in the specified filesystem with the prefix
-        `starts_with`"""
+        `starts_with`
+
+        :return: The list of filenames that start with the prefix
+        :rtype: List[str]
+        """
         return [f.get("name") for f in self.file_system_client.get_paths(path=starts_with)]
 
     def exists(self, path: str) -> bool:
-        """Returns whether there exists a file named `path`"""
+        """Returns whether there exists a file named `path`
+
+        :return: True if `path` exists, False otherwise
+        :rtype: bool
+        """
         file_client = self.file_system_client.get_file_client(path)
         return file_client.exists()

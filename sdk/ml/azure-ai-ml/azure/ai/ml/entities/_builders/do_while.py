@@ -109,7 +109,11 @@ class DoWhile(LoopNode):
 
     @classmethod
     def _create_instance_from_schema_dict(cls, pipeline_jobs, loaded_data: Dict, validate_port=True) -> "DoWhile":
-        """Create a do_while instance from schema parsed dict."""
+        """Create a do_while instance from schema parsed dict.
+
+        :return: The DoWhile node
+        :rtype: DoWhile
+        """
 
         # pylint: disable=protected-access
 

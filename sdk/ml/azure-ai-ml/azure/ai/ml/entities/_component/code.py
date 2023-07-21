@@ -106,7 +106,13 @@ class ComponentIgnoreFile(IgnoreFile):
         return ComponentIgnoreFile(other_path, extra_ignore_list=self._extra_ignore_list + [self])
 
     def _get_ignore_list(self) -> List[str]:
-        """Override to add custom ignores."""
+        """Retrieves the list of ignores from ignore file
+
+        Override to add custom ignores.
+
+        :return: The ignore rules
+        :rtype: List[str]
+        """
         if not super(ComponentIgnoreFile, self).exists():
             return self._COMPONENT_CODE_IGNORES
         return super(ComponentIgnoreFile, self)._get_ignore_list() + self._COMPONENT_CODE_IGNORES
@@ -153,7 +159,11 @@ class ComponentCodeMixin:
     """
 
     def _get_base_path_for_code(self) -> Path:
-        """Get base path for additional includes."""
+        """Get base path for additional includes.
+
+        :return: The base path
+        :rtype: Path
+        """
         if hasattr(self, "base_path"):
             return Path(self.base_path)
         raise NotImplementedError(
@@ -163,8 +173,12 @@ class ComponentCodeMixin:
 
     @classmethod
     def _get_code_field_name(cls) -> str:
-        """Get the field name for code. Will be used to get origin code value by default and will be used as
-        field name of validation diagnostics.
+        """Get the field name for code.
+
+        Will be used to get origin code value by default and will be used as field name of validation diagnostics.
+
+        :return: Code field name
+        :rtype: str
         """
         return "code"
 

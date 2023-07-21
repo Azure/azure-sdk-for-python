@@ -45,14 +45,22 @@ class DictMixin(object):
 
     def __eq__(self, other):
         # type: (Any) -> bool
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+
+        :return: True if both object are the same class and have matching __dict__, False otherwise
+        :rtype: bool
+        """
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return False
 
     def __ne__(self, other):
         # type: (Any) -> bool
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+
+        :return: not self.__eq__(other)
+        :rtype: bool
+        """
         return not self.__eq__(other)
 
     def __str__(self):
@@ -88,7 +96,11 @@ class DictMixin(object):
 
 class TelemetryMixin:
     def _get_telemetry_values(self, *args, **kwargs):  # pylint: disable=unused-argument
-        """Return the telemetry values of object."""
+        """Return the telemetry values of object.
+
+        :return: The telemetry values
+        :rtype: Dict
+        """
         return {}
 
 
@@ -98,7 +110,11 @@ class YamlTranslatableMixin:
         """Dump the object into a dictionary."""
 
     def _to_ordered_dict_for_yaml_dump(self) -> Dict:
-        """Dump the object into a dictionary with a specific key order."""
+        """Dump the object into a dictionary with a specific key order.
+        
+        :return: The ordered dict
+        :rtype: Dict
+        """
         order_keys = [
             "$schema",
             "name",
@@ -139,7 +155,11 @@ class YamlTranslatableMixin:
         return _sort_dict_according_to_list(order_keys, self._to_dict())
 
     def _to_yaml(self) -> str:
-        """Dump the object content into a sorted yaml string."""
+        """Dump the object content into a sorted yaml string.
+
+        :return: YAML formatted string
+        :rtype: str
+        """
         return dump_yaml(self._to_ordered_dict_for_yaml_dump(), sort_keys=False)
 
 

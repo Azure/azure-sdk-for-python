@@ -186,6 +186,8 @@ def parallel_run_function(
                              specify is_deterministic=False if you would like to avoid such reuse behavior,
                              defaults to True.
     :type is_deterministic: bool
+    :return: The parallel node
+    :rtype: ~azure.ai.ml._builders.parallel.Parallel
     """
     # pylint: disable=too-many-locals
     inputs = inputs or {}

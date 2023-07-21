@@ -53,11 +53,13 @@ class CustomDimensionsFilter(logging.Filter):
 
 
 def in_jupyter_notebook() -> bool:
-    """
-    Checks if user is using a Jupyter Notebook. This is necessary because logging is not allowed in
+    """Checks if user is using a Jupyter Notebook. This is necessary because logging is not allowed in
     non-Jupyter contexts.
 
     Adapted from https://stackoverflow.com/a/22424821
+
+    :return: Whether is running in a Jupyter Notebook
+    :rtype: bool
     """
     try:  # cspell:ignore ipython
         from IPython import get_ipython

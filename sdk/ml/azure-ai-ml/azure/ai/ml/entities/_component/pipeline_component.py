@@ -121,7 +121,11 @@ class PipelineComponent(Component):
         return jobs
 
     def _customized_validate(self) -> MutableValidationResult:
-        """Validate pipeline component structure."""
+        """Validate pipeline component structure.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
+        """
         validation_result = super(PipelineComponent, self)._customized_validate()
 
         # Validate inputs
@@ -189,7 +193,11 @@ class PipelineComponent(Component):
         return validation_result
 
     def _get_input_binding_dict(self, node: BaseNode) -> Tuple[dict, dict]:
-        """Return the input binding dict for each node."""
+        """Return the input binding dict for each node.
+
+        :return: A 2-tuple of (binding_dict, optional_binding_in_expression_dict)
+        :rtype: Tuple[dict, dict]
+        """
         # pylint: disable=too-many-nested-blocks
         binding_inputs = node._build_inputs()
         # Collect binding relation dict {'pipeline_input': ['node_input']}
@@ -230,6 +238,9 @@ class PipelineComponent(Component):
 
         Mark input as optional if all binding is optional and optional not set. Raise error if pipeline input is
         optional but link to required inputs.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
         component_definition_inputs = {}
         # Add flattened group input into definition inputs.
@@ -294,7 +305,11 @@ class PipelineComponent(Component):
         return self._jobs
 
     def _get_anonymous_hash(self) -> str:
-        """Get anonymous hash for pipeline component."""
+        """Get anonymous hash for pipeline component.
+
+        :return: The anonymous hash of the pipeline component
+        :rtype: str
+        """
         # ideally we should always use rest object to generate hash as it's the same as
         # what we send to server-side, but changing the hash function will break reuse of
         # existing components except for command component (hash result is the same for
@@ -427,7 +442,11 @@ class PipelineComponent(Component):
         return rest_component_jobs
 
     def _to_rest_object(self) -> ComponentVersion:
-        """Check ignored keys and return rest object."""
+        """Check ignored keys and return rest object.
+
+        :return: The component version
+        :rtype: ComponentVersion
+        """
         ignored_keys = self._check_ignored_keys(self)
         if ignored_keys:
             module_logger.warning("%s ignored on pipeline component %r.", ignored_keys, self.name)

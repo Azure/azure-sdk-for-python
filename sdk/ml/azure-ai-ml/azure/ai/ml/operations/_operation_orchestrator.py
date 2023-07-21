@@ -367,7 +367,11 @@ class OperationOrchestrator(object):
 
     def _get_component_arm_id(self, component: Component) -> str:
         """If component arm id is already resolved, return the id Or get arm id via remote call, register the component
-        if necessary, and FILL BACK the arm id to component to reduce remote call."""
+        if necessary, and FILL BACK the arm id to component to reduce remote call.
+
+        :return: The component id
+        :rtype: str
+        """
         if not component.id:
             component._id = self._component.create_or_update(
                 component, is_anonymous=True, show_progress=self._operation_config.show_progress

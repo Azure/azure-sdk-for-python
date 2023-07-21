@@ -367,6 +367,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         Latest is defined as the most recently created, not the most
         recently updated.
+
+        :return: The latest version of the named environment
+        :rtype: Environment
         """
         result = _get_latest(
             name,

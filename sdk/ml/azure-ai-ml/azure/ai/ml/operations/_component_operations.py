@@ -369,6 +369,9 @@ class ComponentOperations(_ScopeDependentOperations):
     ) -> ValidationResult:
         """Implementation of validate. Add this function to avoid calling validate() directly in create_or_update(),
         which will impact telemetry statistics & bring experimental warning in create_or_update().
+
+        :return: The validation result
+        :rtype: ValidationResult
         """
         # Update component when the input is a component function
         if isinstance(component, types.FunctionType):
@@ -598,6 +601,9 @@ class ComponentOperations(_ScopeDependentOperations):
 
         Latest is defined as the most recently created, not the most
         recently updated.
+
+        :return: A latest version of the named Component
+        :rtype: Component
         """
 
         result = (
@@ -876,17 +882,24 @@ class ComponentOperations(_ScopeDependentOperations):
 
     def _get_registry_key(self) -> str:
         """Get key for used registry.
+
         Note that, although registry id is in registry discovery response, it is not in RegistryDiscoveryDto; and we'll
         lose the information after deserialization.
         To avoid changing related rest client, we simply use registry related information from self to construct
         registry key, which means that on-disk cache will be invalid if a registry is deleted and then created
         again with the same name.
+
+        :return: The registry key
+        :rtype: str
         """
         return "{}/{}/{}".format(self._subscription_id, self._resource_group_name, self._registry_name)
 
     def _get_client_key(self) -> str:
         """Get key for used client.
         Key should be able to uniquely identify used registry or workspace.
+
+        :return: The client key
+        :rtype: str
         """
         # check cache first
         if self._client_key:

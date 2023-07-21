@@ -91,6 +91,9 @@ class InternalEnvironment:
         """Validate the environment section.
 
         This is a public method but won't be exposed to user given InternalEnvironment is an internal class.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
         validation_result = _ValidationResultBuilder.success()
         if self.os is not None and self.os not in {"Linux", "Windows", "linux", "windows"}:

@@ -110,6 +110,8 @@ class FederatedLearningSilo:
         param list_arg: A string that names the top-level value which contains the list
             of FL silos.
         type list_arg: str
+        :return: The list of federated learning silos
+        :rtype: List[FederatedLearningSilo]
         """
         yaml_dict = load_yaml(yaml_path)
         return [

@@ -127,6 +127,7 @@ def get_asset_body_for_registry_storage(
     :type asset_name: str
     :param asset_version: Asset version.
     :type asset_version: str
+    :return: The temporary data reference request dto
     :rtype: TemporaryDataReferenceRequestDto
     """
     body = TemporaryDataReferenceRequestDto(

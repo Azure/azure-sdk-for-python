@@ -13,6 +13,9 @@ def in_wsl() -> bool:
     name, per Microsoft:
 
     https://github.com/microsoft/WSL/issues/4071#issuecomment-496715404
+
+    :return: True if running in WSL
+    :rtype: bool
     """
     return "microsoft" in uname().release.lower()
 

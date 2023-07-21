@@ -90,7 +90,10 @@ class IgnoreFile(object):
         self._path_spec = None
 
     def exists(self) -> bool:
-        """Checks if ignore file exists."""
+        """Checks if ignore file exists.
+        :return: True if file exists. False Otherwise
+        :rtype: bool
+        """
         return self._file_exists()
 
     def _file_exists(self) -> bool:
@@ -101,7 +104,11 @@ class IgnoreFile(object):
         return self._path.parent
 
     def _get_ignore_list(self) -> List[str]:
-        """Get ignore list from ignore file contents."""
+        """Get ignore list from ignore file contents.
+
+        :return: The lines of the ignore file
+        :rtype: List[str]
+        """
         if not self.exists():
             return []
         if self._file_exists():
@@ -110,11 +117,19 @@ class IgnoreFile(object):
         return []
 
     def _create_pathspec(self) -> List[GitWildMatchPattern]:
-        """Creates path specification based on ignore list."""
+        """Creates path specification based on ignore list.
+
+        :return: Path specification
+        :rtype: List[GitWildMatchPattern]
+        """
         return [GitWildMatchPattern(ignore) for ignore in self._get_ignore_list()]
 
     def _get_rel_path(self, file_path: Union[str, Path]) -> Optional[str]:
-        """Get relative path of given file_path."""
+        """Get relative path of given file_path.
+
+        :return: file_path relative to base_path, if computable. None otherwise
+        :rtype: Optional[str]
+        """
         file_path = Path(file_path).absolute()
         try:
             # use os.path.relpath instead of Path.relative_to in case file_path is not a child of self.base_path
@@ -128,6 +143,8 @@ class IgnoreFile(object):
 
         :param file_path: File path to be checked against ignore file specifications
         :type file_path: Union[str, Path]
+        :return: Whether the file is excluded by ignore file
+        :rtype: bool
         """
         # TODO: current design of ignore file can't distinguish between files and directories of the same name
         if self._path_spec is None:
@@ -240,6 +257,9 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
 
     Metadata includes an upload confirmation field, and for code uploads only, the name and version of the code asset
     being created for that data.
+
+    :return: Metadata dict
+    :rtype: Dict[str, str]
     """
     if name:
         linked_asset_arm_id = {"name": name, "version": version}
@@ -413,6 +433,9 @@ def get_directory_size(root: os.PathLike, ignore_file: IgnoreFile = IgnoreFile(N
 
     If an optional ignore_file argument is provided, then files specified in the ignore file are not included in the
     directory size calculation.
+
+    :return: The computed size of the directory, and the sizes of the child paths
+    :rtype: Tuple[int, Dict[str, int]]
     """
     total_size = 0
     size_list = {}
@@ -757,9 +780,12 @@ def _get_latest(
     order_by: str = OrderString.CREATED_AT_DESC,
     **kwargs,
 ) -> Union[ModelVersionData, DataVersionBaseData]:
-    """Returns the latest version of the asset with the given name.
+    """Retrieve the latest version of the asset with the given name.
 
     Latest is defined as the most recently created, not the most recently updated.
+
+    :return: The latest version of the requested asset
+    :rtype: Union[ModelVersionData, DataVersionBaseData]
     """
     result = (
         version_operation.list(
@@ -919,6 +945,9 @@ def _resolve_label_to_asset(
     """Returns the asset referred to by the given label.
 
     Throws if label does not refer to a version of the named asset
+
+    :return: The requested asset
+    :rtype: Asset
     """
 
     resolver = assetOperations._managed_label_resolver.get(label, None)
@@ -1017,6 +1046,7 @@ def get_storage_info_for_non_registry_asset(
     :type version: str
     :param resource_group: Resource group
     :type resource_group: str
+    :return: The sas_uri and blob_uri
     :rtype: Dict[str, str]
     """
     request_body = PendingUploadRequestDto(pending_upload_type="TemporaryBlobReference")

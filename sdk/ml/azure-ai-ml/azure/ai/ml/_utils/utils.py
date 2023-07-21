@@ -97,7 +97,13 @@ def camel_to_snake(text: str) -> Optional[str]:
 # This is snake to camel back which is different from snake to camel
 # https://stackoverflow.com/questions/19053707
 def snake_to_camel(text: Optional[str]) -> Optional[str]:
-    """convert snake name to camel."""
+    """Convert snake name to camel.
+
+    :return:
+       * None if text is None
+       * Converted text from snake_case to camelCase
+    :rtype: Optional[str]
+    """
     if text:
         return re.sub("_([a-zA-Z0-9])", lambda m: m.group(1).upper(), text)
     return None
@@ -124,13 +130,12 @@ def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retr
     """Creates an HttpPipeline that reuses the same configuration as the supplied pipeline (including the transport),
     but overwrites the retry policy.
 
-    Args:
-        requests_pipeline (HttpPipeline): Pipeline to base new one off of.
-        retry (int, optional): Number of retries. Defaults to 3.
-
-    Returns:
-        HttpPipeline: Pipeline identical to provided one, except with a new
-                     retry policy.
+    :keyword requests_pipeline: Pipeline to base new one off of.
+    :type requests_pipeline: HttpPipeline
+    :keyword retry: Number of retries. Defaults to 3
+    :type retry: int, optional
+    :return: Pipeline identical to provided one, except with a new retry policy
+    :rtype: HttpPipeline
     """
     return requests_pipeline.with_policies(retry_policy=get_retry_policy(num_retry=retries))
 
@@ -158,14 +163,16 @@ def download_text_from_url(
 ) -> str:
     """Downloads the content from an URL.
 
-    Args:
-        source_uri (str): URI to download
-        requests_pipeline (HttpPipeline):  Used to send the request
-        timeout (Union[float, Tuple[float, float]], optional): One of
-            * float that specifies the connect and read time outs
-            * a 2-tuple that specifies the connect and read time out in that order
-    Returns:
-        str: the Response text
+    :param source_uri: URI to download
+    :type source_uri: str
+    :param requests_pipeline:  Used to send the request
+    :type requests_pipeline: HttpPipeline
+    :param timeout: One of
+      * float that specifies the connect and read time outs
+      * a 2-tuple that specifies the connect and read time out in that order
+    :type timeout: Union[float, Tuple[float, float]], optional
+    :return: The Response text
+    :rtype: str
     """
     if not timeout:
         timeout_params = {}
@@ -307,6 +314,9 @@ def dump_yaml(*args, **kwargs):
     """A thin wrapper over yaml.dump which forces `OrderedDict`s to be serialized as mappings.
 
     Otherwise behaves identically to yaml.dump
+
+    :return: The yaml object
+    :rtype: Any
     """
 
     class OrderedDumper(yaml.Dumper):
@@ -590,7 +600,11 @@ def from_iso_duration_format_min_sec(duration: Optional[str]) -> str:
 
 
 def hash_dict(items: dict, keys_to_omit=None):
-    """Return hash GUID of a dictionary except keys_to_omit."""
+    """Return hash GUID of a dictionary except keys_to_omit.
+
+    :return: The hash GUID of the dictionary
+    :rtype: str
+    """
     if keys_to_omit is None:
         keys_to_omit = []
     items = pydash.omit(items, keys_to_omit)
@@ -649,7 +663,11 @@ def map_single_brackets_and_warn(command: str):
 
 
 def transform_dict_keys(data: Dict, casing_transform: Callable[[str], str], exclude_keys=None) -> Dict:
-    """Convert all keys of a nested dictionary according to the passed casing_transform function."""
+    """Convert all keys of a nested dictionary according to the passed casing_transform function.
+
+    :return: A dictionary with transformed keys
+    :rtype: dict
+    """
     transformed_dict = {}
     for key in data.keys():
         # Modify the environment_variables separately: don't transform values in environment_variables.
@@ -869,7 +887,11 @@ def _str_to_bool(s):
 
 
 def _is_user_error_from_exception_type(e: Optional[Exception]) -> bool:
-    """Determine whether if an exception is user error from it's exception type."""
+    """Determine whether if an exception is user error from it's exception type.
+
+    :return: True if exception is a user error
+    :rtype: bool
+    """
     # Connection error happens on user's network failure, should be user error.
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
     return isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28)

@@ -57,6 +57,8 @@ class GetTokenMixin(abc.ABC):
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
             attribute gives a reason.
+        :return: The access token
+        :rtype: ~azure.core.credentials.AccessToken
         """
         if not scopes:
             msg = '"get_token" requires at least one scope'

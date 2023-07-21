@@ -285,7 +285,11 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
             self._referenced_control_flow_node_instance_id = instance_id
 
     def _get_component_id(self) -> Union[str, Component]:
-        """Return component id if possible."""
+        """Return component id if possible.
+
+        :return: The component id
+        :rtype: Union[str, Component]
+        """
         if isinstance(self._component, Component) and self._component.id:
             # If component is remote, return it's asset id
             return self._component.id
@@ -309,6 +313,9 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         """Return the error target of this resource.
 
         Should be overridden by subclass. Value should be in ErrorTarget enum.
+
+        :return: The error target
+        :rtype: ErrorTarget
         """
         return ErrorTarget.PIPELINE
 
@@ -343,6 +350,9 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         """Validate the resource with customized logic.
 
         Override this method to add customized validation logic.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
         validate_result = self._validate_inputs(raise_error=False)
         return validate_result
@@ -391,10 +401,13 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
 
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
-        """Transfer the rest object to a dict containing items to init the node.
+        """Convert the rest object to a dict containing items to init the node.
 
         Will be used in _from_rest_object. Please override this method instead of _from_rest_object to make the logic
         reusable.
+
+        :return: The init params
+        :rtype: Dict
         """
         inputs = obj.get("inputs", {})
         outputs = obj.get("outputs", {})
@@ -420,10 +433,16 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
-        """Override this method to add custom fields to be picked from self._to_dict() in self._to_rest_object().
+        """List of fields to be picked from self._to_dict() in self._to_rest_object().
 
-        Pick nothing by default.
+        By default, returns an empty list.
+
+        Override this method to add custom fields.
+
+        :return: List of fields to pick
+        :rtype: List[str]
         """
+
         return []
 
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument

@@ -66,6 +66,8 @@ class Diagnostic(object):
         :type message: str
         :param error_code: Error code of diagnostic.
         :type error_code: str
+        :return: The created instance
+        :rtype: Diagnostic
         """
         return cls(
             yaml_path=yaml_path,
@@ -143,7 +145,11 @@ class ValidationResult(object):
         return result
 
     def __repr__(self) -> str:
-        """Get the string representation of the validation result."""
+        """Get the string representation of the validation result.
+
+        :return: The string representation
+        :rtype: str
+        """
         return json.dumps(self._to_dict(), indent=2)
 
 
@@ -335,8 +341,13 @@ class MutableValidationResult(ValidationResult):
 class SchemaValidatableMixin:
     @classmethod
     def _create_empty_validation_result(cls) -> MutableValidationResult:
-        """Simply create an empty validation result to reduce _ValidationResultBuilder importing, which is a private
-        class."""
+        """Simply create an empty validation result
+
+        To reduce _ValidationResultBuilder importing, which is a private class.
+
+        :return: An empty validation result
+        :rtype: MutableValidationResult
+        """
         return _ValidationResultBuilder.success()
 
     @classmethod
@@ -372,17 +383,20 @@ class SchemaValidatableMixin:
     def _create_schema_for_validation(cls, context) -> PathAwareSchema:
         """Create a schema of the resource with specific context. Should be overridden by subclass.
 
-        return: The schema of the resource.
-        return type: PathAwareSchema. PathAwareSchema will add marshmallow.Schema as super class on runtime.
+        :return: The schema of the resource.
+        :return type: PathAwareSchema. PathAwareSchema will add marshmallow.Schema as super class on runtime.
         """
         raise NotImplementedError()
 
     @property
     def __base_path_for_validation(self) -> typing.Union[str, PathLike]:
-        """Get the base path of the resource. It will try to return self.base_path, then self._base_path, then
-        Path.cwd() if above attrs are non-existent or None.
+        """Get the base path of the resource.
 
-        return type: str
+        It will try to return self.base_path, then self._base_path, then Path.cwd() if above attrs are non-existent or
+        `None.
+
+        :return: The base path of the resource
+        :rtype: typing.Union[str, os.PathLike]
         """
         return (
             try_get_non_arbitrary_attr(self, "base_path")
@@ -395,6 +409,9 @@ class SchemaValidatableMixin:
         """Return the error target of this resource.
 
         Should be overridden by subclass. Value should be in ErrorTarget enum.
+
+        :return: The error target of the resource
+        :rtype: ErrorTarget
         """
         raise NotImplementedError()
 
@@ -403,13 +420,18 @@ class SchemaValidatableMixin:
         """Return the schema of this Resource with self._base_path as base_path of Schema. Do not override this method.
         Override _get_schema instead.
 
-        return: The schema of the resource.
-        return type: PathAwareSchema. PathAwareSchema will add marshmallow.Schema as super class on runtime.
+        :return: The schema of the resource. Note that PathAwareSchema will add marshmallow.Schema as super class on
+            runtime.
+        :rtype: PathAwareSchema.
         """
         return self._create_schema_for_validation_with_base_path(self.__base_path_for_validation)
 
     def _dump_for_validation(self) -> typing.Dict:
-        """Convert the resource to a dictionary."""
+        """Convert the resource to a dictionary.
+
+        :return: Converted dictionary
+        :rtype: Dict
+        """
         return convert_ordered_dict_to_dict(self._schema_for_validation.dump(self))
 
     def _validate(self, raise_error=False) -> MutableValidationResult:
@@ -418,7 +440,8 @@ class SchemaValidatableMixin:
 
         :param raise_error: Whether to raise ValidationError if validation fails.
         :type raise_error: bool
-        return type: ValidationResult
+        :return: The validation result
+        :rtype: ValidationResult
         """
         result = self.__schema_validate()
         result.merge_with(self._customized_validate())
@@ -428,6 +451,9 @@ class SchemaValidatableMixin:
         """Validate the resource with customized logic.
 
         Override this method to add customized validation logic.
+
+        :return: The customized validation result
+        :rtype: MutableValidationResult
         """
         return self._create_empty_validation_result()
 
@@ -438,13 +464,17 @@ class SchemaValidatableMixin:
         """Get the fields that should be skipped in schema validation.
 
         Override this method to add customized validation logic.
+
+        :return: The fields to skip in schema validation
+        :rtype: typing.List[str]
         """
         return []
 
     def __schema_validate(self) -> MutableValidationResult:
         """Validate the resource with the schema.
 
-        return type: ValidationResult
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
         data = self._dump_for_validation()
         messages = self._schema_for_validation.validate(data)
@@ -490,6 +520,8 @@ class _ValidationResultBuilder:
 
         param singular_error_message: diagnostic.message. param yaml_path: diagnostic.yaml_path. param data: serialized
         validation target.
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
         obj = MutableValidationResult(target_obj=data)
         if singular_error_message:
@@ -713,6 +745,9 @@ class RemoteValidatableMixin(RestTranslatableMixin):
         """Return resource type to be used in remote validation.
 
         Should be overridden by subclass.
+
+        :return: The resource type
+        :rtype: str
         """
         raise NotImplementedError()
 
@@ -720,6 +755,9 @@ class RemoteValidatableMixin(RestTranslatableMixin):
         """Return resource name and version to be used in remote validation.
 
         Should be overridden by subclass.
+
+        :return: The name and version
+        :rtype: typing.Tuple[str, str]
         """
         raise NotImplementedError()
 
@@ -728,6 +766,8 @@ class RemoteValidatableMixin(RestTranslatableMixin):
 
         :param location: The location of the resource.
         :type location: str
+        :return: The preflight resource
+        :rtype: PreflightResource
         """
         name, version = self._get_resource_name_version()
         return PreflightResource(

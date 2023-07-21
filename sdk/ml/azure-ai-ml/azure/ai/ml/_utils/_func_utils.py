@@ -363,6 +363,9 @@ try:
                 result = persistent_locals_func(*args)
                 # Get the locals in the func.
                 func_locals = persistent_locals_func.locals
+
+            :return: The built persistent locals function
+            :rtype: PersistentLocalsFunction
             """
             generated_func = FunctionType(
                 self._create_code(self._build_instructions(func), func),

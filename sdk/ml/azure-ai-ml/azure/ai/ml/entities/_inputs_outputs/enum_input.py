@@ -53,7 +53,11 @@ class EnumInput(Input):
 
     @classmethod
     def _assert_enum_valid(cls, enum):
-        """Check whether the enum is valid and return the values of the enum."""
+        """Check whether the enum is valid and return the values of the enum.
+
+        :return: The enum values
+        :rtype: List[Any]
+        """
         if isinstance(enum, EnumMeta):
             enum_values = [str(option.value) for option in enum]
         elif isinstance(enum, Iterable):
@@ -91,7 +95,11 @@ class EnumInput(Input):
         return enum_values
 
     def _parse(self, val: str):
-        """Parse the enum value from a string value or the enum value."""
+        """Parse the enum value from a string value or the enum value.
+
+        :return: The enum value
+        :rtype: Any
+        """
         if val is None:
             return val
 

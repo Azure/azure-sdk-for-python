@@ -429,7 +429,11 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         return ParallelSchema(context=context)
 
     def __call__(self, *args, **kwargs) -> "Parallel":
-        """Call Parallel as a function will return a new instance each time."""
+        """Call Parallel as a function will return a new instance each time.
+
+        :return: A Parallel node
+        :rtype: Parallel
+        """
         if isinstance(self._component, Component):
             # call this to validate inputs
             node = self._component(*args, **kwargs)

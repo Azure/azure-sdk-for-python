@@ -203,6 +203,9 @@ def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=
     """Convert ordered dict to dict. Remove keys with None value.
     This is a workaround for rest request must be in dict instead of
     ordered dict.
+
+    :return: Converted ordered dict with removed None values
+    :rtype: Union[Dict, List]
     """
     # OrderedDict can appear nested in a list
     if isinstance(target_object, list):

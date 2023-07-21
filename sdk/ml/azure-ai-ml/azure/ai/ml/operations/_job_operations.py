@@ -492,6 +492,9 @@ class JobOperations(_ScopeDependentOperations):
         Add this function to avoid calling validate() directly in
         create_or_update(), which will impact telemetry statistics &
         bring experimental warning in create_or_update().
+
+        :return: The validation result
+        :rtype: ValidationResult
         """
         git_code_validation_result = SchemaValidatableMixin._create_empty_validation_result()
         # TODO: move this check to Job._validate after validation is supported for all job types
@@ -1207,7 +1210,12 @@ class JobOperations(_ScopeDependentOperations):
             pass
 
     def _resolve_arm_id_or_azureml_id(self, job: Job, resolver: Callable) -> Job:
-        """Resolve arm_id for a given job."""
+        """Resolve arm_id for a given job.
+
+
+        :return: The provided job, with fields resolved to full ARM IDs
+        :rtype: Job
+        """
         # TODO: this will need to be parallelized when multiple tasks
         # are required. Also consider the implications for dependencies.
 

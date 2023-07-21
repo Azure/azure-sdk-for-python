@@ -133,7 +133,11 @@ class _LocalDeploymentHelper(object):
         return _convert_container_to_deployment(container=container)
 
     def list(self) -> Iterable[OnlineDeployment]:
-        """List all local endpoints."""
+        """List all local endpoints.
+
+        :return: The OnlineDeployments
+        :rtype: Iterable[OnlineDeployment]
+        """
         containers = self._docker_client.list_containers()
         deployments = []
         for container in containers:

@@ -131,8 +131,12 @@ class AdditionalIncludes:
     @classmethod
     def _resolve_artifact_additional_include_config(cls, artifact_additional_include_config) -> List[Tuple[str, str]]:
         """Resolve an artifact additional include config into a list of (local_path, config_info) tuples.
+
         Configured artifact will be downloaded to local path first; the config_info will be in below format:
         %name%:%version% in %feed%
+
+        :return: A list of 2-tuples of local_path and config_info
+        :rtype: List[Tuple[str, str]]
         """
         result = []
         # Note that we don't validate the artifact config here, since it has already been validated in
@@ -430,7 +434,11 @@ class AdditionalIncludes:
 class AdditionalIncludesMixin(ComponentCodeMixin):
     @classmethod
     def _get_additional_includes_field_name(cls) -> str:
-        """Get the field name for additional includes."""
+        """Get the field name for additional includes.
+
+        :return: The field name
+        :rtype: str
+        """
         return "additional_includes"
 
     def _get_all_additional_includes_configs(self) -> List:

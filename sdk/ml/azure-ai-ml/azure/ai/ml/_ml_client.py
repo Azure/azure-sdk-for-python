@@ -857,6 +857,8 @@ class MLClient:
 
         :param workspace_name: AzureML workspace of the new MLClient.
         :type workspace_name: str
+        :return: An updated MLClient
+        :rtype: MLClient
         """
 
         return MLClient(

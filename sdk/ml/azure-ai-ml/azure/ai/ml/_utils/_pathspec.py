@@ -78,7 +78,9 @@ class Pattern(object):
         """
         Matches this pattern against the specified file.
         *file* (:class:`str`) is the normalized file path to match against.
-        Returns the match result if *file* matched; otherwise, :data:`None`.
+
+        :return: Returns the match result if *file* matched; otherwise, :data:`None`.
+        :rtype: Optional[Any]
         """
         raise NotImplementedError(
             ("{0.__module__}.{0.__qualname__} must override match_file().").format(self.__class__)
@@ -146,8 +148,11 @@ class RegexPattern(Pattern):
     def __eq__(self, other: "RegexPattern") -> bool:
         """
         Tests the equality of this regex pattern with *other* (:class:`RegexPattern`)
-        by comparing their :attr:`~Pattern.include` and :attr:`~RegexPattern.regex`
-        attributes.
+
+
+        :return: Return True if :attr:`~Pattern.include` and :attr:`~RegexPattern.regex`
+            are equal. False otherwise.
+        :rtype: bool
         """
         if isinstance(other, RegexPattern):
             return self.include == other.include and self.regex == other.regex
@@ -158,8 +163,9 @@ class RegexPattern(Pattern):
         Matches this pattern against the specified file.
         *file* (:class:`str`)
         contains each file relative to the root directory (e.g., "relative/path/to/file").
-        Returns the match result (:class:`RegexMatchResult`) if *file*
-        matched; otherwise, :data:`None`.
+        :return: Returns the match result (:class:`RegexMatchResult`) if *file*
+           matched; otherwise, :data:`None`.
+        :rtype: Optional[RegexMatchResult]
         """
         if self.include is not None:
             match = self.regex.match(file)
@@ -174,11 +180,12 @@ class RegexPattern(Pattern):
         Convert the pattern into an uncompiled regular expression.
         *pattern* (:class:`str`) is the pattern to convert into a regular
         expression.
-        Returns the uncompiled regular expression (:class:`str` or :data:`None`),
-        and whether matched files should be included (:data:`True`),
-        excluded (:data:`False`), or is a null-operation (:data:`None`).
             .. NOTE:: The default implementation simply returns *pattern* and
                 :data:`True`.
+        :return: Returns the uncompiled regular expression (:class:`str` or :data:`None`),
+            and whether matched files should be included (:data:`True`),
+            excluded (:data:`False`), or is a null-operation (:data:`None`).
+        :rtype: Tuple[str, bool]
         """
         return pattern, True
 
@@ -225,10 +232,13 @@ class GitWildMatchPattern(RegexPattern):
         Convert the pattern into a regular expression.
         *pattern* (:class:`str` or :class:`bytes`) is the pattern to convert
         into a regular expression.
-        Returns the uncompiled regular expression (:class:`str`, :class:`bytes`,
-        or :data:`None`); and whether matched files should be included
-        (:data:`True`), excluded (:data:`False`), or if it is a
-        null-operation (:data:`None`).
+
+        :return: A 2-tuple of:
+          * the uncompiled regular expression (:class:`str`, :class:`bytes`,
+            or :data:`None`)
+          * whether matched files should be included (:data:`True`), excluded (:data:`False`), or if it is a
+            null-operation (:data:`None`).
+        :rtype: Tuple[Optional[AnyStr], Optional[bool]]
         """
         if isinstance(pattern, str):
             return_type = str
@@ -411,7 +421,9 @@ class GitWildMatchPattern(RegexPattern):
         the constructor to translate a path segment glob pattern to its
         corresponding regular expression.
         *pattern* (:class:`str`) is the glob pattern.
-        Returns the regular expression (:class:`str`).
+
+        :return: The regular expression
+        :rtype: str
         """
         # NOTE: This is derived from `fnmatch.translate()` and is similar to
         # the POSIX function `fnmatch()` with the `FNM_PATHNAME` flag set.
@@ -517,7 +529,9 @@ class GitWildMatchPattern(RegexPattern):
         Escape special characters in the given string.
         *s* (:class:`str` or :class:`bytes`) a filename or a string that you
         want to escape, usually before adding it to a ".gitignore".
-        Returns the escaped string (:class:`str` or :class:`bytes`).
+
+        :return: The escaped string
+        :rtype: Union[str, bytes]
         """
         if isinstance(s, str):
             return_type = str

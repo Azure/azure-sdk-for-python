@@ -513,6 +513,9 @@ class ModelOperations(_ScopeDependentOperations):
         """Returns the latest version of the asset with the given name.
 
         Latest is defined as the most recently created, not the most recently updated.
+
+        :return: The latest version of the named model
+        :rtype: Model
         """
         result = _get_latest(
             name,

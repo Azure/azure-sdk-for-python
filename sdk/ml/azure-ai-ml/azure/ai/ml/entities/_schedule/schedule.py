@@ -282,6 +282,9 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
                 node1: ...
             inputs:
                 input: ..
+
+        :return: The job schedule
+        :rtype: JobSchedule
         """
         data = data or {}
         params_override = params_override or []
@@ -323,7 +326,11 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         return JobScheduleSchema(context=context)
 
     def _customized_validate(self) -> MutableValidationResult:
-        """Validate the resource with customized logic."""
+        """Validate the resource with customized logic.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
+        """
         if isinstance(self.create_job, PipelineJob):
             return self.create_job._validate()
         return self._create_empty_validation_result()
@@ -333,6 +340,9 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         """Get the fields that should be skipped in schema validation.
 
         Override this method to add customized validation logic.
+
+        :return: The list of fields to skip in schema validation
+        :rtype: typing.List[str]
         """
         return ["create_job"]
 

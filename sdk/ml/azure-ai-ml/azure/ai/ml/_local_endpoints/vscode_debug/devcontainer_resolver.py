@@ -172,6 +172,8 @@ def _get_devcontainer_file_path(directory_path: str) -> str:
 
     :param directory_path: absolute path of local directory to write devcontainer.json.
     :type directory_path: str
+    :return: Absolute path to the devcontainer
+    :rtype: str
     """
     devcontainer_path = Path(directory_path, ".devcontainer")
     devcontainer_path.mkdir(parents=True, exist_ok=True)

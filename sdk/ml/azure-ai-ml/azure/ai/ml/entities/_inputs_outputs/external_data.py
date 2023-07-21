@@ -171,7 +171,11 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
             self.path = path
 
     def _to_dict(self, remove_name=True):
-        """Convert the Source object to a dict."""
+        """Convert the Source object to a dict.
+
+        :return: The dictionary representation of the object
+        :rtype: Dict
+        """
         keys = ["name", "path", "type", "connection"]
         if remove_name:
             keys.remove("name")

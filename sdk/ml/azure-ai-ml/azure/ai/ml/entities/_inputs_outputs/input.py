@@ -283,11 +283,20 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         Currently, there are two scenarios that need to check this property:
         1. before `in` as it may throw exception; there will be `in` operation for validation/transformation.
         2. `str()` of list is not ideal, so we need to manually create its string result.
+
+        :return: Whether this input has multiple types
+        :rtype: bool
         """
         return isinstance(self.type, list)
 
     def _is_literal(self) -> bool:
-        """Override this function as `self.type` can be list and not hashable for operation `in`."""
+        """Whether this input is a literal
+
+        Override this function as `self.type` can be list and not hashable for operation `in`.
+
+        :return: Whether is a literal
+        :rtype: bool
+        """
         return not self._multiple_types and super(Input, self)._is_literal()
 
     def _is_enum(self):
@@ -295,7 +304,11 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         return self.type == ComponentParameterTypes.STRING and self.enum
 
     def _to_dict(self):
-        """Convert the Input object to a dict."""
+        """Convert the Input object to a dict.
+
+        :return: Dictionary representation of Input
+        :rtype: Dict
+        """
         keys = self._IO_KEYS
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
@@ -428,6 +441,9 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         """Get python builtin type for current input in string, eg: str.
 
         Return yaml type if not available.
+
+        :return: The name of the input type
+        :rtype: str
         """
         if self._multiple_types:
             return "[" + ", ".join(self.type) + "]"

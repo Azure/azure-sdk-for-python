@@ -176,7 +176,11 @@ class SparkComponent(
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(SparkComponent, self)._to_dict()})
 
     def _to_ordered_dict_for_yaml_dump(self) -> Dict:
-        """Dump the component content into a sorted yaml string."""
+        """Dump the component content into a sorted yaml string.
+
+        :return: The ordered dict
+        :rtype: Dict
+        """
 
         obj = super()._to_ordered_dict_for_yaml_dump()
         # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value

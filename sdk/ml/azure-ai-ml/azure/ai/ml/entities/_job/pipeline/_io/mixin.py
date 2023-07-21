@@ -153,6 +153,9 @@ class NodeIOMixin:
            "input_value": 10,
            "learning_rate": "${{jobs.step1.inputs.learning_rate}}"
         }
+
+        :return: The input dict
+        :rtype: Dict[str, Union[Input, str, bool, int, float]]
         """
         inputs = {}
         for name, input in self.inputs.items():  # pylint: disable=redefined-builtin
@@ -171,6 +174,9 @@ class NodeIOMixin:
         {
             "eval_output": "${{jobs.eval.outputs.eval_output}}"
         }
+
+        :return: The output dict
+        :rtype: Dict[str, Output]
         """
         outputs = {}
         for name, output in self.outputs.items():
@@ -189,6 +195,9 @@ class NodeIOMixin:
            "input_value": 10,
            "learning_rate": "${{jobs.step1.inputs.learning_rate}}"
         }
+
+        :return: The REST inputs
+        :rtype: Dict[str, Dict]
         """
         built_inputs = self._build_inputs()
         return self._input_entity_to_rest_inputs(input_entity=built_inputs)
@@ -220,6 +229,9 @@ class NodeIOMixin:
 
         The built dictionary's format aligns with component job's output yaml, eg:
         {"eval_output": "${{jobs.eval.outputs.eval_output}}"}
+
+        :return: The REST outputs
+        :rtype: Dict[str, Dict]
         """
         built_outputs = self._build_outputs()
 
@@ -256,7 +268,11 @@ class NodeIOMixin:
 
     @classmethod
     def _from_rest_inputs(cls, inputs) -> Dict[str, Union[Input, str, bool, int, float]]:
-        """Load inputs from rest inputs."""
+        """Load inputs from rest inputs.
+
+        :return: Input dict
+        :rtype: Dict[str, Union[Input, str, bool, int, float]]
+        """
 
         # JObject -> RestJobInput/RestJobOutput
         input_bindings, rest_inputs = from_dict_to_rest_io(inputs, RestJobInput, [ComponentJobConstants.INPUT_PATTERN])
@@ -268,7 +284,11 @@ class NodeIOMixin:
 
     @classmethod
     def _from_rest_outputs(cls, outputs) -> Dict[str, Output]:
-        """Load outputs from rest outputs."""
+        """Load outputs from rest outputs.
+
+        :return: Output dict
+        :rtype: Dict[str, Output]
+        """
 
         # JObject -> RestJobInput/RestJobOutput
         output_bindings, rest_outputs = from_dict_to_rest_io(
@@ -465,6 +485,9 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         The built dictionary's format aligns with component job's output yaml,
         un-configured outputs will be None, eg:
         {"eval_output": "${{jobs.eval.outputs.eval_output}}", "un_configured": None}
+
+        :return: The output dict
+        :rtype: Dict[str, Output]
         """
         outputs = {}
         for name, output in self.outputs.items():

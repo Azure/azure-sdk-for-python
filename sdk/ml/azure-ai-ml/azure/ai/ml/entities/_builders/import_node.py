@@ -163,7 +163,11 @@ class Import(BaseNode):
         return ImportSchema(context=context)
 
     def __call__(self, *args, **kwargs) -> "Import":
-        """Call Import as a function will return a new instance each time."""
+        """Call Import as a function will return a new instance each time.
+
+        :return: An Import node.
+        :rtype: Import
+        """
         if isinstance(self._component, Component):
             # call this to validate inputs
             node = self._component(*args, **kwargs)

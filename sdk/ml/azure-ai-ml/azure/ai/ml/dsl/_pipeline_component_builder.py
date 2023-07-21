@@ -81,7 +81,11 @@ _definition_builder_stack = _PipelineComponentBuilderStack()
 
 
 def _is_inside_dsl_pipeline_func() -> bool:
-    """Returns true if is inside DSL pipeline func."""
+    """Checks whether executing within a dsl pipeline func
+
+    :return: True if is inside DSL pipeline func.
+    :rtype: bool
+    """
     return _definition_builder_stack.size() > 0
 
 
@@ -157,6 +161,8 @@ class PipelineComponentBuilder:
         :keyword user_provided_kwargs: The kwargs user provided to dsl pipeline function. None if not provided.
         :keyword non_pipeline_inputs_dict: The non-pipeline input provided key-value. None if not exist.
         :keyword non_pipeline_inputs: List of non-pipeline input name. None if not exist.
+        :return: The built PipelineComponent
+        :rtype: PipelineComponent
         """
         if user_provided_kwargs is None:
             user_provided_kwargs = {}
