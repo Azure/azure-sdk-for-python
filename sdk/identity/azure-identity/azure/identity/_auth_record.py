@@ -23,14 +23,7 @@ class AuthenticationRecord:
     :param str username: The user principal or service principal name of the account.
     """
 
-    def __init__(
-            self,
-            tenant_id: str,
-            client_id: str,
-            authority: str,
-            home_account_id: str,
-            username: str
-    ) -> None:
+    def __init__(self, tenant_id: str, client_id: str, authority: str, home_account_id: str, username: str) -> None:
         self._authority = authority
         self._client_id = client_id
         self._home_account_id = home_account_id
@@ -46,7 +39,7 @@ class AuthenticationRecord:
         return self._authority
 
     @property
-    def client_id(self)  -> str:
+    def client_id(self) -> str:
         """The client ID of the application which performed the original authentication.
 
         :rtype: str
