@@ -28,7 +28,7 @@ class AuthCodeRedirectHandler(BaseHTTPRequestHandler):
 
         self.wfile.write(b"Authentication complete. You can close this window.")
 
-    def log_message(self, format, *args):  # pylint: disable=redefined-builtin,unused-argument,no-self-use
+    def log_message(self, format, *args):  # pylint: disable=redefined-builtin,unused-argument
         pass  # this prevents server dumping messages to stdout
 
 
