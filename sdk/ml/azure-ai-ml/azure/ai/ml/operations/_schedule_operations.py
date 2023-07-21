@@ -314,10 +314,12 @@ class ScheduleOperations(_ScopeDependentOperations):
                     target=ErrorTarget.SCHEDULE,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-
+        
         # resolve ARM id for each signal and populate any defaults if needed
         for signal_name, signal in schedule.create_monitor.monitoring_signals.items():
             if signal.type == MonitorSignalType.CUSTOM:
+                if signal.data_window_size is None:
+                    signal.data_window_size = 7
                 for input_value in signal.input_datasets.values():
                     self._job_operations._resolve_job_input(input_value.input_dataset, schedule._base_path)
                     input_value.pre_processing_component = self._orchestrators.get_asset_arm_id(

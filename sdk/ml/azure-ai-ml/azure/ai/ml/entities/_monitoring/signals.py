@@ -570,12 +570,14 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         metric_thresholds: List[CustomMonitoringMetricThreshold],
         component_id: str,
         alert_enabled: bool = True,
+        data_window_size: int = None,
     ):
         self.type = MonitorSignalType.CUSTOM
         self.input_datasets = input_datasets
         self.metric_thresholds = metric_thresholds
         self.component_id = component_id
         self.alert_enabled = alert_enabled
+        self.data_window_size = data_window_size
 
     def _to_rest_object(self, **kwargs) -> RestCustomMonitoringSignal:  # pylint:disable=unused-argument
         return RestCustomMonitoringSignal(
@@ -587,6 +589,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
             if self.input_datasets
             else None,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
+            lookback_period=to_iso_duration_format_days(self.data_window_size) 
         )
 
     @classmethod
