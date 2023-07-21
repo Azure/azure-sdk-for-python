@@ -80,8 +80,12 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         self.stored_procedure = stored_procedure
         self.stored_procedure_params = stored_procedure_params
 
-    def _to_dict(self, remove_name=True):
-        """Convert the Source object to a dict."""
+    def _to_dict(self, remove_name=True) -> Dict:
+        """Convert the Source object to a dict.
+
+        :return: The dictionary representation of the class
+        :rtype: Dict
+        """
         keys = [
             "name",
             "type",

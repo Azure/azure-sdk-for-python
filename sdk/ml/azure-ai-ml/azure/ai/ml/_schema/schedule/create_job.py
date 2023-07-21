@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 import copy
+from typing import Optional
 
 import yaml
 from marshmallow import INCLUDE, ValidationError, fields, post_load, pre_load
@@ -64,8 +65,14 @@ class BaseCreateJobSchema(BaseJobSchema):
         required=True,
     )
 
-    def _get_job_instance_for_remote_job(self, id, data, **kwargs):  # pylint: disable=redefined-builtin
-        """Get a job instance to store updates for remote job."""
+    def _get_job_instance_for_remote_job(
+        self, id: Optional[str], data: Optional[dict], **kwargs
+    ) -> "Job":  # pylint: disable=redefined-builtin
+        """Get a job instance to store updates for remote job.
+
+        :return: The remote job
+        :rtype: Job
+        """
         from azure.ai.ml.entities import Job
 
         data = {} if data is None else data

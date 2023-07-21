@@ -120,8 +120,14 @@ def _map_v1_io_type(output_type: str) -> str:
     """
 
     # TODO: put it in a common place
-    def _map_primitive_type(_type):
-        """Convert double and float to number type."""
+    def _map_primitive_type(_type: str) -> str:
+        """Convert double and float to number type.
+
+        :return:
+          * InputTypes.NUMBER if _type is "double" or "float"
+          * The provided type otherwise
+        :rtype: str
+        """
         _type = _type.lower()
         if _type in ["double", "float"]:
             return InputTypes.NUMBER
@@ -156,7 +162,11 @@ class InternalOutput(Output):
             return _output
         return InternalOutput(**_output)
 
-    def map_pipeline_output_type(self):
-        """Map output type to pipeline output type."""
+    def map_pipeline_output_type(self) -> str:
+        """Map output type to pipeline output type.
+
+        :return: The pipeline output type
+        :rtype: str
+        """
         # TODO: call this for node output
         return _map_v1_io_type(self.type)

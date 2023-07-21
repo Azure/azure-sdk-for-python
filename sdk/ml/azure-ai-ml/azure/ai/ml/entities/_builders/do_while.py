@@ -11,6 +11,7 @@ from azure.ai.ml.constants._component import DO_WHILE_MAX_ITERATION, ControlFlow
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_limits import DoWhileJobLimits
 from azure.ai.ml.entities._job.pipeline._io import InputOutputBase
+from azure.ai.ml.entities._validation import MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ValidationErrorType
 
 from .._util import load_from_dict, validate_attribute_type
@@ -207,8 +208,12 @@ class DoWhile(LoopNode):
         validation_result.merge_with(self._validate_body_output_mapping(raise_error=False))
         return validation_result
 
-    def _validate_port(self, port, node_ports, port_type, yaml_path):
-        """Validate input/output port is exist in the dowhile body."""
+    def _validate_port(self, port, node_ports, port_type, yaml_path) -> MutableValidationResult:
+        """Validate input/output port is exist in the dowhile body.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
+        """
         validation_result = self._create_empty_validation_result()
         if isinstance(port, str):
             port_obj = node_ports.get(port, None)

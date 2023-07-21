@@ -7,7 +7,7 @@ import json
 import os.path
 from os import PathLike
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Optional, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Optional, Union
 
 import jwt
 from azure.core.credentials import TokenCredential
@@ -291,8 +291,12 @@ class JobOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _handle_rest_errors(self, job_object):
-        """Handle errors while resolving azureml_id's during list operation."""
+    def _handle_rest_errors(self, job_object) -> Optional[Job]:
+        """Handle errors while resolving azureml_id's during list operation.
+
+        :return: The resolved job
+        :rtype: Optional[Job]
+        """
         try:
             return self._resolve_azureml_id(Job._from_rest_object(job_object))
         except JobParsingError:
@@ -1087,8 +1091,14 @@ class JobOperations(_ScopeDependentOperations):
 
     # TODO: move it to somewhere else?
     @classmethod
-    def _flatten_group_inputs(cls, inputs):
-        """Get flatten values from an InputDict."""
+    def _flatten_group_inputs(
+        cls, inputs: Dict[str, Union[Input, str, bool, int, float]]
+    ) -> List[Union[Input, str, bool, int, float]]:
+        """Get flatten values from an InputDict.
+
+        :return: A list of values from the Input Dict
+        :rtype: List[Union[Input, str, bool, int, float]]
+        """
         input_values = []
         # Flatten inputs for pipeline job
         for key, item in inputs.items():
@@ -1246,8 +1256,13 @@ class JobOperations(_ScopeDependentOperations):
             )
         return job
 
-    def _resolve_arm_id_for_command_job(self, job: Command, resolver: Callable) -> Job:
-        """Resolve arm_id for CommandJob."""
+    def _resolve_arm_id_for_command_job(self, job: Command, resolver: Callable) -> Command:
+        """Resolve arm_id for CommandJob.
+
+
+        :return: The provided Command job, with resolved fields
+        :rtype: Command
+        """
         if job.code is not None and is_registry_id_for_resource(job.code):
             msg = "Format not supported for code asset: {}"
             raise ValidationException(
@@ -1267,8 +1282,12 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_spark_job(self, job: Spark, resolver: Callable) -> Job:
-        """Resolve arm_id for SparkJob."""
+    def _resolve_arm_id_for_spark_job(self, job: Spark, resolver: Callable) -> Spark:
+        """Resolve arm_id for SparkJob.
+
+        :return: The provided SparkJob, with resolved fields
+        :rtype: Spark
+        """
         if job.code is not None and is_registry_id_for_resource(job.code):
             msg = "Format not supported for code asset: {}"
             raise JobException(
@@ -1287,8 +1306,12 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_import_job(self, job: Job, resolver: Callable) -> Job:
-        """Resolve arm_id for ImportJob."""
+    def _resolve_arm_id_for_import_job(self, job: ImportJob, resolver: Callable) -> ImportJob:
+        """Resolve arm_id for ImportJob.
+
+        :return: The provided ImportJob, with resolved fields
+        :rtype: ImportJob
+        """
         # compute property will be no longer applicable once import job type is ready on MFE in PuP
         # for PrP, we use command job type instead for import job where compute property is required
         # However, MFE only validates compute resource url format. Execution service owns the real
@@ -1297,8 +1320,12 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, ComputeType.ADF)
         return job
 
-    def _resolve_arm_id_for_parallel_job(self, job: Job, resolver: Callable) -> Job:
-        """Resolve arm_id for ParallelJob."""
+    def _resolve_arm_id_for_parallel_job(self, job: ParallelJob, resolver: Callable) -> ParallelJob:
+        """Resolve arm_id for ParallelJob.
+
+        :return: The provided ParallelJob, with resolved fields
+        :rtype: ParallelJob
+        """
         if job.code is not None and not is_ARM_id_for_resource(job.code, AzureMLResourceType.CODE):
             job.code = resolver(
                 Code(base_path=job._base_path, path=job.code),
@@ -1308,8 +1335,12 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_sweep_job(self, job: Job, resolver: Callable) -> Job:
-        """Resolve arm_id for SweepJob."""
+    def _resolve_arm_id_for_sweep_job(self, job: SweepJob, resolver: Callable) -> SweepJob:
+        """Resolve arm_id for SweepJob.
+
+        :return: The provided SweepJob, with resolved fields
+        :rtype: SweepJob
+        """
         if job.trial.code is not None and not is_ARM_id_for_resource(job.trial.code, AzureMLResourceType.CODE):
             job.trial.code = resolver(
                 Code(base_path=job._base_path, path=job.trial.code),
@@ -1319,8 +1350,12 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_automl_job(self, job: Job, resolver: Callable, inside_pipeline: bool) -> Job:
-        """Resolve arm_id for AutoMLJob."""
+    def _resolve_arm_id_for_automl_job(self, job: AutoMLJob, resolver: Callable, inside_pipeline: bool) -> AutoMLJob:
+        """Resolve arm_id for AutoMLJob.
+
+        :return: The provided AutoMLJob, with resolved fields
+        :rtype: AutoMLJob
+        """
         # AutoML does not have dependency uploads. Only need to resolve reference to arm id.
 
         # automl node in pipeline has optional compute
@@ -1329,8 +1364,12 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = resolver(job.compute, azureml_type=AzureMLResourceType.COMPUTE)
         return job
 
-    def _resolve_arm_id_for_pipeline_job(self, pipeline_job: "PipelineJob", resolver: Callable) -> Job:
-        """Resolve arm_id for pipeline_job."""
+    def _resolve_arm_id_for_pipeline_job(self, pipeline_job: PipelineJob, resolver: Callable) -> PipelineJob:
+        """Resolve arm_id for pipeline_job.
+
+        :return: The provided PipelineJob, with resolved fields
+        :rtype: PipelineJob
+        """
         # Get top-level job compute
         _get_job_compute_id(pipeline_job, resolver)
 

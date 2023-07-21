@@ -286,11 +286,16 @@ class AdditionalIncludes:
 
         return additional_include_configs_in_local_path
 
-    def _validate_local_additional_include_config(self, local_path: str, config_info: str = None):
+    def _validate_local_additional_include_config(
+        self, local_path: str, config_info: str = None
+    ) -> MutableValidationResult:
         """Validate local additional include config.
 
         Note that we will check the file conflicts between each local additional includes and origin code, but
         won't check the file conflicts among local additional includes fo now.
+
+        :return: The validation result.
+        :rtype: ~azure.ai.ml.entities._validation.MutableValidationResult
         """
         validation_result = _ValidationResultBuilder.success()
         include_path = self.base_path / local_path
@@ -340,8 +345,12 @@ class AdditionalIncludes:
             validation_result.merge_with(self._validate_additional_include_config(additional_include_config))
         return validation_result
 
-    def _copy_origin_code(self, target_path):
-        """Copy origin code to target path."""
+    def _copy_origin_code(self, target_path) -> ComponentIgnoreFile:
+        """Copy origin code to target path.
+
+        :return: The component ignore file for the origin path
+        :rtype: ComponentIgnoreFile
+        """
         # code can be either file or folder, as additional includes exists, need to copy to temporary folder
         if self.resolved_code_path is None:
             # if additional include configs exist but no origin code path, return a dummy ignore file

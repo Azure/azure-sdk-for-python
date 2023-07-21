@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import copy
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Type, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
@@ -322,8 +322,12 @@ def _flatten_dict(dictionary, parent_key="", separator="."):
     return dict(items)
 
 
-def flatten_dict(dct, _type, *, allow_dict_fields=None):
-    """Flatten inputs/input_definitions dict for inputs dict build."""
+def flatten_dict(dct: Dict, _type: Type, *, allow_dict_fields=None) -> Dict:
+    """Flatten inputs/input_definitions dict for inputs dict build.
+
+    :return: The flattened dict
+    :rtype: Dict
+    """
     _result = {}
     for key, val in dct.items():
         # to support passing dict value as parameter group

@@ -401,10 +401,13 @@ def get_resource_name_from_arm_id(resource_id: str) -> str:
     return AMLNamedArmId(resource_id).asset_name
 
 
-def get_resource_name_from_arm_id_safe(resource_id: str) -> Optional[str]:
+def get_resource_name_from_arm_id_safe(resource_id: str) -> str:
     """Get the resource name from an ARM id.
 
-    return input string if it is not an ARM id.
+    :return:
+      * Resource Name if input string is ARM id
+      * Original input otherwise
+    :rtype: str
     """
     try:
         return get_resource_name_from_arm_id(resource_id)

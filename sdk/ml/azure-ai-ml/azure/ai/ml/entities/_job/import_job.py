@@ -77,8 +77,12 @@ class DatabaseImportSource(ImportSource):
         )
         self.query = query
 
-    def _to_job_inputs(self) -> Dict[str, str]:
-        """Translate source to command Inputs."""
+    def _to_job_inputs(self) -> Dict[str, Optional[str]]:
+        """Translate source to command Inputs.
+
+        :return: The job inputs dict
+        :rtype: Dict[str, str]
+        """
         inputs = {
             "type": self.type,
             "connection": self.connection,

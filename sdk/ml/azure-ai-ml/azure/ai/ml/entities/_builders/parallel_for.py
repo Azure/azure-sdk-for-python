@@ -17,6 +17,7 @@ from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, validate_attribute_type
+from azure.ai.ml.entities._validation import MutableValidationResult
 from azure.ai.ml.exceptions import UserErrorException
 
 
@@ -203,8 +204,12 @@ class ParallelFor(LoopNode, NodeIOMixin):
         loaded_data["body"] = cls._get_body_from_pipeline_jobs(pipeline_jobs=pipeline_jobs, body_name=body_name)
         return cls(**loaded_data, **kwargs)
 
-    def _convert_output_meta(self, outputs):
-        """Convert output meta to aggregate types."""
+    def _convert_output_meta(self, outputs: Dict[str, Union[NodeOutput, Output]]) -> Dict[str, Output]:
+        """Convert output meta to aggregate types.
+
+        :return: Dictionary of aggregate types
+        :rtype: Dict[str, Output]
+        """
         # pylint: disable=protected-access
         aggregate_outputs = {}
         for name, output in outputs.items():
@@ -227,8 +232,12 @@ class ParallelFor(LoopNode, NodeIOMixin):
             aggregate_outputs[name] = resolved_output
         return aggregate_outputs
 
-    def _customized_validate(self):
-        """Customized validation for parallel for node."""
+    def _customized_validate(self) -> MutableValidationResult:
+        """Customized validation for parallel for node.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
+        """
         # pylint: disable=protected-access
         validation_result = self._validate_body(raise_error=False)
         validation_result.merge_with(

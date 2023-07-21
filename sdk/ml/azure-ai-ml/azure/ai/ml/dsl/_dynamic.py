@@ -32,8 +32,12 @@ class KwParameter(Parameter):
         self._optional = _optional
 
 
-def _replace_function_name(func: types.FunctionType, new_name):
-    """Return a function with the same body but a new name."""
+def _replace_function_name(func: types.FunctionType, new_name: str) -> types.FunctionType:
+    """Replaces the name of a function with a new name
+
+    :return: The function with a replaced name, but otherwise unchanged body
+    :rtype: types.FunctionType
+    """
     try:
         # Use the original code of the function to initialize a new code object for the new function.
         code_template = func.__code__

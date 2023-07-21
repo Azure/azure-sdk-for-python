@@ -10,6 +10,7 @@ from collections import OrderedDict
 from enum import Enum as PyEnum
 from enum import EnumMeta
 from inspect import Parameter, getmro, signature
+from typing import Any, Dict, List, TypeVar
 
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import UserErrorException
@@ -142,8 +143,12 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
             raise UserErrorException(msg)
         return complete_annotation
 
-    def _update_fields_with_default(annotation_fields, defaults_dict):
-        """Use public values in class dict to update annotations."""
+    def _update_fields_with_default(annotation_fields: Dict[str, Any], defaults_dict: Dict[str, Any]) -> List[str]:
+        """Use public values in class dict to update annotations.
+
+        :return: List of field names
+        :rtype: List[str]
+        """
         all_fields = OrderedDict()
         all_filed_keys = _merge_field_keys(annotation_fields, defaults_dict)
         for name in all_filed_keys:
@@ -335,7 +340,19 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
     return result
 
 
-def _remove_empty_values(data, ignore_keys=None):
+T = TypeVar("T")
+
+
+def _remove_empty_values(data: T, ignore_keys=None) -> T:
+    """Recursively removes None values from a dict
+
+    :param data: The value to remove None from
+    :type data: T
+    :return:
+      * `data` if `data` is not a dict
+      * `data` with None values recursively filtered out if data is a dict
+    :rtype: T
+    """
     if not isinstance(data, dict):
         return data
     ignore_keys = ignore_keys or {}

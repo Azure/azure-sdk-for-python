@@ -181,7 +181,7 @@ class GitIgnoreFile(IgnoreFile):
         super(GitIgnoreFile, self).__init__(file_path)
 
 
-def get_ignore_file(directory_path: Union[Path, str]) -> Optional[IgnoreFile]:
+def get_ignore_file(directory_path: Union[Path, str]) -> IgnoreFile:
     """Finds and returns IgnoreFile object based on ignore file found in directory_path.
 
     .amlignore takes precedence over .gitignore and if no file is found, an empty
@@ -191,6 +191,8 @@ def get_ignore_file(directory_path: Union[Path, str]) -> Optional[IgnoreFile]:
 
     :param directory_path: Path to the (root) directory where ignore file is located
     :type directory_path: Union[Path, str]
+    :return: The IgnoreFile found in the directory
+    :rtype: IgnoreFile
     """
     aml_ignore = AmlIgnoreFile(directory_path)
     git_ignore = GitIgnoreFile(directory_path)
@@ -292,8 +294,11 @@ def get_content_hash_version():
     return 202208
 
 
-def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> str:
-    """Generating sha256 hash for file/folder, e.g. Code snapshot fingerprints to prevent tampering.
+def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> Optional[str]:
+    """Generating sha256 hash for file/folder,
+
+    e.g. Code snapshot fingerprints to prevent tampering.
+
     The process of hashing is:
     1. If it's a link, get the actual path of the link.
     2. If it's a file, append file content.
@@ -311,6 +316,9 @@ def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFil
             ('/mnt/c/codehash/code/Folder2/folder1/file1.txt', 'Folder2/folder1/file1.txt')
         ]
     4. Hash the content and convert to hex digest string.
+
+    :return: The content hash if the content is a link, directory, or file. None otherwise
+    :rtype: Optional[str]
     """
     # DO NOT change this function unless you change the verification logic together
     actual_path = path

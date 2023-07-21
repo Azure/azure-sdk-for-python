@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import re
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from azure.ai.ml import Output
 from azure.ai.ml._schema import PathAwareSchema
@@ -745,10 +745,13 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
         return data_path
 
-    def _get_aggregator_input_name(self, silo_output_name):
-        """
-        Returns aggregator input name that maps to silo_output.
-        Returns None if silo_output_name not in silo_to_aggregation_argument_map
+    def _get_aggregator_input_name(self, silo_output_name) -> Optional[str]:
+        """Retrieves the aggregator input name
+
+        :return:
+            * Returns aggregator input name that maps to silo_output.
+            * Returns None if silo_output_name not in silo_to_aggregation_argument_map
+        :rtype: Optional[str]
         """
         return self.silo_to_aggregation_argument_map.get(silo_output_name)
 
@@ -759,7 +762,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         agg_comp: Component,
         silo_agg_map: Dict,
         agg_silo_map: Dict,
-    ):
+    ) -> Tuple[Optional[Dict], Optional[Dict]]:
         """
         This function tries to produce dictionaries that link the silo and aggregation
         components' outputs to the other's inputs.
@@ -768,11 +771,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         These auto-generated mappings are naive, and simply maps all outputs of a component that have a
         identically-named input in the other component.
 
-            This function does nothing if either inputted component is None. This function will also do nothing
+        This function does nothing if either inputted component is None. This function will also do nothing
         for a given mapping if either of the relevant inputs or outputs are None (but not empty).
-
-        Returns a tuple of the potentially modified silo to aggregation mapping,
-        followed by the aggregation to silo mapping.
 
         Example inputs:
             silo_comp.inputs = {"silo_input" : value }
@@ -785,6 +785,9 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         Example returns:
             {"silo_output1" : "silo_output1"}, {}
 
+        :return: Returns a tuple of the potentially modified silo to aggregation mapping, followed by the aggregation
+            to silo mapping.
+        :rtype: Tuple[Optional[Dict], Optional[Dict]]
         """
         if silo_comp is None or agg_comp is None:
             return silo_agg_map, agg_silo_map

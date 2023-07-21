@@ -9,7 +9,7 @@ import os
 import re
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 from azure.ai.ml.dsl._constants import VALID_NAME_CHARS
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget
@@ -28,20 +28,33 @@ def _sanitize_python_variable_name(name: str):
     return _normalize_identifier_name(name).replace(" ", "_")
 
 
-def is_valid_name(name: str):
-    """Indicate whether the name is a valid component name."""
+def is_valid_name(name: str) -> bool:
+    """Indicate whether the name is a valid component name.
+
+    :return: True if name is a valid name for a component, False otherwise
+    :rtype: bool
+    """
     return all(c in VALID_NAME_CHARS for c in name)
 
 
-def _resolve_source_directory():
-    """Resolve source directory as last customer frame's module file dir position."""
+def _resolve_source_directory() -> Optional[Union[str, Path]]:
+    """Resolve source directory as last customer frame's module file dir position.
+
+    :return: The directory path of the last customer owner frame in the callstack
+    :rtype: Optional[Union[str, Path]]
+    """
     source_file = _resolve_source_file()
     # Fall back to current working directory if not found
     return os.getcwd() if not source_file else Path(os.path.dirname(source_file)).absolute()
 
 
 def _resolve_source_file() -> Optional[Path]:
-    """Resolve source file as last customer frame's module file position."""
+    """Resolve source file as last customer frame's module file position.
+
+
+    :return: The filepath of the last customer owner frame in the callstack
+    :rtype: Optional[Path]
+    """
     try:
         frame_list = inspect.stack()
         # We find the last frame which is in SDK code instead of customer code or dependencies code
@@ -68,11 +81,16 @@ def _assert_frame_package_name(pattern, frame):
     return package_name and re.match(pattern, package_name)
 
 
-def _relative_to(path, basedir, raises_if_impossible=False):
+def _relative_to(path, basedir, raises_if_impossible=False) -> Optional[Path]:
     """Compute the relative path under basedir.
 
     This is a wrapper function of Path.relative_to, by default Path.relative_to raises if path is not under basedir, In
     this function, it returns None if raises_if_impossible=False, otherwise raises.
+
+    :return:
+        * None if raises_if_impossible is False and basedir is not a parent of path
+        * path.relative_to(basedir) otherwise
+    :rtype: Optional[Path]
     """
     # The second resolve is to resolve possible win short path.
     path = Path(path).resolve().absolute().resolve()

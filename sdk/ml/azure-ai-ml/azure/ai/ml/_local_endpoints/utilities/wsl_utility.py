@@ -20,10 +20,14 @@ def in_wsl() -> bool:
     return "microsoft" in uname().release.lower()
 
 
-def get_wsl_path(path: str) -> bool:
-    """Input /home/username/ for example.
+def get_wsl_path(path: str) -> str:
+    """Converts a WSL unix path to a Windows Path
 
+    Input /home/username/ for example.
     Output /mnt/c/users/username
+
+    :return: A Windows Path
+    :rtype: str
     """
     windows_path = run_cli_command(["wslpath", "-w", path])
     return windows_path

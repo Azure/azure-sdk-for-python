@@ -7,6 +7,7 @@ import typing
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
+from typing_extensions import Literal
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as RestJobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobScheduleAction
@@ -434,6 +435,10 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         except BaseException:  # pylint: disable=broad-except
             return super(JobSchedule, self).__str__()
 
-    def _get_telemetry_values(self, *args, **kwargs):
-        """Return the telemetry values of schedule."""
+    def _get_telemetry_values(self, *args, **kwargs) -> Dict[Literal["trigger_type"], str]:
+        """Return the telemetry values of schedule.
+
+        :return: A dictionary with telemetry values
+        :rtype: Dict[Literal["trigger_type"], str]
+        """
         return {"trigger_type": type(self.trigger).__name__}

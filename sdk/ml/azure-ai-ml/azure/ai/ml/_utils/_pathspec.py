@@ -12,7 +12,7 @@ import os
 import posixpath
 import re
 import warnings
-from typing import Any, AnyStr, Iterable, Iterator
+from typing import Any, AnyStr, Iterable
 from typing import Match as MatchHint
 from typing import Optional
 from typing import Pattern as PatternHint
@@ -48,7 +48,7 @@ class Pattern(object):
         or is a null-operation (:data:`None`).
         """
 
-    def match(self, files: Iterable[str]) -> Iterator[str]:
+    def match(self, files: Iterable[str]) -> Iterable[str]:
         """
         DEPRECATED: This method is no longer used and has been replaced by
         :meth:`.match_file`. Use the :meth:`.match_file` method with a loop
@@ -57,8 +57,9 @@ class Pattern(object):
         *files* (:class:`~collections.abc.Iterable` of :class:`str`)
         contains each file relative to the root directory (e.g.,
         :data:`"relative/path/to/file"`).
-        Returns an :class:`~collections.abc.Iterable` yielding each matched
-        file path (:class:`str`).
+
+        :return: The matched file paths
+        :rtype: Iterable[str]
         """
         warnings.warn(
             (
@@ -552,8 +553,7 @@ class GitWildMatchPattern(RegexPattern):
         return out_string
 
 
-def normalize_file(file, separators=None):
-    # type: (Union[Text, PathLike], Optional[Collection[Text]]) -> Text
+def normalize_file(file: Union[str, os.PathLike], separators: Optional[Iterable[str]] = None) -> str:
     """
     Normalizes the file path to use the POSIX path separator (i.e.,
     ``'/'``), and make the paths relative (remove leading ``'/'``).
@@ -567,7 +567,8 @@ def normalize_file(file, separators=None):
     :data:`NORMALIZE_PATH_SEPS`. To prevent normalization, pass an empty
     container (e.g., an empty tuple ``()``).
 
-    Returns the normalized file path (:class:`str`).
+    :return: The normalized file path.
+    :rtype: str
     """
     # Normalize path separators.
     if separators is None:

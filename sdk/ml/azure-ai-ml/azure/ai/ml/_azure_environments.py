@@ -78,8 +78,11 @@ def _get_cloud(cloud: str):
         raise Exception('Unknown cloud environment "{0}".'.format(cloud)) from e
 
 
-def _get_default_cloud_name():
-    """Return AzureCloud as the default cloud."""
+def _get_default_cloud_name() -> str:
+    """
+    :return: Configured cloud, defaults to 'AzureCloud'
+    :rtype: str
+    """
     return os.getenv(AZUREML_CLOUD_ENV_NAME, AzureEnvironments.ENV_DEFAULT)
 
 

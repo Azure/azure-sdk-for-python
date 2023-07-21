@@ -47,8 +47,12 @@ class Diagnostic(object):
         self.error_code = error_code
         self.local_path, self.value = None, None
 
-    def __repr__(self):
-        """Return the asset friendly name and error message."""
+    def __repr__(self) -> str:
+        """The asset friendly name and error message.
+
+        :return: The formatted diagnostic
+        :rtype: str
+        """
         return "{}: {}".format(self.yaml_path, self.message)
 
     @classmethod
@@ -491,14 +495,21 @@ class _ValidationResultBuilder:
         pass
 
     @classmethod
-    def success(cls):
-        """Create a validation result with success status."""
+    def success(cls) -> MutableValidationResult:
+        """Create a validation result with success status.
+
+        :return: A validation result
+        :rtype: MutableValidationResult
+        """
         return MutableValidationResult()
 
     @classmethod
-    def from_rest_object(cls, rest_obj: DeploymentValidateResult):
+    def from_rest_object(cls, rest_obj: DeploymentValidateResult) -> MutableValidationResult:
         """Create a validation result from a rest object. Note that the created validation result does not have
         target_obj so should only be used for merging.
+
+        :return: The validation result created from rest_obj
+        :rtype: MutableValidationResult
         """
         if not rest_obj.error or not rest_obj.error.details:
             return cls.success()
@@ -531,13 +542,15 @@ class _ValidationResultBuilder:
     @classmethod
     def from_validation_error(
         cls, error: ValidationError, *, source_path: Optional[str] = None, error_on_unknown_field=False
-    ):
+    ) -> MutableValidationResult:
         """Create a validation result from a ValidationError, which will be raised in marshmallow.Schema.load. Please
         use this function only for exception in loading file.
 
         param error: ValidationError raised by marshmallow.Schema.load. type error: ValidationError param
         error_on_unknown_field: whether to raise error if there are unknown field diagnostics. type
         error_on_unknown_field: bool
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
         obj = cls.from_validation_messages(
             error.messages, data=error.data, error_on_unknown_field=error_on_unknown_field
@@ -547,12 +560,16 @@ class _ValidationResultBuilder:
         return obj
 
     @classmethod
-    def from_validation_messages(cls, errors: typing.Dict, data: typing.Dict, *, error_on_unknown_field: bool = False):
+    def from_validation_messages(
+        cls, errors: typing.Dict, data: typing.Dict, *, error_on_unknown_field: bool = False
+    ) -> MutableValidationResult:
         """Create a validation result from error messages, which will be returned by marshmallow.Schema.validate.
 
         param errors: error message returned by marshmallow.Schema.validate. type errors: dict param data: serialized
         data to validate type data: dict param error_on_unknown_field: whether to raise error if there are unknown field
         diagnostics. type error_on_unknown_field: bool
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
         instance = MutableValidationResult(target_obj=data)
         errors = copy.deepcopy(errors)

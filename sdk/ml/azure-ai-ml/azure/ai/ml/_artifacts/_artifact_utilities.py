@@ -10,7 +10,7 @@ import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Optional, Tuple, TypeVar, Union
-
+from typing_extensions import Literal
 from azure.storage.blob import BlobSasPermissions, generate_blob_sas
 from azure.storage.filedatalake import FileSasPermissions, generate_file_sas
 
@@ -69,7 +69,7 @@ def get_datastore_info(
     *,
     credential=None,
     **kwargs,
-) -> Dict[str, str]:
+) -> Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]:
     """Get datastore account, type, and auth information.
 
     :param operations: DatastoreOperations object
@@ -80,6 +80,8 @@ def get_datastore_info(
         credentials from the datastore, which requires authorization to perform action
         'Microsoft.MachineLearningServices/workspaces/datastores/listSecrets/action' over target datastore.
     :type credential: str
+    :return: The dictionary with datastore info
+    :rtype: Dict[Literal["storage_type", "storage_account", "account_url", "container_name"], str]
     """
     datastore_info = {}
     if name:
@@ -126,13 +128,19 @@ def get_datastore_info(
     return datastore_info
 
 
-def list_logs_in_datastore(ds_info: Dict[str, str], prefix: str, legacy_log_folder_name: str) -> Dict[str, str]:
+def list_logs_in_datastore(
+    ds_info: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str],
+    prefix: str,
+    legacy_log_folder_name: str,
+) -> Dict[str, str]:
     """Returns a dictionary of file name to blob or data lake uri with SAS token, matching the structure of
     RunDetails.logFiles.
 
     legacy_log_folder_name: the name of the folder in the datastore that contains the logs
         /azureml-logs/*.txt is the legacy log structure for commandJob and sweepJob
         /logs/azureml/*.txt is the legacy log structure for pipeline parent Job
+    :return: A mapping of log file name to the remote URI
+    :rtype: Dict[str, str]
     """
     if ds_info["storage_type"] not in [
         DatastoreType.AZURE_BLOB,
@@ -298,12 +306,14 @@ def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operati
 
 def aml_datastore_path_exists(
     uri: str, datastore_operation: DatastoreOperations, datastore_info: Optional[dict] = None
-):
+) -> bool:
     """Checks whether `uri` of the form "azureml://" points to either a directory or a file.
 
     :param str uri: azure ml datastore uri
     :param DatastoreOperations datastore_operation: Datastore operation
     :param dict datastore_info: return value of get_datastore_info
+    :return: True if uri exists False otherwise
+    :rtype: bool
     """
     parsed_uri = AzureMLDatastorePathUri(uri)
     datastore_info = datastore_info or get_datastore_info(datastore_operation, parsed_uri.datastore)
@@ -405,7 +415,7 @@ def _check_and_upload_path(
     sas_uri: Optional[str] = None,
     show_progress: bool = True,
     blob_uri: Optional[str] = None,
-) -> Tuple[T, str]:
+) -> Tuple[T, Optional[str]]:
     """Checks whether `artifact` is a path or a uri and uploads it to the datastore if necessary.
 
     param T artifact: artifact to check and upload param
@@ -413,6 +423,8 @@ def _check_and_upload_path(
     asset_operations:     the asset operations to use for uploading
     param str datastore_name: the name of the datastore to upload to
     param str sas_uri: the sas uri to use for uploading
+    :return: A 2-tuple of the uploaded artifact, and the indicator file.
+    :rtype: Tuple[T, Optional[str]]
     """
 
     datastore_name = artifact.datastore

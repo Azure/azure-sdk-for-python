@@ -7,7 +7,7 @@
 import copy
 import re
 from abc import ABC, abstractmethod
-from typing import List, Optional, Union
+from typing import List, Optional, TypeVar, Union
 
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
@@ -20,8 +20,15 @@ from azure.ai.ml.entities._util import resolve_pipeline_parameter
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UserErrorException, ValidationException
 
 
-def _build_data_binding(data: Union["PipelineInput", "Output"]) -> str:
-    """Build input builders to data bindings."""
+T = TypeVar("T")
+
+
+def _build_data_binding(data: Union[str, "PipelineInput", "Output"]) -> str:
+    """Build input builders to data bindings.
+
+    :return: A data binding string if data isn't a str, otherwise data
+    :rtype: str
+    """
     if isinstance(data, (InputOutputBase)):
         # Build data binding when data is PipelineInput, Output
         result = data._data_binding()
@@ -31,8 +38,17 @@ def _build_data_binding(data: Union["PipelineInput", "Output"]) -> str:
     return result
 
 
-def _resolve_builders_2_data_bindings(data: Union[list, dict]) -> Union[list, dict, str]:
-    """Traverse data and build input builders inside it to data bindings."""
+def _resolve_builders_2_data_bindings(
+    data: Union[list, dict, str, "PipelineInput", "Output"]
+) -> Union[list, dict, str]:
+    """Traverse data and build input builders inside it to data bindings.
+
+    :return:
+       * A dict if data was a dict
+       * A list if data was a list
+       * A str otherwise
+    :rtype: Union[list, dict, str]
+    """
     if isinstance(data, dict):
         for key, val in data.items():
             if isinstance(val, (dict, list)):
@@ -48,8 +64,12 @@ def _resolve_builders_2_data_bindings(data: Union[list, dict]) -> Union[list, di
     return _build_data_binding(data)
 
 
-def _data_to_input(data):
-    """Convert a Data object to an Input object."""
+def _data_to_input(data: Data) -> Input:
+    """Convert a Data object to an Input object.
+
+    :return: The Input object
+    :rtype: Input
+    """
     if data.id:
         return Input(type=data.type, path=data.id)
     return Input(type=data.type, path=f"{data.name}:{data.version}")
@@ -89,8 +109,12 @@ class InputOutputBase(ABC):
         super(InputOutputBase, self).__init__(**kwargs)
 
     @abstractmethod
-    def _build_data(self, data, key=None):  # pylint: disable=unused-argument
-        """Validate if data matches type and translate it to Input/Output acceptable type."""
+    def _build_data(self, data: T, key=None) -> Union[T, str, Input, "InputOutputBase"]:  # pylint: disable=unused-argument
+        """Validate if data matches type and translate it to Input/Output acceptable type.
+
+        :return: The built data
+        :rtype: Union[T, str, Input, InputOutputBase]
+        """
 
     @abstractmethod
     def _build_default_data(self):
@@ -262,11 +286,18 @@ class NodeInput(InputOutputBase):
         if self._data is None:
             self._data = Input()
 
-    def _build_data(self, data, key=None):  # pylint: disable=unused-argument
-        """Build input data according to assigned input, eg: node.inputs.key = data"""
-        data = resolve_pipeline_parameter(data)
+    def _build_data(self, data: T, key=None) -> Union[T, str, Input, InputOutputBase]:  # pylint: disable=unused-argument
+        """Build input data according to assigned input
+
+        eg: node.inputs.key = data
+
+        :return: The built data
+        :rtype: Union[T, str, Input, "PipelineInput", "NodeOutput"]
+        """
+        data: Union[T, str, NodeOutput] = resolve_pipeline_parameter(data)
         if data is None:
             return data
+        # Unidiomatic typecheck: Checks that data is _exactly_ this type, and not potentially a subtype
         if type(data) is NodeInput:  # pylint: disable=unidiomatic-typecheck
             msg = "Can not bind input to another component's input."
             raise ValidationException(
@@ -535,8 +566,12 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             # so we just leave the type inference work to backend
             self._data = Output(type=None)
 
-    def _build_data(self, data, key=None):
-        """Build output data according to assigned input, eg: node.outputs.key = data"""
+    def _build_data(self, data: T, key=None) -> T:
+        """Build output data according to assigned input, eg: node.outputs.key = data
+
+        :return: `data`
+        :rtype: T
+        """
         if data is None:
             return data
         if not isinstance(data, (Output, str)):
@@ -637,10 +672,17 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
     def __str__(self) -> str:
         return self._data_binding()
 
-    def _build_data(self, data, key=None):  # pylint: disable=unused-argument
-        """Build data according to input type."""
+    def _build_data(self, data: T, key=None) -> Union[Input, T]:  # pylint: disable=unused-argument
+        """Build data according to input type.
+
+        :return:
+            * Input if data is a Model or Data
+            * data otherwise
+        :rtype: Union[Input, T]
+        """
         if data is None:
             return data
+        # Unidiomatic typecheck: Checks that data is _exactly_ this type, and not potentially a subtype
         if type(data) is NodeInput:  # pylint: disable=unidiomatic-typecheck
             msg = "Can not bind input to another component's input."
             raise ValidationException(message=msg, no_personal_data_message=msg, target=ErrorTarget.PIPELINE)

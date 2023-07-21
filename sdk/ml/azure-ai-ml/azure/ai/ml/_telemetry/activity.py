@@ -18,6 +18,7 @@ import logging
 import os
 import uuid
 from datetime import datetime
+from typing import Dict, Tuple
 from uuid import uuid4
 
 from marshmallow import ValidationError
@@ -70,17 +71,23 @@ class ActivityLoggerAdapter(logging.LoggerAdapter):
         super(ActivityLoggerAdapter, self).__init__(logger, None)
 
     @property
-    def activity_info(self):
-        """Return current activity info."""
+    def activity_info(self) -> str:
+        """Return current activity info.
+
+        :return: The info to write to the logger
+        :rtype: str
+        """
         return self._activity_info
 
-    def process(self, msg, kwargs):
+    def process(self, msg: str, kwargs: Dict) -> Tuple[str, Dict]:
         """Process the log message.
 
         :param msg: The log message.
         :type msg: str
         :param kwargs: The arguments with properties.
         :type kwargs: dict
+        :return: A tuple of the processed msg and kwargs
+        :rtype: Tuple[str, Dict]
         """
         if "extra" not in kwargs:
             kwargs["extra"] = {}

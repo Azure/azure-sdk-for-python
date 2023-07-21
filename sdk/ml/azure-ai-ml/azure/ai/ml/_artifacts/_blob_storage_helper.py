@@ -12,6 +12,7 @@ import uuid
 from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
+from typing_extensions import Literal
 from colorama import Fore
 
 from azure.ai.ml._artifacts._constants import (
@@ -70,8 +71,12 @@ class BlobStorageClient:
         ignore_file: IgnoreFile = IgnoreFile(None),
         asset_hash: Optional[str] = None,
         show_progress: bool = True,
-    ) -> Dict[str, str]:
-        """Upload a file or directory to a path inside the container."""
+    ) -> Dict[Literal["remote path", "name", "version", "indicator file"], str]:
+        """Upload a file or directory to a path inside the container.
+
+        :return: A dictionary containing info of the uploaded artifact
+        :rtype: Dict[Literal["remote path", "name", "version", "indicator file"], str]
+        """
         if name and version is None:
             version = str(uuid.uuid4())  # placeholder for auto-increment artifacts
 

@@ -21,7 +21,7 @@ from datetime import timedelta
 from functools import singledispatch, wraps
 from os import PathLike
 from pathlib import Path, PosixPath, PureWindowsPath
-from typing import IO, Any, AnyStr, Callable, Dict, List, Optional, Tuple, Union
+from typing import IO, Any, AnyStr, Callable, Dict, Iterable, List, Optional, Tuple, Union
 from urllib.parse import urlparse
 from uuid import UUID
 
@@ -804,15 +804,16 @@ def try_enable_internal_components(*, force=False):
         enable_internal_components_in_pipeline(force=force)
 
 
-def is_valid_node_name(name):
-    """Return True if the string is a valid Python identifier in lower ASCII range, False otherwise.
+def is_valid_node_name(name: str) -> bool:
+    """Check if `name` is a valid node name
 
-    The regular expression match pattern is r"^[a-z_][a-z0-9_]*".
+    :return: Return True if the string is a valid Python identifier in lower ASCII range, False otherwise.
+    :rtype: bool
     """
     return isinstance(name, str) and name.isidentifier() and re.fullmatch(r"^[a-z_][a-z\d_]*", name) is not None
 
 
-def parse_args_description_from_docstring(docstring):
+def parse_args_description_from_docstring(docstring: str) -> Dict[str, str]:
     """Return arg descriptions in docstring with google style.
 
     e.g.
@@ -839,6 +840,9 @@ def parse_args_description_from_docstring(docstring):
                 'job_in_number': 'a number parameter with multi-line description',
                 'job_in_int': 'a int parameter'
             }
+
+    :return: A map of parameter names to parameter descriptions
+    :rtype: Dict[str, str]
     """
     args = {}
     if not isinstance(docstring, str):
@@ -876,10 +880,13 @@ def _is_user_error_from_status_code(http_status_code):
     return 400 <= http_status_code < 500
 
 
-def _str_to_bool(s):
-    """Returns True if literal 'true' is passed, otherwise returns False.
+def _str_to_bool(s: str) -> bool:
+    """Converts a string to a boolean
 
     Can be used as a type for argument in argparse, return argument's boolean value according to it's literal value.
+
+    :return: True if s is "true" (case-insensitive), otherwise returns False.
+    :rtype: bool
     """
     if not isinstance(s, str):
         return False
@@ -909,8 +916,12 @@ class DockerProxy:
             ) from e
 
 
-def get_all_enum_values_iter(enum_type):
-    """Get all values of an enum type."""
+def get_all_enum_values_iter(enum_type: type) -> Iterable[Any]:
+    """Get all values of an enum type.
+
+    :return: An iterable of all of the attributes of `enum_type`
+    :rtype: Iterable[Any]
+    """
     for key in dir(enum_type):
         if not key.startswith("_"):
             yield getattr(enum_type, key)

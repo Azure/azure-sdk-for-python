@@ -10,7 +10,7 @@ import sys
 import time
 from pathlib import Path, PurePosixPath
 from typing import Any, Dict, Optional, Tuple, Union
-
+from typing_extensions import Literal
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.fileshare import ShareDirectoryClient, ShareFileClient
 
@@ -70,8 +70,12 @@ class FileStorageClient:
         ignore_file: IgnoreFile = IgnoreFile(None),
         asset_hash: Optional[str] = None,
         show_progress: bool = True,
-    ) -> Dict[str, str]:
-        """Upload a file or directory to a path inside the file system."""
+    ) -> Dict[Literal["remote path", "name", "version"], str]:
+        """Upload a file or directory to a path inside the file system.
+
+        :return: A dictionary containing info of the uploaded artifact
+        :rtype: Dict[Literal["remote path", "name", "version"], str]
+        """
         asset_id = generate_asset_id(asset_hash, include_directory=False)
         source_name = Path(source).name
         dest = str(PurePosixPath(asset_id, source_name))

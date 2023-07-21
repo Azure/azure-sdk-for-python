@@ -112,7 +112,7 @@ class CachedNodeResolver(object):
         self._lock = _node_resolution_lock[self._client_hash]
 
     @staticmethod
-    def _get_component_registration_max_workers():
+    def _get_component_registration_max_workers() -> int:
         """Get the max workers for component registration.
 
         Before Python 3.8, the default max_worker is the number of processors multiplied by 5.
@@ -122,6 +122,9 @@ class CachedNodeResolver(object):
 
         1 risk is that, asset_utils will create a new thread pool to upload files in subprocesses, which may cause
         the number of threads exceed the max_worker.
+
+        :return: The number of workers to use for component registration
+        :rtype: int
         """
         default_max_workers = min(32, (os.cpu_count() or 1) + 4)
         try:

@@ -5,8 +5,9 @@ import re
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Tuple, Union
+from typing import IO, AnyStr, Dict, Optional, TYPE_CHECKING, Tuple, Union
 
+from typing_extensions import Literal
 from marshmallow import INCLUDE
 
 from ..._restclient.v2022_10_01.models import (
@@ -36,6 +37,8 @@ from ...entities._validation import MutableValidationResult, RemoteValidatableMi
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
 from .._inputs_outputs import GroupInput
 
+if TYPE_CHECKING:
+    from ...entities.builders import BaseNode
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
 
@@ -253,8 +256,18 @@ class Component(
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     @staticmethod
-    def _resolve_component_source_from_id(id):
-        """Resolve the component source from id."""
+    def _resolve_component_source_from_id(
+        id,
+    ) -> Literal[ComponentSource.CLASS, ComponentSource.REMOTE_REGISTRY, ComponentSource.REMOTE_WORKSPACE_COMPONENT]:
+        """Resolve the component source from id.
+
+        :return: The component source
+        :rtype: Literal[
+                ComponentSource.CLASS,
+                ComponentSource.REMOTE_REGISTRY,
+                ComponentSource.REMOTE_WORKSPACE_COMPONENT
+            ]
+        """
         if id is None:
             return ComponentSource.CLASS
         # Consider default is workspace source, as
@@ -558,8 +571,12 @@ class Component(
         is_anonymous = self.name is None or ANONYMOUS_COMPONENT_NAME in self.name
         return {"type": self.type, "source": self._source, "is_anonymous": is_anonymous}
 
-    def __call__(self, *args, **kwargs) -> [..., Union["Command", "Parallel"]]:
-        """Call ComponentVersion as a function and get a Component object."""
+    def __call__(self, *args, **kwargs) -> BaseNode:
+        """Call ComponentVersion as a function and get a Component object.
+
+        :return: The component object
+        :rtype: BaseNode
+        """
         if args:
             # raise clear error message for unsupported positional args
             if self._func._has_parameters:

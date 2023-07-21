@@ -43,8 +43,14 @@ class CustomDimensionsFilter(logging.Filter):
     def __init__(self, custom_dimensions=None):  # pylint: disable=super-init-not-called
         self.custom_dimensions = custom_dimensions or {}
 
-    def filter(self, record):
-        """Adds the default custom_dimensions into the current log record"""
+    def filter(self, record) -> bool:
+        """Adds the default custom_dimensions into the current log record. Does not
+        otherwise filter any records
+
+        :return: True
+        :rtype: bool
+        """
+
         custom_dimensions = self.custom_dimensions.copy()
         custom_dimensions.update(getattr(record, "custom_dimensions", {}))
         record.custom_dimensions = custom_dimensions

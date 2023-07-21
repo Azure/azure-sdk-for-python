@@ -12,7 +12,7 @@ import traceback
 import typing
 from abc import abstractmethod
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from marshmallow import RAISE, fields
 from marshmallow.exceptions import ValidationError
@@ -112,10 +112,13 @@ class LocalPathField(fields.Str):
             schema["pattern"] = self._pattern
         return schema
 
-    def _resolve_path(self, value) -> Path:
+    def _resolve_path(self, value: Union[str, os.PathLike]) -> Path:
         """Resolve path to absolute path based on base_path in context.
 
         Will resolve the path if it's already an absolute path.
+
+        :return: The resolved path
+        :rtype: Path
         """
         try:
             result = Path(value)
@@ -639,10 +642,12 @@ class TypeSensitiveUnionField(UnionField):
             raise self._simplified_error_base_on_type(e, value, attr)
 
 
-def ComputeField(**kwargs):
+def ComputeField(**kwargs) -> Field:
     """
     :keyword required: if set to True, it is not possible to pass None
     :type required: bool
+    :return: The compute field
+    :rtype: Field
     """
     return UnionField(
         [
@@ -656,10 +661,12 @@ def ComputeField(**kwargs):
     )
 
 
-def CodeField(**kwargs):
+def CodeField(**kwargs) -> Field:
     """
     :keyword required: if set to True, it is not possible to pass None
     :type required: bool
+    :return: The code field
+    :rtype: Field
     """
     return UnionField(
         [
@@ -872,8 +879,12 @@ class PythonFuncNameStr(fields.Str):
     def _get_field_name(self) -> str:
         """Returns field name, used for error message."""
 
-    def _deserialize(self, value, attr, data, **kwargs) -> typing.Any:
-        """Validate component name."""
+    def _deserialize(self, value, attr, data, **kwargs) -> str:
+        """Validate component name.
+
+        :return: The component name
+        :rtype: str
+        """
         name = super()._deserialize(value, attr, data, **kwargs)
         pattern = r"^[a-z][a-z\d_]*$"
         if not re.match(pattern, name):
@@ -890,8 +901,12 @@ class PipelineNodeNameStr(fields.Str):
     def _get_field_name(self) -> str:
         """Returns field name, used for error message."""
 
-    def _deserialize(self, value, attr, data, **kwargs) -> typing.Any:
-        """Validate component name."""
+    def _deserialize(self, value, attr, data, **kwargs) -> str:
+        """Validate component name.
+
+        :return: The component name
+        :rtype: str
+        """
         name = super()._deserialize(value, attr, data, **kwargs)
         if not is_valid_node_name(name):
             raise ValidationError(

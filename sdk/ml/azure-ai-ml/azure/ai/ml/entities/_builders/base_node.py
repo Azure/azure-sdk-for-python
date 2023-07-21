@@ -511,8 +511,12 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         # _attr_dict will return False if no extra attributes are set
         return True
 
-    def _get_origin_job_outputs(self):
-        """Restore outputs to JobOutput/BindingString and return them."""
+    def _get_origin_job_outputs(self) -> Dict[str, Union[str, Output]]:
+        """Restore outputs to JobOutput/BindingString and return them.
+
+        :return: The origin job outputs
+        :rtype: Dict[str, Union[str, Output]]
+        """
         outputs: Dict[str, Union[str, Output]] = {}
         if self.outputs is not None:
             for output_name, output_obj in self.outputs.items():

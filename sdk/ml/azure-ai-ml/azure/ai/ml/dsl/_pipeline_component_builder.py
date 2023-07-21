@@ -9,7 +9,7 @@ import logging
 import typing
 from collections import OrderedDict
 from inspect import Parameter, signature
-from typing import Callable, Union
+from typing import Callable, Dict, Union
 
 from azure.ai.ml._utils._func_utils import get_outputs_and_locals
 from azure.ai.ml._utils.utils import (
@@ -231,12 +231,14 @@ class PipelineComponentBuilder:
                 v["description"] = self._args_description[k]
         return inputs
 
-    def _build_pipeline_outputs(self, outputs: typing.Dict[str, NodeOutput]):
+    def _build_pipeline_outputs(self, outputs: typing.Dict[str, NodeOutput]) -> Dict[str, PipelineOutput]:
         """Validate if dsl.pipeline returns valid outputs and set output binding. Create PipelineOutput as pipeline's
         output definition based on node outputs from return.
 
         :param outputs: Outputs of pipeline
         :type outputs: Mapping[str, azure.ai.ml.Output]
+        :return: The mapping of output names to PipelineOutput
+        :rtype: Dict[str, PipelineOutput]
         """
         error_msg = (
             "The return type of dsl.pipeline decorated function should be a mapping from output name to "
@@ -263,8 +265,12 @@ class PipelineComponentBuilder:
                 )
 
             # Hack: map internal output type to pipeline output type
-            def _map_internal_output_type(_meta):
-                """Map component output type to valid pipeline output type."""
+            def _map_internal_output_type(_meta: Output) -> str:
+                """Map component output type to valid pipeline output type.
+
+                :return: Output type
+                :rtype: str
+                """
                 if type(_meta).__name__ != "InternalOutput":
                     return _meta.type
                 return _meta.map_pipeline_output_type()
@@ -308,7 +314,7 @@ class PipelineComponentBuilder:
             group_defaults[key].insert_group_name_for_items(key)
         return group_defaults
 
-    def _update_nodes_variable_names(self, func_variables: dict):
+    def _update_nodes_variable_names(self, func_variables: dict) -> Dict[str, Union[BaseNode, AutoMLJob]]:
         """Update nodes list to ordered dict with variable name key and component object value.
 
         Variable naming priority:
@@ -331,6 +337,9 @@ class PipelineComponentBuilder:
                  e.g.
                  my_node = module_func()     # final node name is "my_node"
                  module_func_1()             # final node name is its component name
+
+        :return: Map of variable name to component object
+        :rtype: Dict[str, Union[BaseNode, AutoMLJob]]
         """
 
         def _get_name_or_component_name(node: Union[BaseNode, AutoMLJob]):
@@ -421,8 +430,12 @@ class PipelineComponentBuilder:
                 self.inputs[input_name] = anno
 
     @classmethod
-    def _get_output_annotation(cls, func):
-        """Get the output annotation of the function, validate & refine it."""
+    def _get_output_annotation(cls, func) -> Dict[str, Dict]:
+        """Get the output annotation of the function, validate & refine it.
+
+        :return: A dict of output annotations
+        :rtype: Dict[str, Dict]
+        """
         return_annotation = inspect.signature(func).return_annotation
 
         if is_group(return_annotation):

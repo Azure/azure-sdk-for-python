@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 # pylint: disable=unused-argument,protected-access
+from typing import List
 
 from marshmallow import fields, post_dump, post_load, pre_dump
 
@@ -122,8 +123,12 @@ class ImageInstanceSegmentationNodeSchema(AutoMLNodeMixin, ImageInstanceSegmenta
     validation_data = UnionField([fields.Str(), NestedField(MLTableInputSchema)])
 
 
-def AutoMLNodeSchema(**kwargs):
-    """Get the list of all nested schema for all AutoML nodes."""
+def AutoMLNodeSchema(**kwargs) -> List[fields.Field]:
+    """Get the list of all nested schema for all AutoML nodes.
+
+    :return: The list of fields
+    :rtype: List[fields.Field]
+    """
     return [
         # region: automl node schemas
         NestedField(AutoMLClassificationNodeSchema, **kwargs),

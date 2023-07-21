@@ -190,8 +190,12 @@ def validate_attribute_type(attrs_to_check: Dict[str, Any], attr_type_map: Dict[
             )
 
 
-def is_empty_target(obj):
-    """Determines if it's empty target"""
+def is_empty_target(obj: Optional[Dict]) -> bool:
+    """Determines if it's empty target
+
+    :return: True if obj is None or an empty Dict
+    :rtype: bool
+    """
     return (
         obj is None
         # some objs have overloaded "==" and will cause error. e.g CommandComponent obj
@@ -317,7 +321,7 @@ class _DummyRestModelFromDict(msrest.serialization.Model):
         return super().__getattribute__(item)
 
 
-def from_rest_dict_to_dummy_rest_object(rest_dict):
+def from_rest_dict_to_dummy_rest_object(rest_dict: Optional[Dict]) -> _DummyRestModelFromDict:
     """Create a dummy rest object based on a rest dict, which is a primitive dict containing
     attributes in a rest object.
     For example, for a rest object class like:
@@ -330,6 +334,9 @@ def from_rest_dict_to_dummy_rest_object(rest_dict):
         regenerated_rest_object = from_rest_dict_to_fake_rest_object(rest_dict)
         assert regenerated_rest_object.a == 1
         assert regenerated_rest_object.b is None
+
+    :return: A dummy rest object
+    :rtype: _DummyRestModelFromDict
     """
     if rest_dict is None or isinstance(rest_dict, dict):
         return _DummyRestModelFromDict(rest_dict)

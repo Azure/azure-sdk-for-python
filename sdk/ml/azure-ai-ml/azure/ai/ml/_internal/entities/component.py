@@ -154,7 +154,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
     # region AdditionalIncludesMixin
 
     @classmethod
-    def _read_additional_include_configs(cls, yaml_path) -> List:
+    def _read_additional_include_configs(cls, yaml_path: Path) -> List[str]:
         """Read additional include configs from the additional includes file.
         The name of the file is the same as the component spec file, with a suffix of ".additional_includes".
         It can be either a yaml file or a text file:
@@ -172,6 +172,9 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         ```
         2. If it is a text file, each line is a path to include. Note that artifact config is not supported
         in this format.
+
+        :return: The list of additional includes
+        :rtype: List[str]
         """
         additional_includes_config_path = yaml_path.with_suffix(_ADDITIONAL_INCLUDES_SUFFIX)
         if additional_includes_config_path.is_file():

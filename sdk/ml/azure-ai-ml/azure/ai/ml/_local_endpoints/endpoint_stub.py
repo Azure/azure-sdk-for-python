@@ -6,7 +6,7 @@
 import json
 import shutil
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Optional
 
 from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.entities import OnlineEndpoint
@@ -20,18 +20,22 @@ class EndpointStub:
     machine in an idempotent, well-known location.
     """
 
-    def create_or_update(self, endpoint: OnlineEndpoint):
+    def create_or_update(self, endpoint: OnlineEndpoint) -> OnlineEndpoint:
         """Create or update a local endpoint.
 
         :param OnlineEndpoint endpoint: OnlineEndpoint entity to create or update.
+        :return: The provided endpoint
+        :rtype: OnlineEndpoint
         """
         self._create_endpoint_cache(endpoint=endpoint)
         return endpoint
 
-    def get(self, endpoint_name: str):
+    def get(self, endpoint_name: str) -> Optional[OnlineEndpoint]:
         """Get a local endpoint.
 
         :param str endpoint_name: Name of local endpoint to get.
+        :return: The specified Online Endpoint
+        :rtype: Optional[Endpoint]
         """
         endpoint_path = self._get_endpoint_cache_file(endpoint_name=endpoint_name)
         if endpoint_path.exists():
@@ -71,10 +75,12 @@ class EndpointStub:
             "Please use 'az ml online-deployment create --local' before invoking."
         )
 
-    def _create_endpoint_cache(self, endpoint: OnlineEndpoint):
+    def _create_endpoint_cache(self, endpoint: OnlineEndpoint) -> Path:
         """Create or update a local endpoint cache.
 
         :param OnlineEndpoint endpoint: OnlineEndpoint entity to create or update.
+        :return: The endpoint cache path
+        :rtype: Path
         """
         endpoint_cache_path = self._get_endpoint_cache_file(endpoint_name=endpoint.name)
         endpoint_metadata = json.dumps(endpoint.dump())

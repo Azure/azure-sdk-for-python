@@ -14,6 +14,7 @@ from collections import defaultdict
 from io import BytesIO
 from pathlib import Path
 from threading import Lock
+from typing import Optional
 
 from typing_extensions import Literal
 from azure.ai.ml.constants._common import DefaultOpenEncoding
@@ -78,8 +79,12 @@ class ArtifactCache:
         return self._cache_directory
 
     @staticmethod
-    def hash_files_content(file_list):
-        """Hash the file content in the file list."""
+    def hash_files_content(file_list) -> str:
+        """Hash the file content in the file list.
+
+        :return: Hashed file contents
+        :rtype: str
+        """
         ordered_file_list = copy.copy(file_list)
         hasher = hashlib.sha256()
         ordered_file_list.sort()
@@ -222,12 +227,14 @@ class ArtifactCache:
             else:
                 return
 
-    def _check_artifacts(self, artifact_package_path):
+    def _check_artifacts(self, artifact_package_path) -> bool:
         """Check the artifact folder is legal.
 
-        If the artifact folder or checksum file does not exist, return false. If the checksum file exists and does not
-        equal to the hash of artifact folder, return False. If the checksum file equals to the hash of artifact folder,
-        return true.
+        :return:
+          * If the artifact folder or checksum file does not exist, return false.
+          * If the checksum file exists and does not equal to the hash of artifact folder, return False.
+          * If the checksum file equals to the hash of artifact folder, return true.
+        :rtype: bool
         """
         path = Path(artifact_package_path)
         if not path.exists():

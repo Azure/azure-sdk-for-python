@@ -8,12 +8,15 @@ import re
 import tempfile
 from collections import namedtuple
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, TYPE_CHECKING, Tuple, Union
 
 from azure.ai.ml._utils.utils import dump_yaml_to_file, get_all_data_binding_expressions, load_yaml
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, DefaultOpenEncoding
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 from azure.ai.ml.exceptions import UserErrorException
+
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._builders import BaseNode
 
 ExpressionInput = namedtuple("ExpressionInput", ["name", "type", "value"])
 NONE_PARAMETER_TYPE = "None"
@@ -460,8 +463,12 @@ class PipelineExpression(PipelineExpressionMixin):
             stack.append(operand1 + operand2)
         return stack.pop()
 
-    def resolve(self):
-        """Resolve expression to data binding or component, depend on the operations."""
+    def resolve(self) -> Union[str, "BaseNode"]:
+        """Resolve expression to data binding or component, depend on the operations.
+
+        :return: The data binding string or the component
+        :rtype: Union[str, BaseNode]
+        """
         if self._string_concatenation:
             return self._to_data_binding()
         return self._create_component()

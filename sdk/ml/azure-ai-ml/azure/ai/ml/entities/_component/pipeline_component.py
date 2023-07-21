@@ -9,7 +9,7 @@ import logging
 import re
 import typing
 from collections import Counter
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from marshmallow import Schema
 
@@ -94,8 +94,12 @@ class PipelineComponent(Component):
         self._source_job_id = kwargs.pop("source_job_id", None)
         # TODO: set anonymous hash for reuse
 
-    def _process_jobs(self, jobs):
-        """Process and validate jobs."""
+    def _process_jobs(self, jobs: Dict[str, BaseNode]) -> Dict[str, BaseNode]:
+        """Process and validate jobs.
+
+        :return: The processed jobs
+        :rtype: Dict[str, BaseNode]
+        """
         # Remove swept Command
         node_names_to_skip = []
         for node_name, job_instance in jobs.items():
@@ -158,7 +162,7 @@ class PipelineComponent(Component):
 
         return validation_result
 
-    def _validate_compute_is_set(self, *, parent_node_name=None):
+    def _validate_compute_is_set(self, *, parent_node_name=None) -> MutableValidationResult:
         """Validate compute in pipeline component.
 
         This function will only be called from pipeline_job._validate_compute_is_set
@@ -168,6 +172,9 @@ class PipelineComponent(Component):
         - For general node:
             - If _skip_required_compute_missing_validation is True, validation will be skipped.
             - All the rest of cases without compute will add compute not set error to validation result.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
 
         # Note: do not put this into customized validate, as we would like call
@@ -279,8 +286,14 @@ class PipelineComponent(Component):
                     )
         return validation_result
 
-    def _get_job_type_and_source(self):
-        """Get job type and source for telemetry."""
+    def _get_job_type_and_source(self) -> Tuple[Dict[str, int], Dict[str, int]]:
+        """Get job types and sources for telemetry.
+
+        :return: A 2-tuple of
+          * A map of job type to the number of occurrences
+          * A map of job source to the number of occurrences
+        :rtype: Tuple[Dict[str, int], Dict[str, int]]
+        """
         job_types, job_sources = [], []
         for job in self.jobs.values():
             job_types.append(job.type)
@@ -378,8 +391,12 @@ class PipelineComponent(Component):
         return ["jobs"]
 
     @classmethod
-    def _check_ignored_keys(cls, obj):
-        """Return ignored keys in obj as a pipeline component when its value be set."""
+    def _check_ignored_keys(cls, obj) -> List[str]:
+        """Return ignored keys in obj as a pipeline component when its value be set.
+
+        :return: List of keys to ignore
+        :rtype: List[str]
+        """
         examine_mapping = {
             "compute": lambda val: val is not None,
             "settings": lambda val: val is not None and any(v is not None for v in val._to_dict().values()),
@@ -421,8 +438,12 @@ class PipelineComponent(Component):
         component_schema_dict.pop("base_path", None)
         return {**self._other_parameter, **component_schema_dict}
 
-    def _build_rest_component_jobs(self):
-        """Build pipeline component jobs to rest."""
+    def _build_rest_component_jobs(self) -> Dict[str, dict]:
+        """Build pipeline component jobs to rest.
+
+        :return: A map of job name to rest objects
+        :rtype: Dict[str, dict]
+        """
         # Build the jobs to dict
         rest_component_jobs = {}
         for job_name, job in self.jobs.items():

@@ -136,8 +136,12 @@ class Output(_InputOutputBase):
         comment_str = self.description.replace('"', '\\"') if self.description else self.type
         return '"""%s"""' % comment_str if comment_str and new_line_style else comment_str
 
-    def _to_dict(self):
-        """Convert the Output object to a dict."""
+    def _to_dict(self) -> Dict:
+        """Convert the Output object to a dict.
+
+        :return: The dictionary representation of Output
+        :rtype: Dict
+        """
         keys = self._IO_KEYS
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)

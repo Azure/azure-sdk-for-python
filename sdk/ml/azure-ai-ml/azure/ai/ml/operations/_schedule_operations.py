@@ -143,8 +143,12 @@ class ScheduleOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _get_polling(self, name):
-        """Return the polling with custom poll interval."""
+    def _get_polling(self, name) -> AzureMLPolling:
+        """Return the polling with custom poll interval.
+
+        :return: The AzureMLPolling object
+        :rtype: AzureMLPolling
+        """
         path_format_arguments = {
             "scheduleName": name,
             "resourceGroupName": self._resource_group_name,
