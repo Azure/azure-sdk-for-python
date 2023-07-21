@@ -15,7 +15,7 @@ from io import BytesIO
 from pathlib import Path
 from threading import Lock
 
-
+from typing_extensions import Literal
 from azure.ai.ml.constants._common import DefaultOpenEncoding
 
 from ._http_utils import HttpPipeline
@@ -241,20 +241,37 @@ class ArtifactCache:
                 return checksum == artifact_hash
         return False
 
-    def get(self, feed, name, version, scope, organization=None, project=None, resolve=True):
+    def get(
+        self,
+        feed: str,
+        name: str,
+        version: str,
+        scope: Literal["project", "organization"],
+        organization: Optional[str] = None,
+        project: Optional[str] = None,
+        resolve: bool = True,
+    ) -> Optional[Path]:
         """Get the catch path of artifact package. Package path like this azure-ai-
         ml/components/additional_includes/artifacts/{organization}/{project}/{feed}/{package_name}/{version}. If the
         path exits, it will return the package path. If the path not exist and resolve=True, it will download the
         artifact package and return package path. If the path not exist and resolve=False, it will return None.
 
         :param feed: Name or ID of the feed.
+        :type feed: str
         :param name: Name of the package.
+        :type name: str
         :param version: Version of the package.
+        :type version: str
         :param scope: Scope of the feed: 'project' if the feed was created in a project, and 'organization' otherwise.
+        :type scope: Literal["project", "organization"]
         :param organization: Azure DevOps organization URL.
+        :type organization: str, optional
         :param project: Name or ID of the project.
+        :type project: str, optional
         :param resolve: Whether download package when package does not exist in local.
+        :type resolve: bool
         :return artifact_package_path: Cache path of the artifact package
+        :rtype: Optional[Path]
         """
         if not all([organization, project]):
             org_val, project_val = self.get_organization_project_by_git()
@@ -293,17 +310,32 @@ class ArtifactCache:
                 )
         return None
 
-    def set(self, feed, name, version, scope, organization=None, project=None):
+    def set(
+        self,
+        feed: str,
+        name: str,
+        version: str,
+        scope: Literal["project", "organization"],
+        organization: Optional[str] = None,
+        project: Optional[str] = None,
+    ) -> Path:
         """Set the artifact package to the cache. The key of the cache is path of artifact packages in local. The value
         is the files/folders in this cache folder. If package path exists, directly return package path.
 
         :param feed: Name or ID of the feed.
+        :type feed: str
         :param name: Name of the package.
+        :type name: str
         :param version: Version of the package.
+        :type version: str
         :param scope: Scope of the feed: 'project' if the feed was created in a project, and 'organization' otherwise.
+        :type scope: Literal["project", "organization"]
         :param organization: Azure DevOps organization URL.
+        :type organization: str, optional
         :param project: Name or ID of the project.
+        :type project: str, optional
         :return artifact_package_path: Cache path of the artifact package
+        :rtype: Path
         """
         tempdir = tempfile.mktemp()  # nosec B306
         download_cmd = [

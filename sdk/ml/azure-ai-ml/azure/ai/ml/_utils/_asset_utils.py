@@ -1005,7 +1005,7 @@ class DirectoryUploadProgressBar(tqdm):
 
 
 def get_storage_info_for_non_registry_asset(
-    service_client, workspace_name, name, version, resource_group
+    service_client, workspace_name: str, name: str, version: str, resource_group: str
 ) -> Dict[str, str]:
     """Get SAS uri and blob uri for non-registry asset. Note that this function won't return the same
     SAS uri and blob uri for the same asset. It will return a new SAS uri and blob uri every time it is called.
@@ -1016,6 +1016,7 @@ def get_storage_info_for_non_registry_asset(
     :param version: Asset version
     :type version: str
     :param resource_group: Resource group
+    :type resource_group: str
     :rtype: Dict[str, str]
     """
     request_body = PendingUploadRequestDto(pending_upload_type="TemporaryBlobReference")

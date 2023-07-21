@@ -6,7 +6,7 @@ import hashlib
 import json
 import os
 import shutil
-from typing import Any, Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, Iterable, List, Optional, Type, Union
 from unittest import mock
 
 import msrest
@@ -166,12 +166,14 @@ def get_md5_string(text):
         raise ex
 
 
-def validate_attribute_type(attrs_to_check: dict, attr_type_map: dict):
+def validate_attribute_type(attrs_to_check: Dict[str, Any], attr_type_map: Dict[str, Type]) -> None:
     """Validate if attributes of object are set with valid types, raise error
     if don't.
 
     :param attrs_to_check: Mapping from attributes name to actual value.
+    :type attrs_to_check: Dict[str, Any]
     :param attr_type_map: Mapping from attributes name to tuple of expecting type
+    :type attr_type_map: Dict[str, Type]
     """
     #
     kwargs = attrs_to_check.get("kwargs", {})

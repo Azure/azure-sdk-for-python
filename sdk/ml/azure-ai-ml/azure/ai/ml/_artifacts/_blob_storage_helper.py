@@ -10,7 +10,7 @@ import sys
 import time
 import uuid
 from pathlib import Path, PurePosixPath
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 from colorama import Fore
 
@@ -203,14 +203,17 @@ class BlobStorageClient:
     def download(
         self,
         starts_with: str,
-        destination: str = Path.home(),
+        destination: Union[str, os.PathLike] = Path.home(),
         max_concurrency: int = MAX_CONCURRENCY,
     ) -> None:
         """Downloads all blobs inside a specified container to the destination folder.
 
         :param starts_with: Indicates the blob name starts with to search.
+        :type starts_with: str
         :param destination: Indicates path to download in local
+        :type destination: Union[str, os.PathLike[str]]
         :param max_concurrency: Indicates concurrent connections to download a blob.
+        :type max_concurrency: int
         """
         try:
             my_list = list(self.container_client.list_blobs(name_starts_with=starts_with, include="metadata"))

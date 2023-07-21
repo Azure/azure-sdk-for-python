@@ -87,13 +87,15 @@ class NodeIOMixin:
         self,
         inputs: Dict[str, Union[Input, str, bool, int, float]],
         *,
-        input_definition_dict: dict = None,
+        input_definition_dict: Optional[dict] = None,
     ) -> InputsAttrDict:
         """Build an input attribute dict so user can get/set inputs by
         accessing attribute, eg: node1.inputs.xxx.
 
         :param inputs: Provided kwargs when parameterizing component func.
+        :type inputs: Dict[str, Union[Input, str, bool, int, float]]
         :keyword input_definition_dict: Static input definition dict. If not provided, will build inputs without meta.
+        :type input_definition_dict: dict, optional
         :return: Built dynamic input attribute dict.
         """
         if input_definition_dict is not None:
@@ -355,13 +357,15 @@ class NodeWithGroupInputMixin(NodeIOMixin):
         self,
         inputs: Dict[str, Union[Input, str, bool, int, float]],
         *,
-        input_definition_dict: dict = None,
+        input_definition_dict: Optional[dict] = None,
     ) -> InputsAttrDict:
         """Build an input attribute dict so user can get/set inputs by
         accessing attribute, eg: node1.inputs.xxx.
 
-        :keyword input_definition_dict: Input definition dict from component entity.
         :param inputs: Provided kwargs when parameterizing component func.
+        :type inputs: Dict[str, Union[Input, str, bool, int, float]]
+        :keyword input_definition_dict: Input definition dict from component entity.
+        :type input_definition_dict: dict, optional
         :return: Built input attribute dict.
         """
 
@@ -412,11 +416,13 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
             return InputsAttrDict(GroupInput.restore_flattened_inputs(input_dict))
         return input_dict
 
-    def _build_output_for_pipeline(self, name, data) -> "PipelineOutput":
+    def _build_output_for_pipeline(self, name: str, data: Optional[Union[Output, NodeOutput]]) -> "PipelineOutput":
         """Build an output object for pipeline and copy settings from source output.
 
         :param name: Output name.
+        :type name: str
         :param data: Output data.
+        :type data: Optional[Union[Output, NodeOutput]]
         :return: Built output object.
         """
         # pylint: disable=protected-access

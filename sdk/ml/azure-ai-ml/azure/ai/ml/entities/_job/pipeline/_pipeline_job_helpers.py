@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import re
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple, Type, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
@@ -85,13 +85,15 @@ def process_sdk_component_job_io(
 
 def from_dict_to_rest_io(
     io: Dict[str, Union[str, dict]],
-    rest_object_class,
+    rest_object_class: Union[Type[RestJobInput], Type[RestJobOutput]],
     io_binding_regex_list: List[str],
 ) -> Tuple[Dict[str, str], Dict[str, Union[RestJobInput, RestJobOutput]]]:
     """Translate rest JObject dictionary to rest inputs/outputs and bindings.
 
     :param io: Input or output dictionary.
+    :type io: Dict[str, Union[str, dict]]
     :param rest_object_class: RestJobInput or RestJobOutput
+    :type rest_object_class: Union[Type[RestJobInput], Type[RestJobOutput]]
     :return: Map from IO name to IO bindings and Map from IO name to IO objects.
     """
     io_bindings = {}

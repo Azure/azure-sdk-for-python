@@ -7,7 +7,7 @@
 
 import math
 from inspect import Parameter
-from typing import Dict, Optional, Union, overload
+from typing import Dict, Optional, TypeVar, Union, overload
 
 from typing_extensions import Literal
 
@@ -300,10 +300,13 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 
-    def _parse(self, val):
+    T = TypeVar("T")
+
+    def _parse(self, val: T) -> Union[int, float, bool, str, T]:
         """Parse value passed from command line.
 
         :param val: The input value
+        :type val: T
         :return: The parsed value.
         """
         if self.type == "integer":
@@ -326,10 +329,11 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             return val if isinstance(val, str) else str(val)
         return val
 
-    def _parse_and_validate(self, val):
+    def _parse_and_validate(self, val: T) -> Union[int, float, bool, str, T]:
         """Parse the val passed from the command line and validate the value.
 
         :param val: The input string value from the command line.
+        :type val: T
         :return: The parsed value, an exception will be raised if the value is invalid.
         """
         if self._is_primitive_type:

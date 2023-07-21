@@ -6,7 +6,7 @@
 
 import logging
 import os
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from azure.ai.ml._utils.utils import _get_mfe_url_override
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
@@ -209,25 +209,28 @@ def _get_registry_discovery_endpoint_from_metadata(cloud_name: Optional[str] = N
     return registry_discovery_endpoint
 
 
-def _resource_to_scopes(resource):
+def _resource_to_scopes(resource: str) -> List[str]:
     """Convert the resource ID to scopes by appending the /.default suffix and return a list. For example:
     'https://management.core.windows.net/' ->
 
     ['https://management.core.windows.net//.default']
 
     :param resource: The resource ID
+    :type resource: str
     :return: A list of scopes
     """
     scope = resource + "/.default"
     return [scope]
 
 
-def _get_registry_discovery_url(cloud, cloud_suffix=""):
+def _get_registry_discovery_url(cloud: dict, cloud_suffix: str = "") -> str:
     """Get or generate the registry discovery url.
 
     :param cloud: configuration of the cloud to get the registry_discovery_url from
+    :type cloud: dict
     :param cloud_suffix: the suffix to use for the cloud, in the case that the registry_discovery_url
         must be generated
+    :type cloud_suffix: str
     :return: string of discovery url
     """
     cloud_name = cloud["name"]
