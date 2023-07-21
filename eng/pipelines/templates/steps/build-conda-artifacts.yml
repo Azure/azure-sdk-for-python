@@ -16,12 +16,7 @@ steps:
       versionSpec: $(PythonVersion)
 
   - pwsh: |
-      mkdir $(Agent.BuildDirectory)/conda/conda-recipes/output
-
-      gci -R $(Build.SourcesDirectory)/conda
-
-      Write-Host "##vso[task.setvariable variable=conda.output]$(Agent.BuildDirectory)/conda/conda-recipes/output"
-      Write-Host "##vso[task.setvariable variable=conda.build]$(Agent.BuildDirectory)/conda/conda-recipes"
+      gci -R | % { $_.FullName }
     displayName: 'Create Conda Working Directories'
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
