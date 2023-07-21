@@ -148,7 +148,9 @@ class RouterJobSamplesAsync(object):
         # [START create_job_async]
         from datetime import datetime, timedelta
         from azure.communication.jobrouter import (
-            RouterJob
+            RouterJob,
+            JobMatchingMode,
+            ScheduleAndSuspendMode
         )
         from azure.communication.jobrouter.aio import (
             JobRouterClient,
@@ -170,7 +172,7 @@ class RouterJobSamplesAsync(object):
                 )
             )
 
-            print(f"Job has been successfully created with status: {router_job.job_status}")
+            print(f"Job has been successfully created with status: {router_job.status}")
 
             # Alternatively, a job can also be created while specifying a classification policy
             # As a pre-requisite, we would need to create a classification policy first
@@ -182,7 +184,7 @@ class RouterJobSamplesAsync(object):
                     channel_reference = "12345"
                 )
             )
-            print(f"Job has been successfully created with status: {router_job_with_cp.job_status}")
+            print(f"Job has been successfully created with status: {router_job_with_cp.status}")
 
             # Additionally, any job can be created as a scheduled job
             # by simply specifying a scheduled_time_utc and setting unavailable_for_matching to true
@@ -193,11 +195,11 @@ class RouterJobSamplesAsync(object):
                     queue_id = queue_id,
                     priority = 10,
                     channel_reference = "12345",
-                    scheduled_time_utc = datetime.utcnow() + timedelta(0, 30),  # scheduled after 30 secs
-                    unavailable_for_matching = True
+                    matching_mode = JobMatchingMode(schedule_and_suspend_mode = ScheduleAndSuspendMode(
+                        schedule_at = datetime.utcnow() + timedelta(0, 30)))
                 )
             )
-            print(f"Scheduled job has been successfully created with status: {router_scheduled_job.job_status}")
+            print(f"Scheduled job has been successfully created with status: {router_scheduled_job.status}")
 
         # [END create_job_async]
 
@@ -319,7 +321,7 @@ class RouterJobSamplesAsync(object):
 
             queried_job: RouterJob = await router_client.get_job(job_id = job_id)
 
-            print(f"Job has been successfully assigned to worker. Current job status: {queried_job.job_status}")
+            print(f"Job has been successfully assigned to worker. Current job status: {queried_job.status}")
             print(f"Job has been successfully assigned with a worker with assignment "
                   f"id: {accept_job_offer_result.assignment_id}")
             # [END accept_job_offer_async]
