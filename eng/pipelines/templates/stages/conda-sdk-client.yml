@@ -9,13 +9,14 @@ parameters:
   default: true
 
 variables:
-  CondaArtifacts:
-  - name: azure-core
-    common_root: azure
-    inBatch: ${{ parameters.release_azure_core }}
-  - name: azure-storage
-    common_root: azure
-    inBatch: ${{ parameters.release_azure_storage }}
+  name: CondaArtifacts
+  value:
+    - name: azure-core
+      common_root: azure
+      inBatch: ${{ parameters.release_azure_core }}
+    - name: azure-storage
+      common_root: azure
+      inBatch: ${{ parameters.release_azure_storage }}
 
 stages:
   - stage: Build
