@@ -101,7 +101,9 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
         if self._client:
             self._client.__exit__(*args)
 
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
@@ -127,7 +129,9 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
 
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account, is_cae=is_cae):
-            token = self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)
+            token = self._client.obtain_token_by_refresh_token(
+                scopes, refresh_token, claims=claims, tenant_id=tenant_id, **kwargs
+            )
             return token
 
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))

@@ -157,7 +157,7 @@ def test_scopes_round_trip():
 def test_authenticate_default_scopes(authority, expected_scope):
     """when given no scopes, authenticate should default to the ARM scope appropriate for the configured authority"""
 
-    def validate_scopes(*scopes):
+    def validate_scopes(*scopes, **_):
         assert scopes == (expected_scope,)
         return REQUEST_TOKEN_RESULT
 
