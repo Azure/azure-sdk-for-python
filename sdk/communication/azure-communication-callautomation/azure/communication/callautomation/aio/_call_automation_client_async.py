@@ -214,8 +214,7 @@ class CallAutomationClient(object):
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional['MediaStreamingConfiguration'] = None,
         azure_cognitive_services_endpoint_url: Optional[str] = None,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
+        custom_context: Optional[CustomContext] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """ Create a call connection request to a list of multiple target identities.
@@ -237,16 +236,16 @@ class CallAutomationClient(object):
         :keyword azure_cognitive_services_endpoint_url:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype azure_cognitive_services_endpoint_url: str
-        :keyword sip_headers: Sip Headers for PSTN Call
-        :paramtype sip_headers: Dict[str, str]
-        :keyword voip_headers: Voip Headers for Voip Call
-        :paramtype voip_headers: Dict[str, str]
+        :keyword custom_context: Custom context
+        :paramtype custom_context: ~azure.communication.callautomation.CustomContext
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = CustomContext(
-            voip_headers=voip_headers, sip_headers=sip_headers) if sip_headers or voip_headers else None
+            voip_headers=custom_context.voip_headers,
+            sip_headers=custom_context.sip_headers
+            ) if (custom_context and (custom_context.sip_headers or custom_context.voip_headers)) else None
 
         create_call_request = CreateCallRequest(
             targets=[serialize_identifier(identifier)

@@ -57,10 +57,6 @@ class CallInvite(object):
     :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
     :keyword source_display_name: Set display name for caller
     :paramtype source_display_name: str
-    :keyword sip_headers: Custom context for PSTN
-    :paramtype sip_headers: dict[str, str]
-    :keyword voip_headers: Custom context for VOIP
-    :paramtype voip_headers: dict[str, str]
     """
 
     target: CommunicationIdentifier
