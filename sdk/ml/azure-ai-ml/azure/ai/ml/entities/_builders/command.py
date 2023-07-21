@@ -480,20 +480,20 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     ) -> None:
         """Set resources for Command.
 
-        :param instance_type: The type of compute instance to run the job on. If not specified, the job will run on
+        :keyword instance_type: The type of compute instance to run the job on. If not specified, the job will run on
             the default compute target.
         :type instance_type: Union[str, list[str]]
-        :param instance_count: The number of instances to run the job on. If not specified, the job will run on a
+        :keyword instance_count: The number of instances to run the job on. If not specified, the job will run on a
             single instance.
         :type instance_count: int
-        :param locations: The list of locations where the job will run. If not specified, the job will run on the
+        :keyword locations: The list of locations where the job will run. If not specified, the job will run on the
             default compute target.
         :type locations: list[str]
-        :param properties: The properties of the job.
+        :keyword properties: The properties of the job.
         :type properties: dict
-        :param docker_args: The Docker arguments for the job.
+        :keyword docker_args: The Docker arguments for the job.
         :type docker_args: str
-        :param shm_size: The size of the docker container's shared memory block. This should be in the
+        :keyword shm_size: The size of the docker container's shared memory block. This should be in the
             format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
             b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
         :type shm_size: str
@@ -531,7 +531,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     def set_limits(self, *, timeout: int, **kwargs) -> None:  # pylint: disable=unused-argument
         """Set limits for Command.
 
-        :param timeout: The timeout for the job in seconds.
+        :keyword timeout: The timeout for the job in seconds.
         :type timeout: int
 
         .. admonition:: Example:
@@ -552,9 +552,9 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     def set_queue_settings(self, *, job_tier: Optional[str] = None, priority: Optional[str] = None) -> None:
         """Set QueueSettings for the job.
 
-        :param job_tier: The job tier. Accepted values are "Spot", "Basic", "Standard", or "Premium".
+        :keyword job_tier: The job tier. Accepted values are "Spot", "Basic", "Standard", or "Premium".
         :type job_tier: str
-        :param priority:  The priority of the job on the compute. Defaults to "Medium".
+        :keyword priority:  The priority of the job on the compute. Defaults to "Medium".
         :type priority: str
 
         .. admonition:: Example:
@@ -604,43 +604,43 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         in the current Command node will be used as its trial component. A command node can sweep
         multiple times, and the generated sweep node will share the same trial component.
 
-        :param primary_metric: The primary metric of the sweep objective - e.g. AUC (Area Under the Curve).
+        :keyword primary_metric: The primary metric of the sweep objective - e.g. AUC (Area Under the Curve).
         The metric must be logged while running the trial component.
         :type primary_metric: str
-        :param goal: The goal of the Sweep objective. Accepted values are "minimize" or "maximize".
+        :keyword goal: The goal of the Sweep objective. Accepted values are "minimize" or "maximize".
         :type goal: str
-        :param sampling_algorithm: The sampling algorithm to use inside the search space. Defaults to "random".
+        :keyword sampling_algorithm: The sampling algorithm to use inside the search space. Defaults to "random".
         Acceptable values are "random", "grid", or "bayesian".
         :type sampling_algorithm: str
-        :param compute: The target compute to run the node on. If not specified, the current node's compute
+        :keyword compute: The target compute to run the node on. If not specified, the current node's compute
         will be used.
         :type compute: str
-        :param max_total_trials: The maximum number of trials to run. This value will overwrite value in
+        :keyword max_total_trials: The maximum number of trials to run. This value will overwrite value in
         CommandJob.limits if specified.
         :type max_total_trials: int
-        :param max_concurrent_trials: The maximum number of concurrent trials for the Sweep job.
+        :keyword max_concurrent_trials: The maximum number of concurrent trials for the Sweep job.
         :type max_concurrent_trials: int
-        :param max_total_trials: The maximum number of total trials for the Sweep Job.
+        :keyword max_total_trials: The maximum number of total trials for the Sweep Job.
         :type max_total_trials: int
-        :param timeout: The maximum run duration in seconds, after which the job will be cancelled.
+        :keyword timeout: The maximum run duration in seconds, after which the job will be cancelled.
         :type timeout: int
-        :param trial_timeout: The Sweep Job trial timeout value in seconds.
+        :keyword trial_timeout: The Sweep Job trial timeout value in seconds.
         :type trial_timeout: int
-        :param early_termination_policy: The early termination policy of the sweep node. Acceptable
+        :keyword early_termination_policy: The early termination policy of the sweep node. Acceptable
         values are "bandit", "median_stopping", or "truncation_selection".
         :type early_termination_policy: Union[~azure.ai.ml.sweep.BanditPolicy,
         ~azure.ai.ml.sweep.TruncationSelectionPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy, str]
-        :param identity: The identity that the job will use while running on compute.
+        :keyword identity: The identity that the job will use while running on compute.
         :type identity: Union[
             ~azure.ai.ml.ManagedIdentityConfiguration,
             ~azure.ai.ml.AmlTokenConfiguration,
             ~azure.ai.ml.UserIdentityConfiguration]
-        :param queue_settings: The queue settings for the job.
+        :keyword queue_settings: The queue settings for the job.
         :type queue_settings: ~azure.ai.ml.entities.QueueSettings
-        :param job_tier: **Experimental** The job tier. Accepted values are "Spot", "Basic",
+        :keyword job_tier: **Experimental** The job tier. Accepted values are "Spot", "Basic",
         "Standard", or "Premium".
         :type job_tier: str
-        :param priority: **Experimental** The compute priority. Accepted values are "low",
+        :keyword priority: **Experimental** The compute priority. Accepted values are "low",
         "medium", and "high".
         :type priority: str
         :return: A Sweep node with the component from current Command node as its trial component.

@@ -23,7 +23,7 @@ class EndpointStub:
     def create_or_update(self, endpoint: OnlineEndpoint):
         """Create or update a local endpoint.
 
-        :param endpoint OnlineEndpoint: OnlineEndpoint entity to create or update.
+        :param OnlineEndpoint endpoint: OnlineEndpoint entity to create or update.
         """
         self._create_endpoint_cache(endpoint=endpoint)
         return endpoint
@@ -31,7 +31,7 @@ class EndpointStub:
     def get(self, endpoint_name: str):
         """Get a local endpoint.
 
-        :param endpoint_name str: Name of local endpoint to get.
+        :param str endpoint_name: Name of local endpoint to get.
         """
         endpoint_path = self._get_endpoint_cache_file(endpoint_name=endpoint_name)
         if endpoint_path.exists():
@@ -49,7 +49,7 @@ class EndpointStub:
     def delete(self, endpoint_name: str):
         """Delete a local endpoint.
 
-        :param endpoint_name str: Name of local endpoint to delete.
+        :param str endpoint_name: Name of local endpoint to delete.
         """
         build_directory = self._get_build_directory(endpoint_name=endpoint_name)
         shutil.rmtree(build_directory)
@@ -67,7 +67,7 @@ class EndpointStub:
     def _create_endpoint_cache(self, endpoint: OnlineEndpoint):
         """Create or update a local endpoint cache.
 
-        :param endpoint OnlineEndpoint: OnlineEndpoint entity to create or update.
+        :param OnlineEndpoint endpoint: OnlineEndpoint entity to create or update.
         """
         endpoint_cache_path = self._get_endpoint_cache_file(endpoint_name=endpoint.name)
         endpoint_metadata = json.dumps(endpoint.dump())
@@ -77,7 +77,7 @@ class EndpointStub:
     def _get_endpoint_cache_file(self, endpoint_name: str) -> Path:
         """Get a local endpoint cache Path. Idempotent.
 
-        :param endpoint_name str: Name of local endpoint to get local cache.
+        :param str endpoint_name: Name of local endpoint to get local cache.
         :returns Path: path to cached endpoint file.
         """
         build_directory = self._create_build_directory(endpoint_name=endpoint_name)
@@ -86,7 +86,7 @@ class EndpointStub:
     def _create_build_directory(self, endpoint_name: str) -> Path:
         """Create or update a local endpoint build directory.
 
-        :param endpoint_name str: Name of local endpoint to get local directory.
+        :param str endpoint_name: Name of local endpoint to get local directory.
         :returns Path: path to endpoint build directory.
         """
         build_directory = self._get_build_directory(endpoint_name=endpoint_name)
@@ -96,7 +96,7 @@ class EndpointStub:
     def _get_build_directory(self, endpoint_name: str) -> Path:
         """Get a local endpoint build directory. Idempotent.
 
-        :param endpoint_name str: Name of local endpoint to get local directory.
+        :param str endpoint_name: Name of local endpoint to get local directory.
         :returns Path: path to endpoint build directory.
         """
         return Path(self._get_inferencing_cache_dir(), endpoint_name)

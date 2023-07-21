@@ -545,11 +545,11 @@ class MLClient:
 
         :param credential: The credential object for the workspace.
         :type credential: ~azure.core.credentials.TokenCredential
-        :param path: The path to the config file or starting directory to search.
+        :keyword path: The path to the config file or starting directory to search.
             The parameter defaults to starting the search in the current directory.
             Defaults to None
         :type path: typing.Union[os.PathLike, str]
-        :param file_name: Allows overriding the config file name to search for when path is a directory path.
+        :keyword file_name: Allows overriding the config file name to search for when path is a directory path.
             (Default value = None)
         :type file_name: str
         :keyword str cloud: The cloud name to use. Defaults to AzureCloud.

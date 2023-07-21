@@ -166,10 +166,10 @@ class _LocalDeploymentHelper(object):
     ):
         """Create deployment locally using Docker.
 
-        :param endpoint: OnlineDeployment object with information from user yaml.
-        :type endpoint: OnlineDeployment
+        :param endpoint_name: OnlineDeployment object with information from user yaml.
+        :type endpoint_name: str
         :param deployment: Deployment to create
-        :type deployment: Deployment entity
+        :type deployment: OnlineDeployment
         :param local_endpoint_mode: Mode for local endpoint.
         :type local_endpoint_mode: LocalEndpointMode
         :param local_enable_gpu: enable local container to access gpu
