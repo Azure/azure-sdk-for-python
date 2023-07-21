@@ -28,7 +28,8 @@ from ._content_downloader_async import ContentDownloader
 from .._utils import (
     serialize_phone_identifier,
     serialize_identifier,
-    serialize_communication_user_identifier
+    serialize_communication_user_identifier,
+    process_repeatability_first_sent
 )
 if TYPE_CHECKING:
     from .._models  import (
@@ -193,6 +194,8 @@ class CallAutomationClient(object):
             custom_context=user_custom_context
         )
 
+        process_repeatability_first_sent(kwargs)
+
         result = await self._client.create_call(
             create_call_request=create_call_request,
             **kwargs)
@@ -261,6 +264,8 @@ class CallAutomationClient(object):
             custom_context=user_custom_context,
         )
 
+        process_repeatability_first_sent(kwargs)
+
         result = await self._client.create_call(
             create_call_request=create_call_request,
             **kwargs)
@@ -308,6 +313,8 @@ class CallAutomationClient(object):
             operation_context=operation_context
         )
 
+        process_repeatability_first_sent(kwargs)
+
         result = await self._client.answer_call(
             answer_call_request=answer_call_request,
             **kwargs)
@@ -344,6 +351,8 @@ class CallAutomationClient(object):
             custom_context=user_custom_context
         )
 
+        process_repeatability_first_sent(kwargs)
+
         await self._client.redirect_call(
             redirect_call_request=redirect_call_request,
             **kwargs)
@@ -371,6 +380,8 @@ class CallAutomationClient(object):
             incoming_call_context=incoming_call_context,
             call_reject_reason=call_reject_reason
         )
+
+        process_repeatability_first_sent(kwargs)
 
         await self._client.reject_call(
             reject_call_request=reject_call_request,
@@ -445,6 +456,8 @@ class CallAutomationClient(object):
             external_storage_location = external_storage_location,
             channel_affinity = channel_affinity_internal
         )
+
+        process_repeatability_first_sent(kwargs)
 
         recording_state_result = await self._call_recording_client.start_recording(
         start_call_recording = start_recording_request, **kwargs)
