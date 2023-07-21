@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from ._generated.models._enums  import (
         CallConnectionState,
         RecordingState,
-        Gender,
+        VoiceKind,
         DtmfTone
     )
     from ._generated.models  import (
@@ -39,8 +39,8 @@ if TYPE_CHECKING:
         RemoveParticipantResponse as RemoveParticipantResultRest,
         TransferCallResponse as TransferParticipantResultRest,
         RecordingStateResponse as RecordingStateResultRest,
-        MuteParticipantsResponse as MuteParticipantsResultRest,
-        SendDtmfResponse as SendDtmfResponseRest,
+        MuteParticipantsResult as MuteParticipantsResultRest,
+        SendDtmfResult as SendDtmfResultRest,
     )
 
 class CallInvite(object):
@@ -196,8 +196,8 @@ class TextSource(object):
     :keyword source_locale: Source language locale to be played. Refer to available locales here:
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
     :paramtype source_locale: str
-    :keyword voice_gender: Voice gender type. Known values are: "male" and "female".
-    :paramtype voice_gender: str or 'azure.communication.callautomation.Gender'
+    :keyword voice_kind: Voice kind type. Known values are: "male" and "female".
+    :paramtype voice_kind: str or ~azure.communication.callautomation.models.VoiceKind
     :keyword voice_name: Voice name to be played. Refer to available Text-to-speech voices here:
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
     :paramtype voice_name: str
@@ -212,8 +212,8 @@ class TextSource(object):
     source_locale: Optional[str]
     """Source language locale to be played. Refer to available locales here:
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"""
-    voice_gender: Optional[Union[str, 'Gender']]
-    """Voice gender type. Known values are: "male" and "female"."""
+    voice_kind: Optional[Union[str, 'VoiceKind']]
+    """Voice kind type. Known values are: "male" and "female"."""
     voice_name: Optional[str]
     """Voice name to be played. Refer to available Text-to-speech voices here:
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"""
@@ -227,7 +227,7 @@ class TextSource(object):
             text: str,
             *,
             source_locale: Optional[str] = None,
-            voice_gender: Optional[Union[str, 'Gender']] = None,
+            voice_kind: Optional[Union[str, 'VoiceKind']] = None,
             voice_name: Optional[str] = None,
             play_source_cache_id: Optional[str] = None,
             custom_voice_endpoint_id: Optional[str] = None,
@@ -236,7 +236,7 @@ class TextSource(object):
         super().__init__(**kwargs)
         self.text = text
         self.source_locale = source_locale
-        self.voice_gender = voice_gender
+        self.voice_kind = voice_kind
         self.voice_name = voice_name
         self.play_source_cache_id = play_source_cache_id
         self.custom_voice_endpoint_id = custom_voice_endpoint_id
@@ -244,10 +244,10 @@ class TextSource(object):
     def _to_generated(self):
         return PlaySourceInternal(
             kind=PlaySourceType.TEXT,
-            text_source=TextSourceInternal(
+            text=TextSourceInternal(
                 text=self.text,
                 source_locale=self.source_locale,
-                voice_gender=self.voice_gender,
+                voice_kind=self.voice_kind,
                 voice_name=self.voice_name,
                 custom_voice_endpoint_id=self.custom_voice_endpoint_id),
             play_source_cache_id=self.play_source_cache_id
@@ -287,7 +287,7 @@ class SsmlSource(object):
     def _to_generated(self):
         return PlaySourceInternal(
             kind=PlaySourceType.SSML,
-            ssml_source=SsmlSourceInternal(
+            ssml=SsmlSourceInternal(
                 ssml_text=self.ssml_text,
                 custom_voice_endpoint_id=self.custom_voice_endpoint_id),
             play_source_cache_id=self.play_source_cache_id
@@ -577,7 +577,7 @@ class Choice(object):
         return ChoiceInternal(label=self.label, phrases=self.phrases, tone=self.tone)
 
 class MuteParticipantResult(object):
-    """The response payload for muting participant from the call.
+    """The result payload for muting participant from the call.
 
     :keyword operation_context: The operation context provided by client.
     :paramtype operation_context: str
@@ -600,7 +600,7 @@ class MuteParticipantResult(object):
         return cls(operation_context=mute_participant_result_generated.operation_context)
 
 class SendDtmfResult(object):
-    """The response payload for send Dtmf.
+    """The result payload for send Dtmf.
     :keyword operation_context: The operation context provided by client.
     :paramtype operation_context: str
     """
@@ -618,5 +618,5 @@ class SendDtmfResult(object):
         self.operation_context = operation_context
 
     @classmethod
-    def _from_generated(cls, send_dtmf_result_generated: 'SendDtmfResponseRest'):
+    def _from_generated(cls, send_dtmf_result_generated: 'SendDtmfResultRest'):
         return cls(operation_context=send_dtmf_result_generated.operation_context)

@@ -179,7 +179,7 @@ class CallAutomationClient(object):
             source=serialize_communication_user_identifier(
                 self.source) if self.source else None,
             operation_context=operation_context,
-            azure_cognitive_services_endpoint_url=cognitive_services_endpoint
+            cognitive_services_endpoint=cognitive_services_endpoint
         )
 
         result = self._client.create_call(
@@ -235,7 +235,7 @@ class CallAutomationClient(object):
             source=serialize_identifier(
                 self.source) if self.source else None,
             operation_context=operation_context,
-            azure_cognitive_services_endpoint_url=cognitive_services_endpoint
+            cognitive_services_endpoint=cognitive_services_endpoint
         )
 
         result = self._client.create_call(
@@ -277,7 +277,7 @@ class CallAutomationClient(object):
         answer_call_request = AnswerCallRequest(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_url,
-            azure_cognitive_services_endpoint_url=cognitive_services_endpoint,
+            cognitive_services_endpoint=cognitive_services_endpoint,
             answered_by=serialize_communication_user_identifier(
                 self.source) if self.source else None,
             operation_context=operation_context

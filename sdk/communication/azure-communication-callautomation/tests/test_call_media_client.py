@@ -107,7 +107,7 @@ class TestCallMediaClient(unittest.TestCase):
         actual_play_request = mock_play.call_args[0][1]
 
         self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
-        self.assertEqual(expected_play_request.play_sources[0].text_source.text, actual_play_request.play_sources[0].text_source.text)
+        self.assertEqual(expected_play_request.play_sources[0].text.text, actual_play_request.play_sources[0].text.text)
         self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
@@ -130,7 +130,7 @@ class TestCallMediaClient(unittest.TestCase):
         actual_play_request = mock_play.call_args[0][1]
 
         self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
-        self.assertEqual(expected_play_request.play_sources[0].ssml_source.ssml_text, actual_play_request.play_sources[0].ssml_source.ssml_text)
+        self.assertEqual(expected_play_request.play_sources[0].ssml.ssml_text, actual_play_request.play_sources[0].ssml.ssml_text)
         self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)

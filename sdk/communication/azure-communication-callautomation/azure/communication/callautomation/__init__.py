@@ -43,7 +43,7 @@ from ._generated.models._enums import (
     DtmfTone,
     CallConnectionState,
     RecordingState,
-    Gender
+    VoiceKind
 )
 __all__ = [
     # clients
@@ -89,6 +89,6 @@ __all__ = [
     "DtmfTone",
     "CallConnectionState",
     "RecordingState",
-    "Gender"
+    "VoiceKind"
 ]
 __version__ = VERSION
