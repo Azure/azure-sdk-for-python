@@ -35,7 +35,6 @@ from ...operations._dataset_operations import (
     build_get_datasets_by_workspace_request,
     build_rename_dataset_request,
 )
-from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

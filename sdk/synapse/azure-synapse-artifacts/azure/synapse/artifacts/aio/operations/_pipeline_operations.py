@@ -38,7 +38,6 @@ from ...operations._pipeline_operations import (
     build_get_pipelines_by_workspace_request,
     build_rename_pipeline_request,
 )
-from .._vendor import ArtifactsClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping

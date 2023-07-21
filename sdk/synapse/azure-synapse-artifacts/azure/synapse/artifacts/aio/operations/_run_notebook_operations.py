@@ -33,7 +33,6 @@ from ...operations._run_notebook_operations import (
     build_get_snapshot_request,
     build_get_status_request,
 )
-from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

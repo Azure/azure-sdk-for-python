@@ -36,7 +36,6 @@ from ...operations._data_flow_debug_session_operations import (
     build_execute_command_request,
     build_query_data_flow_debug_sessions_by_workspace_request,
 )
-from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

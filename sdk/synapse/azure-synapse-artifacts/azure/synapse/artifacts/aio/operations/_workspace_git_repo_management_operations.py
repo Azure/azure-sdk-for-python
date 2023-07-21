@@ -26,7 +26,6 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._workspace_git_repo_management_operations import build_get_git_hub_access_token_request
-from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

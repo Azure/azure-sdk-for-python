@@ -30,7 +30,6 @@ from ._sql_script_operations import SqlScriptOperations
 from ._trigger_operations import TriggerOperations
 from ._trigger_run_operations import TriggerRunOperations
 from ._workspace_operations import WorkspaceOperations
-from ._artifacts_client_operations import ArtifactsClientOperationsMixin
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -61,7 +60,6 @@ __all__ = [
     "TriggerOperations",
     "TriggerRunOperations",
     "WorkspaceOperations",
-    "ArtifactsClientOperationsMixin",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

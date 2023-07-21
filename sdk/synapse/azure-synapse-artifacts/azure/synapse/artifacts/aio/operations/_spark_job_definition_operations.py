@@ -37,7 +37,6 @@ from ...operations._spark_job_definition_operations import (
     build_get_spark_job_definitions_by_workspace_request,
     build_rename_spark_job_definition_request,
 )
-from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

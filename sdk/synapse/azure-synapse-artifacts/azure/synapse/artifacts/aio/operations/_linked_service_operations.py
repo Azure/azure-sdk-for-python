@@ -35,7 +35,6 @@ from ...operations._linked_service_operations import (
     build_get_linked_services_by_workspace_request,
     build_rename_linked_service_request,
 )
-from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

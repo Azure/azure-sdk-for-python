@@ -42,7 +42,6 @@ from ...operations._link_connection_operations import (
     build_stop_request,
     build_update_landing_zone_credential_request,
 )
-from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

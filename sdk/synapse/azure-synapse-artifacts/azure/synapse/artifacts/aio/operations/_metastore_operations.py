@@ -30,7 +30,6 @@ from ...operations._metastore_operations import (
     build_register_request,
     build_update_request,
 )
-from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

@@ -39,7 +39,6 @@ from ...operations._trigger_operations import (
     build_subscribe_trigger_to_events_request,
     build_unsubscribe_trigger_from_events_request,
 )
-from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

@@ -5,18 +5,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from abc import ABC
-from typing import List, TYPE_CHECKING, cast
+from typing import List, cast
 
 from azure.core.pipeline.transport import HttpRequest
-
-from ._configuration import ArtifactsClientConfiguration
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from azure.core import PipelineClient
-
-    from ._serialization import Deserializer, Serializer
 
 
 def _convert_request(request, files=None):
@@ -37,12 +28,3 @@ def _format_url_section(template, **kwargs):
             formatted_components = cast(List[str], template.split("/"))
             components = [c for c in formatted_components if "{}".format(key.args[0]) not in c]
             template = "/".join(components)
-
-
-class ArtifactsClientMixinABC(ABC):
-    """DO NOT use this class. It is for internal typing use only."""
-
-    _client: "PipelineClient"
-    _config: ArtifactsClientConfiguration
-    _serialize: "Serializer"
-    _deserialize: "Deserializer"

@@ -16,7 +16,6 @@ from . import models as _models
 from ._configuration import ArtifactsClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
-    ArtifactsClientOperationsMixin,
     BigDataPoolsOperations,
     DataFlowDebugSessionOperations,
     DataFlowOperations,
@@ -48,10 +47,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ArtifactsClient(
-    ArtifactsClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
-    """SyMS API Service Client.
+class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+    """ArtifactsClient.
 
     :ivar link_connection: LinkConnectionOperations operations
     :vartype link_connection: azure.synapse.artifacts.operations.LinkConnectionOperations

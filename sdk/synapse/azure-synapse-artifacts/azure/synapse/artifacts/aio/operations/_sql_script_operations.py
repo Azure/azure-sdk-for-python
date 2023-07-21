@@ -36,7 +36,6 @@ from ...operations._sql_script_operations import (
     build_get_sql_scripts_by_workspace_request,
     build_rename_sql_script_request,
 )
-from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

@@ -243,14 +243,6 @@ class Db2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BASIC = "Basic"
 
 
-class DDLType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DDL type."""
-
-    CREATE = "CREATE"
-    ALTER = "ALTER"
-    DROP = "DROP"
-
-
 class DependencyCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DependencyCondition."""
 
@@ -656,15 +648,6 @@ class RecurrenceFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     YEAR = "Year"
 
 
-class RelationshipType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Relation Type."""
-
-    ONETOONE = "ONETOONE"
-    ONETOMANY = "ONETOMANY"
-    MANYTOONE = "MANYTOONE"
-    MANYTOMANY = "MANYTOMANY"
-
-
 class RequestStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enumerates possible request statuses."""
 
@@ -801,18 +784,6 @@ class SapTablePartitionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PARTITION_ON_TIME = "PartitionOnTime"
 
 
-class SASEntityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Artifact type."""
-
-    DATABASE = "DATABASE"
-    TABLE = "TABLE"
-    SCHEMA = "SCHEMA"
-    VIEW = "VIEW"
-    FUNCTION = "FUNCTION"
-    PARTITIONINFO = "PARTITIONINFO"
-    RELATIONSHIP = "RELATIONSHIP"
-
-
 class SchedulerCurrentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SchedulerCurrentState."""
 
@@ -872,13 +843,6 @@ class SftpAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     BASIC = "Basic"
     SSH_PUBLIC_KEY = "SshPublicKey"
-
-
-class SortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Sorting order."""
-
-    DESC = "DESC"
-    ASC = "ASC"
 
 
 class SparkAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1012,13 +976,6 @@ class SybaseAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WINDOWS = "Windows"
 
 
-class TableType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Entity type."""
-
-    MANAGED = "MANAGED"
-    EXTERNAL = "EXTERNAL"
-
-
 class TeamDeskAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication type to use."""
 
@@ -1075,13 +1032,6 @@ class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Linked service reference type."""
 
     LINKED_SERVICE_REFERENCE = "LinkedServiceReference"
-
-
-class ValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Validation Status."""
-
-    VALID = "VALID"
-    INVALID = "INVALID"
 
 
 class VariableType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

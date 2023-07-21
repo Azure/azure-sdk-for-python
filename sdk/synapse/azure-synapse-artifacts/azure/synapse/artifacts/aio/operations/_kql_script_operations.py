@@ -33,7 +33,6 @@ from ...operations._kql_script_operations import (
     build_get_by_name_request,
     build_rename_request,
 )
-from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

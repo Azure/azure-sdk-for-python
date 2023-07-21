@@ -135,7 +135,6 @@ from ._models_py3 import CassandraSource
 from ._models_py3 import CassandraTableDataset
 from ._models_py3 import ChainingTrigger
 from ._models_py3 import CloudError
-from ._models_py3 import ColumnRelationshipInformation
 from ._models_py3 import CommonDataServiceForAppsEntityDataset
 from ._models_py3 import CommonDataServiceForAppsLinkedService
 from ._models_py3 import CommonDataServiceForAppsSink
@@ -172,11 +171,8 @@ from ._models_py3 import CustomDataset
 from ._models_py3 import CustomEventsTrigger
 from ._models_py3 import CustomSetupBase
 from ._models_py3 import CustomerManagedKeyDetails
-from ._models_py3 import DDLBatch
-from ._models_py3 import DDLPayload
 from ._models_py3 import DWCopyCommandDefaultValue
 from ._models_py3 import DWCopyCommandSettings
-from ._models_py3 import DataColumn
 from ._models_py3 import DataFlow
 from ._models_py3 import DataFlowDebugCommandPayload
 from ._models_py3 import DataFlowDebugCommandRequest
@@ -199,9 +195,6 @@ from ._models_py3 import DataFlowSourceSetting
 from ._models_py3 import DataFlowStagingInfo
 from ._models_py3 import DataLakeAnalyticsUSQLActivity
 from ._models_py3 import DataLakeStorageAccountDetails
-from ._models_py3 import DataSource
-from ._models_py3 import DatabaseEntity
-from ._models_py3 import DatabaseProperties
 from ._models_py3 import DatabricksNotebookActivity
 from ._models_py3 import DatabricksSparkJarActivity
 from ._models_py3 import DatabricksSparkPythonActivity
@@ -229,7 +222,6 @@ from ._models_py3 import DelimitedTextSource
 from ._models_py3 import DelimitedTextWriteSettings
 from ._models_py3 import DependencyReference
 from ._models_py3 import DistcpSettings
-from ._models_py3 import DistributionInfo
 from ._models_py3 import DocumentDbCollectionDataset
 from ._models_py3 import DocumentDbCollectionSink
 from ._models_py3 import DocumentDbCollectionSource
@@ -280,7 +272,6 @@ from ._models_py3 import FileSystemSource
 from ._models_py3 import FilterActivity
 from ._models_py3 import Flowlet
 from ._models_py3 import ForEachActivity
-from ._models_py3 import FormatInfo
 from ._models_py3 import FormatReadSettings
 from ._models_py3 import FormatWriteSettings
 from ._models_py3 import FtpReadSettings
@@ -403,8 +394,6 @@ from ._models_py3 import LogLocationSettings
 from ._models_py3 import LogSettings
 from ._models_py3 import LogStorageSettings
 from ._models_py3 import LookupActivity
-from ._models_py3 import MDEntity
-from ._models_py3 import MDEntityProperties
 from ._models_py3 import MagentoLinkedService
 from ._models_py3 import MagentoObjectDataset
 from ._models_py3 import MagentoSource
@@ -442,7 +431,6 @@ from ._models_py3 import MultiplePipelineTrigger
 from ._models_py3 import MySqlLinkedService
 from ._models_py3 import MySqlSource
 from ._models_py3 import MySqlTableDataset
-from ._models_py3 import Namespace
 from ._models_py3 import NetezzaLinkedService
 from ._models_py3 import NetezzaPartitionSettings
 from ._models_py3 import NetezzaSource
@@ -489,9 +477,6 @@ from ._models_py3 import ParquetFormat
 from ._models_py3 import ParquetSink
 from ._models_py3 import ParquetSource
 from ._models_py3 import ParquetWriteSettings
-from ._models_py3 import PartitionInfo
-from ._models_py3 import PartitionInfoNamespace
-from ._models_py3 import PartitionInfoProperties
 from ._models_py3 import PaypalLinkedService
 from ._models_py3 import PaypalObjectDataset
 from ._models_py3 import PaypalSource
@@ -518,7 +503,6 @@ from ._models_py3 import PrivateEndpointConnection
 from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
 from ._models_py3 import PurviewConfiguration
-from ._models_py3 import QueryArtifactsResponse
 from ._models_py3 import QueryDataFlowDebugSessionsResponse
 from ._models_py3 import QueryTableStatusRequest
 from ._models_py3 import QuickBooksLinkedService
@@ -531,8 +515,6 @@ from ._models_py3 import RedirectIncompatibleRowSettings
 from ._models_py3 import RedshiftUnloadSettings
 from ._models_py3 import RelationalSource
 from ._models_py3 import RelationalTableDataset
-from ._models_py3 import RelationshipEntity
-from ._models_py3 import RelationshipProperties
 from ._models_py3 import RerunTriggerListResponse
 from ._models_py3 import RerunTriggerResource
 from ._models_py3 import RerunTumblingWindowTrigger
@@ -600,11 +582,8 @@ from ._models_py3 import SapTableLinkedService
 from ._models_py3 import SapTablePartitionSettings
 from ._models_py3 import SapTableResourceDataset
 from ._models_py3 import SapTableSource
-from ._models_py3 import ScalarTypeInfo
 from ._models_py3 import ScheduleTrigger
 from ._models_py3 import ScheduleTriggerRecurrence
-from ._models_py3 import SchemaEntity
-from ._models_py3 import SchemaProperties
 from ._models_py3 import ScriptAction
 from ._models_py3 import ScriptActivity
 from ._models_py3 import ScriptActivityParameter
@@ -638,7 +617,6 @@ from ._models_py3 import SnowflakeImportCopyCommand
 from ._models_py3 import SnowflakeLinkedService
 from ._models_py3 import SnowflakeSink
 from ._models_py3 import SnowflakeSource
-from ._models_py3 import Sorting
 from ._models_py3 import SparkBatchJob
 from ._models_py3 import SparkBatchJobState
 from ._models_py3 import SparkConfiguration
@@ -689,7 +667,6 @@ from ._models_py3 import SsisObjectMetadataStatusResponse
 from ._models_py3 import StagingSettings
 from ._models_py3 import StartDataFlowDebugSessionRequest
 from ._models_py3 import StartDataFlowDebugSessionResponse
-from ._models_py3 import StorageDescriptor
 from ._models_py3 import StoreReadSettings
 from ._models_py3 import StoreWriteSettings
 from ._models_py3 import StoredProcedureParameter
@@ -697,8 +674,6 @@ from ._models_py3 import SubResource
 from ._models_py3 import SubResourceDebugResource
 from ._models_py3 import SwitchActivity
 from ._models_py3 import SwitchCase
-from ._models_py3 import SyMsapiddlResponse
-from ._models_py3 import SyMsapiddlResponses
 from ._models_py3 import SybaseLinkedService
 from ._models_py3 import SybaseSource
 from ._models_py3 import SybaseTableDataset
@@ -706,10 +681,6 @@ from ._models_py3 import SynapseNotebookActivity
 from ._models_py3 import SynapseNotebookReference
 from ._models_py3 import SynapseSparkJobDefinitionActivity
 from ._models_py3 import SynapseSparkJobReference
-from ._models_py3 import TableEntity
-from ._models_py3 import TableNamespace
-from ._models_py3 import TablePartitioning
-from ._models_py3 import TableProperties
 from ._models_py3 import TabularSource
 from ._models_py3 import TabularTranslator
 from ._models_py3 import TarGZipReadSettings
@@ -736,7 +707,6 @@ from ._models_py3 import TumblingWindowTrigger
 from ._models_py3 import TumblingWindowTriggerDependencyReference
 from ._models_py3 import TwilioLinkedService
 from ._models_py3 import TypeConversionSettings
-from ._models_py3 import TypeInfo
 from ._models_py3 import UntilActivity
 from ._models_py3 import UpdateLandingZoneCredential
 from ._models_py3 import UserProperty
@@ -745,8 +715,6 @@ from ._models_py3 import VariableSpecification
 from ._models_py3 import VerticaLinkedService
 from ._models_py3 import VerticaSource
 from ._models_py3 import VerticaTableDataset
-from ._models_py3 import ViewEntity
-from ._models_py3 import ViewEntityProperties
 from ._models_py3 import VirtualNetworkProfile
 from ._models_py3 import WaitActivity
 from ._models_py3 import WebActivity
@@ -793,7 +761,6 @@ from ._artifacts_client_enums import ConfigurationType
 from ._artifacts_client_enums import CopyBehaviorType
 from ._artifacts_client_enums import CreateMode
 from ._artifacts_client_enums import CredentialReferenceType
-from ._artifacts_client_enums import DDLType
 from ._artifacts_client_enums import DataFlowComputeType
 from ._artifacts_client_enums import DataFlowDebugCommandType
 from ._artifacts_client_enums import DataFlowReferenceType
@@ -849,7 +816,6 @@ from ._artifacts_client_enums import PluginCurrentState
 from ._artifacts_client_enums import PolybaseSettingsRejectType
 from ._artifacts_client_enums import PrestoAuthenticationType
 from ._artifacts_client_enums import RecurrenceFrequency
-from ._artifacts_client_enums import RelationshipType
 from ._artifacts_client_enums import RequestStatus
 from ._artifacts_client_enums import ResourceIdentityType
 from ._artifacts_client_enums import ResourceStatus
@@ -858,7 +824,6 @@ from ._artifacts_client_enums import RunQueryFilterOperand
 from ._artifacts_client_enums import RunQueryFilterOperator
 from ._artifacts_client_enums import RunQueryOrder
 from ._artifacts_client_enums import RunQueryOrderByField
-from ._artifacts_client_enums import SASEntityType
 from ._artifacts_client_enums import SalesforceSinkWriteBehavior
 from ._artifacts_client_enums import SalesforceSourceReadBehavior
 from ._artifacts_client_enums import SapCloudForCustomerSinkWriteBehavior
@@ -872,7 +837,6 @@ from ._artifacts_client_enums import ScriptActivityParameterType
 from ._artifacts_client_enums import ScriptType
 from ._artifacts_client_enums import ServiceNowAuthenticationType
 from ._artifacts_client_enums import SftpAuthenticationType
-from ._artifacts_client_enums import SortOrder
 from ._artifacts_client_enums import SparkAuthenticationType
 from ._artifacts_client_enums import SparkBatchJobResultType
 from ._artifacts_client_enums import SparkConfigurationReferenceType
@@ -890,7 +854,6 @@ from ._artifacts_client_enums import SsisLogLocationType
 from ._artifacts_client_enums import SsisPackageLocationType
 from ._artifacts_client_enums import StoredProcedureParameterType
 from ._artifacts_client_enums import SybaseAuthenticationType
-from ._artifacts_client_enums import TableType
 from ._artifacts_client_enums import TeamDeskAuthenticationType
 from ._artifacts_client_enums import TeradataAuthenticationType
 from ._artifacts_client_enums import TeradataPartitionOption
@@ -899,7 +862,6 @@ from ._artifacts_client_enums import TriggerRunStatus
 from ._artifacts_client_enums import TriggerRuntimeState
 from ._artifacts_client_enums import TumblingWindowFrequency
 from ._artifacts_client_enums import Type
-from ._artifacts_client_enums import ValidationStatus
 from ._artifacts_client_enums import VariableType
 from ._artifacts_client_enums import WebActivityMethod
 from ._artifacts_client_enums import WebAuthenticationType
@@ -1039,7 +1001,6 @@ __all__ = [
     "CassandraTableDataset",
     "ChainingTrigger",
     "CloudError",
-    "ColumnRelationshipInformation",
     "CommonDataServiceForAppsEntityDataset",
     "CommonDataServiceForAppsLinkedService",
     "CommonDataServiceForAppsSink",
@@ -1076,11 +1037,8 @@ __all__ = [
     "CustomEventsTrigger",
     "CustomSetupBase",
     "CustomerManagedKeyDetails",
-    "DDLBatch",
-    "DDLPayload",
     "DWCopyCommandDefaultValue",
     "DWCopyCommandSettings",
-    "DataColumn",
     "DataFlow",
     "DataFlowDebugCommandPayload",
     "DataFlowDebugCommandRequest",
@@ -1103,9 +1061,6 @@ __all__ = [
     "DataFlowStagingInfo",
     "DataLakeAnalyticsUSQLActivity",
     "DataLakeStorageAccountDetails",
-    "DataSource",
-    "DatabaseEntity",
-    "DatabaseProperties",
     "DatabricksNotebookActivity",
     "DatabricksSparkJarActivity",
     "DatabricksSparkPythonActivity",
@@ -1133,7 +1088,6 @@ __all__ = [
     "DelimitedTextWriteSettings",
     "DependencyReference",
     "DistcpSettings",
-    "DistributionInfo",
     "DocumentDbCollectionDataset",
     "DocumentDbCollectionSink",
     "DocumentDbCollectionSource",
@@ -1184,7 +1138,6 @@ __all__ = [
     "FilterActivity",
     "Flowlet",
     "ForEachActivity",
-    "FormatInfo",
     "FormatReadSettings",
     "FormatWriteSettings",
     "FtpReadSettings",
@@ -1307,8 +1260,6 @@ __all__ = [
     "LogSettings",
     "LogStorageSettings",
     "LookupActivity",
-    "MDEntity",
-    "MDEntityProperties",
     "MagentoLinkedService",
     "MagentoObjectDataset",
     "MagentoSource",
@@ -1346,7 +1297,6 @@ __all__ = [
     "MySqlLinkedService",
     "MySqlSource",
     "MySqlTableDataset",
-    "Namespace",
     "NetezzaLinkedService",
     "NetezzaPartitionSettings",
     "NetezzaSource",
@@ -1393,9 +1343,6 @@ __all__ = [
     "ParquetSink",
     "ParquetSource",
     "ParquetWriteSettings",
-    "PartitionInfo",
-    "PartitionInfoNamespace",
-    "PartitionInfoProperties",
     "PaypalLinkedService",
     "PaypalObjectDataset",
     "PaypalSource",
@@ -1422,7 +1369,6 @@ __all__ = [
     "PrivateLinkServiceConnectionState",
     "ProxyResource",
     "PurviewConfiguration",
-    "QueryArtifactsResponse",
     "QueryDataFlowDebugSessionsResponse",
     "QueryTableStatusRequest",
     "QuickBooksLinkedService",
@@ -1435,8 +1381,6 @@ __all__ = [
     "RedshiftUnloadSettings",
     "RelationalSource",
     "RelationalTableDataset",
-    "RelationshipEntity",
-    "RelationshipProperties",
     "RerunTriggerListResponse",
     "RerunTriggerResource",
     "RerunTumblingWindowTrigger",
@@ -1504,11 +1448,8 @@ __all__ = [
     "SapTablePartitionSettings",
     "SapTableResourceDataset",
     "SapTableSource",
-    "ScalarTypeInfo",
     "ScheduleTrigger",
     "ScheduleTriggerRecurrence",
-    "SchemaEntity",
-    "SchemaProperties",
     "ScriptAction",
     "ScriptActivity",
     "ScriptActivityParameter",
@@ -1542,7 +1483,6 @@ __all__ = [
     "SnowflakeLinkedService",
     "SnowflakeSink",
     "SnowflakeSource",
-    "Sorting",
     "SparkBatchJob",
     "SparkBatchJobState",
     "SparkConfiguration",
@@ -1593,7 +1533,6 @@ __all__ = [
     "StagingSettings",
     "StartDataFlowDebugSessionRequest",
     "StartDataFlowDebugSessionResponse",
-    "StorageDescriptor",
     "StoreReadSettings",
     "StoreWriteSettings",
     "StoredProcedureParameter",
@@ -1601,8 +1540,6 @@ __all__ = [
     "SubResourceDebugResource",
     "SwitchActivity",
     "SwitchCase",
-    "SyMsapiddlResponse",
-    "SyMsapiddlResponses",
     "SybaseLinkedService",
     "SybaseSource",
     "SybaseTableDataset",
@@ -1610,10 +1547,6 @@ __all__ = [
     "SynapseNotebookReference",
     "SynapseSparkJobDefinitionActivity",
     "SynapseSparkJobReference",
-    "TableEntity",
-    "TableNamespace",
-    "TablePartitioning",
-    "TableProperties",
     "TabularSource",
     "TabularTranslator",
     "TarGZipReadSettings",
@@ -1640,7 +1573,6 @@ __all__ = [
     "TumblingWindowTriggerDependencyReference",
     "TwilioLinkedService",
     "TypeConversionSettings",
-    "TypeInfo",
     "UntilActivity",
     "UpdateLandingZoneCredential",
     "UserProperty",
@@ -1649,8 +1581,6 @@ __all__ = [
     "VerticaLinkedService",
     "VerticaSource",
     "VerticaTableDataset",
-    "ViewEntity",
-    "ViewEntityProperties",
     "VirtualNetworkProfile",
     "WaitActivity",
     "WebActivity",
@@ -1696,7 +1626,6 @@ __all__ = [
     "CopyBehaviorType",
     "CreateMode",
     "CredentialReferenceType",
-    "DDLType",
     "DataFlowComputeType",
     "DataFlowDebugCommandType",
     "DataFlowReferenceType",
@@ -1752,7 +1681,6 @@ __all__ = [
     "PolybaseSettingsRejectType",
     "PrestoAuthenticationType",
     "RecurrenceFrequency",
-    "RelationshipType",
     "RequestStatus",
     "ResourceIdentityType",
     "ResourceStatus",
@@ -1761,7 +1689,6 @@ __all__ = [
     "RunQueryFilterOperator",
     "RunQueryOrder",
     "RunQueryOrderByField",
-    "SASEntityType",
     "SalesforceSinkWriteBehavior",
     "SalesforceSourceReadBehavior",
     "SapCloudForCustomerSinkWriteBehavior",
@@ -1775,7 +1702,6 @@ __all__ = [
     "ScriptType",
     "ServiceNowAuthenticationType",
     "SftpAuthenticationType",
-    "SortOrder",
     "SparkAuthenticationType",
     "SparkBatchJobResultType",
     "SparkConfigurationReferenceType",
@@ -1793,7 +1719,6 @@ __all__ = [
     "SsisPackageLocationType",
     "StoredProcedureParameterType",
     "SybaseAuthenticationType",
-    "TableType",
     "TeamDeskAuthenticationType",
     "TeradataAuthenticationType",
     "TeradataPartitionOption",
@@ -1802,7 +1727,6 @@ __all__ = [
     "TriggerRuntimeState",
     "TumblingWindowFrequency",
     "Type",
-    "ValidationStatus",
     "VariableType",
     "WebActivityMethod",
     "WebAuthenticationType",

@@ -35,7 +35,6 @@ from ...operations._spark_configuration_operations import (
     build_get_spark_configurations_by_workspace_request,
     build_rename_spark_configuration_request,
 )
-from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

@@ -30,7 +30,6 @@ from ...operations._trigger_run_operations import (
     build_query_trigger_runs_by_workspace_request,
     build_rerun_trigger_instance_request,
 )
-from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

@@ -37,7 +37,6 @@ from ...operations._notebook_operations import (
     build_get_notebooks_by_workspace_request,
     build_rename_notebook_request,
 )
-from .._vendor import ArtifactsClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
