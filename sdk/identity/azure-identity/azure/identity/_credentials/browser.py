@@ -8,6 +8,7 @@ from typing import Dict, Any
 import subprocess
 import webbrowser
 from urllib.parse import urlparse
+import msal
 
 from azure.core.exceptions import ClientAuthenticationError
 
@@ -88,7 +89,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
         scopes = list(scopes)  # type: ignore
         claims = kwargs.get("claims")
         app = self._get_app(**kwargs)
-        if self._client_credential:
+        if isinstance(app, msal.ConfidentialClientApplication):
             server = None
             if self._parsed_url:
                 redirect_uri = "http://{}:{}".format(self._parsed_url.hostname, self._parsed_url.port)
