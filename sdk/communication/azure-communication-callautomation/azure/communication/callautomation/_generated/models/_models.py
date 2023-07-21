@@ -672,6 +672,8 @@ class CallParticipant(_serialization.Model):
 class CallTransferAccepted(_serialization.Model):
     """The call transfer accepted event.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
     :ivar server_call_id: Server call ID.
@@ -685,7 +687,17 @@ class CallTransferAccepted(_serialization.Model):
     :ivar result_information: Contains the resulting SIP code/sub-code and message from NGC
      services.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar transfer_target: Traffer target: the user that transferee will be transferred to.
+    :vartype transfer_target:
+     ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar transferee: Transferee: the participant being transferred away.
+    :vartype transferee: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     """
+
+    _validation = {
+        "transfer_target": {"readonly": True},
+        "transferee": {"readonly": True},
+    }
 
     _attribute_map = {
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
@@ -693,6 +705,8 @@ class CallTransferAccepted(_serialization.Model):
         "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "transfer_target": {"key": "transferTarget", "type": "CommunicationIdentifierModel"},
+        "transferee": {"key": "transferee", "type": "CommunicationIdentifierModel"},
     }
 
     def __init__(
@@ -726,6 +740,8 @@ class CallTransferAccepted(_serialization.Model):
         self.correlation_id = correlation_id
         self.operation_context = operation_context
         self.result_information = result_information
+        self.transfer_target = None
+        self.transferee = None
 
 
 class CallTransferFailed(_serialization.Model):
@@ -1852,8 +1868,8 @@ class DialogSensitivityUpdate(_serialization.Model):
     :vartype dialog_input_type: str or ~azure.communication.callautomation.models.DialogInputType
     :ivar dialog_id: Dialog ID.
     :vartype dialog_id: str
-    :ivar sensitive_flag: SensitiveFlag data from the Conversation Conductor.
-    :vartype sensitive_flag: ~azure.communication.callautomation.models.SensitiveFlag
+    :ivar sensitive_mask: SensitiveMask.
+    :vartype sensitive_mask: bool
     """
 
     _validation = {
@@ -1861,7 +1877,7 @@ class DialogSensitivityUpdate(_serialization.Model):
         "operation_context": {"readonly": True},
         "result_information": {"readonly": True},
         "dialog_id": {"readonly": True},
-        "sensitive_flag": {"readonly": True},
+        "sensitive_mask": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1872,7 +1888,7 @@ class DialogSensitivityUpdate(_serialization.Model):
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
         "dialog_input_type": {"key": "dialogInputType", "type": "str"},
         "dialog_id": {"key": "dialogId", "type": "str"},
-        "sensitive_flag": {"key": "sensitiveFlag", "type": "SensitiveFlag"},
+        "sensitive_mask": {"key": "sensitiveMask", "type": "bool"},
     }
 
     def __init__(
@@ -1900,7 +1916,7 @@ class DialogSensitivityUpdate(_serialization.Model):
         self.result_information = None
         self.dialog_input_type = dialog_input_type
         self.dialog_id = None
-        self.sensitive_flag = None
+        self.sensitive_mask = None
 
 
 class DialogStarted(_serialization.Model):
@@ -3762,26 +3778,6 @@ class SendDtmfRequest(_serialization.Model):
         self.operation_context = operation_context
 
 
-class SensitiveFlag(_serialization.Model):
-    """SensitiveFlag.
-
-    :ivar recording:
-    :vartype recording: int
-    """
-
-    _attribute_map = {
-        "recording": {"key": "recording", "type": "int"},
-    }
-
-    def __init__(self, *, recording: Optional[int] = None, **kwargs: Any) -> None:
-        """
-        :keyword recording:
-        :paramtype recording: int
-        """
-        super().__init__(**kwargs)
-        self.recording = recording
-
-
 class SpeechOptions(_serialization.Model):
     """Options for continuous speech recognition.
 
@@ -4164,6 +4160,8 @@ class TransferToParticipantRequest(_serialization.Model):
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
+    :ivar transferee: Transferee is the participant who is transferring the call.
+    :vartype transferee: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar callback_uri_override: The callback URI override.
     :vartype callback_uri_override: str
     """
@@ -4176,6 +4174,7 @@ class TransferToParticipantRequest(_serialization.Model):
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "custom_context": {"key": "customContext", "type": "CustomContext"},
         "operation_context": {"key": "operationContext", "type": "str"},
+        "transferee": {"key": "transferee", "type": "CommunicationIdentifierModel"},
         "callback_uri_override": {"key": "callbackUriOverride", "type": "str"},
     }
 
@@ -4185,6 +4184,7 @@ class TransferToParticipantRequest(_serialization.Model):
         target_participant: "_models.CommunicationIdentifierModel",
         custom_context: Optional["_models.CustomContext"] = None,
         operation_context: Optional[str] = None,
+        transferee: Optional["_models.CommunicationIdentifierModel"] = None,
         callback_uri_override: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -4198,6 +4198,8 @@ class TransferToParticipantRequest(_serialization.Model):
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
+        :keyword transferee: Transferee is the participant who is transferring the call.
+        :paramtype transferee: ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword callback_uri_override: The callback URI override.
         :paramtype callback_uri_override: str
         """
@@ -4205,6 +4207,7 @@ class TransferToParticipantRequest(_serialization.Model):
         self.target_participant = target_participant
         self.custom_context = custom_context
         self.operation_context = operation_context
+        self.transferee = transferee
         self.callback_uri_override = callback_uri_override
 
 

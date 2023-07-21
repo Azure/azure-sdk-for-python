@@ -232,6 +232,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         voip_headers: Optional[Dict[str, str]] = None,
         operation_context: Optional[str] = None,
         callback_url_override: Optional[str] = None,
+        transferee: Optional['CommunicationIdentifier'] = None,
         **kwargs
     ) -> TransferCallResult:
         """Transfer this call to another participant.
@@ -260,6 +261,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             callback_uri_override=callback_url_override)
 
         process_repeatability_first_sent(kwargs)
+
+        if transferee is not None:
+            request.transferee=serialize_identifier(transferee)
 
         return self._call_connection_client.transfer_to_participant(
             self._call_connection_id, request,
