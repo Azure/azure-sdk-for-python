@@ -345,7 +345,7 @@ class ComponentTranslatableMixin:
     def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "BaseNode":
         """Translate to pipeline node.
 
-        :param kwargs:
+        :keyword kwargs:
         :return: Translated node.
         """
         # Note: Source of translated component should be same with Job

@@ -641,7 +641,7 @@ class TypeSensitiveUnionField(UnionField):
 
 def ComputeField(**kwargs):
     """
-    :param required : if set to True, it is not possible to pass None
+    :keyword required: if set to True, it is not possible to pass None
     :type required: bool
     """
     return UnionField(
@@ -658,7 +658,7 @@ def ComputeField(**kwargs):
 
 def CodeField(**kwargs):
     """
-    :param required : if set to True, it is not possible to pass None
+    :keyword required: if set to True, it is not possible to pass None
     :type required: bool
     """
     return UnionField(
