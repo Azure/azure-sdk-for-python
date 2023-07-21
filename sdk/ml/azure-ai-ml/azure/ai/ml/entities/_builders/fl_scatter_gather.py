@@ -262,35 +262,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
         return create_scatter_gather_graph()
 
-    # TODO potential set default fail_on_missing value to false
-    @classmethod
-    def _extract_outputs(cls, component_output: Output, argument_map: Dict, fail_on_missing=False):
-        """
-            Pulls values from a component_output, as specified by the keys of the
-        inputted argument_map, and groups in a new dictionary. The keys of the new dictionary
-        are specified by the items of the argument_map dictionary.
-        Example
-            component_output = {"one" : 1, "two": 2, "three" : 3}
-            argument_map = {"one" : "red", "two" : "two"}
-            returned result = {"red" : 1, "two" : 2}
-        """
-        result = {}
-        if component_output is None or argument_map is None:
-            if fail_on_missing:
-                # TODO error handling
-                pass
-            return result
-
-        for k, v in argument_map.items():
-            if not k in component_output:
-                if fail_on_missing:
-                    pass
-                    # TODO add error handling
-                result[v] = None
-            else:
-                result[v] = component_output[k]
-        return result
-
     @classmethod
     def _get_fl_datastore_path(
         cls,

@@ -114,11 +114,6 @@ def _snake_to_camel(name):
     return re.sub(r"(?:^|_)([a-z])", lambda x: x.group(1).upper(), name)
 
 
-def camel_case_transformer(key, value):
-    """transfer string to camel case."""
-    return (snake_to_camel(key), value)
-
-
 def float_to_str(f):
     with decimal.localcontext() as ctx:
         ctx.prec = 20  # Support up to 20 significant figures.
