@@ -82,6 +82,7 @@ class _AttrDict(Generic[K, V], dict, ABC):
         assign value to it.
 
         :param attr_name: Attribute name
+        :type attr_name: str
         :return: If the given attribute name should be treated as arbitrary attribute.
         """
         # Internal attribute won't be set as arbitrary attribute.

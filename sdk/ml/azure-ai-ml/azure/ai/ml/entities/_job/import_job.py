@@ -214,6 +214,7 @@ class ImportJob(Job, JobIOMixin):
         """Translate a import job to component.
 
         :param context: Context of import job YAML file.
+        :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated import component.
         """
@@ -238,6 +239,7 @@ class ImportJob(Job, JobIOMixin):
         """Translate a import job to a pipeline node.
 
         :param context: Context of import job YAML file.
+        :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated import node.
         """

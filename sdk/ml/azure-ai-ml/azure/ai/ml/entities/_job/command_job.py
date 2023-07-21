@@ -236,6 +236,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         """Translate a command job to component.
 
         :param context: Context of command job YAML file.
+        :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated command component.
         """
@@ -263,6 +264,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         """Translate a command job to a pipeline node.
 
         :param context: Context of command job YAML file.
+        :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated command component.
         """

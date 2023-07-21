@@ -312,6 +312,7 @@ class ComponentTranslatableMixin:
         """Translate inputs to Inputs.
 
         :param inputs: mapping from input name to input object.
+        :type inputs: Dict[str, Union[Input, str, bool, int, float]]
         :return: mapping from input name to translated component input.
         """
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
@@ -324,6 +325,7 @@ class ComponentTranslatableMixin:
         """Translate outputs to Outputs.
 
         :param outputs: mapping from output name to output object.
+        :type outputs: Dict[str, Output]
         :return: mapping from output name to translated component output.
         """
         # Translate outputs to Outputs.

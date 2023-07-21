@@ -401,8 +401,9 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         """Build an input attribute dict so user can get/set inputs by
         accessing attribute, eg: node1.inputs.xxx.
 
-        :keyword input_definition_dict: Input definition dict from component entity.
         :param inputs: Provided kwargs when parameterizing component func.
+        :type inputs: Dict[str, Union[Input, str, bool, int, float]]
+        :keyword input_definition_dict: Input definition dict from component entity.
         :return: Built input attribute dict.
         """
         input_dict = super()._build_inputs_dict(inputs, input_definition_dict=input_definition_dict)
@@ -443,6 +444,7 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         For pipeline outputs, its setting should be copied from node level outputs.
 
         :param outputs: Node output dict or pipeline component's outputs.
+        :type outputs: Dict[str, Union[Output, NodeOutput]]
         :return: Built dynamic output attribute dict.
         """
         output_dict = {}

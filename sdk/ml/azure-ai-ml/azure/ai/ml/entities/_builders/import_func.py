@@ -54,6 +54,7 @@ def import_job(
         Defaults to True.
     :type is_deterministic: bool
     :param kwargs: Additional keyword arguments.
+    :type kwargs: dict
     :returns: The Import object.
     :rtype: ~azure.ai.ml.entities._builders.import_node.Import
     """

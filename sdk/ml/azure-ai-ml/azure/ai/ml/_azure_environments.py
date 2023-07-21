@@ -87,6 +87,7 @@ def _get_cloud_details(cloud: str = AzureEnvironments.ENV_DEFAULT):
     """Returns a Cloud endpoints object for the specified Azure Cloud.
 
     :param cloud: cloud name
+    :type cloud: str
     :return: azure environment endpoint.
     """
     if cloud is None:
@@ -102,6 +103,7 @@ def _set_cloud(cloud: str = AzureEnvironments.ENV_DEFAULT):
     """Sets the current cloud.
 
     :param cloud: cloud name
+    :type cloud: str
     """
     if cloud is not None:
         try:
@@ -117,6 +119,7 @@ def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: 
     """Retrieve the base url for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
+    :type cloud_name: str, optional
     :return: base url for a cloud
     """
     base_url = None
@@ -132,6 +135,7 @@ def _get_aml_resource_id_from_metadata(cloud_name: Optional[str] = None):
     """Retrieve the aml_resource_id for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
+    :type cloud_name: str, optional
     :return: aml_resource_id for a cloud
     """
     cloud_details = _get_cloud_details(cloud_name)
@@ -143,6 +147,7 @@ def _get_active_directory_url_from_metadata(cloud_name: Optional[str] = None):
     """Retrieve the active_directory_url for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
+    :type cloud_name: str, optional
     :return: active_directory for a cloud
     """
     cloud_details = _get_cloud_details(cloud_name)
@@ -154,6 +159,7 @@ def _get_storage_endpoint_from_metadata(cloud_name: Optional[str] = None):
     """Retrieve the storage_endpoint for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
+    :type cloud_name: str, optional
     :return: storage_endpoint for a cloud
     """
     cloud_details = _get_cloud_details(cloud_name)
@@ -165,6 +171,7 @@ def _get_azure_portal_id_from_metadata(cloud_name: Optional[str] = None):
     """Retrieve the azure_portal_id for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
+    :type cloud_name: str, optional
     :return: azure_portal_id for a cloud
     """
     cloud_details = _get_cloud_details(cloud_name)
@@ -176,6 +183,7 @@ def _get_cloud_information_from_metadata(cloud_name: Optional[str] = None, **kwa
     """Retrieve the cloud information from the metadata in SDK.
 
     :param cloud_name: cloud name
+    :type cloud_name: str, optional
     :return: A dictionary of additional configuration parameters required for passing in cloud information.
     """
     cloud_details = _get_cloud_details(cloud_name)
@@ -193,6 +201,7 @@ def _get_registry_discovery_endpoint_from_metadata(cloud_name: Optional[str] = N
     """Retrieve the registry_discovery_endpoint for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
+    :type cloud_name: str, optional
     :return: registry_discovery_endpoint for a cloud
     """
     cloud_details = _get_cloud_details(cloud_name)

@@ -254,6 +254,7 @@ class BlobStorageClient:
         """Lists all blob names in the specified container.
 
         :param starts_with: Indicates the blob name starts with to search.
+        :type starts_with: str
         :return: the list of blob paths in container
         """
         blobs = self.container_client.list_blobs(name_starts_with=starts_with)

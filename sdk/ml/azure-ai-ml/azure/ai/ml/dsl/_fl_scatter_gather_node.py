@@ -41,11 +41,10 @@ def fl_scatter_gather(
     _create_default_mappings_if_needed: bool = False,
     **kwargs,
 ):
-    """USAGE WARNING: Using this node directly from the SDK repo requires that the user have the 'mldesigner'
-    package installed, which is not a standard dependency of this package.
+    """A federated learning scatter-gather subgraph node.
 
-    A federated learning scatter-gather subgraph node. It's assumed that this will be used inside of
-    a @pipeline-decorated function in order to create a subgraph which will:
+    It's assumed that this will be used inside of a `@pipeline`-decorated function in order to create a subgraph which
+    will:
         - Execute a specified pipeline step multiple times (the silo step), with each execution using slightly
             different inputs, datastores, and computes based on an inputted config.
         - Merge the outputs of the multiple silo steps into a single input for another step (the aggregation step),
@@ -121,8 +120,14 @@ def fl_scatter_gather(
         If True, try to automatically create input/output mappings if they're unset.
     :type _create_default_mappings_if_needed: bool, optional
     :param kwargs: Additional keyword arguments to be passed to the `FLScatterGather` constructor.
+    :type kwargs: dict
     :return: The federated learning scatter-gather subgraph node.
     :rtype: ~azure.ai.ml.entities._builders.fl_scatter_gather.FLScatterGather
+
+    .. warning::
+
+        Using this node directly from the SDK repo requires that the user have the 'mldesigner' package installed,
+        which is not a standard dependency of this package.
     """
     # Private kwargs:
     # _create_default_mappings_if_needed: if true, then try to automatically create i/o mappings if they're unset.

@@ -127,6 +127,7 @@ class IgnoreFile(object):
         """Checks if given file_path is excluded.
 
         :param file_path: File path to be checked against ignore file specifications
+        :type file_path: Union[str, Path]
         """
         # TODO: current design of ignore file can't distinguish between files and directories of the same name
         if self._path_spec is None:
@@ -172,6 +173,7 @@ def get_ignore_file(directory_path: Union[Path, str]) -> Optional[IgnoreFile]:
     The ignore file must be in the root directory.
 
     :param directory_path: Path to the (root) directory where ignore file is located
+    :type directory_path: Union[Path, str]
     """
     aml_ignore = AmlIgnoreFile(directory_path)
     git_ignore = GitIgnoreFile(directory_path)

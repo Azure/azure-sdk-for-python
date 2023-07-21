@@ -723,8 +723,11 @@ def is_data_binding_expression(
     "${{parent.jobs.xxx}}_extra" and "${{parent.jobs.xxx}}_{{parent.jobs.xxx}}".
 
     :param value: Value to check.
+    :type value: str
     :param binding_prefix: Prefix to check for.
+    :type binding_prefix: Union[str, List[str]]
     :param is_singular: should the value be a singular data-binding expression, like "${{parent.jobs.xxx}}".
+    :type is_singular: bool
     :return: True if the value is a data-binding expression, False otherwise.
     """
     return len(get_all_data_binding_expressions(value, binding_prefix, is_singular)) > 0
@@ -737,8 +740,11 @@ def get_all_data_binding_expressions(
     return an empty list if the value is not a str.
 
     :param value: Value to extract.
+    :type value: str
     :param binding_prefix: Prefix to filter.
+    :type binding_prefix: Union[str, List[str]]
     :param is_singular: should the value be a singular data-binding expression, like "${{parent.jobs.xxx}}".
+    :type is_singular: bool
     :return: list of data-binding expressions.
     """
     if isinstance(binding_prefix, str):
@@ -892,7 +898,9 @@ def write_to_shared_file(file_path: Union[str, PathLike], content: str):
     """Open file with specific mode and return the file object.
 
     :param file_path: Path to the file.
+    :type file_path: Union[str, os.PathLike]
     :param content: Content to write to the file.
+    :type content: str
     """
     with open(file_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         f.write(content)

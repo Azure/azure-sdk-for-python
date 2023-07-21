@@ -448,6 +448,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         (Write a pipeline job as node in yaml is not supported presently.)
 
         :param context: Context of command job YAML file.
+        :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated command component.
         """
@@ -642,6 +643,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         """Translate a pipeline job to pipeline component.
 
         :param context: Context of pipeline job YAML file.
+        :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated pipeline component.
         """

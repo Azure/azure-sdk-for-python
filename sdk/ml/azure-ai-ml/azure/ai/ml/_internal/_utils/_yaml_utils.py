@@ -28,8 +28,11 @@ class _SafeLoaderWithBaseLoader(strictyaml.ruamel.SafeLoader):
         :param version: version of yaml, like (1, 1)(yaml 1.1) and (1, 2)(yaml 1.2)
         :type version: VersionType
         :param tag: a tag indicating the type of the resolved node, e.g., tag:yaml.org,2002:bool.
+        :type tag: Any
         :param regexp: the regular expression to match the node to be resolved
+        :type regexp: Any
         :param first: a list of first characters to match
+        :type first: Any
         """
         self._version_implicit_resolver.setdefault(version, {})
 

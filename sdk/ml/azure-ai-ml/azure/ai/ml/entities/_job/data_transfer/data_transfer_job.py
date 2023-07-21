@@ -179,6 +179,7 @@ class DataTransferCopyJob(DataTransferJob):
         """Translate a data transfer copy job to component.
 
         :param context: Context of data transfer job YAML file.
+        :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated data transfer copy component.
         """
@@ -204,6 +205,7 @@ class DataTransferCopyJob(DataTransferJob):
         """Translate a data transfer copy job to a pipeline node.
 
         :param context: Context of data transfer job YAML file.
+        :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated data transfer component.
         """
@@ -249,6 +251,7 @@ class DataTransferImportJob(DataTransferJob):
         """Translate a data transfer import job to component.
 
         :param context: Context of data transfer job YAML file.
+        :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated data transfer import component.
         """
@@ -264,6 +267,7 @@ class DataTransferImportJob(DataTransferJob):
         """Translate a data transfer import job to a pipeline node.
 
         :param context: Context of data transfer job YAML file.
+        :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated data transfer import node.
         """
@@ -309,6 +313,7 @@ class DataTransferExportJob(DataTransferJob):
         """Translate a data transfer export job to component.
 
         :param context: Context of data transfer job YAML file.
+        :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated data transfer export component.
         """
@@ -328,6 +333,7 @@ class DataTransferExportJob(DataTransferJob):
         """Translate a data transfer export job to a pipeline node.
 
         :param context: Context of data transfer job YAML file.
+        :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated data transfer export node.
         """
