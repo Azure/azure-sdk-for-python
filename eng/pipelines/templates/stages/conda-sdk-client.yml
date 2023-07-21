@@ -1,9 +1,21 @@
 parameters:
-- name: CondaArtifacts
-  type: object
-  default: []
+- name: release_azure_core
+  displayName: 'azure-core'
+  type: boolean
+  default: true
+- name: release_azure_storage
+  displayName: 'azure-storage'
+  type: boolean
+  default: true
+
 variables:
-  - template: /eng/pipelines/templates/variables/globals.yml
+  CondaArtifacts:
+  - name: azure-core
+    common_root: azure
+    inBatch: ${{ parameters.release_azure_core }}
+  - name: azure-storage
+    common_root: azure
+    inBatch: ${{ parameters.release_azure_storage }}
 
 stages:
   - stage: Build
@@ -11,12 +23,10 @@ stages:
     jobs:
     - template: ../steps/build-conda-artifacts.yml
       parameters:
-        CondaArtifacts: ${{ parameters.CondaArtifacts }}
+        CondaArtifacts: $(CondaArtifacts)
 
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
     - template: archetype-conda-release.yml
       parameters:
         DependsOn: Build
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        CondaArtifacts: ${{ parameters.CondaArtifacts }}
-
+        CondaArtifacts: $(CondaArtifacts)
