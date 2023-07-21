@@ -20,8 +20,6 @@ steps:
 
       gci -R $(Build.SourcesDirectory)/conda
 
-      Write-Host "${{ parameters.CondaArtifacts }}"
-
       Write-Host "##vso[task.setvariable variable=conda.output]$(Agent.BuildDirectory)/conda/conda-recipes/output"
       Write-Host "##vso[task.setvariable variable=conda.build]$(Agent.BuildDirectory)/conda/conda-recipes"
     displayName: 'Create Conda Working Directories'
