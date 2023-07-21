@@ -23,7 +23,7 @@ async def analyze_text_async():
     client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
 
     async with client:
-        # Construct request
+        # Construct a request
         request = AnalyzeTextOptions(text="You are an idiot")
 
         # Analyze text

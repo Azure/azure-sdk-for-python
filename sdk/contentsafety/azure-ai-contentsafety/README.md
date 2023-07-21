@@ -122,7 +122,7 @@ Please refer to [sample data](https://github.com/Azure/azure-sdk-for-python/tree
     # Create an Content Safety client
     client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
 
-    # Construct request
+    # Construct a request
     request = AnalyzeTextOptions(text="You are an idiot")
 
     # Analyze text
