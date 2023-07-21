@@ -238,7 +238,7 @@ class PipelineExpression(PipelineExpressionMixin):
     _DECORATOR_LINE = "@command_component(@@decorator_parameters@@)"
     _COMPONENT_FUNC_NAME = "expression_func"
     _COMPONENT_FUNC_DECLARATION_LINE = (
-        f"def {_COMPONENT_FUNC_NAME}(@@component_parameters@@)" " -> Output(type=@@return_type@@, is_control=True):"
+        f"def {_COMPONENT_FUNC_NAME}(@@component_parameters@@)" " -> Output(type=@@return_type@@):"
     )
     _PYTHON_CACHE_FOLDER_NAME = "__pycache__"
 
@@ -330,11 +330,11 @@ class PipelineExpression(PipelineExpressionMixin):
             _postfix: List[str],
             _expression_inputs: Dict[str, ExpressionInput],
         ) -> Tuple[List[str], dict]:
-            if not _component_output._meta._is_control_or_primitive_type:
+            if not _component_output._meta._is_primitive_type:
                 error_message = (
-                    f"Component output {_component_output._port_name} in expression must have "
-                    f'"is_control" field or is a primitive type with value {True!r}, '
-                    f"got {_component_output._meta._is_control_or_primitive_type!r}"
+                    f"Component output {_component_output._port_name} in expression must "
+                    f"be a primitive type with value {True!r}, "
+                    f"got {_component_output._meta._is_primitive_type!r}"
                 )
                 raise UserErrorException(message=error_message, no_personal_data_message=error_message)
             _name = _component_output._port_name

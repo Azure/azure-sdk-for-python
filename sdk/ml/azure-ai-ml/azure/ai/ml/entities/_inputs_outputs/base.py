@@ -26,5 +26,5 @@ class _InputOutputBase(DictMixin, RestTranslatableMixin):
         return self.type in SUPPORTED_PARAM_TYPES
 
     @property
-    def _is_control_or_primitive_type(self):
-        return getattr(self, "is_control", None) or getattr(self, "_is_primitive_type", None)
+    def _is_primitive_type(self):
+        return getattr(self, "_is_primitive_type", None)
