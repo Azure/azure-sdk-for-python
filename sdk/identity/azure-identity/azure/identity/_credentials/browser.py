@@ -160,9 +160,7 @@ def _open_browser(url):
         system = uname[0].lower()
         release = uname[2].lower()
         if "microsoft" in release and system == "linux":
-            kwargs = {}
-            if platform.python_version() >= "3.3":
-                kwargs["timeout"] = 5
+            kwargs = {"timeout": 5}
 
             try:
                 exit_code = subprocess.call(
