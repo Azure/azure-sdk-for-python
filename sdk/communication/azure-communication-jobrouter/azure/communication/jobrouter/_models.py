@@ -645,7 +645,7 @@ class QueueSelectorAttachment:
         }
     }
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self) -> None:
         """ """
         self.kind: Optional[Literal[
             "conditional", "pass-through", "rule-engine", "static", "weighted-allocation-queue-selector"]] = None
@@ -740,7 +740,7 @@ class WorkerSelectorAttachment:
         }
     }
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self) -> None:
         """ """
         self.kind: Optional[Literal[
             "conditional", "pass-through", "rule-engine", "static", "weighted-allocation-worker-selector"]] = None
