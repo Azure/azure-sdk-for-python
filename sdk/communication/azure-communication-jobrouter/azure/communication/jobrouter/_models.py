@@ -81,7 +81,6 @@ class AcceptJobOfferResult:
         :keyword worker_id: The Id of the worker that has been assigned this job. Required.
         :paramtype worker_id: str
         """
-        
         self.assignment_id = assignment_id
         self.job_id = job_id
         self.worker_id = worker_id
@@ -366,7 +365,6 @@ class CancelJobRequest:
          If not provided, default value of "Cancelled" is set.
         :paramtype disposition_code: str
         """
-        
         self.note = note
         self.disposition_code = disposition_code
 
@@ -402,7 +400,6 @@ class ChannelConfiguration:
          this channel.
         :paramtype max_number_of_jobs: int
         """
-        
         self.capacity_cost_per_job = capacity_cost_per_job
         self.max_number_of_jobs = max_number_of_jobs
 
@@ -479,7 +476,6 @@ class ClassificationPolicy:
         :paramtype worker_selectors:
          list[~azure.communication.jobrouter.WorkerSelectorAttachment]
         """
-        
         self.id = None
         self.name = name
         self.fallback_queue_id = fallback_queue_id
@@ -516,7 +512,6 @@ class ClassificationPolicyItem:
         :keyword etag: (Optional) The Concurrency Token.
         :paramtype etag: str
         """
-        
         self.classification_policy = classification_policy
         self.etag = etag
 
@@ -577,7 +572,6 @@ class CloseJobRequest:
          current timestamp.
         :paramtype note: str
         """
-        
         self.assignment_id = assignment_id
         self.disposition_code = disposition_code
         self.close_at = close_at
@@ -613,7 +607,6 @@ class CompleteJobRequest:
          current timestamp.
         :paramtype note: str
         """
-        
         self.assignment_id = assignment_id
         self.note = note
 
@@ -654,7 +647,6 @@ class QueueSelectorAttachment:
 
     def __init__(self, **kwargs: Any) -> None:
         """ """
-        super().__init__(**kwargs)
         self.kind: Optional[Literal[
             "conditional", "pass-through", "rule-engine", "static", "weighted-allocation-queue-selector"]] = None
 
@@ -750,7 +742,6 @@ class WorkerSelectorAttachment:
 
     def __init__(self, **kwargs: Any) -> None:
         """ """
-        super().__init__(**kwargs)
         self.kind: Optional[Literal[
             "conditional", "pass-through", "rule-engine", "static", "weighted-allocation-worker-selector"]] = None
 
@@ -840,7 +831,6 @@ class DeclineJobOfferRequest:
          eligible for the job at that time.
         :paramtype retry_offer_at: ~datetime.datetime
         """
-        
         self.retry_offer_at = retry_offer_at
 
 
@@ -885,7 +875,6 @@ class RouterRule:
 
     def __init__(self) -> None:
         """ """
-        
         self.kind: Optional[
             Literal["azure-function-rule", "direct-map-rule", "expression-rule", "static-rule", "webhook-rule"]] = None
 
@@ -956,7 +945,6 @@ class DistributionPolicy:
         :keyword mode: Abstract base class for defining a distribution mode.
         :paramtype mode: ~azure.communication.jobrouter.DistributionMode
         """
-        
         self.id = None
         self.name = name
         self.offer_expires_after_seconds = offer_expires_after_seconds
@@ -991,7 +979,6 @@ class DistributionPolicyItem:
         :keyword etag: (Optional) The Concurrency Token.
         :paramtype etag: str
         """
-        
         self.distribution_policy = distribution_policy
         self.etag = etag
 
@@ -1033,7 +1020,6 @@ class ExceptionPolicy:
          exception policy. Key is the Id of each exception rule.
         :paramtype exception_rules: dict[str, ~azure.communication.jobrouter.ExceptionRule]
         """
-        
         self.id = None
         self.name = name
         self.exception_rules = exception_rules
@@ -1065,7 +1051,6 @@ class ExceptionPolicyItem:
         :keyword etag: (Optional) The Concurrency Token.
         :paramtype etag: str
         """
-        
         self.exception_policy = exception_policy
         self.etag = etag
 
@@ -1102,7 +1087,6 @@ class ExceptionRule:
          triggered. Key is the Id of each exception action. Required.
         :paramtype actions: dict[str, ~azure.communication.jobrouter.ExceptionAction]
         """
-        
         self.trigger = trigger
         self.actions = actions
 
@@ -1131,7 +1115,6 @@ class ExceptionTrigger:
 
     def __init__(self) -> None:
         """ """
-        
         self.kind: Optional[Literal["queue-length", "wait-time"]] = None
 
 
@@ -1261,7 +1244,6 @@ class FunctionRouterRuleCredential:
          In context of Azure function, this is usually the name of the key.
         :paramtype client_id: str
         """
-        
         self.function_key = function_key
         self.app_key = app_key
         self.client_id = client_id
@@ -1529,7 +1511,6 @@ class Oauth2ClientCredential:
         :keyword client_secret: Client secret for Contoso Authorization server.
         :paramtype client_secret: str
         """
-        
         self.client_id = client_id
         self.client_secret = client_secret
 
@@ -1699,7 +1680,6 @@ class QueueWeightedAllocation:
          allocation is selected. Required.
         :paramtype queue_selectors: list[~azure.communication.jobrouter.RouterQueueSelector]
         """
-        
         self.weight = weight
         self.queue_selectors = queue_selectors
 
@@ -1953,7 +1933,6 @@ class RouterJob:  # pylint: disable=too-many-instance-attributes
                     notes.pop(k)
                     notes[datetime_as_str] = v
 
-        
         self.id = None
         self.channel_reference = channel_reference
         self.status = None
@@ -2024,7 +2003,6 @@ class RouterJobAssignment:
         :keyword closed_at: The time the job was marked as closed after being completed in UTC.
         :paramtype closed_at: ~datetime.datetime
         """
-        
         self.assignment_id = assignment_id
         self.worker_id = worker_id
         self.assigned_at = assigned_at
@@ -2055,7 +2033,6 @@ class RouterJobItem:
         :keyword etag: (Optional) The Concurrency Token.
         :paramtype etag: str
         """
-        
         self.job = job
         self.etag = etag
 
@@ -2112,7 +2089,6 @@ class RouterJobOffer:
         :keyword expires_at: The time that the offer will expire in UTC.
         :paramtype expires_at: ~datetime.datetime
         """
-        
         self.offer_id = offer_id
         self.job_id = job_id
         self.capacity_cost = capacity_cost
@@ -2176,7 +2152,6 @@ class RouterJobPositionDetails:
          minute. Required.
         :paramtype estimated_wait_time_minutes: float
         """
-        
         self.job_id = job_id
         self.position = position
         self.queue_id = queue_id
@@ -2237,7 +2212,6 @@ class RouterQueue:
          job escalation rules.
         :paramtype exception_policy_id: str
         """
-        
         self.id = None
         self.name = name
         self.distribution_policy_id = distribution_policy_id
@@ -2270,7 +2244,6 @@ class RouterQueueItem:
         :keyword etag: (Optional) The Concurrency Token.
         :paramtype etag: str
         """
-        
         self.queue = queue
         self.etag = etag
 
@@ -2318,7 +2291,6 @@ class RouterQueueSelector:
         :keyword value: The value to compare against the actual label value with the given operator.
         :paramtype value: JSON
         """
-        
         self.key = key
         self.label_operator = label_operator
         self.value = value
@@ -2373,7 +2345,6 @@ class RouterQueueStatistics:
          queue for the longest.
         :paramtype longest_job_wait_time_minutes: float
         """
-        
         self.queue_id = queue_id
         self.length = length
         self.estimated_wait_time_minutes = estimated_wait_time_minutes
@@ -2465,7 +2436,6 @@ class RouterWorker:  # pylint: disable=too-many-instance-attributes
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: bool
         """
-        
         self.id = None
         self.state = None
         self.queue_assignments = queue_assignments
@@ -2523,7 +2493,6 @@ class RouterWorkerAssignment:
         :keyword assigned_at: The assignment time of the job in UTC. Required.
         :paramtype assigned_at: ~datetime.datetime
         """
-        
         self.assignment_id = assignment_id
         self.job_id = job_id
         self.capacity_cost = capacity_cost
@@ -2555,7 +2524,6 @@ class RouterWorkerItem:
         :keyword etag: (Optional) The Concurrency Token.
         :paramtype etag: str
         """
-        
         self.worker = worker
         self.etag = etag
 
@@ -2625,7 +2593,6 @@ class RouterWorkerSelector:
         :keyword expedite: Pushes the job to the front of the queue as long as this selector is active.
         :paramtype expedite: bool
         """
-        
         self.key = key
         self.label_operator = label_operator
         self.value = value
@@ -2747,7 +2714,6 @@ class ScheduleAndSuspendMode:
         :keyword schedule_at:
         :paramtype schedule_at: ~datetime.datetime
         """
-        
         self.schedule_at = schedule_at
 
 
@@ -2817,7 +2783,6 @@ class ScoringRuleOptions:
          If false, will sort scores by ascending order. By default, set to true.
         :paramtype descending_order: bool
         """
-        
         self.batch_size = batch_size
         self.scoring_parameters = scoring_parameters
         self.allow_scoring_batch_of_workers = allow_scoring_batch_of_workers
@@ -2940,7 +2905,6 @@ class UnassignJobRequest:
          re-matching with a worker.
         :paramtype suspend_matching: bool
         """
-        
         self.suspend_matching = suspend_matching
 
 
@@ -2972,7 +2936,6 @@ class UnassignJobResult:
         :keyword unassignment_count: The number of times a job is unassigned. At a maximum 3. Required.
         :paramtype unassignment_count: int
         """
-        
         self.job_id = job_id
         self.unassignment_count = unassignment_count
 
@@ -3154,6 +3117,5 @@ class WorkerWeightedAllocation:
          allocation is selected. Required.
         :paramtype worker_selectors: list[~azure.communication.jobrouter.RouterWorkerSelector]
         """
-        
         self.weight = weight
         self.worker_selectors = worker_selectors
