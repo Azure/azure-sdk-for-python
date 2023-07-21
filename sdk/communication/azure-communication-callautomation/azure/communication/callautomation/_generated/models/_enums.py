@@ -75,13 +75,6 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ASTERISK = "asterisk"
 
 
-class Gender(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Voice gender type."""
-
-    MALE = "male"
-    FEMALE = "female"
-
-
 class PlaySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the type of the play source."""
 
@@ -136,3 +129,10 @@ class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ACTIVE = "active"
     INACTIVE = "inactive"
+
+
+class VoiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Voice kind type."""
+
+    MALE = "male"
+    FEMALE = "female"

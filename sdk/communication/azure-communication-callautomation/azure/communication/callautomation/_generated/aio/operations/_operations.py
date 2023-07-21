@@ -1534,7 +1534,7 @@ class CallConnectionOperations:
         repeatability_first_sent: Optional[datetime.datetime] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.MuteParticipantsResponse:
+    ) -> _models.MuteParticipantsResult:
         """Mute participants from the call using identifier.
 
         Mute participants from the call using identifier.
@@ -1559,8 +1559,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MuteParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResponse
+        :return: MuteParticipantsResult
+        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1574,7 +1574,7 @@ class CallConnectionOperations:
         repeatability_first_sent: Optional[datetime.datetime] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.MuteParticipantsResponse:
+    ) -> _models.MuteParticipantsResult:
         """Mute participants from the call using identifier.
 
         Mute participants from the call using identifier.
@@ -1598,8 +1598,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MuteParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResponse
+        :return: MuteParticipantsResult
+        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1612,7 +1612,7 @@ class CallConnectionOperations:
         repeatability_request_id: Optional[str] = None,
         repeatability_first_sent: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> _models.MuteParticipantsResponse:
+    ) -> _models.MuteParticipantsResult:
         """Mute participants from the call using identifier.
 
         Mute participants from the call using identifier.
@@ -1638,8 +1638,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: MuteParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResponse
+        :return: MuteParticipantsResult
+        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1654,7 +1654,7 @@ class CallConnectionOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MuteParticipantsResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MuteParticipantsResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1692,7 +1692,7 @@ class CallConnectionOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("MuteParticipantsResponse", pipeline_response)
+        deserialized = self._deserialize("MuteParticipantsResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -2325,7 +2325,7 @@ class CallMediaOperations:
         repeatability_first_sent: Optional[datetime.datetime] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.SendDtmfResponse:
+    ) -> _models.SendDtmfResult:
         """Send dtmf tones.
 
         Send dtmf tones.
@@ -2349,8 +2349,8 @@ class CallMediaOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SendDtmfResponse
-        :rtype: ~azure.communication.callautomation.models.SendDtmfResponse
+        :return: SendDtmfResult
+        :rtype: ~azure.communication.callautomation.models.SendDtmfResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2364,7 +2364,7 @@ class CallMediaOperations:
         repeatability_first_sent: Optional[datetime.datetime] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.SendDtmfResponse:
+    ) -> _models.SendDtmfResult:
         """Send dtmf tones.
 
         Send dtmf tones.
@@ -2388,8 +2388,8 @@ class CallMediaOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SendDtmfResponse
-        :rtype: ~azure.communication.callautomation.models.SendDtmfResponse
+        :return: SendDtmfResult
+        :rtype: ~azure.communication.callautomation.models.SendDtmfResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2402,7 +2402,7 @@ class CallMediaOperations:
         repeatability_request_id: Optional[str] = None,
         repeatability_first_sent: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> _models.SendDtmfResponse:
+    ) -> _models.SendDtmfResult:
         """Send dtmf tones.
 
         Send dtmf tones.
@@ -2427,8 +2427,8 @@ class CallMediaOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: SendDtmfResponse
-        :rtype: ~azure.communication.callautomation.models.SendDtmfResponse
+        :return: SendDtmfResult
+        :rtype: ~azure.communication.callautomation.models.SendDtmfResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -2443,7 +2443,7 @@ class CallMediaOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SendDtmfResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SendDtmfResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2481,7 +2481,7 @@ class CallMediaOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("SendDtmfResponse", pipeline_response)
+        deserialized = self._deserialize("SendDtmfResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
