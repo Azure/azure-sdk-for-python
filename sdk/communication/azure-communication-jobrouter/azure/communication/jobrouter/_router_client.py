@@ -259,7 +259,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :param str worker_id: Id of the worker.
 
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
-        :paramtype queue_assignments: Optional[Dict[str, ~azure.communication.jobrouter.QueueAssignment]]
+        :paramtype queue_assignments: Optional[Dict[str, Union[~collections.abc.MutableMapping[str, Any], None]]]
 
         :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
          jobs.
@@ -267,10 +267,10 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
-        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
-        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
          workers capacity.
@@ -300,7 +300,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :type router_worker: ~azure.communication.jobrouter.RouterWorker
 
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
-        :paramtype queue_assignments: Optional[Dict[str, ~azure.communication.jobrouter.QueueAssignment]]
+        :paramtype queue_assignments: Optional[Dict[str, Union[~collections.abc.MutableMapping[str, Any], None]]]
 
         :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
          jobs.
@@ -308,10 +308,10 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
-        :paramtype labels: Optional[dict[str, Union[int, float, str, bool]]]
+        :paramtype labels: Optional[dict[str, Union[int, float, str, bool, None]]]
 
         :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
-        :paramtype tags: Optional[dict[str, Union[int, float, str, bool]]]
+        :paramtype tags: Optional[dict[str, Union[int, float, str, bool, None]]]
 
         :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
          workers capacity.
@@ -582,8 +582,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             priority: Optional[int],
             disposition_code: Optional[str],
             requested_worker_selectors: Optional[List[RouterWorkerSelector]],
-            labels: Optional[Dict[str, Union[int, float, str, bool]]],
-            tags: Optional[Dict[str, Union[int, float, str, bool]]],
+            labels: Optional[Dict[str, Union[int, float, str, bool, None]]],
+            tags: Optional[Dict[str, Union[int, float, str, bool, None]]],
             notes: Optional[Dict[datetime, str]],
             matching_mode: Optional[JobMatchingMode],
             **kwargs: Any
@@ -617,10 +617,10 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
-        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
-        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: Optional[Dict[~datetime.datetime, str]]
@@ -670,14 +670,14 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :keyword requested_worker_selectors: A collection of manually specified label selectors, which
          a worker must satisfy in order to process this job.
-        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.WorkerSelector]]
+        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.RouterWorkerSelector]]
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
-        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
-        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: Optional[Dict[~datetime.datetime, str]]
@@ -953,7 +953,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :paramtype note: Optional[str]
 
         :return: Instance of MutableMapping[str, Any]
-        :rtype: MutableMapping[str, Any]
+        :rtype: ~collections.abc.MutableMapping[str, Any]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1005,7 +1005,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :paramtype note: Optional[str]
 
         :return: Instance of MutableMapping[str, Any]
-        :rtype: MutableMapping[str, Any]
+        :rtype: ~collections.abc.MutableMapping[str, Any]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1058,7 +1058,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :paramtype disposition_code: Optional[str]
 
         :return: Instance of MutableMapping[str, Any]
-        :rtype: MutableMapping[str, Any]
+        :rtype: ~collections.abc.MutableMapping[str, Any]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1097,7 +1097,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :param str job_id: Id of the job.
 
         :return: Instance of MutableMapping[str, Any]
-        :rtype: MutableMapping[str, Any]
+        :rtype: ~collections.abc.MutableMapping[str, Any]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1230,13 +1230,13 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :type offer_id: str
 
         :keyword retry_offer_at: If the retry_offer_at is not provided, then this job will not be re-offered to the
-        worker who declined this job unless the worker is de-registered and re-registered.  If a retry_offer_at is
-        provided, then the job will be re-matched to eligible workers after the reoffer time.  The worker that declined
-        the job will also be eligible for the job at that time.
+          worker who declined this job unless the worker is de-registered and re-registered.  If a retry_offer_at is
+          provided, then the job will be re-matched to eligible workers after the reoffer time. The worker that declined
+          the job will also be eligible for the job at that time.
         :paramtype retry_offer_at: Optional[~datetime.datetime]
 
         :return: Instance of MutableMapping[str, Any]
-        :rtype: MutableMapping[str, Any]
+        :rtype: ~collections.abc.MutableMapping[str, Any]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
