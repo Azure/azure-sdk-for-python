@@ -11,12 +11,12 @@ steps:
 
   - pwsh: |
       $json = "${{ convertToJson(parameters.CondaArtifacts) }}"
-      Write-Host '##vso[task.setvariable variable=ARTIFACT_JSON]$json'
+      Write-Host '$json'
     displayName: 'Save Building JSON as variable'
 
-  - pwsh: |
-      Write-Host "$(ARTIFACT_JSON)"
-    displayName: 'Check output of Artifact Json'
+  # - pwsh: |
+  #     Write-Host "$(ARTIFACT_JSON)"
+  #   displayName: 'Check output of Artifact Json'
 
   # - ${{ each artifact in parameters.CondaArtifacts }}:
   #   # there may be multiple CondaArtifacts. Be certain $(conda.build) is clean just in case!
