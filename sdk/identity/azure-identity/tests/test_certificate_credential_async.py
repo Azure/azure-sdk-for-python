@@ -209,9 +209,11 @@ async def test_token_cache_memory(cert_path, cert_password):
 
     access_token = "token"
     transport = async_validating_transport(
-        requests=[Request(), Request()], responses=[
+        requests=[Request(), Request()],
+        responses=[
             mock_response(json_payload=build_aad_response(access_token=access_token)),
-            mock_response(json_payload=build_aad_response(access_token=access_token))]
+            mock_response(json_payload=build_aad_response(access_token=access_token)),
+        ],
     )
 
     with patch("azure.identity._internal.aad_client_base._load_persistent_cache") as load_persistent_cache:
@@ -226,7 +228,7 @@ async def test_token_cache_memory(cert_path, cert_password):
             assert mock_token_cache.call_count == 1
             assert load_persistent_cache.call_count == 0
             assert credential._client._cache is not None
-            assert credential._client._cae_cache is  None
+            assert credential._client._cae_cache is None
 
             await credential.get_token("scope", enable_cae=True)
             assert mock_token_cache.call_count == 2
@@ -241,17 +243,23 @@ async def test_token_cache_persistent(cert_path, cert_password):
 
     access_token = "token"
     transport = async_validating_transport(
-        requests=[Request(), Request()], responses=[
+        requests=[Request(), Request()],
+        responses=[
             mock_response(json_payload=build_aad_response(access_token=access_token)),
-            mock_response(json_payload=build_aad_response(access_token=access_token))]
+            mock_response(json_payload=build_aad_response(access_token=access_token)),
+        ],
     )
 
     with patch("azure.identity._internal.aad_client_base._load_persistent_cache") as load_persistent_cache:
         with patch("azure.identity._internal.aad_client_base.TokenCache") as mock_token_cache:
 
             credential = CertificateCredential(
-                "tenant", "client-id", cert_path, password=cert_password,
-                 cache_persistence_options=TokenCachePersistenceOptions(), transport=transport
+                "tenant",
+                "client-id",
+                cert_path,
+                password=cert_password,
+                cache_persistence_options=TokenCachePersistenceOptions(),
+                transport=transport,
             )
             assert not mock_token_cache.called
             assert not load_persistent_cache.called
@@ -259,7 +267,7 @@ async def test_token_cache_persistent(cert_path, cert_password):
             await credential.get_token("scope")
             assert load_persistent_cache.call_count == 1
             assert credential._client._cache is not None
-            assert credential._client._cae_cache is  None
+            assert credential._client._cae_cache is None
             _, kwargs = load_persistent_cache.call_args
             assert kwargs.get("cache_suffix") == CACHE_NON_CAE_SUFFIX
 

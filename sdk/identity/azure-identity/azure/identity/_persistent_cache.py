@@ -52,14 +52,14 @@ class TokenCachePersistenceOptions:
 
 
 def _load_persistent_cache(
-        options: TokenCachePersistenceOptions, cache_suffix: str = ""
+    options: TokenCachePersistenceOptions, cache_suffix: str = ""
 ) -> "msal_extensions.PersistedTokenCache":
     import msal_extensions
 
     persistence = _get_persistence(
         allow_unencrypted=options.allow_unencrypted_storage,
         account_name="MSALCache",
-        cache_name=options.name+cache_suffix
+        cache_name=options.name + cache_suffix,
     )
     return msal_extensions.PersistedTokenCache(persistence)
 

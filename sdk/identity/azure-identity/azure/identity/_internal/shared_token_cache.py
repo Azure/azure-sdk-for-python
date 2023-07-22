@@ -80,7 +80,7 @@ def _filtered_accounts(
     return filtered_accounts
 
 
-class SharedTokenCacheBase(ABC):
+class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         username: Optional[str] = None,
@@ -142,7 +142,7 @@ class SharedTokenCacheBase(ABC):
         pass
 
     def _get_cache_items_for_authority(
-            self, credential_type: msal.TokenCache.CredentialType, is_cae: bool = False
+        self, credential_type: msal.TokenCache.CredentialType, is_cae: bool = False
     ) -> List[CacheItem]:
         """Return cache items matching this credential's authority or one of its aliases.
 
@@ -188,7 +188,7 @@ class SharedTokenCacheBase(ABC):
 
     @wrap_exceptions
     def _get_account(
-     self, username: Optional[str] = None, tenant_id: Optional[str] = None, is_cae: bool = False
+        self, username: Optional[str] = None, tenant_id: Optional[str] = None, is_cae: bool = False
     ) -> CacheItem:
         """Returns exactly one account which has a refresh token and matches username and/or tenant_id.
 
@@ -223,7 +223,7 @@ class SharedTokenCacheBase(ABC):
         raise CredentialUnavailableError(message=message)
 
     def _get_cached_access_token(
-            self, scopes: Iterable[str], account: CacheItem, is_cae: bool = False
+        self, scopes: Iterable[str], account: CacheItem, is_cae: bool = False
     ) -> Optional[AccessToken]:
         if "home_account_id" not in account:
             return None

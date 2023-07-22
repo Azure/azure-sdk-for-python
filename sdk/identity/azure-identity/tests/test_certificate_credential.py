@@ -314,7 +314,7 @@ def test_token_cache_persistent(cert_path, cert_password):
             cert_path,
             password=cert_password,
             cache_persistence_options=TokenCachePersistenceOptions(),
-            transport=Mock(send=send)
+            transport=Mock(send=send),
         )
 
         assert load_persistent_cache.call_count == 0, "cache should not be loaded until a token is requested"
@@ -346,11 +346,7 @@ def test_token_cache_memory(cert_path, cert_password):
 
     with patch("azure.identity._internal.msal_credentials._load_persistent_cache") as load_persistent_cache:
         credential = CertificateCredential(
-            "tenant",
-            "client-id",
-            cert_path,
-            password=cert_password,
-            transport=Mock(send=send)
+            "tenant", "client-id", cert_path, password=cert_password, transport=Mock(send=send)
         )
 
         assert credential._cache is None

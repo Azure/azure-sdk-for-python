@@ -194,8 +194,7 @@ class AadClientBase(abc.ABC):
         }
 
         claims = _merge_claims_challenge_and_capabilities(
-            ["CP1"] if kwargs.get("enable_cae") else [],
-            kwargs.get("claims")
+            ["CP1"] if kwargs.get("enable_cae") else [], kwargs.get("claims")
         )
         if claims:
             data["claims"] = claims
@@ -215,8 +214,7 @@ class AadClientBase(abc.ABC):
         }
 
         claims = _merge_claims_challenge_and_capabilities(
-            ["CP1"] if kwargs.get("enable_cae") else [],
-            kwargs.get("claims")
+            ["CP1"] if kwargs.get("enable_cae") else [], kwargs.get("claims")
         )
         if claims:
             data["claims"] = claims
@@ -257,8 +255,7 @@ class AadClientBase(abc.ABC):
         }
 
         claims = _merge_claims_challenge_and_capabilities(
-            ["CP1"] if kwargs.get("enable_cae") else [],
-            kwargs.get("claims")
+            ["CP1"] if kwargs.get("enable_cae") else [], kwargs.get("claims")
         )
         if claims:
             data["claims"] = claims
@@ -282,8 +279,7 @@ class AadClientBase(abc.ABC):
         }
 
         claims = _merge_claims_challenge_and_capabilities(
-            ["CP1"] if kwargs.get("enable_cae") else [],
-            kwargs.get("claims")
+            ["CP1"] if kwargs.get("enable_cae") else [], kwargs.get("claims")
         )
         if claims:
             data["claims"] = claims
@@ -307,8 +303,7 @@ class AadClientBase(abc.ABC):
         }
 
         claims = _merge_claims_challenge_and_capabilities(
-            ["CP1"] if kwargs.get("enable_cae") else [],
-            kwargs.get("claims")
+            ["CP1"] if kwargs.get("enable_cae") else [], kwargs.get("claims")
         )
         if claims:
             data["claims"] = claims
@@ -331,8 +326,7 @@ class AadClientBase(abc.ABC):
             "client_info": 1,  # request AAD include home_account_id in its response
         }
         claims = _merge_claims_challenge_and_capabilities(
-            ["CP1"] if kwargs.get("enable_cae") else [],
-            kwargs.get("claims")
+            ["CP1"] if kwargs.get("enable_cae") else [], kwargs.get("claims")
         )
         if claims:
             data["claims"] = claims

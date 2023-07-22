@@ -224,7 +224,6 @@ def test_token_cache_persistent():
                 ),
             )
 
-
     with patch("azure.identity._internal.msal_credentials._load_persistent_cache") as load_persistent_cache:
         credential = TestCredential(
             cache_persistence_options=TokenCachePersistenceOptions(),
@@ -235,7 +234,6 @@ def test_token_cache_persistent():
         assert load_persistent_cache.call_count == 1
         assert credential._cache is not None
         assert credential._cae_cache is None
-
 
         credential.get_token("scope", enable_cae=True)
         assert load_persistent_cache.call_count == 2

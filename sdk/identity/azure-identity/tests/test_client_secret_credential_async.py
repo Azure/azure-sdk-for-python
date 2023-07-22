@@ -185,15 +185,18 @@ async def test_cache():
     assert token == valid_token
     assert mock_send.call_count == 2
 
+
 @pytest.mark.asyncio
 async def test_token_cache():
     """the credential should default to an in memory cache, and optionally use a persistent cache"""
 
     access_token = "token"
     transport = async_validating_transport(
-        requests=[Request(), Request()], responses=[
+        requests=[Request(), Request()],
+        responses=[
             mock_response(json_payload=build_aad_response(access_token=access_token)),
-            mock_response(json_payload=build_aad_response(access_token=access_token))]
+            mock_response(json_payload=build_aad_response(access_token=access_token)),
+        ],
     )
 
     with patch("azure.identity._internal.aad_client_base._load_persistent_cache") as load_persistent_cache:
@@ -206,12 +209,13 @@ async def test_token_cache():
             assert mock_token_cache.call_count == 1
             assert load_persistent_cache.call_count == 0
             assert credential._client._cache is not None
-            assert credential._client._cae_cache is  None
+            assert credential._client._cae_cache is None
 
             await credential.get_token("scope", enable_cae=True)
             assert mock_token_cache.call_count == 2
             assert load_persistent_cache.call_count == 0
             assert credential._client._cae_cache is not None
+
 
 @pytest.mark.asyncio
 async def test_token_cache_persistent():
@@ -219,9 +223,11 @@ async def test_token_cache_persistent():
 
     access_token = "token"
     transport = async_validating_transport(
-        requests=[Request(), Request()], responses=[
+        requests=[Request(), Request()],
+        responses=[
             mock_response(json_payload=build_aad_response(access_token=access_token)),
-            mock_response(json_payload=build_aad_response(access_token=access_token))]
+            mock_response(json_payload=build_aad_response(access_token=access_token)),
+        ],
     )
 
     with patch("azure.identity._internal.aad_client_base._load_persistent_cache") as load_persistent_cache:
@@ -230,12 +236,12 @@ async def test_token_cache_persistent():
             "client-id",
             "secret",
             cache_persistence_options=TokenCachePersistenceOptions(),
-            transport=transport
+            transport=transport,
         )
         await credential.get_token("scope")
         assert load_persistent_cache.call_count == 1
         assert credential._client._cache is not None
-        assert credential._client._cae_cache is  None
+        assert credential._client._cae_cache is None
         _, kwargs = load_persistent_cache.call_args
         assert kwargs.get("cache_suffix") == CACHE_NON_CAE_SUFFIX
 
@@ -244,6 +250,7 @@ async def test_token_cache_persistent():
         assert credential._client._cae_cache is not None
         _, kwargs = load_persistent_cache.call_args
         assert kwargs.get("cache_suffix") == CACHE_CAE_SUFFIX
+
 
 @pytest.mark.asyncio
 async def test_cache_multiple_clients():

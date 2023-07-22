@@ -81,7 +81,6 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
 
         return self._cae_cache if is_cae else self._cache
 
-
     def _get_app(self, **kwargs: Any) -> msal.ClientApplication:
         tenant_id = resolve_tenant(
             self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs

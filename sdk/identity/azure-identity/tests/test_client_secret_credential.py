@@ -161,12 +161,12 @@ def test_token_cache_persistent():
         return mock_response(json_payload=build_aad_response(access_token=access_token))
 
     with patch("azure.identity._internal.msal_credentials._load_persistent_cache") as load_persistent_cache:
-        credential= ClientSecretCredential(
+        credential = ClientSecretCredential(
             "tenant",
             "client-id",
             "secret",
             cache_persistence_options=TokenCachePersistenceOptions(),
-            transport=Mock(send=send)
+            transport=Mock(send=send),
         )
 
         assert load_persistent_cache.call_count == 0
@@ -196,12 +196,7 @@ def test_token_cache_memory():
         return mock_response(json_payload=build_aad_response(access_token=access_token))
 
     with patch("azure.identity._internal.msal_credentials._load_persistent_cache") as load_persistent_cache:
-        credential = ClientSecretCredential(
-            "tenant",
-            "client-id",
-            "secret",
-            transport=Mock(send=send)
-        )
+        credential = ClientSecretCredential("tenant", "client-id", "secret", transport=Mock(send=send))
 
         assert credential._cache is None
         token = credential.get_token("scope")
@@ -213,6 +208,7 @@ def test_token_cache_memory():
         token = credential.get_token("scope", enable_cae=True)
         assert isinstance(credential._cae_cache, TokenCache)
         assert not load_persistent_cache.called
+
 
 def test_cache_multiple_clients():
     """the credential shouldn't use tokens issued to other service principals"""
@@ -353,6 +349,7 @@ def test_client_capabilities():
         assert ConfidentialClientApplication.call_count == 2
         _, kwargs = ConfidentialClientApplication.call_args
         assert kwargs["client_capabilities"] == ["CP1"]
+
 
 def test_claims_challenge():
     """get_token should pass any claims challenge to MSAL token acquisition APIs"""
