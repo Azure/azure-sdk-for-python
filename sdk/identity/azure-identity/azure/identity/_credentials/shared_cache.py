@@ -53,7 +53,7 @@ class SharedTokenCacheCredential:
 
     @log_get_token("SharedTokenCacheCredential")
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
     ) -> AccessToken:
         """Get an access token for `scopes` from the shared cache.
 
@@ -102,7 +102,7 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
             self._client.__exit__(*args)
 
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
     ) -> AccessToken:
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")

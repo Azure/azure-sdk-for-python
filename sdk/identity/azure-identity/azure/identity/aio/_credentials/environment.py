@@ -93,7 +93,9 @@ class EnvironmentCredential(AsyncContextManager):
             await self._credential.__aexit__()
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+    ) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -102,6 +104,7 @@ class EnvironmentCredential(AsyncContextManager):
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -114,4 +117,4 @@ class EnvironmentCredential(AsyncContextManager):
                 "this issue."
             )
             raise CredentialUnavailableError(message=message)
-        return await self._credential.get_token(*scopes, **kwargs)
+        return await self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)

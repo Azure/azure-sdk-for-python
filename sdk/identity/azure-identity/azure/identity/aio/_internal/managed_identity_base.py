@@ -39,10 +39,12 @@ class AsyncManagedIdentityBase(AsyncContextManager, GetTokenMixin):
     async def close(self) -> None:
         await self.__aexit__()
 
-    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+    ) -> AccessToken:
         if not self._client:
             raise CredentialUnavailableError(message=self.get_unavailable_message())
-        return await super().get_token(*scopes, **kwargs)
+        return await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
         # casting because mypy can't determine that these methods are called

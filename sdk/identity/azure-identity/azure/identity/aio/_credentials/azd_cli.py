@@ -79,7 +79,9 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         self._process_timeout = process_timeout
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -89,6 +91,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -98,7 +101,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         """
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
-            return _SyncAzureDeveloperCliCredential().get_token(*scopes, **kwargs)
+            return _SyncAzureDeveloperCliCredential().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
         if not scopes:
             raise ValueError("Missing scope in request. \n")
@@ -106,7 +109,11 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         commandString = " --scope ".join(scopes)
         command = COMMAND_LINE.format(commandString)
         tenant = resolve_tenant(
-            default_tenant=self.tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
+            default_tenant=self.tenant_id,
+            tenant_id=tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            claims=claims,
+            **kwargs,
         )
 
         if tenant:

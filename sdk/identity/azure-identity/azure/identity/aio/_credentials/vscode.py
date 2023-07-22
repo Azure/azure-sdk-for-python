@@ -47,7 +47,9 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
             await self._client.__aexit__()
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+    ) -> AccessToken:
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 
         This method is called automatically by Azure SDK clients.
@@ -56,6 +58,7 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -73,11 +76,11 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
             raise CredentialUnavailableError("Initialization failed")
         if within_dac.get():
             try:
-                token = await super().get_token(*scopes, **kwargs)
+                token = await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
                 return token
             except ClientAuthenticationError as ex:
                 raise CredentialUnavailableError(message=ex.message) from ex
-        return await super().get_token(*scopes, **kwargs)
+        return await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         self._client = cast(AadClient, self._client)

@@ -62,7 +62,9 @@ class AzureApplicationCredential(ChainedTokenCredential):
             ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs),
         )
 
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+    ) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -70,6 +72,8 @@ class AzureApplicationCredential(ChainedTokenCredential):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
+        :keyword str tenant_id: not used by this credential; any value provided will be ignored.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -77,10 +81,10 @@ class AzureApplicationCredential(ChainedTokenCredential):
             `message` attribute listing each authentication attempt and its error message.
         """
         if self._successful_credential:
-            token = await self._successful_credential.get_token(*scopes, **kwargs)
+            token = await self._successful_credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
             _LOGGER.info(
                 "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
             )
             return token
 
-        return await super().get_token(*scopes, **kwargs)
+        return await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)

@@ -70,7 +70,7 @@ class ChainedTokenCredential:
         self.__exit__()
 
     def get_token(
-            self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+            self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
     ) -> AccessToken:
         """Request a token from each chained credential, in order, returning the first token received.
 
