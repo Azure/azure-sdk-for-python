@@ -15,6 +15,7 @@ The values of the `endpoint`, `apiKey` and `region` variables can be retrieved f
 
 When the input language is known, you can provide those to the service call.
 
+<!-- SNIPPET: get_text_sentence_boundaries -->
 ```Python
 try:
     source_language = "zh-Hans"
@@ -36,11 +37,13 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 ### Break Sentence with auto-detection
 
 You can omit source language of the input text. In this case, API will try to auto-detect the language.
 
+<!-- SNIPPET: get_text_sentence_boundaries_auto -->
 ```Python
 try:
     input_text_elements = [ InputTextItem(text = "This is a test. This is the second sentence.") ]
@@ -60,6 +63,7 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 See the [README] of the Text Translator client library for more information, including useful links and instructions.
 

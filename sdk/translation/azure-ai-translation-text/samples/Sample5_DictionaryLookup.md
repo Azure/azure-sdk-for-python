@@ -15,6 +15,7 @@ The values of the `endpoint`, `apiKey` and `region` variables can be retrieved f
 
 Returns equivalent words for the source term in the target language.
 
+<!-- SNIPPET: get_text_dictionary_lookup -->
 ```Python
 try:
     source_language = "en"
@@ -32,6 +33,7 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 See the [README] of the Text Translator client library for more information, including useful links and instructions.
 

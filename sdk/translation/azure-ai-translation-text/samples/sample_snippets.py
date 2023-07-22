@@ -37,7 +37,7 @@ def create_text_translation_client():
 text_translator = create_text_translation_client()
 
 # -------------------------------------------------------------------------
-# Text translation languages
+# Sample1_GetLanguages.md
 # -------------------------------------------------------------------------
 def get_text_translation_languages():
     # [START get_text_translation_languages]
@@ -129,7 +129,7 @@ def get_text_translation_languages_culture():
     # [END get_text_translation_languages_culture]
 
 # -------------------------------------------------------------------------
-# Text translation
+# Sample2_GetLanguages.md
 # -------------------------------------------------------------------------
 def get_text_translation():
     # [START get_text_translation]
@@ -150,6 +150,33 @@ def get_text_translation():
         print(f"Error Code: {exception.error.code}")
         print(f"Message: {exception.error.message}")
     # [END get_text_translation]
+
+def get_text_translation_with_transliteration():
+    # [START get_text_translation_with_transliteration]
+    try:
+        from_script = "Latn"
+        from_language = "ar"
+        to_script = "Latn"
+        target_languages = ["zh-Hans"]
+        input_text_elements = [ InputTextItem(text = "hudha akhtabar.") ]
+
+        response = text_translator.translate(content = input_text_elements, to = target_languages, from_script=from_script, from_parameter=from_language, to_script=to_script)
+        translation = response[0] if response else None
+
+        if translation:
+            if translation.source_text:
+                print(f"Source Text: {translation.source_text.text}")
+            first_translation = translation.translations[0]
+            if first_translation:
+                print(f"Translation: '{first_translation.text}'.")
+                transliteration = first_translation.transliteration
+                if transliteration:
+                    print(f"Transliterated text ({transliteration.script}): {transliteration.text}")
+
+    except HttpResponseError as exception:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
+    # [END get_text_translation_with_transliteration]
 
 def get_text_translation_multiple():
     # [START get_text_translation_multiple]
@@ -214,8 +241,8 @@ def get_text_translation_exclude():
         print(f"Message: {exception.error.message}")
     # [END get_text_translation_exclude]
 
-def get_text_translation_specify():
-    # [START get_text_translation_specify]
+def get_text_translation_entity():
+    # [START get_text_translation_entity]
     try:
         source_language = "en"
         target_languages = ["cs"]
@@ -231,7 +258,7 @@ def get_text_translation_specify():
     except HttpResponseError as exception:
         print(f"Error Code: {exception.error.code}")
         print(f"Message: {exception.error.message}")
-    # [END get_text_translation_specify]
+    # [END get_text_translation_entity]
 
 def get_text_translation_profanity():
     # [START get_text_translation_profanity]
@@ -325,9 +352,103 @@ def get_text_translation_sentence_length():
         print(f"Error Code: {exception.error.code}")
         print(f"Message: {exception.error.message}")
     # [END get_text_translation_sentence_length]
+    
+def get_text_translation_custom():
+    # [START get_text_translation_custom]
+    try:
+        category = "<<Category ID>>"
+        target_languages = ["cs"]
+        input_text_elements = [ InputTextItem(text = "This is a test") ]
 
-def get_dictionary_lookup():
-    # [START get_dictionary_lookup]
+        response = text_translator.translate(content = input_text_elements, to = target_languages, category = category)
+        translation = response[0] if response else None
+
+        if translation:
+            detected_language = translation.detected_language
+            if detected_language:
+                print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+            for translated_text in translation.translations:
+                print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
+
+    except HttpResponseError as exception:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
+    # [END get_text_translation_custom]    
+
+# -------------------------------------------------------------------------
+# Sample3_Transliterate.md
+# -------------------------------------------------------------------------
+def get_text_transliteration():
+    # [START get_text_transliteration]
+    try:
+        language = "zh-Hans"
+        from_script = "Hans"
+        to_script = "Latn"
+        input_text_elements = [ InputTextItem(text = "这是个测试。") ]
+
+        response = text_translator.transliterate(content = input_text_elements, language = language, from_script = from_script, to_script = to_script)
+        transliteration = response[0] if response else None
+
+        if transliteration:
+            print(f"Input text was transliterated to '{transliteration.script}' script. Transliterated text: '{transliteration.text}'.")
+
+    except HttpResponseError as exception:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
+    # [END get_text_transliteration]
+    
+# -------------------------------------------------------------------------
+# Sample4_BreakSentence.md
+# -------------------------------------------------------------------------    
+def get_text_sentence_boundaries():
+    # [START get_text_sentence_boundaries]
+    try:
+        source_language = "zh-Hans"
+        source_script = "Latn"
+        input_text_elements = [ InputTextItem(text = "zhè shì gè cè shì。") ]
+
+        response = text_translator.find_sentence_boundaries(content = input_text_elements, language = source_language, script = source_script)
+        sentence_boundaries = response[0] if response else None
+
+        if sentence_boundaries:
+            detected_language = sentence_boundaries.detected_language
+            if detected_language:
+                print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+            print(f"The detected sentence boundaries:")
+            for boundary in sentence_boundaries.sent_len:
+                print(boundary)
+
+    except HttpResponseError as exception:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
+    # [END get_text_sentence_boundaries]
+    
+def get_text_sentence_boundaries_auto():
+    # [START get_text_sentence_boundaries_auto]
+    try:
+        input_text_elements = [ InputTextItem(text = "This is a test. This is the second sentence.") ]
+
+        response = text_translator.find_sentence_boundaries(content = input_text_elements)
+        sentence_boundaries = response[0] if response else None
+
+        if sentence_boundaries:
+            detected_language = sentence_boundaries.detected_language
+            if detected_language:
+                print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+            print(f"The detected sentence boundaries:")
+            for boundary in sentence_boundaries.sent_len:
+                print(boundary)
+
+    except HttpResponseError as exception:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
+    # [END get_text_sentence_boundaries_auto]
+    
+# -------------------------------------------------------------------------
+# Sample5_DictionaryLookup.md
+# -------------------------------------------------------------------------
+def get_text_dictionary_lookup():
+    # [START get_text_dictionary_lookup]
     try:
         source_language = "en"
         target_language = "es"
@@ -343,10 +464,13 @@ def get_dictionary_lookup():
     except HttpResponseError as exception:
         print(f"Error Code: {exception.error.code}")
         print(f"Message: {exception.error.message}")
-    # [END get_dictionary_lookup]
+    # [END get_text_translation_dictionary_lookup]
 
-def get_dictionary_entries():
-    # [START get_dictionary_entries]
+# -------------------------------------------------------------------------
+# Sample6_DictionaryExamples.md
+# -------------------------------------------------------------------------
+def get_text_dictionary_entries():
+    # [START get_text_dictionary_entries]
     try:
         source_language = "en"
         target_language = "es"
@@ -362,4 +486,4 @@ def get_dictionary_entries():
     except HttpResponseError as exception:
         print(f"Error Code: {exception.error.code}")
         print(f"Message: {exception.error.message}")
-    # [END get_dictionary_entries]
+    # [END get_text_dictionary_entries]

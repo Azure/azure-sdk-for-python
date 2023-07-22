@@ -11,6 +11,7 @@ text_translator = TextTranslationClient(endpoint="<endpoint>", credential=creden
 
 The values of the `endpoint`, `apiKey` and `region` variables can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.
 
+<!-- SNIPPET: get_text_dictionary_entries -->
 ```Python
 try:
     source_language = "en"
@@ -28,6 +29,7 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 See the [README] of the Text Translator client library for more information, including useful links and instructions.
 

@@ -15,7 +15,8 @@ The values of the `endpoint`, `apiKey` and `region` variables can be retrieved f
 
 Translate text from known source language to target language.
 
-```Python
+<!-- SNIPPET: get_text_translation -->
+```python
 try:
     source_language = "en"
     target_languages = ["cs"]
@@ -32,6 +33,7 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 ### Translate with auto-detection
 
@@ -41,7 +43,8 @@ You can omit source language of the input text. In this case, API will try to au
 
 > Note you can use `suggestedFrom` parameter that specifies a fallback language if the language of the input text can't be identified. Language autodetection is applied when the from parameter is omitted. If detection fails, the suggestedFrom language will be assumed.
 
-```Python
+<!-- SNIPPET: get_text_translation -->
+```python
 try:
     target_languages = ["cs"]
     input_text_elements = [ InputTextItem(text = "This is a test") ]
@@ -60,12 +63,14 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 ### Translate with Transliteration
 
 You can combine both Translation and Transliteration in one Translate call. Your source Text can be in non-standard Script of a language as well as you can ask for non-standard Script of a target language.
 
-```Python
+<!-- SNIPPET: get_text_translation_with_transliteration -->
+```Python 
 try:
     from_script = "Latn"
     from_language = "ar"
@@ -90,13 +95,14 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 ### Translate multiple input texts
 
 You can translate multiple text elements with a various length. Each input element can be in different language (source language parameter needs to be omitted and language auto-detection is used). Refer to [Request limits for Translator](https://learn.microsoft.com/azure/cognitive-services/translator/request-limits) for current limits.
 
-```Python
-try:
+<!-- SNIPPET: get_text_translation_with_transliteration -->
+```Python 
     target_languages = ["cs"]
     input_text_elements = [ 
         InputTextItem(text = "This is a test."),
@@ -113,12 +119,14 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 ### Translate multiple target languages
 
 You can provide multiple target languages which results to each input element be translated to all target languages.
 
-```Python
+<!-- SNIPPET: get_text_translation_multiple -->
+```Python 
 try:
     target_languages = ["cs", "es", "de"]
     input_text_elements = [ InputTextItem(text = "This is a test") ]
@@ -137,11 +145,13 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 ### Translate different text types
 
 You can select whether the translated text is plain text or HTML text. Any HTML needs to be a well-formed, complete element. Possible values are: plain (default) or html.
 
+<!-- SNIPPET: get_text_translation_type -->
 ```Python
 try:
     text_type = TextType.HTML
@@ -162,11 +172,13 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 ### Don’t translate specific entity name in a text
 
 It's sometimes useful to exclude specific content from translation. You can use the attribute class=notranslate to specify content that should remain in its original language. In the following example, the content inside the first div element won't be translated, while the content in the second div element will be translated.
 
+<!-- SNIPPET: get_text_translation_type -->
 ```Python
 try:
     text_type = TextType.HTML
@@ -185,6 +197,7 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 ### Translate specific entity name in a text applying a dictionary
 
@@ -192,6 +205,7 @@ If you already know the translation you want to apply to a word or a phrase, you
 
 > Note You must include the From parameter in your API translation request instead of using the autodetect feature.
 
+<!-- SNIPPET: get_text_translation_entity -->
 ```Python
 try:
     source_language = "en"
@@ -209,6 +223,7 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 ### Profanity handling
 
@@ -216,6 +231,7 @@ except HttpResponseError as exception:
 
 If you want to avoid getting profanity in the translation, regardless of the presence of profanity in the source text, you can use the profanity filtering option. The option allows you to choose whether you want to see profanity deleted, whether you want to mark profanities with appropriate tags (giving you the option to add your own post-processing), or you want no action taken. The accepted values of `ProfanityAction` are `DELETED`, `MARKED` and `NOACTION` (default).
 
+<!-- SNIPPET: get_text_translation_profanity -->
 ```Python
 try:
     profanity_action = ProfanityAction.MARKED
@@ -237,11 +253,13 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 ### Include alignments into translations
 
 You can ask translation service to include alignment projection from source text to translated text.
 
+<!-- SNIPPET: get_text_translation_alignment -->
 ```Python
 try:
     include_alignment = True
@@ -264,11 +282,13 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 ### Include sentence length
 
 You can ask translator service to include sentence boundaries for the input text and the translated text.
 
+<!-- SNIPPET: get_text_translation_sentence_length -->
 ```Python
 try:
     include_sentence_length = True
@@ -292,6 +312,7 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 ### Custom Translator
 
@@ -301,6 +322,7 @@ It is possible to set `allow_fallback` parameter. It specifies that the service 
 
 `allow_fallback=False` specifies that the translation should only use systems trained for the category specified by the request. If a translation for language X to language Y requires chaining through a pivot language E, then all the systems in the chain (X → E and E → Y) will need to be custom and have the same category. If no system is found with the specific category, the request will return a 400 status code. `allow_fallback=True` specifies that the service is allowed to fall back to a general system when a custom system doesn't exist.
 
+<!-- SNIPPET: get_text_translation_custom -->
 ```Python
 try:
     category = "<<Category ID>>"
@@ -321,6 +343,7 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 See the [README] of the Text Translator client library for more information, including useful links and instructions.
 

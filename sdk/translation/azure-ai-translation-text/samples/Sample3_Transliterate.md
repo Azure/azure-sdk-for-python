@@ -15,6 +15,7 @@ The values of the `endpoint`, `apiKey` and `region` variables can be retrieved f
 
 Converts characters or letters of a source language to the corresponding characters or letters of a target language.
 
+<!-- SNIPPET: get_text_transliteration -->
 ```Python
 try:
     language = "zh-Hans"
@@ -32,6 +33,7 @@ except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
+<!-- END SNIPPET -->
 
 See the [README] of the Text Translator client library for more information, including useful links and instructions.
 
