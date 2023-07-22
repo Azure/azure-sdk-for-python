@@ -10,7 +10,7 @@ steps:
       versionSpec: $(PythonVersion)
 
   - pwsh: |
-      $json = "${{ convertToJson(parameters.CondaArtifacts) }}"
+      $json = ${{ convertToJson(parameters.CondaArtifacts) }}
       Write-Host '$json'
     displayName: 'Save Building JSON as variable'
 
