@@ -26,16 +26,15 @@ from azure.mgmt.networkcloud import NetworkCloudMgmtClient
 def main():
     client = NetworkCloudMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="123e4567-e89b-12d3-a456-426655440000",
     )
 
-    response = client.clusters.begin_deploy(
+    client.clusters.begin_deploy(
         resource_group_name="resourceGroupName",
         cluster_name="clusterName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2022-12-12-preview/examples/Clusters_Deploy_SkipValidation.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2023-05-01-preview/examples/Clusters_Deploy_SkipValidation.json
 if __name__ == "__main__":
     main()

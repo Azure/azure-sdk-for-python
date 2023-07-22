@@ -17,6 +17,34 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class AadConfiguration(_serialization.Model):
+    """AadConfiguration represents the Azure Active Directory Integration properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar admin_group_object_ids: The list of Azure Active Directory group object IDs that will
+     have an administrative role on the Kubernetes cluster. Required.
+    :vartype admin_group_object_ids: list[str]
+    """
+
+    _validation = {
+        "admin_group_object_ids": {"required": True, "min_items": 1},
+    }
+
+    _attribute_map = {
+        "admin_group_object_ids": {"key": "adminGroupObjectIds", "type": "[str]"},
+    }
+
+    def __init__(self, *, admin_group_object_ids: List[str], **kwargs: Any) -> None:
+        """
+        :keyword admin_group_object_ids: The list of Azure Active Directory group object IDs that will
+         have an administrative role on the Kubernetes cluster. Required.
+        :paramtype admin_group_object_ids: list[str]
+        """
+        super().__init__(**kwargs)
+        self.admin_group_object_ids = admin_group_object_ids
+
+
 class AdministrativeCredentials(_serialization.Model):
     """AdministrativeCredentials represents the admin credentials for the device requiring
     password-based authentication.
@@ -55,13 +83,88 @@ class AdministrativeCredentials(_serialization.Model):
         self.username = username
 
 
+class AdministratorConfiguration(_serialization.Model):
+    """AdministratorConfiguration represents the administrative credentials that will be applied to
+    the control plane and agent pool nodes in Kubernetes clusters.
+
+    :ivar admin_username: The user name for the administrator that will be applied to the operating
+     systems that run Kubernetes nodes. If not supplied, a user name will be chosen by the service.
+    :vartype admin_username: str
+    :ivar ssh_public_keys: The SSH configuration for the operating systems that run the nodes in
+     the Kubernetes cluster. In some cases, specification of public keys may be required to produce
+     a working environment.
+    :vartype ssh_public_keys: list[~azure.mgmt.networkcloud.models.SshPublicKey]
+    """
+
+    _attribute_map = {
+        "admin_username": {"key": "adminUsername", "type": "str"},
+        "ssh_public_keys": {"key": "sshPublicKeys", "type": "[SshPublicKey]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        admin_username: Optional[str] = None,
+        ssh_public_keys: Optional[List["_models.SshPublicKey"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword admin_username: The user name for the administrator that will be applied to the
+         operating systems that run Kubernetes nodes. If not supplied, a user name will be chosen by the
+         service.
+        :paramtype admin_username: str
+        :keyword ssh_public_keys: The SSH configuration for the operating systems that run the nodes in
+         the Kubernetes cluster. In some cases, specification of public keys may be required to produce
+         a working environment.
+        :paramtype ssh_public_keys: list[~azure.mgmt.networkcloud.models.SshPublicKey]
+        """
+        super().__init__(**kwargs)
+        self.admin_username = admin_username
+        self.ssh_public_keys = ssh_public_keys
+
+
+class AgentOptions(_serialization.Model):
+    """AgentOptions are configurations that will be applied to each agent in an agent pool.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar hugepages_count: The number of hugepages to allocate. Required.
+    :vartype hugepages_count: int
+    :ivar hugepages_size: The size of the hugepages to allocate. Known values are: "2M" and "1G".
+    :vartype hugepages_size: str or ~azure.mgmt.networkcloud.models.HugepagesSize
+    """
+
+    _validation = {
+        "hugepages_count": {"required": True},
+    }
+
+    _attribute_map = {
+        "hugepages_count": {"key": "hugepagesCount", "type": "int"},
+        "hugepages_size": {"key": "hugepagesSize", "type": "str"},
+    }
+
+    def __init__(
+        self, *, hugepages_count: int, hugepages_size: Union[str, "_models.HugepagesSize"] = "2M", **kwargs: Any
+    ) -> None:
+        """
+        :keyword hugepages_count: The number of hugepages to allocate. Required.
+        :paramtype hugepages_count: int
+        :keyword hugepages_size: The size of the hugepages to allocate. Known values are: "2M" and
+         "1G".
+        :paramtype hugepages_size: str or ~azure.mgmt.networkcloud.models.HugepagesSize
+        """
+        super().__init__(**kwargs)
+        self.hugepages_count = hugepages_count
+        self.hugepages_size = hugepages_size
+
+
 class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -104,8 +207,8 @@ class TrackedResource(Resource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -150,6 +253,481 @@ class TrackedResource(Resource):
         self.location = location
 
 
+class AgentPool(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """AgentPool represents the agent pool of Kubernetes cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar extended_location: The extended location of the cluster associated with the resource.
+    :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar administrator_configuration: The administrator credentials to be used for the nodes in
+     this agent pool.
+    :vartype administrator_configuration:
+     ~azure.mgmt.networkcloud.models.AdministratorConfiguration
+    :ivar agent_options: The configurations that will be applied to each agent in this agent pool.
+    :vartype agent_options: ~azure.mgmt.networkcloud.models.AgentOptions
+    :ivar attached_network_configuration: The configuration of networks being attached to the agent
+     pool for use by the workloads that run on this Kubernetes cluster.
+    :vartype attached_network_configuration:
+     ~azure.mgmt.networkcloud.models.AttachedNetworkConfiguration
+    :ivar availability_zones: The list of availability zones of the Network Cloud cluster used for
+     the provisioning of nodes in this agent pool. If not specified, all availability zones will be
+     used.
+    :vartype availability_zones: list[str]
+    :ivar count: The number of virtual machines that use this configuration. Required.
+    :vartype count: int
+    :ivar detailed_status: The current status of the agent pool. Known values are: "Available",
+     "Error", and "Provisioning".
+    :vartype detailed_status: str or ~azure.mgmt.networkcloud.models.AgentPoolDetailedStatus
+    :ivar detailed_status_message: The descriptive message about the current detailed status.
+    :vartype detailed_status_message: str
+    :ivar kubernetes_version: The Kubernetes version running in this agent pool.
+    :vartype kubernetes_version: str
+    :ivar labels: The labels applied to the nodes in this agent pool.
+    :vartype labels: list[~azure.mgmt.networkcloud.models.KubernetesLabel]
+    :ivar mode: The selection of how this agent pool is utilized, either as a system pool or a user
+     pool. System pools run the features and critical services for the Kubernetes Cluster, while
+     user pools are dedicated to user workloads. Every Kubernetes cluster must contain at least one
+     system node pool with at least one node. Required. Known values are: "System", "User", and
+     "NotApplicable".
+    :vartype mode: str or ~azure.mgmt.networkcloud.models.AgentPoolMode
+    :ivar provisioning_state: The provisioning state of the agent pool. Known values are:
+     "Accepted", "Canceled", "Deleting", "Failed", "InProgress", "Succeeded", and "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.networkcloud.models.AgentPoolProvisioningState
+    :ivar taints: The taints applied to the nodes in this agent pool.
+    :vartype taints: list[~azure.mgmt.networkcloud.models.KubernetesLabel]
+    :ivar upgrade_settings: The configuration of the agent pool.
+    :vartype upgrade_settings: ~azure.mgmt.networkcloud.models.AgentPoolUpgradeSettings
+    :ivar vm_sku_name: The name of the VM SKU that determines the size of resources allocated for
+     node VMs. Required.
+    :vartype vm_sku_name: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "count": {"required": True},
+        "detailed_status": {"readonly": True},
+        "detailed_status_message": {"readonly": True},
+        "kubernetes_version": {"readonly": True},
+        "mode": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "vm_sku_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "administrator_configuration": {
+            "key": "properties.administratorConfiguration",
+            "type": "AdministratorConfiguration",
+        },
+        "agent_options": {"key": "properties.agentOptions", "type": "AgentOptions"},
+        "attached_network_configuration": {
+            "key": "properties.attachedNetworkConfiguration",
+            "type": "AttachedNetworkConfiguration",
+        },
+        "availability_zones": {"key": "properties.availabilityZones", "type": "[str]"},
+        "count": {"key": "properties.count", "type": "int"},
+        "detailed_status": {"key": "properties.detailedStatus", "type": "str"},
+        "detailed_status_message": {"key": "properties.detailedStatusMessage", "type": "str"},
+        "kubernetes_version": {"key": "properties.kubernetesVersion", "type": "str"},
+        "labels": {"key": "properties.labels", "type": "[KubernetesLabel]"},
+        "mode": {"key": "properties.mode", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "taints": {"key": "properties.taints", "type": "[KubernetesLabel]"},
+        "upgrade_settings": {"key": "properties.upgradeSettings", "type": "AgentPoolUpgradeSettings"},
+        "vm_sku_name": {"key": "properties.vmSkuName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        count: int,
+        mode: Union[str, "_models.AgentPoolMode"],
+        vm_sku_name: str,
+        tags: Optional[Dict[str, str]] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        administrator_configuration: Optional["_models.AdministratorConfiguration"] = None,
+        agent_options: Optional["_models.AgentOptions"] = None,
+        attached_network_configuration: Optional["_models.AttachedNetworkConfiguration"] = None,
+        availability_zones: Optional[List[str]] = None,
+        labels: Optional[List["_models.KubernetesLabel"]] = None,
+        taints: Optional[List["_models.KubernetesLabel"]] = None,
+        upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword extended_location: The extended location of the cluster associated with the resource.
+        :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+        :keyword administrator_configuration: The administrator credentials to be used for the nodes in
+         this agent pool.
+        :paramtype administrator_configuration:
+         ~azure.mgmt.networkcloud.models.AdministratorConfiguration
+        :keyword agent_options: The configurations that will be applied to each agent in this agent
+         pool.
+        :paramtype agent_options: ~azure.mgmt.networkcloud.models.AgentOptions
+        :keyword attached_network_configuration: The configuration of networks being attached to the
+         agent pool for use by the workloads that run on this Kubernetes cluster.
+        :paramtype attached_network_configuration:
+         ~azure.mgmt.networkcloud.models.AttachedNetworkConfiguration
+        :keyword availability_zones: The list of availability zones of the Network Cloud cluster used
+         for the provisioning of nodes in this agent pool. If not specified, all availability zones will
+         be used.
+        :paramtype availability_zones: list[str]
+        :keyword count: The number of virtual machines that use this configuration. Required.
+        :paramtype count: int
+        :keyword labels: The labels applied to the nodes in this agent pool.
+        :paramtype labels: list[~azure.mgmt.networkcloud.models.KubernetesLabel]
+        :keyword mode: The selection of how this agent pool is utilized, either as a system pool or a
+         user pool. System pools run the features and critical services for the Kubernetes Cluster,
+         while user pools are dedicated to user workloads. Every Kubernetes cluster must contain at
+         least one system node pool with at least one node. Required. Known values are: "System",
+         "User", and "NotApplicable".
+        :paramtype mode: str or ~azure.mgmt.networkcloud.models.AgentPoolMode
+        :keyword taints: The taints applied to the nodes in this agent pool.
+        :paramtype taints: list[~azure.mgmt.networkcloud.models.KubernetesLabel]
+        :keyword upgrade_settings: The configuration of the agent pool.
+        :paramtype upgrade_settings: ~azure.mgmt.networkcloud.models.AgentPoolUpgradeSettings
+        :keyword vm_sku_name: The name of the VM SKU that determines the size of resources allocated
+         for node VMs. Required.
+        :paramtype vm_sku_name: str
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.extended_location = extended_location
+        self.administrator_configuration = administrator_configuration
+        self.agent_options = agent_options
+        self.attached_network_configuration = attached_network_configuration
+        self.availability_zones = availability_zones
+        self.count = count
+        self.detailed_status = None
+        self.detailed_status_message = None
+        self.kubernetes_version = None
+        self.labels = labels
+        self.mode = mode
+        self.provisioning_state = None
+        self.taints = taints
+        self.upgrade_settings = upgrade_settings
+        self.vm_sku_name = vm_sku_name
+
+
+class AgentPoolConfiguration(_serialization.Model):
+    """AgentPoolConfiguration specifies the configuration of a pool of nodes.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar administrator_configuration: The administrator credentials to be used for the nodes in
+     this agent pool.
+    :vartype administrator_configuration:
+     ~azure.mgmt.networkcloud.models.AdministratorConfiguration
+    :ivar agent_options: The configurations that will be applied to each agent in this agent pool.
+    :vartype agent_options: ~azure.mgmt.networkcloud.models.AgentOptions
+    :ivar attached_network_configuration: The configuration of networks being attached to the agent
+     pool for use by the workloads that run on this Kubernetes cluster.
+    :vartype attached_network_configuration:
+     ~azure.mgmt.networkcloud.models.AttachedNetworkConfiguration
+    :ivar availability_zones: The list of availability zones of the Network Cloud cluster used for
+     the provisioning of nodes in this agent pool. If not specified, all availability zones will be
+     used.
+    :vartype availability_zones: list[str]
+    :ivar count: The number of virtual machines that use this configuration. Required.
+    :vartype count: int
+    :ivar labels: The labels applied to the nodes in this agent pool.
+    :vartype labels: list[~azure.mgmt.networkcloud.models.KubernetesLabel]
+    :ivar mode: The selection of how this agent pool is utilized, either as a system pool or a user
+     pool. System pools run the features and critical services for the Kubernetes Cluster, while
+     user pools are dedicated to user workloads. Every Kubernetes cluster must contain at least one
+     system node pool with at least one node. Required. Known values are: "System", "User", and
+     "NotApplicable".
+    :vartype mode: str or ~azure.mgmt.networkcloud.models.AgentPoolMode
+    :ivar taints: The taints applied to the nodes in this agent pool.
+    :vartype taints: list[~azure.mgmt.networkcloud.models.KubernetesLabel]
+    :ivar upgrade_settings: The configuration of the agent pool.
+    :vartype upgrade_settings: ~azure.mgmt.networkcloud.models.AgentPoolUpgradeSettings
+    :ivar vm_sku_name: The name of the VM SKU that determines the size of resources allocated for
+     node VMs. Required.
+    :vartype vm_sku_name: str
+    """
+
+    _validation = {
+        "count": {"required": True},
+        "mode": {"required": True},
+        "vm_sku_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "administrator_configuration": {"key": "administratorConfiguration", "type": "AdministratorConfiguration"},
+        "agent_options": {"key": "agentOptions", "type": "AgentOptions"},
+        "attached_network_configuration": {
+            "key": "attachedNetworkConfiguration",
+            "type": "AttachedNetworkConfiguration",
+        },
+        "availability_zones": {"key": "availabilityZones", "type": "[str]"},
+        "count": {"key": "count", "type": "int"},
+        "labels": {"key": "labels", "type": "[KubernetesLabel]"},
+        "mode": {"key": "mode", "type": "str"},
+        "taints": {"key": "taints", "type": "[KubernetesLabel]"},
+        "upgrade_settings": {"key": "upgradeSettings", "type": "AgentPoolUpgradeSettings"},
+        "vm_sku_name": {"key": "vmSkuName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        count: int,
+        mode: Union[str, "_models.AgentPoolMode"],
+        vm_sku_name: str,
+        administrator_configuration: Optional["_models.AdministratorConfiguration"] = None,
+        agent_options: Optional["_models.AgentOptions"] = None,
+        attached_network_configuration: Optional["_models.AttachedNetworkConfiguration"] = None,
+        availability_zones: Optional[List[str]] = None,
+        labels: Optional[List["_models.KubernetesLabel"]] = None,
+        taints: Optional[List["_models.KubernetesLabel"]] = None,
+        upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword administrator_configuration: The administrator credentials to be used for the nodes in
+         this agent pool.
+        :paramtype administrator_configuration:
+         ~azure.mgmt.networkcloud.models.AdministratorConfiguration
+        :keyword agent_options: The configurations that will be applied to each agent in this agent
+         pool.
+        :paramtype agent_options: ~azure.mgmt.networkcloud.models.AgentOptions
+        :keyword attached_network_configuration: The configuration of networks being attached to the
+         agent pool for use by the workloads that run on this Kubernetes cluster.
+        :paramtype attached_network_configuration:
+         ~azure.mgmt.networkcloud.models.AttachedNetworkConfiguration
+        :keyword availability_zones: The list of availability zones of the Network Cloud cluster used
+         for the provisioning of nodes in this agent pool. If not specified, all availability zones will
+         be used.
+        :paramtype availability_zones: list[str]
+        :keyword count: The number of virtual machines that use this configuration. Required.
+        :paramtype count: int
+        :keyword labels: The labels applied to the nodes in this agent pool.
+        :paramtype labels: list[~azure.mgmt.networkcloud.models.KubernetesLabel]
+        :keyword mode: The selection of how this agent pool is utilized, either as a system pool or a
+         user pool. System pools run the features and critical services for the Kubernetes Cluster,
+         while user pools are dedicated to user workloads. Every Kubernetes cluster must contain at
+         least one system node pool with at least one node. Required. Known values are: "System",
+         "User", and "NotApplicable".
+        :paramtype mode: str or ~azure.mgmt.networkcloud.models.AgentPoolMode
+        :keyword taints: The taints applied to the nodes in this agent pool.
+        :paramtype taints: list[~azure.mgmt.networkcloud.models.KubernetesLabel]
+        :keyword upgrade_settings: The configuration of the agent pool.
+        :paramtype upgrade_settings: ~azure.mgmt.networkcloud.models.AgentPoolUpgradeSettings
+        :keyword vm_sku_name: The name of the VM SKU that determines the size of resources allocated
+         for node VMs. Required.
+        :paramtype vm_sku_name: str
+        """
+        super().__init__(**kwargs)
+        self.administrator_configuration = administrator_configuration
+        self.agent_options = agent_options
+        self.attached_network_configuration = attached_network_configuration
+        self.availability_zones = availability_zones
+        self.count = count
+        self.labels = labels
+        self.mode = mode
+        self.taints = taints
+        self.upgrade_settings = upgrade_settings
+        self.vm_sku_name = vm_sku_name
+
+
+class AgentPoolList(_serialization.Model):
+    """AgentPoolList represents a list of Kubernetes cluster agent pools.
+
+    :ivar next_link: The link used to get the next page of operations.
+    :vartype next_link: str
+    :ivar value: The list of agent pools.
+    :vartype value: list[~azure.mgmt.networkcloud.models.AgentPool]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[AgentPool]"},
+    }
+
+    def __init__(
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.AgentPool"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: The link used to get the next page of operations.
+        :paramtype next_link: str
+        :keyword value: The list of agent pools.
+        :paramtype value: list[~azure.mgmt.networkcloud.models.AgentPool]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
+class AgentPoolPatchParameters(_serialization.Model):
+    """AgentPoolPatchParameters represents the body of the request to patch the Kubernetes cluster
+    agent pool.
+
+    :ivar tags: The Azure resource tags that will replace the existing ones.
+    :vartype tags: dict[str, str]
+    :ivar count: The number of virtual machines that use this configuration.
+    :vartype count: int
+    :ivar upgrade_settings: The configuration of the agent pool.
+    :vartype upgrade_settings: ~azure.mgmt.networkcloud.models.AgentPoolUpgradeSettings
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "count": {"key": "properties.count", "type": "int"},
+        "upgrade_settings": {"key": "properties.upgradeSettings", "type": "AgentPoolUpgradeSettings"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        count: Optional[int] = None,
+        upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: The Azure resource tags that will replace the existing ones.
+        :paramtype tags: dict[str, str]
+        :keyword count: The number of virtual machines that use this configuration.
+        :paramtype count: int
+        :keyword upgrade_settings: The configuration of the agent pool.
+        :paramtype upgrade_settings: ~azure.mgmt.networkcloud.models.AgentPoolUpgradeSettings
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.count = count
+        self.upgrade_settings = upgrade_settings
+
+
+class AgentPoolUpgradeSettings(_serialization.Model):
+    """AgentPoolUpgradeSettings specifies the upgrade settings for an agent pool.
+
+    :ivar max_surge: The maximum number or percentage of nodes that are surged during upgrade. This
+     can either be set to an integer (e.g. '5') or a percentage (e.g. '50%'). If a percentage is
+     specified, it is the percentage of the total agent pool size at the time of the upgrade. For
+     percentages, fractional nodes are rounded up. If not specified, the default is 1.
+    :vartype max_surge: str
+    """
+
+    _attribute_map = {
+        "max_surge": {"key": "maxSurge", "type": "str"},
+    }
+
+    def __init__(self, *, max_surge: str = "1", **kwargs: Any) -> None:
+        """
+        :keyword max_surge: The maximum number or percentage of nodes that are surged during upgrade.
+         This can either be set to an integer (e.g. '5') or a percentage (e.g. '50%'). If a percentage
+         is specified, it is the percentage of the total agent pool size at the time of the upgrade. For
+         percentages, fractional nodes are rounded up. If not specified, the default is 1.
+        :paramtype max_surge: str
+        """
+        super().__init__(**kwargs)
+        self.max_surge = max_surge
+
+
+class AttachedNetworkConfiguration(_serialization.Model):
+    """AttachedNetworkConfiguration represents the set of workload networks to attach to a resource.
+
+    :ivar l2_networks: The list of Layer 2 Networks and related configuration for attachment.
+    :vartype l2_networks: list[~azure.mgmt.networkcloud.models.L2NetworkAttachmentConfiguration]
+    :ivar l3_networks: The list of Layer 3 Networks and related configuration for attachment.
+    :vartype l3_networks: list[~azure.mgmt.networkcloud.models.L3NetworkAttachmentConfiguration]
+    :ivar trunked_networks: The list of Trunked Networks and related configuration for attachment.
+    :vartype trunked_networks:
+     list[~azure.mgmt.networkcloud.models.TrunkedNetworkAttachmentConfiguration]
+    """
+
+    _attribute_map = {
+        "l2_networks": {"key": "l2Networks", "type": "[L2NetworkAttachmentConfiguration]"},
+        "l3_networks": {"key": "l3Networks", "type": "[L3NetworkAttachmentConfiguration]"},
+        "trunked_networks": {"key": "trunkedNetworks", "type": "[TrunkedNetworkAttachmentConfiguration]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        l2_networks: Optional[List["_models.L2NetworkAttachmentConfiguration"]] = None,
+        l3_networks: Optional[List["_models.L3NetworkAttachmentConfiguration"]] = None,
+        trunked_networks: Optional[List["_models.TrunkedNetworkAttachmentConfiguration"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword l2_networks: The list of Layer 2 Networks and related configuration for attachment.
+        :paramtype l2_networks: list[~azure.mgmt.networkcloud.models.L2NetworkAttachmentConfiguration]
+        :keyword l3_networks: The list of Layer 3 Networks and related configuration for attachment.
+        :paramtype l3_networks: list[~azure.mgmt.networkcloud.models.L3NetworkAttachmentConfiguration]
+        :keyword trunked_networks: The list of Trunked Networks and related configuration for
+         attachment.
+        :paramtype trunked_networks:
+         list[~azure.mgmt.networkcloud.models.TrunkedNetworkAttachmentConfiguration]
+        """
+        super().__init__(**kwargs)
+        self.l2_networks = l2_networks
+        self.l3_networks = l3_networks
+        self.trunked_networks = trunked_networks
+
+
+class AvailableUpgrade(_serialization.Model):
+    """AvailableUpgrade represents an upgrade available for a Kubernetes cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar availability_lifecycle: The version lifecycle indicator. Known values are: "Preview" and
+     "GenerallyAvailable".
+    :vartype availability_lifecycle: str or ~azure.mgmt.networkcloud.models.AvailabilityLifecycle
+    :ivar version: The version available for upgrading.
+    :vartype version: str
+    """
+
+    _validation = {
+        "availability_lifecycle": {"readonly": True},
+        "version": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "availability_lifecycle": {"key": "availabilityLifecycle", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.availability_lifecycle = None
+        self.version = None
+
+
 class BareMetalMachine(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """BareMetalMachine represents the physical machine in the rack.
 
@@ -157,8 +735,8 @@ class BareMetalMachine(TrackedResource):  # pylint: disable=too-many-instance-at
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -175,6 +753,9 @@ class BareMetalMachine(TrackedResource):  # pylint: disable=too-many-instance-at
     :ivar extended_location: The extended location of the cluster associated with the resource.
      Required.
     :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar associated_resource_ids: The list of resource IDs for the other Microsoft.NetworkCloud
+     resources that have attached this network.
+    :vartype associated_resource_ids: list[str]
     :ivar bmc_connection_string: The connection string for the baseboard management controller
      including IP address and protocol. Required.
     :vartype bmc_connection_string: str
@@ -201,8 +782,9 @@ class BareMetalMachine(TrackedResource):  # pylint: disable=too-many-instance-at
     :ivar hardware_validation_status: The details of the latest hardware validation performed for
      this bare metal machine.
     :vartype hardware_validation_status: ~azure.mgmt.networkcloud.models.HardwareValidationStatus
-    :ivar hybrid_aks_clusters_associated_ids: The list of the resource IDs for the
-     HybridAksClusters that have nodes hosted on this bare metal machine.
+    :ivar hybrid_aks_clusters_associated_ids: Field Deprecated. These fields will be empty/omitted.
+     The list of the resource IDs for the HybridAksClusters that have nodes hosted on this bare
+     metal machine.
     :vartype hybrid_aks_clusters_associated_ids: list[str]
     :ivar kubernetes_node_name: The name of this machine represented by the host object in the
      Cluster's Kubernetes control plane.
@@ -242,8 +824,9 @@ class BareMetalMachine(TrackedResource):  # pylint: disable=too-many-instance-at
     :vartype serial_number: str
     :ivar service_tag: The discovered value of the machine's service tag.
     :vartype service_tag: str
-    :ivar virtual_machines_associated_ids: The list of the resource IDs for the VirtualMachines
-     that are hosted on this bare metal machine.
+    :ivar virtual_machines_associated_ids: Field Deprecated. These fields will be empty/omitted.
+     The list of the resource IDs for the VirtualMachines that are hosted on this bare metal
+     machine.
     :vartype virtual_machines_associated_ids: list[str]
     """
 
@@ -254,6 +837,7 @@ class BareMetalMachine(TrackedResource):  # pylint: disable=too-many-instance-at
         "system_data": {"readonly": True},
         "location": {"required": True},
         "extended_location": {"required": True},
+        "associated_resource_ids": {"readonly": True},
         "bmc_connection_string": {"required": True},
         "bmc_credentials": {"required": True},
         "bmc_mac_address": {"required": True, "pattern": r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"},
@@ -291,6 +875,7 @@ class BareMetalMachine(TrackedResource):  # pylint: disable=too-many-instance-at
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "associated_resource_ids": {"key": "properties.associatedResourceIds", "type": "[str]"},
         "bmc_connection_string": {"key": "properties.bmcConnectionString", "type": "str"},
         "bmc_credentials": {"key": "properties.bmcCredentials", "type": "AdministrativeCredentials"},
         "bmc_mac_address": {"key": "properties.bmcMacAddress", "type": "str"},
@@ -376,6 +961,7 @@ class BareMetalMachine(TrackedResource):  # pylint: disable=too-many-instance-at
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.extended_location = extended_location
+        self.associated_resource_ids = None
         self.bmc_connection_string = bmc_connection_string
         self.bmc_credentials = bmc_credentials
         self.bmc_mac_address = bmc_mac_address
@@ -569,8 +1155,8 @@ class BareMetalMachineKeySet(TrackedResource):  # pylint: disable=too-many-insta
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1131,51 +1717,121 @@ class BareMetalMachineValidateHardwareParameters(_serialization.Model):
         self.validation_category = validation_category
 
 
-class BgpPeer(_serialization.Model):
-    """BgpPeer represents the IP address and ASN(Autonomous System Number) to peer with Hybrid AKS
-    cluster.
+class BgpAdvertisement(_serialization.Model):
+    """BgpAdvertisement represents the association of IP address pools to the communities and peers.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar as_number: The ASN (Autonomous System Number) of the BGP peer. Required.
-    :vartype as_number: int
-    :ivar password: The password for this peering neighbor. It defaults to no password if not
-     specified.
-    :vartype password: str
-    :ivar peer_ip: The IPv4 or IPv6 address to peer with the associated CNI Network. The IP version
-     type will drive a peering with the same version type from the Default CNI Network. For example,
-     IPv4 to IPv4 or IPv6 to IPv6. Required.
-    :vartype peer_ip: str
+    :ivar advertise_to_fabric: The indicator of if this advertisement is also made to the network
+     fabric associated with the Network Cloud Cluster. This field is ignored if fabricPeeringEnabled
+     is set to False. Known values are: "True" and "False".
+    :vartype advertise_to_fabric: str or ~azure.mgmt.networkcloud.models.AdvertiseToFabric
+    :ivar communities: The names of the BGP communities to be associated with the announcement,
+     utilizing a BGP community string in 1234:1234 format.
+    :vartype communities: list[str]
+    :ivar ip_address_pools: The names of the IP address pools associated with this announcement.
+     Required.
+    :vartype ip_address_pools: list[str]
+    :ivar peers: The names of the BGP peers to limit this advertisement to. If no values are
+     specified, all BGP peers will receive this advertisement.
+    :vartype peers: list[str]
     """
 
     _validation = {
-        "as_number": {"required": True, "maximum": 4294967295, "minimum": 0},
-        "password": {"max_length": 80, "pattern": r"^[a-zA-Z0-9]{0,80}$"},
-        "peer_ip": {"required": True},
+        "ip_address_pools": {"required": True},
     }
 
     _attribute_map = {
-        "as_number": {"key": "asNumber", "type": "int"},
-        "password": {"key": "password", "type": "str"},
-        "peer_ip": {"key": "peerIp", "type": "str"},
+        "advertise_to_fabric": {"key": "advertiseToFabric", "type": "str"},
+        "communities": {"key": "communities", "type": "[str]"},
+        "ip_address_pools": {"key": "ipAddressPools", "type": "[str]"},
+        "peers": {"key": "peers", "type": "[str]"},
     }
 
-    def __init__(self, *, as_number: int, peer_ip: str, password: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        ip_address_pools: List[str],
+        advertise_to_fabric: Union[str, "_models.AdvertiseToFabric"] = "True",
+        communities: Optional[List[str]] = None,
+        peers: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword as_number: The ASN (Autonomous System Number) of the BGP peer. Required.
-        :paramtype as_number: int
-        :keyword password: The password for this peering neighbor. It defaults to no password if not
-         specified.
-        :paramtype password: str
-        :keyword peer_ip: The IPv4 or IPv6 address to peer with the associated CNI Network. The IP
-         version type will drive a peering with the same version type from the Default CNI Network. For
-         example, IPv4 to IPv4 or IPv6 to IPv6. Required.
-        :paramtype peer_ip: str
+        :keyword advertise_to_fabric: The indicator of if this advertisement is also made to the
+         network fabric associated with the Network Cloud Cluster. This field is ignored if
+         fabricPeeringEnabled is set to False. Known values are: "True" and "False".
+        :paramtype advertise_to_fabric: str or ~azure.mgmt.networkcloud.models.AdvertiseToFabric
+        :keyword communities: The names of the BGP communities to be associated with the announcement,
+         utilizing a BGP community string in 1234:1234 format.
+        :paramtype communities: list[str]
+        :keyword ip_address_pools: The names of the IP address pools associated with this announcement.
+         Required.
+        :paramtype ip_address_pools: list[str]
+        :keyword peers: The names of the BGP peers to limit this advertisement to. If no values are
+         specified, all BGP peers will receive this advertisement.
+        :paramtype peers: list[str]
         """
         super().__init__(**kwargs)
-        self.as_number = as_number
-        self.password = password
-        self.peer_ip = peer_ip
+        self.advertise_to_fabric = advertise_to_fabric
+        self.communities = communities
+        self.ip_address_pools = ip_address_pools
+        self.peers = peers
+
+
+class BgpServiceLoadBalancerConfiguration(_serialization.Model):
+    """BgpServiceLoadBalancerConfiguration represents the configuration of a BGP service load
+    balancer.
+
+    :ivar bgp_advertisements: The association of IP address pools to the communities and peers,
+     allowing for announcement of IPs.
+    :vartype bgp_advertisements: list[~azure.mgmt.networkcloud.models.BgpAdvertisement]
+    :ivar bgp_peers: The list of additional BgpPeer entities that the Kubernetes cluster will peer
+     with. All peering must be explicitly defined.
+    :vartype bgp_peers: list[~azure.mgmt.networkcloud.models.ServiceLoadBalancerBgpPeer]
+    :ivar fabric_peering_enabled: The indicator to specify if the load balancer peers with the
+     network fabric. Known values are: "True" and "False".
+    :vartype fabric_peering_enabled: str or ~azure.mgmt.networkcloud.models.FabricPeeringEnabled
+    :ivar ip_address_pools: The list of pools of IP addresses that can be allocated to Load
+     Balancer services.
+    :vartype ip_address_pools: list[~azure.mgmt.networkcloud.models.IpAddressPool]
+    """
+
+    _attribute_map = {
+        "bgp_advertisements": {"key": "bgpAdvertisements", "type": "[BgpAdvertisement]"},
+        "bgp_peers": {"key": "bgpPeers", "type": "[ServiceLoadBalancerBgpPeer]"},
+        "fabric_peering_enabled": {"key": "fabricPeeringEnabled", "type": "str"},
+        "ip_address_pools": {"key": "ipAddressPools", "type": "[IpAddressPool]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        bgp_advertisements: Optional[List["_models.BgpAdvertisement"]] = None,
+        bgp_peers: Optional[List["_models.ServiceLoadBalancerBgpPeer"]] = None,
+        fabric_peering_enabled: Union[str, "_models.FabricPeeringEnabled"] = "True",
+        ip_address_pools: Optional[List["_models.IpAddressPool"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword bgp_advertisements: The association of IP address pools to the communities and peers,
+         allowing for announcement of IPs.
+        :paramtype bgp_advertisements: list[~azure.mgmt.networkcloud.models.BgpAdvertisement]
+        :keyword bgp_peers: The list of additional BgpPeer entities that the Kubernetes cluster will
+         peer with. All peering must be explicitly defined.
+        :paramtype bgp_peers: list[~azure.mgmt.networkcloud.models.ServiceLoadBalancerBgpPeer]
+        :keyword fabric_peering_enabled: The indicator to specify if the load balancer peers with the
+         network fabric. Known values are: "True" and "False".
+        :paramtype fabric_peering_enabled: str or ~azure.mgmt.networkcloud.models.FabricPeeringEnabled
+        :keyword ip_address_pools: The list of pools of IP addresses that can be allocated to Load
+         Balancer services.
+        :paramtype ip_address_pools: list[~azure.mgmt.networkcloud.models.IpAddressPool]
+        """
+        super().__init__(**kwargs)
+        self.bgp_advertisements = bgp_advertisements
+        self.bgp_peers = bgp_peers
+        self.fabric_peering_enabled = fabric_peering_enabled
+        self.ip_address_pools = ip_address_pools
 
 
 class BmcKeySet(TrackedResource):  # pylint: disable=too-many-instance-attributes
@@ -1185,8 +1841,8 @@ class BmcKeySet(TrackedResource):  # pylint: disable=too-many-instance-attribute
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1394,8 +2050,8 @@ class CloudServicesNetwork(TrackedResource):  # pylint: disable=too-many-instanc
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1415,6 +2071,9 @@ class CloudServicesNetwork(TrackedResource):  # pylint: disable=too-many-instanc
     :ivar additional_egress_endpoints: The list of egress endpoints. This allows for connection
      from a Hybrid AKS cluster to the specified endpoint.
     :vartype additional_egress_endpoints: list[~azure.mgmt.networkcloud.models.EgressEndpoint]
+    :ivar associated_resource_ids: The list of resource IDs for the other Microsoft.NetworkCloud
+     resources that have attached this network.
+    :vartype associated_resource_ids: list[str]
     :ivar cluster_id: The resource ID of the Network Cloud cluster this cloud services network is
      associated with.
     :vartype cluster_id: str
@@ -1431,8 +2090,9 @@ class CloudServicesNetwork(TrackedResource):  # pylint: disable=too-many-instanc
     :ivar enabled_egress_endpoints: The full list of additional and default egress endpoints that
      are currently enabled.
     :vartype enabled_egress_endpoints: list[~azure.mgmt.networkcloud.models.EgressEndpoint]
-    :ivar hybrid_aks_clusters_associated_ids: The list of Hybrid AKS cluster resource IDs that are
-     associated with this cloud services network.
+    :ivar hybrid_aks_clusters_associated_ids: Field Deprecated. These fields will be empty/omitted.
+     The list of Hybrid AKS cluster resource IDs that are associated with this cloud services
+     network.
     :vartype hybrid_aks_clusters_associated_ids: list[str]
     :ivar interface_name: The name of the interface that will be present in the virtual machine to
      represent this network.
@@ -1441,8 +2101,9 @@ class CloudServicesNetwork(TrackedResource):  # pylint: disable=too-many-instanc
      are: "Succeeded", "Failed", "Canceled", "Provisioning", and "Accepted".
     :vartype provisioning_state: str or
      ~azure.mgmt.networkcloud.models.CloudServicesNetworkProvisioningState
-    :ivar virtual_machines_associated_ids: The list of virtual machine resource IDs, excluding any
-     Hybrid AKS virtual machines, that are currently using this cloud services network.
+    :ivar virtual_machines_associated_ids: Field Deprecated. These fields will be empty/omitted.
+     The list of virtual machine resource IDs, excluding any Hybrid AKS virtual machines, that are
+     currently using this cloud services network.
     :vartype virtual_machines_associated_ids: list[str]
     """
 
@@ -1453,6 +2114,7 @@ class CloudServicesNetwork(TrackedResource):  # pylint: disable=too-many-instanc
         "system_data": {"readonly": True},
         "location": {"required": True},
         "extended_location": {"required": True},
+        "associated_resource_ids": {"readonly": True},
         "cluster_id": {"readonly": True},
         "detailed_status": {"readonly": True},
         "detailed_status_message": {"readonly": True},
@@ -1472,6 +2134,7 @@ class CloudServicesNetwork(TrackedResource):  # pylint: disable=too-many-instanc
         "location": {"key": "location", "type": "str"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
         "additional_egress_endpoints": {"key": "properties.additionalEgressEndpoints", "type": "[EgressEndpoint]"},
+        "associated_resource_ids": {"key": "properties.associatedResourceIds", "type": "[str]"},
         "cluster_id": {"key": "properties.clusterId", "type": "str"},
         "detailed_status": {"key": "properties.detailedStatus", "type": "str"},
         "detailed_status_message": {"key": "properties.detailedStatusMessage", "type": "str"},
@@ -1514,6 +2177,7 @@ class CloudServicesNetwork(TrackedResource):  # pylint: disable=too-many-instanc
         super().__init__(tags=tags, location=location, **kwargs)
         self.extended_location = extended_location
         self.additional_egress_endpoints = additional_egress_endpoints
+        self.associated_resource_ids = None
         self.cluster_id = None
         self.detailed_status = None
         self.detailed_status_message = None
@@ -1612,8 +2276,8 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1635,7 +2299,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
      Required.
     :vartype aggregator_or_single_rack_definition: ~azure.mgmt.networkcloud.models.RackDefinition
     :ivar analytics_workspace_id: The resource ID of the Log Analytics Workspace that will be used
-     for storing relevant logs. Required.
+     for storing relevant logs.
     :vartype analytics_workspace_id: str
     :ivar available_upgrade_versions: The list of cluster runtime version upgrades available for
      this cluster.
@@ -1682,9 +2346,10 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype detailed_status: str or ~azure.mgmt.networkcloud.models.ClusterDetailedStatus
     :ivar detailed_status_message: The descriptive message about the detailed status.
     :vartype detailed_status_message: str
-    :ivar hybrid_aks_extended_location: The extended location (custom location) that represents the
-     Hybrid AKS control plane location. This extended location is used when creating provisioned
-     clusters (Hybrid AKS clusters).
+    :ivar hybrid_aks_extended_location: Field Deprecated. This field will not be populated in an
+     upcoming version. The extended location (custom location) that represents the Hybrid AKS
+     control plane location. This extended location is used when creating provisioned clusters
+     (Hybrid AKS clusters).
     :vartype hybrid_aks_extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
     :ivar managed_resource_group_configuration: The configuration of the managed resource group
      associated with the resource.
@@ -1714,7 +2379,6 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "location": {"required": True},
         "extended_location": {"required": True},
         "aggregator_or_single_rack_definition": {"required": True},
-        "analytics_workspace_id": {"required": True},
         "available_upgrade_versions": {"readonly": True},
         "cluster_capacity": {"readonly": True},
         "cluster_connection_status": {"readonly": True},
@@ -1785,11 +2449,11 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         location: str,
         extended_location: "_models.ExtendedLocation",
         aggregator_or_single_rack_definition: "_models.RackDefinition",
-        analytics_workspace_id: str,
         cluster_type: Union[str, "_models.ClusterType"],
         cluster_version: str,
         network_fabric_id: str,
         tags: Optional[Dict[str, str]] = None,
+        analytics_workspace_id: Optional[str] = None,
         cluster_location: Optional[str] = None,
         cluster_service_principal: Optional["_models.ServicePrincipalInformation"] = None,
         compute_deployment_threshold: Optional["_models.ValidationThreshold"] = None,
@@ -1810,7 +2474,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
          Required.
         :paramtype aggregator_or_single_rack_definition: ~azure.mgmt.networkcloud.models.RackDefinition
         :keyword analytics_workspace_id: The resource ID of the Log Analytics Workspace that will be
-         used for storing relevant logs. Required.
+         used for storing relevant logs.
         :paramtype analytics_workspace_id: str
         :keyword cluster_location: The customer-provided location information to identify where the
          cluster resides.
@@ -2091,8 +2755,8 @@ class ClusterManager(TrackedResource):  # pylint: disable=too-many-instance-attr
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2285,8 +2949,8 @@ class ClusterMetricsConfiguration(TrackedResource):  # pylint: disable=too-many-
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2573,114 +3237,6 @@ class ClusterUpdateVersionParameters(_serialization.Model):
         self.target_cluster_version = target_cluster_version
 
 
-class CniBgpConfiguration(_serialization.Model):
-    """CniBgpConfiguration represents the Calico BGP configuration.
-
-    :ivar bgp_peers: The list of BgpPeer entities that the Hybrid AKS cluster will peer with in
-     addition to peering that occurs automatically with the switch fabric.
-    :vartype bgp_peers: list[~azure.mgmt.networkcloud.models.BgpPeer]
-    :ivar community_advertisements: The list of prefix community advertisement properties. Each
-     prefix community specifies a prefix, and the
-     communities that should be associated with that prefix when it is announced.
-    :vartype community_advertisements: list[~azure.mgmt.networkcloud.models.CommunityAdvertisement]
-    :ivar node_mesh_password: The password of the Calico node mesh. It defaults to a
-     randomly-generated string when not provided.
-    :vartype node_mesh_password: str
-    :ivar service_external_prefixes: The subnet blocks in CIDR format for Kubernetes service
-     external IPs to be advertised over BGP.
-    :vartype service_external_prefixes: list[str]
-    :ivar service_load_balancer_prefixes: The subnet blocks in CIDR format for Kubernetes load
-     balancers. Load balancer IPs will only be advertised if they
-     are within one of these blocks.
-    :vartype service_load_balancer_prefixes: list[str]
-    """
-
-    _validation = {
-        "node_mesh_password": {"max_length": 80, "pattern": r"^[a-zA-Z0-9]{0,80}$"},
-    }
-
-    _attribute_map = {
-        "bgp_peers": {"key": "bgpPeers", "type": "[BgpPeer]"},
-        "community_advertisements": {"key": "communityAdvertisements", "type": "[CommunityAdvertisement]"},
-        "node_mesh_password": {"key": "nodeMeshPassword", "type": "str"},
-        "service_external_prefixes": {"key": "serviceExternalPrefixes", "type": "[str]"},
-        "service_load_balancer_prefixes": {"key": "serviceLoadBalancerPrefixes", "type": "[str]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        bgp_peers: Optional[List["_models.BgpPeer"]] = None,
-        community_advertisements: Optional[List["_models.CommunityAdvertisement"]] = None,
-        node_mesh_password: Optional[str] = None,
-        service_external_prefixes: Optional[List[str]] = None,
-        service_load_balancer_prefixes: Optional[List[str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword bgp_peers: The list of BgpPeer entities that the Hybrid AKS cluster will peer with in
-         addition to peering that occurs automatically with the switch fabric.
-        :paramtype bgp_peers: list[~azure.mgmt.networkcloud.models.BgpPeer]
-        :keyword community_advertisements: The list of prefix community advertisement properties. Each
-         prefix community specifies a prefix, and the
-         communities that should be associated with that prefix when it is announced.
-        :paramtype community_advertisements:
-         list[~azure.mgmt.networkcloud.models.CommunityAdvertisement]
-        :keyword node_mesh_password: The password of the Calico node mesh. It defaults to a
-         randomly-generated string when not provided.
-        :paramtype node_mesh_password: str
-        :keyword service_external_prefixes: The subnet blocks in CIDR format for Kubernetes service
-         external IPs to be advertised over BGP.
-        :paramtype service_external_prefixes: list[str]
-        :keyword service_load_balancer_prefixes: The subnet blocks in CIDR format for Kubernetes load
-         balancers. Load balancer IPs will only be advertised if they
-         are within one of these blocks.
-        :paramtype service_load_balancer_prefixes: list[str]
-        """
-        super().__init__(**kwargs)
-        self.bgp_peers = bgp_peers
-        self.community_advertisements = community_advertisements
-        self.node_mesh_password = node_mesh_password
-        self.service_external_prefixes = service_external_prefixes
-        self.service_load_balancer_prefixes = service_load_balancer_prefixes
-
-
-class CommunityAdvertisement(_serialization.Model):
-    """CommunityAdvertisement represents the prefix and the communities that should be associated with
-    that prefix.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar communities: The list of community strings to announce with this prefix. Required.
-    :vartype communities: list[str]
-    :ivar subnet_prefix: The subnet in CIDR format for which properties should be advertised.
-     Required.
-    :vartype subnet_prefix: str
-    """
-
-    _validation = {
-        "communities": {"required": True},
-        "subnet_prefix": {"required": True},
-    }
-
-    _attribute_map = {
-        "communities": {"key": "communities", "type": "[str]"},
-        "subnet_prefix": {"key": "subnetPrefix", "type": "str"},
-    }
-
-    def __init__(self, *, communities: List[str], subnet_prefix: str, **kwargs: Any) -> None:
-        """
-        :keyword communities: The list of community strings to announce with this prefix. Required.
-        :paramtype communities: list[str]
-        :keyword subnet_prefix: The subnet in CIDR format for which properties should be advertised.
-         Required.
-        :paramtype subnet_prefix: str
-        """
-        super().__init__(**kwargs)
-        self.communities = communities
-        self.subnet_prefix = subnet_prefix
-
-
 class Console(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Console represents the console of an on-premises Network Cloud virtual machine.
 
@@ -2688,8 +3244,8 @@ class Console(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2882,230 +3438,91 @@ class ConsolePatchParameters(_serialization.Model):
         self.ssh_public_key = ssh_public_key
 
 
-class DefaultCniNetwork(TrackedResource):  # pylint: disable=too-many-instance-attributes
-    """DefaultCniNetwork represents the user-managed portions of the default CNI (pod) network that is
-    created in support of a Hybrid AKS Cluster.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
+class ControlPlaneNodeConfiguration(_serialization.Model):
+    """ControlPlaneNodeConfiguration represents the selection of virtual machines and size of the
+    control plane for a Kubernetes cluster.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar extended_location: The extended location of the cluster associated with the resource.
-     Required.
-    :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
-    :ivar cluster_id: The resource ID of the Network Cloud cluster this default CNI network is
-     associated with.
-    :vartype cluster_id: str
-    :ivar cni_as_number: The autonomous system number that the fabric expects to peer with, derived
-     from the associated L3 isolation domain.
-    :vartype cni_as_number: int
-    :ivar cni_bgp_configuration: The Calico BGP configuration.
-    :vartype cni_bgp_configuration: ~azure.mgmt.networkcloud.models.CniBgpConfiguration
-    :ivar detailed_status: The more detailed status of the default CNI network. Known values are:
-     "Error", "Available", and "Provisioning".
-    :vartype detailed_status: str or
-     ~azure.mgmt.networkcloud.models.DefaultCniNetworkDetailedStatus
-    :ivar detailed_status_message: The descriptive message about the current detailed status.
-    :vartype detailed_status_message: str
-    :ivar fabric_bgp_peers: The L3 isolation fabric BGP peering connectivity information necessary
-     for BGP peering the Hybrid AKS Cluster with the switch fabric.
-    :vartype fabric_bgp_peers: list[~azure.mgmt.networkcloud.models.BgpPeer]
-    :ivar hybrid_aks_clusters_associated_ids: The list of Hybrid AKS cluster resource ID(s) that
-     are associated with this default CNI network.
-    :vartype hybrid_aks_clusters_associated_ids: list[str]
-    :ivar interface_name: The name of the interface that will be present in the virtual machine to
-     represent this network.
-    :vartype interface_name: str
-    :ivar ip_allocation_type: The type of the IP address allocation. Known values are: "IPV4",
-     "IPV6", and "DualStack".
-    :vartype ip_allocation_type: str or ~azure.mgmt.networkcloud.models.IpAllocationType
-    :ivar ipv4_connected_prefix: The IPV4 prefix (CIDR) assigned to this default CNI network. It is
-     required when the IP allocation type
-     is IPV4 or DualStack.
-    :vartype ipv4_connected_prefix: str
-    :ivar ipv6_connected_prefix: The IPV6 prefix (CIDR) assigned to this default CNI network. It is
-     required when the IP allocation type
-     is IPV6 or DualStack.
-    :vartype ipv6_connected_prefix: str
-    :ivar l3_isolation_domain_id: The resource ID of the Network Fabric l3IsolationDomain.
-     Required.
-    :vartype l3_isolation_domain_id: str
-    :ivar provisioning_state: The provisioning state of the default CNI network. Known values are:
-     "Succeeded", "Failed", "Canceled", "Provisioning", and "Accepted".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.networkcloud.models.DefaultCniNetworkProvisioningState
-    :ivar vlan: The VLAN from the l3IsolationDomain that is used for this network. Required.
-    :vartype vlan: int
+    :ivar administrator_configuration: The administrator credentials to be used for the nodes in
+     the control plane.
+    :vartype administrator_configuration:
+     ~azure.mgmt.networkcloud.models.AdministratorConfiguration
+    :ivar availability_zones: The list of availability zones of the Network Cloud cluster to be
+     used for the provisioning of nodes in the control plane. If not specified, all availability
+     zones will be used.
+    :vartype availability_zones: list[str]
+    :ivar count: The number of virtual machines that use this configuration. Required.
+    :vartype count: int
+    :ivar vm_sku_name: The name of the VM SKU supplied during creation. Required.
+    :vartype vm_sku_name: str
     """
 
     _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "location": {"required": True},
-        "extended_location": {"required": True},
-        "cluster_id": {"readonly": True},
-        "cni_as_number": {"readonly": True},
-        "detailed_status": {"readonly": True},
-        "detailed_status_message": {"readonly": True},
-        "fabric_bgp_peers": {"readonly": True},
-        "hybrid_aks_clusters_associated_ids": {"readonly": True},
-        "interface_name": {"readonly": True},
-        "l3_isolation_domain_id": {"required": True},
-        "provisioning_state": {"readonly": True},
-        "vlan": {"required": True, "maximum": 4094, "minimum": 1},
+        "count": {"required": True, "minimum": 1},
+        "vm_sku_name": {"required": True},
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
-        "cluster_id": {"key": "properties.clusterId", "type": "str"},
-        "cni_as_number": {"key": "properties.cniAsNumber", "type": "int"},
-        "cni_bgp_configuration": {"key": "properties.cniBgpConfiguration", "type": "CniBgpConfiguration"},
-        "detailed_status": {"key": "properties.detailedStatus", "type": "str"},
-        "detailed_status_message": {"key": "properties.detailedStatusMessage", "type": "str"},
-        "fabric_bgp_peers": {"key": "properties.fabricBgpPeers", "type": "[BgpPeer]"},
-        "hybrid_aks_clusters_associated_ids": {"key": "properties.hybridAksClustersAssociatedIds", "type": "[str]"},
-        "interface_name": {"key": "properties.interfaceName", "type": "str"},
-        "ip_allocation_type": {"key": "properties.ipAllocationType", "type": "str"},
-        "ipv4_connected_prefix": {"key": "properties.ipv4ConnectedPrefix", "type": "str"},
-        "ipv6_connected_prefix": {"key": "properties.ipv6ConnectedPrefix", "type": "str"},
-        "l3_isolation_domain_id": {"key": "properties.l3IsolationDomainId", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "vlan": {"key": "properties.vlan", "type": "int"},
+        "administrator_configuration": {"key": "administratorConfiguration", "type": "AdministratorConfiguration"},
+        "availability_zones": {"key": "availabilityZones", "type": "[str]"},
+        "count": {"key": "count", "type": "int"},
+        "vm_sku_name": {"key": "vmSkuName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: str,
-        extended_location: "_models.ExtendedLocation",
-        l3_isolation_domain_id: str,
-        vlan: int,
-        tags: Optional[Dict[str, str]] = None,
-        cni_bgp_configuration: Optional["_models.CniBgpConfiguration"] = None,
-        ip_allocation_type: Optional[Union[str, "_models.IpAllocationType"]] = None,
-        ipv4_connected_prefix: Optional[str] = None,
-        ipv6_connected_prefix: Optional[str] = None,
+        count: int,
+        vm_sku_name: str,
+        administrator_configuration: Optional["_models.AdministratorConfiguration"] = None,
+        availability_zones: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        :keyword extended_location: The extended location of the cluster associated with the resource.
-         Required.
-        :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
-        :keyword cni_bgp_configuration: The Calico BGP configuration.
-        :paramtype cni_bgp_configuration: ~azure.mgmt.networkcloud.models.CniBgpConfiguration
-        :keyword ip_allocation_type: The type of the IP address allocation. Known values are: "IPV4",
-         "IPV6", and "DualStack".
-        :paramtype ip_allocation_type: str or ~azure.mgmt.networkcloud.models.IpAllocationType
-        :keyword ipv4_connected_prefix: The IPV4 prefix (CIDR) assigned to this default CNI network. It
-         is required when the IP allocation type
-         is IPV4 or DualStack.
-        :paramtype ipv4_connected_prefix: str
-        :keyword ipv6_connected_prefix: The IPV6 prefix (CIDR) assigned to this default CNI network. It
-         is required when the IP allocation type
-         is IPV6 or DualStack.
-        :paramtype ipv6_connected_prefix: str
-        :keyword l3_isolation_domain_id: The resource ID of the Network Fabric l3IsolationDomain.
-         Required.
-        :paramtype l3_isolation_domain_id: str
-        :keyword vlan: The VLAN from the l3IsolationDomain that is used for this network. Required.
-        :paramtype vlan: int
-        """
-        super().__init__(tags=tags, location=location, **kwargs)
-        self.extended_location = extended_location
-        self.cluster_id = None
-        self.cni_as_number = None
-        self.cni_bgp_configuration = cni_bgp_configuration
-        self.detailed_status = None
-        self.detailed_status_message = None
-        self.fabric_bgp_peers = None
-        self.hybrid_aks_clusters_associated_ids = None
-        self.interface_name = None
-        self.ip_allocation_type = ip_allocation_type
-        self.ipv4_connected_prefix = ipv4_connected_prefix
-        self.ipv6_connected_prefix = ipv6_connected_prefix
-        self.l3_isolation_domain_id = l3_isolation_domain_id
-        self.provisioning_state = None
-        self.vlan = vlan
-
-
-class DefaultCniNetworkList(_serialization.Model):
-    """DefaultCniNetworkList represents a list of default CNI networks.
-
-    :ivar next_link: The link used to get the next page of operations.
-    :vartype next_link: str
-    :ivar value: The list of default CNI networks.
-    :vartype value: list[~azure.mgmt.networkcloud.models.DefaultCniNetwork]
-    """
-
-    _attribute_map = {
-        "next_link": {"key": "nextLink", "type": "str"},
-        "value": {"key": "value", "type": "[DefaultCniNetwork]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["_models.DefaultCniNetwork"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword next_link: The link used to get the next page of operations.
-        :paramtype next_link: str
-        :keyword value: The list of default CNI networks.
-        :paramtype value: list[~azure.mgmt.networkcloud.models.DefaultCniNetwork]
+        :keyword administrator_configuration: The administrator credentials to be used for the nodes in
+         the control plane.
+        :paramtype administrator_configuration:
+         ~azure.mgmt.networkcloud.models.AdministratorConfiguration
+        :keyword availability_zones: The list of availability zones of the Network Cloud cluster to be
+         used for the provisioning of nodes in the control plane. If not specified, all availability
+         zones will be used.
+        :paramtype availability_zones: list[str]
+        :keyword count: The number of virtual machines that use this configuration. Required.
+        :paramtype count: int
+        :keyword vm_sku_name: The name of the VM SKU supplied during creation. Required.
+        :paramtype vm_sku_name: str
         """
         super().__init__(**kwargs)
-        self.next_link = next_link
-        self.value = value
+        self.administrator_configuration = administrator_configuration
+        self.availability_zones = availability_zones
+        self.count = count
+        self.vm_sku_name = vm_sku_name
 
 
-class DefaultCniNetworkPatchParameters(_serialization.Model):
-    """DefaultCniNetworkPatchParameters represents the body of the request to patch the Default CNI
-    network.
+class ControlPlaneNodePatchConfiguration(_serialization.Model):
+    """ControlPlaneNodePatchConfiguration represents the properties of the control plane that can be
+    patched for this Kubernetes cluster.
 
-    :ivar tags: The Azure resource tags that will replace the existing ones.
-    :vartype tags: dict[str, str]
+    :ivar count: The number of virtual machines that use this configuration.
+    :vartype count: int
     """
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
+    _validation = {
+        "count": {"minimum": 1},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    _attribute_map = {
+        "count": {"key": "count", "type": "int"},
+    }
+
+    def __init__(self, *, count: Optional[int] = None, **kwargs: Any) -> None:
         """
-        :keyword tags: The Azure resource tags that will replace the existing ones.
-        :paramtype tags: dict[str, str]
+        :keyword count: The number of virtual machines that use this configuration.
+        :paramtype count: int
         """
         super().__init__(**kwargs)
-        self.tags = tags
+        self.count = count
 
 
 class EgressEndpoint(_serialization.Model):
@@ -3306,6 +3723,45 @@ class ExtendedLocation(_serialization.Model):
         self.type = type
 
 
+class FeatureStatus(_serialization.Model):
+    """FeatureStatus contains information regarding a Kubernetes cluster feature.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar detailed_status: The status representing the state of this feature. Known values are:
+     "Running", "Failed", and "Unknown".
+    :vartype detailed_status: str or ~azure.mgmt.networkcloud.models.FeatureDetailedStatus
+    :ivar detailed_status_message: The descriptive message about the current detailed status.
+    :vartype detailed_status_message: str
+    :ivar name: The name of the feature.
+    :vartype name: str
+    :ivar version: The version of the feature.
+    :vartype version: str
+    """
+
+    _validation = {
+        "detailed_status": {"readonly": True},
+        "detailed_status_message": {"readonly": True},
+        "name": {"readonly": True},
+        "version": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "detailed_status": {"key": "detailedStatus", "type": "str"},
+        "detailed_status_message": {"key": "detailedStatusMessage", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.detailed_status = None
+        self.detailed_status_message = None
+        self.name = None
+        self.version = None
+
+
 class HardwareInventory(_serialization.Model):
     """HardwareInventory represents the hardware configuration of this machine as exposed to the
     customer, including information acquired from the model/sku information and from the ironic
@@ -3415,243 +3871,6 @@ class HardwareValidationStatus(_serialization.Model):
         self.result = None
 
 
-class HybridAksCluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
-    """The details are specific to the Network Cloud use of the Hybrid AKS cluster.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar extended_location: The extended location of the cluster associated with the resource.
-     Required.
-    :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
-    :ivar associated_network_ids: The list of resource IDs for the workload networks associated
-     with the Hybrid AKS cluster. It can be any of l2Networks, l3Networks, or trunkedNetworks
-     resources. This field will also contain one cloudServicesNetwork and one defaultCniNetwork.
-     Required.
-    :vartype associated_network_ids: list[str]
-    :ivar cloud_services_network_id: The resource ID of the associated cloud services network.
-    :vartype cloud_services_network_id: str
-    :ivar cluster_id: The resource ID of the Network Cloud cluster hosting the Hybrid AKS cluster.
-    :vartype cluster_id: str
-    :ivar control_plane_count: The number of control plane node VMs. Required.
-    :vartype control_plane_count: int
-    :ivar control_plane_nodes: The list of node configurations detailing associated VMs that are
-     part of the control plane nodes of this Hybrid AKS cluster.
-    :vartype control_plane_nodes: list[~azure.mgmt.networkcloud.models.NodeConfiguration]
-    :ivar default_cni_network_id: The resource ID of the associated default CNI network.
-    :vartype default_cni_network_id: str
-    :ivar detailed_status: The more detailed status of this Hybrid AKS cluster. Known values are:
-     "Error", "Available", and "Provisioning".
-    :vartype detailed_status: str or ~azure.mgmt.networkcloud.models.HybridAksClusterDetailedStatus
-    :ivar detailed_status_message: The descriptive message about the current detailed status.
-    :vartype detailed_status_message: str
-    :ivar hybrid_aks_provisioned_cluster_id: The resource ID of the Hybrid AKS cluster that this
-     additional information is for. Required.
-    :vartype hybrid_aks_provisioned_cluster_id: str
-    :ivar provisioning_state: The provisioning state of the Hybrid AKS cluster resource. Known
-     values are: "Succeeded", "Failed", and "Canceled".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.networkcloud.models.HybridAksClusterProvisioningState
-    :ivar volumes: The resource IDs of volumes that are attached to the Hybrid AKS cluster.
-    :vartype volumes: list[str]
-    :ivar worker_count: The number of worker node VMs. Required.
-    :vartype worker_count: int
-    :ivar worker_nodes: The list of node configurations detailing associated VMs that are part of
-     the worker nodes of this Hybrid AKS cluster.
-    :vartype worker_nodes: list[~azure.mgmt.networkcloud.models.NodeConfiguration]
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "location": {"required": True},
-        "extended_location": {"required": True},
-        "associated_network_ids": {"required": True},
-        "cloud_services_network_id": {"readonly": True},
-        "cluster_id": {"readonly": True},
-        "control_plane_count": {"required": True, "minimum": 1},
-        "control_plane_nodes": {"readonly": True},
-        "default_cni_network_id": {"readonly": True},
-        "detailed_status": {"readonly": True},
-        "detailed_status_message": {"readonly": True},
-        "hybrid_aks_provisioned_cluster_id": {"required": True},
-        "provisioning_state": {"readonly": True},
-        "volumes": {"readonly": True},
-        "worker_count": {"required": True},
-        "worker_nodes": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
-        "associated_network_ids": {"key": "properties.associatedNetworkIds", "type": "[str]"},
-        "cloud_services_network_id": {"key": "properties.cloudServicesNetworkId", "type": "str"},
-        "cluster_id": {"key": "properties.clusterId", "type": "str"},
-        "control_plane_count": {"key": "properties.controlPlaneCount", "type": "int"},
-        "control_plane_nodes": {"key": "properties.controlPlaneNodes", "type": "[NodeConfiguration]"},
-        "default_cni_network_id": {"key": "properties.defaultCniNetworkId", "type": "str"},
-        "detailed_status": {"key": "properties.detailedStatus", "type": "str"},
-        "detailed_status_message": {"key": "properties.detailedStatusMessage", "type": "str"},
-        "hybrid_aks_provisioned_cluster_id": {"key": "properties.hybridAksProvisionedClusterId", "type": "str"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "volumes": {"key": "properties.volumes", "type": "[str]"},
-        "worker_count": {"key": "properties.workerCount", "type": "int"},
-        "worker_nodes": {"key": "properties.workerNodes", "type": "[NodeConfiguration]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        extended_location: "_models.ExtendedLocation",
-        associated_network_ids: List[str],
-        control_plane_count: int,
-        hybrid_aks_provisioned_cluster_id: str,
-        worker_count: int,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        :keyword extended_location: The extended location of the cluster associated with the resource.
-         Required.
-        :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
-        :keyword associated_network_ids: The list of resource IDs for the workload networks associated
-         with the Hybrid AKS cluster. It can be any of l2Networks, l3Networks, or trunkedNetworks
-         resources. This field will also contain one cloudServicesNetwork and one defaultCniNetwork.
-         Required.
-        :paramtype associated_network_ids: list[str]
-        :keyword control_plane_count: The number of control plane node VMs. Required.
-        :paramtype control_plane_count: int
-        :keyword hybrid_aks_provisioned_cluster_id: The resource ID of the Hybrid AKS cluster that this
-         additional information is for. Required.
-        :paramtype hybrid_aks_provisioned_cluster_id: str
-        :keyword worker_count: The number of worker node VMs. Required.
-        :paramtype worker_count: int
-        """
-        super().__init__(tags=tags, location=location, **kwargs)
-        self.extended_location = extended_location
-        self.associated_network_ids = associated_network_ids
-        self.cloud_services_network_id = None
-        self.cluster_id = None
-        self.control_plane_count = control_plane_count
-        self.control_plane_nodes = None
-        self.default_cni_network_id = None
-        self.detailed_status = None
-        self.detailed_status_message = None
-        self.hybrid_aks_provisioned_cluster_id = hybrid_aks_provisioned_cluster_id
-        self.provisioning_state = None
-        self.volumes = None
-        self.worker_count = worker_count
-        self.worker_nodes = None
-
-
-class HybridAksClusterList(_serialization.Model):
-    """HybridAksClusterList represents a list of Hybrid AKS clusters.
-
-    :ivar next_link: The link used to get the next page of operations.
-    :vartype next_link: str
-    :ivar value: The list of additional details related to Hybrid AKS clusters.
-    :vartype value: list[~azure.mgmt.networkcloud.models.HybridAksCluster]
-    """
-
-    _attribute_map = {
-        "next_link": {"key": "nextLink", "type": "str"},
-        "value": {"key": "value", "type": "[HybridAksCluster]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["_models.HybridAksCluster"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword next_link: The link used to get the next page of operations.
-        :paramtype next_link: str
-        :keyword value: The list of additional details related to Hybrid AKS clusters.
-        :paramtype value: list[~azure.mgmt.networkcloud.models.HybridAksCluster]
-        """
-        super().__init__(**kwargs)
-        self.next_link = next_link
-        self.value = value
-
-
-class HybridAksClusterPatchParameters(_serialization.Model):
-    """HybridAksClusterPatchParameters represents the body of the request to patch the Hybrid AKS
-    cluster.
-
-    :ivar tags: The Azure resource tags that will replace the existing ones.
-    :vartype tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: The Azure resource tags that will replace the existing ones.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-
-
-class HybridAksClusterRestartNodeParameters(_serialization.Model):
-    """HybridAksClusterRestartNodeParameters represents the body of the request to restart the node of
-    a Hybrid AKS cluster.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar node_name: The name of the node to restart. Required.
-    :vartype node_name: str
-    """
-
-    _validation = {
-        "node_name": {"required": True},
-    }
-
-    _attribute_map = {
-        "node_name": {"key": "nodeName", "type": "str"},
-    }
-
-    def __init__(self, *, node_name: str, **kwargs: Any) -> None:
-        """
-        :keyword node_name: The name of the node to restart. Required.
-        :paramtype node_name: str
-        """
-        super().__init__(**kwargs)
-        self.node_name = node_name
-
-
 class ImageRepositoryCredentials(_serialization.Model):
     """ImageRepositoryCredentials represents the credentials used to login to the image repository.
 
@@ -3696,16 +3915,213 @@ class ImageRepositoryCredentials(_serialization.Model):
         self.username = username
 
 
+class InitialAgentPoolConfiguration(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """InitialAgentPoolConfiguration specifies the configuration of a pool of virtual machines that
+    are initially defined with a Kubernetes cluster.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar administrator_configuration: The administrator credentials to be used for the nodes in
+     this agent pool.
+    :vartype administrator_configuration:
+     ~azure.mgmt.networkcloud.models.AdministratorConfiguration
+    :ivar agent_options: The configurations that will be applied to each agent in this agent pool.
+    :vartype agent_options: ~azure.mgmt.networkcloud.models.AgentOptions
+    :ivar attached_network_configuration: The configuration of networks being attached to the agent
+     pool for use by the workloads that run on this Kubernetes cluster.
+    :vartype attached_network_configuration:
+     ~azure.mgmt.networkcloud.models.AttachedNetworkConfiguration
+    :ivar availability_zones: The list of availability zones of the Network Cloud cluster used for
+     the provisioning of nodes in this agent pool. If not specified, all availability zones will be
+     used.
+    :vartype availability_zones: list[str]
+    :ivar count: The number of virtual machines that use this configuration. Required.
+    :vartype count: int
+    :ivar labels: The labels applied to the nodes in this agent pool.
+    :vartype labels: list[~azure.mgmt.networkcloud.models.KubernetesLabel]
+    :ivar mode: The selection of how this agent pool is utilized, either as a system pool or a user
+     pool. System pools run the features and critical services for the Kubernetes Cluster, while
+     user pools are dedicated to user workloads. Every Kubernetes cluster must contain at least one
+     system node pool with at least one node. Required. Known values are: "System", "User", and
+     "NotApplicable".
+    :vartype mode: str or ~azure.mgmt.networkcloud.models.AgentPoolMode
+    :ivar name: The name that will be used for the agent pool resource representing this agent
+     pool. Required.
+    :vartype name: str
+    :ivar taints: The taints applied to the nodes in this agent pool.
+    :vartype taints: list[~azure.mgmt.networkcloud.models.KubernetesLabel]
+    :ivar upgrade_settings: The configuration of the agent pool.
+    :vartype upgrade_settings: ~azure.mgmt.networkcloud.models.AgentPoolUpgradeSettings
+    :ivar vm_sku_name: The name of the VM SKU that determines the size of resources allocated for
+     node VMs. Required.
+    :vartype vm_sku_name: str
+    """
+
+    _validation = {
+        "count": {"required": True},
+        "mode": {"required": True},
+        "name": {"required": True, "pattern": r"^([a-zA-Z0-9][a-zA-Z0-9-_]{0,28}[a-zA-Z0-9])$"},
+        "vm_sku_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "administrator_configuration": {"key": "administratorConfiguration", "type": "AdministratorConfiguration"},
+        "agent_options": {"key": "agentOptions", "type": "AgentOptions"},
+        "attached_network_configuration": {
+            "key": "attachedNetworkConfiguration",
+            "type": "AttachedNetworkConfiguration",
+        },
+        "availability_zones": {"key": "availabilityZones", "type": "[str]"},
+        "count": {"key": "count", "type": "int"},
+        "labels": {"key": "labels", "type": "[KubernetesLabel]"},
+        "mode": {"key": "mode", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "taints": {"key": "taints", "type": "[KubernetesLabel]"},
+        "upgrade_settings": {"key": "upgradeSettings", "type": "AgentPoolUpgradeSettings"},
+        "vm_sku_name": {"key": "vmSkuName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        count: int,
+        mode: Union[str, "_models.AgentPoolMode"],
+        name: str,
+        vm_sku_name: str,
+        administrator_configuration: Optional["_models.AdministratorConfiguration"] = None,
+        agent_options: Optional["_models.AgentOptions"] = None,
+        attached_network_configuration: Optional["_models.AttachedNetworkConfiguration"] = None,
+        availability_zones: Optional[List[str]] = None,
+        labels: Optional[List["_models.KubernetesLabel"]] = None,
+        taints: Optional[List["_models.KubernetesLabel"]] = None,
+        upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword administrator_configuration: The administrator credentials to be used for the nodes in
+         this agent pool.
+        :paramtype administrator_configuration:
+         ~azure.mgmt.networkcloud.models.AdministratorConfiguration
+        :keyword agent_options: The configurations that will be applied to each agent in this agent
+         pool.
+        :paramtype agent_options: ~azure.mgmt.networkcloud.models.AgentOptions
+        :keyword attached_network_configuration: The configuration of networks being attached to the
+         agent pool for use by the workloads that run on this Kubernetes cluster.
+        :paramtype attached_network_configuration:
+         ~azure.mgmt.networkcloud.models.AttachedNetworkConfiguration
+        :keyword availability_zones: The list of availability zones of the Network Cloud cluster used
+         for the provisioning of nodes in this agent pool. If not specified, all availability zones will
+         be used.
+        :paramtype availability_zones: list[str]
+        :keyword count: The number of virtual machines that use this configuration. Required.
+        :paramtype count: int
+        :keyword labels: The labels applied to the nodes in this agent pool.
+        :paramtype labels: list[~azure.mgmt.networkcloud.models.KubernetesLabel]
+        :keyword mode: The selection of how this agent pool is utilized, either as a system pool or a
+         user pool. System pools run the features and critical services for the Kubernetes Cluster,
+         while user pools are dedicated to user workloads. Every Kubernetes cluster must contain at
+         least one system node pool with at least one node. Required. Known values are: "System",
+         "User", and "NotApplicable".
+        :paramtype mode: str or ~azure.mgmt.networkcloud.models.AgentPoolMode
+        :keyword name: The name that will be used for the agent pool resource representing this agent
+         pool. Required.
+        :paramtype name: str
+        :keyword taints: The taints applied to the nodes in this agent pool.
+        :paramtype taints: list[~azure.mgmt.networkcloud.models.KubernetesLabel]
+        :keyword upgrade_settings: The configuration of the agent pool.
+        :paramtype upgrade_settings: ~azure.mgmt.networkcloud.models.AgentPoolUpgradeSettings
+        :keyword vm_sku_name: The name of the VM SKU that determines the size of resources allocated
+         for node VMs. Required.
+        :paramtype vm_sku_name: str
+        """
+        super().__init__(**kwargs)
+        self.administrator_configuration = administrator_configuration
+        self.agent_options = agent_options
+        self.attached_network_configuration = attached_network_configuration
+        self.availability_zones = availability_zones
+        self.count = count
+        self.labels = labels
+        self.mode = mode
+        self.name = name
+        self.taints = taints
+        self.upgrade_settings = upgrade_settings
+        self.vm_sku_name = vm_sku_name
+
+
+class IpAddressPool(_serialization.Model):
+    """IpAddressPool represents a pool of IP addresses that can be allocated to a service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar addresses: The list of IP address ranges. Each range can be a either a subnet in CIDR
+     format or an explicit start-end range of IP addresses. Required.
+    :vartype addresses: list[str]
+    :ivar auto_assign: The indicator to determine if automatic allocation from the pool should
+     occur. Known values are: "True" and "False".
+    :vartype auto_assign: str or ~azure.mgmt.networkcloud.models.BfdEnabled
+    :ivar name: The name used to identify this IP address pool for association with a BGP
+     advertisement. Required.
+    :vartype name: str
+    :ivar only_use_host_ips: The indicator to prevent the use of IP addresses ending with .0 and
+     .255 for this pool. Enabling this option will only use IP addresses between .1 and .254
+     inclusive. Known values are: "True" and "False".
+    :vartype only_use_host_ips: str or ~azure.mgmt.networkcloud.models.BfdEnabled
+    """
+
+    _validation = {
+        "addresses": {"required": True},
+        "name": {"required": True, "pattern": r"^[a-z0-9]([a-z0-9.-]{0,61}[a-z0-9]){0,1}$"},
+    }
+
+    _attribute_map = {
+        "addresses": {"key": "addresses", "type": "[str]"},
+        "auto_assign": {"key": "autoAssign", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "only_use_host_ips": {"key": "onlyUseHostIps", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        addresses: List[str],
+        name: str,
+        auto_assign: Optional[Union[str, "_models.BfdEnabled"]] = None,
+        only_use_host_ips: Optional[Union[str, "_models.BfdEnabled"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword addresses: The list of IP address ranges. Each range can be a either a subnet in CIDR
+         format or an explicit start-end range of IP addresses. Required.
+        :paramtype addresses: list[str]
+        :keyword auto_assign: The indicator to determine if automatic allocation from the pool should
+         occur. Known values are: "True" and "False".
+        :paramtype auto_assign: str or ~azure.mgmt.networkcloud.models.BfdEnabled
+        :keyword name: The name used to identify this IP address pool for association with a BGP
+         advertisement. Required.
+        :paramtype name: str
+        :keyword only_use_host_ips: The indicator to prevent the use of IP addresses ending with .0 and
+         .255 for this pool. Enabling this option will only use IP addresses between .1 and .254
+         inclusive. Known values are: "True" and "False".
+        :paramtype only_use_host_ips: str or ~azure.mgmt.networkcloud.models.BfdEnabled
+        """
+        super().__init__(**kwargs)
+        self.addresses = addresses
+        self.auto_assign = auto_assign
+        self.name = name
+        self.only_use_host_ips = only_use_host_ips
+
+
 class KeySetUser(_serialization.Model):
     """KeySetUser represents the properties of the user in the key set.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar azure_user_name: The Azure Active Directory user name (email name). Required.
+    :ivar azure_user_name: The user name that will be used for access. Required.
     :vartype azure_user_name: str
     :ivar description: The free-form description for this user.
     :vartype description: str
-    :ivar ssh_public_key: The SSH public key for this user. Required.
+    :ivar ssh_public_key: The SSH public key that will be provisioned for user access. The user is
+     expected to have the corresponding SSH private key for logging in. Required.
     :vartype ssh_public_key: ~azure.mgmt.networkcloud.models.SshPublicKey
     """
 
@@ -3730,11 +4146,12 @@ class KeySetUser(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword azure_user_name: The Azure Active Directory user name (email name). Required.
+        :keyword azure_user_name: The user name that will be used for access. Required.
         :paramtype azure_user_name: str
         :keyword description: The free-form description for this user.
         :paramtype description: str
-        :keyword ssh_public_key: The SSH public key for this user. Required.
+        :keyword ssh_public_key: The SSH public key that will be provisioned for user access. The user
+         is expected to have the corresponding SSH private key for logging in. Required.
         :paramtype ssh_public_key: ~azure.mgmt.networkcloud.models.SshPublicKey
         """
         super().__init__(**kwargs)
@@ -3748,7 +4165,7 @@ class KeySetUserStatus(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar azure_user_name: The Azure Active Directory user name (email name).
+    :ivar azure_user_name: The user name that will be used for access.
     :vartype azure_user_name: str
     :ivar status: The indicator of whether the user is currently deployed for access. Known values
      are: "Active" and "Invalid".
@@ -3778,16 +4195,15 @@ class KeySetUserStatus(_serialization.Model):
         self.status_message = None
 
 
-class L2Network(TrackedResource):  # pylint: disable=too-many-instance-attributes
-    """L2Network represents a network that utilizes a single isolation domain set up for layer-2
-    resources.
+class KubernetesCluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """KubernetesCluster represents the Kubernetes cluster hosted on Network Cloud.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3804,6 +4220,490 @@ class L2Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
     :ivar extended_location: The extended location of the cluster associated with the resource.
      Required.
     :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar aad_configuration: The Azure Active Directory Integration properties.
+    :vartype aad_configuration: ~azure.mgmt.networkcloud.models.AadConfiguration
+    :ivar administrator_configuration: The administrative credentials that will be applied to the
+     control plane and agent pool nodes that do not specify their own values.
+    :vartype administrator_configuration:
+     ~azure.mgmt.networkcloud.models.AdministratorConfiguration
+    :ivar attached_network_ids: The full list of network resource IDs that are attached to this
+     cluster, including those attached only to specific agent pools.
+    :vartype attached_network_ids: list[str]
+    :ivar available_upgrades: The list of versions that this Kubernetes cluster can be upgraded to.
+    :vartype available_upgrades: list[~azure.mgmt.networkcloud.models.AvailableUpgrade]
+    :ivar cluster_id: The resource ID of the Network Cloud cluster.
+    :vartype cluster_id: str
+    :ivar connected_cluster_id: The resource ID of the connected cluster set up when this
+     Kubernetes cluster is created.
+    :vartype connected_cluster_id: str
+    :ivar control_plane_kubernetes_version: The current running version of Kubernetes on the
+     control plane.
+    :vartype control_plane_kubernetes_version: str
+    :ivar control_plane_node_configuration: The defining characteristics of the control plane for
+     this Kubernetes Cluster. Required.
+    :vartype control_plane_node_configuration:
+     ~azure.mgmt.networkcloud.models.ControlPlaneNodeConfiguration
+    :ivar detailed_status: The current status of the Kubernetes cluster. Known values are:
+     "Available", "Error", and "Provisioning".
+    :vartype detailed_status: str or
+     ~azure.mgmt.networkcloud.models.KubernetesClusterDetailedStatus
+    :ivar detailed_status_message: The descriptive message about the current detailed status.
+    :vartype detailed_status_message: str
+    :ivar feature_statuses: The current feature settings.
+    :vartype feature_statuses: list[~azure.mgmt.networkcloud.models.FeatureStatus]
+    :ivar initial_agent_pool_configurations: The agent pools that are created with this Kubernetes
+     cluster for running critical system services and workloads. This data in this field is only
+     used during creation, and the field will be empty following the creation of the Kubernetes
+     Cluster. After creation, the management of agent pools is done using the agentPools
+     sub-resource. Required.
+    :vartype initial_agent_pool_configurations:
+     list[~azure.mgmt.networkcloud.models.InitialAgentPoolConfiguration]
+    :ivar kubernetes_version: The Kubernetes version for this cluster. Accepts n.n, n.n.n, and
+     n.n.n-n format. The interpreted version used will be resolved into this field after creation or
+     update. Required.
+    :vartype kubernetes_version: str
+    :ivar managed_resource_group_configuration: The configuration of the managed resource group
+     associated with the resource.
+    :vartype managed_resource_group_configuration:
+     ~azure.mgmt.networkcloud.models.ManagedResourceGroupConfiguration
+    :ivar network_configuration: The configuration of the Kubernetes cluster networking, including
+     the attachment of networks that span the cluster. Required.
+    :vartype network_configuration: ~azure.mgmt.networkcloud.models.NetworkConfiguration
+    :ivar nodes: The details of the nodes in this cluster.
+    :vartype nodes: list[~azure.mgmt.networkcloud.models.KubernetesClusterNode]
+    :ivar provisioning_state: The provisioning state of the Kubernetes cluster resource. Known
+     values are: "Succeeded", "Failed", "Canceled", "Accepted", "InProgress", "Created", "Updating",
+     and "Deleting".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.networkcloud.models.KubernetesClusterProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "extended_location": {"required": True},
+        "attached_network_ids": {"readonly": True},
+        "available_upgrades": {"readonly": True},
+        "cluster_id": {"readonly": True},
+        "connected_cluster_id": {"readonly": True},
+        "control_plane_kubernetes_version": {"readonly": True},
+        "control_plane_node_configuration": {"required": True},
+        "detailed_status": {"readonly": True},
+        "detailed_status_message": {"readonly": True},
+        "feature_statuses": {"readonly": True},
+        "initial_agent_pool_configurations": {"required": True, "min_items": 1},
+        "kubernetes_version": {"required": True},
+        "network_configuration": {"required": True},
+        "nodes": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "aad_configuration": {"key": "properties.aadConfiguration", "type": "AadConfiguration"},
+        "administrator_configuration": {
+            "key": "properties.administratorConfiguration",
+            "type": "AdministratorConfiguration",
+        },
+        "attached_network_ids": {"key": "properties.attachedNetworkIds", "type": "[str]"},
+        "available_upgrades": {"key": "properties.availableUpgrades", "type": "[AvailableUpgrade]"},
+        "cluster_id": {"key": "properties.clusterId", "type": "str"},
+        "connected_cluster_id": {"key": "properties.connectedClusterId", "type": "str"},
+        "control_plane_kubernetes_version": {"key": "properties.controlPlaneKubernetesVersion", "type": "str"},
+        "control_plane_node_configuration": {
+            "key": "properties.controlPlaneNodeConfiguration",
+            "type": "ControlPlaneNodeConfiguration",
+        },
+        "detailed_status": {"key": "properties.detailedStatus", "type": "str"},
+        "detailed_status_message": {"key": "properties.detailedStatusMessage", "type": "str"},
+        "feature_statuses": {"key": "properties.featureStatuses", "type": "[FeatureStatus]"},
+        "initial_agent_pool_configurations": {
+            "key": "properties.initialAgentPoolConfigurations",
+            "type": "[InitialAgentPoolConfiguration]",
+        },
+        "kubernetes_version": {"key": "properties.kubernetesVersion", "type": "str"},
+        "managed_resource_group_configuration": {
+            "key": "properties.managedResourceGroupConfiguration",
+            "type": "ManagedResourceGroupConfiguration",
+        },
+        "network_configuration": {"key": "properties.networkConfiguration", "type": "NetworkConfiguration"},
+        "nodes": {"key": "properties.nodes", "type": "[KubernetesClusterNode]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        location: str,
+        extended_location: "_models.ExtendedLocation",
+        control_plane_node_configuration: "_models.ControlPlaneNodeConfiguration",
+        initial_agent_pool_configurations: List["_models.InitialAgentPoolConfiguration"],
+        kubernetes_version: str,
+        network_configuration: "_models.NetworkConfiguration",
+        tags: Optional[Dict[str, str]] = None,
+        aad_configuration: Optional["_models.AadConfiguration"] = None,
+        administrator_configuration: Optional["_models.AdministratorConfiguration"] = None,
+        managed_resource_group_configuration: Optional["_models.ManagedResourceGroupConfiguration"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword extended_location: The extended location of the cluster associated with the resource.
+         Required.
+        :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+        :keyword aad_configuration: The Azure Active Directory Integration properties.
+        :paramtype aad_configuration: ~azure.mgmt.networkcloud.models.AadConfiguration
+        :keyword administrator_configuration: The administrative credentials that will be applied to
+         the control plane and agent pool nodes that do not specify their own values.
+        :paramtype administrator_configuration:
+         ~azure.mgmt.networkcloud.models.AdministratorConfiguration
+        :keyword control_plane_node_configuration: The defining characteristics of the control plane
+         for this Kubernetes Cluster. Required.
+        :paramtype control_plane_node_configuration:
+         ~azure.mgmt.networkcloud.models.ControlPlaneNodeConfiguration
+        :keyword initial_agent_pool_configurations: The agent pools that are created with this
+         Kubernetes cluster for running critical system services and workloads. This data in this field
+         is only used during creation, and the field will be empty following the creation of the
+         Kubernetes Cluster. After creation, the management of agent pools is done using the agentPools
+         sub-resource. Required.
+        :paramtype initial_agent_pool_configurations:
+         list[~azure.mgmt.networkcloud.models.InitialAgentPoolConfiguration]
+        :keyword kubernetes_version: The Kubernetes version for this cluster. Accepts n.n, n.n.n, and
+         n.n.n-n format. The interpreted version used will be resolved into this field after creation or
+         update. Required.
+        :paramtype kubernetes_version: str
+        :keyword managed_resource_group_configuration: The configuration of the managed resource group
+         associated with the resource.
+        :paramtype managed_resource_group_configuration:
+         ~azure.mgmt.networkcloud.models.ManagedResourceGroupConfiguration
+        :keyword network_configuration: The configuration of the Kubernetes cluster networking,
+         including the attachment of networks that span the cluster. Required.
+        :paramtype network_configuration: ~azure.mgmt.networkcloud.models.NetworkConfiguration
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.extended_location = extended_location
+        self.aad_configuration = aad_configuration
+        self.administrator_configuration = administrator_configuration
+        self.attached_network_ids = None
+        self.available_upgrades = None
+        self.cluster_id = None
+        self.connected_cluster_id = None
+        self.control_plane_kubernetes_version = None
+        self.control_plane_node_configuration = control_plane_node_configuration
+        self.detailed_status = None
+        self.detailed_status_message = None
+        self.feature_statuses = None
+        self.initial_agent_pool_configurations = initial_agent_pool_configurations
+        self.kubernetes_version = kubernetes_version
+        self.managed_resource_group_configuration = managed_resource_group_configuration
+        self.network_configuration = network_configuration
+        self.nodes = None
+        self.provisioning_state = None
+
+
+class KubernetesClusterList(_serialization.Model):
+    """KubernetesClusterList represents a list of Kubernetes clusters.
+
+    :ivar next_link: The link used to get the next page of operations.
+    :vartype next_link: str
+    :ivar value: The list of additional details related to Kubernetes clusters.
+    :vartype value: list[~azure.mgmt.networkcloud.models.KubernetesCluster]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[KubernetesCluster]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["_models.KubernetesCluster"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: The link used to get the next page of operations.
+        :paramtype next_link: str
+        :keyword value: The list of additional details related to Kubernetes clusters.
+        :paramtype value: list[~azure.mgmt.networkcloud.models.KubernetesCluster]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
+class KubernetesClusterNode(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """KubernetesClusterNode represents the details of a node in a Kubernetes cluster.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar agent_pool_id: The resource ID of the agent pool that this node belongs to. This value is
+     not represented on control plane nodes.
+    :vartype agent_pool_id: str
+    :ivar availability_zone: The availability zone this node is running within.
+    :vartype availability_zone: str
+    :ivar bare_metal_machine_id: The resource ID of the bare metal machine that hosts this node.
+    :vartype bare_metal_machine_id: str
+    :ivar cpu_cores: The number of CPU cores configured for this node, derived from the VM SKU
+     specified.
+    :vartype cpu_cores: int
+    :ivar detailed_status: The detailed state of this node. Known values are: "Available", "Error",
+     "Provisioning", "Running", "Scheduling", "Stopped", "Terminating", and "Unknown".
+    :vartype detailed_status: str or
+     ~azure.mgmt.networkcloud.models.KubernetesClusterNodeDetailedStatus
+    :ivar detailed_status_message: The descriptive message about the current detailed status.
+    :vartype detailed_status_message: str
+    :ivar disk_size_gb: The size of the disk configured for this node.
+    :vartype disk_size_gb: int
+    :ivar image: The machine image used to deploy this node.
+    :vartype image: str
+    :ivar kubernetes_version: The currently running version of Kubernetes and bundled features
+     running on this node.
+    :vartype kubernetes_version: str
+    :ivar labels: The list of labels on this node that have been assigned to the agent pool
+     containing this node.
+    :vartype labels: list[~azure.mgmt.networkcloud.models.KubernetesLabel]
+    :ivar memory_size_gb: The amount of memory configured for this node, derived from the vm SKU
+     specified.
+    :vartype memory_size_gb: int
+    :ivar mode: The mode of the agent pool containing this node. Not applicable for control plane
+     nodes. Known values are: "System", "User", and "NotApplicable".
+    :vartype mode: str or ~azure.mgmt.networkcloud.models.AgentPoolMode
+    :ivar name: The name of this node, as realized in the Kubernetes cluster.
+    :vartype name: str
+    :ivar network_attachments: The NetworkAttachments made to this node.
+    :vartype network_attachments: list[~azure.mgmt.networkcloud.models.NetworkAttachment]
+    :ivar power_state: The power state of this node. Known values are: "On", "Off", and "Unknown".
+    :vartype power_state: str or ~azure.mgmt.networkcloud.models.KubernetesNodePowerState
+    :ivar role: The role of this node in the cluster. Known values are: "ControlPlane" and
+     "Worker".
+    :vartype role: str or ~azure.mgmt.networkcloud.models.KubernetesNodeRole
+    :ivar taints: The list of taints that have been assigned to the agent pool containing this
+     node.
+    :vartype taints: list[~azure.mgmt.networkcloud.models.KubernetesLabel]
+    :ivar vm_sku_name: The VM SKU name that was used to create this cluster node.
+    :vartype vm_sku_name: str
+    """
+
+    _validation = {
+        "agent_pool_id": {"readonly": True},
+        "availability_zone": {"readonly": True},
+        "bare_metal_machine_id": {"readonly": True},
+        "cpu_cores": {"readonly": True},
+        "detailed_status": {"readonly": True},
+        "detailed_status_message": {"readonly": True},
+        "disk_size_gb": {"readonly": True},
+        "image": {"readonly": True},
+        "kubernetes_version": {"readonly": True},
+        "labels": {"readonly": True},
+        "memory_size_gb": {"readonly": True},
+        "mode": {"readonly": True},
+        "name": {"readonly": True},
+        "network_attachments": {"readonly": True},
+        "power_state": {"readonly": True},
+        "role": {"readonly": True},
+        "taints": {"readonly": True},
+        "vm_sku_name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "agent_pool_id": {"key": "agentPoolId", "type": "str"},
+        "availability_zone": {"key": "availabilityZone", "type": "str"},
+        "bare_metal_machine_id": {"key": "bareMetalMachineId", "type": "str"},
+        "cpu_cores": {"key": "cpuCores", "type": "int"},
+        "detailed_status": {"key": "detailedStatus", "type": "str"},
+        "detailed_status_message": {"key": "detailedStatusMessage", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "image": {"key": "image", "type": "str"},
+        "kubernetes_version": {"key": "kubernetesVersion", "type": "str"},
+        "labels": {"key": "labels", "type": "[KubernetesLabel]"},
+        "memory_size_gb": {"key": "memorySizeGB", "type": "int"},
+        "mode": {"key": "mode", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "network_attachments": {"key": "networkAttachments", "type": "[NetworkAttachment]"},
+        "power_state": {"key": "powerState", "type": "str"},
+        "role": {"key": "role", "type": "str"},
+        "taints": {"key": "taints", "type": "[KubernetesLabel]"},
+        "vm_sku_name": {"key": "vmSkuName", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.agent_pool_id = None
+        self.availability_zone = None
+        self.bare_metal_machine_id = None
+        self.cpu_cores = None
+        self.detailed_status = None
+        self.detailed_status_message = None
+        self.disk_size_gb = None
+        self.image = None
+        self.kubernetes_version = None
+        self.labels = None
+        self.memory_size_gb = None
+        self.mode = None
+        self.name = None
+        self.network_attachments = None
+        self.power_state = None
+        self.role = None
+        self.taints = None
+        self.vm_sku_name = None
+
+
+class KubernetesClusterPatchParameters(_serialization.Model):
+    """KubernetesClusterPatchParameters represents the body of the request to patch the Hybrid AKS
+    cluster.
+
+    :ivar tags: The Azure resource tags that will replace the existing ones.
+    :vartype tags: dict[str, str]
+    :ivar control_plane_node_configuration: The defining characteristics of the control plane that
+     can be patched for this Kubernetes cluster.
+    :vartype control_plane_node_configuration:
+     ~azure.mgmt.networkcloud.models.ControlPlaneNodePatchConfiguration
+    :ivar kubernetes_version: The Kubernetes version for this cluster. Accepts n.n, n.n.n, and
+     n.n.n-n format. The interpreted version used will be resolved into this field after creation or
+     update.
+    :vartype kubernetes_version: str
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "control_plane_node_configuration": {
+            "key": "properties.controlPlaneNodeConfiguration",
+            "type": "ControlPlaneNodePatchConfiguration",
+        },
+        "kubernetes_version": {"key": "properties.kubernetesVersion", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        control_plane_node_configuration: Optional["_models.ControlPlaneNodePatchConfiguration"] = None,
+        kubernetes_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: The Azure resource tags that will replace the existing ones.
+        :paramtype tags: dict[str, str]
+        :keyword control_plane_node_configuration: The defining characteristics of the control plane
+         that can be patched for this Kubernetes cluster.
+        :paramtype control_plane_node_configuration:
+         ~azure.mgmt.networkcloud.models.ControlPlaneNodePatchConfiguration
+        :keyword kubernetes_version: The Kubernetes version for this cluster. Accepts n.n, n.n.n, and
+         n.n.n-n format. The interpreted version used will be resolved into this field after creation or
+         update.
+        :paramtype kubernetes_version: str
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.control_plane_node_configuration = control_plane_node_configuration
+        self.kubernetes_version = kubernetes_version
+
+
+class KubernetesClusterRestartNodeParameters(_serialization.Model):
+    """KubernetesClusterRestartNodeParameters represents the body of the request to restart the node
+    of a Kubernetes cluster.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar node_name: The name of the node to restart. Required.
+    :vartype node_name: str
+    """
+
+    _validation = {
+        "node_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "node_name": {"key": "nodeName", "type": "str"},
+    }
+
+    def __init__(self, *, node_name: str, **kwargs: Any) -> None:
+        """
+        :keyword node_name: The name of the node to restart. Required.
+        :paramtype node_name: str
+        """
+        super().__init__(**kwargs)
+        self.node_name = node_name
+
+
+class KubernetesLabel(_serialization.Model):
+    """KubernetesLabel represents a single entry for a Kubernetes label or taint such as those used on
+    a node or pod.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar key: The name of the label or taint. Required.
+    :vartype key: str
+    :ivar value: The value of the label or taint. Required.
+    :vartype value: str
+    """
+
+    _validation = {
+        "key": {"required": True},
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "key": {"key": "key", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(self, *, key: str, value: str, **kwargs: Any) -> None:
+        """
+        :keyword key: The name of the label or taint. Required.
+        :paramtype key: str
+        :keyword value: The value of the label or taint. Required.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.key = key
+        self.value = value
+
+
+class L2Network(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """L2Network represents a network that utilizes a single isolation domain set up for layer-2
+    resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.networkcloud.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar extended_location: The extended location of the cluster associated with the resource.
+     Required.
+    :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar associated_resource_ids: The list of resource IDs for the other Microsoft.NetworkCloud
+     resources that have attached this network.
+    :vartype associated_resource_ids: list[str]
     :ivar cluster_id: The resource ID of the Network Cloud cluster this L2 network is associated
      with.
     :vartype cluster_id: str
@@ -3812,11 +4712,12 @@ class L2Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
     :vartype detailed_status: str or ~azure.mgmt.networkcloud.models.L2NetworkDetailedStatus
     :ivar detailed_status_message: The descriptive message about the current detailed status.
     :vartype detailed_status_message: str
-    :ivar hybrid_aks_clusters_associated_ids: The list of Hybrid AKS cluster resource ID(s) that
-     are associated with this L2 network.
+    :ivar hybrid_aks_clusters_associated_ids: Field Deprecated. These fields will be empty/omitted.
+     The list of Hybrid AKS cluster resource ID(s) that are associated with this L2 network.
     :vartype hybrid_aks_clusters_associated_ids: list[str]
-    :ivar hybrid_aks_plugin_type: The network plugin type for Hybrid AKS. Known values are: "DPDK",
-     "SRIOV", and "OSDevice".
+    :ivar hybrid_aks_plugin_type: Field Deprecated. The field was previously optional, now it will
+     have no defined behavior and will be ignored. The network plugin type for Hybrid AKS. Known
+     values are: "DPDK", "SRIOV", and "OSDevice".
     :vartype hybrid_aks_plugin_type: str or ~azure.mgmt.networkcloud.models.HybridAksPluginType
     :ivar interface_name: The default interface name for this L2 network in the virtual machine.
      This name can be overridden by the name supplied in the network attachment configuration of
@@ -3828,8 +4729,9 @@ class L2Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
     :ivar provisioning_state: The provisioning state of the L2 network. Known values are:
      "Succeeded", "Failed", "Canceled", "Provisioning", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.networkcloud.models.L2NetworkProvisioningState
-    :ivar virtual_machines_associated_ids: The list of virtual machine resource ID(s), excluding
-     any Hybrid AKS virtual machines, that are currently using this L2 network.
+    :ivar virtual_machines_associated_ids: Field Deprecated. These fields will be empty/omitted.
+     The list of virtual machine resource ID(s), excluding any Hybrid AKS virtual machines, that are
+     currently using this L2 network.
     :vartype virtual_machines_associated_ids: list[str]
     """
 
@@ -3840,6 +4742,7 @@ class L2Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
         "system_data": {"readonly": True},
         "location": {"required": True},
         "extended_location": {"required": True},
+        "associated_resource_ids": {"readonly": True},
         "cluster_id": {"readonly": True},
         "detailed_status": {"readonly": True},
         "detailed_status_message": {"readonly": True},
@@ -3858,6 +4761,7 @@ class L2Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "associated_resource_ids": {"key": "properties.associatedResourceIds", "type": "[str]"},
         "cluster_id": {"key": "properties.clusterId", "type": "str"},
         "detailed_status": {"key": "properties.detailedStatus", "type": "str"},
         "detailed_status_message": {"key": "properties.detailedStatusMessage", "type": "str"},
@@ -3888,8 +4792,9 @@ class L2Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
         :keyword extended_location: The extended location of the cluster associated with the resource.
          Required.
         :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
-        :keyword hybrid_aks_plugin_type: The network plugin type for Hybrid AKS. Known values are:
-         "DPDK", "SRIOV", and "OSDevice".
+        :keyword hybrid_aks_plugin_type: Field Deprecated. The field was previously optional, now it
+         will have no defined behavior and will be ignored. The network plugin type for Hybrid AKS.
+         Known values are: "DPDK", "SRIOV", and "OSDevice".
         :paramtype hybrid_aks_plugin_type: str or ~azure.mgmt.networkcloud.models.HybridAksPluginType
         :keyword interface_name: The default interface name for this L2 network in the virtual machine.
          This name can be overridden by the name supplied in the network attachment configuration of
@@ -3901,6 +4806,7 @@ class L2Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.extended_location = extended_location
+        self.associated_resource_ids = None
         self.cluster_id = None
         self.detailed_status = None
         self.detailed_status_message = None
@@ -3910,6 +4816,49 @@ class L2Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
         self.l2_isolation_domain_id = l2_isolation_domain_id
         self.provisioning_state = None
         self.virtual_machines_associated_ids = None
+
+
+class L2NetworkAttachmentConfiguration(_serialization.Model):
+    """L2NetworkAttachmentConfiguration represents the configuration of the attachment of a Layer 2
+    network.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar network_id: The resource ID of the network that is being configured for attachment.
+     Required.
+    :vartype network_id: str
+    :ivar plugin_type: The indicator of how this network will be utilized by the Kubernetes
+     cluster. Known values are: "DPDK", "SRIOV", "OSDevice", "MACVLAN", and "IPVLAN".
+    :vartype plugin_type: str or ~azure.mgmt.networkcloud.models.KubernetesPluginType
+    """
+
+    _validation = {
+        "network_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "network_id": {"key": "networkId", "type": "str"},
+        "plugin_type": {"key": "pluginType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        network_id: str,
+        plugin_type: Optional[Union[str, "_models.KubernetesPluginType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword network_id: The resource ID of the network that is being configured for attachment.
+         Required.
+        :paramtype network_id: str
+        :keyword plugin_type: The indicator of how this network will be utilized by the Kubernetes
+         cluster. Known values are: "DPDK", "SRIOV", "OSDevice", "MACVLAN", and "IPVLAN".
+        :paramtype plugin_type: str or ~azure.mgmt.networkcloud.models.KubernetesPluginType
+        """
+        super().__init__(**kwargs)
+        self.network_id = network_id
+        self.plugin_type = plugin_type
 
 
 class L2NetworkList(_serialization.Model):
@@ -3968,8 +4917,8 @@ class L3Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3986,6 +4935,9 @@ class L3Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
     :ivar extended_location: The extended location of the cluster associated with the resource.
      Required.
     :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar associated_resource_ids: The list of resource IDs for the other Microsoft.NetworkCloud
+     resources that have attached this network.
+    :vartype associated_resource_ids: list[str]
     :ivar cluster_id: The resource ID of the Network Cloud cluster this L3 network is associated
      with.
     :vartype cluster_id: str
@@ -3994,15 +4946,17 @@ class L3Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
     :vartype detailed_status: str or ~azure.mgmt.networkcloud.models.L3NetworkDetailedStatus
     :ivar detailed_status_message: The descriptive message about the current detailed status.
     :vartype detailed_status_message: str
-    :ivar hybrid_aks_clusters_associated_ids: The list of Hybrid AKS cluster resource IDs that are
-     associated with this L3 network.
+    :ivar hybrid_aks_clusters_associated_ids: Field Deprecated. These fields will be empty/omitted.
+     The list of Hybrid AKS cluster resource IDs that are associated with this L3 network.
     :vartype hybrid_aks_clusters_associated_ids: list[str]
-    :ivar hybrid_aks_ipam_enabled: The indicator of whether or not to disable IPAM allocation on
-     the network attachment definition injected into the Hybrid AKS Cluster. Known values are:
-     "True" and "False".
+    :ivar hybrid_aks_ipam_enabled: Field Deprecated. The field was previously optional, now it will
+     have no defined behavior and will be ignored. The indicator of whether or not to disable IPAM
+     allocation on the network attachment definition injected into the Hybrid AKS Cluster. Known
+     values are: "True" and "False".
     :vartype hybrid_aks_ipam_enabled: str or ~azure.mgmt.networkcloud.models.HybridAksIpamEnabled
-    :ivar hybrid_aks_plugin_type: The network plugin type for Hybrid AKS. Known values are: "DPDK",
-     "SRIOV", and "OSDevice".
+    :ivar hybrid_aks_plugin_type: Field Deprecated. The field was previously optional, now it will
+     have no defined behavior and will be ignored. The network plugin type for Hybrid AKS. Known
+     values are: "DPDK", "SRIOV", and "OSDevice".
     :vartype hybrid_aks_plugin_type: str or ~azure.mgmt.networkcloud.models.HybridAksPluginType
     :ivar interface_name: The default interface name for this L3 network in the virtual machine.
      This name can be overridden by the name supplied in the network attachment configuration of
@@ -4025,8 +4979,9 @@ class L3Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
     :ivar provisioning_state: The provisioning state of the L3 network. Known values are:
      "Succeeded", "Failed", "Canceled", "Provisioning", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.networkcloud.models.L3NetworkProvisioningState
-    :ivar virtual_machines_associated_ids: The list of virtual machine resource IDs, excluding any
-     Hybrid AKS virtual machines, that are currently using this L3 network.
+    :ivar virtual_machines_associated_ids: Field Deprecated. These fields will be empty/omitted.
+     The list of virtual machine resource IDs, excluding any Hybrid AKS virtual machines, that are
+     currently using this L3 network.
     :vartype virtual_machines_associated_ids: list[str]
     :ivar vlan: The VLAN from the l3IsolationDomain that is used for this network. Required.
     :vartype vlan: int
@@ -4039,6 +4994,7 @@ class L3Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
         "system_data": {"readonly": True},
         "location": {"required": True},
         "extended_location": {"required": True},
+        "associated_resource_ids": {"readonly": True},
         "cluster_id": {"readonly": True},
         "detailed_status": {"readonly": True},
         "detailed_status_message": {"readonly": True},
@@ -4058,6 +5014,7 @@ class L3Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "associated_resource_ids": {"key": "properties.associatedResourceIds", "type": "[str]"},
         "cluster_id": {"key": "properties.clusterId", "type": "str"},
         "detailed_status": {"key": "properties.detailedStatus", "type": "str"},
         "detailed_status_message": {"key": "properties.detailedStatusMessage", "type": "str"},
@@ -4085,7 +5042,7 @@ class L3Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
         hybrid_aks_ipam_enabled: Union[str, "_models.HybridAksIpamEnabled"] = "True",
         hybrid_aks_plugin_type: Optional[Union[str, "_models.HybridAksPluginType"]] = None,
         interface_name: Optional[str] = None,
-        ip_allocation_type: Optional[Union[str, "_models.IpAllocationType"]] = None,
+        ip_allocation_type: Union[str, "_models.IpAllocationType"] = "DualStack",
         ipv4_connected_prefix: Optional[str] = None,
         ipv6_connected_prefix: Optional[str] = None,
         **kwargs: Any
@@ -4098,12 +5055,14 @@ class L3Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
         :keyword extended_location: The extended location of the cluster associated with the resource.
          Required.
         :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
-        :keyword hybrid_aks_ipam_enabled: The indicator of whether or not to disable IPAM allocation on
-         the network attachment definition injected into the Hybrid AKS Cluster. Known values are:
-         "True" and "False".
+        :keyword hybrid_aks_ipam_enabled: Field Deprecated. The field was previously optional, now it
+         will have no defined behavior and will be ignored. The indicator of whether or not to disable
+         IPAM allocation on the network attachment definition injected into the Hybrid AKS Cluster.
+         Known values are: "True" and "False".
         :paramtype hybrid_aks_ipam_enabled: str or ~azure.mgmt.networkcloud.models.HybridAksIpamEnabled
-        :keyword hybrid_aks_plugin_type: The network plugin type for Hybrid AKS. Known values are:
-         "DPDK", "SRIOV", and "OSDevice".
+        :keyword hybrid_aks_plugin_type: Field Deprecated. The field was previously optional, now it
+         will have no defined behavior and will be ignored. The network plugin type for Hybrid AKS.
+         Known values are: "DPDK", "SRIOV", and "OSDevice".
         :paramtype hybrid_aks_plugin_type: str or ~azure.mgmt.networkcloud.models.HybridAksPluginType
         :keyword interface_name: The default interface name for this L3 network in the virtual machine.
          This name can be overridden by the name supplied in the network attachment configuration of
@@ -4128,6 +5087,7 @@ class L3Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.extended_location = extended_location
+        self.associated_resource_ids = None
         self.cluster_id = None
         self.detailed_status = None
         self.detailed_status_message = None
@@ -4142,6 +5102,60 @@ class L3Network(TrackedResource):  # pylint: disable=too-many-instance-attribute
         self.provisioning_state = None
         self.virtual_machines_associated_ids = None
         self.vlan = vlan
+
+
+class L3NetworkAttachmentConfiguration(_serialization.Model):
+    """L3NetworkAttachmentConfiguration represents the configuration of the attachment of a Layer 3
+    network.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar ipam_enabled: The indication of whether this network will or will not perform IP address
+     management and allocate IP addresses when attached. Known values are: "True" and "False".
+    :vartype ipam_enabled: str or ~azure.mgmt.networkcloud.models.L3NetworkConfigurationIpamEnabled
+    :ivar network_id: The resource ID of the network that is being configured for attachment.
+     Required.
+    :vartype network_id: str
+    :ivar plugin_type: The indicator of how this network will be utilized by the Kubernetes
+     cluster. Known values are: "DPDK", "SRIOV", "OSDevice", "MACVLAN", and "IPVLAN".
+    :vartype plugin_type: str or ~azure.mgmt.networkcloud.models.KubernetesPluginType
+    """
+
+    _validation = {
+        "network_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "ipam_enabled": {"key": "ipamEnabled", "type": "str"},
+        "network_id": {"key": "networkId", "type": "str"},
+        "plugin_type": {"key": "pluginType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        network_id: str,
+        ipam_enabled: Union[str, "_models.L3NetworkConfigurationIpamEnabled"] = "False",
+        plugin_type: Optional[Union[str, "_models.KubernetesPluginType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword ipam_enabled: The indication of whether this network will or will not perform IP
+         address management and allocate IP addresses when attached. Known values are: "True" and
+         "False".
+        :paramtype ipam_enabled: str or
+         ~azure.mgmt.networkcloud.models.L3NetworkConfigurationIpamEnabled
+        :keyword network_id: The resource ID of the network that is being configured for attachment.
+         Required.
+        :paramtype network_id: str
+        :keyword plugin_type: The indicator of how this network will be utilized by the Kubernetes
+         cluster. Known values are: "DPDK", "SRIOV", "OSDevice", "MACVLAN", and "IPVLAN".
+        :paramtype plugin_type: str or ~azure.mgmt.networkcloud.models.KubernetesPluginType
+        """
+        super().__init__(**kwargs)
+        self.ipam_enabled = ipam_enabled
+        self.network_id = network_id
+        self.plugin_type = plugin_type
 
 
 class L3NetworkList(_serialization.Model):
@@ -4519,6 +5533,108 @@ class NetworkAttachment(_serialization.Model):
         self.network_attachment_name = network_attachment_name
 
 
+class NetworkConfiguration(_serialization.Model):
+    """NetworkConfiguration specifies the Kubernetes cluster network related configuration.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar attached_network_configuration: The configuration of networks being attached to the
+     cluster for use by the workloads that run on this Kubernetes cluster.
+    :vartype attached_network_configuration:
+     ~azure.mgmt.networkcloud.models.AttachedNetworkConfiguration
+    :ivar bgp_service_load_balancer_configuration: The configuration of the BGP service load
+     balancer for this Kubernetes cluster.
+    :vartype bgp_service_load_balancer_configuration:
+     ~azure.mgmt.networkcloud.models.BgpServiceLoadBalancerConfiguration
+    :ivar cloud_services_network_id: The resource ID of the associated Cloud Services network.
+     Required.
+    :vartype cloud_services_network_id: str
+    :ivar cni_network_id: The resource ID of the Layer 3 network that is used for creation of the
+     Container Networking Interface network. Required.
+    :vartype cni_network_id: str
+    :ivar dns_service_ip: The IP address assigned to the Kubernetes DNS service. It must be within
+     the Kubernetes service address range specified in service CIDR.
+    :vartype dns_service_ip: str
+    :ivar pod_cidrs: The CIDR notation IP ranges from which to assign pod IPs. One IPv4 CIDR is
+     expected for single-stack networking. Two CIDRs, one for each IP family (IPv4/IPv6), is
+     expected for dual-stack networking.
+    :vartype pod_cidrs: list[str]
+    :ivar service_cidrs: The CIDR notation IP ranges from which to assign service IPs. One IPv4
+     CIDR is expected for single-stack networking. Two CIDRs, one for each IP family (IPv4/IPv6), is
+     expected for dual-stack networking.
+    :vartype service_cidrs: list[str]
+    """
+
+    _validation = {
+        "cloud_services_network_id": {"required": True},
+        "cni_network_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "attached_network_configuration": {
+            "key": "attachedNetworkConfiguration",
+            "type": "AttachedNetworkConfiguration",
+        },
+        "bgp_service_load_balancer_configuration": {
+            "key": "bgpServiceLoadBalancerConfiguration",
+            "type": "BgpServiceLoadBalancerConfiguration",
+        },
+        "cloud_services_network_id": {"key": "cloudServicesNetworkId", "type": "str"},
+        "cni_network_id": {"key": "cniNetworkId", "type": "str"},
+        "dns_service_ip": {"key": "dnsServiceIp", "type": "str"},
+        "pod_cidrs": {"key": "podCidrs", "type": "[str]"},
+        "service_cidrs": {"key": "serviceCidrs", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        cloud_services_network_id: str,
+        cni_network_id: str,
+        attached_network_configuration: Optional["_models.AttachedNetworkConfiguration"] = None,
+        bgp_service_load_balancer_configuration: Optional["_models.BgpServiceLoadBalancerConfiguration"] = None,
+        dns_service_ip: Optional[str] = None,
+        pod_cidrs: Optional[List[str]] = None,
+        service_cidrs: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword attached_network_configuration: The configuration of networks being attached to the
+         cluster for use by the workloads that run on this Kubernetes cluster.
+        :paramtype attached_network_configuration:
+         ~azure.mgmt.networkcloud.models.AttachedNetworkConfiguration
+        :keyword bgp_service_load_balancer_configuration: The configuration of the BGP service load
+         balancer for this Kubernetes cluster.
+        :paramtype bgp_service_load_balancer_configuration:
+         ~azure.mgmt.networkcloud.models.BgpServiceLoadBalancerConfiguration
+        :keyword cloud_services_network_id: The resource ID of the associated Cloud Services network.
+         Required.
+        :paramtype cloud_services_network_id: str
+        :keyword cni_network_id: The resource ID of the Layer 3 network that is used for creation of
+         the Container Networking Interface network. Required.
+        :paramtype cni_network_id: str
+        :keyword dns_service_ip: The IP address assigned to the Kubernetes DNS service. It must be
+         within the Kubernetes service address range specified in service CIDR.
+        :paramtype dns_service_ip: str
+        :keyword pod_cidrs: The CIDR notation IP ranges from which to assign pod IPs. One IPv4 CIDR is
+         expected for single-stack networking. Two CIDRs, one for each IP family (IPv4/IPv6), is
+         expected for dual-stack networking.
+        :paramtype pod_cidrs: list[str]
+        :keyword service_cidrs: The CIDR notation IP ranges from which to assign service IPs. One IPv4
+         CIDR is expected for single-stack networking. Two CIDRs, one for each IP family (IPv4/IPv6), is
+         expected for dual-stack networking.
+        :paramtype service_cidrs: list[str]
+        """
+        super().__init__(**kwargs)
+        self.attached_network_configuration = attached_network_configuration
+        self.bgp_service_load_balancer_configuration = bgp_service_load_balancer_configuration
+        self.cloud_services_network_id = cloud_services_network_id
+        self.cni_network_id = cni_network_id
+        self.dns_service_ip = dns_service_ip
+        self.pod_cidrs = pod_cidrs
+        self.service_cidrs = service_cidrs
+
+
 class NetworkInterface(_serialization.Model):
     """NetworkInterface represents properties of the network interface.
 
@@ -4605,116 +5721,6 @@ class Nic(_serialization.Model):
         self.lldp_neighbor = None
         self.mac_address = None
         self.name = None
-
-
-class Node(_serialization.Model):
-    """Node denotes the list of node that utilizes configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar bare_metal_machine_id: The resource ID of the bare metal machine that hosts this node.
-    :vartype bare_metal_machine_id: str
-    :ivar image_id: The machine image last used to deploy this node.
-    :vartype image_id: str
-    :ivar network_attachments: The list of network attachments to the virtual machine.
-    :vartype network_attachments: list[~azure.mgmt.networkcloud.models.NetworkAttachment]
-    :ivar node_name: The name of this node, as realized in the Hybrid AKS cluster.
-    :vartype node_name: str
-    :ivar power_state: The power state (On | Off) of the node. Known values are: "On" and "Off".
-    :vartype power_state: str or ~azure.mgmt.networkcloud.models.HybridAksClusterMachinePowerState
-    """
-
-    _validation = {
-        "bare_metal_machine_id": {"readonly": True},
-        "image_id": {"readonly": True},
-        "network_attachments": {"readonly": True},
-        "node_name": {"readonly": True},
-        "power_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "bare_metal_machine_id": {"key": "bareMetalMachineId", "type": "str"},
-        "image_id": {"key": "imageId", "type": "str"},
-        "network_attachments": {"key": "networkAttachments", "type": "[NetworkAttachment]"},
-        "node_name": {"key": "nodeName", "type": "str"},
-        "power_state": {"key": "powerState", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.bare_metal_machine_id = None
-        self.image_id = None
-        self.network_attachments = None
-        self.node_name = None
-        self.power_state = None
-
-
-class NodeConfiguration(_serialization.Model):
-    """NodeConfiguration contains configuration for a VM associated with a node.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar agent_pool_id: The resource ID of the agent pool that contains the nodes in this
-     configuration.
-    :vartype agent_pool_id: str
-    :ivar agent_pool_name: The name of the agent pool that contains the nodes in this
-     configuration.
-    :vartype agent_pool_name: str
-    :ivar cpu_cores: The number of CPU cores in the virtual machine.
-    :vartype cpu_cores: int
-    :ivar disk_size_gb: The root disk size of the virtual machine in GB.
-    :vartype disk_size_gb: int
-    :ivar memory_size_gb: The memory size of the virtual machine in GB.
-    :vartype memory_size_gb: int
-    :ivar node_pool_name: Field deprecated, use agentPoolName instead. This field will be removed
-     in a future version but will reflect the name of the agent pool that contains the nodes in this
-     configuration.
-    :vartype node_pool_name: str
-    :ivar nodes: The list of nodes that utilize this configuration.
-    :vartype nodes: list[~azure.mgmt.networkcloud.models.Node]
-    :ivar vm_count: The number of virtual machines that use this configuration.
-    :vartype vm_count: int
-    :ivar vm_size: The name of the VM size supplied during the creation of the cluster.
-    :vartype vm_size: str
-    """
-
-    _validation = {
-        "agent_pool_id": {"readonly": True},
-        "agent_pool_name": {"readonly": True},
-        "cpu_cores": {"readonly": True},
-        "disk_size_gb": {"readonly": True},
-        "memory_size_gb": {"readonly": True},
-        "node_pool_name": {"readonly": True},
-        "nodes": {"readonly": True},
-        "vm_count": {"readonly": True},
-        "vm_size": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "agent_pool_id": {"key": "agentPoolId", "type": "str"},
-        "agent_pool_name": {"key": "agentPoolName", "type": "str"},
-        "cpu_cores": {"key": "cpuCores", "type": "int"},
-        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
-        "memory_size_gb": {"key": "memorySizeGB", "type": "int"},
-        "node_pool_name": {"key": "nodePoolName", "type": "str"},
-        "nodes": {"key": "nodes", "type": "[Node]"},
-        "vm_count": {"key": "vmCount", "type": "int"},
-        "vm_size": {"key": "vmSize", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.agent_pool_id = None
-        self.agent_pool_name = None
-        self.cpu_cores = None
-        self.disk_size_gb = None
-        self.memory_size_gb = None
-        self.node_pool_name = None
-        self.nodes = None
-        self.vm_count = None
-        self.vm_size = None
 
 
 class Operation(_serialization.Model):
@@ -4892,8 +5898,8 @@ class Rack(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5022,7 +6028,8 @@ class RackDefinition(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar availability_zone: The zone name used for this rack when created.
+    :ivar availability_zone: The zone name used for this rack when created. Availability zones are
+     used for workload placement.
     :vartype availability_zone: str
     :ivar bare_metal_machine_configuration_data: The unordered list of bare metal machine
      configuration.
@@ -5082,7 +6089,8 @@ class RackDefinition(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword availability_zone: The zone name used for this rack when created.
+        :keyword availability_zone: The zone name used for this rack when created. Availability zones
+         are used for workload placement.
         :paramtype availability_zone: str
         :keyword bare_metal_machine_configuration_data: The unordered list of bare metal machine
          configuration.
@@ -5193,8 +6201,8 @@ class RackSku(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5297,6 +6305,119 @@ class RackSkuList(_serialization.Model):
         self.value = value
 
 
+class ServiceLoadBalancerBgpPeer(_serialization.Model):
+    """ServiceLoadBalancerBgpPeer represents the configuration of the BGP service load balancer for
+    the Kubernetes cluster.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar bfd_enabled: The indicator of BFD enablement for this BgpPeer. Known values are: "True"
+     and "False".
+    :vartype bfd_enabled: str or ~azure.mgmt.networkcloud.models.BfdEnabled
+    :ivar bgp_multi_hop: The indicator to enable multi-hop peering support. Known values are:
+     "True" and "False".
+    :vartype bgp_multi_hop: str or ~azure.mgmt.networkcloud.models.BgpMultiHop
+    :ivar hold_time: The requested BGP hold time value. This field uses ISO 8601 duration format,
+     for example P1H.
+    :vartype hold_time: str
+    :ivar keep_alive_time: The requested BGP keepalive time value. This field uses ISO 8601
+     duration format, for example P1H.
+    :vartype keep_alive_time: str
+    :ivar my_asn: The autonomous system number used for the local end of the BGP session.
+    :vartype my_asn: int
+    :ivar name: The name used to identify this BGP peer for association with a BGP advertisement.
+     Required.
+    :vartype name: str
+    :ivar password: The authentication password for routers enforcing TCP MD5 authenticated
+     sessions.
+    :vartype password: str
+    :ivar peer_address: The IPv4 or IPv6 address used to connect this BGP session. Required.
+    :vartype peer_address: str
+    :ivar peer_asn: The autonomous system number expected from the remote end of the BGP session.
+     Required.
+    :vartype peer_asn: int
+    :ivar peer_port: The port used to connect this BGP session.
+    :vartype peer_port: int
+    """
+
+    _validation = {
+        "my_asn": {"maximum": 4294967295, "minimum": 0},
+        "name": {"required": True, "pattern": r"^[a-z0-9]([a-z0-9.-]{0,61}[a-z0-9]){0,1}$"},
+        "password": {"max_length": 80, "pattern": r"^[a-zA-Z0-9]{0,80}$"},
+        "peer_address": {"required": True},
+        "peer_asn": {"required": True, "maximum": 4294967295, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "bfd_enabled": {"key": "bfdEnabled", "type": "str"},
+        "bgp_multi_hop": {"key": "bgpMultiHop", "type": "str"},
+        "hold_time": {"key": "holdTime", "type": "str"},
+        "keep_alive_time": {"key": "keepAliveTime", "type": "str"},
+        "my_asn": {"key": "myAsn", "type": "int"},
+        "name": {"key": "name", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "peer_address": {"key": "peerAddress", "type": "str"},
+        "peer_asn": {"key": "peerAsn", "type": "int"},
+        "peer_port": {"key": "peerPort", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        peer_address: str,
+        peer_asn: int,
+        bfd_enabled: Optional[Union[str, "_models.BfdEnabled"]] = None,
+        bgp_multi_hop: Union[str, "_models.BgpMultiHop"] = "False",
+        hold_time: Optional[str] = None,
+        keep_alive_time: Optional[str] = None,
+        my_asn: Optional[int] = None,
+        password: Optional[str] = None,
+        peer_port: int = 179,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword bfd_enabled: The indicator of BFD enablement for this BgpPeer. Known values are:
+         "True" and "False".
+        :paramtype bfd_enabled: str or ~azure.mgmt.networkcloud.models.BfdEnabled
+        :keyword bgp_multi_hop: The indicator to enable multi-hop peering support. Known values are:
+         "True" and "False".
+        :paramtype bgp_multi_hop: str or ~azure.mgmt.networkcloud.models.BgpMultiHop
+        :keyword hold_time: The requested BGP hold time value. This field uses ISO 8601 duration
+         format, for example P1H.
+        :paramtype hold_time: str
+        :keyword keep_alive_time: The requested BGP keepalive time value. This field uses ISO 8601
+         duration format, for example P1H.
+        :paramtype keep_alive_time: str
+        :keyword my_asn: The autonomous system number used for the local end of the BGP session.
+        :paramtype my_asn: int
+        :keyword name: The name used to identify this BGP peer for association with a BGP
+         advertisement. Required.
+        :paramtype name: str
+        :keyword password: The authentication password for routers enforcing TCP MD5 authenticated
+         sessions.
+        :paramtype password: str
+        :keyword peer_address: The IPv4 or IPv6 address used to connect this BGP session. Required.
+        :paramtype peer_address: str
+        :keyword peer_asn: The autonomous system number expected from the remote end of the BGP
+         session. Required.
+        :paramtype peer_asn: int
+        :keyword peer_port: The port used to connect this BGP session.
+        :paramtype peer_port: int
+        """
+        super().__init__(**kwargs)
+        self.bfd_enabled = bfd_enabled
+        self.bgp_multi_hop = bgp_multi_hop
+        self.hold_time = hold_time
+        self.keep_alive_time = keep_alive_time
+        self.my_asn = my_asn
+        self.name = name
+        self.password = password
+        self.peer_address = peer_address
+        self.peer_asn = peer_asn
+        self.peer_port = peer_port
+
+
 class ServicePrincipalInformation(_serialization.Model):
     """ServicePrincipalInformation represents the details of the service principal to be used by the
     cluster during Arc Appliance installation.
@@ -5352,12 +6473,11 @@ class ServicePrincipalInformation(_serialization.Model):
 
 
 class SshPublicKey(_serialization.Model):
-    """SshPublicKey represents the public key used to authenticate with the virtual machine through
-    SSH.
+    """SshPublicKey represents the public key used to authenticate with a resource through SSH.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar key_data: The public ssh key of the user. Required.
+    :ivar key_data: The SSH public key data. Required.
     :vartype key_data: str
     """
 
@@ -5371,7 +6491,7 @@ class SshPublicKey(_serialization.Model):
 
     def __init__(self, *, key_data: str, **kwargs: Any) -> None:
         """
-        :keyword key_data: The public ssh key of the user. Required.
+        :keyword key_data: The SSH public key data. Required.
         :paramtype key_data: str
         """
         super().__init__(**kwargs)
@@ -5385,8 +6505,8 @@ class StorageAppliance(TrackedResource):  # pylint: disable=too-many-instance-at
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5806,39 +6926,6 @@ class StorageApplianceSkuSlot(_serialization.Model):
         self.model = None
 
 
-class StorageApplianceValidateHardwareParameters(_serialization.Model):
-    """StorageApplianceValidateHardwareParameters represents the body of the request to validate the
-    physical hardware of a storage appliance.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar validation_category: The category of hardware validation to perform. Required.
-     "BasicValidation"
-    :vartype validation_category: str or
-     ~azure.mgmt.networkcloud.models.StorageApplianceHardwareValidationCategory
-    """
-
-    _validation = {
-        "validation_category": {"required": True},
-    }
-
-    _attribute_map = {
-        "validation_category": {"key": "validationCategory", "type": "str"},
-    }
-
-    def __init__(
-        self, *, validation_category: Union[str, "_models.StorageApplianceHardwareValidationCategory"], **kwargs: Any
-    ) -> None:
-        """
-        :keyword validation_category: The category of hardware validation to perform. Required.
-         "BasicValidation"
-        :paramtype validation_category: str or
-         ~azure.mgmt.networkcloud.models.StorageApplianceHardwareValidationCategory
-        """
-        super().__init__(**kwargs)
-        self.validation_category = validation_category
-
-
 class StorageProfile(_serialization.Model):
     """StorageProfile represents information about a disk.
 
@@ -5967,8 +7054,8 @@ class TrunkedNetwork(TrackedResource):  # pylint: disable=too-many-instance-attr
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5985,6 +7072,9 @@ class TrunkedNetwork(TrackedResource):  # pylint: disable=too-many-instance-attr
     :ivar extended_location: The extended location of the cluster associated with the resource.
      Required.
     :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar associated_resource_ids: The list of resource IDs for the other Microsoft.NetworkCloud
+     resources that have attached this network.
+    :vartype associated_resource_ids: list[str]
     :ivar cluster_id: The resource ID of the Network Cloud cluster this trunked network is
      associated with.
     :vartype cluster_id: str
@@ -5993,11 +7083,12 @@ class TrunkedNetwork(TrackedResource):  # pylint: disable=too-many-instance-attr
     :vartype detailed_status: str or ~azure.mgmt.networkcloud.models.TrunkedNetworkDetailedStatus
     :ivar detailed_status_message: The descriptive message about the current detailed status.
     :vartype detailed_status_message: str
-    :ivar hybrid_aks_clusters_associated_ids: The list of Hybrid AKS cluster resource IDs that are
-     associated with this trunked network.
+    :ivar hybrid_aks_clusters_associated_ids: Field Deprecated. These fields will be empty/omitted.
+     The list of Hybrid AKS cluster resource IDs that are associated with this trunked network.
     :vartype hybrid_aks_clusters_associated_ids: list[str]
-    :ivar hybrid_aks_plugin_type: The network plugin type for Hybrid AKS. Known values are: "DPDK",
-     "SRIOV", and "OSDevice".
+    :ivar hybrid_aks_plugin_type: Field Deprecated. The field was previously optional, now it will
+     have no defined behavior and will be ignored. The network plugin type for Hybrid AKS. Known
+     values are: "DPDK", "SRIOV", and "OSDevice".
     :vartype hybrid_aks_plugin_type: str or ~azure.mgmt.networkcloud.models.HybridAksPluginType
     :ivar interface_name: The default interface name for this trunked network in the virtual
      machine. This name can be overridden by the name supplied in the network attachment
@@ -6011,8 +7102,9 @@ class TrunkedNetwork(TrackedResource):  # pylint: disable=too-many-instance-attr
      "Succeeded", "Failed", "Canceled", "Provisioning", and "Accepted".
     :vartype provisioning_state: str or
      ~azure.mgmt.networkcloud.models.TrunkedNetworkProvisioningState
-    :ivar virtual_machines_associated_ids: The list of virtual machine resource IDs, excluding any
-     Hybrid AKS virtual machines, that are currently using this trunked network.
+    :ivar virtual_machines_associated_ids: Field Deprecated. These fields will be empty/omitted.
+     The list of virtual machine resource IDs, excluding any Hybrid AKS virtual machines, that are
+     currently using this trunked network.
     :vartype virtual_machines_associated_ids: list[str]
     :ivar vlans: The list of vlans that are selected from the isolation domains for trunking.
      Required.
@@ -6026,6 +7118,7 @@ class TrunkedNetwork(TrackedResource):  # pylint: disable=too-many-instance-attr
         "system_data": {"readonly": True},
         "location": {"required": True},
         "extended_location": {"required": True},
+        "associated_resource_ids": {"readonly": True},
         "cluster_id": {"readonly": True},
         "detailed_status": {"readonly": True},
         "detailed_status_message": {"readonly": True},
@@ -6045,6 +7138,7 @@ class TrunkedNetwork(TrackedResource):  # pylint: disable=too-many-instance-attr
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "associated_resource_ids": {"key": "properties.associatedResourceIds", "type": "[str]"},
         "cluster_id": {"key": "properties.clusterId", "type": "str"},
         "detailed_status": {"key": "properties.detailedStatus", "type": "str"},
         "detailed_status_message": {"key": "properties.detailedStatusMessage", "type": "str"},
@@ -6077,8 +7171,9 @@ class TrunkedNetwork(TrackedResource):  # pylint: disable=too-many-instance-attr
         :keyword extended_location: The extended location of the cluster associated with the resource.
          Required.
         :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
-        :keyword hybrid_aks_plugin_type: The network plugin type for Hybrid AKS. Known values are:
-         "DPDK", "SRIOV", and "OSDevice".
+        :keyword hybrid_aks_plugin_type: Field Deprecated. The field was previously optional, now it
+         will have no defined behavior and will be ignored. The network plugin type for Hybrid AKS.
+         Known values are: "DPDK", "SRIOV", and "OSDevice".
         :paramtype hybrid_aks_plugin_type: str or ~azure.mgmt.networkcloud.models.HybridAksPluginType
         :keyword interface_name: The default interface name for this trunked network in the virtual
          machine. This name can be overridden by the name supplied in the network attachment
@@ -6094,6 +7189,7 @@ class TrunkedNetwork(TrackedResource):  # pylint: disable=too-many-instance-attr
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.extended_location = extended_location
+        self.associated_resource_ids = None
         self.cluster_id = None
         self.detailed_status = None
         self.detailed_status_message = None
@@ -6104,6 +7200,49 @@ class TrunkedNetwork(TrackedResource):  # pylint: disable=too-many-instance-attr
         self.provisioning_state = None
         self.virtual_machines_associated_ids = None
         self.vlans = vlans
+
+
+class TrunkedNetworkAttachmentConfiguration(_serialization.Model):
+    """TrunkedNetworkAttachmentConfiguration represents the configuration of the attachment of a
+    trunked network.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar network_id: The resource ID of the network that is being configured for attachment.
+     Required.
+    :vartype network_id: str
+    :ivar plugin_type: The indicator of how this network will be utilized by the Kubernetes
+     cluster. Known values are: "DPDK", "SRIOV", "OSDevice", "MACVLAN", and "IPVLAN".
+    :vartype plugin_type: str or ~azure.mgmt.networkcloud.models.KubernetesPluginType
+    """
+
+    _validation = {
+        "network_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "network_id": {"key": "networkId", "type": "str"},
+        "plugin_type": {"key": "pluginType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        network_id: str,
+        plugin_type: Optional[Union[str, "_models.KubernetesPluginType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword network_id: The resource ID of the network that is being configured for attachment.
+         Required.
+        :paramtype network_id: str
+        :keyword plugin_type: The indicator of how this network will be utilized by the Kubernetes
+         cluster. Known values are: "DPDK", "SRIOV", "OSDevice", "MACVLAN", and "IPVLAN".
+        :paramtype plugin_type: str or ~azure.mgmt.networkcloud.models.KubernetesPluginType
+        """
+        super().__init__(**kwargs)
+        self.network_id = network_id
+        self.plugin_type = plugin_type
 
 
 class TrunkedNetworkList(_serialization.Model):
@@ -6212,8 +7351,8 @@ class VirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-attr
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -6233,6 +7372,8 @@ class VirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-attr
     :ivar admin_username: The name of the administrator to which the ssh public keys will be added
      into the authorized keys. Required.
     :vartype admin_username: str
+    :ivar availability_zone: The cluster availability zone containing this virtual machine.
+    :vartype availability_zone: str
     :ivar bare_metal_machine_id: The resource ID of the bare metal machine the virtual machine has
      landed to.
     :vartype bare_metal_machine_id: str
@@ -6247,7 +7388,8 @@ class VirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-attr
     :ivar cpu_cores: The number of CPU cores in the virtual machine. Required.
     :vartype cpu_cores: int
     :ivar detailed_status: The more detailed status of the virtual machine. Known values are:
-     "Error", "Available", and "Provisioning".
+     "Available", "Error", "Provisioning", "Running", "Scheduling", "Stopped", "Terminating", and
+     "Unknown".
     :vartype detailed_status: str or ~azure.mgmt.networkcloud.models.VirtualMachineDetailedStatus
     :ivar detailed_status_message: The descriptive message about the current detailed status.
     :vartype detailed_status_message: str
@@ -6264,7 +7406,8 @@ class VirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-attr
     :vartype network_data: str
     :ivar placement_hints: The scheduling hints for the virtual machine.
     :vartype placement_hints: list[~azure.mgmt.networkcloud.models.VirtualMachinePlacementHint]
-    :ivar power_state: The power state of the virtual machine. Known values are: "On" and "Off".
+    :ivar power_state: The power state of the virtual machine. Known values are: "On", "Off", and
+     "Unknown".
     :vartype power_state: str or ~azure.mgmt.networkcloud.models.VirtualMachinePowerState
     :ivar provisioning_state: The provisioning state of the virtual machine. Known values are:
      "Succeeded", "Failed", "Canceled", "Provisioning", and "Accepted".
@@ -6303,6 +7446,7 @@ class VirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-attr
         "location": {"required": True},
         "extended_location": {"required": True},
         "admin_username": {"required": True, "max_length": 32, "min_length": 1, "pattern": r"^[a-z_][a-z0-9_]{0,31}$"},
+        "availability_zone": {"readonly": True},
         "bare_metal_machine_id": {"readonly": True},
         "cloud_services_network_attachment": {"required": True},
         "cluster_id": {"readonly": True},
@@ -6326,6 +7470,7 @@ class VirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-attr
         "location": {"key": "location", "type": "str"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
         "admin_username": {"key": "properties.adminUsername", "type": "str"},
+        "availability_zone": {"key": "properties.availabilityZone", "type": "str"},
         "bare_metal_machine_id": {"key": "properties.bareMetalMachineId", "type": "str"},
         "boot_method": {"key": "properties.bootMethod", "type": "str"},
         "cloud_services_network_attachment": {
@@ -6438,6 +7583,7 @@ class VirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-attr
         super().__init__(tags=tags, location=location, **kwargs)
         self.extended_location = extended_location
         self.admin_username = admin_username
+        self.availability_zone = None
         self.bare_metal_machine_id = None
         self.boot_method = boot_method
         self.cloud_services_network_attachment = cloud_services_network_attachment
@@ -6655,8 +7801,8 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str

@@ -76,7 +76,6 @@ from ._models import ResultInformation
 from ._models import SendDtmfCompleted
 from ._models import SendDtmfFailed
 from ._models import SendDtmfRequest
-from ._models import SensitiveFlag
 from ._models import SpeechOptions
 from ._models import SpeechResult
 from ._models import SsmlSource
@@ -184,7 +183,6 @@ __all__ = [
     "SendDtmfCompleted",
     "SendDtmfFailed",
     "SendDtmfRequest",
-    "SensitiveFlag",
     "SpeechOptions",
     "SpeechResult",
     "SsmlSource",

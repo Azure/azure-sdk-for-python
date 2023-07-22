@@ -103,11 +103,11 @@ class ForecastingJob(AutoMLTabular):
     ) -> None:
         """Manage parameters used by forecasting tasks.
 
-        :param time_column_name:
+        :keyword time_column_name:
             The name of the time column. This parameter is required when forecasting to specify the datetime
             column in the input data used for building the time series and inferring its frequency.
         :type time_column_name: str
-        :param forecast_horizon:
+        :keyword forecast_horizon:
             The desired maximum forecast horizon in units of time-series frequency. The default value is 1.
 
             Units are based on the time interval of your training data, e.g., monthly, weekly that the forecaster
@@ -115,13 +115,13 @@ class ForecastingJob(AutoMLTabular):
             setting forecasting parameters, see `Auto-train a time-series forecast model <https://docs.microsoft.com/
             azure/machine-learning/how-to-auto-train-forecast>`_.
         :type forecast_horizon: int or str
-        :param time_series_id_column_names:
+        :keyword time_series_id_column_names:
             The names of columns used to group a timeseries.
             It can be used to create multiple series. If time series id column names is not defined or
             the identifier columns specified do not identify all the series in the dataset, the time series identifiers
             will be automatically created for your dataset.
         :type time_series_id_column_names: str or list(str)
-        :param target_lags:
+        :keyword target_lags:
             The number of past periods to lag from the target column. By default the lags are turned off.
 
             When forecasting, this parameter represents the number of rows to lag the target values based
@@ -153,9 +153,9 @@ class ForecastingJob(AutoMLTabular):
                auto correlation will designate the lag. If first significant element (value correlate with
                itself) is followed by insignificant, the lag will be 0 and we will not use look back features.
         :type target_lags: int, str, or list(int)
-        :param feature_lags: Flag for generating lags for the numeric features with 'auto' or None.
+        :keyword feature_lags: Flag for generating lags for the numeric features with 'auto' or None.
         :type feature_lags: str or None
-        :param target_rolling_window_size:
+        :keyword target_rolling_window_size:
             The number of past periods used to create a rolling window average of the target column.
 
             When forecasting, this parameter represents `n` historical periods to use to generate forecasted values,
@@ -164,18 +164,18 @@ class ForecastingJob(AutoMLTabular):
             If set to 'auto', rolling window will be estimated as the last
             value where the PACF is more then the significance threshold. Please see target_lags section for details.
         :type target_rolling_window_size: int, str or None
-        :param country_or_region_for_holidays: The country/region used to generate holiday features.
+        :keyword country_or_region_for_holidays: The country/region used to generate holiday features.
             These should be ISO 3166 two-letter country/region codes, for example 'US' or 'GB'.
         :type country_or_region_for_holidays: str or None
-        :param use_stl: Configure STL Decomposition of the time-series target column.
+        :keyword use_stl: Configure STL Decomposition of the time-series target column.
                     use_stl can take three values: None (default) - no stl decomposition, 'season' - only generate
                     season component and season_trend - generate both season and trend components.
         :type use_stl: str or None
-        :param seasonality: Set time series seasonality as an integer multiple of the series frequency.
+        :keyword seasonality: Set time series seasonality as an integer multiple of the series frequency.
                     If seasonality is set to 'auto', it will be inferred.
                     If set to None, the time series is assumed non-seasonal which is equivalent to seasonality=1.
         :type seasonality: int, str or None
-        :param short_series_handling_config:
+        :keyword short_series_handling_config:
             The parameter defining how if AutoML should handle short time series.
 
             Possible values: 'auto' (default), 'pad', 'drop' and None.
@@ -237,7 +237,7 @@ class ForecastingJob(AutoMLTabular):
             +-----------+------------------------+--------------------+----------------------------------+
 
         :type short_series_handling_config: str or None
-        :param frequency: Forecast frequency.
+        :keyword frequency: Forecast frequency.
 
             When forecasting, this parameter represents the period with which the forecast is desired,
             for example daily, weekly, yearly, etc. The forecast frequency is dataset frequency by default.
@@ -248,7 +248,7 @@ class ForecastingJob(AutoMLTabular):
             Please refer to pandas documentation for more information:
             https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#dateoffset-objects
         :type frequency: str or None
-        :param target_aggregate_function: The function to be used to aggregate the time series target
+        :keyword target_aggregate_function: The function to be used to aggregate the time series target
                                             column to conform to a user specified frequency. If the
                                             target_aggregation_function is set, but the freq parameter
                                             is not set, the error is raised. The possible target
@@ -283,7 +283,7 @@ class ForecastingJob(AutoMLTabular):
                 +----------------+-----------------------------+---------------------------------------------+
 
         :type target_aggregate_function: str or None
-        :param cv_step_size:
+        :keyword cv_step_size:
             Number of periods between the origin_time of one CV fold and the next fold. For
             example, if `n_step` = 3 for daily data, the origin time for each fold will be
             three days apart.

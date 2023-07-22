@@ -26,8 +26,8 @@ from azure.communication.jobrouter._shared.policy import HMACCredentialsPolicy
 from .._datetimeutils import _convert_str_to_datetime  # pylint:disable=protected-access
 from .._generated.aio import AzureCommunicationJobRouterService
 from .._enums import (
-    RouterWorkerStateSelector,
-    RouterJobStatusSelector,
+    RouterWorkerState,
+    RouterJobStatus,
 )
 from .._models import (
     RouterQueueStatistics,
@@ -62,6 +62,11 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
 
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -100,7 +105,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Host URL must be a string")
+            raise ValueError("Host URL must be a string") # pylint:disable=raise-missing-from
 
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
@@ -154,7 +159,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :param str queue_id: Id of the queue.
 
-        :return: QueueStatistics
+        :return: Instance of RouterQueueStatistics
         :rtype: ~azure.communication.jobrouter.RouterQueueStatistics
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -195,7 +200,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :param router_worker: An instance of RouterWorker.
         :type router_worker: ~azure.communication.jobrouter.RouterWorker
 
-        :return: RouterWorker
+        :return: Instance of RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -234,7 +239,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
           Please provide either this or individual keyword parameters.
         :type router_worker: ~azure.communication.jobrouter.RouterWorker
 
-        :return: RouterWorker
+        :return: Instance of RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -277,7 +282,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
 
-        :return: RouterWorker
+        :return: Instance of RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -322,7 +327,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             class instance will not be considered if they are also specified in keyword arguments.
         :paramtype router_worker: Optional[~azure.communication.jobrouter.RouterWorker]
 
-        :return: RouterWorker
+        :return: Instance of RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -387,7 +392,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :param str worker_id: Id of the worker.
 
-        :return: RouterWorker
+        :return: Instance of RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -414,7 +419,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
     def list_workers(
             self,
             *,
-            state: Optional[Union[str, RouterWorkerStateSelector]] = RouterWorkerStateSelector.ALL,
+            state: Optional[Union[str, RouterWorkerState, Literal["all"]]] = "all",
             channel_id: Optional[str] = None,
             queue_id: Optional[str] = None,
             has_capacity: Optional[bool] = None,
@@ -425,7 +430,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :keyword state: If specified, select workers by worker status. Default value is "all".
           Accepted value(s): active, draining, inactive, all
-        :paramtype state: Optional[Union[str, ~azure.communication.jobrouter.RouterWorkerStateSelector]]
+        :paramtype state: Optional[Union[str, ~azure.communication.jobrouter.RouterWorkerState, Literal["all"]]]
 
         :keyword channel_id: If specified, select workers who have a channel configuration
            with this channel. Default value is None.
@@ -441,8 +446,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
 
-        :return: An iterator like instance of PagedWorker
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.PagedWorker]
+        :return: An iterator like instance of RouterWorkerItem
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.RouterWorkerItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -529,7 +534,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :param router_job: An instance of RouterJob.
         :type router_job: ~azure.communication.jobrouter.RouterJob
 
-        :return: RouterJob
+        :return: Instance of RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -568,7 +573,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
           Please provide either this or individual keyword parameters.
         :type router_job: ~azure.communication.jobrouter.RouterJob
 
-        :return: RouterJob
+        :return: Instance of RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -632,7 +637,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :paramtype matching_mode: Optional[~azure.communication.jobrouter.JobMatchingMode]
 
 
-        :return: RouterJob
+        :return: Instance of RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -689,7 +694,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :paramtype matching_mode: Optional[~azure.communication.jobrouter.JobMatchingMode]
 
 
-        :return: RouterJob
+        :return: Instance of RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -742,7 +747,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :param str job_id: Id of the job.
 
-        :return: RouterJob
+        :return: Instance of RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -769,7 +774,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
     def list_jobs(
             self,
             *,
-            status: Optional[Union[str, RouterJobStatusSelector]] = RouterJobStatusSelector.ALL,
+            status: Optional[Union[str, RouterJobStatus, Literal["all", "active"] ]] = "all",
             channel_id: Optional[str] = None,
             queue_id: Optional[str] = None,
             classification_policy_id: Optional[str] = None,
@@ -783,7 +788,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :keyword status: If specified, filter jobs by status. Default value is "all".
             Accepted value(s): pendingClassification, queued, assigned, completed, closed, cancelled,
             classificationFailed, active, all
-        :paramtype status: Optional[Union[str, ~azure.communication.jobrouter.RouterJobStatusSelector]]
+        :paramtype status: Optional[Union[str, ~azure.communication.jobrouter.RouterJobStatus, Literal["all","active"]]]
 
         :keyword channel_id: If specified, filter jobs by channel. Default value is None.
         :paramtype channel_id: Optional[str]
@@ -902,7 +907,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :param str job_id: Id of the job.
 
-        :return: JobPositionDetails
+        :return: Instance of RouterJobPositionDetails
         :rtype: ~azure.communication.jobrouter.RouterJobPositionDetails
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -932,6 +937,10 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             self,
             job_id: str,
             assignment_id: str,
+            *,
+            disposition_code: Optional[str] = None,
+            close_at: Optional[datetime] = None,
+            note: Optional[str] = None,
             **kwargs: Any
     ) -> JSON:
         """Closes a completed job.
@@ -953,7 +962,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
          current timestamp. Default value is None.
         :paramtype note: Optional[str]
 
-        :return: CloseJobResult
+        :return: Instance of MutableMapping[str, Any]
         :rtype: MutableMapping[str, Any]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -971,10 +980,6 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         if not assignment_id:
             raise ValueError("assignment_id cannot be None.")
-
-        disposition_code = kwargs.pop('disposition_code', None)
-        close_at = kwargs.pop('close_at', None)
-        note = kwargs.pop('note', None)
 
         close_job_request = CloseJobRequest(
             assignment_id = assignment_id,
@@ -995,6 +1000,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             self,
             job_id: str,
             assignment_id: str,
+            *,
+            note: Optional[str] = None,
             **kwargs: Any
     ) -> JSON:
         """Completes an assigned job.
@@ -1026,8 +1033,6 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         if not assignment_id:
             raise ValueError("assignment_id cannot be None.")
 
-        note = kwargs.pop('note', None)
-
         complete_job_request = CompleteJobRequest(
             assignment_id = assignment_id,
             note = note
@@ -1044,6 +1049,9 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
     async def cancel_job(
             self,
             job_id: str,
+            *,
+            disposition_code: Optional[str] = None,
+            note: Optional[str] = None,
             **kwargs: Any
     ) -> JSON:
         """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
@@ -1059,8 +1067,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
          If not provided, default value of "Cancelled" is set. Default value is None.
         :paramtype disposition_code: Optional[str]
 
-        :return: CancelJobResult
-        :rtype: ~azure.communication.jobrouter.CancelJobResult
+        :return: Instance of MutableMapping[str, Any]
+        :rtype: MutableMapping[str, Any]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1075,9 +1083,6 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         if not job_id:
             raise ValueError("job_id cannot be None.")
-
-        note = kwargs.pop('note', None)
-        disposition_code = kwargs.pop('disposition_code', None)
 
         cancel_job_request = CancelJobRequest(
             note = note,
@@ -1101,7 +1106,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :param str job_id: Id of the job.
 
-        :return: ReclassifyJobResult
+        :return: Instance of MutableMapping[str, Any]
         :rtype: MutableMapping[str, Any]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -1123,7 +1128,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         )
 
     @distributed_trace
-    async def unassign_job(
+    async def unassign_job( # pylint: disable=client-method-missing-tracing-decorator-async
             self,
             job_id: str,
             assignment_id: str,
@@ -1136,10 +1141,11 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :param str job_id: Id of the job.
         :param str assignment_id: Id of the assignment.
 
-        :keyword suspend_matching: The name of this policy.
+        :keyword suspend_matching: If set to true, then the job is not queued for
+         re-matching with a worker.
         :paramtype suspend_matching: Optional[bool]
 
-        :return: UnassignJobResult
+        :return: Instance of UnassignJobResult
         :rtype: ~azure.communication.jobrouter.UnassignJobResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -1190,7 +1196,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :param offer_id: Id of the offer.
         :type offer_id: str
 
-        :return: AcceptJobOfferResult
+        :return: Instance of AcceptJobOfferResult
         :rtype: ~azure.communication.jobrouter.AcceptJobOfferResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -1233,14 +1239,14 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :param offer_id: Id of the offer.
         :type offer_id: str
 
-        :keyword retry_offer_at: If the reoffer time is not provided, then this job will not be re-offered to the
-        worker who declined this job unless the worker is de-registered and re-registered.  If a reoffer time is
+        :keyword retry_offer_at: If the retry_offer_at is not provided, then this job will not be re-offered to the
+        worker who declined this job unless the worker is de-registered and re-registered.  If a retry_offer_at is
         provided, then the job will be re-matched to eligible workers after the reoffer time.  The worker that declined
         the job will also be eligible for the job at that time.
         :paramtype retry_offer_at: Optional[~datetime.datetime]
 
-        :return: DeclineJobOfferResult
-        :rtype: ~azure.communication.jobrouter.DeclineJobOfferResult
+        :return: Instance of MutableMapping[str, Any]
+        :rtype: MutableMapping[str, Any]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:

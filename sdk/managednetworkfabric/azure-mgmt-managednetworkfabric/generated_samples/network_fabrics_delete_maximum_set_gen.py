@@ -26,15 +26,15 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="70A68989-24C0-4FA7-B1B2-8A2BB6D10CA8",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     client.network_fabrics.begin_delete(
-        resource_group_name="rgNetworkFabrics",
-        network_fabric_name="lrhjxlxlhgvufessdcuetcwnto",
+        resource_group_name="example-rg",
+        network_fabric_name="example-fabric",
     ).result()
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/NetworkFabrics_Delete_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/NetworkFabrics_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

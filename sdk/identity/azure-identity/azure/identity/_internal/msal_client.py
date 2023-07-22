@@ -72,12 +72,12 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
         self.__exit__()
 
     def post(
-            self,
-            url: str,
-            params: Optional[Dict[str, str]] = None,
-            data: Optional[RequestData] = None,
-            headers: Optional[Dict[str, str]] = None,
-            **kwargs: Any
+        self,
+        url: str,
+        params: Optional[Dict[str, str]] = None,
+        data: Optional[RequestData] = None,
+        headers: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> MsalResponse:
         # pylint:disable=unused-argument
         request = HttpRequest("POST", url, headers=headers)
@@ -98,11 +98,7 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
         return MsalResponse(response)
 
     def get(
-            self,
-            url: str,
-            params: Optional[Dict[str, str]] = None,
-            headers: Optional[Dict[str, str]] = None,
-            **kwargs: Any
+        self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> MsalResponse:
         # pylint:disable=unused-argument
         request = HttpRequest("GET", url, headers=headers)

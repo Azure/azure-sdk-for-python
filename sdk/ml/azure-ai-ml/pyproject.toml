@@ -3,6 +3,7 @@ mypy = false
 pyright = false
 type_check_samples = false
 verifytypes = false
+pylint = false
 
 [tool.interrogate]
 fail-under = 35

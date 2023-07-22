@@ -34,8 +34,8 @@ class ClassificationPolicySamplesAsync(object):
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
         from azure.communication.jobrouter import (
             ClassificationPolicy,
-            StaticRule,
-            ExpressionRule,
+            StaticRouterRule,
+            ExpressionRouterRule,
             StaticQueueSelectorAttachment,
             ConditionalQueueSelectorAttachment,
             RouterQueueSelector,
@@ -52,7 +52,7 @@ class ClassificationPolicySamplesAsync(object):
             classification_policy: ClassificationPolicy = await router_admin_client.create_classification_policy(
                 classification_policy_id = policy_id,
                 classification_policy = ClassificationPolicy(
-                    prioritization_rule = StaticRule(value = 10),
+                    prioritization_rule = StaticRouterRule(value = 10),
                     queue_selectors = [
                         StaticQueueSelectorAttachment(
                             queue_selector = RouterQueueSelector(
@@ -62,7 +62,7 @@ class ClassificationPolicySamplesAsync(object):
                             )
                         ),
                         ConditionalQueueSelectorAttachment(
-                            condition = ExpressionRule(expression = "If(job.Product = \"O365\", true, false)"),
+                            condition = ExpressionRouterRule(expression = "If(job.Product = \"O365\", true, false)"),
                             queue_selectors = [
                                 RouterQueueSelector(key = "Product", label_operator = LabelOperator.EQUAL, value = "O365"),
                                 RouterQueueSelector(key = "QGroup", label_operator = LabelOperator.EQUAL, value = "NA_O365")
@@ -71,7 +71,7 @@ class ClassificationPolicySamplesAsync(object):
                     ],
                     worker_selectors = [
                         ConditionalWorkerSelectorAttachment(
-                            condition = ExpressionRule(expression = "If(job.Product = \"O365\", true, false)"),
+                            condition = ExpressionRouterRule(expression = "If(job.Product = \"O365\", true, false)"),
                             worker_selectors = [
                                 RouterWorkerSelector(key = "Skill_O365", label_operator = LabelOperator.EQUAL, value = True),
                                 RouterWorkerSelector(
@@ -82,7 +82,7 @@ class ClassificationPolicySamplesAsync(object):
                             ]
                         ),
                         ConditionalWorkerSelectorAttachment(
-                            condition = ExpressionRule(expression = "If(job.HighPriority = \"true\", true, false)"),
+                            condition = ExpressionRouterRule(expression = "If(job.HighPriority = \"true\", true, false)"),
                             worker_selectors = [
                                 RouterWorkerSelector(
                                     key = "Skill_O365_Lvl",
@@ -106,7 +106,7 @@ class ClassificationPolicySamplesAsync(object):
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
         from azure.communication.jobrouter import (
             ClassificationPolicy,
-            ExpressionRule,
+            ExpressionRouterRule,
         )
 
         # set `connection_string` to an existing ACS endpoint
@@ -117,7 +117,7 @@ class ClassificationPolicySamplesAsync(object):
             updated_classification_policy: ClassificationPolicy = \
                 await router_admin_client.update_classification_policy(
                     classification_policy_id = policy_id,
-                    prioritization_rule = ExpressionRule(
+                    prioritization_rule = ExpressionRouterRule(
                         expression = "If(job.HighPriority = \"true\", 50, 10)"
                     )
                 )

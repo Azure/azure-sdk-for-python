@@ -52,25 +52,6 @@ class RouterJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WAITING_FOR_ACTIVATION = "waitingForActivation"
 
 
-class RouterJobStatusSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RouterJobStatusSelector."""
-
-    ALL = "all"
-    PENDING_CLASSIFICATION = "pendingClassification"
-    QUEUED = "queued"
-    ASSIGNED = "assigned"
-    COMPLETED = "completed"
-    CLOSED = "closed"
-    CANCELLED = "cancelled"
-    CLASSIFICATION_FAILED = "classificationFailed"
-    CREATED = "created"
-    PENDING_SCHEDULE = "pendingSchedule"
-    SCHEDULED = "scheduled"
-    SCHEDULE_FAILED = "scheduleFailed"
-    WAITING_FOR_ACTIVATION = "waitingForActivation"
-    ACTIVE = "active"
-
-
 class RouterWorkerSelectorStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the worker selector."""
 
@@ -84,15 +65,6 @@ class RouterWorkerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACTIVE = "active"
     DRAINING = "draining"
     INACTIVE = "inactive"
-
-
-class RouterWorkerStateSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RouterWorkerStateSelector."""
-
-    ACTIVE = "active"
-    DRAINING = "draining"
-    INACTIVE = "inactive"
-    ALL = "all"
 
 
 class ScoringRuleParameterSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):

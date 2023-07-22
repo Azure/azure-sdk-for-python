@@ -184,6 +184,15 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
 )
 
 
+class DefaultOpenEncoding:
+    """Enum that captures SDK's default values for the encoding param of open(...)"""
+
+    READ = "utf-8-sig"
+    """SDK Default Encoding when reading a file"""
+    WRITE = "utf-8"
+    """SDK Default Encoding when writing a file"""
+
+
 class AzureMLResourceType:
     """AzureMLResourceType is a class that defines the resource types that are supported by the SDK/CLI."""
 

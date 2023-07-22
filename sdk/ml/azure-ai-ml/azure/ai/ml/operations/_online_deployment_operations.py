@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,no-self-use,broad-except
+# pylint: disable=protected-access,broad-except
 
 import random
 import re
@@ -93,11 +93,11 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
         :param deployment: the deployment entity
         :type deployment: ~azure.ai.ml.entities.OnlineDeployment
-        :param local: Whether deployment should be created locally, defaults to False
+        :keyword local: Whether deployment should be created locally, defaults to False
         :type local: bool, optional
-        :param vscode_debug: Whether to open VSCode instance to debug local deployment, defaults to False
+        :keyword vscode_debug: Whether to open VSCode instance to debug local deployment, defaults to False
         :type vscode_debug: bool, optional
-        :param local_enable_gpu: enable local container to access gpu
+        :keyword local_enable_gpu: enable local container to access gpu
         :type local_enable_gpu: bool, optional
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot
             be successfully validated. Details will be provided in the error message.
@@ -224,7 +224,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :type name: str
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
-        :param local: Whether deployment should be retrieved from local docker environment, defaults to False
+        :keyword local: Whether deployment should be retrieved from local docker environment, defaults to False
         :type local: Optional[bool]
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: a deployment entity
@@ -255,7 +255,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :type name: str
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
-        :param local: Whether deployment should be retrieved from local docker environment, defaults to False
+        :keyword local: Whether deployment should be retrieved from local docker environment, defaults to False
         :type local: Optional[bool]
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: A poller to track the operation status
@@ -290,10 +290,10 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :type endpoint_name: str
         :param lines: The maximum number of lines to tail
         :type lines: int
-        :param container_type: The type of container to retrieve logs from. Possible values include:
+        :keyword container_type: The type of container to retrieve logs from. Possible values include:
             "StorageInitializer", "InferenceServer", defaults to None
         :type container_type: Optional[str], optional
-        :param local: [description], defaults to False
+        :keyword local: [description], defaults to False
         :type local: bool, optional
         :return: the logs
         :rtype: str
@@ -321,7 +321,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
-        :param local: Whether deployment should be retrieved from local docker environment, defaults to False
+        :keyword local: Whether deployment should be retrieved from local docker environment, defaults to False
         :type local: bool, optional
         :return: an iterator of deployment entities
         :rtype: Iterable[~azure.ai.ml.entities.OnlineDeployment]

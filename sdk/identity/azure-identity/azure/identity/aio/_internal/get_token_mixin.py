@@ -22,9 +22,7 @@ class GetTokenMixin(abc.ABC):
         super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
 
     @abc.abstractmethod
-    async def _acquire_token_silently(
-        self, *scopes: str, **kwargs
-    ) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
         """Attempt to acquire an access token from a cache or by redeeming a refresh token.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.

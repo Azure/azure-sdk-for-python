@@ -11,7 +11,8 @@ from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 from ._utils import (
     serialize_phone_identifier,
-    serialize_identifier
+    serialize_identifier,
+    process_repeatability_first_sent
 )
 from ._models import (
     CallParticipant,
@@ -38,10 +39,10 @@ from ._generated.models import (
     MuteParticipantsRequest,
 )
 from ._generated.models._enums import RecognizeInputType
-from ._shared.utils import (
-    get_authentication_policy,
-    parse_connection_str
-)
+from ._shared.auth_policy_utils import get_authentication_policy
+from ._shared.utils import parse_connection_str
+from ._credential.call_automation_auth_policy_utils import get_call_automation_auth_policy
+from ._credential.credential_utils import get_custom_enabled, get_custom_url
 if TYPE_CHECKING:
     from ._call_automation_client import CallAutomationClient
     from ._models  import (
@@ -92,18 +93,31 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
                 if not endpoint.lower().startswith('http'):
                     endpoint = "https://" + endpoint
             except AttributeError:
-                raise ValueError("Host URL must be a string")
+                raise ValueError("Host URL must be a string") # pylint: disable=raise-missing-from
             parsed_url = urlparse(endpoint.rstrip('/'))
             if not parsed_url.netloc:
                 raise ValueError(f"Invalid URL: {format(endpoint)}")
-            self._client = AzureCommunicationCallAutomationService(
-                endpoint,
-                credential=credential,
-                api_version=api_version or DEFAULT_VERSION,
-                authentication_policy=get_authentication_policy(
-                    endpoint, credential),
-                sdk_moniker=SDK_MONIKER,
-                **kwargs)
+
+            custom_enabled = get_custom_enabled()
+            custom_url = get_custom_url()
+            if custom_enabled and custom_url is not None:
+                self._client = AzureCommunicationCallAutomationService(
+                    custom_url,
+                    credential,
+                    api_version=api_version or DEFAULT_VERSION,
+                    authentication_policy=get_call_automation_auth_policy(
+                    custom_url, credential, acs_url=endpoint),
+                    sdk_moniker=SDK_MONIKER,
+                    **kwargs)
+            else:
+                self._client = AzureCommunicationCallAutomationService(
+                    endpoint,
+                    credential,
+                    api_version=api_version or DEFAULT_VERSION,
+                    authentication_policy=get_authentication_policy(
+                        endpoint, credential),
+                    sdk_moniker=SDK_MONIKER,
+                    **kwargs)
         else:
             self._client = call_automation_client
 
@@ -171,6 +185,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         """
 
         if is_for_everyone:
+            process_repeatability_first_sent(kwargs)
             self._call_connection_client.terminate_call(
                 self._call_connection_id,
                 **kwargs)
@@ -216,6 +231,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         sip_headers: Optional[Dict[str, str]] = None,
         voip_headers: Optional[Dict[str, str]] = None,
         operation_context: Optional[str] = None,
+        callback_url_override: Optional[str] = None,
+        transferee: Optional['CommunicationIdentifier'] = None,
         **kwargs
     ) -> TransferCallResult:
         """Transfer this call to another participant.
@@ -228,6 +245,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype voip_headers: dict[str, str]
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
+        :keyword callback_url_override: Url that overrides original callback URI for this request.
+        :paramtype callback_url_override: str
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -238,7 +257,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             ) if sip_headers or voip_headers else None
         request = TransferToParticipantRequest(
             target_participant=serialize_identifier(target_participant),
-            custom_context=user_custom_context, operation_context=operation_context)
+            custom_context=user_custom_context, operation_context=operation_context,
+            callback_uri_override=callback_url_override)
+
+        process_repeatability_first_sent(kwargs)
+
+        if transferee is not None:
+            request.transferee=serialize_identifier(transferee)
 
         return self._call_connection_client.transfer_to_participant(
             self._call_connection_id, request,
@@ -251,6 +276,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         *,
         invitation_timeout: Optional[int] = None,
         operation_context: Optional[str] = None,
+        callback_url_override: Optional[str] = None,
         **kwargs
     ) -> AddParticipantResult:
         """Add a participant to this call.
@@ -262,6 +288,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :paramtype invitation_timeout: int
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
+        :keyword callback_url_override: Url that overrides original callback URI for this request.
+        :paramtype callback_url_override: str
         :return: AddParticipantResult
         :rtype: ~azure.communication.callautomation.AddParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -277,7 +305,10 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             source_display_name=target_participant.source_display_name,
             custom_context=user_custom_context,
             invitation_timeout=invitation_timeout,
-            operation_context=operation_context)
+            operation_context=operation_context,
+            callback_uri_override=callback_url_override)
+
+        process_repeatability_first_sent(kwargs)
 
         response = self._call_connection_client.add_participant(
             self._call_connection_id,
@@ -292,6 +323,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         target_participant: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
+        callback_url_override: Optional[str] = None,
         **kwargs
     ) -> RemoveParticipantResult:
         """Remove a participant from this call.
@@ -300,13 +332,17 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
+        :keyword callback_url_override: Url that overrides original callback URI for this request.
+        :paramtype callback_url_override: str
         :return: RemoveParticipantResult
         :rtype: ~azure.communication.callautomation.RemoveParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         remove_participant_request = RemoveParticipantRequest(
             participant_to_remove=serialize_identifier(target_participant),
-            operation_context=operation_context)
+            operation_context=operation_context, callback_uri_override=callback_url_override)
+
+        process_repeatability_first_sent(kwargs)
 
         response = self._call_connection_client.remove_participant(
             self._call_connection_id,
@@ -632,6 +668,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         mute_participants_request = MuteParticipantsRequest(
             target_participants=[serialize_identifier(target_participant)],
             operation_context=operation_context)
+
+        process_repeatability_first_sent(kwargs)
 
         response = self._call_connection_client.mute(
             self._call_connection_id,

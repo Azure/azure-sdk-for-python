@@ -46,7 +46,7 @@ def test_close():
     transport = MagicMock()
     credential = SharedTokenCacheCredential(transport=transport, _cache=TokenCache())
     with pytest.raises(CredentialUnavailableError):
-        credential.get_token('scope')
+        credential.get_token("scope")
 
     assert not transport.__enter__.called
     assert not transport.__exit__.called
@@ -60,7 +60,7 @@ def test_context_manager():
     transport = MagicMock()
     credential = SharedTokenCacheCredential(transport=transport, _cache=TokenCache())
     with pytest.raises(CredentialUnavailableError):
-        credential.get_token('scope')
+        credential.get_token("scope")
 
     assert not transport.__enter__.called
     assert not transport.__exit__.called
@@ -143,7 +143,7 @@ def test_tenant_id():
     credential = SharedTokenCacheCredential(
         _cache=populated_cache(get_account_event("test@user", "uid", "utid")),
         transport=transport,
-        additionally_allowed_tenants=['*']
+        additionally_allowed_tenants=["*"],
     )
 
     credential.get_token("scope", tenant_id="tenant_id")
@@ -877,7 +877,7 @@ def test_multitenant_authentication():
     cache = populated_cache(expected_account)
 
     credential = SharedTokenCacheCredential(
-        authority=authority, transport=Mock(send=send), _cache=cache, additionally_allowed_tenants=['*']
+        authority=authority, transport=Mock(send=send), _cache=cache, additionally_allowed_tenants=["*"]
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -928,7 +928,7 @@ def test_multitenant_authentication_auth_record():
         transport=Mock(send=send),
         authentication_record=record,
         _cache=cache,
-        additionally_allowed_tenants = ['*']
+        additionally_allowed_tenants=["*"],
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -973,6 +973,7 @@ def populated_cache(*accounts):
         cache.add(account)
     cache.add = lambda *_, **__: None  # prevent anything being added to the cache
     return cache
+
 
 def test_multitenant_authentication_not_allowed():
     default_tenant = "organizations"

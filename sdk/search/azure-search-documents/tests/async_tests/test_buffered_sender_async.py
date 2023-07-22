@@ -55,17 +55,17 @@ class TestSearchBatchingClientAsync:
 
     async def test_flush(self):
         DOCUMENT = {
-            "Category": "Hotel",
-            "HotelId": "1000",
-            "Rating": 4.0,
-            "Rooms": [],
-            "HotelName": "Azure Inn",
+            "category": "Hotel",
+            "hotelId": "1000",
+            "rating": 4.0,
+            "rooms": [],
+            "hotelName": "Azure Inn",
         }
         with mock.patch.object(
             SearchIndexingBufferedSender, "_index_documents_actions", side_effect=HttpResponseError("Error")
         ):
             async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
-                client._index_key = "HotelId"
+                client._index_key = "hotelId"
                 await client.upload_documents([DOCUMENT])
                 await client.flush()
                 assert len(client.actions) == 0
