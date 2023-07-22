@@ -66,6 +66,9 @@ from ._models import (
     ScheduleAndSuspendMode,
     QueueSelectorAttachment,
     WorkerSelectorAttachment,
+    RouterRule,
+    ExceptionAction,
+    ExceptionTrigger,
 )
 
 
@@ -82,9 +85,11 @@ __all__ = [
     'DistributionMode',
     'DistributionPolicy',
     'DistributionPolicyItem',
+    'ExceptionAction',
     'ExceptionPolicy',
     'ExceptionPolicyItem',
     'ExceptionRule',
+    'ExceptionTrigger',
     'ExpressionRouterRule',
     'ExpressionRouterRuleLanguage',
     'FunctionRouterRule',
@@ -113,6 +118,7 @@ __all__ = [
     'RouterQueueItem',
     'RouterQueueSelector',
     'RouterQueueStatistics',
+    'RouterRule',
     'RouterWorker',
     'RouterWorkerAssignment',
     'RouterWorkerItem',
