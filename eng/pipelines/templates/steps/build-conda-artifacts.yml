@@ -1,10 +1,4 @@
 parameters:
-  - name: TestPipeline
-    type: boolean
-    default: false
-  - name: ServiceDirectory
-    type: string
-    default: ''
   - name: CondaArtifacts
     type: object
     default: []
@@ -16,15 +10,20 @@ steps:
       versionSpec: $(PythonVersion)
 
   - pwsh: |
-      gci -R | % { $_.FullName }
-    displayName: 'Create Conda Working Directories'
+      $json = "${{ convertToJson(parameters.CondaArtifacts) }}"
+      Write-Host '##vso[task.setvariable variable=ARTIFACT_JSON]$json'
+    displayName: 'Save Building JSON as variable'
 
-  - ${{ each artifact in parameters.CondaArtifacts }}:
-    # there may be multiple CondaArtifacts. Be certain $(conda.build) is clean just in case!
-    - pwsh:
-        Write-Host "${{ artifact.name }}"
-        Write-Host "${{ artifact.inBatch }}"
-      displayName: 'Dump Artifact Details'
+  - pwsh: |
+      Write-Host "$(ARTIFACT_JSON)"
+    displayName: 'Check output of Artifact Json'
+
+  # - ${{ each artifact in parameters.CondaArtifacts }}:
+  #   # there may be multiple CondaArtifacts. Be certain $(conda.build) is clean just in case!
+  #   - pwsh:
+  #       Write-Host "${{ artifact.name }}"
+  #       Write-Host "${{ artifact.inBatch }}"
+  #     displayName: 'Dump Artifact Details'
 
     # - pwsh:
     #     Write-Host "Clean up Conda Build Directory $(conda.build)"
@@ -40,19 +39,19 @@ steps:
   #         CheckoutPath: ${{checkout.checkout_path}}
   #         Version: ${{checkout.version}}
 
-  #   - task: PythonScript@0
-  #     displayName: 'Build Source Distribution for ${{ artifact.name }}'
-  #     inputs:
-  #       scriptPath: 'scripts/devops_tasks/build_conda_artifacts.py'
-  #       arguments: >-
-  #         -d "$(conda.output)"
-  #         -b "$(conda.build)"
-  #         -m "$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.meta_source }}"
-  #         -r "${{ artifact.common_root }}"
-  #         -n "${{ artifact.name }}"
-  #         -s "${{ parameters.ServiceDirectory }}"
-  #         -e "$(Build.SourcesDirectory)/eng/conda_env.yml"
-  #         -c "$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/ci.yml"
+  # - task: PythonScript@0
+  #   displayName: 'Build Source Distribution for ${{ artifact.name }}'
+  #   inputs:
+  #     scriptPath: 'scripts/devops_tasks/build_conda_artifacts.py'
+  #     arguments: >-
+  #       -d "$(conda.output)"
+  #       -b "$(conda.build)"
+  #       -m "$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.meta_source }}"
+  #       -r "${{ artifact.common_root }}"
+  #       -n "${{ artifact.name }}"
+  #       -s "${{ parameters.ServiceDirectory }}"
+  #       -e "$(Build.SourcesDirectory)/eng/conda_env.yml"
+  #       -c "$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/ci.yml"
 
   #   - bash: |
   #       echo "##vso[task.prependpath]$CONDA/bin"
