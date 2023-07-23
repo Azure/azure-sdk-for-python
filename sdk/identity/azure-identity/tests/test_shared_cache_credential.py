@@ -11,12 +11,7 @@ from azure.identity import (
     SharedTokenCacheCredential,
     TokenCachePersistenceOptions,
 )
-from azure.identity._constants import (
-    DEVELOPER_SIGN_ON_CLIENT_ID,
-    EnvironmentVariables,
-    CACHE_NON_CAE_SUFFIX,
-    CACHE_CAE_SUFFIX,
-)
+from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 from azure.identity._internal.shared_token_cache import (
     KNOWN_ALIASES,
     MULTIPLE_ACCOUNTS,
@@ -779,16 +774,16 @@ def test_initialization_with_cache_options():
         with pytest.raises(CredentialUnavailableError):
             credential.get_token("scope")
         assert mock_cache_loader.call_count == 1
-        args, kwargs = mock_cache_loader.call_args
+        args, _ = mock_cache_loader.call_args
         assert args[0] == options
-        assert kwargs.get("cache_suffix") == CACHE_NON_CAE_SUFFIX
+        assert args[1] is False  # is_cae is False.
 
         with pytest.raises(CredentialUnavailableError):
             credential.get_token("scope", enable_cae=True)
         assert mock_cache_loader.call_count == 2
-        args, kwargs = mock_cache_loader.call_args
+        args, _ = mock_cache_loader.call_args
         assert args[0] == options
-        assert kwargs.get("cache_suffix") == CACHE_CAE_SUFFIX
+        assert args[1] is True  # is_cae is True.
 
 
 def test_authentication_record_authenticating_tenant():

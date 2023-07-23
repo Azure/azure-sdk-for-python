@@ -7,6 +7,8 @@ import os
 import sys
 from typing import TYPE_CHECKING, Any
 
+from ._constants import CACHE_CAE_SUFFIX, CACHE_NON_CAE_SUFFIX
+
 if TYPE_CHECKING:
     import msal_extensions
 
@@ -52,10 +54,11 @@ class TokenCachePersistenceOptions:
 
 
 def _load_persistent_cache(
-    options: TokenCachePersistenceOptions, cache_suffix: str = ""
+    options: TokenCachePersistenceOptions, is_cae: bool = False
 ) -> "msal_extensions.PersistedTokenCache":
     import msal_extensions
 
+    cache_suffix = CACHE_CAE_SUFFIX if is_cae else CACHE_NON_CAE_SUFFIX
     persistence = _get_persistence(
         allow_unencrypted=options.allow_unencrypted_storage,
         account_name="MSALCache",

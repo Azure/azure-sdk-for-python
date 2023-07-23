@@ -17,7 +17,6 @@ from .._internal.decorators import wrap_exceptions
 from .._internal.msal_client import MsalClient
 from .._internal.shared_token_cache import NO_TOKEN
 from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
-from .._constants import CACHE_CAE_SUFFIX, CACHE_NON_CAE_SUFFIX
 from .. import AuthenticationRecord
 
 
@@ -86,13 +85,13 @@ class SilentAuthenticationCredential:
 
         if not self._cache and not is_cae:
             try:
-                self._cache = _load_persistent_cache(cache_options, cache_suffix=CACHE_NON_CAE_SUFFIX)
+                self._cache = _load_persistent_cache(cache_options, is_cae)
             except Exception:  # pylint:disable=broad-except
                 return None
 
         if not self._cae_cache and is_cae:
             try:
-                self._cae_cache = _load_persistent_cache(cache_options, cache_suffix=CACHE_CAE_SUFFIX)
+                self._cae_cache = _load_persistent_cache(cache_options, is_cae)
             except Exception:  # pylint:disable=broad-except
                 return None
 

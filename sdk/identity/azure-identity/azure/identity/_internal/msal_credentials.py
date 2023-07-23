@@ -9,7 +9,7 @@ import msal
 
 from .msal_client import MsalClient
 from .utils import get_default_authority, normalize_authority, resolve_tenant, validate_tenant_id
-from .._constants import EnvironmentVariables, CACHE_CAE_SUFFIX, CACHE_NON_CAE_SUFFIX
+from .._constants import EnvironmentVariables
 from .._persistent_cache import _load_persistent_cache
 
 
@@ -70,9 +70,9 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
     def _initialize_cache(self, is_cae: bool = False) -> msal.TokenCache:
         if self._cache_options:
             if is_cae:
-                self._cae_cache = _load_persistent_cache(self._cache_options, cache_suffix=CACHE_CAE_SUFFIX)
+                self._cae_cache = _load_persistent_cache(self._cache_options, is_cae)
             else:
-                self._cache = _load_persistent_cache(self._cache_options, cache_suffix=CACHE_NON_CAE_SUFFIX)
+                self._cache = _load_persistent_cache(self._cache_options, is_cae)
         else:
             if is_cae:
                 self._cae_cache = msal.TokenCache()

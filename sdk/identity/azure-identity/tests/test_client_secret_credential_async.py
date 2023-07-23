@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import TokenCachePersistenceOptions
-from azure.identity._constants import EnvironmentVariables, CACHE_NON_CAE_SUFFIX, CACHE_CAE_SUFFIX
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import ClientSecretCredential
 from msal import TokenCache
@@ -242,14 +242,14 @@ async def test_token_cache_persistent():
         assert load_persistent_cache.call_count == 1
         assert credential._client._cache is not None
         assert credential._client._cae_cache is None
-        _, kwargs = load_persistent_cache.call_args
-        assert kwargs.get("cache_suffix") == CACHE_NON_CAE_SUFFIX
+        args, _ = load_persistent_cache.call_args
+        assert args[1] is False
 
         await credential.get_token("scope", enable_cae=True)
         assert load_persistent_cache.call_count == 2
         assert credential._client._cae_cache is not None
-        _, kwargs = load_persistent_cache.call_args
-        assert kwargs.get("cache_suffix") == CACHE_CAE_SUFFIX
+        args, _ = load_persistent_cache.call_args
+        assert args[1] is True
 
 
 @pytest.mark.asyncio
@@ -292,15 +292,14 @@ async def test_cache_multiple_clients():
         assert token_a.token == access_token_a
         assert transport_a.send.call_count == 1
         assert mock_cache_loader.call_count == 1
-        _, kwargs = mock_cache_loader.call_args
-        assert kwargs.get("cache_suffix") == CACHE_NON_CAE_SUFFIX
+        args, _ = mock_cache_loader.call_args
+        assert args[1] is False
 
         # B should get a different token for the same scope
         token_b = await credential_b.get_token(scope)
         assert token_b.token == access_token_b
         assert transport_b.send.call_count == 1
         assert mock_cache_loader.call_count == 2
-        assert kwargs.get("cache_suffix") == CACHE_NON_CAE_SUFFIX
 
         assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2
 

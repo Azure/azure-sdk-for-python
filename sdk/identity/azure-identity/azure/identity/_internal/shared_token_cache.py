@@ -11,7 +11,7 @@ import msal
 
 from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
-from .._constants import KnownAuthorities, CACHE_CAE_SUFFIX, CACHE_NON_CAE_SUFFIX
+from .._constants import KnownAuthorities
 from .._internal import get_default_authority, normalize_authority, wrap_exceptions
 from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
 from .._internal import AadClientBase
@@ -123,14 +123,14 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
 
         if not self._cache and not is_cae:
             try:
-                self._cache = _load_persistent_cache(cache_options, cache_suffix=CACHE_NON_CAE_SUFFIX)
+                self._cache = _load_persistent_cache(cache_options, is_cae)
                 self._client._cache = self._cache  # pylint:disable=protected-access
             except Exception:  # pylint:disable=broad-except
                 return None
 
         if not self._cae_cache and is_cae:
             try:
-                self._cae_cache = _load_persistent_cache(cache_options, cache_suffix=CACHE_CAE_SUFFIX)
+                self._cae_cache = _load_persistent_cache(cache_options, is_cae)
                 self._client._cae_cache = self._cae_cache  # pylint:disable=protected-access
             except Exception:  # pylint:disable=broad-except
                 return None

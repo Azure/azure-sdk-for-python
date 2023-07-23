@@ -18,7 +18,6 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from .utils import get_default_authority, normalize_authority, resolve_tenant
 from .aadclient_certificate import AadClientCertificate
-from .._constants import CACHE_CAE_SUFFIX, CACHE_NON_CAE_SUFFIX
 from .._persistent_cache import _load_persistent_cache
 
 
@@ -68,9 +67,9 @@ class AadClientBase(abc.ABC):
     def _initialize_cache(self, is_cae: bool = False) -> TokenCache:
         if self._cache_options:
             if is_cae:
-                self._cae_cache = _load_persistent_cache(self._cache_options, cache_suffix=CACHE_CAE_SUFFIX)
+                self._cae_cache = _load_persistent_cache(self._cache_options, is_cae)
             else:
-                self._cache = _load_persistent_cache(self._cache_options, cache_suffix=CACHE_NON_CAE_SUFFIX)
+                self._cache = _load_persistent_cache(self._cache_options, is_cae)
         else:
             if is_cae:
                 self._cae_cache = TokenCache()
