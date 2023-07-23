@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- A keyword argument `enable_cae` was added to the `get_token` method of the `TokenCredential` protocol.  #31012
+- `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now accept `enable_cae` keyword arguments in their constructors. This is used in determining if Continuous Access Evaluation (CAE) should be enabled for each `get_token` request.  #31012
+
 ### Breaking Changes
 
 ### Bugs Fixed
