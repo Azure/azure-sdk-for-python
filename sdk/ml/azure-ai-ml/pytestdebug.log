@@ -1,0 +1,917 @@
+versions pytest-7.2.1, python-3.10.11.final.0
+cwd=C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml
+args=('tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule::test_custom_basic', '--debug', '-vv')
+
+  pytest_cmdline_main [hook]
+      config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+    pytest_plugin_registered [hook]
+        plugin: <Session azure-sdk-for-python exitstatus='<UNSET>' testsfailed=0 testscollected=0>
+        manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+    finish pytest_plugin_registered --> [] [hook]
+    pytest_configure [hook]
+        config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.cacheprovider.LFPlugin object at 0x000002AECE7A6140>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.cacheprovider.NFPlugin object at 0x000002AECE7A6380>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+    early skip of rewriting module: faulthandler [assertion]
+      pytest_plugin_registered [hook]
+          plugin: <class '_pytest.legacypath.LegacyTmpdirPlugin'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+    early skip of rewriting module: pdb [assertion]
+    early skip of rewriting module: cmd [assertion]
+    early skip of rewriting module: code [assertion]
+    early skip of rewriting module: codeop [assertion]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.config.Config object at 0x000002AEC5EAE770>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.mark' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\mark\\__init__.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.main' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\main.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.runner' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\runner.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.fixtures' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\fixtures.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.helpconfig' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\helpconfig.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.python' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\python.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.terminal' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\terminal.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.debugging' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\debugging.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.unittest' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\unittest.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.capture' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\capture.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.skipping' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\skipping.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.legacypath' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\legacypath.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.tmpdir' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\tmpdir.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.monkeypatch' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\monkeypatch.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.recwarn' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\recwarn.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.pastebin' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\pastebin.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.nose' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\nose.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.assertion' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\assertion\\__init__.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.junitxml' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\junitxml.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.doctest' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\doctest.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.cacheprovider' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\cacheprovider.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.freeze_support' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\freeze_support.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.setuponly' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\setuponly.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.setupplan' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\setupplan.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.stepwise' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\stepwise.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.warnings' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\warnings.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.logging' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\logging.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.reports' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\reports.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.python_path' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\python_path.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.unraisableexception' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\unraisableexception.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.threadexception' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\threadexception.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.faulthandler' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\faulthandler.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'pytest_asyncio.plugin' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest_asyncio\\plugin.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'pytest_cov.plugin' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest_cov\\plugin.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'pytest_forked' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest_forked\\__init__.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'pytest_mock' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest_mock\\__init__.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'pytest_timeout' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest_timeout.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'xdist.plugin' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\xdist\\plugin.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'xdist.looponfail' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\xdist\\looponfail.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <CaptureManager _method='fd' _global_capturing=<MultiCapture out=<FDCapture 1 oldfd=9 _state='suspended' tmpfile=<_io.TextIOWrapper name='<tempfile._TemporaryFileWrapper object at 0x000002AEC5FF9AE0>' mode='r+' encoding='utf-8'>> err=<FDCapture 2 oldfd=11 _state='suspended' tmpfile=<_io.TextIOWrapper name='<tempfile._TemporaryFileWrapper object at 0x000002AEC5FF9ED0>' mode='r+' encoding='utf-8'>> in_=<FDCapture 0 oldfd=7 _state='started' tmpfile=<_io.TextIOWrapper name='nul' mode='r' encoding='utf-8'>> _state='suspended' _in_suspended=False> _capture_fixture=None>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'conftest' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\sdk\\conftest.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'conftest' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\sdk\\ml\\azure-ai-ml\\tests\\conftest.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <Session azure-sdk-for-python exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.cacheprovider.LFPlugin object at 0x000002AECE7A6140>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.cacheprovider.NFPlugin object at 0x000002AECE7A6380>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <class '_pytest.legacypath.LegacyTmpdirPlugin'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_warning_recorded [hook]
+          warning_message: {message : DeprecationWarning("'urllib3[secure]' extra is deprecated and will be removed in a future release of urllib3 2.x. Read more in this issue: https://github.com/urllib3/urllib3/issues/2680"), category : 'DeprecationWarning', filename : 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\vcr\\patch.py', lineno : 36, line : None}
+          nodeid: 
+          when: config
+          location: None
+      finish pytest_warning_recorded --> [] [hook]
+      pytest_warning_recorded [hook]
+          warning_message: {message : RemovedInMarshmallow4Warning("Passing field metadata as keyword arguments is deprecated. Use the explicit `metadata=...` argument instead. Additional metadata: {'unknown': 'include'}"), category : 'RemovedInMarshmallow4Warning', filename : 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\sdk\\ml\\azure-ai-ml\\azure\\ai\\ml\\_schema\\core\\fields.py', lineno : 420, line : None}
+          nodeid: 
+          when: config
+          location: None
+      finish pytest_warning_recorded --> [] [hook]
+      pytest_warning_recorded [hook]
+          warning_message: {message : RemovedInMarshmallow4Warning("Passing field metadata as keyword arguments is deprecated. Use the explicit `metadata=...` argument instead. Additional metadata: {'unknown': 'include'}"), category : 'RemovedInMarshmallow4Warning', filename : 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\sdk\\ml\\azure-ai-ml\\azure\\ai\\ml\\_schema\\core\\fields.py', lineno : 420, line : None}
+          nodeid: 
+          when: config
+          location: None
+      finish pytest_warning_recorded --> [] [hook]
+      pytest_warning_recorded [hook]
+          warning_message: {message : RemovedInMarshmallow4Warning("The 'default' argument to fields is deprecated. Use 'dump_default' instead."), category : 'RemovedInMarshmallow4Warning', filename : 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\sdk\\ml\\azure-ai-ml\\azure\\ai\\ml\\_schema\\assets\\package\\model_package.py', lineno : 22, line : None}
+          nodeid: 
+          when: config
+          location: None
+      finish pytest_warning_recorded --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.terminal.TerminalReporter object at 0x000002AECE7A7490>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.logging.LoggingPlugin object at 0x000002AECE7ED780>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+    finish pytest_configure --> [] [hook]
+    pytest_sessionstart [hook]
+        session: <Session azure-sdk-for-python exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.config.Config object at 0x000002AEC5EAE770>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.mark' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\mark\\__init__.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.main' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\main.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.runner' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\runner.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.fixtures' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\fixtures.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.helpconfig' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\helpconfig.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.python' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\python.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.terminal' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\terminal.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.debugging' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\debugging.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.unittest' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\unittest.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.capture' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\capture.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.skipping' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\skipping.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.legacypath' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\legacypath.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.tmpdir' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\tmpdir.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.monkeypatch' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\monkeypatch.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.recwarn' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\recwarn.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.pastebin' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\pastebin.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.nose' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\nose.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.assertion' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\assertion\\__init__.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.junitxml' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\junitxml.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.doctest' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\doctest.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.cacheprovider' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\cacheprovider.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.freeze_support' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\freeze_support.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.setuponly' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\setuponly.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.setupplan' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\setupplan.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.stepwise' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\stepwise.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.warnings' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\warnings.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.logging' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\logging.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.reports' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\reports.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.python_path' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\python_path.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.unraisableexception' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\unraisableexception.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.threadexception' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\threadexception.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.faulthandler' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\faulthandler.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'pytest_asyncio.plugin' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest_asyncio\\plugin.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'pytest_cov.plugin' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest_cov\\plugin.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'pytest_forked' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest_forked\\__init__.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'pytest_mock' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest_mock\\__init__.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'pytest_timeout' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest_timeout.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'xdist.plugin' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\xdist\\plugin.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'xdist.looponfail' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\xdist\\looponfail.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <CaptureManager _method='fd' _global_capturing=<MultiCapture out=<FDCapture 1 oldfd=9 _state='suspended' tmpfile=<_io.TextIOWrapper name='<tempfile._TemporaryFileWrapper object at 0x000002AEC5FF9AE0>' mode='r+' encoding='utf-8'>> err=<FDCapture 2 oldfd=11 _state='suspended' tmpfile=<_io.TextIOWrapper name='<tempfile._TemporaryFileWrapper object at 0x000002AEC5FF9ED0>' mode='r+' encoding='utf-8'>> in_=<FDCapture 0 oldfd=7 _state='started' tmpfile=<_io.TextIOWrapper name='nul' mode='r' encoding='utf-8'>> _state='suspended' _in_suspended=False> _capture_fixture=None>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'conftest' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\sdk\\conftest.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'conftest' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\sdk\\ml\\azure-ai-ml\\tests\\conftest.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <Session azure-sdk-for-python exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.cacheprovider.LFPlugin object at 0x000002AECE7A6140>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.cacheprovider.NFPlugin object at 0x000002AECE7A6380>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <class '_pytest.legacypath.LegacyTmpdirPlugin'>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.terminal.TerminalReporter object at 0x000002AECE7A7490>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.logging.LoggingPlugin object at 0x000002AECE7ED780>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.fixtures.FixtureManager object at 0x000002AECE7A5ED0>
+          manager: <_pytest.config.PytestPluginManager object at 0x000002AEC50C1B70>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_report_header [hook]
+          config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+          start_path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml
+          startdir: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml
+      finish pytest_report_header --> [['asyncio: mode=strict'], ['rootdir: C:\\Users\\nemanjarajic\\azure-sdk-for-python, configfile: setup.cfg', 'plugins: asyncio-0.20.3, cov-4.0.0, forked-1.6.0, mock-3.10.0, timeout-2.1.0, xdist-3.2.0'], 'cachedir: .pytest_cache', ['using: pytest-7.2.1', 'setuptools registered plugins:', '  pytest-asyncio-0.20.3 at C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest_asyncio\\plugin.py', '  pytest-cov-4.0.0 at C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest_cov\\plugin.py', '  pytest-forked-1.6.0 at C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest_forked\\__init__.py', '  pytest-mock-3.10.0 at C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest_mock\\__init__.py', '  pytest-timeout-2.1.0 at C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest_timeout.py', '  pytest-xdist-3.2.0 at C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\xdist\\plugin.py', '  pytest-xdist-3.2.0 at C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\xdist\\looponfail.py']] [hook]
+    finish pytest_sessionstart --> [] [hook]
+    pytest_collection [hook]
+        session: <Session azure-sdk-for-python exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+    perform_collect <Session azure-sdk-for-python exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0> ['tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule::test_custom_basic'] [collection]
+        pytest_collectstart [hook]
+            collector: <Session azure-sdk-for-python exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+        finish pytest_collectstart --> [] [hook]
+        pytest_make_collect_report [hook]
+            collector: <Session azure-sdk-for-python exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+        processing argument (WindowsPath('C:/Users/nemanjarajic/azure-sdk-for-python/sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py'), ['TestMonitorSchedule', 'test_custom_basic']) [collection]
+            pytest_ignore_collect [hook]
+                config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+                collection_path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\unittests\__init__.py
+                path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\unittests\__init__.py
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                parent: <Session azure-sdk-for-python exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+                file_path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\unittests\__init__.py
+                path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\unittests\__init__.py
+              pytest_pycollect_makemodule [hook]
+                  parent: <Session azure-sdk-for-python exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+                  module_path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\unittests\__init__.py
+                  path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\unittests\__init__.py
+              finish pytest_pycollect_makemodule --> <Package unittests> [hook]
+            finish pytest_collect_file --> [<Package unittests>] [hook]
+            pytest_ignore_collect [hook]
+                config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+                collection_path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\__init__.py
+                path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\__init__.py
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                parent: <Session azure-sdk-for-python exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+                file_path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\__init__.py
+                path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\__init__.py
+              pytest_pycollect_makemodule [hook]
+                  parent: <Session azure-sdk-for-python exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+                  module_path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\__init__.py
+                  path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\__init__.py
+              finish pytest_pycollect_makemodule --> <Package monitoring> [hook]
+            finish pytest_collect_file --> [<Package monitoring>] [hook]
+            pytest_collect_file [hook]
+                parent: <Package unittests>
+                file_path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\unittests\test_monitor_schedule.py
+                path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\unittests\test_monitor_schedule.py
+              pytest_pycollect_makemodule [hook]
+                  parent: <Package unittests>
+                  module_path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\unittests\test_monitor_schedule.py
+                  path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\unittests\test_monitor_schedule.py
+              finish pytest_pycollect_makemodule --> <Module test_monitor_schedule.py> [hook]
+            finish pytest_collect_file --> [<Module test_monitor_schedule.py>] [hook]
+          matchnodes [<Module test_monitor_schedule.py>] ['TestMonitorSchedule', 'test_custom_basic'] [collection]
+              pytest_collectstart [hook]
+                  collector: <Module test_monitor_schedule.py>
+              finish pytest_collectstart --> [] [hook]
+              pytest_make_collect_report [hook]
+                  collector: <Module test_monitor_schedule.py>
+              early skip of rewriting module: monitoring [assertion]
+              early skip of rewriting module: monitoring.unittests [assertion]
+              find_module called for: monitoring.unittests.test_monitor_schedule [assertion]
+              matched test file (was specified on cmdline): 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\sdk\\ml\\azure-ai-ml\\tests\\monitoring\\unittests\\test_monitor_schedule.py' [assertion]
+              found cached rewritten pyc for C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests\monitoring\unittests\test_monitor_schedule.py [assertion]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Module test_monitor_schedule.py>
+                    name: @py_builtins
+                    obj: <module 'builtins' (built-in)>
+                finish pytest_pycollect_makeitem --> None [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Module test_monitor_schedule.py>
+                    name: @pytest_ar
+                    obj: <module '_pytest.assertion.rewrite' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\_pytest\\assertion\\rewrite.py'>
+                finish pytest_pycollect_makeitem --> None [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Module test_monitor_schedule.py>
+                    name: json
+                    obj: <module 'json' from 'C:\\Users\\nemanjarajic\\AppData\\Local\\Programs\\Python\\Python310\\lib\\json\\__init__.py'>
+                finish pytest_pycollect_makeitem --> None [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Module test_monitor_schedule.py>
+                    name: yaml
+                    obj: <module 'yaml' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\yaml\\__init__.py'>
+                finish pytest_pycollect_makeitem --> None [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Module test_monitor_schedule.py>
+                    name: pytest
+                    obj: <module 'pytest' from 'C:\\Users\\nemanjarajic\\azure-sdk-for-python\\env\\lib\\site-packages\\pytest\\__init__.py'>
+                finish pytest_pycollect_makeitem --> None [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Module test_monitor_schedule.py>
+                    name: MonitorSchedule
+                    obj: <class 'azure.ai.ml.entities._monitoring.schedule.MonitorSchedule'>
+                finish pytest_pycollect_makeitem --> None [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Module test_monitor_schedule.py>
+                    name: Schedule
+                    obj: <class 'azure.ai.ml.entities._schedule.schedule.Schedule'>
+                finish pytest_pycollect_makeitem --> None [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Module test_monitor_schedule.py>
+                    name: load_schedule
+                    obj: <function load_schedule at 0x000002AECE758550>
+                finish pytest_pycollect_makeitem --> None [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Module test_monitor_schedule.py>
+                    name: RestSchedule
+                    obj: <class 'azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3.Schedule'>
+                finish pytest_pycollect_makeitem --> None [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Module test_monitor_schedule.py>
+                    name: validate_to_from_rest_translation
+                    obj: <function validate_to_from_rest_translation at 0x000002AECE812560>
+                finish pytest_pycollect_makeitem --> None [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Module test_monitor_schedule.py>
+                    name: TestMonitorSchedule
+                    obj: <class 'monitoring.unittests.test_monitor_schedule.TestMonitorSchedule'>
+                finish pytest_pycollect_makeitem --> <Class TestMonitorSchedule> [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Module test_monitor_schedule.py>
+                    name: override_frequency_interval_and_check_window_size
+                    obj: <function override_frequency_interval_and_check_window_size at 0x000002AECE8125F0>
+                finish pytest_pycollect_makeitem --> None [hook]
+              finish pytest_make_collect_report --> <CollectReport 'sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py' lenresult=1 outcome='passed'> [hook]
+            matchnodes finished ->  0 nodes [collection]
+          matchnodes [<Module test_monitor_schedule.py>] ['TestMonitorSchedule', 'test_custom_basic'] [collection]
+              pytest_collectstart [hook]
+                  collector: <Class TestMonitorSchedule>
+              finish pytest_collectstart --> [] [hook]
+              pytest_make_collect_report [hook]
+                  collector: <Class TestMonitorSchedule>
+                pytest_pycollect_makeitem [hook]
+                    collector: <Class TestMonitorSchedule>
+                    name: test_data_drift_basic
+                    obj: <function TestMonitorSchedule.test_data_drift_basic at 0x000002AECE812680>
+                  pytest_generate_tests [hook]
+                      metafunc: <_pytest.python.Metafunc object at 0x000002AECE8420E0>
+                  finish pytest_generate_tests --> [] [hook]
+                finish pytest_pycollect_makeitem --> [<Function test_data_drift_basic>] [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Class TestMonitorSchedule>
+                    name: test_prediction_drift_basic
+                    obj: <function TestMonitorSchedule.test_prediction_drift_basic at 0x000002AECE812710>
+                  pytest_generate_tests [hook]
+                      metafunc: <_pytest.python.Metafunc object at 0x000002AECE842200>
+                  finish pytest_generate_tests --> [] [hook]
+                finish pytest_pycollect_makeitem --> [<Function test_prediction_drift_basic>] [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Class TestMonitorSchedule>
+                    name: test_data_quality_basic
+                    obj: <function TestMonitorSchedule.test_data_quality_basic at 0x000002AECE8127A0>
+                  pytest_generate_tests [hook]
+                      metafunc: <_pytest.python.Metafunc object at 0x000002AECE8421A0>
+                  finish pytest_generate_tests --> [] [hook]
+                finish pytest_pycollect_makeitem --> [<Function test_data_quality_basic>] [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Class TestMonitorSchedule>
+                    name: test_feature_attribution_drift_basic
+                    obj: <function TestMonitorSchedule.test_feature_attribution_drift_basic at 0x000002AECE812830>
+                  pytest_generate_tests [hook]
+                      metafunc: <_pytest.python.Metafunc object at 0x000002AECE842170>
+                  finish pytest_generate_tests --> [] [hook]
+                finish pytest_pycollect_makeitem --> [<Function test_feature_attribution_drift_basic>] [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Class TestMonitorSchedule>
+                    name: test_model_performance_basic
+                    obj: <function TestMonitorSchedule.test_model_performance_basic at 0x000002AECE8128C0>
+                  pytest_generate_tests [hook]
+                      metafunc: <_pytest.python.Metafunc object at 0x000002AECE842620>
+                  finish pytest_generate_tests --> [] [hook]
+                finish pytest_pycollect_makeitem --> [<Function test_model_performance_basic>] [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Class TestMonitorSchedule>
+                    name: test_custom_basic
+                    obj: <function TestMonitorSchedule.test_custom_basic at 0x000002AECE812950>
+                  pytest_generate_tests [hook]
+                      metafunc: <_pytest.python.Metafunc object at 0x000002AECE842EC0>
+                  finish pytest_generate_tests --> [] [hook]
+                finish pytest_pycollect_makeitem --> [<Function test_custom_basic>] [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Class TestMonitorSchedule>
+                    name: test_default_data_window_size_recurrence
+                    obj: <function TestMonitorSchedule.test_default_data_window_size_recurrence at 0x000002AECE8129E0>
+                  pytest_generate_tests [hook]
+                      metafunc: <_pytest.python.Metafunc object at 0x000002AECE842950>
+                    pytest_make_parametrize_id [hook]
+                        config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+                        val: tests/test_configs/monitoring/yaml_configs/data_drift.yaml
+                        argname: test_path
+                    finish pytest_make_parametrize_id --> None [hook]
+                  early skip of rewriting module: encodings.unicode_escape [assertion]
+                    pytest_make_parametrize_id [hook]
+                        config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+                        val: tests/test_configs/monitoring/yaml_configs/prediction_drift.yaml
+                        argname: test_path
+                    finish pytest_make_parametrize_id --> None [hook]
+                    pytest_make_parametrize_id [hook]
+                        config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+                        val: tests/test_configs/monitoring/yaml_configs/data_quality.yaml
+                        argname: test_path
+                    finish pytest_make_parametrize_id --> None [hook]
+                    pytest_make_parametrize_id [hook]
+                        config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+                        val: tests/test_configs/monitoring/yaml_configs/feature_attribution_drift.yaml
+                        argname: test_path
+                    finish pytest_make_parametrize_id --> None [hook]
+                  finish pytest_generate_tests --> [] [hook]
+                finish pytest_pycollect_makeitem --> [<Function test_default_data_window_size_recurrence[tests/test_configs/monitoring/yaml_configs/data_drift.yaml]>, <Function test_default_data_window_size_recurrence[tests/test_configs/monitoring/yaml_configs/prediction_drift.yaml]>, <Function test_default_data_window_size_recurrence[tests/test_configs/monitoring/yaml_configs/data_quality.yaml]>, <Function test_default_data_window_size_recurrence[tests/test_configs/monitoring/yaml_configs/feature_attribution_drift.yaml]>] [hook]
+                pytest_pycollect_makeitem [hook]
+                    collector: <Class TestMonitorSchedule>
+                    name: pytestmark
+                    obj: [Mark(name='unittest', args=(), kwargs={})]
+                finish pytest_pycollect_makeitem --> None [hook]
+              finish pytest_make_collect_report --> <CollectReport 'sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule' lenresult=10 outcome='passed'> [hook]
+            matchnodes finished ->  0 nodes [collection]
+          matchnodes [<Module test_monitor_schedule.py>] ['TestMonitorSchedule', 'test_custom_basic'] [collection]
+            matchnodes finished ->  1 nodes [collection]
+        finish pytest_make_collect_report --> <CollectReport '' lenresult=1 outcome='passed'> [hook]
+        pytest_collectreport [hook]
+            report: <CollectReport '' lenresult=1 outcome='passed'>
+        finish pytest_collectreport --> [] [hook]
+    genitems <Function test_custom_basic> [collection]
+      pytest_itemcollected [hook]
+          item: <Function test_custom_basic>
+      finish pytest_itemcollected --> [] [hook]
+      pytest_collection_modifyitems [hook]
+          session: <Session azure-sdk-for-python exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+          config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+          items: [<Function test_custom_basic>]
+      finish pytest_collection_modifyitems --> [] [hook]
+      pytest_collection_finish [hook]
+          session: <Session azure-sdk-for-python exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+        pytest_report_collectionfinish [hook]
+            config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+            items: [<Function test_custom_basic>]
+            start_path: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml
+            startdir: C:\Users\nemanjarajic\azure-sdk-for-python\sdk\ml\azure-ai-ml
+        finish pytest_report_collectionfinish --> [] [hook]
+      finish pytest_collection_finish --> [] [hook]
+    finish pytest_collection --> None [hook]
+    pytest_runtestloop [hook]
+        session: <Session azure-sdk-for-python exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=1>
+      pytest_runtest_protocol [hook]
+          item: <Function test_custom_basic>
+          nextitem: None
+        pytest_runtest_logstart [hook]
+            nodeid: sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule::test_custom_basic
+            location: ('sdk\\ml\\azure-ai-ml\\tests\\monitoring\\unittests\\test_monitor_schedule.py', 63, 'TestMonitorSchedule.test_custom_basic')
+        finish pytest_runtest_logstart --> [] [hook]
+        pytest_runtest_setup [hook]
+            item: <Function test_custom_basic>
+          pytest_fixture_setup [hook]
+              fixturedef: <FixtureDef argname='clean_cached_resources' scope='session' baseid='sdk'>
+              request: <SubRequest 'clean_cached_resources' for <Function test_custom_basic>>
+          finish pytest_fixture_setup --> None [hook]
+          pytest_fixture_setup [hook]
+              fixturedef: <FixtureDef argname='test_proxy' scope='session' baseid='sdk'>
+              request: <SubRequest 'test_proxy' for <Function test_custom_basic>>
+          finish pytest_fixture_setup --> None [hook]
+          pytest_fixture_setup [hook]
+              fixturedef: <FixtureDef argname='start_proxy' scope='session' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'start_proxy' for <Function test_custom_basic>>
+          finish pytest_fixture_setup --> None [hook]
+          pytest_fixture_setup [hook]
+              fixturedef: <FixtureDef argname='fake_datastore_key' scope='session' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'fake_datastore_key' for <Function test_custom_basic>>
+          finish pytest_fixture_setup --> dGhpcyBpcyBmYWtlIGtleQ== [hook]
+          pytest_fixture_setup [hook]
+              fixturedef: <FixtureDef argname='pytestconfig' scope='session' baseid=''>
+              request: <SubRequest 'pytestconfig' for <Function test_custom_basic>>
+          finish pytest_fixture_setup --> <_pytest.config.Config object at 0x000002AEC5EAE770> [hook]
+          pytest_fixture_setup [hook]
+              fixturedef: <FixtureDef argname='add_sanitizers' scope='function' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'add_sanitizers' for <Function test_custom_basic>>
+          finish pytest_fixture_setup --> None [hook]
+          pytest_fixture_setup [hook]
+              fixturedef: <FixtureDef argname='mocker' scope='function' baseid=''>
+              request: <SubRequest 'mocker' for <Function test_custom_basic>>
+          finish pytest_fixture_setup --> <pytest_mock.plugin.MockerFixture object at 0x000002AECE8941C0> [hook]
+          pytest_fixture_setup [hook]
+              fixturedef: <FixtureDef argname='mock_job_name_generator' scope='function' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'mock_job_name_generator' for <Function test_custom_basic>>
+          finish pytest_fixture_setup --> None [hook]
+          pytest_fixture_setup [hook]
+              fixturedef: <FixtureDef argname='remove_git_props' scope='function' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'remove_git_props' for <Function test_custom_basic>>
+          finish pytest_fixture_setup --> None [hook]
+          pytest_fixture_setup [hook]
+              fixturedef: <FixtureDef argname='skip_sleep_for_playback' scope='function' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'skip_sleep_for_playback' for <Function test_custom_basic>>
+          finish pytest_fixture_setup --> None [hook]
+        finish pytest_runtest_setup --> [] [hook]
+        pytest_runtest_makereport [hook]
+            item: <Function test_custom_basic>
+            call: <CallInfo when='setup' result: []>
+        finish pytest_runtest_makereport --> <TestReport 'sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule::test_custom_basic' when='setup' outcome='passed'> [hook]
+        pytest_runtest_logreport [hook]
+            report: <TestReport 'sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule::test_custom_basic' when='setup' outcome='passed'>
+          pytest_report_teststatus [hook]
+              report: <TestReport 'sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule::test_custom_basic' when='setup' outcome='passed'>
+              config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+          finish pytest_report_teststatus --> ('', '', '') [hook]
+        finish pytest_runtest_logreport --> [] [hook]
+        pytest_runtest_call [hook]
+            item: <Function test_custom_basic>
+          pytest_pyfunc_call [hook]
+              pyfuncitem: <Function test_custom_basic>
+          early skip of rewriting module: encodings.utf_8_sig [assertion]
+          early skip of rewriting module: IPython [assertion]
+            pytest_assertrepr_compare [hook]
+                config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+                op: ==
+                left: {'properties': {'properties': {'prop1': 'value'}, 'tags': {'tag1': 'tag', 'compute.spark.resources.instance_type': 'standard_e8s_v3', 'compute.spark.resources.runtime_version': '3.2'}, 'action': {'action_type': 'CreateMonitor', 'monitor_definition': {'compute_id': 'spark', 'monitoring_target': 'fake_endpoint_id', 'signals': {'testSignal': {'lookback_period': 'P7D', 'mode': 'Enabled', 'signal_type': 'Custom', 'component_id': 'fake_component:1', 'input_assets': {'test_data_1': {'asset': {'uri': 'Direct:1', 'jobInputType': 'mltable'}, 'data_context': 'test'}, 'test_data_2': {'asset': {'uri': 'Direct:1', 'jobInputType': 'mltable'}, 'data_context': 'test'}}, 'metric_thresholds': [{'metric': 'metric1', 'threshold': {'value': 0.1}}, {'metric': 'metric2', 'threshold': {'value': 0.2}}]}}}}, 'trigger': {'time_zone': 'utc', 'trigger_type': 'Recurrence', 'frequency': 'week', 'interval': 1, 'schedule': {'hours': [22, 20], 'minutes': [0, 0], 'week_days': ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']}}}}
+                right: {'properties': {'properties': {'prop1': 'value'}, 'tags': {'tag1': 'tag', 'compute.spark.resources.instance_type': 'standard_e8s_v3', 'compute.spark.resources.runtime_version': '3.2'}, 'action': {'action_type': 'CreateMonitor', 'monitor_definition': {'compute_id': 'spark', 'monitoring_target': 'fake_endpoint_id', 'signals': {'testSignal': {'mode': 'Enabled', 'signal_type': 'Custom', 'component_id': 'fake_component:1', 'input_assets': {'test_data_1': {'asset': {'jobInputType': 'mltable', 'uri': 'Direct:1'}, 'data_context': 'test'}, 'test_data_2': {'asset': {'jobInputType': 'mltable', 'uri': 'Direct:1'}, 'data_context': 'test'}}, 'metric_thresholds': [{'metric': 'metric1', 'threshold': {'value': 0.1}}, {'metric': 'metric2', 'threshold': {'value': 0.2}}]}}}}, 'trigger': {'time_zone': 'utc', 'trigger_type': 'Recurrence', 'frequency': 'week', 'interval': 1, 'schedule': {'hours': [22, 20], 'minutes': [0, 0], 'week_days': ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']}}}}
+            finish pytest_assertrepr_compare --> [["{'properties': {'properties': {'prop1': 'value'}, 'tags': {'tag1': 'tag', 'compute.spark.resources.instance_type': 'standard_e8s_v3', 'compute.spark.resources.runtime_version': '3.2'}, 'action': {'action_type': 'CreateMonitor', 'monitor_definition': {'compute_id': 'spark', 'monitoring_target': 'fake_endpoint_id', 'signals': {'testSignal': {'lookback_period': 'P7D', 'mode': 'Enabled', 'signal_type': 'Custom', 'component_id': 'fake_component:1', 'input_assets': {'test_data_1': {'asset': {'uri': 'Direct:1', 'jobInputType': 'mltable'}, 'data_context': 'test'}, 'test_data_2': {'asset': {'uri': 'Direct:1', 'jobInputType': 'mltable'}, 'data_context': 'test'}}, 'metric_thresholds': [{'metric': 'metric1', 'threshold': {'value': 0.1}}, {'metric': 'metric2', 'threshold': {'value': 0.2}}]}}}}, 'trigger': {'time_zone': 'utc', 'trigger_type': 'Recurrence', 'frequency': 'week', 'interval': 1, 'schedule': {'hours': [22, 20], 'minutes': [0, 0], 'week_days': ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']}}}} == {'properties': {'properties': {'prop1': 'value'}, 'tags': {'tag1': 'tag', 'compute.spark.resources.instance_type': 'standard_e8s_v3', 'compute.spark.resources.runtime_version': '3.2'}, 'action': {'action_type': 'CreateMonitor', 'monitor_definition': {'compute_id': 'spark', 'monitoring_target': 'fake_endpoint_id', 'signals': {'testSignal': {'mode': 'Enabled', 'signal_type': 'Custom', 'component_id': 'fake_component:1', 'input_assets': {'test_data_1': {'asset': {'jobInputType': 'mltable', 'uri': 'Direct:1'}, 'data_context': 'test'}, 'test_data_2': {'asset': {'jobInputType': 'mltable', 'uri': 'Direct:1'}, 'data_context': 'test'}}, 'metric_thresholds': [{'metric': 'metric1', 'threshold': {'value': 0.1}}, {'metric': 'metric2', 'threshold': {'value': 0.2}}]}}}}, 'trigger': {'time_zone': 'utc', 'trigger_type': 'Recurrence', 'frequency': 'week', 'interval': 1, 'schedule': {'hours': [22, 20], 'minutes': [0, 0], 'week_days': ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']}}}}", 'Differing items:', "{'properties': {'action': {'action_type': 'CreateMonitor', 'monitor_definition': {'compute_id': 'spark', 'monitoring_t..., 'minutes': [0, 0], 'week_days': ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']}, 'time_zone': 'utc', ...}}} != {'properties': {'action': {'action_type': 'CreateMonitor', 'monitor_definition': {'compute_id': 'spark', 'monitoring_t..., 'minutes': [0, 0], 'week_days': ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']}, 'time_zone': 'utc', ...}}}", 'Full diff:', '  {', "   'properties': {'action': {'action_type': 'CreateMonitor',", "                             'monitor_definition': {'compute_id': 'spark',", "                                                    'monitoring_target': 'fake_endpoint_id',", "                                                    'signals': {'testSignal': {'component_id': 'fake_component:1',", "                                                                               'input_assets': {'test_data_1': {'asset': {'jobInputType': 'mltable',", "                                                                                                                          'uri': 'Direct:1'},", "                                                                                                                'data_context': 'test'},", "                                                                                                'test_data_2': {'asset': {'jobInputType': 'mltable',", "                                                                                                                          'uri': 'Direct:1'},", "                                                                                                                'data_context': 'test'}},", "+                                                                              'lookback_period': 'P7D',", "                                                                               'metric_thresholds': [{'metric': 'metric1',", "                                                                                                      'threshold': {'value': 0.1}},", "                                                                                                     {'metric': 'metric2',", "                                                                                                      'threshold': {'value': 0.2}}],", "                                                                               'mode': 'Enabled',", "                                                                               'signal_type': 'Custom'}}}},", "                  'properties': {'prop1': 'value'},", "                  'tags': {'compute.spark.resources.instance_type': 'standard_e8s_v3',", "                           'compute.spark.resources.runtime_version': '3.2',", "                           'tag1': 'tag'},", "                  'trigger': {'frequency': 'week',", "                              'interval': 1,", "                              'schedule': {'hours': [22,", '                                                     20],', "                                           'minutes': [0,", '                                                       0],', "                                           'week_days': ['monday',", "                                                         'tuesday',", "                                                         'wednesday',", "                                                         'thursday',", "                                                         'friday']},", "                              'time_zone': 'utc',", "                              'trigger_type': 'Recurrence'}},", '  }']] [hook]
+        pytest_runtest_makereport [hook]
+            item: <Function test_custom_basic>
+            call: <CallInfo when='call' excinfo=<ExceptionInfo AssertionError("assert {'properties': {'properties': {'prop1': 'value'}, 'tags': {'tag1': 'tag', 'compute.spark.resour...                          'time_zone': 'utc',\n                                'trigger_type': 'Recurrence'}},\n    }") tblen=26>>
+        finish pytest_runtest_makereport --> <TestReport 'sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule::test_custom_basic' when='call' outcome='failed'> [hook]
+        pytest_runtest_logreport [hook]
+            report: <TestReport 'sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule::test_custom_basic' when='call' outcome='failed'>
+          pytest_report_teststatus [hook]
+              report: <TestReport 'sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule::test_custom_basic' when='call' outcome='failed'>
+              config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+          finish pytest_report_teststatus --> ('failed', 'F', 'FAILED') [hook]
+        finish pytest_runtest_logreport --> [] [hook]
+        pytest_exception_interact [hook]
+            node: <Function test_custom_basic>
+            call: <CallInfo when='call' excinfo=<ExceptionInfo AssertionError("assert {'properties': {'properties': {'prop1': 'value'}, 'tags': {'tag1': 'tag', 'compute.spark.resour...                          'time_zone': 'utc',\n                                'trigger_type': 'Recurrence'}},\n    }") tblen=2>>
+            report: <TestReport 'sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule::test_custom_basic' when='call' outcome='failed'>
+          pytest_timeout_cancel_timer [hook]
+              item: <Function test_custom_basic>
+          finish pytest_timeout_cancel_timer --> True [hook]
+        finish pytest_exception_interact --> [] [hook]
+        pytest_runtest_teardown [hook]
+            item: <Function test_custom_basic>
+            nextitem: None
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='skip_sleep_for_playback' scope='function' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'skip_sleep_for_playback' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='remove_git_props' scope='function' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'remove_git_props' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='mock_job_name_generator' scope='function' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'mock_job_name_generator' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='remove_git_props' scope='function' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'remove_git_props' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='mock_job_name_generator' scope='function' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'mock_job_name_generator' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='mocker' scope='function' baseid=''>
+              request: <SubRequest 'mocker' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='add_sanitizers' scope='function' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'add_sanitizers' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='mocker' scope='function' baseid=''>
+              request: <SubRequest 'mocker' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='pytestconfig' scope='session' baseid=''>
+              request: <SubRequest 'pytestconfig' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='add_sanitizers' scope='function' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'add_sanitizers' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='fake_datastore_key' scope='session' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'fake_datastore_key' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='start_proxy' scope='session' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'start_proxy' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='add_sanitizers' scope='function' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'add_sanitizers' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='start_proxy' scope='session' baseid='sdk/ml/azure-ai-ml/tests'>
+              request: <SubRequest 'start_proxy' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='test_proxy' scope='session' baseid='sdk'>
+              request: <SubRequest 'test_proxy' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='clean_cached_resources' scope='session' baseid='sdk'>
+              request: <SubRequest 'clean_cached_resources' for <Function test_custom_basic>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+        finish pytest_runtest_teardown --> [] [hook]
+        pytest_runtest_makereport [hook]
+            item: <Function test_custom_basic>
+            call: <CallInfo when='teardown' result: []>
+        finish pytest_runtest_makereport --> <TestReport 'sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule::test_custom_basic' when='teardown' outcome='passed'> [hook]
+        pytest_runtest_logreport [hook]
+            report: <TestReport 'sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule::test_custom_basic' when='teardown' outcome='passed'>
+          pytest_report_teststatus [hook]
+              report: <TestReport 'sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule::test_custom_basic' when='teardown' outcome='passed'>
+              config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+          finish pytest_report_teststatus --> ('', '', '') [hook]
+        finish pytest_runtest_logreport --> [] [hook]
+        pytest_runtest_logfinish [hook]
+            nodeid: sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule::test_custom_basic
+            location: ('sdk\\ml\\azure-ai-ml\\tests\\monitoring\\unittests\\test_monitor_schedule.py', 63, 'TestMonitorSchedule.test_custom_basic')
+        finish pytest_runtest_logfinish --> [] [hook]
+      finish pytest_runtest_protocol --> True [hook]
+    finish pytest_runtestloop --> True [hook]
+    pytest_sessionfinish [hook]
+        session: <Session azure-sdk-for-python exitstatus=<ExitCode.TESTS_FAILED: 1> testsfailed=1 testscollected=1>
+        exitstatus: 1
+      pytest_terminal_summary [hook]
+          terminalreporter: <_pytest.terminal.TerminalReporter object at 0x000002AECE7A7490>
+          exitstatus: 1
+          config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+      early skip of rewriting module: pygments [assertion]
+      early skip of rewriting module: pygments.formatters [assertion]
+      early skip of rewriting module: pygments.formatters._mapping [assertion]
+      early skip of rewriting module: pygments.plugin [assertion]
+      early skip of rewriting module: pygments.util [assertion]
+      early skip of rewriting module: pygments.formatters.terminal [assertion]
+      early skip of rewriting module: pygments.formatter [assertion]
+      early skip of rewriting module: pygments.styles [assertion]
+      early skip of rewriting module: pygments.token [assertion]
+      early skip of rewriting module: pygments.console [assertion]
+      early skip of rewriting module: pygments.lexers [assertion]
+      early skip of rewriting module: pygments.lexers._mapping [assertion]
+      early skip of rewriting module: pygments.modeline [assertion]
+      early skip of rewriting module: pygments.lexers.python [assertion]
+      early skip of rewriting module: pygments.lexer [assertion]
+      early skip of rewriting module: pygments.filter [assertion]
+      early skip of rewriting module: pygments.filters [assertion]
+      early skip of rewriting module: pygments.regexopt [assertion]
+      early skip of rewriting module: pygments.unistring [assertion]
+        pytest_report_teststatus [hook]
+            report: <TestReport 'sdk/ml/azure-ai-ml/tests/monitoring/unittests/test_monitor_schedule.py::TestMonitorSchedule::test_custom_basic' when='call' outcome='failed'>
+            config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+        finish pytest_report_teststatus --> ('failed', 'F', 'FAILED') [hook]
+      finish pytest_terminal_summary --> [] [hook]
+    finish pytest_sessionfinish --> [] [hook]
+    pytest_unconfigure [hook]
+        config: <_pytest.config.Config object at 0x000002AEC5EAE770>
+    finish pytest_unconfigure --> [] [hook]

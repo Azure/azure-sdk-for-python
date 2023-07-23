@@ -279,6 +279,9 @@ class ScheduleOperations(_ScopeDependentOperations):
         self, schedule: MonitorSchedule
     ) -> None:
         # resolve target ARM ID
+        import debugpy
+        debugpy.connect(("localhost", 5678))
+        debugpy.breakpoint()
         model_inputs_name, model_outputs_name = None, None
         model_inputs_version, model_outputs_version = None, None
         mdc_input_enabled, mdc_output_enabled = False, False
