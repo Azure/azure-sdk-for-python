@@ -20,7 +20,6 @@ class _InputOutputBase(DictMixin, RestTranslatableMixin):
         :type type: str
         """
         self.type = type
-        self._is_primitive_type = None
 
     def _is_literal(self) -> bool:
         """Returns True if this input is literal input."""
