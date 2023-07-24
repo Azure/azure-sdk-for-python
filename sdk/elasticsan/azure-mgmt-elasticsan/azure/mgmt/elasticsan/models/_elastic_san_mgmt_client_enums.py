@@ -10,6 +10,12 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
+
+    INTERNAL = "Internal"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -22,8 +28,8 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of key used to encrypt the data of the disk."""
 
-    #: Volume is encrypted at rest with Platform managed key. It is the default encryption type.
     ENCRYPTION_AT_REST_WITH_PLATFORM_KEY = "EncryptionAtRestWithPlatformKey"
+    """Volume is encrypted at rest with Platform managed key. It is the default encryption type."""
 
 
 class OperationalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -37,6 +43,25 @@ class OperationalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RUNNING = "Running"
     STOPPED = "Stopped"
     STOPPED_DEALLOCATED_ = "Stopped (deallocated)"
+
+
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system".
+    """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
+
+
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    FAILED = "Failed"
+    REJECTED = "Rejected"
 
 
 class ProvisioningStates(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -55,17 +80,17 @@ class ProvisioningStates(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sku name."""
 
-    #: Premium locally redundant storage
     PREMIUM_LRS = "Premium_LRS"
-    #: Premium zone redundant storage
+    """Premium locally redundant storage"""
     PREMIUM_ZRS = "Premium_ZRS"
+    """Premium zone redundant storage"""
 
 
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sku tier."""
 
-    #: Premium Tier
     PREMIUM = "Premium"
+    """Premium Tier"""
 
 
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
