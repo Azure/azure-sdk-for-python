@@ -546,7 +546,7 @@ class ModelPerformanceSignal(ModelSignal):
 
 @experimental
 class CustomMonitoringSignal(RestTranslatableMixin):
-    """Feature attribution drift signal
+    """Custom signal
 
     :ivar type: The type of the signal
     :vartype type: str
@@ -561,6 +561,9 @@ class CustomMonitoringSignal(RestTranslatableMixin):
     :param component_id: ARM ID of the component resource used to
         calculate the custom metrics.
     :type component_id: str
+    :param data_window_size: The number of days a single monitor looks back
+        over the target
+    :type data_window_size: int
     """
 
     def __init__(
