@@ -150,6 +150,8 @@ def test_claims_challenge():
     args, kwargs = credential.get_token.call_args
     assert expected_scope in args
     assert kwargs["claims"] == expected_claims
+    if "enable_cae" in kwargs:
+        assert kwargs["enable_cae"] == True
 
     with pytest.raises(StopIteration):
         next(tokens)

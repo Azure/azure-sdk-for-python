@@ -25,12 +25,14 @@
 # --------------------------------------------------------------------------
 import base64
 import time
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, TYPE_CHECKING, Any
 
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.exceptions import ServiceRequestError
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 HTTPRequestType = TypeVar("HTTPRequestType")
 HTTPResponseType = TypeVar("HTTPResponseType")
@@ -45,6 +47,11 @@ class ARMChallengeAuthenticationPolicy(BearerTokenCredentialPolicy):
     :param ~azure.core.credentials.TokenCredential credential: credential for authorizing requests
     :param str scopes: required authentication scopes
     """
+
+    def __init__(self, credential: "TokenCredential", *scopes: str, **kwargs: Any) -> None:
+        # ARM supports Continuous Access Evaluation (CAE). This policy will enable it by default.
+        kwargs.setdefault("enable_cae", True)
+        super().__init__(credential, *scopes, **kwargs)
 
     def on_challenge(
         self,
