@@ -198,7 +198,7 @@
                 "[variables('uniqueAzConfigNameProvider')]"
             ],
             "properties": {
-                "value": "{\"id\":\"Alpha\",\"description\":\"\",\"enabled\":true,\"conditions\":{\"client_filters\":[]}}",
+                "value": "{\"id\":\"Alpha\",\"description\":\"\",\"enabled\":false,\"conditions\":{\"client_filters\":[]}}",
                 "contentType": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
             }
         }
