@@ -27,6 +27,7 @@ from ...constants._common import (
     AZUREML_RESOURCE_PROVIDER,
     BASE_PATH_CONTEXT_KEY,
     CONDA_FILE,
+    DefaultOpenEncoding,
     DOCKER_FILE_NAME,
     EXPERIMENTAL_FIELD_MESSAGE,
     EXPERIMENTAL_LINK_MESSAGE,
@@ -623,7 +624,7 @@ class TypeSensitiveUnionField(UnionField):
                 target_path.resolve()
             if target_path.is_file():
                 self.context[BASE_PATH_CONTEXT_KEY] = target_path.parent
-                with target_path.open() as f:
+                with target_path.open(encoding=DefaultOpenEncoding.READ) as f:
                     return yaml.safe_load(f)
         except Exception:  # pylint: disable=broad-except
             pass
@@ -640,7 +641,7 @@ class TypeSensitiveUnionField(UnionField):
 
 def ComputeField(**kwargs):
     """
-    :param required : if set to True, it is not possible to pass None
+    :keyword required: if set to True, it is not possible to pass None
     :type required: bool
     """
     return UnionField(
@@ -657,7 +658,7 @@ def ComputeField(**kwargs):
 
 def CodeField(**kwargs):
     """
-    :param required : if set to True, it is not possible to pass None
+    :keyword required: if set to True, it is not possible to pass None
     :type required: bool
     """
     return UnionField(

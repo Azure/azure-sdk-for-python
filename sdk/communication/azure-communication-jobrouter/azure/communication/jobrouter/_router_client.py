@@ -23,8 +23,8 @@ from azure.communication.jobrouter._shared.policy import HMACCredentialsPolicy
 from ._datetimeutils import _convert_str_to_datetime  # pylint:disable=protected-access
 from ._generated import AzureCommunicationJobRouterService
 from ._enums import (
-    RouterWorkerStateSelector,
-    RouterJobStatusSelector,
+    RouterWorkerState,
+    RouterJobStatus
 )
 from ._models import (
     RouterQueueStatistics,
@@ -59,6 +59,11 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
 
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -254,7 +259,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :param str worker_id: Id of the worker.
 
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
-        :paramtype queue_assignments: Optional[Dict[str, ~azure.communication.jobrouter.QueueAssignment]]
+        :paramtype queue_assignments: Optional[Dict[str, Union[~collections.abc.MutableMapping[str, Any], None]]]
 
         :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
          jobs.
@@ -262,10 +267,10 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
-        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
-        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
          workers capacity.
@@ -295,7 +300,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :type router_worker: ~azure.communication.jobrouter.RouterWorker
 
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
-        :paramtype queue_assignments: Optional[Dict[str, ~azure.communication.jobrouter.QueueAssignment]]
+        :paramtype queue_assignments: Optional[Dict[str, Union[~collections.abc.MutableMapping[str, Any], None]]]
 
         :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
          jobs.
@@ -303,10 +308,10 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
-        :paramtype labels: Optional[dict[str, Union[int, float, str, bool]]]
+        :paramtype labels: Optional[dict[str, Union[int, float, str, bool, None]]]
 
         :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
-        :paramtype tags: Optional[dict[str, Union[int, float, str, bool]]]
+        :paramtype tags: Optional[dict[str, Union[int, float, str, bool, None]]]
 
         :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
          workers capacity.
@@ -407,7 +412,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
     def list_workers(
             self,
             *,
-            state: Optional[Union[str, RouterWorkerStateSelector]] = RouterWorkerStateSelector.ALL,
+            state: Optional[Union[str, RouterWorkerState, Literal["all"]]] = "all",
             channel_id: Optional[str] = None,
             queue_id: Optional[str] = None,
             has_capacity: Optional[bool] = None,
@@ -418,7 +423,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :keyword state: If specified, select workers by worker status. Default value is "all".
           Accepted value(s): active, draining, inactive, all
-        :paramtype state: Optional[Union[str, ~azure.communication.jobrouter.RouterWorkerStateSelector]]
+        :paramtype state: Optional[Union[str, ~azure.communication.jobrouter.RouterWorkerState, Literal["all"]]]
 
         :keyword channel_id: If specified, select workers who have a channel configuration
            with this channel. Default value is None.
@@ -577,8 +582,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             priority: Optional[int],
             disposition_code: Optional[str],
             requested_worker_selectors: Optional[List[RouterWorkerSelector]],
-            labels: Optional[Dict[str, Union[int, float, str, bool]]],
-            tags: Optional[Dict[str, Union[int, float, str, bool]]],
+            labels: Optional[Dict[str, Union[int, float, str, bool, None]]],
+            tags: Optional[Dict[str, Union[int, float, str, bool, None]]],
             notes: Optional[Dict[datetime, str]],
             matching_mode: Optional[JobMatchingMode],
             **kwargs: Any
@@ -612,10 +617,10 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
-        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
-        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: Optional[Dict[~datetime.datetime, str]]
@@ -665,14 +670,14 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
 
         :keyword requested_worker_selectors: A collection of manually specified label selectors, which
          a worker must satisfy in order to process this job.
-        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.WorkerSelector]]
+        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.RouterWorkerSelector]]
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
-        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
-        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: Optional[Dict[~datetime.datetime, str]]
@@ -761,7 +766,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
     def list_jobs(
             self,
             *,
-            status: Optional[Union[str, RouterJobStatusSelector]] = RouterJobStatusSelector.ALL,
+            status: Optional[Union[str, RouterJobStatus, Literal["all", "active"] ]] = "all",
             channel_id: Optional[str] = None,
             queue_id: Optional[str] = None,
             classification_policy_id: Optional[str] = None,
@@ -775,7 +780,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :keyword status: If specified, filter jobs by status. Default value is "all".
             Accepted value(s): pendingClassification, queued, assigned, completed, closed, cancelled,
             classificationFailed, active, all
-        :paramtype status: Optional[Union[str, ~azure.communication.jobrouter.RouterJobStatusSelector]]
+        :paramtype status: Optional[Union[str, ~azure.communication.jobrouter.RouterJobStatus, Literal["all","active"]]]
 
         :keyword channel_id: If specified, filter jobs by channel. Default value is None.
         :paramtype channel_id: Optional[str]
@@ -927,7 +932,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             close_at: Optional[datetime] = None,
             note: Optional[str] = None,
             **kwargs: Any
-    ) -> JSON:
+    ) -> None:
         """Closes a completed job.
 
         :param str job_id: Id of the job.
@@ -947,8 +952,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
          current timestamp. Default value is None.
         :paramtype note: Optional[str]
 
-        :return: Instance of MutableMapping[str, Any]
-        :rtype: MutableMapping[str, Any]
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -973,7 +978,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             note = note
         )
 
-        return self._client.job_router.close_job_action(
+        self._client.job_router.close_job_action(
             id = job_id,
             # pylint:disable=protected-access
             close_job_request = _serialize_to_json(close_job_request, "CloseJobRequest"),
@@ -988,7 +993,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             *,
             note: Optional[str] = None,
             **kwargs: Any
-    ) -> JSON:
+    ) -> None:
         """Completes an assigned job.
 
         :param str job_id: Id of the job.
@@ -999,8 +1004,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
          current timestamp. Default value is None.
         :paramtype note: Optional[str]
 
-        :return: Instance of MutableMapping[str, Any]
-        :rtype: MutableMapping[str, Any]
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1023,7 +1028,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             note = note
         )
 
-        return self._client.job_router.complete_job_action(
+        self._client.job_router.complete_job_action(
             id = job_id,
             # pylint:disable=protected-access
             complete_job_request = _serialize_to_json(complete_job_request, "CompleteJobRequest"),
@@ -1038,7 +1043,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             disposition_code: Optional[str] = None,
             note: Optional[str] = None,
             **kwargs: Any
-    ) -> JSON:
+    ) -> None:
         """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
         :param str job_id: Id of the job.
@@ -1052,8 +1057,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
          If not provided, default value of "Cancelled" is set. Default value is None.
         :paramtype disposition_code: Optional[str]
 
-        :return: Instance of MutableMapping[str, Any]
-        :rtype: MutableMapping[str, Any]
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1074,7 +1079,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             disposition_code = disposition_code
         )
 
-        return self._client.job_router.cancel_job_action(
+        self._client.job_router.cancel_job_action(
             id = job_id,
             # pylint:disable=protected-access
             cancel_job_request = _serialize_to_json(cancel_job_request, "CancelJobRequest"),
@@ -1086,13 +1091,13 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             self,
             job_id: str,
             **kwargs: Any
-    ) -> JSON:
+    ) -> None:
         """Reclassify a job.
 
         :param str job_id: Id of the job.
 
-        :return: Instance of MutableMapping[str, Any]
-        :rtype: MutableMapping[str, Any]
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1107,7 +1112,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         if not job_id:
             raise ValueError("identifier cannot be None.")
 
-        return self._client.job_router.reclassify_job_action(
+        self._client.job_router.reclassify_job_action(
             id = job_id,
             **kwargs
         )
@@ -1216,7 +1221,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             *,
             retry_offer_at: Optional[datetime] = None,
             **kwargs: Any
-    ) -> JSON:
+    ) -> None:
         """Declines an offer to work on a job.
 
         :param worker_id: Id of the worker.
@@ -1225,13 +1230,13 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         :type offer_id: str
 
         :keyword retry_offer_at: If the retry_offer_at is not provided, then this job will not be re-offered to the
-        worker who declined this job unless the worker is de-registered and re-registered.  If a retry_offer_at is
-        provided, then the job will be re-matched to eligible workers after the reoffer time.  The worker that declined
-        the job will also be eligible for the job at that time.
+          worker who declined this job unless the worker is de-registered and re-registered.  If a retry_offer_at is
+          provided, then the job will be re-matched to eligible workers after the reoffer time. The worker that declined
+          the job will also be eligible for the job at that time.
         :paramtype retry_offer_at: Optional[~datetime.datetime]
 
-        :return: Instance of MutableMapping[str, Any]
-        :rtype: MutableMapping[str, Any]
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1253,7 +1258,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             retry_offer_at = retry_offer_at
         )
 
-        return self._client.job_router.decline_job_action(
+        self._client.job_router.decline_job_action(
             worker_id = worker_id,
             offer_id = offer_id,
             # pylint:disable=protected-access

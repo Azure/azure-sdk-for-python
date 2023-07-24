@@ -231,7 +231,7 @@ provider_storage_account_resource_id = "/subscriptions/{subscription-id}/resourc
 
 list_request = client.sent_shares.list(
     reference_name=provider_storage_account_resource_id,
-    orderby="properties/createdAt desc")
+    order_by="properties/createdAt desc")
 
 for list_response in list_request:
     print(list_response)
@@ -366,7 +366,7 @@ credential = DefaultAzureCredential()
 
 client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
-list_detached_response = client.received_shares.list_detached(orderby="properties/createdAt desc")
+list_detached_response = client.received_shares.list_detached(order_by="properties/createdAt desc")
 print(list_detached_response)
 ```
 
@@ -387,7 +387,7 @@ client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
 consumer_storage_account_resource_id = "/subscriptions/{subscription-id}/resourceGroups/consumer-storage-rg/providers/Microsoft.Storage/storageAccounts/consumerstorage"
 
-list_detached_response = client.received_shares.list_detached(orderby="properties/createdAt desc")
+list_detached_response = client.received_shares.list_detached(order_by="properties/createdAt desc")
 received_share = next(x for x in list_detached_response)
 
 store_reference = {
@@ -431,7 +431,7 @@ credential = DefaultAzureCredential()
 
 client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
-list_detached_response = client.received_shares.list_detached(orderby="properties/createdAt desc")
+list_detached_response = client.received_shares.list_detached(order_by="properties/createdAt desc")
 list_detached = json.loads(list_detached_response)
 received_share = list_detached[0]
 
@@ -459,7 +459,7 @@ consumer_storage_account_resource_id = "/subscriptions/{subscription-id}/resourc
 
 list_attached_response = client.received_shares.list_attached(
     reference_name=consumer_storage_account_resource_id,
-    orderby="properties/createdAt desc")
+    order_by="properties/createdAt desc")
 print(list_attached_response)
 ```
 
@@ -504,7 +504,7 @@ client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
 list_request = client.share_resources.list(
     filter="properties/storeKind eq 'AdlsGen2Account'",
-    orderby="properties/createdAt desc")
+    order_by="properties/createdAt desc")
 
 for list_response in list_request:
     print(list_response)

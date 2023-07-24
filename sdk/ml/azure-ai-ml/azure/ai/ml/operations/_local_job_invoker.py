@@ -28,6 +28,7 @@ from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml.constants._common import (
     AZUREML_RUN_SETUP_DIR,
     AZUREML_RUNS_DIR,
+    DefaultOpenEncoding,
     EXECUTION_SERVICE_URL_KEY,
     INVOCATION_BASH_FILE,
     INVOCATION_BAT_FILE,
@@ -204,10 +205,10 @@ class CommonRuntimeHelper:
             CommonRuntimeHelper.VM_BOOTSTRAPPER_FILE_NAME,
         )
         self.stdout = open(  # pylint: disable=consider-using-with
-            os.path.join(self.common_runtime_temp_folder, "stdout"), "w+"
+            os.path.join(self.common_runtime_temp_folder, "stdout"), "w+", encoding=DefaultOpenEncoding.WRITE
         )
         self.stderr = open(  # pylint: disable=consider-using-with
-            os.path.join(self.common_runtime_temp_folder, "stderr"), "w+"
+            os.path.join(self.common_runtime_temp_folder, "stderr"), "w+", encoding=DefaultOpenEncoding.WRITE
         )
 
     def get_docker_client(self, registry: Dict[str, str]) -> "docker.DockerClient":

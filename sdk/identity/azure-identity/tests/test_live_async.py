@@ -44,7 +44,6 @@ async def test_certificate_credential(certificate_fixture, request):
     assert "xms_cc" in parsed_payload and "CP1" in parsed_payload["xms_cc"]
 
 
-
 @pytest.mark.asyncio
 async def test_client_secret_credential(live_service_principal):
     credential = ClientSecretCredential(
@@ -55,7 +54,6 @@ async def test_client_secret_credential(live_service_principal):
     token = await get_token(credential)
     parsed_payload = get_token_payload_contents(token.token)
     assert "xms_cc" in parsed_payload and "CP1" in parsed_payload["xms_cc"]
-
 
 
 @pytest.mark.asyncio

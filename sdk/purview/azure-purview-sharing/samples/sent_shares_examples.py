@@ -111,7 +111,7 @@ get_response = client.sent_shares.get(sent_share_id=str(sent_share_id))
 # [START get_all_sent_shares]
 list_request = client.sent_shares.list(
     reference_name=str(sent_share["properties.artifact.storeReference.referenceName"]),
-    orderby="properties/createdAt desc")
+    order_by="properties/createdAt desc")
 # [END get_all_sent_shares]
 
 # Delete a sent share

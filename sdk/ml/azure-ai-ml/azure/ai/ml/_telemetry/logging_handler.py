@@ -84,15 +84,15 @@ def get_appinsights_log_handler(
 
     :param user_agent: Information about the user's browser.
     :type user_agent: Dict[str, str]
-    :param instrumentation_key: The Application Insights instrumentation key.
-    :type instrumentation_key: str
-    :param component_name: The component name.
-    :type component_name: str
-    :param enable_telemetry: Whether to enable telemetry. Will be overriden to False if not in a Jupyter Notebook.
-    :type enable_telemetry: bool
     :param args: Optional arguments for formatting messages.
     :type args: list
-    :param kwargs: Optional keyword arguments for adding additional information to messages.
+    :keyword instrumentation_key: The Application Insights instrumentation key.
+    :type instrumentation_key: str
+    :keyword component_name: The component name.
+    :type component_name: str
+    :keyword enable_telemetry: Whether to enable telemetry. Will be overriden to False if not in a Jupyter Notebook.
+    :type enable_telemetry: bool
+    :keyword kwargs: Optional keyword arguments for adding additional information to messages.
     :type kwargs: dict
     :return: The logging handler.
     :rtype: AzureMLSDKLogHandler

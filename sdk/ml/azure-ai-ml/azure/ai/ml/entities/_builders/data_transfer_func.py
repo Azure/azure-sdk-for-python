@@ -135,29 +135,29 @@ def copy_data(
 ) -> DataTransferCopy:
     """Create a DataTransferCopy object which can be used inside dsl.pipeline as a function.
 
-    :param name: The name of the job.
+    :keyword name: The name of the job.
     :type name: str
-    :param description: Description of the job.
+    :keyword description: Description of the job.
     :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
-    :param display_name: Display name of the job.
+    :keyword display_name: Display name of the job.
     :type display_name: str
-    :param experiment_name:  Name of the experiment the job will be created under.
+    :keyword experiment_name:  Name of the experiment the job will be created under.
     :type experiment_name: str
-    :param compute: The compute resource the job runs on.
+    :keyword compute: The compute resource the job runs on.
     :type compute: str
-    :param inputs: Mapping of inputs data bindings used in the job.
+    :keyword inputs: Mapping of inputs data bindings used in the job.
     :type inputs: dict
-    :param outputs: Mapping of outputs data bindings used in the job.
+    :keyword outputs: Mapping of outputs data bindings used in the job.
     :type outputs: dict
-    :param is_deterministic: Specify whether the command will return same output given same input.
+    :keyword is_deterministic: Specify whether the command will return same output given same input.
         If a command (component) is deterministic, when use it as a node/step in a pipeline,
         it will reuse results from a previous submitted job in current workspace which has same inputs and settings.
         In this case, this step will not use any compute resource.
         Default to be True, specify is_deterministic=False if you would like to avoid such reuse behavior.
     :type is_deterministic: bool
-    :param data_copy_mode: data copy mode in copy task, possible value is "merge_with_overwrite", "fail_if_conflict".
+    :keyword data_copy_mode: data copy mode in copy task, possible value is "merge_with_overwrite", "fail_if_conflict".
     :type data_copy_mode: str
     """
     inputs = inputs or {}
@@ -212,21 +212,21 @@ def import_data(
 ) -> DataTransferImport:
     """Create a DataTransferImport object which can be used inside dsl.pipeline.
 
-    :param name: The name of the job.
+    :keyword name: The name of the job.
     :type name: str
-    :param description: Description of the job.
+    :keyword description: Description of the job.
     :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
-    :param display_name: Display name of the job.
+    :keyword display_name: Display name of the job.
     :type display_name: str
-    :param experiment_name:  Name of the experiment the job will be created under.
+    :keyword experiment_name:  Name of the experiment the job will be created under.
     :type experiment_name: str
-    :param compute: The compute resource the job runs on.
+    :keyword compute: The compute resource the job runs on.
     :type compute: str
-    :param source: The data source of file system or database
+    :keyword source: The data source of file system or database
     :type source: Union[Dict, Database, FileSystem]
-    :param outputs: Mapping of outputs data bindings used in the job, default will be an output port with key "sink"
+    :keyword outputs: Mapping of outputs data bindings used in the job, default will be an output port with key "sink"
     and type "mltable".
     :type outputs: dict
     """
@@ -278,21 +278,21 @@ def export_data(
 ) -> DataTransferExport:
     """Create a DataTransferExport object which can be used inside dsl.pipeline.
 
-    :param name: The name of the job.
+    :keyword name: The name of the job.
     :type name: str
-    :param description: Description of the job.
+    :keyword description: Description of the job.
     :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
-    :param display_name: Display name of the job.
+    :keyword display_name: Display name of the job.
     :type display_name: str
-    :param experiment_name:  Name of the experiment the job will be created under.
+    :keyword experiment_name:  Name of the experiment the job will be created under.
     :type experiment_name: str
-    :param compute: The compute resource the job runs on.
+    :keyword compute: The compute resource the job runs on.
     :type compute: str
-    :param sink: The sink of external data and databases.
+    :keyword sink: The sink of external data and databases.
     :type sink: Union[Dict, Database, FileSystem]
-    :param inputs: Mapping of inputs data bindings used in the job.
+    :keyword inputs: Mapping of inputs data bindings used in the job.
     :type inputs: dict
     """
     sink = _build_source_sink(sink)

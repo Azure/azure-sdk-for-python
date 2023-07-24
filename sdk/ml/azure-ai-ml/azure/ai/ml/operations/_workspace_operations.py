@@ -62,7 +62,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Workspace]:
         """List all workspaces that the user has access to in the current resource group or subscription.
 
-        :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
+        :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :type scope: str, optional
         :return: An iterator like instance of Workspace objects
         :rtype: ~azure.core.paging.ItemPaged[Workspace]
@@ -135,7 +135,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         """Triggers the workspace to provision the managed network. Specifying spark enabled
         as true prepares the workspace managed network for supporting Spark.
 
-        :param workspace_name: Name of the workspace.
+        :keyword workspace_name: Name of the workspace.
         :type workspace_name: str
         :return: An instance of LROPoller.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.ManagedNetworkProvisionStatus]
@@ -195,11 +195,11 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         :param name: Name of the workspace
         :type name: str
-        :param delete_dependent_resources: Whether to delete resources associated with the workspace,
+        :keyword delete_dependent_resources: Whether to delete resources associated with the workspace,
             i.e., container registry, storage account, key vault, and application insights.
             The default is False. Set to True to delete these resources.
         :type delete_dependent_resources: bool
-        :param permanently_delete: Workspaces are soft-deleted state by default to allow recovery of workspace data.
+        :keyword permanently_delete: Workspaces are soft-deleted state by default to allow recovery of workspace data.
             Set this flag to override the soft-delete behavior and permanently delete your workspace.
         :type permanently_delete: bool
         :return: A poller to track the operation status.

@@ -183,7 +183,7 @@ def to_rest_dataset_literal_inputs(
     :type inputs: Dict[str, Union[int, str, float, bool, JobInput]]
     :return: A dictionary mapping input name to a ComponentJobInput or PipelineInput
     :rtype: Dict[str, Union[ComponentJobInput, PipelineInput]]
-    :param job_type: When job_type is pipeline, enable dot('.') in parameter keys to support parameter group.
+    :keyword job_type: When job_type is pipeline, enable dot('.') in parameter keys to support parameter group.
         TODO: Remove this after move name validation to Job's customized validate.
     :type job_type: str
     """
