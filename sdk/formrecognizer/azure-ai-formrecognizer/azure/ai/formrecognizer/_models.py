@@ -3787,7 +3787,11 @@ class AzureBlobFileListSource:
         )
 
     def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of AzureBlobFileListSource."""
+        """Returns a dict representation of AzureBlobFileListSource.
+
+        :return: Dict[str, Any]
+        :rtype: Dict[str, Any]
+        """
         return {
             "container_url": self.container_url,
             "file_list": self.file_list
@@ -3837,7 +3841,11 @@ class AzureBlobSource:
         )
 
     def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of AzureBlobSource."""
+        """Returns a dict representation of AzureBlobSource.
+
+        :return: Dict[str, Any]
+        :rtype: Dict[str, Any]
+        """
         return {
             "container_url": self.container_url,
             "prefix": self.prefix
@@ -3887,7 +3895,11 @@ class ClassifierDocumentTypeDetails:
         )
 
     def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of ClassifierDocumentTypeDetails."""
+        """Returns a dict representation of ClassifierDocumentTypeDetails.
+
+        :return: Dict[str, Any]
+        :rtype: Dict[str, Any]
+        """
         return {
             "source": self.source.to_dict() if self.source else None,
         }
