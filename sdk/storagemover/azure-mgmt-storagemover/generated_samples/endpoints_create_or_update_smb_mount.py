@@ -14,7 +14,7 @@ from azure.mgmt.storagemover import StorageMoverMgmtClient
     pip install azure-identity
     pip install azure-mgmt-storagemover
 # USAGE
-    python endpoints_create_or_update.py
+    python endpoints_create_or_update_smb_mount.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,7 +26,7 @@ from azure.mgmt.storagemover import StorageMoverMgmtClient
 def main():
     client = StorageMoverMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="11111111-2222-3333-4444-555555555555",
+        subscription_id="60bcfc77-6589-4da2-b7fd-f9ec9322cf95",
     )
 
     response = client.endpoints.create_or_update(
@@ -35,16 +35,21 @@ def main():
         endpoint_name="examples-endpointName",
         endpoint={
             "properties": {
-                "blobContainerName": "examples-blobContainerName",
-                "description": "Example Storage Container Endpoint Description",
-                "endpointType": "AzureStorageBlobContainer",
-                "storageAccountResourceId": "/subscriptions/11111111-2222-3333-4444-555555555555/resourceGroups/examples-rg/providers/Microsoft.Storage/storageAccounts/examples-storageAccountName/",
+                "credentials": {
+                    "passwordUri": "https://examples-azureKeyVault.vault.azure.net/secrets/examples-password",
+                    "type": "AzureKeyVaultSmb",
+                    "usernameUri": "https://examples-azureKeyVault.vault.azure.net/secrets/examples-username",
+                },
+                "description": "Example SMB Mount Endpoint Description",
+                "endpointType": "SmbMount",
+                "host": "0.0.0.0",
+                "shareName": "examples-shareName",
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2023-03-01/examples/Endpoints_CreateOrUpdate.json
+# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/preview/2023-07-01-preview/examples/Endpoints_CreateOrUpdate_SmbMount.json
 if __name__ == "__main__":
     main()
