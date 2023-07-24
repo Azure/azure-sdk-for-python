@@ -71,9 +71,9 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
     :param component: Pipeline component version. The field is mutually exclusive with 'jobs'.
     :type component: Union[str, ~azure.ai.ml.entities._component.pipeline_component.PipelineComponent]
     :param inputs: Inputs to the pipeline job.
-    :type inputs: dict[str, Union[~azure.ai.ml.entities._inputs_outputs.Input, str, bool, int, float]]
+    :type inputs: dict[str, Union[~azure.ai.ml.entities.Input, str, bool, int, float]]
     :param outputs: Outputs of the pipeline job.
-    :type outputs: dict[str, ~azure.ai.ml.entities._inputs_outputs.Output]
+    :type outputs: dict[str, ~azure.ai.ml.entities.Output]
     :param name: Name of the PipelineJob. Defaults to None
     :type name: str, optional
     :param description: Description of the pipeline job. Defaults to None
@@ -179,7 +179,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         """Inputs of the pipeline job.
 
         :return: Inputs of the pipeline job.
-        :rtype: dict[str, Union[~azure.ai.ml.entities._inputs_outputs.Input, str, bool, int, float]]
+        :rtype: dict[str, Union[~azure.ai.ml.entities.Input, str, bool, int, float]]
         """
         return self._inputs
 
@@ -188,7 +188,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         """Outputs of the pipeline job.
 
         :return: Outputs of the pipeline job.
-        :rtype: dict[str, Union[str, ~azure.ai.ml.entities._inputs_outputs.Output]]
+        :rtype: dict[str, Union[str, ~azure.ai.ml.entities.Output]]
         """
         return self._outputs
 

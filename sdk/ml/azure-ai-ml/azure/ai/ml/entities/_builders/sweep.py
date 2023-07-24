@@ -62,7 +62,7 @@ class Sweep(ParameterizedSweep, BaseNode):
     You should not instantiate this class directly. Instead, you should create from the builder function: sweep.
 
     :param trial: Id or instance of the command component/job to be run for the step.
-    :type trial: Union[~azure.ai.ml.entities._component.command_component.CommandComponent, str]
+    :type trial: Union[~~azure.ai.ml.entities.CommandComponent, str]
     :param compute: Compute definition containing the compute information for the step.
     :type compute: str
     :param limits: Limits in running the sweep node.
@@ -90,13 +90,13 @@ class Sweep(ParameterizedSweep, BaseNode):
         ~azure.ai.ml.entities._job.sweep.search_space.Uniform]]
     :param inputs: Inputs to the command.
     :type inputs: Dict[str, Union[
-        ~azure.ai.ml.entities._inputs_outputs.Input,
+        ~azure.ai.ml.entities.Input,
         str,
         bool,
         int,
         float]]
     :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Dict[str, Union[str, ~azure.ai.ml.entities._inputs_outputs.Output]]
+    :type outputs: Dict[str, Union[str, ~azure.ai.ml.entities.Output]]
     :param identity: Identity that training job will use while running on compute.
     :type identity: Union[
         ~azure.ai.ml.entities._credentials.ManagedIdentityConfiguration,
@@ -164,7 +164,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         """Id or instance of the command component/job to be run for the step.
 
         :return: The id or instance of the command component/job.
-        :rtype: Union[~azure.ai.ml.entities._component.command_component.CommandComponent, str]
+        :rtype: Union[~~azure.ai.ml.entities.CommandComponent, str]
         """
         return self._component
 

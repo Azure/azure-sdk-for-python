@@ -45,7 +45,7 @@ def import_job(
     :param source: Input source parameters used by this import. Defaults to None.
     :type source: ~azure.ai.ml.entities._job.import_job.ImportSource, optional
     :param output: The output of this import. Defaults to None.
-    :type output: ~azure.ai.ml.entities._inputs_outputs.Output, optional
+    :type output: ~azure.ai.ml.entities.Output, optional
     :param is_deterministic: Specify whether the command will return the same output given the same input.
         If a command (component) is deterministic, when used as a node/step in a pipeline,
         it will reuse results from a previously submitted job in the current workspace

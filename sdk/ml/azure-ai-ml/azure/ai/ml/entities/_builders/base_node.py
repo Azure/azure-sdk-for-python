@@ -86,7 +86,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     :type inputs: Optional[Dict[str, Union[
         ~azure.ai.ml.entities._job.pipeline._io.PipelineInput,
         ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
-        ~azure.ai.ml.entities._inputs_outputs.Input,
+        ~azure.ai.ml.entities.Input,
         str,
         bool,
         int,
@@ -94,7 +94,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         Enum,
         'Input']]]
     :param outputs: Mapping of output data bindings used in the job. Defaults to None.
-    :type outputs: Optional[Dict[str, Union[str, ~azure.ai.ml.entities._inputs_outputs.Output, 'Output']]]
+    :type outputs: Optional[Dict[str, Union[str, ~azure.ai.ml.entities.Output, 'Output']]]
     :param name: The name of the node. Defaults to None.
     :type name: Optional[str]
     :param display_name: The display name of the node. Defaults to None.
@@ -499,7 +499,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         """Get the inputs for the object.
 
         :return: A dictionary containing the inputs for the object.
-        :rtype: Dict[str, Union[~azure.ai.ml.entities._inputs_outputs.Input, str, bool, int, float]]
+        :rtype: Dict[str, Union[~azure.ai.ml.entities.Input, str, bool, int, float]]
         """
         return self._inputs
 
@@ -508,7 +508,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         """Get the outputs of the object.
 
         :return: A dictionary containing the outputs for the object.
-        :rtype: Dict[str, Union[str, ~azure.ai.ml.entities._inputs_outputs.Output]]
+        :rtype: Dict[str, Union[str, ~azure.ai.ml.entities.Output]]
         """
         return self._outputs
 

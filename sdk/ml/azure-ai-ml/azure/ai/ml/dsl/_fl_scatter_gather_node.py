@@ -89,14 +89,14 @@ def fl_scatter_gather(
     :param silo_component: A pipeline step that will be run multiple times across different silos, as specified
         by the silo_configs input. In a typical horizontal federated learning context, this step is what will perform
         model training using siloed subsets of data. Can be either a PipelineJob or a CommandComponent.
-    :type silo_component: Union[~azure.ai.ml.entities.PipelineJob, ~azure.ai.ml.entities._builders.CommandComponent]
+    :type silo_component: Union[~azure.ai.ml.entities.PipelineJob, ~~azure.ai.ml.entities.CommandComponent]
     :param aggregation_component: A pipeline step which receives inputs from the myriad executed silo components,
         and does something with them. In a typical horizontal federated learning context, this component will merge
         the models that were independently trained on each silo's data in a single model. Can be either a
         PipelineJob or a CommandComponent.
     :type aggregation_component: Union[
         ~azure.ai.ml.entities.PipelineJob,
-        ~azure.ai.ml.entities._builders.CommandComponent]
+        ~~azure.ai.ml.entities.CommandComponent]
     :param aggregation_compute: The name of the compute that the aggregation component will use.
     :type aggregation_compute: str, optional
     :param aggregation_datastore: The name of the datastore that the aggregation component will use.

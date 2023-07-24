@@ -29,11 +29,11 @@ class DoWhile(LoopNode):
     :param body: Pipeline job for the do-while loop body.
     :type body: ~azure.ai.ml.entities._builders.pipeline.Pipeline
     :param condition: Boolean type control output of body as do-while loop condition.
-    :type condition: ~azure.ai.ml.entities._inputs_outputs.Output
+    :type condition: ~azure.ai.ml.entities.Output
     :param mapping: Output-Input mapping for each round of the do-while loop.
         Key is the last round output of the body. Value is the input port for the current body.
-    :type mapping: dict[Union[str, ~azure.ai.ml.entities._inputs_outputs.Output],
-        Union[str, ~azure.ai.ml.entities._inputs_outputs.Input, list]]
+    :type mapping: dict[Union[str, ~azure.ai.ml.entities.Output],
+        Union[str, ~azure.ai.ml.entities.Input, list]]
     :param limits: Limits in running the do-while node.
     :type limits: Union[dict, ~azure.ai.ml.entities._job.job_limits.DoWhileJobLimits], optional
     :raises ValidationError: If the initialization parameters are not of valid types.
@@ -70,8 +70,8 @@ class DoWhile(LoopNode):
         """Get the output-input mapping for each round of the do-while loop.
 
         :return: Output-Input mapping for each round of the do-while loop.
-        :rtype: dict[Union[str, ~azure.ai.ml.entities._inputs_outputs.Output],
-            Union[str, ~azure.ai.ml.entities._inputs_outputs.Input, list]]
+        :rtype: dict[Union[str, ~azure.ai.ml.entities.Output],
+            Union[str, ~azure.ai.ml.entities.Input, list]]
         """
         return self._mapping
 
@@ -80,7 +80,7 @@ class DoWhile(LoopNode):
         """Get the boolean type control output of the body as the do-while loop condition.
 
         :return: Control output of the body as the do-while loop condition.
-        :rtype: ~azure.ai.ml.entities._inputs_outputs.Output
+        :rtype: ~azure.ai.ml.entities.Output
         """
         return self._condition
 

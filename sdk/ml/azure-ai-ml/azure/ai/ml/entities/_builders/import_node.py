@@ -39,7 +39,7 @@ class Import(BaseNode):
     :param inputs: Input parameters to the import, defaults to None.
     :type inputs: Dict[str, str], optional
     :param outputs: Mapping of output data bindings used in the job, defaults to None.
-    :type outputs: Dict[str, Union[str, ~azure.ai.ml.entities._inputs_outputs.Output]], optional
+    :type outputs: Dict[str, Union[str, ~azure.ai.ml.entities.Output]], optional
     :param name: Name of the import.
     :type name: str
     :param description: Description of the import, defaults to None.

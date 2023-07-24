@@ -26,10 +26,10 @@ class Pipeline(BaseNode):
     :type component: Union[~azure.ai.ml.entities._component.component.Component, str]
     :param inputs: Inputs of the pipeline node.
     :type inputs: Optional[Dict[str, Union[
-                                    ~azure.ai.ml.entities._inputs_outputs.Input,
+                                    ~azure.ai.ml.entities.Input,
                                     str, bool, int, float, Enum, "Input"]]], defaults to None.
     :param outputs: Outputs of the pipeline node, defaults to None.
-    :type outputs: Optional[Dict[str, Union[str, ~azure.ai.ml.entities._inputs_outputs.Output, "Output"]]]
+    :type outputs: Optional[Dict[str, Union[str, ~azure.ai.ml.entities.Output, "Output"]]]
     :param settings: Setting of pipeline node, only taking effect for root pipeline job, defaults to None.
     :type settings: Optional[~azure.ai.ml.entities._job.pipeline.pipeline_job_settings.PipelineJobSettings]
     """
