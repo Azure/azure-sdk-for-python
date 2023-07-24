@@ -181,13 +181,13 @@ class DatastoreOperations(_ScopeDependentOperations):
         mode='ro_mount',
         **kwargs,
     ) -> None:
-        """Mount a data asset to a local path.
+        """Mount a data store to a local path.
 
-        :param path: The data asset path to mount, in the form of `azureml:<name>` or `azureml:<name>:<version>`.
+        :param path: The data store path to mount, in the form of `<name>` or `azureml://datastores/<name>`.
         :type name: str
         :param mount_point: A local path used as mount point.
         :type version: str
-        :param mode: Mount mode. Only `ro_mount` (read-only) is supported for data asset mount.
+        :param mode: Mount mode, either `ro_mount` (read-only) or `rw_mount` (read-write).
         :return: None
         """
 
