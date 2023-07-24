@@ -14,7 +14,7 @@ from azure.mgmt.kusto import KustoManagementClient
     pip install azure-identity
     pip install azure-mgmt-kusto
 # USAGE
-    python kusto_cluster_detach_follower_databases.py
+    python kusto_database_invite_follower.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,16 +29,27 @@ def main():
         subscription_id="12345678-1234-1234-1234-123456789098",
     )
 
-    client.clusters.begin_detach_follower_databases(
+    response = client.database.invite_follower(
         resource_group_name="kustorptest",
         cluster_name="kustoCluster",
-        follower_database_to_remove={
-            "attachedDatabaseConfigurationName": "attachedDatabaseConfigurationsTest",
-            "clusterResourceId": "/subscriptions/12345678-1234-1234-1234-123456789098/resourceGroups/kustorptest/providers/Microsoft.Kusto/clusters/kustoCluster2",
+        database_name="database",
+        parameters={
+            "inviteeEmail": "invitee@contoso.com",
+            "tableLevelSharingProperties": {
+                "externalTablesToExclude": [],
+                "externalTablesToInclude": ["ExternalTable*"],
+                "functionsToExclude": ["functionsToExclude2"],
+                "functionsToInclude": ["functionsToInclude1"],
+                "materializedViewsToExclude": ["MaterializedViewTable2"],
+                "materializedViewsToInclude": ["MaterializedViewTable1"],
+                "tablesToExclude": ["Table2"],
+                "tablesToInclude": ["Table1"],
+            },
         },
-    ).result()
+    )
+    print(response)
 
 
-# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-05-02/examples/KustoClusterDetachFollowerDatabases.json
+# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-05-02/examples/KustoDatabaseInviteFollower.json
 if __name__ == "__main__":
     main()
