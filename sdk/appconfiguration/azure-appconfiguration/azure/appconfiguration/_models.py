@@ -465,8 +465,9 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
             return generated
 
         filters = []
-        for config_setting_filter in generated.filters:
-            filters.append(ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label))
+        if generated.filters:
+            for config_setting_filter in generated.filters:
+                filters.append(ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label))
         snapshot = cls(
             filters=filters,
             composition_type=cast(Optional[Literal["key", "key_label"]], generated.composition_type),
@@ -493,8 +494,9 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         if deserialized is None:
             return deserialized
         filters = []
-        for config_setting_filter in deserialized.filters:
-            filters.append(ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label))
+        if deserialized.filters:
+            for config_setting_filter in deserialized.filters:
+                filters.append(ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label))
         snapshot = cls(
             filters=filters,
             composition_type=cast(Optional[Literal["key", "key_label"]], deserialized.composition_type),
