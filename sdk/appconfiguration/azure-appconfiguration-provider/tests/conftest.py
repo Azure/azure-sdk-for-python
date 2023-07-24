@@ -13,11 +13,11 @@ import pytest
 def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(
         value="https://fake-endpoint.azconfig.io",
-        regex=os.environ.get("APPCONFIGURATION_ENDPOINT_STRING", "https://fake-endpoint.azconfig.io"),
+        regex=os.environ.get("APPCONFIGURATION_ENDPOINT_STRING_PROVIDER", "https://fake-endpoint.azconfig.io"),
     )
     add_general_regex_sanitizer(
         value="fake-connection-string",
-        regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "fake-connection-string"),
+        regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING_PROVIDER", "fake-connection-string"),
     )
     add_general_regex_sanitizer(
         value="fake-client-id", regex=os.environ.get("APPCONFIGURATION_CLIENT_ID", "fake-client-id")
@@ -30,6 +30,6 @@ def add_sanitizers(test_proxy):
     )
     add_general_string_sanitizer(
         value="https://fake-key-vault.vault.azure.net/",
-        target=os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE", "https://fake-key-vault.vault.azure.net/"),
+        target=os.environ.get("KEYVAULT_SECRET_URL", "https://fake-key-vault.vault.azure.net/"),
     )
     add_oauth_response_sanitizer()

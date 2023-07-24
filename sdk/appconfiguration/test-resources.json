@@ -45,7 +45,7 @@
             "type": "string"
         },
         "azConfigPrefix": {
-            "defaultValue": "azconfig-net",
+            "defaultValue": "azconfig-python",
             "type": "string"
         },
         "azConfigEndpointSuffix": {
@@ -70,7 +70,9 @@
     "variables": {
         "roleDefinitionId": "[format('/subscriptions/{0}/providers/Microsoft.Authorization/roleDefinitions/5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b', subscription().subscriptionId)]",
         "uniqueAzConfigName": "[format('{0}-{1}', parameters('baseName'), parameters('azConfigPrefix'))]",
+        "uniqueAzConfigNameProvider": "[format('{0}-{1}-provider', parameters('baseName'), parameters('azConfigPrefix'))]",
         "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('azConfigPrefix'), parameters('azConfigEndpointSuffix'))]",
+        "endpointValueProvider": "[format('https://{0}-{1}{2}-provider', parameters('baseName'), parameters('azConfigPrefix'), parameters('azConfigEndpointSuffix'))]",
         "azureKeyVaultSecretUrl": "[format('https://{0}{1}/secrets/TestSecret', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]"
     },
     "resources": [
@@ -83,7 +85,19 @@
                 "name": "[parameters('sku')]"
             },
             "properties": {
-                "endpoint":"[variables('endpointValue')]"
+                "endpoint": "[variables('endpointValue')]"
+            }
+        },
+        {
+            "type": "Microsoft.AppConfiguration/configurationStores",
+            "apiVersion": "2019-10-01",
+            "name": "[variables('uniqueAzConfigNameProvider')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "[parameters('sku')]"
+            },
+            "properties": {
+                "endpoint": "[variables('endpointValue')]"
             }
         },
         {
@@ -125,10 +139,67 @@
             "apiVersion": "2016-10-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-              "[resourceId('Microsoft.KeyVault/vaults', parameters('baseName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('baseName'))]"
             ],
             "properties": {
-              "value": "Very secret value"
+                "value": "Very secret value"
+            }
+        },
+        {
+            "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
+            "apiVersion": "2020-07-01-preview",
+            "name": "[concat(variables('uniqueAzConfigNameProvider'), '/', 'message')]",
+            "dependsOn": [
+                "[variables('uniqueAzConfigNameProvider')]"
+            ],
+            "properties": {
+                "value": "hi"
+            }
+        },
+        {
+            "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
+            "apiVersion": "2020-07-01-preview",
+            "name": "[concat(variables('uniqueAzConfigNameProvider'), '/', 'message$dev')]",
+            "dependsOn": [
+                "[variables('uniqueAzConfigNameProvider')]"
+            ],
+            "properties": {
+                "value": "test"
+            }
+        },
+        {
+            "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
+            "apiVersion": "2020-07-01-preview",
+            "name": "[concat(variables('uniqueAzConfigNameProvider'), '/', 'my_json')]",
+            "dependsOn": [
+                "[variables('uniqueAzConfigNameProvider')]"
+            ],
+            "properties": {
+                "value": "{\"key\": \"value\"}",
+                "contentType": "application/json"
+            }
+        },
+        {
+            "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
+            "apiVersion": "2020-07-01-preview",
+            "name": "[concat(variables('uniqueAzConfigNameProvider'), '/', 'test.trimmed')]",
+            "dependsOn": [
+                "[variables('uniqueAzConfigNameProvider')]"
+            ],
+            "properties": {
+                "value": "key"
+            }
+        },
+        {
+            "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
+            "apiVersion": "2020-07-01-preview",
+            "name": "[concat(variables('uniqueAzConfigNameProvider'), '/', '.appconfig.featureflag~2FAlpha')]",
+            "dependsOn": [
+                "[variables('uniqueAzConfigNameProvider')]"
+            ],
+            "properties": {
+                "value": "{\"id\":\"Alpha\",\"description\":\"\",\"enabled\":true,\"conditions\":{\"client_filters\":[]}}",
+                "contentType": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8"
             }
         }
     ],
@@ -144,6 +215,14 @@
         "KEYVAULT_SECRET_URL": {
             "type": "string",
             "value": "[variables('azureKeyVaultSecretUrl')]"
+        },
+        "APPCONFIGURATION_CONNECTION_STRING_PROVIDER": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.AppConfiguration/configurationStores',variables('uniqueAzConfigNameProvider')), '2019-02-01-preview').value[0].connectionString]"
+        },
+        "APPCONFIGURATION_ENDPOINT_STRING_PROVIDER": {
+            "type": "string",
+            "value": "[variables('endpointValue')]"
         }
     }
 }
