@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Dict, Any, Union
+from datetime import datetime
 from ._shared.models import (
     CommunicationIdentifier,
     CommunicationUserIdentifier,
@@ -17,6 +18,16 @@ from ._generated.models import (
     CommunicationUserIdentifierModel,
     PhoneNumberIdentifierModel
 )
+
+def process_repeatability_first_sent(keywords):
+    if 'headers' in keywords:
+        if 'Repeatability-First-Sent' not in keywords['headers']:
+            keywords['headers']['Repeatability-First-Sent'] = get_repeatability_timestamp()
+    else:
+        keywords['headers'] = {'Repeatability-First-Sent': get_repeatability_timestamp()}
+
+def get_repeatability_timestamp():
+    return datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
 
 def serialize_identifier(
         identifier:CommunicationIdentifier

@@ -72,7 +72,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         """List all feature stores that the user has access to in the current
         resource group or subscription.
 
-        :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
+        :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :type scope: str, optional
         :return: An iterator like instance of FeatureStore objects
         :rtype: ~azure.core.paging.ItemPaged[FeatureStore]
@@ -181,8 +181,8 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
         Returns the feature store if already exists.
 
-        :param feature store: FeatureStore definition.
-        :type feature store: FeatureStore
+        :param feature_store: FeatureStore definition.
+        :type feature_store: FeatureStore
         :type update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
@@ -232,17 +232,17 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     ) -> LROPoller[FeatureStore]:
         """Update friendly name, description, materialization identities or tags of a feature store.
 
-        :param feature store: FeatureStore resource.
-        :param update_dependent_resources: gives your consent to update the feature store dependent resources.
+        :param feature_store: FeatureStore resource.
+        :type feature_store: FeatureStore
+        :keyword update_dependent_resources: gives your consent to update the feature store dependent resources.
             Note that updating the feature store attached Azure Container Registry resource may break lineage
             of previous jobs or your ability to rerun earlier jobs in this feature store.
             Also, updating the feature store attached Azure Application Insights resource may break lineage of
             deployed inference endpoints this feature store. Only set this argument if you are sure that you want
             to perform this operation. If this argument is not set, the command to update
             Azure Container Registry and Azure Application Insights will fail.
-        :param application_insights: Application insights resource for feature store.
-        :param container_registry: Container registry resource for feature store.
-        :type feature store: FeatureStore
+        :keyword application_insights: Application insights resource for feature store.
+        :keyword container_registry: Container registry resource for feature store.
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
@@ -396,7 +396,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
         :param name: Name of the FeatureStore
         :type name: str
-        :param delete_dependent_resources: Whether to delete resources associated with the feature store,
+        :keyword delete_dependent_resources: Whether to delete resources associated with the feature store,
             i.e., container registry, storage account, key vault, and application insights.
             The default is False. Set to True to delete these resources.
         :type delete_dependent_resources: bool

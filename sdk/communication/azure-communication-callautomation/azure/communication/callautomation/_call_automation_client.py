@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, Iterable, Dict
+from typing import List, Union, Optional, TYPE_CHECKING, Iterable
 from urllib.parse import urlparse
 from azure.core.tracing.decorator import distributed_trace
 from ._version import SDK_MONIKER
@@ -30,7 +30,8 @@ from ._content_downloader import ContentDownloader
 from ._utils import (
     serialize_phone_identifier,
     serialize_identifier,
-    serialize_communication_user_identifier
+    serialize_communication_user_identifier,
+    process_repeatability_first_sent
 )
 if TYPE_CHECKING:
     from ._models  import (
@@ -186,10 +187,13 @@ class CallAutomationClient(object):
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers,
-            sip_headers=target_participant.sip_headers
-            ) if target_participant.sip_headers or target_participant.voip_headers else None
+        user_custom_context = (CustomContext(
+            voip_headers=target_participant.custom_context.voip_headers,
+            sip_headers=target_participant.custom_context.sip_headers
+            )
+            if target_participant.custom_context.sip_headers or target_participant.custom_context.voip_headers
+            else None
+            )
         create_call_request = CreateCallRequest(
             targets=[serialize_identifier(target_participant.target)],
             callback_uri=callback_url,
@@ -204,6 +208,8 @@ class CallAutomationClient(object):
             azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url,
             custom_context=user_custom_context
         )
+
+        process_repeatability_first_sent(kwargs)
 
         result = self._client.create_call(
             create_call_request=create_call_request,
@@ -223,8 +229,7 @@ class CallAutomationClient(object):
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional['MediaStreamingConfiguration'] = None,
         azure_cognitive_services_endpoint_url: Optional[str] = None,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
+        custom_context: Optional[CustomContext] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Create a call connection request to a list of multiple target identities.
@@ -247,16 +252,16 @@ class CallAutomationClient(object):
         :keyword azure_cognitive_services_endpoint_url:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype azure_cognitive_services_endpoint_url: str
-        :keyword sip_headers: Sip Headers for PSTN Call
-        :paramtype sip_headers: Dict[str, str]
-        :keyword voip_headers: Voip Headers for Voip Call
-        :paramtype voip_headers: Dict[str, str]
+        :keyword custom_context: Custom context
+        :paramtype custom_context: ~azure.communication.callautomation.CustomContext
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = CustomContext(
-            voip_headers=voip_headers, sip_headers=sip_headers) if sip_headers or voip_headers else None
+            voip_headers=custom_context.voip_headers,
+            sip_headers=custom_context.sip_headers
+            ) if (custom_context and (custom_context.sip_headers or custom_context.voip_headers)) else None
 
         create_call_request = CreateCallRequest(
             targets=[serialize_identifier(identifier)
@@ -273,6 +278,8 @@ class CallAutomationClient(object):
             azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url,
             custom_context=user_custom_context,
         )
+
+        process_repeatability_first_sent(kwargs)
 
         result = self._client.create_call(
             create_call_request=create_call_request,
@@ -322,6 +329,8 @@ class CallAutomationClient(object):
             operation_context=operation_context
         )
 
+        process_repeatability_first_sent(kwargs)
+
         result = self._client.answer_call(
             answer_call_request=answer_call_request,
             **kwargs)
@@ -347,10 +356,16 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers,
-            sip_headers=target_participant.sip_headers
-            ) if target_participant.sip_headers or target_participant.voip_headers else None
+
+        user_custom_context = (CustomContext(
+            voip_headers=target_participant.custom_context.voip_headers,
+            sip_headers=target_participant.custom_context.sip_headers
+            )
+            if target_participant.custom_context.sip_headers or target_participant.custom_context.voip_headers
+            else None
+            )
+
+        process_repeatability_first_sent(kwargs)
 
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,
@@ -385,6 +400,8 @@ class CallAutomationClient(object):
             incoming_call_context=incoming_call_context,
             call_reject_reason=call_reject_reason
         )
+
+        process_repeatability_first_sent(kwargs)
 
         self._client.reject_call(
             reject_call_request=reject_call_request,
@@ -459,6 +476,8 @@ class CallAutomationClient(object):
             external_storage_location = external_storage_location,
             channel_affinity = channel_affinity_internal
         )
+
+        process_repeatability_first_sent(kwargs)
 
         recording_state_result = self._call_recording_client.start_recording(
         start_call_recording = start_recording_request, **kwargs)

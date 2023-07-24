@@ -248,8 +248,10 @@ class ModelPackage(Resource, PackageRequest):
     ) -> None:
         """Dump the model package spec into a file in yaml format.
 
-        :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
-        :type path: str
+        :param dest: Either
+          * A path to a local file
+          * A writeable file-like object
+        :type dest: Union[str, PathLike, IO[AnyStr]]
         """
         yaml_serialized = self._to_dict()
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False)

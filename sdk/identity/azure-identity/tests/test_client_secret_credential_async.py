@@ -267,7 +267,7 @@ async def test_multitenant_authentication():
         return mock_response(json_payload=build_aad_response(access_token=token))
 
     credential = ClientSecretCredential(
-        first_tenant, "client-id", "secret", transport=Mock(send=send), additionally_allowed_tenants=['*']
+        first_tenant, "client-id", "secret", transport=Mock(send=send), additionally_allowed_tenants=["*"]
     )
     token = await credential.get_token("scope")
     assert token.token == first_token
@@ -287,7 +287,10 @@ async def test_multitenant_authentication():
 async def test_live_multitenant_authentication(live_service_principal):
     # first create a credential with a non-existent tenant
     credential = ClientSecretCredential(
-        "...", live_service_principal["client_id"], live_service_principal["client_secret"], additionally_allowed_tenants=['*']
+        "...",
+        live_service_principal["client_id"],
+        live_service_principal["client_secret"],
+        additionally_allowed_tenants=["*"],
     )
     # then get a valid token for an actual tenant
     token = await credential.get_token(
@@ -308,7 +311,9 @@ async def test_multitenant_authentication_not_allowed():
         token = expected_token if tenant == expected_tenant else expected_token * 2
         return mock_response(json_payload=build_aad_response(access_token=token))
 
-    credential = ClientSecretCredential(expected_tenant, "client-id", "secret", transport=Mock(send=send), additionally_allowed_tenants=['*'])
+    credential = ClientSecretCredential(
+        expected_tenant, "client-id", "secret", transport=Mock(send=send), additionally_allowed_tenants=["*"]
+    )
 
     token = await credential.get_token("scope")
     assert token.token == expected_token

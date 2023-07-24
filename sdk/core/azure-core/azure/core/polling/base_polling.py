@@ -351,6 +351,12 @@ class OperationResourcePolling(LongRunningOperation[HttpRequestTypeVar, AllHttpR
         self._set_async_url_if_present(response)
 
         if response.status_code in {200, 201, 202, 204} and self._async_url:
+            # Check if we can extract status from initial response, if present
+            try:
+                return self.get_status(pipeline_response)
+            # Wide catch, it may not even be JSON at all, deserialization is lenient
+            except Exception:  # pylint: disable=broad-except
+                pass
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
