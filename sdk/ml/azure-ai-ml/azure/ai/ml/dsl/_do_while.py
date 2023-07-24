@@ -40,16 +40,18 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
                 )
 
     :param body: The pipeline job or command node for the do-while loop body.
-    :type body: Union[Pipeline, Command]
+    :type body: Union[~azure.ai.ml.entities._builders.pipeline.Pipeline, ~azure.ai.ml.entities._builders.Command]
     :param mapping: The output-input mapping for each round of the do-while loop.
         The key is the last round's output of the body, and the value is the input port for the current body.
-    :type mapping: Dict[Union[str, Output], Union[str, Input, List]]
+    :type mapping: Dict[
+        Union[str,  ~azure.ai.ml.entities._inputs_outputs.Output],
+        Union[str, ~azure.ai.ml.entities._inputs_outputs.Input, List]]
     :param max_iteration_count: The limit on running the do-while node.
     :type max_iteration_count: int
     :param condition: The name of a boolean output of the body.
         The do-while loop stops if its value is evaluated to be negative.
         If not specified, it handles as a while-true loop.
-    :type condition: Output, optional
+    :type condition:  ~azure.ai.ml.entities._inputs_outputs.Output, optional
     :return: The do-while node.
     :rtype: ~azure.ai.ml.entities._builders.do_while.DoWhile
     """
