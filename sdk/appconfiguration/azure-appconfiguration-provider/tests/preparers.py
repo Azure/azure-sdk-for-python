@@ -21,7 +21,7 @@ AppConfigProviderPreparer = functools.partial(
 def app_config_decorator(func, **kwargs):
     @AppConfigProviderPreparer()
     def wrapper(*args, **kwargs):
-        appconfiguration_connection_string = kwargs.pop("appconfiguration_connection_string_provider")
+        appconfiguration_connection_string_provider = kwargs.pop("appconfiguration_connection_string_provider")
         kwargs["appconfiguration_connection_string_provider"] = appconfiguration_connection_string_provider
 
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
