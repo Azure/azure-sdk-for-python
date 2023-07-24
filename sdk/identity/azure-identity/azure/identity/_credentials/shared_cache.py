@@ -15,6 +15,7 @@ from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
+
 class SharedTokenCacheCredential:
     """Authenticates using tokens in the local cache shared between Microsoft applications.
 
@@ -65,7 +66,7 @@ class SharedTokenCacheCredential:
             claims challenge following an authorization failure
 
         :return: An access token with the desired scopes.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
             information
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``

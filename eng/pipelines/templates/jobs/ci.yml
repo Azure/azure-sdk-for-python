@@ -163,16 +163,15 @@ jobs:
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
         GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
-  # See Azure/azure-sdk-for-python#30683 for details on this commented code
-  # - job: Compliance
-  #   pool:
-  #     name: azsdk-pool-mms-win-2022-general
-  #     vmImage: MMS2022
-  #   steps:
-  #     - template: /eng/common/pipelines/templates/steps/credscan.yml
-  #       parameters:
-  #         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-  #         BaselineFilePath: $(Build.SourcesDirectory)\eng\python.gdnbaselines
+  - job: Compliance
+    pool:
+      name: azsdk-pool-mms-win-2022-general
+      vmImage: MMS2022
+    steps:
+      - template: /eng/common/pipelines/templates/steps/credscan.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          BaselineFilePath: $(Build.SourcesDirectory)\eng\python.gdnbaselines
 
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:

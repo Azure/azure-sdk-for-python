@@ -131,7 +131,7 @@ class EnvironmentCredential:
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
 
         :raises ~azure.identity.CredentialUnavailableError: environment variable configuration is incomplete
         """

@@ -1,5 +1,11 @@
 # Release History
 
+## 30.1.0 (2023-07-21)
+
+### Features Added
+
+  - Model GrantAccessData has a new parameter file_format
+
 ## 30.0.0 (2023-05-25)
 
 ### Features Added

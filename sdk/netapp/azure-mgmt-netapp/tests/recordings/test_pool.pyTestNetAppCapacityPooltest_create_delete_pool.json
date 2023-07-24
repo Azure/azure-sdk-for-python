@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-identity/1.14.0b2 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:19:54 GMT",
+        "Date": "Wed, 28 Jun 2023 11:03:39 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14990.5 - WEULR2 ProdSlices",
+        "x-ms-ests-server": "2.1.15723.3 - FRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -101,7 +101,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-identity/1.14.0b2 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:19:54 GMT",
+        "Date": "Wed, 28 Jun 2023 11:03:39 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14990.5 - WEULR1 ProdSlices",
+        "x-ms-ests-server": "2.1.15723.3 - SEC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,28 +172,28 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "40be05de-a269-4ea4-9548-588cbdb8cb17",
+        "client-request-id": "51a3f999-daf2-4b21-8f87-d1282590d8b7",
         "Connection": "keep-alive",
         "Content-Length": "288",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.11.2 (Windows-10-10.0.22000-SP0)",
+        "User-Agent": "azsdk-python-identity/1.14.0b2 Python/3.11.2 (Windows-10-10.0.22621-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
         "x-client-os": "win32",
         "x-client-sku": "MSAL.Python",
-        "x-client-ver": "1.21.0",
+        "x-client-ver": "1.22.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
       "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "40be05de-a269-4ea4-9548-588cbdb8cb17",
+        "client-request-id": "51a3f999-daf2-4b21-8f87-d1282590d8b7",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:19:54 GMT",
+        "Date": "Wed, 28 Jun 2023 11:03:39 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14990.5 - NEULR2 ProdSlices",
+        "x-ms-ests-server": "2.1.15723.3 - NEULR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -213,7 +213,7 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b?api-version=2022-11-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -221,37 +221,37 @@
         "Connection": "keep-alive",
         "Content-Length": "23",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "location": "westus2"
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/fdda7941-c65c-4a37-b36a-409a2a0dead0?api-version=2022-09-01",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/129e3eae-c6f6-498e-8644-41542c74d988?api-version=2022-11-01",
         "Cache-Control": "no-cache",
         "Content-Length": "706",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:19:57 GMT",
-        "ETag": "W/\u0022datetime\u00272023-03-30T11%3A19%3A57.3764226Z\u0027\u0022",
+        "Date": "Wed, 28 Jun 2023 11:03:45 GMT",
+        "ETag": "W/\u0022datetime\u00272023-06-28T11%3A03%3A43.8725289Z\u0027\u0022",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "0c231f1f-6878-4ad9-ad2d-ad0596c8fdbb",
-        "x-ms-ratelimit-remaining-subscription-writes": "1144",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T111958Z:0c231f1f-6878-4ad9-ad2d-ad0596c8fdbb",
+        "x-ms-correlation-request-id": "97eed8a6-ae43-4a32-9c3b-d9be4abd7dc5",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110345Z:97eed8a6-ae43-4a32-9c3b-d9be4abd7dc5",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b",
         "name": "sdk-py-tests-acc-1-18a4278b",
         "type": "Microsoft.NetApp/netAppAccounts",
-        "etag": "W/\u0022datetime\u00272023-03-30T11%3A19%3A57.3764226Z\u0027\u0022",
+        "etag": "W/\u0022datetime\u00272023-06-28T11%3A03%3A43.8725289Z\u0027\u0022",
         "location": "westus2",
         "tags": {
-          "CreatedOnDate": "2023-03-30T11:19:55.9969396Z"
+          "CreatedOnDate": "2023-06-28T11:03:40.4265733Z"
         },
         "properties": {
           "provisioningState": "Creating"
@@ -259,21 +259,21 @@
         "systemData": {
           "createdBy": "00000000-0000-0000-0000-000000000000",
           "createdByType": "Application",
-          "createdAt": "2023-03-30T11:19:57.2258734Z",
+          "createdAt": "2023-06-28T11:03:42.9809687Z",
           "lastModifiedBy": "00000000-0000-0000-0000-000000000000",
           "lastModifiedByType": "Application",
-          "lastModifiedAt": "2023-03-30T11:19:57.2258734Z"
+          "lastModifiedAt": "2023-06-28T11:03:42.9809687Z"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/fdda7941-c65c-4a37-b36a-409a2a0dead0?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/129e3eae-c6f6-498e-8644-41542c74d988?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -281,7 +281,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:19:57 GMT",
+        "Date": "Wed, 28 Jun 2023 11:03:45 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -289,17 +289,17 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "4b439158-2e8c-4c6b-8538-e41f14b50919",
-        "x-ms-ratelimit-remaining-subscription-reads": "11536",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T111958Z:4b439158-2e8c-4c6b-8538-e41f14b50919",
+        "x-ms-correlation-request-id": "ae15452c-2ba0-42ee-bce8-8e5804327ca3",
+        "x-ms-ratelimit-remaining-subscription-reads": "11999",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110345Z:ae15452c-2ba0-42ee-bce8-8e5804327ca3",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/fdda7941-c65c-4a37-b36a-409a2a0dead0",
-        "name": "fdda7941-c65c-4a37-b36a-409a2a0dead0",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/129e3eae-c6f6-498e-8644-41542c74d988",
+        "name": "129e3eae-c6f6-498e-8644-41542c74d988",
         "status": "Succeeded",
-        "startTime": "2023-03-30T11:19:57.3803408Z",
-        "endTime": "2023-03-30T11:19:57.5100687Z",
+        "startTime": "2023-06-28T11:03:43.8790429Z",
+        "endTime": "2023-06-28T11:03:43.9296732Z",
         "percentComplete": 100.0,
         "properties": {
           "resourceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b",
@@ -308,13 +308,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -322,8 +322,8 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:19:58 GMT",
-        "ETag": "W/\u0022datetime\u00272023-03-30T11%3A19%3A57.5043052Z\u0027\u0022",
+        "Date": "Wed, 28 Jun 2023 11:03:45 GMT",
+        "ETag": "W/\u0022datetime\u00272023-06-28T11%3A03%3A43.9229336Z\u0027\u0022",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -331,19 +331,19 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "458bcb76-e49c-4b5c-87d0-2386e0985d54",
-        "x-ms-ratelimit-remaining-subscription-reads": "11535",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T111959Z:458bcb76-e49c-4b5c-87d0-2386e0985d54",
+        "x-ms-correlation-request-id": "9a364959-8157-4323-bff0-1ec7709fdca4",
+        "x-ms-ratelimit-remaining-subscription-reads": "11998",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110346Z:9a364959-8157-4323-bff0-1ec7709fdca4",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b",
         "name": "sdk-py-tests-acc-1-18a4278b",
         "type": "Microsoft.NetApp/netAppAccounts",
-        "etag": "W/\u0022datetime\u00272023-03-30T11%3A19%3A57.5043052Z\u0027\u0022",
+        "etag": "W/\u0022datetime\u00272023-06-28T11%3A03%3A43.9229336Z\u0027\u0022",
         "location": "westus2",
         "tags": {
-          "CreatedOnDate": "2023-03-30T11:19:55.9969396Z"
+          "CreatedOnDate": "2023-06-28T11:03:40.4265733Z"
         },
         "properties": {
           "activeDirectories": [
@@ -373,21 +373,21 @@
         "systemData": {
           "createdBy": "00000000-0000-0000-0000-000000000000",
           "createdByType": "Application",
-          "createdAt": "2023-03-30T11:19:57.2258734Z",
+          "createdAt": "2023-06-28T11:03:42.9809687Z",
           "lastModifiedBy": "00000000-0000-0000-0000-000000000000",
           "lastModifiedByType": "Application",
-          "lastModifiedAt": "2023-03-30T11:19:57.2258734Z"
+          "lastModifiedAt": "2023-06-28T11:03:42.9809687Z"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -395,8 +395,8 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:19:58 GMT",
-        "ETag": "W/\u0022datetime\u00272023-03-30T11%3A19%3A57.5043052Z\u0027\u0022",
+        "Date": "Wed, 28 Jun 2023 11:03:46 GMT",
+        "ETag": "W/\u0022datetime\u00272023-06-28T11%3A03%3A43.9229336Z\u0027\u0022",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -404,19 +404,19 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "f41d48b6-6b95-467f-b63e-44315dd68a22",
-        "x-ms-ratelimit-remaining-subscription-reads": "11534",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T111959Z:f41d48b6-6b95-467f-b63e-44315dd68a22",
+        "x-ms-correlation-request-id": "b3cf6da4-cbe2-4e51-8ea1-63df04c25b69",
+        "x-ms-ratelimit-remaining-subscription-reads": "11997",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110346Z:b3cf6da4-cbe2-4e51-8ea1-63df04c25b69",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b",
         "name": "sdk-py-tests-acc-1-18a4278b",
         "type": "Microsoft.NetApp/netAppAccounts",
-        "etag": "W/\u0022datetime\u00272023-03-30T11%3A19%3A57.5043052Z\u0027\u0022",
+        "etag": "W/\u0022datetime\u00272023-06-28T11%3A03%3A43.9229336Z\u0027\u0022",
         "location": "westus2",
         "tags": {
-          "CreatedOnDate": "2023-03-30T11:19:55.9969396Z"
+          "CreatedOnDate": "2023-06-28T11:03:40.4265733Z"
         },
         "properties": {
           "activeDirectories": [
@@ -446,15 +446,15 @@
         "systemData": {
           "createdBy": "00000000-0000-0000-0000-000000000000",
           "createdByType": "Application",
-          "createdAt": "2023-03-30T11:19:57.2258734Z",
+          "createdAt": "2023-06-28T11:03:42.9809687Z",
           "lastModifiedBy": "00000000-0000-0000-0000-000000000000",
           "lastModifiedByType": "Application",
-          "lastModifiedAt": "2023-03-30T11:19:57.2258734Z"
+          "lastModifiedAt": "2023-06-28T11:03:42.9809687Z"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1?api-version=2022-11-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -462,7 +462,7 @@
         "Connection": "keep-alive",
         "Content-Length": "138",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "location": "westus2",
@@ -475,30 +475,30 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/6fea9325-d6d9-4f67-9b0a-a8ab071afcff?api-version=2022-09-01",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/09159cd7-312f-4fc0-b27d-c26b5c79b886?api-version=2022-11-01",
         "Cache-Control": "no-cache",
         "Content-Length": "922",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:20:01 GMT",
-        "ETag": "W/\u0022datetime\u00272023-03-30T11%3A20%3A01.1662249Z\u0027\u0022",
+        "Date": "Wed, 28 Jun 2023 11:03:49 GMT",
+        "ETag": "W/\u0022datetime\u00272023-06-28T11%3A03%3A48.3876835Z\u0027\u0022",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "5039c8fc-67f7-42ed-ada9-f5d265b020c0",
-        "x-ms-ratelimit-remaining-subscription-writes": "1143",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112002Z:5039c8fc-67f7-42ed-ada9-f5d265b020c0",
+        "x-ms-correlation-request-id": "bcae66a7-626d-4a35-b093-64dc5593ab3f",
+        "x-ms-ratelimit-remaining-subscription-writes": "1198",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110349Z:bcae66a7-626d-4a35-b093-64dc5593ab3f",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1",
         "name": "sdk-py-tests-acc-1-18a4278b/sdk-py-tests-pool-1",
         "type": "Microsoft.NetApp/netAppAccounts/capacityPools",
-        "etag": "W/\u0022datetime\u00272023-03-30T11%3A20%3A01.1662249Z\u0027\u0022",
+        "etag": "W/\u0022datetime\u00272023-06-28T11%3A03%3A48.3876835Z\u0027\u0022",
         "location": "westus2",
         "tags": {
-          "CreatedOnDate": "2023-03-30T11:19:59.6865342Z"
+          "CreatedOnDate": "2023-06-28T11:03:46.8933488Z"
         },
         "properties": {
           "serviceLevel": "Premium",
@@ -512,21 +512,21 @@
         "systemData": {
           "createdBy": "00000000-0000-0000-0000-000000000000",
           "createdByType": "Application",
-          "createdAt": "2023-03-30T11:20:00.9290344Z",
+          "createdAt": "2023-06-28T11:03:48.1530152Z",
           "lastModifiedBy": "00000000-0000-0000-0000-000000000000",
           "lastModifiedByType": "Application",
-          "lastModifiedAt": "2023-03-30T11:20:00.9290344Z"
+          "lastModifiedAt": "2023-06-28T11:03:48.1530152Z"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/6fea9325-d6d9-4f67-9b0a-a8ab071afcff?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/09159cd7-312f-4fc0-b27d-c26b5c79b886?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -534,7 +534,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:20:01 GMT",
+        "Date": "Wed, 28 Jun 2023 11:03:49 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -542,17 +542,17 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "f0038428-2ee0-402e-b0b6-5a8189f92a9d",
-        "x-ms-ratelimit-remaining-subscription-reads": "11533",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112002Z:f0038428-2ee0-402e-b0b6-5a8189f92a9d",
+        "x-ms-correlation-request-id": "aff7e5af-02c1-4a16-9f92-90b50b752a8a",
+        "x-ms-ratelimit-remaining-subscription-reads": "11996",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110350Z:aff7e5af-02c1-4a16-9f92-90b50b752a8a",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/6fea9325-d6d9-4f67-9b0a-a8ab071afcff",
-        "name": "6fea9325-d6d9-4f67-9b0a-a8ab071afcff",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/09159cd7-312f-4fc0-b27d-c26b5c79b886",
+        "name": "09159cd7-312f-4fc0-b27d-c26b5c79b886",
         "status": "Succeeded",
-        "startTime": "2023-03-30T11:20:01.1706548Z",
-        "endTime": "2023-03-30T11:20:01.6185368Z",
+        "startTime": "2023-06-28T11:03:48.3940508Z",
+        "endTime": "2023-06-28T11:03:48.844156Z",
         "percentComplete": 100.0,
         "properties": {
           "resourceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1",
@@ -561,13 +561,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -575,8 +575,8 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:20:01 GMT",
-        "ETag": "W/\u0022datetime\u00272023-03-30T11%3A20%3A01.5630051Z\u0027\u0022",
+        "Date": "Wed, 28 Jun 2023 11:03:50 GMT",
+        "ETag": "W/\u0022datetime\u00272023-06-28T11%3A03%3A48.8253762Z\u0027\u0022",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -584,22 +584,22 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d328c74e-bef3-4592-a978-633f80c84728",
-        "x-ms-ratelimit-remaining-subscription-reads": "11532",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112002Z:d328c74e-bef3-4592-a978-633f80c84728",
+        "x-ms-correlation-request-id": "9c59b158-28b5-45f5-94ee-429457c1dbd2",
+        "x-ms-ratelimit-remaining-subscription-reads": "11995",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110350Z:9c59b158-28b5-45f5-94ee-429457c1dbd2",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1",
         "name": "sdk-py-tests-acc-1-18a4278b/sdk-py-tests-pool-1",
         "type": "Microsoft.NetApp/netAppAccounts/capacityPools",
-        "etag": "W/\u0022datetime\u00272023-03-30T11%3A20%3A01.5630051Z\u0027\u0022",
+        "etag": "W/\u0022datetime\u00272023-06-28T11%3A03%3A48.8253762Z\u0027\u0022",
         "location": "westus2",
         "tags": {
-          "CreatedOnDate": "2023-03-30T11:19:59.6865342Z"
+          "CreatedOnDate": "2023-06-28T11:03:46.8933488Z"
         },
         "properties": {
-          "poolId": "75134418-3c0d-aeea-fdba-60d4208158af",
+          "poolId": "c4490712-1282-104b-64a1-15e30baf10d0",
           "serviceLevel": "Premium",
           "size": 4398046511104,
           "qosType": "Auto",
@@ -612,21 +612,21 @@
         "systemData": {
           "createdBy": "00000000-0000-0000-0000-000000000000",
           "createdByType": "Application",
-          "createdAt": "2023-03-30T11:20:00.9290344Z",
+          "createdAt": "2023-06-28T11:03:48.1530152Z",
           "lastModifiedBy": "00000000-0000-0000-0000-000000000000",
           "lastModifiedByType": "Application",
-          "lastModifiedAt": "2023-03-30T11:20:00.9290344Z"
+          "lastModifiedAt": "2023-06-28T11:03:48.1530152Z"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -634,8 +634,8 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:20:02 GMT",
-        "ETag": "W/\u0022datetime\u00272023-03-30T11%3A20%3A01.5630051Z\u0027\u0022",
+        "Date": "Wed, 28 Jun 2023 11:03:50 GMT",
+        "ETag": "W/\u0022datetime\u00272023-06-28T11%3A03%3A48.8253762Z\u0027\u0022",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -643,22 +643,22 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "ceae387e-d5f0-451f-9a52-ecee47971565",
-        "x-ms-ratelimit-remaining-subscription-reads": "11531",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112003Z:ceae387e-d5f0-451f-9a52-ecee47971565",
+        "x-ms-correlation-request-id": "8cdeb5af-c604-4f9a-9175-7ed7d4749457",
+        "x-ms-ratelimit-remaining-subscription-reads": "11994",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110350Z:8cdeb5af-c604-4f9a-9175-7ed7d4749457",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1",
         "name": "sdk-py-tests-acc-1-18a4278b/sdk-py-tests-pool-1",
         "type": "Microsoft.NetApp/netAppAccounts/capacityPools",
-        "etag": "W/\u0022datetime\u00272023-03-30T11%3A20%3A01.5630051Z\u0027\u0022",
+        "etag": "W/\u0022datetime\u00272023-06-28T11%3A03%3A48.8253762Z\u0027\u0022",
         "location": "westus2",
         "tags": {
-          "CreatedOnDate": "2023-03-30T11:19:59.6865342Z"
+          "CreatedOnDate": "2023-06-28T11:03:46.8933488Z"
         },
         "properties": {
-          "poolId": "75134418-3c0d-aeea-fdba-60d4208158af",
+          "poolId": "c4490712-1282-104b-64a1-15e30baf10d0",
           "serviceLevel": "Premium",
           "size": 4398046511104,
           "qosType": "Auto",
@@ -671,21 +671,21 @@
         "systemData": {
           "createdBy": "00000000-0000-0000-0000-000000000000",
           "createdByType": "Application",
-          "createdAt": "2023-03-30T11:20:00.9290344Z",
+          "createdAt": "2023-06-28T11:03:48.1530152Z",
           "lastModifiedBy": "00000000-0000-0000-0000-000000000000",
           "lastModifiedByType": "Application",
-          "lastModifiedAt": "2023-03-30T11:20:00.9290344Z"
+          "lastModifiedAt": "2023-06-28T11:03:48.1530152Z"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -693,7 +693,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:20:02 GMT",
+        "Date": "Wed, 28 Jun 2023 11:03:50 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -701,9 +701,9 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "e1be4dad-3390-4152-a3aa-3957be854226",
-        "x-ms-ratelimit-remaining-subscription-reads": "11530",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112003Z:e1be4dad-3390-4152-a3aa-3957be854226",
+        "x-ms-correlation-request-id": "31ebdcc9-f081-45d2-b2ee-a4c0b6e4c961",
+        "x-ms-ratelimit-remaining-subscription-reads": "11993",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110351Z:31ebdcc9-f081-45d2-b2ee-a4c0b6e4c961",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
@@ -712,13 +712,13 @@
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1",
             "name": "sdk-py-tests-acc-1-18a4278b/sdk-py-tests-pool-1",
             "type": "Microsoft.NetApp/netAppAccounts/capacityPools",
-            "etag": "W/\u0022datetime\u00272023-03-30T11%3A20%3A01.5630051Z\u0027\u0022",
+            "etag": "W/\u0022datetime\u00272023-06-28T11%3A03%3A48.8253762Z\u0027\u0022",
             "location": "westus2",
             "tags": {
-              "CreatedOnDate": "2023-03-30T11:19:59.6865342Z"
+              "CreatedOnDate": "2023-06-28T11:03:46.8933488Z"
             },
             "properties": {
-              "poolId": "75134418-3c0d-aeea-fdba-60d4208158af",
+              "poolId": "c4490712-1282-104b-64a1-15e30baf10d0",
               "serviceLevel": "Premium",
               "size": 4398046511104,
               "qosType": "Auto",
@@ -731,53 +731,53 @@
             "systemData": {
               "createdBy": "00000000-0000-0000-0000-000000000000",
               "createdByType": "Application",
-              "createdAt": "2023-03-30T11:20:00.9290344Z",
+              "createdAt": "2023-06-28T11:03:48.1530152Z",
               "lastModifiedBy": "00000000-0000-0000-0000-000000000000",
               "lastModifiedByType": "Application",
-              "lastModifiedAt": "2023-03-30T11:20:00.9290344Z"
+              "lastModifiedAt": "2023-06-28T11:03:48.1530152Z"
             }
           }
         ]
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1?api-version=2022-11-01",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/4765cac1-9c79-41a5-b170-5e758e016674?api-version=2022-09-01",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/b3a49075-5355-44c6-b16a-eef4650b36fd?api-version=2022-11-01",
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 30 Mar 2023 11:20:03 GMT",
+        "Date": "Wed, 28 Jun 2023 11:03:51 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/4765cac1-9c79-41a5-b170-5e758e016674?api-version=2022-09-01\u0026operationResultResponseType=Location",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/b3a49075-5355-44c6-b16a-eef4650b36fd?api-version=2022-11-01\u0026operationResultResponseType=Location",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "eca0a112-cc94-409a-9f8c-fc222ac27274",
-        "x-ms-ratelimit-remaining-subscription-deletes": "14967",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112004Z:eca0a112-cc94-409a-9f8c-fc222ac27274",
+        "x-ms-correlation-request-id": "922130ff-eb39-4692-bbee-a759a0c0d447",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14999",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110352Z:922130ff-eb39-4692-bbee-a759a0c0d447",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/4765cac1-9c79-41a5-b170-5e758e016674?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/b3a49075-5355-44c6-b16a-eef4650b36fd?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -785,7 +785,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:20:03 GMT",
+        "Date": "Wed, 28 Jun 2023 11:03:51 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -793,17 +793,17 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "b483edf3-c6bc-4554-8f97-91f7e55d074f",
-        "x-ms-ratelimit-remaining-subscription-reads": "11529",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112004Z:b483edf3-c6bc-4554-8f97-91f7e55d074f",
+        "x-ms-correlation-request-id": "74a91ce0-164d-4730-92f9-3dd5cd93273d",
+        "x-ms-ratelimit-remaining-subscription-reads": "11992",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110352Z:74a91ce0-164d-4730-92f9-3dd5cd93273d",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/4765cac1-9c79-41a5-b170-5e758e016674",
-        "name": "4765cac1-9c79-41a5-b170-5e758e016674",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/b3a49075-5355-44c6-b16a-eef4650b36fd",
+        "name": "b3a49075-5355-44c6-b16a-eef4650b36fd",
         "status": "Succeeded",
-        "startTime": "2023-03-30T11:20:04.0759098Z",
-        "endTime": "2023-03-30T11:20:04.287561Z",
+        "startTime": "2023-06-28T11:03:51.9336735Z",
+        "endTime": "2023-06-28T11:03:52.1537833Z",
         "percentComplete": 100.0,
         "properties": {
           "resourceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1",
@@ -812,13 +812,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/4765cac1-9c79-41a5-b170-5e758e016674?api-version=2022-09-01\u0026operationResultResponseType=Location",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/b3a49075-5355-44c6-b16a-eef4650b36fd?api-version=2022-11-01\u0026operationResultResponseType=Location",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -826,7 +826,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:20:03 GMT",
+        "Date": "Wed, 28 Jun 2023 11:03:52 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -834,22 +834,22 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "80fec3ba-5ad2-4bf2-99b3-2b35b13f45b9",
-        "x-ms-ratelimit-remaining-subscription-reads": "11528",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112004Z:80fec3ba-5ad2-4bf2-99b3-2b35b13f45b9",
+        "x-ms-correlation-request-id": "723157e6-c544-4eb9-946d-2fd068f9da60",
+        "x-ms-ratelimit-remaining-subscription-reads": "11991",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110352Z:723157e6-c544-4eb9-946d-2fd068f9da60",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1",
         "name": "sdk-py-tests-acc-1-18a4278b/sdk-py-tests-pool-1",
         "type": "Microsoft.NetApp/netAppAccounts/capacityPools",
-        "etag": "W/\u0022datetime\u00272023-03-30T11%3A20%3A04.0705831Z\u0027\u0022",
+        "etag": "W/\u0022datetime\u00272023-06-28T11%3A03%3A51.927733Z\u0027\u0022",
         "location": "westus2",
         "tags": {
-          "CreatedOnDate": "2023-03-30T11:19:59.6865342Z"
+          "CreatedOnDate": "2023-06-28T11:03:46.8933488Z"
         },
         "properties": {
-          "poolId": "75134418-3c0d-aeea-fdba-60d4208158af",
+          "poolId": "c4490712-1282-104b-64a1-15e30baf10d0",
           "serviceLevel": "Premium",
           "size": 4398046511104,
           "vendorID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1",
@@ -863,21 +863,21 @@
         "systemData": {
           "createdBy": "00000000-0000-0000-0000-000000000000",
           "createdByType": "Application",
-          "createdAt": "2023-03-30T11:20:00.9290344Z",
+          "createdAt": "2023-06-28T11:03:48.1530152Z",
           "lastModifiedBy": "00000000-0000-0000-0000-000000000000",
           "lastModifiedByType": "Application",
-          "lastModifiedAt": "2023-03-30T11:20:00.9290344Z"
+          "lastModifiedAt": "2023-06-28T11:03:48.1530152Z"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 404,
@@ -885,15 +885,15 @@
         "Cache-Control": "no-cache",
         "Content-Length": "289",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:20:04 GMT",
+        "Date": "Wed, 28 Jun 2023 11:03:52 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "65285ca5-d1cf-481b-984a-d33c12bd9efd",
-        "x-ms-ratelimit-remaining-subscription-reads": "11527",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112005Z:65285ca5-d1cf-481b-984a-d33c12bd9efd",
+        "x-ms-correlation-request-id": "086fdb58-108c-43e0-8474-ce46192a1712",
+        "x-ms-ratelimit-remaining-subscription-reads": "11990",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110353Z:086fdb58-108c-43e0-8474-ce46192a1712",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
@@ -904,13 +904,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -918,7 +918,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:20:04 GMT",
+        "Date": "Wed, 28 Jun 2023 11:03:52 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -926,9 +926,9 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d708f414-69e7-4ecb-be3f-2f1a7a1656a3",
-        "x-ms-ratelimit-remaining-subscription-reads": "11526",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112005Z:d708f414-69e7-4ecb-be3f-2f1a7a1656a3",
+        "x-ms-correlation-request-id": "d034552f-ab43-4b80-97f9-5e0542eccbd0",
+        "x-ms-ratelimit-remaining-subscription-reads": "11989",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110353Z:d034552f-ab43-4b80-97f9-5e0542eccbd0",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
@@ -936,107 +936,107 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b?api-version=2022-11-01",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 409,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "114",
+        "Content-Length": "312",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:20:05 GMT",
+        "Date": "Wed, 28 Jun 2023 11:03:53 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "52b78295-2818-4216-87f8-1d250e38ad26",
+        "x-ms-correlation-request-id": "ab1acd89-9a79-49a3-aa46-8bacf0d25fa2",
         "x-ms-failure-cause": "gateway",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112006Z:52b78295-2818-4216-87f8-1d250e38ad26"
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110353Z:ab1acd89-9a79-49a3-aa46-8bacf0d25fa2"
       },
       "ResponseBody": {
         "error": {
           "code": "CannotDeleteResource",
-          "message": "Can not delete resource before nested resources are deleted."
+          "message": "Cannot delete resource while nested resources exist. Some existing nested resource IDs include: \u0027Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1\u0027. Please delete all nested resources before deleting this resource."
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b?api-version=2022-11-01",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 409,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "114",
+        "Content-Length": "312",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:20:15 GMT",
+        "Date": "Wed, 28 Jun 2023 11:04:03 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "3bb019ed-1346-476f-b165-28cf66cd4b8a",
+        "x-ms-correlation-request-id": "2dba7833-3816-4f8c-9aae-723a68cf62c1",
         "x-ms-failure-cause": "gateway",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112016Z:3bb019ed-1346-476f-b165-28cf66cd4b8a"
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110404Z:2dba7833-3816-4f8c-9aae-723a68cf62c1"
       },
       "ResponseBody": {
         "error": {
           "code": "CannotDeleteResource",
-          "message": "Can not delete resource before nested resources are deleted."
+          "message": "Cannot delete resource while nested resources exist. Some existing nested resource IDs include: \u0027Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b/capacityPools/sdk-py-tests-pool-1\u0027. Please delete all nested resources before deleting this resource."
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b?api-version=2022-11-01",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/35e07e96-22e1-4033-b523-05766d8e7d2b?api-version=2022-09-01",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/19e07e92-f672-4937-be28-f1369ea039a3?api-version=2022-11-01",
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 30 Mar 2023 11:20:26 GMT",
+        "Date": "Wed, 28 Jun 2023 11:04:14 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/35e07e96-22e1-4033-b523-05766d8e7d2b?api-version=2022-09-01\u0026operationResultResponseType=Location",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/19e07e92-f672-4937-be28-f1369ea039a3?api-version=2022-11-01\u0026operationResultResponseType=Location",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "6f66d2bb-80c4-434e-9f9f-85c427b6ad0a",
-        "x-ms-ratelimit-remaining-subscription-deletes": "14964",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112027Z:6f66d2bb-80c4-434e-9f9f-85c427b6ad0a",
+        "x-ms-correlation-request-id": "e6266a57-eaa9-4165-b683-3d94f021126f",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14996",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110415Z:e6266a57-eaa9-4165-b683-3d94f021126f",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/35e07e96-22e1-4033-b523-05766d8e7d2b?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/19e07e92-f672-4937-be28-f1369ea039a3?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1044,7 +1044,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:20:26 GMT",
+        "Date": "Wed, 28 Jun 2023 11:04:14 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -1052,17 +1052,17 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "4df85a42-9726-43b0-9d6b-31dbd1c87003",
-        "x-ms-ratelimit-remaining-subscription-reads": "11525",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112027Z:4df85a42-9726-43b0-9d6b-31dbd1c87003",
+        "x-ms-correlation-request-id": "87bcd35e-0989-4d3f-b1ce-41662333f239",
+        "x-ms-ratelimit-remaining-subscription-reads": "11988",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110415Z:87bcd35e-0989-4d3f-b1ce-41662333f239",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/35e07e96-22e1-4033-b523-05766d8e7d2b",
-        "name": "35e07e96-22e1-4033-b523-05766d8e7d2b",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/19e07e92-f672-4937-be28-f1369ea039a3",
+        "name": "19e07e92-f672-4937-be28-f1369ea039a3",
         "status": "Succeeded",
-        "startTime": "2023-03-30T11:20:27.3404201Z",
-        "endTime": "2023-03-30T11:20:27.3916892Z",
+        "startTime": "2023-06-28T11:04:14.9085718Z",
+        "endTime": "2023-06-28T11:04:14.9556264Z",
         "percentComplete": 100.0,
         "properties": {
           "resourceName": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b",
@@ -1071,13 +1071,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/35e07e96-22e1-4033-b523-05766d8e7d2b?api-version=2022-09-01\u0026operationResultResponseType=Location",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/operationResults/19e07e92-f672-4937-be28-f1369ea039a3?api-version=2022-11-01\u0026operationResultResponseType=Location",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1085,7 +1085,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:20:26 GMT",
+        "Date": "Wed, 28 Jun 2023 11:04:14 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -1093,19 +1093,19 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "81dfec95-fb52-49d7-a063-ef580ab66576",
-        "x-ms-ratelimit-remaining-subscription-reads": "11524",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112027Z:81dfec95-fb52-49d7-a063-ef580ab66576",
+        "x-ms-correlation-request-id": "747e9c75-a3c9-4038-959d-823e8bdbbcad",
+        "x-ms-ratelimit-remaining-subscription-reads": "11987",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110415Z:747e9c75-a3c9-4038-959d-823e8bdbbcad",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b",
         "name": "sdk-py-tests-acc-1-18a4278b",
         "type": "Microsoft.NetApp/netAppAccounts",
-        "etag": "W/\u0022datetime\u00272023-03-30T11%3A20%3A27.3064088Z\u0027\u0022",
+        "etag": "W/\u0022datetime\u00272023-06-28T11%3A04%3A14.8987395Z\u0027\u0022",
         "location": "westus2",
         "tags": {
-          "CreatedOnDate": "2023-03-30T11:19:55.9969396Z"
+          "CreatedOnDate": "2023-06-28T11:03:40.4265733Z"
         },
         "properties": {
           "encryption": {
@@ -1116,21 +1116,21 @@
         "systemData": {
           "createdBy": "00000000-0000-0000-0000-000000000000",
           "createdByType": "Application",
-          "createdAt": "2023-03-30T11:19:57.2258734Z",
+          "createdAt": "2023-06-28T11:03:42.9809687Z",
           "lastModifiedBy": "00000000-0000-0000-0000-000000000000",
           "lastModifiedByType": "Application",
-          "lastModifiedAt": "2023-03-30T11:19:57.2258734Z"
+          "lastModifiedAt": "2023-06-28T11:03:42.9809687Z"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b?api-version=2022-09-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-python-tests-rg-tmp/providers/Microsoft.NetApp/netAppAccounts/sdk-py-tests-acc-1-18a4278b?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-mgmt-netapp/10.1.0 Python/3.11.2 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 404,
@@ -1138,15 +1138,15 @@
         "Cache-Control": "no-cache",
         "Content-Length": "255",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 30 Mar 2023 11:20:27 GMT",
+        "Date": "Wed, 28 Jun 2023 11:04:15 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "044d584e-8c17-4348-99a4-ebd02a5753d5",
-        "x-ms-ratelimit-remaining-subscription-reads": "11523",
-        "x-ms-routing-request-id": "WESTEUROPE:20230330T112028Z:044d584e-8c17-4348-99a4-ebd02a5753d5",
+        "x-ms-correlation-request-id": "25b09d45-c600-4ed5-a27f-936d4fa0d78a",
+        "x-ms-ratelimit-remaining-subscription-reads": "11986",
+        "x-ms-routing-request-id": "WESTEUROPE:20230628T110416Z:25b09d45-c600-4ed5-a27f-936d4fa0d78a",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {

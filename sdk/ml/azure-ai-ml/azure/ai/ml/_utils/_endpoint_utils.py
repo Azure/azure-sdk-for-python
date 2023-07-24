@@ -14,7 +14,7 @@ from typing import Any, Callable, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, DefaultOpenEncoding, LROConfigurations
 from azure.ai.ml.entities import BatchDeployment
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._deployment.deployment import Deployment
@@ -90,7 +90,7 @@ def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> An
 
     :param Callable func: Name of the endpoint.
     :param str message: Message to print out before starting operation write-out.
-    :param dict kwargs: kwargs to be passed to the func
+    :keyword dict kwargs: kwargs to be passed to the func
     :return: The type returned by Func
     """
     pool = concurrent.futures.ThreadPoolExecutor()
@@ -177,7 +177,7 @@ def validate_scoring_script(deployment):
         deployment.code_configuration.code, deployment.scoring_script
     )
     try:
-        with open(score_script_path, "r") as script:
+        with open(score_script_path, "r", encoding=DefaultOpenEncoding.READ) as script:
             contents = script.read()
             try:
                 ast.parse(contents, score_script_path)

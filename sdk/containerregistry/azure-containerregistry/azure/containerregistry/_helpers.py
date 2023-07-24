@@ -47,7 +47,11 @@ def _is_tag(tag_or_digest: str) -> bool:
     return not (len(tag) == 2 and tag[0].startswith("sha"))
 
 def _clean(matches: List[str]) -> None:
-    """This method removes empty strings and commas from the regex matching of the Challenge header"""
+    """This method removes empty strings and commas from the regex matching of the Challenge header.
+
+    :param list[str] matches: The regex list to clean.
+    :return: None
+    """
     while True:
         try:
             matches.remove("")
@@ -61,7 +65,12 @@ def _clean(matches: List[str]) -> None:
             return
 
 def _parse_challenge(header: str) -> Dict[str, str]:
-    """Parse challenge header into service and scope"""
+    """Parse challenge header into service and scope
+
+    :param str header: The challenge header to parse.
+    :return: A service and scope dict parsed from challenge header.
+    :rtype: dict[str, str]
+    """
     ret: Dict[str, str] = {}
     if header.startswith(BEARER):
         challenge_params = header[len(BEARER) + 1 :]
@@ -74,7 +83,7 @@ def _parse_challenge(header: str) -> Dict[str, str]:
     return ret
 
 def _parse_next_link(link_string: str) -> Optional[str]:
-    """Parses the next link in the list operations response URL
+    """Parse the next link in the list operations response URL
 
     Per the Docker v2 HTTP API spec, the Link header is an RFC5988
     compliant rel='next' with URL to next result set, if available.
@@ -84,13 +93,21 @@ def _parse_next_link(link_string: str) -> Optional[str]:
     Link       = "Link" ":" #link-value
     link-value = "<" URI-Reference ">" * (";" link-param )
     See: https://tools.ietf.org/html/rfc5988#section-5
+
+    :param str link_string: The Link header in HTTP response.
+    :return: The URI reference of next link.
+    :rtype: str or None
     """
     if not link_string:
         return None
     return link_string[1 : link_string.find(">")]
 
 def _enforce_https(request: PipelineRequest) -> None:
-    """Raise ServiceRequestError if the request URL is non-HTTPS and the sender did not specify enforce_https=False"""
+    """Raise ServiceRequestError if the request URL is non-HTTPS and the sender did not specify enforce_https=False
+
+    :param ~azure.core.pipeline.PipelineRequest request: The pipeline request object.
+    :return: None
+    """
 
     # move 'enforce_https' from options to context so it persists
     # across retries but isn't passed to a transport implementation
@@ -114,8 +131,7 @@ def _strip_alg(digest):
         return digest.split(":")[1]
     return digest
 
-def _parse_exp_time(raw_token):
-    # type: (str) -> float
+def _parse_exp_time(raw_token: str) -> float:
     raw_token_list = raw_token.split(".")
     if len(raw_token_list) > 2:
         value = raw_token_list[1]

@@ -144,7 +144,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param name: Component name, if not set, list all components of the workspace
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived components.
+        :keyword list_view_type: View type for including/excluding (for example) archived components.
             Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of component objects
@@ -262,7 +262,6 @@ class ComponentOperations(_ScopeDependentOperations):
 
     @experimental
     @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
-    # pylint: disable=no-self-use
     def validate(
         self,
         component: Union[Component, types.FunctionType],
@@ -287,7 +286,7 @@ class ComponentOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
-    def _validate(  # pylint: disable=no-self-use
+    def _validate(
         self,
         component: Union[Component, types.FunctionType],
         raise_on_failure: bool,
@@ -606,21 +605,15 @@ class ComponentOperations(_ScopeDependentOperations):
         the base path of the pipeline component.
         :type base_path: str
         """
-        from azure.ai.ml.entities._builders import Pipeline
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 
         for _, job_instance in jobs.items():
             # resolve inputs for each job's component
-            if isinstance(job_instance, Pipeline):
-                node: Pipeline = job_instance
-                self._job_operations._resolve_pipeline_job_inputs(
-                    node,
-                    base_path,
-                )
-            elif isinstance(job_instance, BaseNode):
+            if isinstance(job_instance, BaseNode):
                 node: BaseNode = job_instance
                 self._job_operations._resolve_job_inputs(
-                    map(lambda x: x._data, node.inputs.values()),
+                    # parameter group input need to be flattened first
+                    self._job_operations._flatten_group_inputs(node.inputs),
                     base_path,
                 )
             elif isinstance(job_instance, AutoMLJob):
@@ -821,7 +814,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :type component: Union[Component, str]
         :param resolver: The resolver to resolve the dependencies.
         :type resolver: Callable
-        :param resolve_inputs: Whether to resolve inputs.
+        :keyword resolve_inputs: Whether to resolve inputs.
         :type resolve_inputs: bool
         """
         if not isinstance(component, PipelineComponent) or not component.jobs:

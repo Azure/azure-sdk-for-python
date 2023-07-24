@@ -49,9 +49,9 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
     :param silo_configs: List of federated learning silo configurations.
     :type silo_configs: List[~azure.ai.ml.entities._assets.federated_learning_silo.FederatedLearningSilo]
     :param silo_component: Component representing the silo for federated learning.
-    :type silo_component: ~azure.ai.ml.entities._component.component.Component
+    :type silo_component: ~azure.ai.ml.entities.Component
     :param aggregation_component: Component representing the aggregation step.
-    :type aggregation_component: ~azure.ai.ml.entities._component.component.Component
+    :type aggregation_component: ~azure.ai.ml.entities.Component
     :param aggregation_compute: The compute resource for the aggregation step.
     :type aggregation_compute: str, optional
     :param aggregation_datastore: The datastore for the aggregation step.
@@ -504,9 +504,9 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         :param silo_configs: List of federated learning silo configurations.
         :type silo_configs: List[~azure.ai.ml.entities._assets.federated_learning_silo.FederatedLearningSilo]
         :param silo_component: Component representing the silo for federated learning.
-        :type silo_component: ~azure.ai.ml.entities._component.component.Component
+        :type silo_component: ~azure.ai.ml.entities.Component
         :param aggregation_component: Component representing the aggregation step.
-        :type aggregation_component: ~azure.ai.ml.entities._component.component.Component
+        :type aggregation_component: ~azure.ai.ml.entities.Component
         :param shared_silo_kwargs: Keyword arguments shared across all silos.
         :type shared_silo_kwargs: Dict
         :param aggregation_compute: The compute resource for the aggregation step.

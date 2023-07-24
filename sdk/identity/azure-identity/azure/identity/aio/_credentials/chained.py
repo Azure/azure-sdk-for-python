@@ -26,7 +26,7 @@ class ChainedTokenCredential(AsyncContextManager):
     valid token received.
 
     :param credentials: credential instances to form the chain
-    :type credentials: :class:`azure.core.credentials.AsyncTokenCredential`
+    :type credentials: ~azure.core.credentials.AsyncTokenCredential
 
     .. admonition:: Example:
 
@@ -63,7 +63,7 @@ class ChainedTokenCredential(AsyncContextManager):
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
 
         :return: An access token with the desired scopes.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
         within_credential_chain.set(True)
@@ -91,7 +91,11 @@ class ChainedTokenCredential(AsyncContextManager):
 
         within_credential_chain.set(False)
         attempts = _get_error_message(history)
-        message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts \
-                  + "\nTo mitigate this issue, please refer to the troubleshooting guidelines here at " \
-                    "https://aka.ms/azsdk/python/identity/defaultazurecredential/troubleshoot."
+        message = (
+            self.__class__.__name__
+            + " failed to retrieve a token from the included credentials."
+            + attempts
+            + "\nTo mitigate this issue, please refer to the troubleshooting guidelines here at "
+            "https://aka.ms/azsdk/python/identity/defaultazurecredential/troubleshoot."
+        )
         raise ClientAuthenticationError(message=message)

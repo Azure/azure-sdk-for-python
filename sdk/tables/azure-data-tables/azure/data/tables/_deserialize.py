@@ -7,12 +7,10 @@ from typing import Union, Dict, Any, Optional
 
 from uuid import UUID
 import logging
-import datetime
-
-import six
+from datetime import datetime, timezone
 
 from ._entity import EntityProperty, EdmType, TableEntity
-from ._common_conversion import _decode_base64_to_bytes, TZ_UTC
+from ._common_conversion import _decode_base64_to_bytes
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -23,7 +21,7 @@ except ImportError:
     from urllib2 import quote  # type: ignore
 
 
-class TablesEntityDatetime(datetime.datetime):
+class TablesEntityDatetime(datetime):
 
     @property
     def tables_service_value(self):
@@ -63,13 +61,13 @@ def _from_entity_datetime(value):
     cleaned_value = clean_up_dotnet_timestamps(value)
     try:
         dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
-            tzinfo=TZ_UTC
+            tzinfo=timezone.utc
         )
     except ValueError:
         dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(
-            tzinfo=TZ_UTC
+            tzinfo=timezone.utc
         )
-    dt_obj._service_value = value  # pylint:disable=protected-access
+    dt_obj._service_value = value  # pylint:disable=protected-access,assigning-non-slot
     return dt_obj
 
 
@@ -99,7 +97,7 @@ def _from_entity_guid(value):
 
 
 def _from_entity_str(value: Union[str, bytes]) -> str:
-    if isinstance(value, six.binary_type):
+    if isinstance(value, bytes):
         return value.decode('utf-8')
     return value
 
@@ -143,6 +141,11 @@ def _convert_to_entity(entry_element):
        "PartitionKey":"my_partition_key",
        "RowKey":"my_row_key"
     }
+
+    :param entry_element: The entity in response.
+    :type entry_element: Mapping[str, Any]
+    :return: An entity dict with additional metadata.
+    :rtype: dict[str, Any]
     """
     entity = TableEntity()
 
@@ -215,7 +218,13 @@ def _convert_to_entity(entry_element):
 
 
 def _extract_etag(response):
-    """ Extracts the etag from the response headers. """
+    """ Extracts the etag from the response headers.
+
+    :param response: The PipelineResponse object.
+    :type response: ~azure.core.pipeline.PipelineResponse
+    :return: The etag from the response headers
+    :rtype: str or None
+    """
     if response and response.headers:
         return response.headers.get("etag")
 
@@ -233,8 +242,8 @@ def _extract_continuation_token(continuation_token):
         return None, None
     try:
         return continuation_token.get("PartitionKey"), continuation_token.get("RowKey")
-    except AttributeError:
-        raise ValueError("Invalid continuation token format.")
+    except AttributeError as exc:
+        raise ValueError("Invalid continuation token format.") from exc
 
 
 def _normalize_headers(headers):

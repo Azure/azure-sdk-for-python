@@ -91,11 +91,12 @@ def _build_auth_record(response):
 
 class InteractiveCredential(MsalCredential, ABC):
     def __init__(
-            self,
-            *,
-            authentication_record: Optional[AuthenticationRecord] = None,
-            disable_automatic_authentication: bool = False,
-            **kwargs: Any) -> None:
+        self,
+        *,
+        authentication_record: Optional[AuthenticationRecord] = None,
+        disable_automatic_authentication: bool = False,
+        **kwargs: Any
+    ) -> None:
         self._disable_automatic_authentication = disable_automatic_authentication
         self._auth_record = authentication_record
         if self._auth_record:
@@ -123,7 +124,7 @@ class InteractiveCredential(MsalCredential, ABC):
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``

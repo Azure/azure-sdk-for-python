@@ -344,6 +344,9 @@
 # ServiceLabel: %AAD %Service Attention
 #/<NotInRepo>/          @adamedx
 
+# ServiceLabel: %AgriFood
+#/<NotInRepo>/          @bhargav-kansagara
+
 # ServiceLabel: %AKS %Service Attention
 #/<NotInRepo>/          @Azure/aks-pm
 
@@ -422,6 +425,9 @@
 # ServiceLabel: %Bot Service %Service Attention
 #/<NotInRepo>/          @sgellock
 
+# ServiceLabel: %Client
+#/<NotInRepo>/          @simorenoh @gahl-levy @bambriz
+
 # ServiceLabel: %Cloud Shell %Service Attention
 #/<NotInRepo>/          @maertendMSFT
 
@@ -497,6 +503,9 @@
 # ServiceLabel: %Compute - VMSS %Service Attention
 #/<NotInRepo>/          @Drewm3 @avirishuv
 
+# ServiceLabel: %Confidential Ledger
+#/<NotInRepo>/          @lynshi
+
 # ServiceLabel: %Connected Kubernetes %Service Attention
 #/<NotInRepo>/          @akashkeshari
 
@@ -566,6 +575,9 @@
 # ServiceLabel: %Device Provisioning Service %Service Attention
 #/<NotInRepo>/          @nberdy
 
+# ServiceLabel: %Device Update
+#/<NotInRepo>/          @dpokluda @sedols
+
 # ServiceLabel: %Digital Twins %Service Attention
 #/<NotInRepo>/          @sourabhguha @inesk-vt
 
@@ -626,6 +638,9 @@
 # ServiceLabel: %Managed Services %Service Attention
 #/<NotInRepo>/          @Lighthouse-Azure
 
+# ServiceLabel: %Maps
+#/<NotInRepo>/          @alextts627
+
 # ServiceLabel: %MariaDB %Service Attention
 #/<NotInRepo>/          @ambhatna @savjani
 
@@ -637,6 +652,9 @@
 
 # ServiceLabel: %Migrate %Service Attention
 #/<NotInRepo>/          @shijojoy
+
+# ServiceLabel: %Mixed Reality
+#/<NotInRepo>/          @crtreasu @rikogeln
 
 # ServiceLabel: %Mobile Engagement %Service Attention
 #/<NotInRepo>/          @kpiteira
@@ -845,7 +863,7 @@
 # ServiceLabel: %SecurityInsights %Service Attention
 #/<NotInRepo>/          @amirkeren
 
-# ServiceLabel: %IoT/CLI %Service Attention
+# ServiceLabel: %IoT - CLI %Service Attention
 #/<NotInRepo>/          @Azure/azure-iot-cli-triage
 
 # ServiceLabel: %Communication %Service Attention
@@ -874,6 +892,12 @@
 
 # ServiceLabel: %ML-Inference %Service Attention
 #/<NotInRepo>/          @shivanissambare
+
+# ServiceLabel: %ML-Jobs
+#/<NotInRepo>/          @DouglasXiaoMS @TonyJ1 @wangchao1230
+
+# ServiceLabel: %ML-Local Endpoints
+#/<NotInRepo>/          @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
 
 # ServiceLabel: %ML-MLOps %Service Attention
 #/<NotInRepo>/          @lostmygithubaccount

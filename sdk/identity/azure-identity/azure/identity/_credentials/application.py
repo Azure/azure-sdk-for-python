@@ -72,7 +72,7 @@ class AzureApplicationCredential(ChainedTokenCredential):
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :return: An access token with the desired scopes.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
             `message` attribute listing each authentication attempt and its error message.
         """

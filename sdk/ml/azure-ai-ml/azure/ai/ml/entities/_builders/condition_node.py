@@ -94,11 +94,11 @@ class ConditionNode(ControlFlowNode):
         if isinstance(self.condition, InputOutputBase) and self.condition._meta is not None:
             # pylint: disable=protected-access
             output_definition = self.condition._meta
-            if output_definition is not None and not output_definition.is_control:
+            if output_definition is not None and not output_definition._is_control_or_primitive_type:
                 validation_result.append_error(
                     yaml_path="condition",
-                    message=f"'condition' of dsl.condition node must have 'is_control' field "
-                    f"with value 'True', got {output_definition.is_control}",
+                    message=f"'condition' of dsl.condition node must have 'is_control' field or is primitive type "
+                    f"with value 'True', got {output_definition._is_control_or_primitive_type}",
                 )
 
         # check if condition is valid binding

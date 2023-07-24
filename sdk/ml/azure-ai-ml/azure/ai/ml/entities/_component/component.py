@@ -34,6 +34,7 @@ from ...entities._system_data import SystemData
 from ...entities._util import find_type_in_override
 from ...entities._validation import MutableValidationResult, RemoteValidatableMixin, SchemaValidatableMixin
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
+from .._inputs_outputs import GroupInput
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
@@ -292,6 +293,10 @@ class Component(
                 component_io[name] = port if isinstance(port, Input) else Input(**port)
             else:
                 component_io[name] = port if isinstance(port, Output) else Output(**port)
+
+        if is_input:
+            # Restore flattened parameters to group
+            return GroupInput.restore_flattened_inputs(component_io)
         return component_io
 
     @classmethod

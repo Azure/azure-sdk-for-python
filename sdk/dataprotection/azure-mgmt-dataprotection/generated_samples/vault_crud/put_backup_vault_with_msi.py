@@ -36,7 +36,9 @@ def main():
             "identity": {"type": "systemAssigned"},
             "location": "WestUS",
             "properties": {
+                "featureSettings": {"crossRegionRestoreSettings": {"state": "Enabled"}},
                 "monitoringSettings": {"azureMonitorAlertSettings": {"alertsForAllJobFailures": "Enabled"}},
+                "securitySettings": {"softDeleteSettings": {"retentionDurationInDays": 14, "state": "Enabled"}},
                 "storageSettings": [{"datastoreType": "VaultStore", "type": "LocallyRedundant"}],
             },
             "tags": {"key1": "val1"},
@@ -45,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/dataprotection/resource-manager/Microsoft.DataProtection/stable/2023-01-01/examples/VaultCRUD/PutBackupVaultWithMSI.json
+# x-ms-original-file: specification/dataprotection/resource-manager/Microsoft.DataProtection/stable/2023-05-01/examples/VaultCRUD/PutBackupVaultWithMSI.json
 if __name__ == "__main__":
     main()

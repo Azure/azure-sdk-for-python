@@ -19,9 +19,11 @@ from .. import CredentialUnavailableError
 from .._internal import resolve_tenant
 from .._internal.decorators import log_get_token
 
-CLI_NOT_FOUND = 'Azure Developer CLI could not be found. '\
-                 'Please visit https://aka.ms/azure-dev for installation instructions and then,'\
-                 'once installed, authenticate to your Azure account using \'azd auth login\'.'
+CLI_NOT_FOUND = (
+    "Azure Developer CLI could not be found. "
+    "Please visit https://aka.ms/azure-dev for installation instructions and then,"
+    "once installed, authenticate to your Azure account using 'azd auth login'."
+)
 COMMAND_LINE = "azd auth token --output json --scope {}"
 EXECUTABLE_NAME = "azd"
 NOT_LOGGED_IN = "Please run 'azd auth login' from a command prompt to authenticate before using this credential."
@@ -72,10 +74,12 @@ class AzureDeveloperCliCredential:
         *,
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
-        process_timeout: int = 10
+        process_timeout: int = 10,
+        is_chained: bool = False,
     ) -> None:
 
         self.tenant_id = tenant_id
+        self._is_chained = is_chained
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
@@ -101,7 +105,7 @@ class AzureDeveloperCliCredential:
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :rtype: ~azure.core.credentials.AccessToken
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke
           the Azure Developer CLI.
@@ -119,16 +123,19 @@ class AzureDeveloperCliCredential:
         )
         if tenant:
             command += " --tenant-id " + tenant
-        output = _run_command(command, self._process_timeout)
+        output = _run_command(command, self._process_timeout, is_chained=self._is_chained)
 
         token = parse_token(output)
         if not token:
             sanitized_output = sanitize_output(output)
-            raise ClientAuthenticationError(
-                message="Unexpected output from Azure CLI: '{}'. \n"
-                        "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-                        "https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot.".format(sanitized_output)
+            message = (
+                f"Unexpected output from Azure CLI: '{sanitized_output}'. \n"
+                f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                f"https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot."
             )
+            if self._is_chained:
+                raise CredentialUnavailableError(message=message)
+            raise ClientAuthenticationError(message=message)
 
         return token
 
@@ -141,7 +148,7 @@ def parse_token(output: str) -> Optional[AccessToken]:
 
     :param str output: The output of the Azure Developer CLI command.
     :return: An AccessToken or None if the output isn't valid.
-    :rtype: :class:`azure.core.credentials.AccessToken` or None
+    :rtype: azure.core.credentials.AccessToken or None
     """
     try:
         token = json.loads(output)
@@ -182,7 +189,7 @@ def sanitize_output(output: str) -> str:
     return re.sub(r"\"token\": \"(.*?)(\"|$)", "****", output)
 
 
-def _run_command(command: str, timeout: int) -> str:
+def _run_command(command: str, timeout: int, is_chained: bool = False) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
     if shutil.which(EXECUTABLE_NAME) is None:
         raise CredentialUnavailableError(message=CLI_NOT_FOUND)
@@ -216,6 +223,8 @@ def _run_command(command: str, timeout: int) -> str:
             message = sanitize_output(ex.stderr)
         else:
             message = "Failed to invoke Azure Developer CLI"
+        if is_chained:
+            raise CredentialUnavailableError(message=message) from ex
         raise ClientAuthenticationError(message=message) from ex
     except OSError as ex:
         # failed to execute 'cmd' or '/bin/sh'

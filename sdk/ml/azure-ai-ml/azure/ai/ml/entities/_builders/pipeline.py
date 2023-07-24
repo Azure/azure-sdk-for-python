@@ -23,7 +23,7 @@ class Pipeline(BaseNode):
     class directly. Instead, you should use @pipeline decorator to create a pipeline node.
 
     :param component: Id or instance of the pipeline component/job to be run for the step.
-    :type component: Union[~azure.ai.ml.entities._component.component.Component, str]
+    :type component: Union[~azure.ai.ml.entities.Component, str]
     :param inputs: Inputs of the pipeline node.
     :type inputs: Optional[Dict[str, Union[
                                     ~azure.ai.ml.entities.Input,
@@ -78,7 +78,7 @@ class Pipeline(BaseNode):
         """Id or instance of the pipeline component/job to be run for the step.
 
         :return: Id or instance of the pipeline component/job.
-        :rtype: Union[str, ~azure.ai.ml.entities._component.component.Component]
+        :rtype: Union[str, ~azure.ai.ml.entities.Component]
         """
         return self._component
 

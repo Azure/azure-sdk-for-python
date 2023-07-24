@@ -10,6 +10,11 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Optional, Union
 
 import jwt
+from azure.core.credentials import TokenCredential
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
+
 from azure.ai.ml._artifacts._artifact_utilities import (
     _upload_and_generate_remote_uri,
     aml_datastore_path_exists,
@@ -88,10 +93,6 @@ from azure.ai.ml.exceptions import (
 )
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
-from azure.core.credentials import TokenCredential
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
 
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
@@ -240,9 +241,9 @@ class JobOperations(_ScopeDependentOperations):
     ) -> Iterable[Job]:
         """List jobs of the workspace.
 
-        :param parent_job_name: When provided, returns children of named job.
+        :keyword parent_job_name: When provided, returns children of named job.
         :type parent_job_name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived jobs. Default: ACTIVE_ONLY.
+        :keyword list_view_type: View type for including/excluding (for example) archived jobs. Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Job objects.
         :rtype: ~azure.core.paging.ItemPaged[Job]
@@ -271,7 +272,7 @@ class JobOperations(_ScopeDependentOperations):
         try:
             return self._resolve_azureml_id(Job._from_rest_object(job_object))
         except JobParsingError:
-            pass
+            return None
 
     @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
@@ -413,7 +414,7 @@ class JobOperations(_ScopeDependentOperations):
 
         :param job: Job object to be validated.
         :type job: Job
-        :param raise_on_failure: Whether raise error when there are validation errors.
+        :keyword raise_on_failure: Whether raise error when there are validation errors.
         :type raise_on_failure: bool
         :return: a ValidationResult object containing all found errors.
         :rtype: ValidationResult
@@ -488,16 +489,16 @@ class JobOperations(_ScopeDependentOperations):
         Environment, Code, they'll be created together with the job.
 
         :param Job job: Job definition or object which can be translate to a job.
-        :param description: Description to overwrite when submitting the pipeline.
+        :keyword description: Description to overwrite when submitting the pipeline.
         :type description: str
-        :param compute: Compute target to overwrite when submitting the pipeline.
+        :keyword compute: Compute target to overwrite when submitting the pipeline.
         :type compute: str
-        :param tags: Tags to overwrite when submitting the pipeline.
+        :keyword tags: Tags to overwrite when submitting the pipeline.
         :type tags: dict
-        :param experiment_name: Name of the experiment the job will be created under, if None is provided,
+        :keyword experiment_name: Name of the experiment the job will be created under, if None is provided,
             job will be created under experiment 'Default'.
         :type experiment_name: str
-        :param skip_validation: whether to skip validation before creating/updating the job. Note that dependent
+        :keyword skip_validation: whether to skip validation before creating/updating the job. Note that dependent
             resources like anonymous component won't skip their validation in creating.
         :type skip_validation: bool
         :raises [~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised if
@@ -674,17 +675,13 @@ class JobOperations(_ScopeDependentOperations):
     ) -> None:
         """Download logs and output of a job.
 
-        :param str name: Name of a job.
-        :param Union[PathLike, str] download_path: Local path as download destination, defaults to '.'.
-        :param str output_name: Named output to download, defaults to None.
-        :param bool all: Whether to download logs and all named outputs, defaults to False.
         :param name: Name of a job.
         :type name: str
-        :param download_path: Local path as download destination, defaults to '.'.
+        :keyword download_path: Local path as download destination, defaults to '.'.
         :type download_path: Union[PathLike, str]
-        :param output_name: Named output to download, defaults to None.
+        :keyword output_name: Named output to download, defaults to None.
         :type output_name: str
-        :param all: Whether to download logs and all named outputs, defaults to False.
+        :keyword all: Whether to download logs and all named outputs, defaults to False.
         :type all: bool
         :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state.
             Details will be provided in the error message.
@@ -713,7 +710,10 @@ class JobOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        is_batch_job = job_details.tags.get("azureml.batchrun", None) == "true"
+        is_batch_job = (
+            job_details.tags.get("azureml.batchrun", None) == "true"
+            and job_details.tags.get("azureml.jobtype", None) != PipelineConstants.PIPELINE_JOB_TYPE
+        )
         outputs = {}
         download_path = Path(download_path)
         artifact_directory_name = "artifacts"
@@ -891,7 +891,7 @@ class JobOperations(_ScopeDependentOperations):
 
         if isinstance(job, PipelineJob):
             # Resolve top-level inputs
-            self._resolve_pipeline_job_inputs(job, job._base_path)
+            self._resolve_job_inputs(self._flatten_group_inputs(job.inputs), job._base_path)
             # inputs in sub-pipelines has been resolved in
             # self._resolve_arm_id_or_azureml_id(job, self._orchestrators.get_asset_arm_id)
             # as they are part of the pipeline component
@@ -971,20 +971,21 @@ class JobOperations(_ScopeDependentOperations):
         for entry in entries:
             self._resolve_job_input(entry, base_path)
 
-    def _resolve_pipeline_job_inputs(self, job: PipelineJob, base_path: str):
-        """resolve pipeline job inputs as ARM id or remote url."""
-        inputs = []
+    # TODO: move it to somewhere else?
+    @classmethod
+    def _flatten_group_inputs(cls, inputs):
+        """Get flatten values from an InputDict."""
+        input_values = []
         # Flatten inputs for pipeline job
-        for key, item in job.inputs.items():
+        for key, item in inputs.items():
             if isinstance(item, _GroupAttrDict):
-                inputs.extend(item.flatten(group_parameter_name=key))
+                input_values.extend(item.flatten(group_parameter_name=key))
             else:
                 # skip resolving inferred optional input without path (in do-while + dynamic input case)
                 if isinstance(item._data, Input) and not item._data.path and item._meta._is_inferred_optional:
                     continue
-                inputs.append(item._data)
-        for entry in inputs:
-            self._resolve_job_input(entry, base_path)
+                input_values.append(item._data)
+        return input_values
 
     def _resolve_job_input(self, entry: Union[Input, str, bool, int, float], base_path: str) -> None:
         """resolve job input as ARM id or remote url."""
@@ -1197,9 +1198,7 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_automl_job(  # pylint: disable=no-self-use
-        self, job: Job, resolver: Callable, inside_pipeline: bool
-    ) -> Job:
+    def _resolve_arm_id_for_automl_job(self, job: Job, resolver: Callable, inside_pipeline: bool) -> Job:
         """Resolve arm_id for AutoMLJob."""
         # AutoML does not have dependency uploads. Only need to resolve reference to arm id.
 

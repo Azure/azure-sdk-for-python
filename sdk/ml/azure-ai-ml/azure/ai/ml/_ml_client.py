@@ -61,7 +61,7 @@ from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._preflight_utils import get_deployments_operation
 from azure.ai.ml._utils._registry_utils import get_registry_client
 from azure.ai.ml._utils.utils import _is_https_url
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType, DefaultOpenEncoding
 from azure.ai.ml.entities import (
     BatchDeployment,
     ModelBatchDeployment,
@@ -452,6 +452,7 @@ class MLClient:
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
+            all_operations=self._operation_container,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATA, self._data)
@@ -474,7 +475,6 @@ class MLClient:
             requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
         )
-        self._data._job_operation = self._jobs
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
         self._schedules = ScheduleOperations(
             self._operation_scope,
@@ -545,11 +545,11 @@ class MLClient:
 
         :param credential: The credential object for the workspace.
         :type credential: ~azure.core.credentials.TokenCredential
-        :param path: The path to the config file or starting directory to search.
+        :keyword path: The path to the config file or starting directory to search.
             The parameter defaults to starting the search in the current directory.
             Defaults to None
         :type path: typing.Union[os.PathLike, str]
-        :param file_name: Allows overriding the config file name to search for when path is a directory path.
+        :keyword file_name: Allows overriding the config file name to search for when path is a directory path.
             (Default value = None)
         :type file_name: str
         :keyword str cloud: The cloud name to use. Defaults to AzureCloud.
@@ -837,7 +837,7 @@ class MLClient:
 
     @classmethod
     def _get_workspace_info(cls, found_path: Optional[str]) -> Tuple[str, str, str]:
-        with open(found_path) as config_file:
+        with open(found_path, encoding=DefaultOpenEncoding.READ) as config_file:
             config = json.load(config_file)
 
         # Checking the keys in the config.json file to check for required parameters.
@@ -884,6 +884,7 @@ class MLClient:
     # Each entry here requires a registered _create_or_update function below
     T = TypeVar("T", Job, Model, Environment, Component, Datastore)
 
+    # pylint: disable-next=client-method-missing-tracing-decorator
     def create_or_update(
         self,
         entity: T,
@@ -916,6 +917,7 @@ class MLClient:
         Schedule,
     )
 
+    # pylint: disable-next=client-method-missing-tracing-decorator
     def begin_create_or_update(
         self,
         entity: R,

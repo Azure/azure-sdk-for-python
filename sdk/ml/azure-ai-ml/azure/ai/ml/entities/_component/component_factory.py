@@ -122,7 +122,7 @@ class _ComponentFactory:
         :param _type: The type name of the component.
         :type _type: str
         :param create_instance_func: A function to create an instance of the component.
-        :type create_instance_func: Callable[..., ~azure.ai.ml.entities._component.component.Component]
+        :type create_instance_func: Callable[..., ~azure.ai.ml.entities.Component]
         :param create_schema_func: A function to create a schema for the component.
         :type create_schema_func: Callable[[Any], Schema]
         """
@@ -140,7 +140,7 @@ class _ComponentFactory:
         :param _type: The type name of the component. When None, it will be inferred from the YAML dict.
         :type _type: str
         :return: The loaded component.
-        :rtype: ~azure.ai.ml.entities._component.component.Component
+        :rtype: ~azure.ai.ml.entities.Component
         """
 
         return Component._load(
@@ -159,7 +159,7 @@ class _ComponentFactory:
         :param _type: The type name of the component. When None, it will be inferred from the REST object.
         :type _type: str
         :return: The loaded component.
-        :rtype: ~azure.ai.ml.entities._component.component.Component
+        :rtype: ~azure.ai.ml.entities.Component
         """
         if _type is not None:
             obj.properties.component_spec["type"] = _type
