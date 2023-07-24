@@ -41,6 +41,7 @@ MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "requests": "2.19.0",
     "six": "1.12.0",
     "cryptography": "3.3.2",
+    "msal": "1.23.0",
 }
 
 # this array contains overrides ONLY IF the package being processed the key of each item
