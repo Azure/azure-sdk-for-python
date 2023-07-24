@@ -28,11 +28,11 @@ from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml.constants._common import (
     AZUREML_RUN_SETUP_DIR,
     AZUREML_RUNS_DIR,
-    DefaultOpenEncoding,
     EXECUTION_SERVICE_URL_KEY,
     INVOCATION_BASH_FILE,
     INVOCATION_BAT_FILE,
     LOCAL_JOB_FAILURE_MSG,
+    DefaultOpenEncoding,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
@@ -232,12 +232,12 @@ class CommonRuntimeHelper:
         if registry:
             try:
                 client.login(
-                    username=registry["username"],
-                    password=registry["password"],
-                    registry=registry["url"],
+                    username=registry.get("username"),
+                    password=registry.get("password"),
+                    registry=registry.get("url"),
                 )
             except Exception as e:
-                raise RuntimeError(self.DOCKER_LOGIN_FAILURE_MSG.format(registry["url"], e)) from e
+                raise RuntimeError(self.DOCKER_LOGIN_FAILURE_MSG.format(registry.get("url"), e)) from e
         else:
             raise RuntimeError("Registry information is missing from bootstrapper configuration.")
 
