@@ -570,7 +570,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         metric_thresholds: List[CustomMonitoringMetricThreshold],
         component_id: str,
         alert_enabled: bool = True,
-        data_window_size: int = None,
+        data_window_size: Optional[int] = None,
     ):
         self.type = MonitorSignalType.CUSTOM
         self.input_datasets = input_datasets
