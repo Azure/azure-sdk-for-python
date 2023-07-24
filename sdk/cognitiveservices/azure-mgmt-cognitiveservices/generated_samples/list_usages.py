@@ -14,7 +14,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
     pip install azure-identity
     pip install azure-mgmt-cognitiveservices
 # USAGE
-    python list_commitment_plans.py
+    python list_usages.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,17 +26,16 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 def main():
     client = CognitiveServicesManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.commitment_plans.list(
-        resource_group_name="resourceGroupName",
-        account_name="accountName",
+    response = client.usages.list(
+        location="WestUS",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2023-05-01/examples/ListCommitmentPlans.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2023-05-01/examples/ListUsages.json
 if __name__ == "__main__":
     main()
