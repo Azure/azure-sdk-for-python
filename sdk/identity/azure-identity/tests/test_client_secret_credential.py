@@ -20,7 +20,7 @@ from helpers import (
     mock_response,
     msal_validating_transport,
     new_msal_validating_transport,
-    Request
+    Request,
 )
 from unittest.mock import Mock, patch
 
@@ -228,7 +228,7 @@ def test_multitenant_authentication():
         return mock_response(json_payload=build_aad_response(access_token=token))
 
     credential = ClientSecretCredential(
-        first_tenant, "client-id", "secret", transport=Mock(send=send), additionally_allowed_tenants=['*']
+        first_tenant, "client-id", "secret", transport=Mock(send=send), additionally_allowed_tenants=["*"]
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -247,7 +247,10 @@ def test_multitenant_authentication():
 def test_live_multitenant_authentication(live_service_principal):
     # first create a credential with a non-existent tenant
     credential = ClientSecretCredential(
-        "...", live_service_principal["client_id"], live_service_principal["client_secret"], additionally_allowed_tenants=['*']
+        "...",
+        live_service_principal["client_id"],
+        live_service_principal["client_secret"],
+        additionally_allowed_tenants=["*"],
     )
     # then get a valid token for an actual tenant
     token = credential.get_token("https://vault.azure.net/.default", tenant_id=live_service_principal["tenant_id"])

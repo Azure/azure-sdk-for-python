@@ -60,15 +60,18 @@ class AzurePowerShellCredential:
             :dedent: 4
             :caption: Create an AzurePowerShellCredential.
     """
+
     def __init__(
         self,
         *,
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
-        process_timeout: int = 10
+        process_timeout: int = 10,
+        is_chained: bool = False
     ) -> None:
 
         self.tenant_id = tenant_id
+        self._is_chained = is_chained
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
@@ -102,13 +105,11 @@ class AzurePowerShellCredential:
           receive an access token
         """
         tenant_id = resolve_tenant(
-            default_tenant=self.tenant_id,
-            additionally_allowed_tenants=self._additionally_allowed_tenants,
-            **kwargs
+            default_tenant=self.tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
         command_line = get_command_line(scopes, tenant_id)
         output = run_command_line(command_line, self._process_timeout)
-        token = parse_token(output)
+        token = parse_token(output, is_chained=self._is_chained)
         return token
 
 
@@ -133,8 +134,9 @@ def run_command_line(command_line: List[str], timeout: int) -> str:
             proc.kill()
         error = CredentialUnavailableError(
             message="Failed to invoke PowerShell.\n"
-                    "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-                    "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.")
+            "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+            "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot."
+        )
         raise error from ex
 
     raise_for_error(proc.returncode, stdout, stderr)
@@ -153,12 +155,14 @@ def start_process(args: List[str]) -> "subprocess.Popen":
     return proc
 
 
-def parse_token(output: str) -> AccessToken:
+def parse_token(output: str, is_chained: bool = False) -> AccessToken:
     for line in output.split():
         if line.startswith("azsdk%"):
             _, token, expires_on = line.split("%")
             return AccessToken(token, int(expires_on))
 
+    if is_chained:
+        raise CredentialUnavailableError(message='Unexpected output from Get-AzAccessToken: "{}"'.format(output))
     raise ClientAuthenticationError(message='Unexpected output from Get-AzAccessToken: "{}"'.format(output))
 
 

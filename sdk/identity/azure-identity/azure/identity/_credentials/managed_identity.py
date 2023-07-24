@@ -73,8 +73,10 @@ class ManagedIdentityCredential:
                 from .cloud_shell import CloudShellCredential
 
                 self._credential = CloudShellCredential(**kwargs)
-        elif all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS)\
-                and not exclude_workload_identity:
+        elif (
+            all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS)
+            and not exclude_workload_identity
+        ):
             _LOGGER.info("%s will use workload identity", self.__class__.__name__)
             from .workload_identity import WorkloadIdentityCredential
 
@@ -123,8 +125,8 @@ class ManagedIdentityCredential:
         if not self._credential:
             raise CredentialUnavailableError(
                 message="No managed identity endpoint found. \n"
-                        "The Target Azure platform could not be determined from environment variables. \n"
-                        "Visit https://aka.ms/azsdk/python/identity/managedidentitycredential/troubleshoot to "
-                        "troubleshoot this issue."
+                "The Target Azure platform could not be determined from environment variables. \n"
+                "Visit https://aka.ms/azsdk/python/identity/managedidentitycredential/troubleshoot to "
+                "troubleshoot this issue."
             )
         return self._credential.get_token(*scopes, **kwargs)

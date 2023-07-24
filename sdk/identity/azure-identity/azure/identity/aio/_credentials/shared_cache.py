@@ -32,7 +32,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
 
     async def __aenter__(self):
         if self._client:
-            await self._client.__aenter__() # type: ignore
+            await self._client.__aenter__()  # type: ignore
         return self
 
     async def close(self) -> None:

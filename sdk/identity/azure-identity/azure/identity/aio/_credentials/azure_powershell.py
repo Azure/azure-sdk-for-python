@@ -46,17 +46,17 @@ class AzurePowerShellCredential(AsyncContextManager):
         *,
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
-        process_timeout: int = 10
+        process_timeout: int = 10,
+        is_chained: bool = False
     ) -> None:
 
         self.tenant_id = tenant_id
+        self._is_chained = is_chained
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
     @log_get_token_async
-    async def get_token(
-        self, *scopes: str, **kwargs: Any
-    ) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -79,13 +79,11 @@ class AzurePowerShellCredential(AsyncContextManager):
             return _SyncCredential().get_token(*scopes, **kwargs)
 
         tenant_id = resolve_tenant(
-            default_tenant=self.tenant_id,
-            additionally_allowed_tenants=self._additionally_allowed_tenants,
-            **kwargs
+            default_tenant=self.tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
         command_line = get_command_line(scopes, tenant_id)
         output = await run_command_line(command_line, self._process_timeout)
-        token = parse_token(output)
+        token = parse_token(output, is_chained=self._is_chained)
         return token
 
     async def close(self) -> None:
@@ -106,15 +104,17 @@ async def run_command_line(command_line: List[str], timeout: int) -> str:
         # failed to execute "cmd" or "/bin/sh"; Azure PowerShell may or may not be installed
         error = CredentialUnavailableError(
             message='Failed to execute "{}".\n'
-                    'To mitigate this issue, please refer to the troubleshooting guidelines here at '
-                    'https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.'.format(command_line[0]))
+            "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+            "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.".format(command_line[0])
+        )
         raise error from ex
     except asyncio.TimeoutError as ex:
         proc.kill()
         raise CredentialUnavailableError(
             message="Timed out waiting for Azure PowerShell.\n"
-                    "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-                    "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.") from ex
+            "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+            "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot."
+        ) from ex
 
     decoded_stdout = stdout.decode()
 
