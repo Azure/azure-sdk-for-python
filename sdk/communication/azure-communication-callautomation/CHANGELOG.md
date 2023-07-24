@@ -8,6 +8,12 @@
 - Send DTMF tones to a participant in the call.
 - Mute participants in the call.
 
+### Other Changes
+- The models `ServerCallLocator` and `GroupCallLocator` have been deperecated, and the ID values can now be passed directly into `CallAutomationClient.start_recording` as keyword arguments.
+- The model `CallInvite` has been deprecated and now the target `CommunicationIdentifier` and associated properties can be passed directly into `create_call`, `redirect_call` and `add_participant`.
+- The method `CallAutomationClient.create_group_call` has been deprecated, this can now be achieved by passing a list of `CommunicationIdentifier`s into `create_call`.
+- The method `CallConnectionClient.play_media_to_all` has been deprecated, this can now be achieved as the default behaviour of `play_media`.
+
 ## 1.0.0 (2023-06-14)
 Call Automation enables developers to build call workflows. Personalise customer interactions by listening to call events and take actions based on your business logic. For more information, please see the [README][read_me].
 
