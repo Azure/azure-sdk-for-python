@@ -932,7 +932,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             close_at: Optional[datetime] = None,
             note: Optional[str] = None,
             **kwargs: Any
-    ) -> JSON:
+    ) -> None:
         """Closes a completed job.
 
         :param str job_id: Id of the job.
@@ -952,8 +952,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
          current timestamp. Default value is None.
         :paramtype note: Optional[str]
 
-        :return: Instance of MutableMapping[str, Any]
-        :rtype: ~collections.abc.MutableMapping[str, Any]
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -978,7 +978,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             note = note
         )
 
-        return self._client.job_router.close_job_action(
+        self._client.job_router.close_job_action(
             id = job_id,
             # pylint:disable=protected-access
             close_job_request = _serialize_to_json(close_job_request, "CloseJobRequest"),
@@ -993,7 +993,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             *,
             note: Optional[str] = None,
             **kwargs: Any
-    ) -> JSON:
+    ) -> None:
         """Completes an assigned job.
 
         :param str job_id: Id of the job.
@@ -1004,8 +1004,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
          current timestamp. Default value is None.
         :paramtype note: Optional[str]
 
-        :return: Instance of MutableMapping[str, Any]
-        :rtype: ~collections.abc.MutableMapping[str, Any]
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1028,7 +1028,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             note = note
         )
 
-        return self._client.job_router.complete_job_action(
+        self._client.job_router.complete_job_action(
             id = job_id,
             # pylint:disable=protected-access
             complete_job_request = _serialize_to_json(complete_job_request, "CompleteJobRequest"),
@@ -1043,7 +1043,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             disposition_code: Optional[str] = None,
             note: Optional[str] = None,
             **kwargs: Any
-    ) -> JSON:
+    ) -> None:
         """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
         :param str job_id: Id of the job.
@@ -1057,8 +1057,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
          If not provided, default value of "Cancelled" is set. Default value is None.
         :paramtype disposition_code: Optional[str]
 
-        :return: Instance of MutableMapping[str, Any]
-        :rtype: ~collections.abc.MutableMapping[str, Any]
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1079,7 +1079,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             disposition_code = disposition_code
         )
 
-        return self._client.job_router.cancel_job_action(
+        self._client.job_router.cancel_job_action(
             id = job_id,
             # pylint:disable=protected-access
             cancel_job_request = _serialize_to_json(cancel_job_request, "CancelJobRequest"),
@@ -1091,13 +1091,13 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             self,
             job_id: str,
             **kwargs: Any
-    ) -> JSON:
+    ) -> None:
         """Reclassify a job.
 
         :param str job_id: Id of the job.
 
-        :return: Instance of MutableMapping[str, Any]
-        :rtype: ~collections.abc.MutableMapping[str, Any]
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1112,7 +1112,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
         if not job_id:
             raise ValueError("identifier cannot be None.")
 
-        return self._client.job_router.reclassify_job_action(
+        self._client.job_router.reclassify_job_action(
             id = job_id,
             **kwargs
         )
@@ -1221,7 +1221,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             *,
             retry_offer_at: Optional[datetime] = None,
             **kwargs: Any
-    ) -> JSON:
+    ) -> None:
         """Declines an offer to work on a job.
 
         :param worker_id: Id of the worker.
@@ -1235,8 +1235,8 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
           the job will also be eligible for the job at that time.
         :paramtype retry_offer_at: Optional[~datetime.datetime]
 
-        :return: Instance of MutableMapping[str, Any]
-        :rtype: ~collections.abc.MutableMapping[str, Any]
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1258,7 +1258,7 @@ class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-man
             retry_offer_at = retry_offer_at
         )
 
-        return self._client.job_router.decline_job_action(
+        self._client.job_router.decline_job_action(
             worker_id = worker_id,
             offer_id = offer_id,
             # pylint:disable=protected-access
