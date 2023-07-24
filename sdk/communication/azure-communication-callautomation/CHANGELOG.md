@@ -9,7 +9,7 @@
 - Mute participants in the call.
 
 ### Other Changes
-- The models `ServerCallLocator` and `GroupCallLocator` have been deperecated, and the ID values can now be passed directly into `CallAutomationClient.start_recording` as keyword arguments.
+- The models `ServerCallLocator` and `GroupCallLocator` have been deprecated, and the ID values can now be passed directly into `CallAutomationClient.start_recording` as keyword arguments.
 - The model `CallInvite` has been deprecated and now the target `CommunicationIdentifier` and associated properties can be passed directly into `create_call`, `redirect_call` and `add_participant`.
 - The method `CallAutomationClient.create_group_call` has been deprecated, this can now be achieved by passing a list of `CommunicationIdentifier`s into `create_call`.
 - The method `CallConnectionClient.play_media_to_all` has been deprecated, this can now be achieved as the default behaviour of `play_media`.

@@ -86,7 +86,7 @@ def process_repeatability_first_sent(keywords: Dict[str, Any]) -> None:
 def get_repeatability_timestamp() -> str:
     return datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
 
-  
+
 def serialize_identifier(identifier:CommunicationIdentifier) -> Dict[str, Any]:
     """Serialize the Communication identifier into CommunicationIdentifierModel
 
