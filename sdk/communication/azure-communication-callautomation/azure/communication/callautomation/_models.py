@@ -539,7 +539,7 @@ class TransferCallResult(object):
     def _from_generated(cls, transfer_result_generated: 'TransferParticipantResultRest'):
         return cls(operation_context=transfer_result_generated.operation_context)
 
-class Choice(object):
+class RecognitionChoice(object):
     """
     An IVR choice for the recognize operation.
 

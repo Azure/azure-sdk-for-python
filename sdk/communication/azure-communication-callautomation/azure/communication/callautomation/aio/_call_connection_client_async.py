@@ -52,7 +52,7 @@ if TYPE_CHECKING:
         TextSource,
         SsmlSource,
         CallInvite,
-        Choice
+        RecognitionChoice
     )
     from azure.core.credentials_async import (
         AsyncTokenCredential
@@ -416,7 +416,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         dtmf_max_tones_to_collect: Optional[int] = None,
         dtmf_stop_tones: Optional[List[str or 'DtmfTone']] = None,
         speech_language: Optional[str] = None,
-        choices: Optional[List['Choice']] = None,
+        choices: Optional[List['RecognitionChoice']] = None,
         end_silence_timeout: Optional[int] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         **kwargs
@@ -452,7 +452,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :keyword speech_language: Speech language to be recognized, If not set default is en-US.
         :paramtype speech_language: str
         :keyword choices: Defines Ivr choices for recognize.
-        :paramtype choices: list[~azure.communication.callautomation.models.Choice]
+        :paramtype choices: list[~azure.communication.callautomation.RecognitionChoice]
         :keyword end_silence_timeout: The length of end silence when user stops speaking and cogservice
          send response.
         :paramtype end_silence_timeout: int

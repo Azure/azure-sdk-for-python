@@ -14,7 +14,7 @@ from ._models import (
     FileSource,
     TextSource,
     SsmlSource,
-    Choice,
+    RecognitionChoice,
     CallParticipant,
     RecordingProperties,
     AddParticipantResult,
@@ -57,7 +57,7 @@ __all__ = [
     "FileSource",
     "TextSource",
     "SsmlSource",
-    "Choice",
+    "RecognitionChoice",
     "ChannelAffinity",
 
     # models for output
