@@ -86,6 +86,7 @@ class InputOutputBase(ABC):
         )
         # TODO: remove this
         self._attribute_map = {}
+        self._is_primitive_type = self._type in IOConstants.PRIMITIVE_STR_2_TYPE
         super(InputOutputBase, self).__init__(**kwargs)
 
     @abstractmethod
@@ -205,10 +206,6 @@ class InputOutputBase(ABC):
         if isinstance(original_data, PipelineInput):
             return None
         return data.mode if data is not None and hasattr(data, "mode") else kwargs.pop("mode", None)
-
-    @property
-    def _is_primitive_type(self):
-        return self.type in IOConstants.PRIMITIVE_STR_2_TYPE
 
 
 class NodeInput(InputOutputBase):
