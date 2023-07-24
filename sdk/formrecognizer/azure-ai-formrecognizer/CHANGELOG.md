@@ -7,6 +7,8 @@ This version of the client library defaults to the service API version `2023-07-
 ### Features Added
 
 ### Breaking Changes
+ > Note: The following changes are only breaking from the previous beta. They are not breaking against previous stable versions.
+ 
 - Going forward this library will default to service API version `2023-07-31`.
 - Removed `query_fields` keyword argument from `begin_analyze_document()` and `begin_analyze_document_from_url()`.
 - Removed `kind` property from `DocumentPage`.

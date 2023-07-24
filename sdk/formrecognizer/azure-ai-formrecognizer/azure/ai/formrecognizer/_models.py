@@ -3769,8 +3769,7 @@ class AzureBlobFileListSource:
     def __init__(  # pylint: disable=unused-argument
         self,
         container_url: str,
-        file_list: str,
-        **kwargs: Any
+        file_list: str
     ) -> None:
         self.container_url = container_url
         self.file_list = file_list
@@ -3820,8 +3819,7 @@ class AzureBlobSource:
         self,
         container_url: str,
         *,
-        prefix: Optional[str] = None,
-        **kwargs: Any
+        prefix: Optional[str] = None
     ) -> None:
         self.container_url = container_url
         self.prefix = prefix
@@ -3867,14 +3865,13 @@ class ClassifierDocumentTypeDetails:
 
     def __init__(  # pylint: disable=unused-argument
         self,
-        source: Union[AzureBlobSource, AzureBlobFileListSource],
-        **kwargs: Any
+        source: Union[AzureBlobSource, AzureBlobFileListSource]
     ) -> None:
         self.source = source
 
     def __repr__(self) -> str:
         return (
-            f"ClassifierDocumentTypeDetails(source={self.source})"
+            f"ClassifierDocumentTypeDetails(source={repr(self.source)})"
         )
 
     @classmethod

@@ -30,7 +30,7 @@ Azure Form Recognizer is a cloud service that uses machine learning to analyze t
 Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer --pre
+pip install azure-ai-formrecognizer
 ```
 
 > Note: This version of the client library defaults to the `2023-07-31` version of the service.
