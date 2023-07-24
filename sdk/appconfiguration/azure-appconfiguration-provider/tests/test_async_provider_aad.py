@@ -35,7 +35,9 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_provider_trim_prefixes(self, appconfiguration_endpoint_string_provider):
         trimmed = {"test."}
-        async with await self.build_provider_aad(appconfiguration_endpoint_string_provider, trim_prefixes=trimmed) as client:
+        async with await self.build_provider_aad(
+            appconfiguration_endpoint_string_provider, trim_prefixes=trimmed
+        ) as client:
             assert client["message"] == "hi"
             assert client["my_json"]["key"] == "value"
             assert client["trimmed"] == "key"
