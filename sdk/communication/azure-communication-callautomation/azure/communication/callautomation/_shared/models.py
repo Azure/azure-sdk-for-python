@@ -90,7 +90,7 @@ class CommunicationUserIdentifier:
     def __eq__(self, other):
         try:
             return self.raw_id == other.properties["id"]
-        except Exception:  # pylint: diable=broad-except
+        except Exception:  # pylint: disable=broad-except
             return False
 
 
@@ -127,7 +127,7 @@ class PhoneNumberIdentifier:
     def __eq__(self, other):
         try:
             return self.raw_id == _phone_number_raw_id(other)
-        except Exception:  # pylint: diable=broad-except
+        except Exception:  # pylint: disable=broad-except
             return False
 
 
@@ -167,7 +167,7 @@ class UnknownIdentifier:
     def __eq__(self, other):
         try:
             return self.raw_id == other.raw_id
-        except Exception:  # pylint: diable=broad-except
+        except Exception:  # pylint: disable=broad-except
             return False
 
 
@@ -216,7 +216,7 @@ class MicrosoftTeamsUserIdentifier:
     def __eq__(self, other):
         try:
             return self.raw_id == _microsoft_teams_user_raw_id(other)
-        except Exception:  # pylint: diable=broad-except
+        except Exception:  # pylint: disable=broad-except
             return False
 
 
@@ -283,11 +283,11 @@ class MicrosoftBotIdentifier:
     def __eq__(self, other):
         try:
             return self.raw_id == _microsoft_bot_raw_id(other)
-        except Exception:  # pylint: diable=broad-except
+        except Exception:  # pylint: disable=broad-except
             return False
 
 
-def _microsoft_bot_raw_id(identifier: MicrosoftBotIdentifier) -> str:  # pylint: diable=too-many-return-statements
+def _microsoft_bot_raw_id(identifier: MicrosoftBotIdentifier) -> str:  # pylint: disable=too-many-return-statements
     if identifier.raw_id:
         return str(identifier.raw_id)
     bot_id = identifier.properties["bot_id"]
@@ -306,7 +306,7 @@ def _microsoft_bot_raw_id(identifier: MicrosoftBotIdentifier) -> str:  # pylint:
     return f"{BOT_PUBLIC_CLOUD_PREFIX}{bot_id}"
 
 
-def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: diable=too-many-return-statements
+def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: disable=too-many-return-statements
     """
     Creates a CommunicationIdentifier from a given raw ID.
 
