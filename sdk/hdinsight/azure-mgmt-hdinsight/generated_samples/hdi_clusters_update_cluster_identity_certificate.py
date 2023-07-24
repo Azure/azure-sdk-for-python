@@ -29,7 +29,7 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.clusters.begin_update_identity_certificate(
+    client.clusters.begin_update_identity_certificate(
         resource_group_name="rg1",
         cluster_name="cluster1",
         parameters={
@@ -38,9 +38,8 @@ def main():
             "certificatePassword": "**********",
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2021-06-01/examples/HDI_Clusters_UpdateClusterIdentityCertificate.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/preview/2023-04-15-preview/examples/HDI_Clusters_UpdateClusterIdentityCertificate.json
 if __name__ == "__main__":
     main()

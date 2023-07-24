@@ -42,6 +42,8 @@ from ._models_py3 import PrivateLinkResourceList
 from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
 from ._models_py3 import RegenerateKeyParameters
+from ._models_py3 import Replica
+from ._models_py3 import ReplicaList
 from ._models_py3 import Resource
 from ._models_py3 import ResourceLogCategory
 from ._models_py3 import ResourceLogConfiguration
@@ -80,6 +82,7 @@ from ._web_pub_sub_management_client_enums import ManagedIdentityType
 from ._web_pub_sub_management_client_enums import PrivateLinkServiceConnectionStatus
 from ._web_pub_sub_management_client_enums import ProvisioningState
 from ._web_pub_sub_management_client_enums import ScaleType
+from ._web_pub_sub_management_client_enums import ServiceKind
 from ._web_pub_sub_management_client_enums import SharedPrivateLinkResourceStatus
 from ._web_pub_sub_management_client_enums import UpstreamAuthType
 from ._web_pub_sub_management_client_enums import WebPubSubRequestType
@@ -125,6 +128,8 @@ __all__ = [
     "PrivateLinkServiceConnectionState",
     "ProxyResource",
     "RegenerateKeyParameters",
+    "Replica",
+    "ReplicaList",
     "Resource",
     "ResourceLogCategory",
     "ResourceLogConfiguration",
@@ -162,6 +167,7 @@ __all__ = [
     "PrivateLinkServiceConnectionStatus",
     "ProvisioningState",
     "ScaleType",
+    "ServiceKind",
     "SharedPrivateLinkResourceStatus",
     "UpstreamAuthType",
     "WebPubSubRequestType",
