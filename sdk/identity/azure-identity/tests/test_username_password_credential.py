@@ -79,11 +79,7 @@ def test_tenant_id():
     )
 
     credential = UsernamePasswordCredential(
-        "client-id",
-        "username",
-        "password",
-        transport=transport,
-        additionally_allowed_tenants=['*']
+        "client-id", "username", "password", transport=transport, additionally_allowed_tenants=["*"]
     )
 
     credential.get_token("scope", tenant_id="tenant_id")

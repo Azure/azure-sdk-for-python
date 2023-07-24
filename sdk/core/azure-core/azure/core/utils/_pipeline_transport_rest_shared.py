@@ -22,6 +22,7 @@ from typing import (
     Type,
     Iterator,
     List,
+    Sequence,
 )
 from http.client import HTTPConnection
 from urllib.parse import urlparse
@@ -100,7 +101,7 @@ def _format_parameters_helper(http_request, params):
     http_request.url = http_request.url + query
 
 
-def _pad_attr_name(attr: str, backcompat_attrs: List[str]) -> str:
+def _pad_attr_name(attr: str, backcompat_attrs: Sequence[str]) -> str:
     """Pad hidden attributes so users can access them.
 
     Currently, for our backcompat attributes, we define them
@@ -137,7 +138,7 @@ def _prepare_multipart_body_helper(http_request: "HTTPRequestType", content_inde
     if not http_request.multipart_mixed_info:
         return 0
 
-    requests: List["HTTPRequestType"] = http_request.multipart_mixed_info[0]
+    requests: Sequence["HTTPRequestType"] = http_request.multipart_mixed_info[0]
     boundary: Optional[str] = http_request.multipart_mixed_info[2]
 
     # Update the main request with the body
@@ -215,7 +216,7 @@ def _decode_parts_helper(
     response: "PipelineTransportHttpResponseBase",
     message: Message,
     http_response_type: Type["PipelineTransportHttpResponseBase"],
-    requests: List["PipelineTransportHttpRequest"],
+    requests: Sequence["PipelineTransportHttpRequest"],
     deserialize_response: Callable,
 ) -> List["PipelineTransportHttpResponse"]:
     """Helper for _decode_parts.
@@ -297,7 +298,7 @@ def _parts_helper(
 
     responses = response._get_raw_parts()  # pylint: disable=protected-access
     if response.request.multipart_mixed_info:
-        policies: List["SansIOHTTPPolicy"] = response.request.multipart_mixed_info[1]
+        policies: Sequence["SansIOHTTPPolicy"] = response.request.multipart_mixed_info[1]
 
         # Apply on_response concurrently to all requests
         import concurrent.futures

@@ -17,7 +17,8 @@ from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 from .._utils import (
     serialize_phone_identifier,
-    serialize_identifier
+    serialize_identifier,
+    process_repeatability_first_sent
 )
 from .._models import (
     CallParticipant,
@@ -181,6 +182,7 @@ class CallConnectionClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if is_for_everyone:
+            process_repeatability_first_sent(kwargs)
             await self._call_connection_client.terminate_call(
                 self._call_connection_id,
                 **kwargs
@@ -234,6 +236,7 @@ class CallConnectionClient:
         voip_headers: Optional[Dict[str, str]] = None,
         operation_context: Optional[str] = None,
         callback_url_override: Optional[str] = None,
+        transferee: Optional['CommunicationIdentifier'] = None,
         **kwargs
     ) -> TransferCallResult:
         """Transfer the call to a participant.
@@ -262,6 +265,9 @@ class CallConnectionClient:
             operation_context=operation_context,
             callback_uri_override=callback_url_override
         )
+        process_repeatability_first_sent(kwargs)
+        if transferee:
+            request.transferee = serialize_identifier(transferee)
         result = await self._call_connection_client.transfer_to_participant(
             self._call_connection_id,
             request,
@@ -331,6 +337,7 @@ class CallConnectionClient:
             operation_context=operation_context,
             callback_uri_override=callback_url_override
         )
+        process_repeatability_first_sent(kwargs)
         response = await self._call_connection_client.add_participant(
             self._call_connection_id,
             add_participant_request,
@@ -364,6 +371,7 @@ class CallConnectionClient:
             operation_context=operation_context,
             callback_uri_override=callback_url_override
         )
+        process_repeatability_first_sent(kwargs)
         response = await self._call_connection_client.remove_participant(
             self._call_connection_id,
             remove_participant_request,
@@ -676,6 +684,7 @@ class CallConnectionClient:
             target_participants=[serialize_identifier(target_participant)],
             operation_context=operation_context
         )
+        process_repeatability_first_sent(kwargs)
         response =  await self._call_connection_client.mute(
             self._call_connection_id,
             mute_participants_request,

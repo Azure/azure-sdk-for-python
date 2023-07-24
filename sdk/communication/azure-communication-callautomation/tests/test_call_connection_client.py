@@ -23,6 +23,7 @@ from unittest.mock import Mock
 class TestCallConnectionClient(unittest.TestCase):
     call_connection_id = "10000000-0000-0000-0000-000000000000"
     communication_user_id = "8:acs:123"
+    transferee_user_id = "8:acs:456"
     operation_context = "operationContext"
     call_participant = {
         "identifier": {"rawId": communication_user_id, "communicationUser": {"id": communication_user_id}},
@@ -74,6 +75,29 @@ class TestCallConnectionClient(unittest.TestCase):
 
         response = call_connection.transfer_call_to_participant(user)
         assert isinstance(response, TransferCallResult)
+        self.assertEqual(self.operation_context, response.operation_context)
+
+    def test_transfer_call_to_participant_with_transferee(self):
+        raised = False
+
+        def mock_send(*_, **__):
+            return mock_response(status_code=202, json_payload={
+                "operationContext": self.operation_context})
+
+        call_connection = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id,
+            transport=Mock(send=mock_send))
+        user = CommunicationUserIdentifier(self.communication_user_id)
+        transferee = CommunicationUserIdentifier(self.transferee_user_id)
+        try:
+            response = call_connection.transfer_call_to_participant(user, transferee=transferee)
+        except:
+            raised = True
+            raise
+
+        self.assertFalse(raised, 'Expected is no exception raised')
         self.assertEqual(self.operation_context, response.operation_context)
 
     def test_list_participants(self):

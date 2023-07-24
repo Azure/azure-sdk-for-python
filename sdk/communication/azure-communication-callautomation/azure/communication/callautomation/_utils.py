@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING, Dict, Any, List, Optional, Union
+from datetime import datetime
+
 from ._shared.models import (
     CommunicationIdentifier,
     CommunicationUserIdentifier,
@@ -73,6 +75,18 @@ def build_call_locator(
     return request
 
 
+def process_repeatability_first_sent(keywords: Dict[str, Any]) -> None:
+    if 'headers' in keywords:
+        if 'Repeatability-First-Sent' not in keywords['headers']:
+            keywords['headers']['Repeatability-First-Sent'] = get_repeatability_timestamp()
+    else:
+        keywords['headers'] = {'Repeatability-First-Sent': get_repeatability_timestamp()}
+
+
+def get_repeatability_timestamp() -> str:
+    return datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+
+  
 def serialize_identifier(identifier:CommunicationIdentifier) -> Dict[str, Any]:
     """Serialize the Communication identifier into CommunicationIdentifierModel
 
@@ -131,8 +145,8 @@ def serialize_communication_user_identifier(
 
 
 def deserialize_identifier(
-        identifier_model:CommunicationIdentifierModel
-        )->CommunicationIdentifier:
+    identifier_model:CommunicationIdentifierModel
+)->CommunicationIdentifier:
     """
     Deserialize the CommunicationIdentifierModel into Communication Identifier
 
@@ -158,8 +172,8 @@ def deserialize_identifier(
 
 
 def deserialize_phone_identifier(
-        identifier_model:PhoneNumberIdentifierModel
-        ) -> Union[PhoneNumberIdentifier, None]:
+    identifier_model:PhoneNumberIdentifierModel
+) -> Union[PhoneNumberIdentifier, None]:
     """
     Deserialize the PhoneNumberIdentifierModel into PhoneNumberIdentifier
 
@@ -174,8 +188,8 @@ def deserialize_phone_identifier(
 
 
 def deserialize_comm_user_identifier(
-        identifier_model:CommunicationUserIdentifierModel
-        ) -> Union[CommunicationUserIdentifierModel, None]:
+    identifier_model:CommunicationUserIdentifierModel
+) -> Union[CommunicationUserIdentifierModel, None]:
     """
     Deserialize the CommunicationUserIdentifierModel into CommunicationUserIdentifier
 

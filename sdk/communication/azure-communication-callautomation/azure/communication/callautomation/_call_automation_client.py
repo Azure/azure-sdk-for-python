@@ -15,6 +15,8 @@ from ._call_connection_client import CallConnectionClient
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._shared.auth_policy_utils import get_authentication_policy
 from ._shared.utils import parse_connection_str
+from ._credential.call_automation_auth_policy_utils import get_call_automation_auth_policy
+from ._credential.credential_utils import get_custom_enabled, get_custom_url
 from ._generated.models import (
     CreateCallRequest,
     AnswerCallRequest,
@@ -34,7 +36,8 @@ from ._utils import (
     serialize_phone_identifier,
     serialize_identifier,
     serialize_communication_user_identifier,
-    build_call_locator
+    build_call_locator,
+    process_repeatability_first_sent
 )
 if TYPE_CHECKING:
     from ._models  import (
@@ -98,14 +101,26 @@ class CallAutomationClient:
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {format(endpoint)}")
 
-        self._client = AzureCommunicationCallAutomationService(
-            endpoint,
-            credential,
-            api_version=api_version or DEFAULT_VERSION,
-            authentication_policy=get_authentication_policy(
-                endpoint, credential),
-            sdk_moniker=SDK_MONIKER,
-            **kwargs)
+        custom_enabled = get_custom_enabled()
+        custom_url = get_custom_url()
+        if custom_enabled and custom_url is not None:
+            self._client = AzureCommunicationCallAutomationService(
+                custom_url,
+                credential,
+                api_version=api_version or DEFAULT_VERSION,
+                authentication_policy=get_call_automation_auth_policy(
+                custom_url, credential, acs_url=endpoint),
+                sdk_moniker=SDK_MONIKER,
+                **kwargs)
+        else:
+            self._client = AzureCommunicationCallAutomationService(
+                endpoint,
+                credential,
+                api_version=api_version or DEFAULT_VERSION,
+                authentication_policy=get_authentication_policy(
+                    endpoint, credential),
+                sdk_moniker=SDK_MONIKER,
+                **kwargs)
 
         self._call_recording_client = self._client.call_recording
         self._downloader = ContentDownloader(self._call_recording_client)
@@ -223,6 +238,7 @@ class CallAutomationClient:
             azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url,
             custom_context=user_custom_context
         )
+        process_repeatability_first_sent(kwargs)
         result = self._client.create_call(
             create_call_request=create_call_request,
             **kwargs
@@ -321,6 +337,8 @@ class CallAutomationClient:
             operation_context=operation_context
         )
 
+        process_repeatability_first_sent(kwargs)
+
         result = self._client.answer_call(
             answer_call_request=answer_call_request,
             **kwargs
@@ -364,6 +382,7 @@ class CallAutomationClient:
                 voip_headers=voip_headers,
                 sip_headers=sip_headers
             )
+        process_repeatability_first_sent(kwargs)
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,
             target=serialize_identifier(target_participant),
@@ -397,6 +416,8 @@ class CallAutomationClient:
             incoming_call_context=incoming_call_context,
             call_reject_reason=call_reject_reason
         )
+
+        process_repeatability_first_sent(kwargs)
 
         self._client.reject_call(
             reject_call_request=reject_call_request,
@@ -518,7 +539,6 @@ class CallAutomationClient:
             kwargs.pop("server_call_id", None),
             kwargs.pop("group_call_id", None)
         )
-
         start_recording_request = StartCallRecordingRequest(
             call_locator=call_locator,
             recording_state_callback_uri=kwargs.pop("recording_state_callback_url", None),
@@ -530,6 +550,7 @@ class CallAutomationClient:
             external_storage_location=kwargs.pop("external_storage_location", None),
             channel_affinity=channel_affinity_internal
         )
+        process_repeatability_first_sent(kwargs)
         recording_state_result = self._call_recording_client.start_recording(
             start_call_recording=start_recording_request,
             **kwargs
