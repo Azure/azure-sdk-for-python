@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, Iterable
+from typing import List, Union, Optional, TYPE_CHECKING, Iterable, Dict
 from urllib.parse import urlparse
 from azure.core.tracing.decorator import distributed_trace
 from ._version import SDK_MONIKER
@@ -187,13 +187,10 @@ class CallAutomationClient(object):
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = (CustomContext(
-            voip_headers=target_participant.custom_context.voip_headers,
-            sip_headers=target_participant.custom_context.sip_headers
-            )
-            if target_participant.custom_context.sip_headers or target_participant.custom_context.voip_headers
-            else None
-            )
+        user_custom_context = CustomContext(
+            voip_headers=target_participant.voip_headers,
+            sip_headers=target_participant.sip_headers
+            ) if target_participant.sip_headers or target_participant.voip_headers else None
         create_call_request = CreateCallRequest(
             targets=[serialize_identifier(target_participant.target)],
             callback_uri=callback_url,
@@ -229,7 +226,8 @@ class CallAutomationClient(object):
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional['MediaStreamingConfiguration'] = None,
         azure_cognitive_services_endpoint_url: Optional[str] = None,
-        custom_context: Optional[CustomContext] = None,
+        sip_headers: Optional[Dict[str, str]] = None,
+        voip_headers: Optional[Dict[str, str]] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Create a call connection request to a list of multiple target identities.
@@ -252,16 +250,16 @@ class CallAutomationClient(object):
         :keyword azure_cognitive_services_endpoint_url:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype azure_cognitive_services_endpoint_url: str
-        :keyword custom_context: Custom context
-        :paramtype custom_context: ~azure.communication.callautomation.CustomContext
+        :keyword sip_headers: Sip Headers for PSTN Call
+        :paramtype sip_headers: Dict[str, str]
+        :keyword voip_headers: Voip Headers for Voip Call
+        :paramtype voip_headers: Dict[str, str]
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = CustomContext(
-            voip_headers=custom_context.voip_headers,
-            sip_headers=custom_context.sip_headers
-            ) if (custom_context and (custom_context.sip_headers or custom_context.voip_headers)) else None
+            voip_headers=voip_headers, sip_headers=sip_headers) if sip_headers or voip_headers else None
 
         create_call_request = CreateCallRequest(
             targets=[serialize_identifier(identifier)
@@ -356,14 +354,10 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
-        user_custom_context = (CustomContext(
-            voip_headers=target_participant.custom_context.voip_headers,
-            sip_headers=target_participant.custom_context.sip_headers
-            )
-            if target_participant.custom_context.sip_headers or target_participant.custom_context.voip_headers
-            else None
-            )
+        user_custom_context = CustomContext(
+            voip_headers=target_participant.voip_headers,
+            sip_headers=target_participant.sip_headers
+            ) if target_participant.sip_headers or target_participant.voip_headers else None
 
         process_repeatability_first_sent(kwargs)
 
