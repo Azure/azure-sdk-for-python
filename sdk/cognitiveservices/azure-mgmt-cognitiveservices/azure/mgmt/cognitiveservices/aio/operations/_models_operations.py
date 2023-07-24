@@ -27,21 +27,21 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._resource_skus_operations import build_list_request
+from ...operations._models_operations import build_list_request
 from .._vendor import CognitiveServicesManagementClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ResourceSkusOperations:
+class ModelsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.cognitiveservices.aio.CognitiveServicesManagementClient`'s
-        :attr:`resource_skus` attribute.
+        :attr:`models` attribute.
     """
 
     models = _models
@@ -54,20 +54,21 @@ class ResourceSkusOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.ResourceSku"]:
-        """Gets the list of Microsoft.CognitiveServices SKUs available for your Subscription.
+    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.Model"]:
+        """List Models.
 
+        :param location: Resource location. Required.
+        :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ResourceSku or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cognitiveservices.models.ResourceSku]
+        :return: An iterator like instance of either Model or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cognitiveservices.models.Model]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ResourceSkuListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ModelListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -81,6 +82,7 @@ class ResourceSkusOperations:
             if not next_link:
 
                 request = build_list_request(
+                    location=location,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list.metadata["url"],
@@ -109,7 +111,7 @@ class ResourceSkusOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ResourceSkuListResult", pipeline_response)
+            deserialized = self._deserialize("ModelListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -133,4 +135,6 @@ class ResourceSkusOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/skus"}
+    list.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/models"
+    }
