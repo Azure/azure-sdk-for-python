@@ -20,11 +20,8 @@ class _InputOutputBase(DictMixin, RestTranslatableMixin):
         :type type: str
         """
         self.type = type
+        self._is_primitive_type = None
 
     def _is_literal(self) -> bool:
         """Returns True if this input is literal input."""
         return self.type in SUPPORTED_PARAM_TYPES
-
-    @property
-    def _is_primitive_type(self):
-        return getattr(self, "_is_primitive_type", None)
