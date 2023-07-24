@@ -26,17 +26,75 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="97D66995-95BA-464A-A250-FB6E25E499A8",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     response = client.route_policies.begin_update(
-        resource_group_name="resourceGroupName",
-        route_policy_name="routePolicyName",
-        body={"tags": {"key8254": ""}},
+        resource_group_name="example-rg",
+        route_policy_name="example-routePolicy",
+        body={
+            "properties": {
+                "statements": [
+                    {
+                        "action": {
+                            "actionType": "Permit",
+                            "ipCommunityProperties": {
+                                "add": {
+                                    "ipCommunityIds": [
+                                        "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/ipCommunities/example-ipCommunity"
+                                    ]
+                                },
+                                "delete": {
+                                    "ipCommunityIds": [
+                                        "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/ipCommunities/example-ipCommunity"
+                                    ]
+                                },
+                                "set": {
+                                    "ipCommunityIds": [
+                                        "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/ipCommunities/example-ipCommunity"
+                                    ]
+                                },
+                            },
+                            "ipExtendedCommunityProperties": {
+                                "add": {
+                                    "ipExtendedCommunityIds": [
+                                        "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/ipExtendedCommunities/example-ipExtendedCommunity"
+                                    ]
+                                },
+                                "delete": {
+                                    "ipExtendedCommunityIds": [
+                                        "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/ipExtendedCommunities/example-ipExtendedCommunity"
+                                    ]
+                                },
+                                "set": {
+                                    "ipExtendedCommunityIds": [
+                                        "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/ipExtendedCommunities/example-ipExtendedCommunity"
+                                    ]
+                                },
+                            },
+                            "localPreference": 20,
+                        },
+                        "annotation": "annotation",
+                        "condition": {
+                            "ipCommunityIds": [
+                                "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/ipCommunities/example-ipCommunity"
+                            ],
+                            "ipExtendedCommunityIds": [
+                                "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/ipExtendedCommunities/example-ipExtendedCommunity"
+                            ],
+                            "ipPrefixId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/ipPrefixes/example-ipPrefix",
+                            "type": "Or",
+                        },
+                        "sequenceNumber": 7,
+                    }
+                ]
+            },
+            "tags": {"keyID": "keyValue"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/RoutePolicies_Update_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/RoutePolicies_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

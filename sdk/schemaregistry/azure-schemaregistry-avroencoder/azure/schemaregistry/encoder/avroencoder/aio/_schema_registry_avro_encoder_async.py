@@ -61,42 +61,39 @@ class AvroEncoder(object):
 
     """
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        try:
-            self._schema_registry_client = kwargs.pop(
-                "client"
-            )  # type: "SchemaRegistryClient"
-        except KeyError as exc:
-            raise TypeError(f"'{exc.args[0]}' is a required keyword.")
+    def __init__(
+        self,
+        *,
+        client: "SchemaRegistryClient",
+        group_name: Optional[str] = None,
+        auto_register: bool = False,
+        **kwargs: Any
+    ) -> None:
+        self._schema_registry_client = client
         self._avro_encoder = AvroObjectEncoder(codec=kwargs.get("codec"))
-        self._schema_group = kwargs.pop("group_name", None)
-        self._auto_register = kwargs.get("auto_register", False)
+        self._schema_group = group_name
+        self._auto_register = auto_register
         self._auto_register_schema_func = (
             self._schema_registry_client.register_schema
             if self._auto_register
             else self._schema_registry_client.get_schema_properties
         )
 
-    async def __aenter__(self):
-        # type: () -> AvroEncoder
+    async def __aenter__(self) -> "AvroEncoder":
         await self._schema_registry_client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details):
-        # type: (Any) -> None
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._schema_registry_client.__aexit__(*exc_details)
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
         await self._schema_registry_client.close()
 
     @alru_cache(maxsize=128, cache_exceptions=False)
-    async def _get_schema_id(self, schema_name, schema_str, **kwargs):
-        # type: (str, str, Any) -> str
+    async def _get_schema_id(self, schema_name: str, schema_str: str, **kwargs: Any) -> str:
         """
         Get schema id from local cache with the given schema.
         If there is no item in the local cache, get schema id from the service and cache it.
@@ -113,14 +110,14 @@ class AvroEncoder(object):
         return schema_properties.id
 
     @alru_cache(maxsize=128, cache_exceptions=False)
-    async def _get_schema(self, schema_id, **kwargs):
-        # type: (str, Any) -> str
+    async def _get_schema(self, schema_id: str, **kwargs: Any) -> str:
         """
         Get schema definition from local cache with the given schema id.
         If there is no item in the local cache, get schema from the service and cache it.
 
         :param str schema_id: Schema id
         :return: Schema definition
+        :rtype: str
         """
         schema = await self._schema_registry_client.get_schema(schema_id, **kwargs)
         return schema.definition

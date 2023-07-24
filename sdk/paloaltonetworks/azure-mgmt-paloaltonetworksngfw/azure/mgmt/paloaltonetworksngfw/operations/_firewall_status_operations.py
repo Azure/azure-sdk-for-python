@@ -42,7 +42,7 @@ def build_list_by_firewalls_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -73,7 +73,7 @@ def build_get_request(resource_group_name: str, firewall_name: str, subscription
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL

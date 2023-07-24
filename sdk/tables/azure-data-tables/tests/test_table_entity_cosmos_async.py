@@ -7,7 +7,7 @@
 from uuid import UUID
 import pytest
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
 
@@ -23,7 +23,6 @@ from azure.data.tables import (
     TableSasPermissions,
 )
 from azure.data.tables.aio import TableServiceClient
-from azure.data.tables._common_conversion import TZ_UTC
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
@@ -1855,7 +1854,7 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         entity = {
             'PartitionKey': partition,
             'RowKey': row,
-            'Timestamp': datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=TZ_UTC)
+            'Timestamp': datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=timezone.utc)
         }
         try:
             await self.table.create_entity(entity)
@@ -1866,7 +1865,7 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             assert isinstance(received.metadata['timestamp'], datetime)
             assert received.metadata['timestamp'].year > 2020
         
-            received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=TZ_UTC)
+            received['timestamp'] = datetime(year=1999, month=9, day=9, hour=9, minute=9, tzinfo=timezone.utc)
             await self.table.update_entity(received, mode=UpdateMode.REPLACE)
             received = await self.table.get_entity(partition, row)
 

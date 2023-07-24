@@ -50,7 +50,10 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-eventhub-checkpointstoreblob": {"azure-core": "1.25.0"},
 }
 
-MAXIMUM_VERSION_GENERIC_OVERRIDES = {"cryptography": "4.0.0"}
+MAXIMUM_VERSION_GENERIC_OVERRIDES = {
+    "cryptography": "4.0.0",
+    "typing-extensions": "4.6.3"
+}
 
 MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
 

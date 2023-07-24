@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Dict, Any, Union
-import uuid
 from datetime import datetime
 from ._shared.models import (
     CommunicationIdentifier,
@@ -20,8 +19,12 @@ from ._generated.models import (
     PhoneNumberIdentifierModel
 )
 
-def get_repeatability_guid():
-    return uuid.uuid4()
+def process_repeatability_first_sent(keywords):
+    if 'headers' in keywords:
+        if 'Repeatability-First-Sent' not in keywords['headers']:
+            keywords['headers']['Repeatability-First-Sent'] = get_repeatability_timestamp()
+    else:
+        keywords['headers'] = {'Repeatability-First-Sent': get_repeatability_timestamp()}
 
 def get_repeatability_timestamp():
     return datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
@@ -34,6 +37,7 @@ def serialize_identifier(
     :param identifier: Identifier object
     :type identifier: CommunicationIdentifier
     :return: CommunicationIdentifierModel
+    :rtype: dict[str, any]
     """
     try:
         request_model = {'raw_id': identifier.raw_id}
@@ -42,7 +46,7 @@ def serialize_identifier(
             request_model[identifier.kind] = dict(identifier.properties)
         return request_model
     except AttributeError:
-        raise TypeError("Unsupported identifier type " +
+        raise TypeError("Unsupported identifier type " + # pylint: disable=raise-missing-from
                         identifier.__class__.__name__)
 
 def serialize_phone_identifier(
@@ -53,6 +57,7 @@ def serialize_phone_identifier(
     :param identifier: PhoneNumberIdentifier
     :type identifier: PhoneNumberIdentifier
     :return: PhoneNumberIdentifierModel
+    :rtype: ~azure.communication.callautomation._generated.models.PhoneNumberIdentifierModel
     """
     try:
         if identifier.kind and identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
@@ -60,7 +65,7 @@ def serialize_phone_identifier(
             return request_model
         raise AttributeError
     except AttributeError:
-        raise TypeError("Unsupported identifier type " +
+        raise TypeError("Unsupported identifier type " + # pylint: disable=raise-missing-from
                         identifier.__class__.__name__)
 
 def serialize_communication_user_identifier(
@@ -71,6 +76,7 @@ def serialize_communication_user_identifier(
     :param identifier: CommunicationUserIdentifier
     :type identifier: CommunicationUserIdentifier
     :return: CommunicationUserIdentifierModel
+    :rtype: ~azure.communication.callautomation._generated.models.CommunicationUserIdentifierModel
     """
     try:
         if identifier.kind and identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
@@ -78,7 +84,7 @@ def serialize_communication_user_identifier(
             return request_model
         raise AttributeError
     except AttributeError:
-        raise TypeError("Unsupported identifier type " +
+        raise TypeError("Unsupported identifier type " + # pylint: disable=raise-missing-from
                         identifier.__class__.__name__)
 
 def deserialize_identifier(
@@ -90,6 +96,7 @@ def deserialize_identifier(
     :param identifier_model: CommunicationIdentifierModel
     :type identifier_model: CommunicationIdentifierModel
     :return: CommunicationIdentifier
+    :rtype: ~azure.communication.callautomation.CommunicationIdentifier
     """
     raw_id = identifier_model.raw_id
 
@@ -115,6 +122,7 @@ def deserialize_phone_identifier(
     :param identifier_model: PhoneNumberIdentifierModel
     :type identifier_model: PhoneNumberIdentifierModel
     :return: PhoneNumberIdentifier
+    :rtype: ~azure.communication.callautomation.PhoneNumberIdentifier
     """
     if identifier_model:
         return PhoneNumberIdentifier(identifier_model.value)
@@ -129,5 +137,6 @@ def deserialize_comm_user_identifier(
     :param identifier_model: CommunicationUserIdentifierModel
     :type identifier_model: CommunicationUserIdentifierModel
     :return: CommunicationUserIdentifier
+    :rtype: ~azure.communication.callautomation.CommunicationUserIdentifier
     """
     return CommunicationUserIdentifierModel(id=identifier_model.id) if identifier_model else None

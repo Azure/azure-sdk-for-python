@@ -26,28 +26,31 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     response = client.network_fabric_controllers.begin_create(
-        resource_group_name="resourceGroupName",
-        network_fabric_controller_name="NetworkControllerName",
+        resource_group_name="example-rg",
+        network_fabric_controller_name="example-networkController",
         body={
             "location": "eastus",
             "properties": {
-                "annotation": "lab 1",
+                "annotation": "annotation",
                 "infrastructureExpressRouteConnections": [
                     {
-                        "expressRouteAuthorizationKey": "xxxxxxx",
-                        "expressRouteCircuitId": "/subscriptions/xxxxx/resourceGroups/resourceGroupName/providers/Microsoft.Network/expressRouteCircuits/expressRouteCircuitName",
+                        "expressRouteAuthorizationKey": "1234ABCD-0A1B-1234-5678-123456ABCDEF",
+                        "expressRouteCircuitId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.Network/expressRouteCircuits/expressRouteCircuitName",
                     }
                 ],
                 "ipv4AddressSpace": "172.253.0.0/19",
+                "ipv6AddressSpace": "::/60",
+                "isWorkloadManagementNetworkEnabled": "True",
                 "managedResourceGroupConfiguration": {"location": "eastus", "name": "managedResourceGroupName"},
+                "nfcSku": "Standard",
                 "workloadExpressRouteConnections": [
                     {
                         "expressRouteAuthorizationKey": "xxxxx",
-                        "expressRouteCircuitId": "/subscriptions/xxxxx/resourceGroups/resourceGroupName/providers/Microsoft.Network/expressRouteCircuits/expressRouteCircuitName",
+                        "expressRouteCircuitId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.Network/expressRouteCircuits/expressRouteCircuitName",
                     }
                 ],
             },
@@ -56,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/NetworkFabricControllers_Create_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/NetworkFabricControllers_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

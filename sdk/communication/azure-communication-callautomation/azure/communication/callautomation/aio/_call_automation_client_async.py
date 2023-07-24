@@ -5,16 +5,13 @@
 # --------------------------------------------------------------------------
 from typing import List, Union, Optional, TYPE_CHECKING, AsyncIterable, Dict
 from urllib.parse import urlparse
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 from ._call_connection_client_async import CallConnectionClient
 from .._generated.aio import AzureCommunicationCallAutomationService
-from .._shared.utils import (
-    get_authentication_policy,
-    parse_connection_str
-)
+from .._shared.auth_policy_utils import get_authentication_policy
+from .._shared.utils import parse_connection_str
 from .._generated.models import (
     CreateCallRequest,
     AnswerCallRequest,
@@ -29,11 +26,10 @@ from .._models import (
 )
 from ._content_downloader_async import ContentDownloader
 from .._utils import (
-    get_repeatability_guid,
-    get_repeatability_timestamp,
     serialize_phone_identifier,
     serialize_identifier,
-    serialize_communication_user_identifier
+    serialize_communication_user_identifier,
+    process_repeatability_first_sent
 )
 if TYPE_CHECKING:
     from .._models  import (
@@ -74,9 +70,9 @@ class CallAutomationClient(object):
      or ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Azure Communication Call Automation API version.
     :paramtype api_version: str
-    :keyword source_identity: ACS User Identity to be used when the call is created or answered.
+    :keyword source: ACS User Identity to be used when the call is created or answered.
      If not provided, service will generate one.
-    :paramtype source_identity: ~azure.communication.callautomation.CommunicationUserIdentifier
+    :paramtype source: ~azure.communication.callautomation.CommunicationUserIdentifier
     """
     def __init__(
             self,
@@ -84,7 +80,7 @@ class CallAutomationClient(object):
             credential: Union['AsyncTokenCredential', 'AzureKeyCredential'],
             *,
             api_version: Optional[str] = None,
-            source_identity: Optional['CommunicationUserIdentifier'] = None,
+            source: Optional['CommunicationUserIdentifier'] = None,
             **kwargs
     ) -> None:
         if not credential:
@@ -94,7 +90,7 @@ class CallAutomationClient(object):
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Host URL must be a string")
+            raise ValueError("Host URL must be a string") # pylint:disable=raise-missing-from
 
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
@@ -102,6 +98,7 @@ class CallAutomationClient(object):
 
         self._client = AzureCommunicationCallAutomationService(
             endpoint,
+            credential,
             api_version=api_version or DEFAULT_VERSION,
             authentication_policy=get_authentication_policy(
                 endpoint, credential, is_async=True),
@@ -110,7 +107,7 @@ class CallAutomationClient(object):
 
         self._call_recording_client = self._client.call_recording
         self._downloader = ContentDownloader(self._call_recording_client)
-        self.source_identity = source_identity
+        self.source = source
 
     @classmethod
     def from_connection_string(
@@ -129,8 +126,7 @@ class CallAutomationClient(object):
 
         return cls(endpoint, access_key, **kwargs)
 
-    @distributed_trace
-    def get_call_connection(
+    def get_call_connection( # pylint:disable=client-method-missing-tracing-decorator
         self,
         call_connection_id: str,
         **kwargs
@@ -190,7 +186,7 @@ class CallAutomationClient(object):
                 target_participant.source_caller_id_number) if target_participant.source_caller_id_number else None,
             source_display_name=target_participant.source_display_name,
             source_identity=serialize_communication_user_identifier(
-                self.source_identity) if self.source_identity else None,
+                self.source) if self.source else None,
             operation_context=operation_context,
             media_streaming_configuration=media_streaming_configuration.to_generated(
             ) if media_streaming_configuration else None,
@@ -198,10 +194,10 @@ class CallAutomationClient(object):
             custom_context=user_custom_context
         )
 
+        process_repeatability_first_sent(kwargs)
+
         result = await self._client.create_call(
             create_call_request=create_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
         return CallConnectionProperties._from_generated(# pylint:disable=protected-access
@@ -260,7 +256,7 @@ class CallAutomationClient(object):
                 source_caller_id_number) if source_caller_id_number else None,
             source_display_name=source_display_name,
             source_identity=serialize_identifier(
-                self.source_identity) if self.source_identity else None,
+                self.source) if self.source else None,
             operation_context=operation_context,
             media_streaming_configuration=media_streaming_configuration.to_generated(
             ) if media_streaming_configuration else None,
@@ -268,10 +264,10 @@ class CallAutomationClient(object):
             custom_context=user_custom_context,
         )
 
+        process_repeatability_first_sent(kwargs)
+
         result = await self._client.create_call(
             create_call_request=create_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
         return CallConnectionProperties._from_generated(# pylint:disable=protected-access
@@ -299,7 +295,7 @@ class CallAutomationClient(object):
         :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
         :keyword azure_cognitive_services_endpoint_url:
          The endpoint url of the Azure Cognitive Services resource attached.
-         :paramtype azure_cognitive_services_endpoint_url: str
+        :paramtype azure_cognitive_services_endpoint_url: str
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
         :return: CallConnectionProperties
@@ -313,14 +309,14 @@ class CallAutomationClient(object):
             ) if media_streaming_configuration else None,
             azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url,
             answered_by_identifier=serialize_communication_user_identifier(
-                self.source_identity) if self.source_identity else None,
+                self.source) if self.source else None,
             operation_context=operation_context
         )
 
+        process_repeatability_first_sent(kwargs)
+
         result = await self._client.answer_call(
             answer_call_request=answer_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
         return CallConnectionProperties._from_generated(# pylint:disable=protected-access
@@ -355,10 +351,10 @@ class CallAutomationClient(object):
             custom_context=user_custom_context
         )
 
+        process_repeatability_first_sent(kwargs)
+
         await self._client.redirect_call(
             redirect_call_request=redirect_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
     @distributed_trace_async
@@ -385,10 +381,10 @@ class CallAutomationClient(object):
             call_reject_reason=call_reject_reason
         )
 
+        process_repeatability_first_sent(kwargs)
+
         await self._client.reject_call(
             reject_call_request=reject_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
     @distributed_trace_async
@@ -458,10 +454,10 @@ class CallAutomationClient(object):
             audio_channel_participant_ordering = audio_channel_participant_ordering,
             recording_storage_type = recording_storage_type,
             external_storage_location = external_storage_location,
-            channel_affinity = channel_affinity_internal,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid()
+            channel_affinity = channel_affinity_internal
         )
+
+        process_repeatability_first_sent(kwargs)
 
         recording_state_result = await self._call_recording_client.start_recording(
         start_call_recording = start_recording_request, **kwargs)
@@ -549,14 +545,14 @@ class CallAutomationClient(object):
 
         :param recording_url: Recording's url to be downloaded
         :type recording_url: str
-        :param offset: If provided, only download the bytes of the content in the specified range.
+        :keyword offset: If provided, only download the bytes of the content in the specified range.
          Offset of starting byte.
-        :type offset: int
-        :param length: If provided, only download the bytes of the content in the specified range.
+        :paramtype offset: int
+        :keyword length: If provided, only download the bytes of the content in the specified range.
          Length of the bytes to be downloaded.
-        :type length: int
-        :return: AsyncIterable[bytes]
-        :rtype: AsyncIterable[bytes]
+        :paramtype length: int
+        :return: Iterable[bytes]
+        :rtype: Iterable[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         stream = await self._downloader.download_streaming(

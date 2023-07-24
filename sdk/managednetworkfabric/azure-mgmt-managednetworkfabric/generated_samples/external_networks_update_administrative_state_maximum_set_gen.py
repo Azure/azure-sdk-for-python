@@ -26,22 +26,18 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
-    client.external_networks.begin_update_administrative_state(
-        resource_group_name="resourceGroupName",
+    response = client.external_networks.begin_update_administrative_state(
+        resource_group_name="example-rg",
         l3_isolation_domain_name="example-l3domain",
         external_network_name="example-externalnetwork",
-        body={
-            "resourceIds": [
-                "/subscriptions/xxxxxx/resourceGroups/resourcegroupname/providers/Microsoft.ManagedNetworkFabric/l3IsolationDomains/example-l3domain"
-            ],
-            "state": "Enable",
-        },
+        body={"resourceIds": [""], "state": "Enable"},
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/ExternalNetworks_updateAdministrativeState_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/ExternalNetworks_UpdateAdministrativeState_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

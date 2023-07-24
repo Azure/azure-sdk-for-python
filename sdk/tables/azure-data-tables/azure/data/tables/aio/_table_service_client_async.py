@@ -40,11 +40,11 @@ class TableServiceClient(AsyncTablesBaseClient):
     :keyword credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-        AzureSasCredential (azure-core), or AsyncTokenCredential from azure-identity.
+        AzureSasCredential (azure-core), or an AsyncTokenCredential implementation from azure-identity.
     :paramtype credential:
-        :class:`~azure.core.credentials.AzureNamedKeyCredential` or
-        :class:`~azure.core.credentials.AzureSasCredential` or
-        :class:`~azure.core.credentials.AsyncTokenCredential`
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials_async.AsyncTokenCredential or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-02-02'.
         Setting to an older version may result in reduced feature compatibility.
@@ -69,8 +69,12 @@ class TableServiceClient(AsyncTablesBaseClient):
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location
         mode hostname.
+
+        :param str hostname: The current location mode hostname.
+        :returns: The full URL to the Tables account.
+        :rtype: str
         """
-        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
+        return f"{self.scheme}://{hostname}{self._query_str}"
 
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs) -> 'TableServiceClient':
@@ -78,7 +82,7 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :param str conn_str: A connection string to an Azure Tables account.
         :returns: A Table service client.
-        :rtype: :class:`~azure.data.tables.aio.TableServiceClient`
+        :rtype: ~azure.data.tables.aio.TableServiceClient
 
         .. admonition:: Example:
 
@@ -101,7 +105,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
         :return: Dictionary of service stats
-        :rtype: Dict[str, object]
+        :rtype: dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         try:
@@ -120,7 +124,7 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableServiceProperties, or the result of cls(response)
-        :rtype: Dict[str, object]
+        :rtype: dict[str, object]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
@@ -148,15 +152,14 @@ class TableServiceClient(AsyncTablesBaseClient):
          including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :keyword analytics_logging: Properties for analytics
-        :paramtype analytics_logging: ~azure.data.tables.TableAnalyticsLogging
+        :paramtype analytics_logging: ~azure.data.tables.TableAnalyticsLogging or None
         :keyword hour_metrics: Hour level metrics
-        :paramtype hour_metrics: ~azure.data.tables.TableMetrics
+        :paramtype hour_metrics: ~azure.data.tables.TableMetrics or None
         :keyword minute_metrics: Minute level metrics
-        :paramtype minute_metrics: ~azure.data.tables.TableMetrics
+        :paramtype minute_metrics: ~azure.data.tables.TableMetrics or None
         :keyword cors: Cross-origin resource sharing rules
-        :paramtype cors: List[~azure.data.tables.TableCorsRule]
+        :paramtype cors: list[~azure.data.tables.TableCorsRule] or None
         :return: None
-        :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         if cors:
@@ -180,10 +183,9 @@ class TableServiceClient(AsyncTablesBaseClient):
     async def create_table(self, table_name: str, **kwargs) -> TableClient:
         """Creates a new table under the given account.
 
-        :param headers:
         :param str table_name: The Table name.
         :return: TableClient, or the result of cls(response)
-        :rtype: :class:`~azure.data.tables.aio.TableClient`
+        :rtype: ~azure.data.tables.aio.TableClient
         :raises: :class:`~azure.core.exceptions.ResourceExistsError`
 
         .. admonition:: Example:
@@ -208,7 +210,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         :param table_name: The Table name.
         :type table_name: str
         :return: TableClient
-        :rtype: :class:`~azure.data.tables.aio.TableClient`
+        :rtype: ~azure.data.tables.aio.TableClient
 
         .. admonition:: Example:
 
@@ -233,7 +235,6 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :param str table_name: The Table name.
         :return: None
-        :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -253,8 +254,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in returned ItemPaged
-        :return: AsyncItemPaged[:class:`~azure.data.tables.TableItem`]
-        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :return: An async iterator of :class:`~azure.data.tables.TableItem`
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableItem]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -282,9 +283,9 @@ class TableServiceClient(AsyncTablesBaseClient):
         :param str query_filter: Specify a filter to return certain tables.
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword parameters: Dictionary for formatting query with additional, user defined parameters
-        :paramtype parameters:  Dict[str, Any]
-        :return: AsyncItemPaged[:class:`~azure.data.tables.TableItem`]
-        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :paramtype parameters:  dict[str, Any]
+        :return: An async iterator of :class:`~azure.data.tables.TableItem`
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableItem]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
@@ -316,7 +317,7 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :param str table_name: The table name
         :returns: A :class:`~azure.data.tables.aio.TableClient` object.
-        :rtype: :class:`~azure.data.tables.aio.TableClient`
+        :rtype: ~azure.data.tables.aio.TableClient
 
         """
         pipeline = AsyncPipeline(  # type: ignore

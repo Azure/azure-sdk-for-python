@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+
 def analyze_text():
     # [START analyze_text]
 
@@ -13,19 +14,16 @@ def analyze_text():
     from azure.ai.contentsafety import ContentSafetyClient
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import HttpResponseError
-    from azure.ai.contentsafety.models import AnalyzeTextOptions, TextCategory
+    from azure.ai.contentsafety.models import AnalyzeTextOptions
 
     key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
-    text_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_data/text.txt"))
 
     # Create an Content Safety client
     client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
 
-    # Read sample data
-    with open(text_path) as f:
-        # Build request
-        request = AnalyzeTextOptions(text=f.readline(), categories=[TextCategory.HATE, TextCategory.SELF_HARM])
+    # Construct a request
+    request = AnalyzeTextOptions(text="You are an idiot")
 
     # Analyze text
     try:
@@ -43,6 +41,10 @@ def analyze_text():
         print(f"Hate severity: {response.hate_result.severity}")
     if response.self_harm_result:
         print(f"SelfHarm severity: {response.self_harm_result.severity}")
+    if response.sexual_result:
+        print(f"Sexual severity: {response.sexual_result.severity}")
+    if response.violence_result:
+        print(f"Violence severity: {response.violence_result.severity}")
 
     # [END analyze_text]
 

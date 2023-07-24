@@ -125,11 +125,11 @@ class _ComponentFactory:
     def load_from_dict(cls, *, data: Dict, context: Dict, _type: Optional[str] = None, **kwargs) -> Component:
         """Load a component from a yaml dict.
 
-        :param data: the yaml dict.
+        :keyword data: the yaml dict.
         :type data: Dict
-        :param context: the context of the yaml dict.
+        :keyword context: the context of the yaml dict.
         :type context: Dict
-        :param _type: the type name of the component. When None, it will be inferred from the yaml dict.
+        :keyword _type: the type name of the component. When None, it will be inferred from the yaml dict.
         :type _type: str
         """
 
@@ -144,9 +144,9 @@ class _ComponentFactory:
     def load_from_rest(cls, *, obj: ComponentVersion, _type: Optional[str] = None) -> Component:
         """Load a component from a rest object.
 
-        :param obj: The rest object.
+        :keyword obj: The rest object.
         :type obj: ComponentVersion
-        :param _type: the type name of the component. When None, it will be inferred from the rest object.
+        :keyword _type: the type name of the component. When None, it will be inferred from the rest object.
         :type _type: str
         """
         if _type is not None:
