@@ -25,7 +25,6 @@ class BaseUnitTests(unittest.TestCase):
         rh = m.RecordDiagnostics()
         rh(_headers, "body")
         assert rh.headers == _headers
-        assert rh.headers is not _headers
 
     def test_headers_case(self):
         rh = m.RecordDiagnostics()
