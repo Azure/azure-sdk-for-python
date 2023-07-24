@@ -29,7 +29,7 @@ class MiscellaneousOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.formrecognizer.v2023_02_28_preview.aio.FormRecognizerClient`'s
+        :class:`~azure.ai.formrecognizer.v2023_07_31.aio.FormRecognizerClient`'s
         :attr:`miscellaneous` attribute.
     """
 
@@ -48,21 +48,19 @@ class MiscellaneousOperations:
         self,
         **kwargs: Any
     ) -> AsyncIterable[_models.GetOperationsResponse]:
-        """List operations.
-
-        Lists all operations.
+        """Lists all operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GetOperationsResponse or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2023_02_28_preview.models.GetOperationsResponse]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2023_07_31.models.GetOperationsResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-02-28-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.GetOperationsResponse]
 
         error_map = {
@@ -140,15 +138,13 @@ class MiscellaneousOperations:
         operation_id: str,
         **kwargs: Any
     ) -> _models.OperationDetails:
-        """Get operation.
-
-        Gets operation info.
+        """Gets operation info.
 
         :param operation_id: Unique operation ID.
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OperationDetails, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2023_02_28_preview.models.OperationDetails
+        :rtype: ~azure.ai.formrecognizer.v2023_07_31.models.OperationDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -159,7 +155,7 @@ class MiscellaneousOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-02-28-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationDetails]
 
         
@@ -203,13 +199,11 @@ class MiscellaneousOperations:
         self,
         **kwargs: Any
     ) -> _models.ResourceDetails:
-        """Get resource info.
-
-        Return information about the current resource.
+        """Return information about the current resource.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceDetails, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2023_02_28_preview.models.ResourceDetails
+        :rtype: ~azure.ai.formrecognizer.v2023_07_31.models.ResourceDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -220,7 +214,7 @@ class MiscellaneousOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-02-28-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2023-07-31"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ResourceDetails]
 
         
