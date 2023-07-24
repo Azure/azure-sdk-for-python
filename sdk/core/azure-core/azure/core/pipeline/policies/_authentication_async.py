@@ -36,7 +36,6 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
     """
 
     def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: Any) -> None:
-        # pylint:disable=unused-argument
         super().__init__()
         self._credential = credential
         self._lock = asyncio.Lock()
