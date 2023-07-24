@@ -53,22 +53,17 @@ class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class DocumentAnalysisFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     #: Perform OCR at a higher resolution to handle documents with fine print.
-    OCR_HIGH_RESOLUTION = "ocr.highResolution"
-    #: Enable the detection of mathematical expressions the document.
-    OCR_FORMULA = "ocr.formula"
+    OCR_HIGH_RESOLUTION = "ocrHighResolution"
+    #: Enable the detection of the text content language.
+    LANGUAGES = "languages"
+    #: Enable the detection of barcodes in the document.
+    BARCODES = "barcodes"
+    #: Enable the detection of mathematical expressions in the document.
+    FORMULAS = "formulas"
+    #: Enable the detection of general key value pairs (form fields) in the document.
+    KEY_VALUE_PAIRS = "keyValuePairs"
     #: Enable the recognition of various font styles.
-    OCR_FONT = "ocr.font"
-    #: Enable extraction of additional fields via the queryFields query parameter.
-    QUERY_FIELDS_PREMIUM = "queryFields.premium"
-
-class DocumentAnnotationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Annotation kind.
-    """
-
-    #: A visual check ✓.
-    CHECK = "check"
-    #: A visual cross X.
-    CROSS = "cross"
+    STYLE_FONT = "styleFont"
 
 class DocumentBarcodeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Barcode kind.
@@ -159,20 +154,6 @@ class DocumentFormulaKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INLINE = "inline"
     #: A formula in display mode that takes up an entire line.
     DISPLAY = "display"
-
-class DocumentPageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Kind of document page.
-    """
-
-    #: A page from a PDF or image file.  All content from Office/HTML files is represented as a single
-    #: page.
-    DOCUMENT = "document"
-    #: A sheet from a spreadsheet.
-    SHEET = "sheet"
-    #: A slide from a presentation.
-    SLIDE = "slide"
-    #: An embedded image from an Office/HTML file.
-    IMAGE = "image"
 
 class DocumentSignatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Presence of signature.

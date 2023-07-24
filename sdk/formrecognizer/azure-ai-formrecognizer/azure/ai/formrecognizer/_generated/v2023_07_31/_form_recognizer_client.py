@@ -27,20 +27,19 @@ class FormRecognizerClient:
 
     :ivar document_models: DocumentModelsOperations operations
     :vartype document_models:
-     azure.ai.formrecognizer.v2023_02_28_preview.operations.DocumentModelsOperations
+     azure.ai.formrecognizer.v2023_07_31.operations.DocumentModelsOperations
     :ivar miscellaneous: MiscellaneousOperations operations
-    :vartype miscellaneous:
-     azure.ai.formrecognizer.v2023_02_28_preview.operations.MiscellaneousOperations
+    :vartype miscellaneous: azure.ai.formrecognizer.v2023_07_31.operations.MiscellaneousOperations
     :ivar document_classifiers: DocumentClassifiersOperations operations
     :vartype document_classifiers:
-     azure.ai.formrecognizer.v2023_02_28_preview.operations.DocumentClassifiersOperations
+     azure.ai.formrecognizer.v2023_07_31.operations.DocumentClassifiersOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for
      example: https://westus2.api.cognitive.microsoft.com).
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2023-02-28-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-07-31". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
