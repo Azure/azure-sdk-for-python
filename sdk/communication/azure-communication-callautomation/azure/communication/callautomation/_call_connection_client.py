@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Optional, List, Union, Dict
+from typing import TYPE_CHECKING, Optional, List, Union
 from urllib.parse import urlparse
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -228,8 +228,7 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         self,
         target_participant: 'CommunicationIdentifier',
         *,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
+        custom_context: Optional[CustomContext] = None,
         operation_context: Optional[str] = None,
         callback_url_override: Optional[str] = None,
         transferee: Optional['CommunicationIdentifier'] = None,
@@ -239,10 +238,8 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
 
         :param target_participant: The transfer target.
         :type target_participant: CommunicationIdentifier
-        :keyword sip_headers: Custom context for PSTN
-        :paramtype sip_headers: dict[str, str]
-        :keyword voip_headers: Custom context for VOIP
-        :paramtype voip_headers: dict[str, str]
+        :keyword custom_context: Custom context
+        :paramtype custom_context: ~azure.communication.callautomation.CustomContext
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
         :keyword callback_url_override: Url that overrides original callback URI for this request.
@@ -252,9 +249,9 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = CustomContext(
-            voip_headers=voip_headers,
-            sip_headers=sip_headers
-            ) if sip_headers or voip_headers else None
+            voip_headers=custom_context.voip_headers,
+            sip_headers=custom_context.sip_headers
+            ) if (custom_context and (custom_context.sip_headers or custom_context.voip_headers)) else None
         request = TransferToParticipantRequest(
             target_participant=serialize_identifier(target_participant),
             custom_context=user_custom_context, operation_context=operation_context,
@@ -294,10 +291,13 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :rtype: ~azure.communication.callautomation.AddParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
-            voip_headers=target_participant.voip_headers,
-            sip_headers=target_participant.sip_headers
-            ) if target_participant.sip_headers or target_participant.voip_headers else None
+        user_custom_context = (CustomContext(
+            voip_headers=target_participant.custom_context.voip_headers,
+            sip_headers=target_participant.custom_context.sip_headers
+            ) if target_participant.custom_context.sip_headers or target_participant.custom_context.voip_headers
+            else None
+            )
+
         add_participant_request = AddParticipantRequest(
             participant_to_add=serialize_identifier(target_participant.target),
             source_caller_id_number=serialize_phone_identifier(
