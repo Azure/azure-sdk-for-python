@@ -163,16 +163,16 @@ class DefaultAzureCredential(ChainedTokenCredential):
                     username=shared_cache_username,
                     tenant_id=shared_cache_tenant_id,
                     authority=authority,
-                    is_chained=True,
+                    _is_chained=True,
                     **kwargs
                 )
                 credentials.append(shared_cache)
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
-            credentials.append(VisualStudioCodeCredential(is_chained=True, **vscode_args))
+            credentials.append(VisualStudioCodeCredential(_is_chained=True, **vscode_args))
         if not exclude_cli_credential:
-            credentials.append(AzureCliCredential(process_timeout=process_timeout, is_chained=True))
+            credentials.append(AzureCliCredential(process_timeout=process_timeout, _is_chained=True))
         if not exclude_powershell_credential:
             credentials.append(AzurePowerShellCredential(process_timeout=process_timeout))
         if not exclude_developer_cli_credential:

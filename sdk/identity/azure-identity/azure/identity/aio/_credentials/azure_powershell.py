@@ -47,11 +47,11 @@ class AzurePowerShellCredential(AsyncContextManager):
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
-        is_chained: bool = False
+        _is_chained: bool = False
     ) -> None:
 
         self.tenant_id = tenant_id
-        self._is_chained = is_chained
+        self._is_chained = _is_chained
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
@@ -83,7 +83,7 @@ class AzurePowerShellCredential(AsyncContextManager):
         )
         command_line = get_command_line(scopes, tenant_id)
         output = await run_command_line(command_line, self._process_timeout)
-        token = parse_token(output, is_chained=self._is_chained)
+        token = parse_token(output, _is_chained=self._is_chained)
         return token
 
     async def close(self) -> None:
