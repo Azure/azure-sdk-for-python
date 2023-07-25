@@ -97,7 +97,7 @@
                 "name": "[parameters('sku')]"
             },
             "properties": {
-                "endpoint": "[variables('endpointValue')]"
+                "endpoint": "[variables('endpointValueProvider')]"
             }
         },
         {
