@@ -63,7 +63,7 @@ class WorkspaceHub(Workspace):
         :type location: str
         :param resource_group: Name of resource group to create the WorkspaceHub in.
         :type resource_group: str
-        :param managed_network: workspace's Managed Network configuration
+        :param managed_network: WorkspaceHub's Managed Network configuration
         :type managed_network: ManagedNetwork
         :param storage_account: The resource ID of an existing storage account to use instead of creating a new one.
         :type storage_account: str
@@ -72,7 +72,7 @@ class WorkspaceHub(Workspace):
         :param container_registry: The resource ID of an existing container registry
             to use instead of creating a new one.
         :type container_registry: str
-        :param existing_workspaces: List of existing workspaces used by WorkspaceHub to do convert
+        :param existing_workspaces: List of existing workspaces to convert to use this workspaceHub's shared resources.
         :type existing_workspaces: List[str]
         :param customer_managed_key: Key vault details for encrypting data with customer-managed keys.
             If not specified, Microsoft-managed keys will be used by default.
@@ -80,9 +80,9 @@ class WorkspaceHub(Workspace):
         :param image_build_compute: The name of the compute target to use for building environment
             Docker images with the container registry is behind a VNet.
         :type public_network_access: str
-        :param identity: workspace's Managed Identity (user assigned, or system assigned)
+        :param identity: workspaceHub's Managed Identity (user assigned, or system assigned)
         :type identity: IdentityConfiguration
-        :param primary_user_assigned_identity: The workspace's primary user assigned identity
+        :param primary_user_assigned_identity: The workspaceHub's primary user assigned identity
         :type primary_user_assigned_identity: str
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict

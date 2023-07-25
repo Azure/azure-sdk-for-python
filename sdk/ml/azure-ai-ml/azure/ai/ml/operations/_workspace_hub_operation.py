@@ -182,29 +182,13 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
         ):
             raise ValidationError("{0} is not a WorkspaceHub".format(name))
-        if rest_workspace_obj.storage_accounts is not None:
-            for storageaccount in rest_workspace_obj.storage_accounts:
+        if rest_workspace_obj.workspace_hub_config.additional_workspace_storage_accounts is not None:
+            for storageaccount in rest_workspace_obj.workspace_hub_config.additional_workspace_storage_accounts:
                 delete_resource_by_arm_id(
                     self._credentials,
                     self._subscription_id,
                     storageaccount,
                     ArmConstants.AZURE_MGMT_STORAGE_API_VERSION,
-                )
-        if rest_workspace_obj.key_vaults is not None:
-            for keyvault in rest_workspace_obj.key_vaults:
-                delete_resource_by_arm_id(
-                    self._credentials,
-                    self._subscription_id,
-                    keyvault,
-                    ArmConstants.AZURE_MGMT_KEYVAULT_API_VERSION,
-                )
-        if rest_workspace_obj.container_registries is not None:
-            for containerregistry in rest_workspace_obj.container_registries:
-                delete_resource_by_arm_id(
-                    self._credentials,
-                    self._subscription_id,
-                    containerregistry,
-                    ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
                 )
 
         return super().begin_delete(name=name, delete_dependent_resources=delete_dependent_resources, **kwargs)
