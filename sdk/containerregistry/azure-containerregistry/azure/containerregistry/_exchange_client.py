@@ -55,27 +55,27 @@ class ACRExchangeClient(object):
         self._refresh_token = None  # type: Optional[str]
         self._expiration_time = 0  # type: float
 
-    def get_acr_access_token(
+    def get_acr_access_token(  # pylint:disable=client-method-missing-tracing-decorator
         self, challenge: str, **kwargs
-    ) -> Optional[str]:  # pylint:disable=client-method-missing-tracing-decorator
+    ) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
         refresh_token = self.get_refresh_token(parsed_challenge["service"], **kwargs)
         return self.exchange_refresh_token_for_access_token(
             refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"], **kwargs
         )
 
-    def get_refresh_token(
+    def get_refresh_token(  # pylint:disable=client-method-missing-tracing-decorator
         self, service: str, **kwargs
-    ) -> str:  # pylint:disable=client-method-missing-tracing-decorator
+    ) -> str:
         if not self._refresh_token or self._expiration_time - time.time() > 300:
             self._refresh_token = self.exchange_aad_token_for_refresh_token(service, **kwargs)
             self._expiration_time = _parse_exp_time(self._refresh_token)
         return self._refresh_token
 
-    def exchange_aad_token_for_refresh_token(
+    def exchange_aad_token_for_refresh_token(  # pylint:disable=client-method-missing-tracing-decorator
         self, service: str, **kwargs
-    ) -> str:  # pylint:disable=client-method-missing-tracing-decorator
-        refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(  # type: ignore
+    ) -> str:
+        refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(  # type: ignore[attr-defined] # pylint: disable=line-too-long
             grant_type=PostContentSchemaGrantType.ACCESS_TOKEN,
             service=service,
             access_token=self._credential.get_token(*self.credential_scopes).token,
@@ -86,7 +86,7 @@ class ACRExchangeClient(object):
     def exchange_refresh_token_for_access_token(  # pylint:disable=client-method-missing-tracing-decorator
         self, refresh_token: str, service: str, scope: str, **kwargs
     ) -> Optional[str]:
-        access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(  # type: ignore
+        access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(  # type: ignore[attr-defined] # pylint: disable=line-too-long
             service=service, scope=scope, refresh_token=refresh_token, **kwargs
         )
         return access_token.access_token
