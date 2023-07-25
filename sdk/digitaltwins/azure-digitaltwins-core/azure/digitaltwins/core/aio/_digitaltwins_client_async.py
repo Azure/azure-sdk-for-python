@@ -551,10 +551,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
     async def create_models(self, dtdl_models: List[object], **kwargs) -> List[DigitalTwinsModelData]:
         """Create one or more models. When any error occurs, no models are uploaded.
 
-        :param List[object] model_list: The set of models to create.
+        :param list[object] dtdl_models: The set of models to create.
             Each dict corresponds to exactly one model.
         :return: The list of created models
-        :rtype: List[~azure.digitaltwins.core.DigitalTwinsModelData]
+        :rtype: list[~azure.digitaltwins.core.DigitalTwinsModelData]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceExistsError: One or more of
             the provided models already exist.
