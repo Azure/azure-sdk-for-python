@@ -548,10 +548,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         )
 
     @distributed_trace_async
-    async def create_models(self, dtdl_models: List[object], **kwargs) -> List[DigitalTwinsModelData]:
+    async def create_models(self, dtdl_models: List[Dict[str,object]], **kwargs) -> List[DigitalTwinsModelData]:
         """Create one or more models. When any error occurs, no models are uploaded.
 
-        :param list[object] dtdl_models: The set of models to create.
+        :param list[dict[str,object]] dtdl_models: The set of models to create.
             Each dict corresponds to exactly one model.
         :return: The list of created models
         :rtype: list[~azure.digitaltwins.core.DigitalTwinsModelData]
