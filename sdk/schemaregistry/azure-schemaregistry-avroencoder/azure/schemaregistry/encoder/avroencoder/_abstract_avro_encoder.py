@@ -3,9 +3,28 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import BinaryIO, Dict, Union, Any, Mapping
+from typing import BinaryIO, Dict, Union, Any, Mapping, Protocol
 from abc import abstractmethod
 
+class AvroDataReader(Protocol):
+    """
+    An Avro Data Reader.
+    """
+    def __init__(self, writers_schema: Any, readers_schema: Any) -> None:
+        """
+        Data reader used as defined in the Avro specification.
+        :param writers_schema: The writer's schema.
+        :type writers_schema: any
+        :param readers_schema: The reader's schema.
+        :type readers_schema: any
+        """
+
+    def read(self, decoder: Any, **kwargs: Any) -> object:
+        """
+        Reads data using the provided writer's and reader's schema.
+        :param decoder: The binary decoder used for reading.
+        :type decoder: any
+        """
 
 class AbstractAvroObjectEncoder(object):
     """
@@ -36,7 +55,7 @@ class AbstractAvroObjectEncoder(object):
         Schema must be a Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
         :param content: A mapping to encode
-        :type content: mapping[str, Any]
+        :type content: mapping[str, any]
         :param schema: An Avro RecordSchema
         :type schema: str
         :returns: Encoded bytes
@@ -44,13 +63,13 @@ class AbstractAvroObjectEncoder(object):
         """
 
     @abstractmethod
-    def decode(self, content: Union[bytes, BinaryIO], reader: Any) -> Dict[str, Any]:
+    def decode(self, content: Union[bytes, BinaryIO], reader: AvroDataReader) -> Dict[str, Any]:
         """Read the binary representation into a specific type.
         Return type will be ignored, since the schema is deduced from the provided bytes.
         :param content: A stream of bytes or bytes directly
         :type content: BinaryIO or bytes
-        :keyword reader: The data reader.
-        :paramtype reader: Any 
+        :param reader: The data reader.
+        :type reader: AvroDataReader
         :returns: The content dict.
-        :rtype: dict[str, Any]
+        :rtype: dict[str, any]
         """

@@ -10,6 +10,7 @@ import avro  # type: ignore
 from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder  # type: ignore
 from ._abstract_avro_encoder import (  # pylint: disable=import-error
     AbstractAvroObjectEncoder,
+    AvroDataReader
 )
 
 if TYPE_CHECKING:
@@ -54,7 +55,7 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         Schema must be a Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
         :param content: A mapping to encode
-        :type content: mapping[str, Any]
+        :type content: mapping[str, any]
         :param schema: An Avro RecordSchema
         :type schema: str
         :returns: Encoded bytes
@@ -74,16 +75,16 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
     def decode(
         self,
         content: Union[bytes, BinaryIO],
-        reader: DatumReader,
+        reader: AvroDataReader,
     ) -> Dict[str, Any]:
         """Read the binary representation into a specific type.
         Return type will be ignored, since the schema is deduced from the provided bytes.
         :param content: A stream of bytes or bytes directly
         :type content: BinaryIO or bytes
-        :keyword reader: The Apache Avro data reader.
-        :paramtype reader: DatumReader
+        :param reader: The Apache Avro data reader.
+        :type reader: DatumReader
         :returns: The content dict.
-        :rtype: dict[str, Any]
+        :rtype: dict[str, any]
         """
         if not hasattr(content, "read"):
             content = cast(bytes, content)
