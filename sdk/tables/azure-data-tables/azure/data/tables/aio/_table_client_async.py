@@ -389,14 +389,9 @@ class TableClient(AsyncTablesBaseClient):
                 **kwargs
             )
         except HttpResponseError as error:
-            decoded = _decode_error(error.response, error.message)
-            if decoded.error_code == "PropertiesNeedValue":
-                if entity.get("PartitionKey") is None:
-                    raise ValueError("PartitionKey must be present in an entity") from error
-                if entity.get("RowKey") is None:
-                    raise ValueError("RowKey must be present in an entity") from error
-            _validate_tablename_error(decoded, self.table_name)
-            raise decoded from error
+            _process_table_error(
+                error, validate_key_values=True, partition_key=entity.get("PartitionKey"), row_key=entity.get("RowKey")
+            )
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
 
