@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import unittest
 import sys
+import pytest
 
 from azure.communication.callautomation import (
     CallConnectionClient,
@@ -71,7 +72,7 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_play_request.play_to[0]['raw_id'], actual_play_request.play_to[0]['raw_id'])
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
 
-    def test_play_file_to_all(self):
+    def test_play_file_to_all_back_compat(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
         play_source = FileSource(url=self.url)
@@ -92,12 +93,33 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
     
+    def test_play_file_to_all(self):
+        mock_play = Mock()
+        self.call_media_operations.play = mock_play
+        play_source = FileSource(url=self.url)
+
+        self.call_connection_client.play_media(play_source=play_source)
+
+        expected_play_request = PlayRequest(
+            play_source_info=play_source._to_generated(),
+            play_to=[],
+            play_options=PlayOptions(loop=False)
+        )
+        mock_play.assert_called_once()
+        actual_play_request = mock_play.call_args[0][1]
+
+        self.assertEqual(expected_play_request.play_source_info.source_type, actual_play_request.play_source_info.source_type)
+        self.assertEqual(expected_play_request.play_source_info.file_source.uri, actual_play_request.play_source_info.file_source.uri)
+        self.assertEqual(expected_play_request.play_source_info.play_source_id, actual_play_request.play_source_info.play_source_id)
+        self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
+        self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
+    
     def test_play_text_to_all(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
         play_source = TextSource(text='test test test', custom_voice_endpoint_id="customVoiceEndpointId")
 
-        self.call_connection_client.play_media_to_all(play_source=play_source)
+        self.call_connection_client.play_media(play_source=play_source)
 
         expected_play_request = PlayRequest(
             play_source_info=play_source._to_generated(),
@@ -120,7 +142,7 @@ class TestCallMediaClient(unittest.TestCase):
             ssml_text='<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="en-US"><voice name="en-US-JennyNeural">Recognize Choice Completed, played through SSML source.</voice></speak>',
             custom_voice_endpoint_id="customVoiceEndpointId")
 
-        self.call_connection_client.play_media_to_all(play_source=play_source)
+        self.call_connection_client.play_media(play_source=play_source)
 
         expected_play_request = PlayRequest(
             play_source_info=play_source._to_generated(),
@@ -140,7 +162,7 @@ class TestCallMediaClient(unittest.TestCase):
         mock_recognize = Mock()
         self.call_media_operations.recognize = mock_recognize
 
-        test_input_type = RecognizeInputType.DTMF
+        test_input_type = "dtmf"
         test_max_tones_to_collect = 3
         test_inter_tone_timeout = 10
         test_stop_dtmf_tones = [DtmfTone.FOUR]
@@ -192,6 +214,13 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_recognize_request.recognize_options.dtmf_options.inter_tone_timeout_in_seconds, actual_recognize_request.recognize_options.dtmf_options.inter_tone_timeout_in_seconds)
         self.assertEqual(expected_recognize_request.recognize_options.dtmf_options.max_tones_to_collect, actual_recognize_request.recognize_options.dtmf_options.max_tones_to_collect)
         self.assertEqual(expected_recognize_request.recognize_options.dtmf_options.stop_tones, actual_recognize_request.recognize_options.dtmf_options.stop_tones)
+
+        with pytest.raises(ValueError) as e:
+            self.call_connection_client.start_recognizing_media(
+                target_participant=self.target_user,
+                input_type="foo"
+            )
+        assert "'foo' is not supported." in str(e.value)
 
     def test_recognize_choices(self):
         mock_recognize = Mock()
