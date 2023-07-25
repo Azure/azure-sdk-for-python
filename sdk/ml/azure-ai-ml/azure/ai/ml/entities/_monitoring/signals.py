@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from typing_extensions import Literal
 
