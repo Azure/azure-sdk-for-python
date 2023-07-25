@@ -29,7 +29,7 @@ class _VSCodeCredentialBase(abc.ABC):
         super(_VSCodeCredentialBase, self).__init__()
 
         user_settings = get_user_settings()
-        self._is_chained = kwargs.pop("is_chained", False)
+        self._is_chained = kwargs.pop("_is_chained", False)
         self._cloud = user_settings.get("azure.cloud", "AzureCloud")
         self._refresh_token = None
         self._unavailable_reason = ""
