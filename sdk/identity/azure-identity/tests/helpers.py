@@ -192,6 +192,12 @@ def msal_validating_transport(requests, responses, **kwargs):
     return validating_transport([Request()] * 2 + requests, [get_discovery_response(**kwargs)] * 2 + responses)
 
 
+def new_msal_validating_transport(requests, responses, **kwargs):
+    """a transport with default responses to MSAL's discovery requests without validation"""
+    """msal made some optimizations to make less calls to discovery endpoint"""
+    return validating_transport([Request()] + requests, [get_discovery_response(**kwargs)] + responses)
+
+
 def urlsafeb64_decode(s):
     if isinstance(s, str):
         s = s.encode("ascii")

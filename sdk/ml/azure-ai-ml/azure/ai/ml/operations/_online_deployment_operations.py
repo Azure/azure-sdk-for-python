@@ -9,28 +9,31 @@ import re
 import subprocess
 from typing import Dict, Optional
 
+from azure.core.credentials import TokenCredential
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._local_endpoints import LocalEndpointMode
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DeploymentLogsRequest
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
-from azure.ai.ml._utils._package_utils import package_deployment
 from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml._utils._package_utils import package_deployment
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
-from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType, SmallSKUs, DEFAULT_MDC_PATH
-from azure.ai.ml.entities import OnlineDeployment, Data
+from azure.ai.ml.constants._deployment import DEFAULT_MDC_PATH, EndpointDeploymentLogContainerType, SmallSKUs
+from azure.ai.ml.entities import Data, OnlineDeployment
 from azure.ai.ml.exceptions import (
     ErrorCategory,
     ErrorTarget,
@@ -39,10 +42,6 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
-from azure.core.credentials import TokenCredential
-from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
 
 from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
@@ -86,7 +85,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         local: bool = False,
         vscode_debug: bool = False,
         skip_script_validation: bool = False,
-        local_enable_gpu: Optional[bool] = False,
+        local_enable_gpu: bool = False,
         **kwargs,
     ) -> LROPoller[OnlineDeployment]:
         """Create or update a deployment.

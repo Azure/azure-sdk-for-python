@@ -38,7 +38,7 @@ class SilentAuthenticationCredential:
         # authenticate in the tenant that produced the record unless "tenant_id" specifies another
         self._tenant_id = tenant_id or self._auth_record.tenant_id
         validate_tenant_id(self._tenant_id)
-        self._is_chained = kwargs.pop("is_chained", False)
+        self._is_chained = kwargs.pop("_is_chained", False)
         self._cache = kwargs.pop("_cache", None)
         self._cache_persistence_options = kwargs.pop("cache_persistence_options", None)
         self._client_applications: Dict[str, PublicClientApplication] = {}
