@@ -97,7 +97,7 @@ class ForecastingSettings(RestTranslatableMixin):
         self.target_aggregate_function = target_aggregate_function
         self.time_column_name = time_column_name
         self.time_series_id_column_names = time_series_id_column_names
-        self.featues_unknown_at_forecast_time = features_unknown_at_forecast_time
+        self.features_unknown_at_forecast_time = features_unknown_at_forecast_time
 
     def _to_rest_object(self) -> RestForecastingSettings:
         forecast_horizon = None
@@ -129,9 +129,9 @@ class ForecastingSettings(RestTranslatableMixin):
         if isinstance(self.time_series_id_column_names, str) and self.time_series_id_column_names:
             time_series_id_column_names = [self.time_series_id_column_names]
 
-        features_unknown_at_forecast_time = self.featues_unknown_at_forecast_time
-        if isinstance(self.featues_unknown_at_forecast_time, str) and self.featues_unknown_at_forecast_time:
-            features_unknown_at_forecast_time = [self.featues_unknown_at_forecast_time]
+        features_unknown_at_forecast_time = self.features_unknown_at_forecast_time
+        if isinstance(self.features_unknown_at_forecast_time, str) and self.features_unknown_at_forecast_time:
+            features_unknown_at_forecast_time = [self.features_unknown_at_forecast_time]
 
 
         return RestForecastingSettings(
@@ -212,7 +212,7 @@ class ForecastingSettings(RestTranslatableMixin):
             and self.target_aggregate_function == other.target_aggregate_function
             and self.time_column_name == other.time_column_name
             and self.time_series_id_column_names == other.time_series_id_column_names
-            and self.featues_unknown_at_forecast_time == other.featues_unknown_at_forecast_time
+            and self.features_unknown_at_forecast_time == other.features_unknown_at_forecast_time
         )
 
     def __ne__(self, other: object) -> bool:
