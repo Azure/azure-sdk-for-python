@@ -40,3 +40,5 @@ class WorkspaceHubSchema(PathAwareSchema):
     managed_network = ExperimentalField(NestedField(ManagedNetworkSchema))
     existing_workspaces = fields.List(fields.Str())
     workspace_hub_config = ExperimentalField(NestedField(WorkspaceHubConfigSchema))
+    enable_data_isolation = fields.Bool()
+

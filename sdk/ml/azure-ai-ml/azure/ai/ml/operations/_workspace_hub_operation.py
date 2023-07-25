@@ -164,7 +164,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
     # @monitor_with_activity(logger, "Hub.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
+    def begin_delete(self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False,  **kwargs: Dict) -> LROPoller:
         """Delete a WorkspaceHub.
 
         :param name: Name of the WorkspaceHub
@@ -191,4 +191,4 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
                     ArmConstants.AZURE_MGMT_STORAGE_API_VERSION,
                 )
 
-        return super().begin_delete(name=name, delete_dependent_resources=delete_dependent_resources, **kwargs)
+        return super().begin_delete(name=name, delete_dependent_resources=delete_dependent_resources, permanently_delete=permanently_delete, **kwargs)

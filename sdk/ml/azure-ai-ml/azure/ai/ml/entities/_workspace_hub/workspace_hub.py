@@ -44,6 +44,7 @@ class WorkspaceHub(Workspace):
         public_network_access: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
+        enable_data_isolation: bool = False,
         workspace_hub_config: Optional[WorkspaceHubConfig] = None,
         **kwargs,
     ):
@@ -105,6 +106,7 @@ class WorkspaceHub(Workspace):
             identity=identity,
             primary_user_assigned_identity=primary_user_assigned_identity,
             managed_network=managed_network,
+            enable_data_isolation=enable_data_isolation,
             **kwargs,
         )
         self.existing_workspaces = existing_workspaces
@@ -142,6 +144,7 @@ class WorkspaceHub(Workspace):
             container_registry=rest_obj.container_registry,
             existing_workspaces=rest_obj.existing_workspaces,
             workspace_id=rest_obj.workspace_id,
+            enable_data_isolation=rest_obj.enable_data_isolation,
             workspace_hub_config=workspace_hub_config,
             id=rest_obj.id,
         )
