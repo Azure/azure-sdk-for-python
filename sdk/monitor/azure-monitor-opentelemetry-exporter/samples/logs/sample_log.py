@@ -37,5 +37,3 @@ logger.info("Hello World!")
 # Telemetry records are flushed automatically upon application exit
 # If you would like to flush records manually yourself, you can call force_flush()
 logger_provider.force_flush()
-
-input()

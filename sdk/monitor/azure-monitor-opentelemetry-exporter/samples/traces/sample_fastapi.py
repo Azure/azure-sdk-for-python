@@ -29,9 +29,12 @@ async def read_root(client=Depends(get_client)):
         return response.json()
 
 if __name__ == "__main__":
+    # cSpell:disable
     import uvicorn
     trace.set_tracer_provider(TracerProvider())
     exporter = AzureMonitorTraceExporter()
     span_processor = BatchSpanProcessor(exporter)
     trace.get_tracer_provider().add_span_processor(span_processor)
     uvicorn.run("sample_fastapi:app", port=8008, reload=True)
+    # cSpell:disable
+

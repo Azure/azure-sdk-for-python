@@ -27,5 +27,3 @@ with tracer.start_as_current_span("hello"):
 # Telemetry records are flushed automatically upon application exit
 # If you would like to flush records manually yourself, you can call force_flush()
 tracer_provider.force_flush()
-
-input()

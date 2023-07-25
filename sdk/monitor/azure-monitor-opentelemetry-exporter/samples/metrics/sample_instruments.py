@@ -73,5 +73,3 @@ gauge = meter.create_observable_gauge("gauge", [observable_gauge_func])
 meter_provider.force_flush()
 
 # cSpell:disable
-
-input()
