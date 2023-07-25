@@ -120,8 +120,8 @@ class TestComputeOperation:
         mock_compute_operation._operation.begin_delete.assert_called_once()
 
     def test_local_compute_no_registry_info(self) -> None:
-        # Confirm that we can create a docker client without registry info
+        # Confirm that we can create a docker client without registry username and password
         cr_helper = CommonRuntimeHelper("myjobname")
-        registry = {"username": None, "password": None, "url": None}
+        registry = {"url": None}
         docker_client = cr_helper.get_docker_client(registry)
         assert docker_client is not None
