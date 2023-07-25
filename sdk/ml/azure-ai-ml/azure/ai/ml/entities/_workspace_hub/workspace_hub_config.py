@@ -20,7 +20,7 @@ class WorkspaceHubConfig:
         additional_workspace_storage_accounts: Optional[List[str]] = None,
         default_workspace_resource_group: Optional[str] = None,
     ) -> None:
-         
+
         """WorkspaceHubConfig.
 
         :param additional_workspace_storage_accounts: A list of resource IDs of existing storage accounts that will be utilized in addition to the default one.
