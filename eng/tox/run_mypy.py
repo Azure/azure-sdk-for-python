@@ -89,8 +89,14 @@ if __name__ == "__main__":
         except CalledProcessError as sample_err:
             sample_code_error = sample_err
 
-    build_id = os.getenv("BUILD_BUILDID")
-    print(f"the build id is {build_id}")
+    print(f"the build id is {os.getenv('BUILD_BUILDID')}")
+    print(f"the build URI is {os.getenv('BUILD_BUILDURI')}")
+    print(f"the environment id is {os.getenv('ENVIRONMENT_ID')}")
+    print(f"the environment RESOURCE id is {os.getenv('ENVIRONMENT_RESOURCEID')}")
+    print(f"the system job id is {os.getenv('SYSTEM_JOBID')}")
+    print(f"the system BUILD id is {os.getenv('SYSTEM_BUILDID')}")
+    print(f"the system DEFINITION id is {os.getenv('SYSTEM_DEFINITIONID')}")
+    print(f"the AGENT id is {os.getenv('AGENT_ID')}")
     print("See https://aka.ms/python/typing-guide for information.\n\n")
     # if args.next and in_ci():
     #     if src_code_error or sample_code_error:
