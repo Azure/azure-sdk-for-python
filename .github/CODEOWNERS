@@ -318,7 +318,7 @@
 /sdk/personalizer/                                                   @sharathmalladi
 
 # PRLabel: %Graph
-/sdk/graphrbac/                                                      @msyyc @Wzb123456789
+/sdk/graphrbac/                                                      @msyyc @ChenxiJiang333
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @annatisch @YalinLi0312
@@ -952,7 +952,7 @@
 
 
 # Management Plane
-/**/*mgmt*/                                                          @Wzb123456789 @msyyc
+/**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
 
 
 ###########
