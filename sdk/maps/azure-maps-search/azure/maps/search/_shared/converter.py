@@ -34,6 +34,13 @@ def _reformat_coordinates(
     Converts tuples, tuples of tuples, lists of tuples, etc. into lists and
     lists of lists, etc. and preserves points/coordinate pairs as lists or
     tuples depending on the desired style.
+
+    :param item: The item to reformat.
+    :type item: tuple or list
+    :param style: The desired style of the coordinates.
+    :type style: str
+    :return: The reformatted item.
+    :rtype: tuple or list
     """
     if type(item) in {tuple, list} and type(item[0]) in {tuple, list}:
         return [_reformat_coordinates(x, style) for x in item]
@@ -44,13 +51,25 @@ def _reformat_coordinates(
     raise ValueError('Unknown style')
 
 def geo_interface_to_geojson(geo_interface: dict) -> dict:
-    """Converts a geo_interface dictionary into a raw GeoJSON dictionary."""
+    """Converts a geo_interface dictionary into a raw GeoJSON dictionary.
+
+    :param geo_interface: The geo_interface dictionary to convert.
+    :type geo_interface: dict
+    :return: The raw GeoJSON dictionary.
+    :rtype: dict
+    """
     coords = _reformat_coordinates(geo_interface['coordinates'], 'geojson')
 
     return {'type': geo_interface['type'], 'coordinates': coords}
 
 def wkt_to_geo_interface(wkt: str) -> dict:
-    """Converts a WKT string to a geo_interface dictionary."""
+    """Converts a WKT string to a geo_interface dictionary.
+
+    :param wkt: The WKT string to convert.
+    :type wkt: str
+    :return: The geo_interface dictionary.
+    :rtype: dict
+    """
     try:
         wkt_type, coords = re.split(r'(?<=[A-Z])\s', wkt)
 
@@ -81,16 +100,28 @@ def wkt_to_geo_interface(wkt: str) -> dict:
             coords = [coords]  # type: ignore
 
     except Exception:
-        raise ValueError('{} is not a WKT string'.format(wkt))
+        raise ValueError('{} is not a WKT string'.format(wkt)) from None
 
     return {'type': geo_type, 'coordinates': coords}
 
 def wkt_to_geojson(wkt: str) -> str:
-    """Converts a WKT string to GeoJSON."""
+    """Converts a WKT string to GeoJSON.
+
+    :param wkt: The WKT string to convert.
+    :type wkt: str
+    :return: The GeoJSON string.
+    :rtype: str
+    """
     return geo_interface_to_geojson(wkt_to_geo_interface(wkt))
 
 def parse_geometry_input(geo_thing: Union[str, dict]) -> dict:
-    """Checks to see if the string is geojson or WKT or geo_interface property"""
+    """Checks to see if the string is geojson or WKT or geo_interface property
+
+    :param geo_thing: The geojson or WKT string or geo_interface property
+    :type geo_thing: str or dict
+    :return: The GeoJSON dictionary.
+    :rtype: dict
+    """
     error_msg = 'Strings must be valid GeoJSON or WKT or geo_interface property'
     geometry={}
     # Input might be WKT
@@ -108,14 +139,14 @@ def parse_geometry_input(geo_thing: Union[str, dict]) -> dict:
             else:
                 geom = geo_thing
         except ValueError:
-            raise ValueError(error_msg)
+            raise ValueError(error_msg) from None
     else:
         # Input might be an object with a geo_interface
         try:
             geo_interface = geo_thing.__geo_interface__
             geom = geo_interface_to_geojson(geo_interface)
         except AttributeError:
-            raise AttributeError('Object has no geo_interface.')
+            raise AttributeError('Object has no geo_interface.') from None
 
     geometry['geometry'] = geom
     return geometry

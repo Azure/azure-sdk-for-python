@@ -1104,7 +1104,7 @@ class MapsSearchClient(MapsSearchClientBase):
             List[str]
         :return:
             The results of reverse search batch request.
-        :paramtype:
+        :rtype:
             ~azure.core.polling.LROPoller[~azure.maps.search.models.ReverseSearchAddressBatchProcessResult]
         :raises:
             ~azure.core.exceptions.HttpResponseError:
