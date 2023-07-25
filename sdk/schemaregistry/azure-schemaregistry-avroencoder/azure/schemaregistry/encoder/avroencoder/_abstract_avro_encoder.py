@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import BinaryIO, Dict, Union, Any, Mapping, Protocol
 from abc import abstractmethod
+from typing import BinaryIO, Dict, Union, Any, Mapping
+from typing_extensions import Protocol
 
 class AvroDataReader(Protocol):
     """
