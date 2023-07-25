@@ -1,8 +1,9 @@
+from typing import List, Dict, Any
 import argparse
 import json
 import logging
 from pathlib import Path
-from subprocess import check_call
+from subprocess import check_call, getoutput
 import shutil
 import re
 import os
@@ -26,6 +27,13 @@ from .generate_utils import (
 
 _LOGGER = logging.getLogger(__name__)
 
+# return relative path like: network/azure-mgmt-network
+def extract_sdk_folder(python_md: List[str]) -> str:
+    pattern = ["$(python-sdks-folder)", "azure-mgmt-"]
+    for line in python_md:
+        if all(p in line for p in pattern):
+            return re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
+    return ""
 
 @return_origin_path
 def multiapi_combiner(sdk_code_path: str):
@@ -41,24 +49,124 @@ def del_outdated_folder(readme: str):
 
     with open(python_readme, "r") as file_in:
         content = file_in.readlines()
-    pattern = ["$(python-sdks-folder)", "azure-mgmt-"]
-    for line in content:
-        if all(p in line for p in pattern):
-            # remove generated_samples
-            sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
-            sample_folder = Path(f"sdk/{sdk_folder}/generated_samples")
-            if sample_folder.exists():
-                if "azure-mgmt-rdbms" not in str(sample_folder):
-                    shutil.rmtree(sample_folder)
-                    _LOGGER.info(f"remove sample folder: {sample_folder}")
-                else:
-                    _LOGGER.info(f"we don't remove sample folder for rdbms")
+    sdk_folder = extract_sdk_folder(content)
+    if sdk_folder:
+        sample_folder = Path(f"sdk/{sdk_folder}/generated_samples")
+        if sample_folder.exists():
+            if "azure-mgmt-rdbms" not in str(sample_folder):
+                shutil.rmtree(sample_folder)
+                _LOGGER.info(f"remove sample folder: {sample_folder}")
             else:
-                _LOGGER.info(f"sample folder does not exist: {sample_folder}")
-            return
+                _LOGGER.info(f"we don't remove sample folder for rdbms")
+        else:
+            _LOGGER.info(f"sample folder does not exist: {sample_folder}")
+    else:
+        _LOGGER.info(f"do not find valid sdk_folder in {python_readme}")
 
-    _LOGGER.info(f"do not find {pattern} in {python_readme}")
+# look for fines in tag like:
+# ``` yaml $(tag) == 'package-2023-05-01-preview-only'
+# input-file:
+# - Microsoft.Insights/preview/2023-05-01-preview/tenantActionGroups_API.json
+# ```
+def get_related_swagger(readme_content: List[str], tag: str) -> List[str]:
+    result = []
+    for idx in range(len(readme_content)):
+        line = readme_content[idx]
+        if all(tag in line, "```" in line, "tag" in line, "==" in line, "yaml" in line):
+            idx += 1
+            while idx < len(readme_content):
+                if "```" in readme_content[idx]:
+                    break
+                if ".json" in readme_content[idx]:
+                    result.append(readme_content[idx].strip('\n -'))
+                idx += 1
+            break
+    return result            
 
+def get_last_commit_info(files: List[str]) -> str:
+    result = [getoutput(f'git log --pretty="format:%ai%H" {f}').split('\n') for f in files]
+    result.sort()
+    return result[-1]
+
+# input_readme: "specification/paloaltonetworks/resource-manager/readme.md"
+# source: content of readme.python.md 
+# work directory is in root folder of azure-rest-api-specs
+@return_origin_path
+def choose_tag_and_update_meta(idx: int, source: List[str], target:List[str], input_readme: str, meta: Dict[str, Any], need_regenerate: bool)->int:
+    os.chdir(str(Path(input_readme).parent))
+    with open("readme.md", "r") as file_in:
+        readme_content = file_in.readlines()
+    
+    while idx < len(source):
+        tag = source[idx].split('tag:')[-1].strip('\n ')
+        related_files = get_related_swagger(readme_content, tag)
+        commit_info = get_last_commit_info(related_files)
+        recorded_info = meta.get(tag, "")
+        # there may be new commit after last release
+        if need_regenerate or commit_info > recorded_info:
+            meta[tag] = commit_info
+            target.append(source[idx])
+        idx += 1
+        if "tag" not in source[idx]:
+            break
+    return idx
+
+def extract_version_info(config: Dict[str, Any]) -> str:
+    autorest_version = config.get("autorest", "")
+    autorest_modelerfour_version = config.get("use", [])
+    return autorest_version + "".join(autorest_modelerfour_version)
+
+def if_need_regenerate(meta: Dict[str, Any]) -> bool:
+    with open(str(Path("../azure-sdk-for-python", CONFIG_FILE)), "r") as file_in:
+        config = json.load(file_in)
+    recorded_info = extract_version_info(meta)
+    current_info = extract_version_info(config)
+    return recorded_info != current_info
+
+
+# spec_folder: "../azure-rest-api-specs"
+# input_readme: "specification/paloaltonetworks/resource-manager/readme.md"
+@return_origin_path
+def update_metadata_for_multiapi_package(spec_folder: str, input_readme: str):
+    os.chdir(spec_folder)
+    python_readme = (Path(input_readme).parent / "readme.python.md").absolute()
+    if not python_readme.exists():
+        _LOGGER.info(f"do not find python configuration: {python_readme}")
+        return
+    
+    with open(python_readme, "r") as file_in:
+        python_md_content = file_in.readlines()
+    is_multiapi = "multiapi: true" in ("".join(python_md_content))
+    if not is_multiapi:
+        return
+    
+    sdk_folder = extract_sdk_folder(python_md_content)
+    if not sdk_folder:
+        _LOGGER.warning("don't find valid sdk folder")
+        return
+    meta_path = Path("../azure-sdk-for-python/sdk", sdk_folder, "_meta.json")
+    if not meta_path.exists():
+        _LOGGER.warning(f"don't find meta file: {meta_path}")
+        return
+    
+    with open(meta_path, "r") as file_in:
+        meta = json.load(file_in)
+    
+    need_regenerate = if_need_regenerate(meta)
+
+    after_handle = []
+    for idx in range(len(python_md_content)):
+        after_handle.append(python_md_content[idx])
+        if "batch:" in python_md_content[idx]:
+            line_number = choose_tag_and_update_meta(idx+1, python_md_content, after_handle, input_readme, meta, need_regenerate)
+            after_handle.extend(python_md_content[line_number:])
+            break
+    
+    with open(python_readme, "w") as file_out:
+        file_out.writelines(after_handle)
+
+    with open(meta_path, "r") as file_out:
+        json.dump(meta, file_out, indent=2)
 
 def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
@@ -92,6 +200,7 @@ def main(generate_input, generate_output):
         is_typespec = False
         if "resource-manager" in input_readme:
             relative_path_readme = str(Path(spec_folder, input_readme))
+            update_metadata_for_multiapi_package(spec_folder, input_readme)
             del_outdated_folder(relative_path_readme)
             config = generate(
                 CONFIG_FILE,
