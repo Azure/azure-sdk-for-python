@@ -78,7 +78,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
         else:
             self._parsed_url = None
 
-        self._is_chained = kwargs.pop("is_chained", False)
+        self._is_chained = kwargs.pop("_is_chained", False)
         self._login_hint = kwargs.pop("login_hint", None)
         self._timeout = kwargs.pop("timeout", 300)
         self._server_class = kwargs.pop("_server_class", AuthCodeRedirectServer)
