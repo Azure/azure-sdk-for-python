@@ -222,7 +222,7 @@
         },
         "APPCONFIGURATION_ENDPOINT_STRING_PROVIDER": {
             "type": "string",
-            "value": "[variables('endpointValue')]"
+            "value": "[variables('endpointValueProvider')]"
         }
     }
 }
