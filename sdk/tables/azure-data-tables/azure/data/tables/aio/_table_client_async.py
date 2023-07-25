@@ -29,12 +29,7 @@ from .._serialize import(
 from .._deserialize import(
     deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
 )
-from .._error import (
-    _decode_error,
-    _process_table_error,
-    _reprocess_error,
-    _validate_tablename_error
-)
+from .._error import _process_table_error, _reprocess_error,
 from .._table_client import EntityType, TransactionOperationType
 from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
