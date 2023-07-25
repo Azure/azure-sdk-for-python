@@ -86,7 +86,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
     :param jobs: Pipeline component node name to component object. Defaults to None
     :type jobs: dict[str, ~azure.ai.ml.entities._builders.BaseNode], optional
     :param settings: Setting of the pipeline job. Defaults to None
-    :type settings: ~azure.ai.ml.entities._job.pipeline.pipeline_job_settings.PipelineJobSettings, optional
+    :type settings: ~azure.ai.ml.entities.PipelineJobSettings, optional
     :param identity: Identity that the training job will use while running on compute. Defaults to None
     :type identity: Union[
         ~azure.ai.ml.entities._credentials.ManagedIdentityConfiguration,
@@ -206,7 +206,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         """Settings of the pipeline job.
 
         :return: Settings of the pipeline job.
-        :rtype: ~azure.ai.ml.entities._job.pipeline.pipeline_job_settings.PipelineJobSettings
+        :rtype: ~azure.ai.ml.entities.PipelineJobSettings
         """
         if self._settings is None:
             self._settings = PipelineJobSettings()
