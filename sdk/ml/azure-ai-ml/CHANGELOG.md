@@ -4,12 +4,13 @@
 
 ### Features Added
 - Added support to enable gpu access (local_enable_gpu) for local deployment.
+- Added support for new workspace connection types: azure_open_ai, cognitive_search, and cognitive_service.
 
 ### Other Changes
 
 - Improved the output when printing a workspace object to be more clean and readable.
 - Log level of unknown field notifications for pipeline nodes raised from INFO to WARNING.
-
+- Removed references to deprecated "feature_store" workspace connection type.
 ## 1.8.0 (2023-06-12)
 
 ### Features Added
