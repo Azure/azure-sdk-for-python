@@ -116,7 +116,7 @@ class WorkspaceOperationsBase:
         workspace.resource_group = resource_group
         template, param, resources_being_deployed = self._populate_arm_paramaters(workspace, **kwargs)
         # check if create with workspace hub request is valid
-        if workspace._kind == PROJECT_WORKSPACE_KIND and workspace.workspace_hub:
+        if workspace._kind == PROJECT_WORKSPACE_KIND:
             if not all(
                 x is None
                 for x in [
@@ -128,7 +128,7 @@ class WorkspaceOperationsBase:
                     workspace.customer_managed_key,
                 ]
             ):
-                msg = "To use workspaceHub, only specify location, application insight, encryption and identity."
+                msg = "To create a project workspace with a workspace hub, please only specify name, description, display_name, location, application insight and identity"
                 raise ValidationException(
                     message=msg,
                     target=ErrorTarget.WORKSPACE,
