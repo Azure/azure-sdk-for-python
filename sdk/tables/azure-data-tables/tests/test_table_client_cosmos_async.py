@@ -3,17 +3,24 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 import pytest
 import platform
 import os
 
+from datetime import datetime, timedelta
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceNotFoundError
+from azure.data.tables import(
+    TableTransactionError,
+    AccountSasPermissions,
+    ResourceTypes,
+    generate_account_sas,
+    __version__ as  VERSION,
+)
 from azure.data.tables.aio import TableServiceClient, TableClient
-from azure.data.tables import __version__ as VERSION, TableTransactionError
 from azure.data.tables._constants import DEFAULT_COSMOS_ENDPOINT_SUFFIX
 from test_table_client_cosmos import validate_standard_account_endpoints
 
@@ -162,6 +169,41 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                 await client.submit_transaction(batch)
             assert error.value.error_code == 'ResourceNotFound'
+    
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_client_with_sas_token(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        base_url = self.account_url(tables_cosmos_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        sas_token = self.generate_sas(
+            generate_account_sas,
+            tables_primary_cosmos_account_key,
+            resource_types=ResourceTypes.from_string("sco"),
+            permission=AccountSasPermissions.from_string("rwdlacu"),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        
+        async with TableServiceClient(base_url, credential=AzureSasCredential(sas_token)) as client:
+            with pytest.raises(ClientAuthenticationError):
+                await client.create_table(table_name)
+        
+        async with TableClient(base_url, table_name, credential=AzureSasCredential(sas_token)) as client:
+            with pytest.raises(ClientAuthenticationError):
+                await client.create_table()
+        
+        async with TableClient.from_table_url(f"{base_url}/{table_name}", credential=AzureSasCredential(sas_token)) as client:
+            with pytest.raises(ClientAuthenticationError):
+                await client.create_table()
+        
+        sas_url = f"{base_url}/{table_name}?{sas_token}"
+        async with TableClient.from_table_url(sas_url) as client:
+            with pytest.raises(ClientAuthenticationError):
+                await client.create_table()
+        
+        with pytest.raises(ValueError) as ex:
+            client = TableClient.from_table_url(sas_url, credential=AzureSasCredential(sas_token))
+        ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
+        assert ex_msg == str(ex.value)
 
 
 class TestTableClientCosmosAsyncUnitTests(AsyncTableTestCase):
