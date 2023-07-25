@@ -33,7 +33,6 @@ from .._error import (
     _decode_error,
     _process_table_error,
     _reprocess_error,
-    _reraise_error,
     _validate_tablename_error
 )
 from .._table_client import EntityType, TransactionOperationType
@@ -397,7 +396,7 @@ class TableClient(AsyncTablesBaseClient):
                 if entity.get("RowKey") is None:
                     raise ValueError("RowKey must be present in an entity") from error
             _validate_tablename_error(decoded, self.table_name)
-            _reraise_error(error)
+            raise decoded from error
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
 
