@@ -487,11 +487,25 @@
                 "description": "A flag to determine if workspace has data isolation enabled. The flag can only be set at the creation phase, it can't be updated."
             }
         },
-        "workspace_hub_config" : {
-            "type": "object",
-            "defaultValue": {},
+        "storage_accounts" : {
+            "type": "array",
+            "defaultValue": [],
             "metadata": {
-                "description": "Additional configuration for WorkspaceHub."
+                "description": "A list of storage accounts used by Hub."
+            }
+        },
+        "key_vaults" : {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "A list of key vaults used by Hub."
+            }
+        },
+        "container_registies" : {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "A list of container registries used by Hub."
             }
         },
         "existing_workspaces" : {
@@ -540,120 +554,15 @@
         "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]",
         "offlineStoreConnectionName": "[if(equals(parameters('offline_store_connection_name'), ''), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]",
         "onlineStoreConnectionName": "[if(equals(parameters('online_store_connection_name'), ''), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]",
-        "isWorkspaceHub": "[equals(parameters('kind'), 'hub')]"
+        "isWorkspaceHub": "[equals(parameters('kind'), 'hub')]",
+        "storageAccountList": ["[variables('storageAccount')]"],
+        "keyVaultList": ["[variables('keyVault')]"],
+        "emptyArray": [],
+        "containerRegistryList": "[if(not(equals(parameters('containerRegistryOption'), 'none')), array(variables('containerRegistry')), variables('emptyArray'))]"
     },
     "resources": [
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('vnetOption'), 'new'))]",
-            "type": "Microsoft.Network/virtualNetworks",
-            "apiVersion": "2019-09-01",
-            "name": "[parameters('vnetName')]",
-            "location": "[parameters('location')]",
-            "tags": "[parameters('tagValues')]",
-            "properties": {
-                "addressSpace": {
-                    "addressPrefixes": "[parameters('addressPrefixes')]"
-                },
-                "enableDdosProtection": false,
-                "enableVmProtection": false
-            }
-        },
-        {
-            "condition": "[and(variables('enablePE'), equals(parameters('subnetOption'), 'new'))]",
-            "type": "Microsoft.Network/virtualNetworks/subnets",
-            "apiVersion": "2019-09-01",
-            "name": "[concat(parameters('vnetName'), '/', parameters('subnetName'))]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
-            ],
-            "properties": {
-                "addressPrefix": "[parameters('subnetPrefix')]",
-                "privateEndpointNetworkPolicies": "Disabled",
-                "privateLinkServiceNetworkPolicies": "Enabled",
-                "serviceEndpoints": [
-                    {
-                        "service": "Microsoft.Storage"
-                    },
-                    {
-                        "service": "Microsoft.KeyVault"
-                    },
-                    {
-                        "service": "Microsoft.ContainerRegistry"
-                    }
-                ]
-            }
-        },
-        {
-            "condition": "[and(variables('enablePE'), equals(parameters('storageAccountOption'), 'new'))]",
-            "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2019-04-01",
-            "name": "[parameters('storageAccountName')]",
-            "tags": "[parameters('tagValues')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
-            ],
-            "location": "[parameters('storageAccountLocation')]",
-            "sku": {
-                "name": "[parameters('storageAccountType')]"
-            },
-            "kind": "StorageV2",
-            "properties": {
-                "encryption": {
-                    "services": {
-                        "blob": {
-                            "enabled": true
-                        },
-                        "file": {
-                            "enabled": true
-                        }
-                    },
-                    "keySource": "Microsoft.Storage"
-                },
-                "supportsHttpsTrafficOnly": true,
-                "allowBlobPublicAccess": false,
-                "networkAcls": "[if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
-            }
-        },
-        {
-            "condition": "[and(variables('enablePE'), equals(parameters('keyVaultOption'), 'new'))]",
-            "type": "Microsoft.KeyVault/vaults",
-            "apiVersion": "2019-09-01",
-            "tags": "[parameters('tagValues')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
-            ],
-            "name": "[parameters('keyVaultName')]",
-            "location": "[parameters('keyVaultLocation')]",
-            "properties": {
-                "tenantId": "[variables('tenantId')]",
-                "sku": {
-                    "name": "standard",
-                    "family": "A"
-                },
-                "accessPolicies": [],
-                "networkAcls": "[if(equals(parameters('keyVaultBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
-            }
-        },
-        {
-            "condition": "[and(variables('enablePE'), equals(parameters('containerRegistryOption'), 'new'))]",
-            "type": "Microsoft.ContainerRegistry/registries",
-            "apiVersion": "2019-05-01",
-            "tags": "[parameters('tagValues')]",
-            "name": "[parameters('containerRegistryName')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
-            ],
-            "location": "[parameters('containerRegistryLocation')]",
-            "sku": {
-                "name": "[parameters('containerRegistrySku')]"
-            },
-            "properties": {
-                "adminUserEnabled": true,
-                "networkRuleSet": "[if(equals(parameters('containerRegistryBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
-            }
-        },
-        {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'), not(variables('isWorkspaceHub')))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
             "type": "Microsoft.OperationalInsights/workspaces",
             "tags": "[parameters('tagValues')]",
             "apiVersion": "2020-08-01",
@@ -665,7 +574,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'), not(variables('isWorkspaceHub')))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
             "type": "Microsoft.Insights/components",
             "tags": "[parameters('tagValues')]",
             "apiVersion": "2020-02-02-preview",
@@ -689,246 +598,15 @@
             "kind": "[parameters('kind')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
-                "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]",
-                "[resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]"
+                "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]"
             ],
             "identity": "[parameters('identity')]",
             "properties": {
                 "friendlyName": "[parameters('friendlyName')]",
                 "description": "[parameters('description')]",
-                "storageAccount": "[variables('storageAccount')]",
-                "keyVault": "[variables('keyVault')]",
-                "applicationInsights": "[if(variables('isWorkspaceHub'), json('null'), variables('applicationInsights'))]",
-                "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
-                "hbiWorkspace": "[parameters('confidential_data')]",
-                "imageBuildCompute": "[parameters('imageBuildCompute')]",
-                "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
-                "softDeleteEnabled": "[parameters('soft_delete_enabled')]",
-                "allowRecoverSoftDeletedWorkspace": "[parameters('allow_recover_softdeleted_workspace')]",
-                "encryption": {
-                    "status": "[parameters('encryption_status')]",
-                    "keyVaultProperties": {
-                        "keyVaultArmId": "[parameters('cmk_keyvault')]",
-                        "keyIdentifier": "[parameters('resource_cmk_uri')]"
-                    },
-                    "cosmosDbArmId": "[parameters('encryption_cosmosdb_resourceid')]",
-                    "storageAccountArmId": "[parameters('encryption_storage_resourceid')]",
-                    "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
-                },
+                "applicationInsights": "[variables('applicationInsights')]",
                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
-                "managedNetwork": "[parameters('managedNetwork')]",
-                "featureStoreSettings": {
-                    "computeruntime": {
-                        "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
-                    },
-                    "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
-                    "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
-                },
-                "enableDataIsolation": "[parameters('enable_data_isolation')]",
-                "workspaceHubConfig": "[parameters('workspace_hub_config')]",
-                "existingWorkspaces": "[parameters('existing_workspaces')]"
-            }
-        },
-        {
-            "condition":"[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('offline_store_connection_target'), '')))]",
-			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2022-05-01",
-			"name": "[concat(parameters('workspaceName'), '-update-offline-connection')]",
-			"dependsOn": [
-				"[parameters('workspaceName')]"
-			],
-			"properties": {
-				"mode": "Incremental",
-				"parameters": {},
-				"template": {
-					"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-					"contentVersion": "1.0.0.1",
-					"resources": [{
-						"apiVersion": "2022-12-01-preview",
-						"name": "[parameters('workspaceName')]",
-						"location": "[parameters('location')]",
-						"kind": "featurestore",
-						"type": "Microsoft.MachineLearningServices/workspaces",
-						"identity": {
-							"type": "SystemAssigned,UserAssigned",
-							"userAssignedIdentities": {
-							    "[parameters('materialization_identity_resource_id')]": {}
-							}
-						},
-						"properties": {
-                            "friendlyName": "[parameters('friendlyName')]",
-                            "description": "[parameters('description')]",
-                            "storageAccount": "[variables('storageAccount')]",
-                            "keyVault": "[variables('keyVault')]",
-                            "applicationInsights": "[variables('applicationInsights')]",
-                            "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
-                            "hbiWorkspace": "[parameters('confidential_data')]",
-                            "imageBuildCompute": "[parameters('imageBuildCompute')]",
-                            "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
-                            "encryption": {
-                                "status": "[parameters('encryption_status')]",
-                                "keyVaultProperties": {
-                                    "keyVaultArmId": "[parameters('cmk_keyvault')]",
-                                    "keyIdentifier": "[parameters('resource_cmk_uri')]"
-                                },
-                                "cosmosDbArmId": "[parameters('encryption_cosmosdb_resourceid')]",
-                                "storageAccountArmId": "[parameters('encryption_storage_resourceid')]",
-                                "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
-                            },
-                            "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
-                            "featureStoreSettings": {
-                                "computeruntime": {
-                                    "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
-                                },
-                                "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
-                                "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
-                            }
-						},
-                        "resources": [
-                            {
-                                "condition": "[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('offline_store_connection_target'), '')))]",
-                                "type": "connections",
-                                "apiVersion": "2022-05-01",
-                                "name": "[variables('offlineStoreConnectionName')]",
-                                "location": "[parameters('location')]",
-                                "dependsOn": [
-                                    "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
-                                ],
-                                "identity": {
-                                    "type": "SystemAssigned"
-                                },
-                                "properties": {
-                                    "category": "AzureDataLakeGen2",
-                                    "target": "[parameters('offline_store_connection_target')]",
-                                    "authType": "ManagedIdentity",
-                                    "credentials": {
-                                        "clientid": "[parameters('materialization_identity_client_id')]",
-                                        "resourceid": "[parameters('materialization_identity_resource_id')]"
-                                    }
-                                }
-                            }
-                        ]
-					}]
-				}
-			}
-		},
-        {
-            "condition":"[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('online_store_connection_target'), '')))]",
-			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2022-05-01",
-			"name": "[concat(parameters('workspaceName'), '-update-online-connection')]",
-			"dependsOn": [
-				"[parameters('workspaceName')]"
-			],
-			"properties": {
-				"mode": "Incremental",
-				"parameters": {},
-				"template": {
-					"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-					"contentVersion": "1.0.0.1",
-					"resources": [{
-						"apiVersion": "2022-12-01-preview",
-						"name": "[parameters('workspaceName')]",
-						"location": "[parameters('location')]",
-						"kind": "featurestore",
-						"type": "Microsoft.MachineLearningServices/workspaces",
-						"identity": {
-							"type": "SystemAssigned,UserAssigned",
-							"userAssignedIdentities": {
-							    "[parameters('materialization_identity_resource_id')]": {}
-							}
-						},
-						"properties": {
-                            "friendlyName": "[parameters('friendlyName')]",
-                            "description": "[parameters('description')]",
-                            "storageAccount": "[variables('storageAccount')]",
-                            "keyVault": "[variables('keyVault')]",
-                            "applicationInsights": "[variables('applicationInsights')]",
-                            "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
-                            "hbiWorkspace": "[parameters('confidential_data')]",
-                            "imageBuildCompute": "[parameters('imageBuildCompute')]",
-                            "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
-                            "encryption": {
-                                "status": "[parameters('encryption_status')]",
-                                "keyVaultProperties": {
-                                    "keyVaultArmId": "[parameters('cmk_keyvault')]",
-                                    "keyIdentifier": "[parameters('resource_cmk_uri')]"
-                                },
-                                "cosmosDbArmId": "[parameters('encryption_cosmosdb_resourceid')]",
-                                "storageAccountArmId": "[parameters('encryption_storage_resourceid')]",
-                                "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
-                            },
-                            "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
-                            "featureStoreSettings": {
-                                "computeruntime": {
-                                    "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
-                                },
-                                "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
-                                "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
-                            }
-						},
-                        "resources": [
-                            {
-                                "condition": "[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('online_store_connection_target'), '')))]",
-                                "type": "connections",
-                                "apiVersion": "2022-05-01",
-                                "name": "[variables('onlineStoreConnectionName')]",
-                                "location": "[parameters('location')]",
-                                "dependsOn": [
-                                    "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
-                                ],
-                                "identity": {
-                                    "type": "SystemAssigned"
-                                },
-                                "properties": {
-                                    "category": "Redis",
-                                    "target": "[parameters('online_store_connection_target')]",
-                                    "authType": "ManagedIdentity",
-                                    "credentials": {
-                                        "clientid": "[parameters('materialization_identity_client_id')]",
-                                        "resourceid": "[parameters('materialization_identity_resource_id')]"
-                                    }
-                                }
-                            }
-                        ]
-					}]
-				}
-			}
-		},
-        {
-            "condition": "[and(variables('enablePE'), not(equals(parameters('privateEndpointType'), 'none')))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-06-01",
-            "name": "[variables('privateEndpointDeploymentName')]",
-            "resourceGroup": "[parameters('privateEndpointResourceGroupName')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "resources": [
-                        {
-                            "apiVersion": "2020-06-01",
-                            "name": "[parameters('privateEndpointName')]",
-                            "type": "Microsoft.Network/privateEndpoints",
-                            "location": "[parameters('location')]",
-                            "tags": "[parameters('tagValues')]",
-                            "properties": {
-                                "privateLinkServiceConnections": "[if(equals(parameters('privateEndpointType'), 'AutoApproval'), variables('defaultPEConnections'), json('null'))]",
-                                "manualPrivateLinkServiceConnections": "[if(equals(parameters('privateEndpointType'), 'ManualApproval'), variables('defaultPEConnections'), json('null'))]",
-                                "subnet": {
-                                    "id": "[variables('subnet')]"
-                                }
-                            }
-                        }
-                    ]
-                }
+                "hubResourceId": "[parameters('workspace_hub')]"
             }
         }
     ]

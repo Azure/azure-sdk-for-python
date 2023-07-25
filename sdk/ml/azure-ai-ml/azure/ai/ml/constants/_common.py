@@ -240,6 +240,8 @@ class AzureMLResourceType:
     """Feature store entity resource type."""
     FEATURE_STORE = "feature_store"
     """Feature store resource type."""
+    WORKSPACE_HUB = "workspace_hub"
+    """WorkspaceHub resource type."""
 
     NAMED_TYPES = {
         JOB,
@@ -305,6 +307,7 @@ class ArmConstants:
     BASE_TYPE = "base"
     WORKSPACE_BASE = "workspace_base"
     WORKSPACE_PARAM = "workspace_param"
+    WORKSPACE_PROJECT = "workspace_project"
 
     OPERATION_CREATE = "create"
     OPERATION_UPDATE = "update"
@@ -461,6 +464,7 @@ class YAMLRefDocLinks:
     FEATURE_STORE = "https://aka.ms/ml-cli-v2-featurestore-yaml-reference"
     FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
     FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
+    WORKSPACEHUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
