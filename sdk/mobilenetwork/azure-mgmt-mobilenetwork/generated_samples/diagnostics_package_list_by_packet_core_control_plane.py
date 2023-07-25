@@ -14,7 +14,7 @@ from azure.mgmt.mobilenetwork import MobileNetworkManagementClient
     pip install azure-identity
     pip install azure-mgmt-mobilenetwork
 # USAGE
-    python sim_group_update_tags.py
+    python diagnostics_package_list_by_packet_core_control_plane.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,17 +26,17 @@ from azure.mgmt.mobilenetwork import MobileNetworkManagementClient
 def main():
     client = MobileNetworkManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.sim_groups.update_tags(
+    response = client.diagnostics_packages.list_by_packet_core_control_plane(
         resource_group_name="rg1",
-        sim_group_name="testSimGroup",
-        parameters={"tags": {"tag1": "value1", "tag2": "value2"}},
+        packet_core_control_plane_name="TestPacketCoreCP",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2022-11-01/examples/SimGroupUpdateTags.json
+# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2023-06-01/examples/DiagnosticsPackageListByPacketCoreControlPlane.json
 if __name__ == "__main__":
     main()
