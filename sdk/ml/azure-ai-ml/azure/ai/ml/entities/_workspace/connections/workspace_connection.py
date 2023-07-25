@@ -9,7 +9,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     ManagedIdentityAuthTypeWorkspaceConnectionProperties,
     NoneAuthTypeWorkspaceConnectionProperties,
     PATAuthTypeWorkspaceConnectionProperties,
@@ -17,10 +17,10 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     ServicePrincipalAuthTypeWorkspaceConnectionProperties,
     UsernamePasswordAuthTypeWorkspaceConnectionProperties,
 )
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     ConnectionAuthType,
     AccessKeyAuthTypeWorkspaceConnectionProperties,
 )
@@ -59,7 +59,8 @@ class WorkspaceConnection(Resource):
     :param type: The category of external resource for this connection.
     :type type: The type of workspace connection, possible values are: [
         "git", "python_feed", "container_registry", "feature_store", "s3", "snowflake",
-         "azure_sql_db", "azure_synapse_analytics", "azure_my_sql_db", "azure_postgres_db"
+         "azure_sql_db", "azure_synapse_analytics", "azure_my_sql_db", "azure_postgres_db",
+         "azure_open_ai", "cognitive_search", "cognitive_service"
           ]
     """
 
