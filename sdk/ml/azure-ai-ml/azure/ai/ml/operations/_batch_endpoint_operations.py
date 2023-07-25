@@ -28,7 +28,7 @@ from azure.ai.ml._scope_dependent_operations import (
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_aml_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import validate_response
+from azure.ai.ml._utils._endpoint_utils import validate_response, convert_v1_dataset_to_v2
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
@@ -283,14 +283,17 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         batch_job = BatchJobSchema(context=context).load(data={})  # pylint: disable=no-member
         # update output datastore to arm id if needed
         # TODO: Unify datastore name -> arm id logic, TASK: 1104172
+        json = {}
         if (
             batch_job.output_dataset
             and batch_job.output_dataset.datastore_id
             and (not is_ARM_id_for_resource(batch_job.output_dataset.datastore_id))
         ):
-            batch_job.output_dataset.datastore_id = get_datastore_arm_id(
-                batch_job.output_dataset.datastore_id, self._operation_scope
-            )
+            v2_dataset_dictionary = convert_v1_dataset_to_v2(batch_job.output_dataset, batch_job.output_file_name)
+            batch_job.output_dataset = None
+            batch_job.output_file_name = None
+            json=BatchJobResource(properties=batch_job).serialize()
+            json['properties']['outputData']= v2_dataset_dictionary
 
         endpoint = self._batch_operation.get(
             resource_group_name=self._resource_group_name,
@@ -310,7 +313,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         response = self._requests_pipeline.post(
             endpoint.properties.scoring_uri,
-            json=BatchJobResource(properties=batch_job).serialize(),
+            json=json,
             headers=headers,
         )
         validate_response(response)
