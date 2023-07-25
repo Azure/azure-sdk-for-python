@@ -21,7 +21,9 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._entity import TableEntity
-from ._error import _decode_error, _process_table_error, _reprocess_error, _validate_tablename_error, _validate_key_values
+from ._error import(
+    _decode_error, _process_table_error, _reprocess_error, _validate_tablename_error, _validate_key_values
+)
 from ._generated.models import SignedIdentifier, TableProperties
 from ._serialize import(
     serialize_iso, _parameter_filter_substitution, _get_match_headers, _add_entity_properties, _prepare_key
