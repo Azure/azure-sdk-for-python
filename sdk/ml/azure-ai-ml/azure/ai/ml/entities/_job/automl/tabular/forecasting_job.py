@@ -100,6 +100,7 @@ class ForecastingJob(AutoMLTabular):
         frequency: Optional[str] = None,
         target_aggregate_function: Optional[str] = None,
         cv_step_size: Optional[int] = None,
+        features_unknown_at_forecast_time: Optional[Union[str, List[str]]] = None,
     ) -> None:
         """Manage parameters used by forecasting tasks.
 
@@ -288,6 +289,9 @@ class ForecastingJob(AutoMLTabular):
             example, if `n_step` = 3 for daily data, the origin time for each fold will be
             three days apart.
         :type cv_step_size: int or None
+        :param features_unknown_at_forecast_time:
+            The column of features/regressors that are available at training time but unknown at forecast time.
+        :type features_unknown_at_forecast_time: str or list(str)
         """
         self._forecasting_settings = self._forecasting_settings or ForecastingSettings()
 
@@ -337,6 +341,11 @@ class ForecastingJob(AutoMLTabular):
             time_series_id_column_names
             if time_series_id_column_names is not None
             else self._forecasting_settings.time_series_id_column_names
+        )
+        self._forecasting_settings.features_unknown_at_forecast_time = (
+            features_unknown_at_forecast_time
+            if features_unknown_at_forecast_time is not None
+            else self._forecasting_settings.features_unknown_at_forecast_time
         )
 
     # override
