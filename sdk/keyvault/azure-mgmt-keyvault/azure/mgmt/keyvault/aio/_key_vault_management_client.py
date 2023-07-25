@@ -71,6 +71,8 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs: Any
     ) -> None:
+        if api_version:
+            kwargs.setdefault('api_version', api_version)
         self._config = KeyVaultManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(KeyVaultManagementClient, self).__init__(
@@ -152,7 +154,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'keys'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def managed_hsm_keys(self):
@@ -166,7 +168,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'managed_hsm_keys'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def managed_hsms(self):
@@ -195,7 +197,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'managed_hsms'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def mhsm_private_endpoint_connections(self):
@@ -221,7 +223,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'mhsm_private_endpoint_connections'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def mhsm_private_link_resources(self):
@@ -247,7 +249,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'mhsm_private_link_resources'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def mhsm_regions(self):
@@ -261,7 +263,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'mhsm_regions'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def operations(self):
@@ -299,7 +301,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def private_endpoint_connections(self):
@@ -334,7 +336,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def private_link_resources(self):
@@ -369,7 +371,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def secrets(self):
@@ -395,7 +397,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'secrets'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def vaults(self):
@@ -433,7 +435,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'vaults'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     async def close(self):
         await self._client.close()

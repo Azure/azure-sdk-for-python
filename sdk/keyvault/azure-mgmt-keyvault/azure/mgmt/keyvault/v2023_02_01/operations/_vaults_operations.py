@@ -426,6 +426,7 @@ class VaultsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     def _create_or_update_initial(
         self,
@@ -445,7 +446,7 @@ class VaultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Vault] = kwargs.pop("cls", None)
 
@@ -604,7 +605,7 @@ class VaultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Vault] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -742,7 +743,7 @@ class VaultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Vault] = kwargs.pop("cls", None)
 
@@ -822,7 +823,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
@@ -880,7 +881,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-02-01"))
         cls: ClsType[_models.Vault] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -1022,7 +1023,7 @@ class VaultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VaultAccessPolicyParameters] = kwargs.pop("cls", None)
 
@@ -1096,7 +1097,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-02-01"))
         cls: ClsType[_models.VaultListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1182,7 +1183,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-02-01"))
         cls: ClsType[_models.VaultListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1263,7 +1264,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-02-01"))
         cls: ClsType[_models.DeletedVaultListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1355,7 +1356,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-02-01"))
         cls: ClsType[_models.DeletedVault] = kwargs.pop("cls", None)
 
         request = build_get_deleted_request(
@@ -1406,7 +1407,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_purge_deleted_request(
@@ -1462,7 +1463,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1526,7 +1527,9 @@ class VaultsOperations:
         filter: Literal["resourceType eq 'Microsoft.KeyVault/vaults'"] = kwargs.pop(
             "filter", _params.pop("$filter", "resourceType eq 'Microsoft.KeyVault/vaults'")
         )
-        api_version: Literal["2015-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2015-11-01"))
+        api_version: Literal["2015-11-01"] = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2015-11-01")
+        )
         cls: ClsType[_models.ResourceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1663,7 +1666,7 @@ class VaultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CheckNameAvailabilityResult] = kwargs.pop("cls", None)
 
