@@ -29,7 +29,7 @@ from .._serialize import(
 from .._deserialize import(
     deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
 )
-from .._error import _process_table_error, _reprocess_error,
+from .._error import _decode_error, _process_table_error, _reprocess_error, _validate_tablename_error, _validate_key_values
 from .._table_client import EntityType, TransactionOperationType
 from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
@@ -384,9 +384,10 @@ class TableClient(AsyncTablesBaseClient):
                 **kwargs
             )
         except HttpResponseError as error:
-            _process_table_error(
-                error, validate_key_values=True, partition_key=entity.get("PartitionKey"), row_key=entity.get("RowKey")
-            )
+            decoded = _decode_error(error.response, error.message)
+            _validate_key_values(decoded, entity.get("PartitionKey"), entity.get("RowKey"))
+            _validate_tablename_error(decoded, self.table_name)
+            raise decoded from error
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
 

@@ -187,13 +187,11 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):  # p
     return error
 
 
-def _process_table_error(storage_error, table_name=None, validate_key_values=False, partition_key=None, row_key=None):
+def _process_table_error(storage_error, table_name=None):
     try:
         decoded_error = _decode_error(storage_error.response, storage_error.message)
     except AttributeError as exc:
         raise storage_error from exc
-    if validate_key_values:
-        _validate_key_values(decoded_error, partition_key, row_key)
     if table_name:
         _validate_tablename_error(decoded_error, table_name)
     raise decoded_error from storage_error
