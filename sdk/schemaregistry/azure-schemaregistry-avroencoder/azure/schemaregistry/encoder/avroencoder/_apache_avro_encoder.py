@@ -53,8 +53,8 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         """Convert the provided value to it's binary representation and write it to the stream.
         Schema must be a Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
-        :param content: An mapping to encode
-        :type content: Mapping[str, Any]
+        :param content: A mapping to encode
+        :type content: mapping[str, Any]
         :param schema: An Avro RecordSchema
         :type schema: str
         :returns: Encoded bytes
@@ -80,11 +80,9 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         Return type will be ignored, since the schema is deduced from the provided bytes.
         :param content: A stream of bytes or bytes directly
         :type content: BinaryIO or bytes
-        :param schema: An Avro RecordSchema
-        :type schema: str
-        :keyword readers_schema: An optional reader's schema as defined by the Apache Avro specification.
-        :paramtype readers_schema: str or None
-        :returns: An instantiated object
+        :keyword reader: The Apache Avro data reader.
+        :paramtype reader: DatumReader
+        :returns: The content dict.
         :rtype: dict[str, Any]
         """
         if not hasattr(content, "read"):
