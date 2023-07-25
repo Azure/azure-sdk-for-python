@@ -137,9 +137,9 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             boundary=f"batch_{uuid4()}",
         )
 
-        pipeline_response = await self._client._client._pipeline.run(
+        pipeline_response = await self._client._client._pipeline.run(  # pylint: disable=protected-access
             request, **kwargs
-        )  # pylint: disable=protected-access
+        )
         response = pipeline_response.http_response
         # TODO: Check for proper error model deserialization
         if response.status_code == 413:

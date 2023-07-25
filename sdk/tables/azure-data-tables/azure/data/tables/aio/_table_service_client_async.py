@@ -318,8 +318,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         """
         pipeline = AsyncPipeline(  # type: ignore
             transport=AsyncTransportWrapper(
-                self._client._client._pipeline._transport
-            ),  # pylint:disable=protected-access
+                self._client._client._pipeline._transport  # pylint:disable=protected-access
+            ),
             policies=self._policies,
         )
         return TableClient(
