@@ -40,7 +40,9 @@ class AnonymousACRExchangeClient(object):
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, **kwargs) -> None: # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(
+        self, endpoint: str, **kwargs
+    ) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
@@ -52,7 +54,9 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
-    async def get_acr_access_token(self, challenge: str, **kwargs) -> Optional[str]: # pylint:disable=client-method-missing-tracing-decorator-async
+    async def get_acr_access_token(
+        self, challenge: str, **kwargs
+    ) -> Optional[str]:  # pylint:disable=client-method-missing-tracing-decorator-async
         parsed_challenge = _parse_challenge(challenge)
         return await self.exchange_refresh_token_for_access_token(
             "",
@@ -62,10 +66,10 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
-    async def exchange_refresh_token_for_access_token( # pylint:disable=client-method-missing-tracing-decorator-async
+    async def exchange_refresh_token_for_access_token(  # pylint:disable=client-method-missing-tracing-decorator-async
         self, refresh_token: str, service: str, scope: str, grant_type: Union[str, TokenGrantType], **kwargs
     ) -> Optional[str]:
-        access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token( # type: ignore
+        access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(  # type: ignore
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs
         )
         return access_token.access_token
