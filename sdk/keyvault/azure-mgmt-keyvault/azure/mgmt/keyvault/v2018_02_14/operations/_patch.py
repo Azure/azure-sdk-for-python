@@ -6,7 +6,8 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, List, Iterable, Optional, Literal
+import sys
+from typing import Any, List, Iterable, Optional
 import urllib.parse
 
 from azure.core.tracing.decorator import distributed_trace
@@ -27,6 +28,11 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ._vaults_operations import VaultsOperations as _VaultsOperations, ClsType, build_list_request
 from .. import models as _models
 from .._vendor import _convert_request
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 class VaultsOperations(_VaultsOperations):
     @distributed_trace
