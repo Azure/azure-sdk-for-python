@@ -17,8 +17,8 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
     # method: provider_creation
     @recorded_by_proxy
     @app_config_decorator
-    def test_provider_creation(self, appconfiguration_connection_string_provider):
-        client = self.build_provider(appconfiguration_connection_string_provider)
+    def test_provider_creation(self, appconfiguration_connection_string):
+        client = self.build_provider(appconfiguration_connection_string)
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
         assert (
@@ -29,9 +29,9 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
     # method: provider_trim_prefixes
     @recorded_by_proxy
     @app_config_decorator
-    def test_provider_trim_prefixes(self, appconfiguration_connection_string_provider):
+    def test_provider_trim_prefixes(self, appconfiguration_connection_string):
         trimmed = {"test."}
-        client = self.build_provider(appconfiguration_connection_string_provider, trim_prefixes=trimmed)
+        client = self.build_provider(appconfiguration_connection_string, trim_prefixes=trimmed)
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
         assert client["trimmed"] == "key"
@@ -44,9 +44,9 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
     # method: provider_selectors
     @recorded_by_proxy
     @app_config_decorator
-    def test_provider_selectors(self, appconfiguration_connection_string_provider):
+    def test_provider_selectors(self, appconfiguration_connection_string):
         selects = {SettingSelector(key_filter="message*", label_filter="dev")}
-        client = self.build_provider(appconfiguration_connection_string_provider, selects=selects)
+        client = self.build_provider(appconfiguration_connection_string, selects=selects)
         assert client["message"] == "test"
         assert "test.trimmed" not in client
         assert "FeatureManagementFeatureFlags" not in client

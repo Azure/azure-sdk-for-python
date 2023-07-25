@@ -10,8 +10,8 @@ import inspect
 AppConfigProviderPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_connection_string_provider="Endpoint=https://fake-endpoint.azconfig.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
-    appconfiguration_endpoint_string_provider="https://fake-endpoint.azconfig.io",
+    appconfiguration_connection_string="Endpoint=https://fake-endpoint.azconfig.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
+    appconfiguration_endpoint_string="https://fake-endpoint.azconfig.io",
     appconfiguration_client_id="fake-client-id",
     appconfiguration_client_secret="fake-client-secret",
     appconfiguration_tenant_id="fake-tenant-id",
@@ -21,8 +21,8 @@ AppConfigProviderPreparer = functools.partial(
 def app_config_decorator(func, **kwargs):
     @AppConfigProviderPreparer()
     def wrapper(*args, **kwargs):
-        appconfiguration_connection_string_provider = kwargs.pop("appconfiguration_connection_string_provider")
-        kwargs["appconfiguration_connection_string_provider"] = appconfiguration_connection_string_provider
+        appconfiguration_connection_string = kwargs.pop("appconfiguration_connection_string")
+        kwargs["appconfiguration_connection_string"] = appconfiguration_connection_string
 
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)
@@ -35,8 +35,8 @@ def app_config_decorator(func, **kwargs):
 def app_config_decorator_aad(func, **kwargs):
     @AppConfigProviderPreparer()
     def wrapper(*args, **kwargs):
-        appconfiguration_endpoint_string_provider = kwargs.pop("appconfiguration_endpoint_string_provider")
-        kwargs["appconfiguration_endpoint_string_provider"] = appconfiguration_endpoint_string_provider
+        appconfiguration_endpoint_string = kwargs.pop("appconfiguration_endpoint_string")
+        kwargs["appconfiguration_endpoint_string"] = appconfiguration_endpoint_string
 
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)
