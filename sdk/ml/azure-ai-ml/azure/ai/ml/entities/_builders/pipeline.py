@@ -27,10 +27,10 @@ class Pipeline(BaseNode):
     :param inputs: Inputs of the pipeline node.
     :type inputs: Optional[Dict[str, Union[
                                     ~azure.ai.ml.entities.Input,
-                                    str, bool, int, float, Enum, "Input"]]], defaults to None.
-    :param outputs: Outputs of the pipeline node, defaults to None.
+                                    str, bool, int, float, Enum, "Input"]]].
+    :param outputs: Outputs of the pipeline node.
     :type outputs: Optional[Dict[str, Union[str, ~azure.ai.ml.entities.Output, "Output"]]]
-    :param settings: Setting of pipeline node, only taking effect for root pipeline job, defaults to None.
+    :param settings: Setting of pipeline node, only taking effect for root pipeline job.
     :type settings: Optional[~azure.ai.ml.entities._job.pipeline.pipeline_job_settings.PipelineJobSettings]
     """
 

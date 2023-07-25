@@ -62,7 +62,7 @@ class Sweep(ParameterizedSweep, BaseNode):
     You should not instantiate this class directly. Instead, you should create from the builder function: sweep.
 
     :param trial: Id or instance of the command component/job to be run for the step.
-    :type trial: Union[~~azure.ai.ml.entities.CommandComponent, str]
+    :type trial: Union[~azure.ai.ml.entities.CommandComponent, str]
     :param compute: Compute definition containing the compute information for the step.
     :type compute: str
     :param limits: Limits in running the sweep node.
@@ -164,7 +164,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         """Id or instance of the command component/job to be run for the step.
 
         :return: The id or instance of the command component/job.
-        :rtype: Union[~~azure.ai.ml.entities.CommandComponent, str]
+        :rtype: Union[~azure.ai.ml.entities.CommandComponent, str]
         """
         return self._component
 

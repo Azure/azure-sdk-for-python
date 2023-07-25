@@ -52,33 +52,33 @@ class Component(
 ):
     """Base class for component version, used to define a component. Can't be instantiated directly.
 
-    :param name: Name of the resource. Defaults to None.
+    :param name: Name of the resource.
     :type name: str
-    :param version: Version of the resource. Defaults to None.
+    :param version: Version of the resource.
     :type version: str
-    :param id: Global ID of the resource, Azure Resource Manager ID. Defaults to None.
+    :param id: Global ID of the resource, Azure Resource Manager ID.
     :type id: str
-    :param type: Type of the command, supported is 'command'. Defaults to None.
+    :param type: Type of the command, supported is 'command'.
     :type type: str
-    :param description: Description of the resource. Defaults to None.
+    :param description: Description of the resource.
     :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
-    :param properties: Internal use only. Defaults to None.
+    :param properties: Internal use only.
     :type properties: dict
-    :param display_name: Display name of the component. Defaults to None.
+    :param display_name: Display name of the component.
     :type display_name: str
     :param is_deterministic: Whether the component is deterministic. Defaults to True.
     :type is_deterministic: bool
-    :param inputs: Inputs of the component. Defaults to None.
+    :param inputs: Inputs of the component.
     :type inputs: dict
-    :param outputs: Outputs of the component. Defaults to None.
+    :param outputs: Outputs of the component.
     :type outputs: dict
-    :param yaml_str: The YAML string of the component. Defaults to None.
+    :param yaml_str: The YAML string of the component.
     :type yaml_str: str
-    :param _schema: Schema of the component. Defaults to None.
+    :param _schema: Schema of the component.
     :type _schema: str
-    :param creation_context: Creation metadata of the component. Defaults to None.
+    :param creation_context: Creation metadata of the component.
     :type creation_context: ~azure.ai.ml.entities.SystemData
     :param kwargs: Additional parameters for the component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.

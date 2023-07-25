@@ -25,9 +25,9 @@ class EnumInput(Input):
 
         :param enum: Enum values.
         :type enum: Union[EnumMeta, Sequence[str]], optional
-        :param default: Default value of the parameter, defaults to None
+        :param default: Default value of the parameter
         :type default: Any, optional
-        :param description: Description of the parameter, defaults to None
+        :param description: Description of the parameter
         :type description: str, optional
         """
         enum_values = self._assert_enum_valid(enum)

@@ -36,18 +36,18 @@ class Import(BaseNode):
 
     :param component: Id or instance of the import component/job to be run for the step.
     :type component: ~azure.ai.ml.entities._component.import_component.ImportComponent
-    :param inputs: Input parameters to the import, defaults to None.
+    :param inputs: Input parameters to the import.
     :type inputs: Dict[str, str], optional
-    :param outputs: Mapping of output data bindings used in the job, defaults to None.
+    :param outputs: Mapping of output data bindings used in the job.
     :type outputs: Dict[str, Union[str, ~azure.ai.ml.entities.Output]], optional
     :param name: Name of the import.
     :type name: str
-    :param description: Description of the import, defaults to None.
+    :param description: Description of the import.
     :type description: str, optional
-    :param display_name: Display name of the job, defaults to None.
+    :param display_name: Display name of the job.
     :type display_name: str, optional
     :param experiment_name: Name of the experiment the job will be created under,
-        if None is provided, the default will be set to the current directory name, defaults to None.
+        if None is provided, the default will be set to the current directory name.
     :type experiment_name: str, optional
     """
 

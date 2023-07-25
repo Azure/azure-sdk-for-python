@@ -33,7 +33,7 @@ class AdditionalIncludes:
     :type origin_code_value: Union[None, str]
     :param base_path: The base path for origin code path and additional include configs.
     :type base_path: Path
-    :param configs: The additional include configs, defaults to None.
+    :param configs: The additional include configs.
     :type configs: List[Union[str, dict]], optional
     """
 

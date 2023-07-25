@@ -42,7 +42,7 @@ class ParallelComponent(
     :param display_name: Display name of the component. Defaults to None
     :type display_name: str, optional
     :param retry_settings: parallel component run failed retry. Defaults to None
-    :type retry_settings: BatchRetrySettings, defaults to None
+    :type retry_settings: BatchRetrySettings
     :param logging_level: A string of the logging level name. Defaults to None
     :type logging_level: str, optional
     :param max_concurrency_per_instance: The max parallellism that each compute instance has. Defaults to None
@@ -73,7 +73,7 @@ class ParallelComponent(
     :type inputs: dict, optional
     :param outputs: Outputs of the component. Defaults to None
     :type outputs: dict, optional
-    :param code: promoted property from task.code, defaults to None
+    :param code: promoted property from task.code
     :type code: str, optional
     :param instance_count: promoted property from resources.instance_count. Defaults to None
     :type instance_count: int, optional

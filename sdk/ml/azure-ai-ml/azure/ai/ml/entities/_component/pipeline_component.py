@@ -40,23 +40,23 @@ class PipelineComponent(Component):
     """Pipeline component, currently used to store components in an azure.ai.ml.dsl.pipeline.
 
     :param name: Name of the component.
-    :type name: str, defaults to None
+    :type name: str
     :param version: Version of the component.
-    :type version: str, defaults to None
+    :type version: str
     :param description: Description of the component.
-    :type description: str, defaults to None
+    :type description: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict, defaults to None
+    :type tags: dict
     :param display_name: Display name of the component.
-    :type display_name: str, defaults to None
+    :type display_name: str
     :param inputs: Component inputs.
-    :type inputs: dict, defaults to None
+    :type inputs: dict
     :param outputs: Component outputs.
-    :type outputs: dict, defaults to None
+    :type outputs: dict
     :param jobs: Id to components dict inside the pipeline definition.
-    :type jobs: Dict[str, ~azure.ai.ml.entities._builders.BaseNode], defaults to None
+    :type jobs: Dict[str, ~azure.ai.ml.entities._builders.BaseNode]
     :param is_deterministic: Whether the pipeline component is deterministic.
-    :type is_deterministic: bool, defaults to None
+    :type is_deterministic: bool
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if PipelineComponent cannot be successfully validated.
         Details will be provided in the error message.
     """

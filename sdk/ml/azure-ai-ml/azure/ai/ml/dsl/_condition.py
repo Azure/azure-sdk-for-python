@@ -45,11 +45,11 @@ def condition(
         ~azure.ai.ml.entities._job.pipeline._io.InputOutputBase,
         ~azure.ai.ml.entities._builders.BaseNode,
         ~azure.ai.ml.entities._job.pipeline._pipeline_expression.PipelineExpression]
-    :param true_block: The block to be executed if the condition resolves to True. Defaults to None.
+    :param true_block: The block to be executed if the condition resolves to True.
     :type true_block: Union[
         ~azure.ai.ml.entities._builders.BaseNode,
         List[~azure.ai.ml.entities._builders.BaseNode]], optional
-    :param false_block: The block to be executed if the condition resolves to False. Defaults to None.
+    :param false_block: The block to be executed if the condition resolves to False.
     :type false_block: Union[
         ~azure.ai.ml.entities._builders.BaseNode,
         List[~azure.ai.ml.entities._builders.BaseNode]], optional

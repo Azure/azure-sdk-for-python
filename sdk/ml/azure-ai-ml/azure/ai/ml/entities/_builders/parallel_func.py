@@ -99,47 +99,45 @@ def parallel_run_function(
             ),
         )
 
-    :param name: Name of the parallel job or component created, defaults to None.
+    :param name: Name of the parallel job or component created.
     :type name: str, optional
-    :param description: A friendly description of the parallel, defaults to None.
+    :param description: A friendly description of the parallel.
     :type description: str, optional
-    :param tags: Tags to be attached to this parallel, defaults to None.
+    :param tags: Tags to be attached to this parallel.
     :type tags: Dict, optional
-    :param properties: The asset property dictionary, defaults to None.
+    :param properties: The asset property dictionary.
     :type properties: Dict, optional
-    :param display_name: A friendly name, defaults to None.
+    :param display_name: A friendly name.
     :type display_name: str, optional
     :param experiment_name: Name of the experiment the job will be created under,
                             if None is provided, default will be set to current directory name.
-                            Will be ignored as a pipeline step, defaults to None.
+                            Will be ignored as a pipeline step.
     :type experiment_name: str, optional
     :param compute: The name of the compute where the parallel job is executed (will not be used
-                    if the parallel is used as a component/function), defaults to None.
+                    if the parallel is used as a component/function).
     :type compute: str, optional
-    :param retry_settings: Parallel component run failed retry, defaults to None
+    :param retry_settings: Parallel component run failed retry
     :type retry_settings: ~azure.ai.ml.entities._deployment.deployment_settings.BatchRetrySettings, optional
     :param environment_variables: A dictionary of environment variables names and values.
                                   These environment variables are set on the process
-                                  where user script is being executed, defaults to None.
+                                  where user script is being executed.
     :type environment_variables: Dict[str, str], optional
     :param logging_level: A string of the logging level name, which is defined in 'logging'.
                           Possible values are 'WARNING', 'INFO', and 'DEBUG'. (optional, default value is 'INFO'.)
-                          This value could be set through PipelineParameter, defaults to None.
+                          This value could be set through PipelineParameter.
     :type logging_level: str, optional
-    :param max_concurrency_per_instance: The max parallellism that each compute instance has., defaults to None
+    :param max_concurrency_per_instance: The max parallellism that each compute instance has.
     :type max_concurrency_per_instance: int, optional
     :param error_threshold: The number of record failures for Tabular Dataset and file failures for File Dataset
                             that should be ignored during processing.
                             If the error count goes above this value, then the job will be aborted.
                             Error threshold is for the entire input rather
                             than the individual mini-batch sent to run() method.
-                            The range is [-1, int.max]. -1 indicates ignore all failures during processing,
-                            defaults to None.
+                            The range is [-1, int.max]. -1 indicates ignore all failures during processing
     :type error_threshold: int, optional
-    :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored,
-                                       defaults to None
+    :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored
     :type mini_batch_error_threshold: int, optional
-    :param task: The parallel task, defaults to None
+    :param task: The parallel task
     :type task: ~azure.ai.ml.entities._job.parallel.run_function.RunFunction, optional
     :param mini_batch_size: For FileDataset input,
                             this field is the number of files a user script can process in one run() call.
@@ -147,38 +145,36 @@ def parallel_run_function(
                             the user script can process in one run() call.
                             Example values are 1024, 1024KB, 10MB, and 1GB.
                             (optional, default value is 10 files for FileDataset and 1MB for TabularDataset.)
-                            This value could be set through PipelineParameter, defaults to None.
+                            This value could be set through PipelineParameter.
     :type mini_batch_size: str, optional
     :param partition_keys: The keys used to partition dataset into mini-batches. If specified,
                            the data with the same key will be partitioned into the same mini-batch.
                            If both partition_keys and mini_batch_size are specified,
                            the partition keys will take effect.
                            The input(s) must be partitioned dataset(s),
-                           and the partition_keys must be a subset of the keys of every input dataset for this to work,
-                           defaults to None.
+                           and the partition_keys must be a subset of the keys of every input dataset for this to work
     :type partition_keys: List, optional
-    :param input_data: The input data, defaults to None.
+    :param input_data: The input data.
     :type input_data: str, optional
-    :param inputs: A dict of inputs used by this parallel, defaults to None.
+    :param inputs: A dict of inputs used by this parallel.
     :type inputs: Dict, optional
-    :param outputs: The outputs of this parallel, defaults to None
+    :param outputs: The outputs of this parallel
     :type outputs: Dict, optional
     :param instance_count: Optional number of instances or nodes used by the compute target.
                            Defaults to 1
     :type instance_count: int, optional
-    :param instance_type: Optional type of VM used as supported by the compute target., defaults to None.
+    :param instance_type: Optional type of VM used as supported by the compute target..
     :type instance_type: str, optional
     :param docker_args: Extra arguments to pass to the Docker run command.
                         This would override any parameters that have already been set by the system,
                         or in this section.
-                        This parameter is only supported for Azure ML compute types, defaults to None.
+                        This parameter is only supported for Azure ML compute types.
     :type docker_args: str, optional
     :param shm_size: Size of the docker container's shared memory block.
                      This should be in the format of (number)(unit) where number as to be greater than 0
-                     and the unit can be one of b(bytes), k(kilobytes), m(megabytes), or g(gigabytes),
-                     defaults to None.
+                     and the unit can be one of b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
     :type shm_size: str, optional
-    :param identity: Identity that training job will use while running on compute, defaults to None.
+    :param identity: Identity that training job will use while running on compute.
     :type identity: Union[
                     ~azure.ai.ml._restclient.v2022_02_01_preview.models.ManagedIdentity,
                     ~azure.ai.ml._restclient.v2022_02_01_preview.models.AmlToken], optional

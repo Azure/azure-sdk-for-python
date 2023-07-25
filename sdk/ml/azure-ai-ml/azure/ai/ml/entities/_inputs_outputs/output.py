@@ -24,34 +24,30 @@ class Output(_InputOutputBase):
         'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
         Defaults to 'uri_folder'.
     :type type: str
-    :param path: The path to which the output is pointing. Needs to point to a cloud path. Defaults to None.
+    :param path: The path to which the output is pointing. Needs to point to a cloud path.
     :type path: str, optional
     :param mode: The mode of the data output. Possible values are:
         'rw_mount': Read-write mount the data,
         'upload': Upload the data from the compute target,
         'direct': Pass in the URI as a string.
-        Defaults to None.
     :type mode: str, optional
-    :param description: Description of the output. Defaults to None.
+    :param description: Description of the output.
     :type description: str, optional
     :param name: The name used to register output as data or model asset.
         Name can be set without setting version.
-        Defaults to None.
     :type name: str, optional
     :param version: The version used to register output as data or model asset.
         Version can be set only when name is set.
-        Defaults to None.
     :type version: str, optional
-    :param is_control: Determine if the output is a control output. Defaults to None.
+    :param is_control: Determine if the output is a control output.
     :type is_control: bool, optional
-    :param early_available: Mark the output for early node orchestration. Defaults to None.
+    :param early_available: Mark the output for early node orchestration.
     :type early_available: bool, optional
     :param intellectual_property: Intellectual property associated with the output.
         It can be an instance of `IntellectualProperty` or a dictionary that will be used to create an instance.
-        Defaults to None.
     :type intellectual_property: Union[
-                                ~azure.ai.ml.entities._assets.intellectual_property.IntellectualProperty,
-                                dict], optional
+        ~azure.ai.ml.entities._assets.intellectual_property.IntellectualProperty,
+        dict], optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Output cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -66,23 +62,20 @@ class Output(_InputOutputBase):
             'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
             Defaults to 'uri_folder'.
         :type type: str
-        :param path: The path to which the output is pointing. Needs to point to a cloud path. Defaults to None.
+        :param path: The path to which the output is pointing. Needs to point to a cloud path.
         :type path: str, optional
         :param mode: The mode of the data output. Possible values are:
             'rw_mount': Read-write mount the data,
             'upload': Upload the data from the compute target,
             'direct': Pass in the URI as a string.
-            Defaults to None.
         :type mode: str, optional
-        :param description: Description of the output. Defaults to None.
+        :param description: Description of the output.
         :type description: str, optional
         :param name: The name used to register output as data or model asset.
             Name can be set without setting version.
-            Defaults to None.
         :type name: str, optional
         :param version: The version used to register output as data or model asset.
             Version can be set only when name is set.
-            Defaults to None.
         :type version: str, optional
         """
 
@@ -94,23 +87,20 @@ class Output(_InputOutputBase):
             'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
             Defaults to 'uri_file'.
         :type type: str
-        :param path: The path to which the output is pointing. Needs to point to a cloud path. Defaults to None.
+        :param path: The path to which the output is pointing. Needs to point to a cloud path.
         :type path: str, optional
         :param mode: The mode of the data output. Possible values are:
             'rw_mount': Read-write mount the data,
             'upload': Upload the data from the compute target,
             'direct': Pass in the URI as a string.
-            Defaults to None.
         :type mode: str, optional
-        :param description: Description of the output. Defaults to None.
+        :param description: Description of the output.
         :type description: str, optional
         :param name: The name used to register output as data or model asset.
             Name can be set without setting version.
-            Defaults to None.
         :type name: str, optional
         :param version: The version used to register output as data or model asset.
             Version can be set only when name is set.
-            Defaults to None.
         :type version: str, optional
         """
 

@@ -38,27 +38,27 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
 
     :param component: Id or instance of the parallel component/job to be run for the step
     :type component: ~azure.ai.ml.entities._component.parallel_component.parallelComponent
-    :param name: Name of the parallel, defaults to None
+    :param name: Name of the parallel
     :type name: str, optional
-    :param description: Description of the commad, defaults to None
+    :param description: Description of the commad
     :type description: str, optional
-    :param tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+    :param tags: Tag dictionary. Tags can be added, removed, and updated
     :type tags: dict[str, str], optional
-    :param properties: The job property dictionary, defaults to None
+    :param properties: The job property dictionary
     :type properties: dict[str, str], optional
-    :param display_name: Display name of the job, defaults to None
+    :param display_name: Display name of the job
     :type display_name: str, optional
-    :param retry_settings: Parallel job run failed retry, defaults to None
+    :param retry_settings: Parallel job run failed retry
     :type retry_settings: BatchRetrySettings, optional
-    :param logging_level: A string of the logging level name, defaults to None
+    :param logging_level: A string of the logging level name
     :type logging_level: str, optional
-    :param max_concurrency_per_instance: The max parallellism that each compute instance has, defaults to None
+    :param max_concurrency_per_instance: The max parallellism that each compute instance has
     :type max_concurrency_per_instance: int, optional
-    :param error_threshold: The number of item processing failures should be ignored, defaults to None
+    :param error_threshold: The number of item processing failures should be ignored
     :type error_threshold: int, optional
-    :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored, defaults to None
+    :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored
     :type mini_batch_error_threshold: int, optional
-    :param task: The parallel task, defaults to None
+    :param task: The parallel task
     :type task: ParallelTask, optional
     :param mini_batch_size: For FileDataset input, this field is the number of files
                             a user script can process in one run() call.
@@ -66,21 +66,20 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
                             the user script can process in one run() call.
                             Example values are 1024, 1024KB, 10MB, and 1GB. (optional, default value is 10 files
                             for FileDataset and 1MB for TabularDataset.)
-                            This value could be set through PipelineParameter, defaults to None
+                            This value could be set through PipelineParameter
     :type mini_batch_size: str, optional
     :param partition_keys: The keys used to partition dataset into mini-batches. If specified,
                            the data with the same key will be partitioned into the same mini-batch.
                            If both partition_keys and mini_batch_size are specified,
                            the partition keys will take effect.
                            The input(s) must be partitioned dataset(s),
-                           and the partition_keys must be a subset of the keys of every input dataset for this to work,
-                           defaults to None
+                           and the partition_keys must be a subset of the keys of every input dataset for this to work.
     :type partition_keys: List, optional
-    :param input_data: The input data, defaults to None
+    :param input_data: The input data
     :type input_data: str, optional
-    :param inputs: Inputs of the component/job, defaults to None
+    :param inputs: Inputs of the component/job
     :type inputs: dict, optional
-    :param outputs: Outputs of the component/job, defaults to None
+    :param outputs: Outputs of the component/job
     :type outputs: dict, optional
     """
 

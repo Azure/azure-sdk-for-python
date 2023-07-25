@@ -83,7 +83,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
     :type type: str
     :param component: Id or instance of the component version to be run for the step
     :type component: Component
-    :param inputs: The inputs for the node. Defaults to None.
+    :param inputs: The inputs for the node.
     :type inputs: Optional[Dict[str, Union[
         ~azure.ai.ml.entities._job.pipeline._io.PipelineInput,
         ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
@@ -94,25 +94,25 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         float,
         Enum,
         'Input']]]
-    :param outputs: Mapping of output data bindings used in the job. Defaults to None.
+    :param outputs: Mapping of output data bindings used in the job.
     :type outputs: Optional[Dict[str, Union[str, ~azure.ai.ml.entities.Output, 'Output']]]
-    :param name: The name of the node. Defaults to None.
+    :param name: The name of the node.
     :type name: Optional[str]
-    :param display_name: The display name of the node. Defaults to None.
+    :param display_name: The display name of the node.
     :type display_name: Optional[str]
-    :param description: The description of the node. Defaults to None.
+    :param description: The description of the node.
     :type description: Optional[str]
-    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: Optional[Dict]
-    :param properties: The properties of the job. Defaults to None.
+    :param properties: The properties of the job.
     :type properties: Optional[Dict]
-    :param comment: Comment of the pipeline node, which will be shown in designer canvas. Defaults to None.
+    :param comment: Comment of the pipeline node, which will be shown in designer canvas.
     :type comment: Optional[str]
-    :param compute: Compute definition containing the compute information for the step. Defaults to None.
+    :param compute: Compute definition containing the compute information for the step.
     :type compute: Optional[str]
     :param experiment_name: Name of the experiment the job will be created under,
         if None is provided, default will be set to current directory name.
-        Will be ignored as a pipeline step. Defaults to None.
+        Will be ignored as a pipeline step.
     :type experiment_name: Optional[str]
     :param kwargs: Additional keyword arguments for future compatibility.
     """

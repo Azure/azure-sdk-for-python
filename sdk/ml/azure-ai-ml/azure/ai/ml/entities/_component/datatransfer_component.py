@@ -27,11 +27,11 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
     """DataTransfer component version, used to define a data transfer component.
 
     :param task: Task type in the data transfer component. Possible values are "copy_data",
-                 "import_data", and "export_data". Defaults to None.
+                 "import_data", and "export_data".
     :type task: str, optional
-    :param inputs: Mapping of input data bindings used in the job. Defaults to None.
+    :param inputs: Mapping of input data bindings used in the job.
     :type inputs: dict, optional
-    :param outputs: Mapping of output data bindings used in the job. Defaults to None.
+    :param outputs: Mapping of output data bindings used in the job.
     :type outputs: dict, optional
     :param kwargs: Additional parameters for the data transfer component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the component cannot be successfully validated.
@@ -132,11 +132,11 @@ class DataTransferCopyComponent(DataTransferComponent):
     """DataTransfer copy component version, used to define a data transfer copy component.
 
     :param data_copy_mode: Data copy mode in the copy task.
-                           Possible values are "merge_with_overwrite" and "fail_if_conflict". Defaults to None.
+                           Possible values are "merge_with_overwrite" and "fail_if_conflict".
     :type data_copy_mode: str, optional
-    :param inputs: Mapping of input data bindings used in the job. Defaults to None.
+    :param inputs: Mapping of input data bindings used in the job.
     :type inputs: dict, optional
-    :param outputs: Mapping of output data bindings used in the job. Defaults to None.
+    :param outputs: Mapping of output data bindings used in the job.
     :type outputs: dict, optional
     :param kwargs: Additional parameters for the data transfer copy component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the component cannot be successfully validated.
@@ -228,10 +228,10 @@ class DataTransferCopyComponent(DataTransferComponent):
 class DataTransferImportComponent(DataTransferComponent):
     """DataTransfer import component version, used to define a data transfer import component.
 
-    :param source: The data source of the file system or database. Defaults to None.
+    :param source: The data source of the file system or database.
     :type source: dict, optional
     :param outputs: Mapping of output data bindings used in the job.
-                    Default value is an output port with the key "sink" and the type "mltable". Defaults to None.
+                    Default value is an output port with the key "sink" and the type "mltable".
     :type outputs: dict, optional
     :param kwargs: Additional parameters for the data transfer import component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the component cannot be successfully validated.
@@ -275,9 +275,9 @@ class DataTransferImportComponent(DataTransferComponent):
 class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too-many-instance-attributes
     """DataTransfer export component version, used to define a data transfer export component.
 
-    :param sink: The sink of external data and databases. Defaults to None.
+    :param sink: The sink of external data and databases.
     :type sink: Union[Dict, Database, FileSystem], optional
-    :param inputs: Mapping of input data bindings used in the job. Defaults to None.
+    :param inputs: Mapping of input data bindings used in the job.
     :type inputs: dict, optional
     :param kwargs: Additional parameters for the data transfer export component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the component cannot be successfully validated.

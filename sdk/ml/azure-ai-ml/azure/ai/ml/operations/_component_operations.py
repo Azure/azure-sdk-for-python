@@ -76,11 +76,11 @@ class ComponentOperations(_ScopeDependentOperations):
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: The service client for API operations.
     :type service_client: Union[
-                            ~azure.ai.ml._restclient.v2022_10_01.AzureMachineLearningWorkspaces,
-                            ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview.AzureMachineLearningWorkspaces]
+        ~azure.ai.ml._restclient.v2022_10_01.AzureMachineLearningWorkspaces,
+        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview.AzureMachineLearningWorkspaces]
     :param all_operations: The container for all available operations.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
-    :param preflight_operation: The preflight operation for deployments, defaults to None.
+    :param preflight_operation: The preflight operation for deployments.
     :type preflight_operation: Optional[~azure.ai.ml._vendor.azure_resources.operations.DeploymentsOperations]
     :param kwargs: Additional keyword arguments.
     :type kwargs: Dict
@@ -223,9 +223,9 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param name: Name of the code component.
         :type name: str
-        :param version: Version of the component, defaults to None.
+        :param version: Version of the component.
         :type version: Optional[str]
-        :param label: Label of the component, mutually exclusive with version, defaults to None.
+        :param label: Label of the component, mutually exclusive with version.
         :type label: Optional[str]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully
             identified and retrieved. Details will be provided in the error message.
@@ -336,7 +336,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param component: The component object or a mldesigner component function that generates component object
         :type component: Union[Component, types.FunctionType]
-        :param version: The component version to override. Defaults to None.
+        :param version: The component version to override.
         :type version: str
         :param skip_validation: whether to skip validation before creating/updating the component, defaults to False
         :type skip_validation: bool
@@ -477,9 +477,9 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param name: Name of the component.
         :type name: str
-        :param version: Version of the component. Defaults to None.
+        :param version: Version of the component.
         :type version: str
-        :param label: Label of the component. (mutually exclusive with version). Defaults to None.
+        :param label: Label of the component. (mutually exclusive with version).
         :type label: str
         """
         _archive_or_restore(
@@ -504,9 +504,9 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param name: Name of the component.
         :type name: str
-        :param version: Version of the component. Defaults to None.
+        :param version: Version of the component.
         :type version: str
-        :param label: Label of the component. (mutually exclusive with version). Defaults to None.
+        :param label: Label of the component. (mutually exclusive with version).
         :type label: str
         """
         _archive_or_restore(
