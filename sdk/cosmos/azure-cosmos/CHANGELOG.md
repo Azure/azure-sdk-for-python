@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.4.1 (2023-07-25)
+### 4.4.1b1 (2023-07-25)
 
 #### Features Added
 * Added ability to limit continuation token size when querying for items. See [PR 30731](https://github.com/Azure/azure-sdk-for-python/pull/30731)
