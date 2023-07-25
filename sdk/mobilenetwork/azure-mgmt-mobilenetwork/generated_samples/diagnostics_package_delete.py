@@ -14,7 +14,7 @@ from azure.mgmt.mobilenetwork import MobileNetworkManagementClient
     pip install azure-identity
     pip install azure-mgmt-mobilenetwork
 # USAGE
-    python packet_core_control_plane_update_tags.py
+    python diagnostics_package_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,17 +26,16 @@ from azure.mgmt.mobilenetwork import MobileNetworkManagementClient
 def main():
     client = MobileNetworkManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.packet_core_control_planes.update_tags(
+    client.diagnostics_packages.begin_delete(
         resource_group_name="rg1",
         packet_core_control_plane_name="TestPacketCoreCP",
-        parameters={"tags": {"tag1": "value1", "tag2": "value2"}},
-    )
-    print(response)
+        diagnostics_package_name="dp1",
+    ).result()
 
 
-# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2022-11-01/examples/PacketCoreControlPlaneUpdateTags.json
+# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2023-06-01/examples/DiagnosticsPackageDelete.json
 if __name__ == "__main__":
     main()
