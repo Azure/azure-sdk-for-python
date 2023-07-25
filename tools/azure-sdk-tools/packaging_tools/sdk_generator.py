@@ -132,8 +132,8 @@ def extract_version_info(config: Dict[str, Any]) -> str:
 def if_need_regenerate(meta: Dict[str, Any]) -> bool:
     with open(str(Path("../azure-sdk-for-python", CONFIG_FILE)), "r") as file_in:
         config = json.load(file_in)
-    recorded_info = extract_version_info(meta)
-    current_info = extract_version_info(config)
+    current_info = config["meta"]["autorest_options"]["version"] + "".join(config["meta"]["autorest_options"]["use"])
+    recorded_info = meta["autorest"] + "".join(meta["use"])
     return recorded_info != current_info
 
 
