@@ -27,6 +27,7 @@ from .generate_utils import (
 
 _LOGGER = logging.getLogger(__name__)
 
+
 # return relative path like: network/azure-mgmt-network
 def extract_sdk_folder(python_md: List[str]) -> str:
     pattern = ["$(python-sdks-folder)", "azure-mgmt-"]
@@ -35,11 +36,16 @@ def extract_sdk_folder(python_md: List[str]) -> str:
             return re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
     return ""
 
+
 @return_origin_path
 def multiapi_combiner(sdk_code_path: str):
     os.chdir(sdk_code_path)
-    check_call(f"python {str(Path('../../../tools/azure-sdk-tools/packaging_tools/multiapi_combiner.py'))} --pkg-path={os.getcwd()}", shell=True)
+    check_call(
+        f"python {str(Path('../../../tools/azure-sdk-tools/packaging_tools/multiapi_combiner.py'))} --pkg-path={os.getcwd()}",
+        shell=True,
+    )
     check_call("pip install -e .", shell=True)
+
 
 def del_outdated_folder(readme: str):
     python_readme = Path(readme).parent / "readme.python.md"
@@ -63,6 +69,7 @@ def del_outdated_folder(readme: str):
     else:
         _LOGGER.info(f"do not find valid sdk_folder in {python_readme}")
 
+
 # look for fines in tag like:
 # ``` yaml $(tag) == 'package-2023-05-01-preview-only'
 # input-file:
@@ -78,27 +85,31 @@ def get_related_swagger(readme_content: List[str], tag: str) -> List[str]:
                 if "```" in readme_content[idx]:
                     break
                 if ".json" in readme_content[idx]:
-                    result.append(readme_content[idx].strip('\n -'))
+                    result.append(readme_content[idx].strip("\n -"))
                 idx += 1
             break
-    return result            
+    return result
+
 
 def get_last_commit_info(files: List[str]) -> str:
-    result = [getoutput(f'git log --pretty="format:%ai%H" {f}').split('\n') for f in files]
+    result = [getoutput(f'git log --pretty="format:%ai%H" {f}').split("\n") for f in files]
     result.sort()
     return result[-1]
 
+
 # input_readme: "specification/paloaltonetworks/resource-manager/readme.md"
-# source: content of readme.python.md 
+# source: content of readme.python.md
 # work directory is in root folder of azure-rest-api-specs
 @return_origin_path
-def choose_tag_and_update_meta(idx: int, source: List[str], target:List[str], input_readme: str, meta: Dict[str, Any], need_regenerate: bool)->int:
+def choose_tag_and_update_meta(
+    idx: int, source: List[str], target: List[str], input_readme: str, meta: Dict[str, Any], need_regenerate: bool
+) -> int:
     os.chdir(str(Path(input_readme).parent))
     with open("readme.md", "r") as file_in:
         readme_content = file_in.readlines()
-    
+
     while idx < len(source):
-        tag = source[idx].split('tag:')[-1].strip('\n ')
+        tag = source[idx].split("tag:")[-1].strip("\n ")
         related_files = get_related_swagger(readme_content, tag)
         commit_info = get_last_commit_info(related_files)
         recorded_info = meta.get(tag, "")
@@ -111,10 +122,12 @@ def choose_tag_and_update_meta(idx: int, source: List[str], target:List[str], in
             break
     return idx
 
+
 def extract_version_info(config: Dict[str, Any]) -> str:
     autorest_version = config.get("autorest", "")
     autorest_modelerfour_version = config.get("use", [])
     return autorest_version + "".join(autorest_modelerfour_version)
+
 
 def if_need_regenerate(meta: Dict[str, Any]) -> bool:
     with open(str(Path("../azure-sdk-for-python", CONFIG_FILE)), "r") as file_in:
@@ -133,13 +146,13 @@ def update_metadata_for_multiapi_package(spec_folder: str, input_readme: str):
     if not python_readme.exists():
         _LOGGER.info(f"do not find python configuration: {python_readme}")
         return
-    
+
     with open(python_readme, "r") as file_in:
         python_md_content = file_in.readlines()
     is_multiapi = "multiapi: true" in ("".join(python_md_content))
     if not is_multiapi:
         return
-    
+
     sdk_folder = extract_sdk_folder(python_md_content)
     if not sdk_folder:
         _LOGGER.warning("don't find valid sdk folder")
@@ -148,25 +161,28 @@ def update_metadata_for_multiapi_package(spec_folder: str, input_readme: str):
     if not meta_path.exists():
         _LOGGER.warning(f"don't find meta file: {meta_path}")
         return
-    
+
     with open(meta_path, "r") as file_in:
         meta = json.load(file_in)
-    
+
     need_regenerate = if_need_regenerate(meta)
 
     after_handle = []
     for idx in range(len(python_md_content)):
         after_handle.append(python_md_content[idx])
         if "batch:" in python_md_content[idx]:
-            line_number = choose_tag_and_update_meta(idx+1, python_md_content, after_handle, input_readme, meta, need_regenerate)
+            line_number = choose_tag_and_update_meta(
+                idx + 1, python_md_content, after_handle, input_readme, meta, need_regenerate
+            )
             after_handle.extend(python_md_content[line_number:])
             break
-    
+
     with open(python_readme, "w") as file_out:
         file_out.writelines(after_handle)
 
     with open(meta_path, "r") as file_out:
         json.dump(meta, file_out, indent=2)
+
 
 def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
