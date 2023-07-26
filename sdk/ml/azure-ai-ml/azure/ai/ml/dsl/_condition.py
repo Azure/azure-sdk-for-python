@@ -40,9 +40,9 @@ def condition(
         The value could be a boolean type control output, a node with exactly one boolean type output
         or a pipeline expression.
     :type condition: Union[str, bool, InputOutputBase, BaseNode, PipelineExpression]
-    :param true_block: Block to be executed if condition resolved result is true.
+    :keyword true_block: Block to be executed if condition resolved result is true.
     :type true_block: BaseNode
-    :param false_block: Block to be executed if condition resolved result is false.
+    :keyword false_block: Block to be executed if condition resolved result is false.
     :type false_block:  BaseNode
     :return: The condition node.
     :rtype: ConditionNode

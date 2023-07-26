@@ -203,7 +203,10 @@ def test_device_code_credential():
 
     callback = Mock()
     credential = DeviceCodeCredential(
-        client_id=client_id, prompt_callback=callback, transport=transport, disable_instance_discovery=True,
+        client_id=client_id,
+        prompt_callback=callback,
+        transport=transport,
+        disable_instance_discovery=True,
     )
 
     now = datetime.datetime.utcnow()
@@ -259,7 +262,11 @@ def test_tenant_id():
 
     callback = Mock()
     credential = DeviceCodeCredential(
-        client_id=client_id, prompt_callback=callback, transport=transport, disable_instance_discovery=True, additionally_allowed_tenants=['*']
+        client_id=client_id,
+        prompt_callback=callback,
+        transport=transport,
+        disable_instance_discovery=True,
+        additionally_allowed_tenants=["*"],
     )
 
     now = datetime.datetime.utcnow()

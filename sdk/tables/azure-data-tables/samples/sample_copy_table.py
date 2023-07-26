@@ -40,15 +40,19 @@ class CopyTableSamples(object):
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.table_connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
+        self.table_connection_string = (
+            "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+                self.account_name, self.access_key, self.endpoint_suffix
+            )
         )
         self.copy_to_blob_table_name = "copytoblobtablename" + uuid4().hex
         self.copy_to_table_table_name = "copytotabletablename" + uuid4().hex
         self.blob_account_name = os.getenv("STORAGE_ACCOUNT_NAME")
         self.blob_account_key = os.getenv("STORAGE_ACCOUNT_KEY")
-        self.blob_connection_string = "DefDefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix=core.windows.net".format(
-            self.blob_account_name, self.blob_account_key
+        self.blob_connection_string = (
+            "DefDefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix=core.windows.net".format(
+                self.blob_account_name, self.blob_account_key
+            )
         )
         self.blob_service_client = BlobServiceClient.from_connection_string(self.blob_connection_string)
         self.entity = {
@@ -59,7 +63,7 @@ class CopyTableSamples(object):
             "last_updated": datetime.today(),
             "product_id": uuid4(),
             "inventory_count": 42,
-            "barcode": b"135aefg8oj0ld58" # cspell:disable-line
+            "barcode": b"135aefg8oj0ld58",  # cspell:disable-line
         }
 
     def copy_table_from_table_to_blob(self):
@@ -90,7 +94,9 @@ class CopyTableSamples(object):
             # Note: when entities size is too big, may need to do copy by chunk
             blob_list = self.container_client.list_blobs()
             # Upload entities to a table
-            table_service_client = TableServiceClient.from_connection_string(conn_str=self.table_connection_string, table_name=self.copy_to_table_table_name)
+            table_service_client = TableServiceClient.from_connection_string(
+                conn_str=self.table_connection_string, table_name=self.copy_to_table_table_name
+            )
             self.table_client = table_service_client.get_table_client(self.copy_to_table_table_name)
             self.table_client.create_table()
             for blob in blob_list:
@@ -107,7 +113,9 @@ class CopyTableSamples(object):
             self._tear_down()
 
     def _setup_table(self):
-        table_service_client = TableServiceClient.from_connection_string(conn_str=self.table_connection_string, table_name=self.copy_to_blob_table_name)
+        table_service_client = TableServiceClient.from_connection_string(
+            conn_str=self.table_connection_string, table_name=self.copy_to_blob_table_name
+        )
         self.table_client = table_service_client.get_table_client(self.copy_to_blob_table_name)
         self.table_client.create_table()
         for i in range(10):
@@ -118,12 +126,12 @@ class CopyTableSamples(object):
         self.container_client = self.blob_service_client.create_container(self.copy_to_table_table_name)
         entity = copy.deepcopy(self.entity)
         # Convert type datetime, bytes, UUID values to string as they're not JSON serializable
-        entity["last_updated"] = entity["last_updated"].isoformat() # type: ignore[attr-defined]
-        entity["product_id"] = entity["product_id"].hex # type: ignore[attr-defined]
-        entity["barcode"] = entity["barcode"].decode("utf-8") # type: ignore[attr-defined]
+        entity["last_updated"] = entity["last_updated"].isoformat()  # type: ignore[attr-defined]
+        entity["product_id"] = entity["product_id"].hex  # type: ignore[attr-defined]
+        entity["barcode"] = entity["barcode"].decode("utf-8")  # type: ignore[attr-defined]
         for i in range(10):
             entity["RowKey"] = str(i)
-            blob_name = entity["PartitionKey"] + entity["RowKey"] # type: ignore[operator]
+            blob_name = entity["PartitionKey"] + entity["RowKey"]  # type: ignore[operator]
             blob_client = self.blob_service_client.get_blob_client(self.copy_to_table_table_name, blob_name)
             blob_client.upload_blob(json.dumps(entity))
 

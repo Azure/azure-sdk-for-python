@@ -22,7 +22,7 @@ class TriggerSchema(metaclass=PatchedSchemaMeta):
     time_zone = fields.Str()
 
     @post_dump(pass_original=True)
-    def resolve_time_zone(self, data, original_data, **kwargs):  # pylint: disable=no-self-use, unused-argument
+    def resolve_time_zone(self, data, original_data, **kwargs):  # pylint: disable= unused-argument
         """
         Auto-convert will get string like "TimeZone.UTC" for TimeZone enum object,
         while the valid result should be "UTC"
@@ -37,7 +37,7 @@ class CronTriggerSchema(TriggerSchema):
     expression = fields.Str(required=True)
 
     @post_load
-    def make(self, data, **kwargs) -> "CronTrigger":  # pylint: disable=no-self-use, unused-argument
+    def make(self, data, **kwargs) -> "CronTrigger":  # pylint: disable= unused-argument
         from azure.ai.ml.entities import CronTrigger
 
         data.pop("type")
@@ -61,7 +61,7 @@ class RecurrencePatternSchema(metaclass=PatchedSchemaMeta):
     )
 
     @post_load
-    def make(self, data, **kwargs) -> "RecurrencePattern":  # pylint: disable=no-self-use, unused-argument
+    def make(self, data, **kwargs) -> "RecurrencePattern":  # pylint: disable= unused-argument
         from azure.ai.ml.entities import RecurrencePattern
 
         return RecurrencePattern(**data)
@@ -74,7 +74,7 @@ class RecurrenceTriggerSchema(TriggerSchema):
     schedule = NestedField(RecurrencePatternSchema())
 
     @post_load
-    def make(self, data, **kwargs) -> "RecurrenceTrigger":  # pylint: disable=no-self-use, unused-argument
+    def make(self, data, **kwargs) -> "RecurrenceTrigger":  # pylint: disable= unused-argument
         from azure.ai.ml.entities import RecurrenceTrigger
 
         data.pop("type")

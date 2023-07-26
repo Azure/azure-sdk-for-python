@@ -19,13 +19,10 @@ from helpers import (
     id_token_claims,
     mock_response,
     msal_validating_transport,
-    Request
+    new_msal_validating_transport,
+    Request,
 )
-
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+from unittest.mock import Mock, patch
 
 
 def test_tenant_id_validation():
@@ -52,7 +49,7 @@ def test_no_scopes():
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
-    transport = msal_validating_transport(
+    transport = new_msal_validating_transport(
         requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token="**"))]
     )
 
@@ -66,7 +63,7 @@ def test_policies_configurable():
 
 
 def test_user_agent():
-    transport = msal_validating_transport(
+    transport = new_msal_validating_transport(
         requests=[Request(required_headers={"User-Agent": USER_AGENT})],
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
     )
@@ -82,7 +79,7 @@ def test_client_secret_credential():
     tenant_id = "fake-tenant-id"
     access_token = "***"
 
-    transport = msal_validating_transport(
+    transport = new_msal_validating_transport(
         endpoint="https://localhost/" + tenant_id,
         requests=[Request(url_substring=tenant_id, required_data={"client_id": client_id, "client_secret": secret})],
         responses=[mock_response(json_payload=build_aad_response(access_token=access_token))],
@@ -170,10 +167,10 @@ def test_cache_multiple_clients():
 
     access_token_a = "token a"
     access_token_b = "not " + access_token_a
-    transport_a = msal_validating_transport(
+    transport_a = new_msal_validating_transport(
         requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_a))]
     )
-    transport_b = msal_validating_transport(
+    transport_b = new_msal_validating_transport(
         requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_b))]
     )
 
@@ -202,12 +199,12 @@ def test_cache_multiple_clients():
     scope = "scope"
     token_a = credential_a.get_token(scope)
     assert token_a.token == access_token_a
-    assert transport_a.send.call_count == 3  # two MSAL discovery requests, one token request
+    assert transport_a.send.call_count == 2  # two MSAL discovery requests, one token request
 
     # B should get a different token for the same scope
     token_b = credential_b.get_token(scope)
     assert token_b.token == access_token_b
-    assert transport_b.send.call_count == 3
+    assert transport_b.send.call_count == 2
 
     assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2
 
@@ -231,7 +228,7 @@ def test_multitenant_authentication():
         return mock_response(json_payload=build_aad_response(access_token=token))
 
     credential = ClientSecretCredential(
-        first_tenant, "client-id", "secret", transport=Mock(send=send), additionally_allowed_tenants=['*']
+        first_tenant, "client-id", "secret", transport=Mock(send=send), additionally_allowed_tenants=["*"]
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -250,7 +247,10 @@ def test_multitenant_authentication():
 def test_live_multitenant_authentication(live_service_principal):
     # first create a credential with a non-existent tenant
     credential = ClientSecretCredential(
-        "...", live_service_principal["client_id"], live_service_principal["client_secret"], additionally_allowed_tenants=['*']
+        "...",
+        live_service_principal["client_id"],
+        live_service_principal["client_secret"],
+        additionally_allowed_tenants=["*"],
     )
     # then get a valid token for an actual tenant
     token = credential.get_token("https://vault.azure.net/.default", tenant_id=live_service_principal["tenant_id"])

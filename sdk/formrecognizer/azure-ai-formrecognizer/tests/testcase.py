@@ -41,7 +41,6 @@ class FakeTokenCredential(object):
 class FormRecognizerTest(AzureRecordedTestCase):
 
     testing_container_sas_url = os.getenv("FORMRECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL", "https://blob_sas_url")
-    annotations_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "annotations.jpg")
     barcode_url_tif = _get_blob_url(testing_container_sas_url, "testingdata", "barcode2.tif")
     formula_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "formula4.jpg")
     receipt_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "contoso-allinone.jpg")
@@ -555,7 +554,6 @@ class FormRecognizerTest(AzureRecordedTestCase):
             self.assertDocumentKeyValueElementTransformCorrect(key_value.key, expected.key)
             self.assertDocumentKeyValueElementTransformCorrect(key_value.value, expected.value)
             assert key_value.confidence == expected.confidence
-            assert key_value.common_name == expected.common_name
 
     def assertDocumentLanguagesTransformCorrect(self, transformed_languages, raw_languages, **kwargs):
         if transformed_languages == [] and not raw_languages:

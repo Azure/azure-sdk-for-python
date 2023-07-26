@@ -1685,7 +1685,7 @@ class ErrorDetails(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: Error code.
-    :vartype code: int
+    :vartype code: str
     :ivar message: Error message indicating why the operation failed.
     :vartype message: str
     """
@@ -1696,7 +1696,7 @@ class ErrorDetails(_serialization.Model):
     }
 
     _attribute_map = {
-        "code": {"key": "code", "type": "int"},
+        "code": {"key": "code", "type": "str"},
         "message": {"key": "message", "type": "str"},
     }
 
@@ -1713,7 +1713,7 @@ class ErrorDetailsWithNestedDetails(ErrorDetails):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: Error code.
-    :vartype code: int
+    :vartype code: str
     :ivar message: Error message indicating why the operation failed.
     :vartype message: str
     :ivar details: The additional details of the error.
@@ -1727,7 +1727,7 @@ class ErrorDetailsWithNestedDetails(ErrorDetails):
     }
 
     _attribute_map = {
-        "code": {"key": "code", "type": "int"},
+        "code": {"key": "code", "type": "str"},
         "message": {"key": "message", "type": "str"},
         "details": {"key": "details", "type": "[ErrorDetailsWithNestedDetails]"},
     }
@@ -5437,7 +5437,6 @@ class View(CostManagementProxyResource):  # pylint: disable=too-many-instance-at
         "type": {"readonly": True},
         "created_on": {"readonly": True},
         "modified_on": {"readonly": True},
-        "date_range": {"readonly": True},
         "currency": {"readonly": True},
     }
 
@@ -5470,6 +5469,7 @@ class View(CostManagementProxyResource):  # pylint: disable=too-many-instance-at
         e_tag: Optional[str] = None,
         display_name: Optional[str] = None,
         scope: Optional[str] = None,
+        date_range: Optional[str] = None,
         chart: Optional[Union[str, "_models.ChartType"]] = None,
         accumulated: Optional[Union[str, "_models.AccumulatedType"]] = None,
         metric: Optional[Union[str, "_models.MetricType"]] = None,
@@ -5506,6 +5506,8 @@ class View(CostManagementProxyResource):  # pylint: disable=too-many-instance-at
          '/providers/Microsoft.CostManagement/externalSubscriptions/{externalSubscriptionName}' for
          ExternalSubscription scope.
         :paramtype scope: str
+        :keyword date_range: Date range of the current view.
+        :paramtype date_range: str
         :keyword chart: Chart type of the main view in Cost Analysis. Required. Known values are:
          "Area", "Line", "StackedColumn", "GroupedColumn", and "Table".
         :paramtype chart: str or ~azure.mgmt.costmanagement.models.ChartType
@@ -5538,7 +5540,7 @@ class View(CostManagementProxyResource):  # pylint: disable=too-many-instance-at
         self.scope = scope
         self.created_on = None
         self.modified_on = None
-        self.date_range = None
+        self.date_range = date_range
         self.currency = None
         self.chart = chart
         self.accumulated = accumulated
