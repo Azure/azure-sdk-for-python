@@ -7,6 +7,7 @@
 from devtools_testutils import AzureRecordedTestCase
 from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting, FeatureFlagConfigurationSetting
 from azure.appconfiguration.provider import SettingSelector, load
+import os
 
 
 class AppConfigTestCase(AzureRecordedTestCase):
@@ -34,13 +35,17 @@ class AppConfigTestCase(AzureRecordedTestCase):
         setup_configs(client)
         return load(connection_string=appconfiguration_connection_string, trim_prefixes=trim_prefixes, selects=selects)
 
-
 def setup_configs(client):
-    client.set_configuration_setting(create_config_setting("message", "\0", "hi"))
-    client.set_configuration_setting(create_config_setting("message", "dev", "test"))
-    client.set_configuration_setting(create_config_setting("my_json", "\0", '{"key": "value"}', "application/json"))
-    client.set_configuration_setting(create_config_setting("test.trimmed", "\0", "key"))
-    client.set_configuration_setting(
+    for config in get_configs():
+        client.set_configuration_setting(config)
+
+def get_configs():
+    configs = []
+    configs.append(create_config_setting("message", "\0", "hi"))
+    configs.append(create_config_setting("message", "dev", "test"))
+    configs.append(create_config_setting("my_json", "\0", '{"key": "value"}', "application/json"))
+    configs.append(create_config_setting("test.trimmed", "\0", "key"))
+    configs.append(
         create_config_setting(
             ".appconfig.featureflag/Alpha",
             "\0",
@@ -48,7 +53,8 @@ def setup_configs(client):
             "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
         )
     )
-
+    configs.append(create_config_setting("secret", "prod", "{\"uri\":\"" + os.getenv("KEYVAULT_SECRET_URL") + "/secrets/TestSecret\"}", "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"))
+    return configs
 
 def create_config_setting(key, label, value, content_type="text/plain"):
     return ConfigurationSetting(
