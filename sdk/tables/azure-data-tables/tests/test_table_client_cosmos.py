@@ -12,14 +12,14 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.data.tables import(
+from azure.data.tables import (
     TableServiceClient,
     TableClient,
     TableTransactionError,
     AccountSasPermissions,
     ResourceTypes,
     generate_account_sas,
-    __version__ as  VERSION,
+    __version__ as VERSION,
 )
 from azure.data.tables._constants import DEFAULT_COSMOS_ENDPOINT_SUFFIX
 from azure.data.tables._error import _validate_cosmos_tablename
@@ -181,8 +181,8 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             batch = []
             batch.append(("upsert", {"PartitionKey": "A", "RowKey": "B"}))
             client.submit_transaction(batch)
-        assert error.value.error_code == 'ResourceNotFound'
-    
+        assert error.value.error_code == "ResourceNotFound"
+
     @cosmos_decorator
     @recorded_by_proxy
     def test_client_with_sas_token(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -195,39 +195,39 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             permission=AccountSasPermissions.from_string("rwdlacu"),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        
+
         with TableServiceClient(base_url, credential=AzureSasCredential(sas_token)) as client:
             client.create_table(table_name)
             name_filter = "TableName eq '{}'".format(table_name)
             result = client.query_tables(name_filter)
             assert len(list(result)) == 1
-        
+
         with TableClient(base_url, table_name, credential=AzureSasCredential(sas_token)) as client:
             entities = client.query_entities(
-                query_filter='PartitionKey eq @pk',
-                parameters={'pk': 'dummy-pk'},
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
             )
             for e in entities:
                 pass
-        
+
         with TableClient.from_table_url(f"{base_url}/{table_name}", credential=AzureSasCredential(sas_token)) as client:
             entities = client.query_entities(
-                query_filter='PartitionKey eq @pk',
-                parameters={'pk': 'dummy-pk'},
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
             )
             for e in entities:
                 pass
-        
+
         sas_url = f"{base_url}/{table_name}?{sas_token}"
         with TableClient.from_table_url(sas_url) as client:
             entities = client.query_entities(
-                query_filter='PartitionKey eq @pk',
-                parameters={'pk': 'dummy-pk'},
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
             )
             for e in entities:
                 pass
             client.delete_table()
-        
+
         with pytest.raises(ValueError) as ex:
             client = TableClient.from_table_url(sas_url, credential=AzureSasCredential(sas_token))
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."

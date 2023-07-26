@@ -256,7 +256,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             async for e in entities:
                 pass
             await client.delete_table()
-        
+
         with pytest.raises(ValueError) as ex:
             client = TableClient.from_table_url(sas_url, credential=AzureSasCredential(sas_token))
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
