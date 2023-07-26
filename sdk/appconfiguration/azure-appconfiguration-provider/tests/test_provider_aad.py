@@ -11,7 +11,6 @@ from testcase import AppConfigTestCase
 
 
 class TestAppConfigurationProvider(AppConfigTestCase):
-
     # method: provider_creation_aad
     @recorded_by_proxy
     @app_config_decorator_aad

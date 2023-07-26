@@ -45,10 +45,11 @@ def get_credential(authority, **kwargs):
             tenant_id=os.environ.get("APPCONFIGURATION_TENANT_ID"),
             client_id=os.environ.get("APPCONFIGURATION_CLIENT_ID"),
             client_secret=os.environ.get("APPCONFIGURATION_CLIENT_SECRET"),
-            authority=authority)
+            authority=authority,
+        )
     return ClientSecretCredential(
         tenant_id=os.environ.get("APPCONFIGURATION_TENANT_ID"),
         client_id=os.environ.get("APPCONFIGURATION_CLIENT_ID"),
         client_secret=os.environ.get("APPCONFIGURATION_CLIENT_SECRET"),
-        authority=authority
+        authority=authority,
     )

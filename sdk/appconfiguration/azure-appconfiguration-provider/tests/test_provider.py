@@ -10,7 +10,6 @@ from testcase import AppConfigTestCase
 
 
 class TestAppConfigurationProvider(AppConfigTestCase):
-
     # method: provider_creation
     @recorded_by_proxy
     @app_config_decorator

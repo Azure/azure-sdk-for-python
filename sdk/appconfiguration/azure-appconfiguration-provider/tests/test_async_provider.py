@@ -28,9 +28,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @recorded_by_proxy_async
     async def test_provider_trim_prefixes(self, appconfiguration_connection_string):
         trimmed = {"test."}
-        async with await self.create_client(
-            appconfiguration_connection_string, trim_prefixes=trimmed
-        ) as client:
+        async with await self.create_client(appconfiguration_connection_string, trim_prefixes=trimmed) as client:
             assert client["message"] == "hi"
             assert client["my_json"]["key"] == "value"
             assert client["trimmed"] == "key"
