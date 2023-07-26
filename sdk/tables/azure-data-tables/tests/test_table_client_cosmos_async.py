@@ -173,7 +173,7 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     @recorded_by_proxy_async
     async def test_client_with_sas_token(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        base_url = self.account_url(tables_cosmos_account_name, "table")
+        base_url = self.account_url(tables_cosmos_account_name, "cosmos")
         table_name = self.get_resource_name("mytable")
         sas_token = self.generate_sas(
             generate_account_sas,
@@ -184,21 +184,39 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         )
         
         async with TableServiceClient(base_url, credential=AzureSasCredential(sas_token)) as client:
-            with pytest.raises(ClientAuthenticationError):
-                await client.create_table(table_name)
+            await client.create_table(table_name)
+            name_filter = "TableName eq '{}'".format(table_name)
+            count = 0
+            result = client.query_tables(name_filter)
+            async for table in result:
+                count += 1
+            assert count == 1
         
         async with TableClient(base_url, table_name, credential=AzureSasCredential(sas_token)) as client:
-            with pytest.raises(ClientAuthenticationError):
-                await client.create_table()
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            async for e in entities:
+                pass
         
         async with TableClient.from_table_url(f"{base_url}/{table_name}", credential=AzureSasCredential(sas_token)) as client:
-            with pytest.raises(ClientAuthenticationError):
-                await client.create_table()
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            async for e in entities:
+                pass
         
         sas_url = f"{base_url}/{table_name}?{sas_token}"
         async with TableClient.from_table_url(sas_url) as client:
-            with pytest.raises(ClientAuthenticationError):
-                await client.create_table()
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            async for e in entities:
+                pass
+            await client.delete_table()
         
         with pytest.raises(ValueError) as ex:
             client = TableClient.from_table_url(sas_url, credential=AzureSasCredential(sas_token))

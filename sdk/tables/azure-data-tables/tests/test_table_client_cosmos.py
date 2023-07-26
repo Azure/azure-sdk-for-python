@@ -174,7 +174,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
     @recorded_by_proxy
     def test_client_with_sas_token(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        base_url = self.account_url(tables_cosmos_account_name, "table")
+        base_url = self.account_url(tables_cosmos_account_name, "cosmos")
         table_name = self.get_resource_name("mytable")
         sas_token = self.generate_sas(
             generate_account_sas,
@@ -185,21 +185,36 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
         )
         
         with TableServiceClient(base_url, credential=AzureSasCredential(sas_token)) as client:
-            with pytest.raises(ClientAuthenticationError):
-                client.create_table(table_name)
+            client.create_table(table_name)
+            name_filter = "TableName eq '{}'".format(table_name)
+            result = client.query_tables(name_filter)
+            assert len(list(result)) == 1
         
         with TableClient(base_url, table_name, credential=AzureSasCredential(sas_token)) as client:
-            with pytest.raises(ClientAuthenticationError):
-                client.create_table()
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            for e in entities:
+                pass
         
         with TableClient.from_table_url(f"{base_url}/{table_name}", credential=AzureSasCredential(sas_token)) as client:
-            with pytest.raises(ClientAuthenticationError):
-                client.create_table()
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            for e in entities:
+                pass
         
         sas_url = f"{base_url}/{table_name}?{sas_token}"
         with TableClient.from_table_url(sas_url) as client:
-            with pytest.raises(ClientAuthenticationError):
-                client.create_table()
+            entities = client.query_entities(
+                query_filter='PartitionKey eq @pk',
+                parameters={'pk': 'dummy-pk'},
+            )
+            for e in entities:
+                pass
+            client.delete_table()
         
         with pytest.raises(ValueError) as ex:
             client = TableClient.from_table_url(sas_url, credential=AzureSasCredential(sas_token))
