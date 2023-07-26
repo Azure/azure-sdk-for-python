@@ -91,7 +91,7 @@ class RecordDiagnostics(object):
         raise AttributeError(name)
 
 
-def __getattr__(self, name):
+def __getattr__(name):
     warnings.warn("The `diagnostics.py` file is deprecated and will be removed in the future. For logging " +
                   "diagnostics information for the SDK, please use our CosmosHttpLoggingPolicy. For more " +
                   "information on this, please see our README.",
