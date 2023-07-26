@@ -839,6 +839,7 @@ def test_within_dac_error():
     with patch("azure.identity._credentials.silent.PublicClientApplication") as PublicClientApplication:
         with pytest.raises(CredentialUnavailableError):  # (cache is empty)
             credential.get_token("scope")
+    within_dac.set(False)
 
 
 def test_claims_challenge():
