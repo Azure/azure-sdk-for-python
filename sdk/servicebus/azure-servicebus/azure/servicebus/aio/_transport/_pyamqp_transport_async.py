@@ -130,7 +130,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :param ~pyamqp.message.Message message: The message to send.
         :param int timeout: Timeout time.
         :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-        :param any logger: Logger.
+        :param logging.Logger logger: Logger.
         """
         # pylint: disable=protected-access
         await sender._open()

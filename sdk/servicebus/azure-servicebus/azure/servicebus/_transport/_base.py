@@ -168,7 +168,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         :type message: ~azure.servicebus.ServiceBusMessage or ~azure.servicebus.ServiceBusMessageBatch
         :param int timeout: Timeout time.
         :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-        :param any logger: Logger.
+        :param logging.Logger logger: Logger.
         """
 
     @staticmethod
@@ -251,7 +251,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def get_current_time(handler):
         """
         Gets the current time.
-        :param AQMPClient handler: The handler.
+        :param AMQPClient handler: The handler.
         """
 
     @staticmethod

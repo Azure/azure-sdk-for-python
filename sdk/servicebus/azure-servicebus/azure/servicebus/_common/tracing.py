@@ -140,7 +140,7 @@ def receive_trace_context_manager(
     :param links: A list of links to include in the tracing span.
     :type links: list[Link] or None
     :param start_time: The time that the receive operation started.
-    :type start_time: int or none
+    :type start_time: int or None
     :return: An iterator that yields the tracing span.
     :rtype: iterator[None]
     """

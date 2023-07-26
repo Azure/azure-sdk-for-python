@@ -261,8 +261,8 @@ class ServiceBusMessage(
         """DEPRECATED: Set the underlying Message.
         This is deprecated and will be removed in a later release.
 
-        :param value: The uamqp.Message or LegacyMessage to use as the underlying message.
-        :type value: uamqp.Message or LegacyMessage
+        :param value: The uamqp.Message to use as the underlying message.
+        :type value: uamqp.Message
         """
         warnings.warn(
             "The `message` property is deprecated and will be removed in future versions.",

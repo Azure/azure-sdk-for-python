@@ -626,7 +626,7 @@ try:
         ) -> None:  # pylint: disable=unused-argument
             """
             Add ServiceBusMessage to the data body of the BatchMessage.
-            :param ~azure.servicebus.ServiceBusMessagebatch sb_message_batch: ServiceBusMessageBatch to add data to.
+            :param ~azure.servicebus.ServiceBusMessageBatch sb_message_batch: ServiceBusMessageBatch to add data to.
             :param ~azure.servicebus.ServiceBusMessage outgoing_sb_message: Transformed ServiceBusMessage for sending.
             :rtype: None
             """

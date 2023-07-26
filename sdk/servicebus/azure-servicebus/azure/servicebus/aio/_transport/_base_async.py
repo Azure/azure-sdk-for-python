@@ -146,7 +146,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         :param Message message: The message to send.
         :param int timeout: Timeout time.
         :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-        :param any logger: Logger.
+        :param logging.Logger logger: Logger.
         """
 
     @staticmethod
