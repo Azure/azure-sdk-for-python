@@ -286,8 +286,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     print(args.config)
-    config = yaml.safe_load(args.config)
-    print(config)
+
+    json_config = json.loads(args.config)
+    print(json_config[0].name)
 
 
     # output_source_location = create_combined_sdist(
