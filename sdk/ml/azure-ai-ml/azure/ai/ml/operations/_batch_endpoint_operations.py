@@ -283,7 +283,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         batch_job = BatchJobSchema(context=context).load(data={})  # pylint: disable=no-member
         # update output datastore to arm id if needed
         # TODO: Unify datastore name -> arm id logic, TASK: 1104172
-        json = {}
+        request = {}
         if (
             batch_job.output_dataset
             and batch_job.output_dataset.datastore_id
@@ -292,8 +292,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             v2_dataset_dictionary = convert_v1_dataset_to_v2(batch_job.output_dataset, batch_job.output_file_name)
             batch_job.output_dataset = None
             batch_job.output_file_name = None
-            json=BatchJobResource(properties=batch_job).serialize()
-            json['properties']['outputData']= v2_dataset_dictionary
+            request = BatchJobResource(properties=batch_job).serialize()
+            request["properties"]["outputData"] = v2_dataset_dictionary
 
         endpoint = self._batch_operation.get(
             resource_group_name=self._resource_group_name,
@@ -313,7 +313,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         response = self._requests_pipeline.post(
             endpoint.properties.scoring_uri,
-            json=json,
+            json=request,
             headers=headers,
         )
         validate_response(response)

@@ -211,8 +211,9 @@ def validate_scoring_script(deployment):
             no_personal_data_message="Failed to open scoring script.",
         ) from err
 
+
 def convert_v1_dataset_to_v2(output_data_set: DataVersion, file_name: str) -> Dict[str, Any]:
-    v2_dataset=  UriFileJobOutput(
-        uri= f"azureml://datastores/{output_data_set.datastore_id}/paths/{output_data_set.path}/{file_name}"
+    v2_dataset = UriFileJobOutput(
+        uri=f"azureml://datastores/{output_data_set.datastore_id}/paths/{output_data_set.path}/{file_name}"
     ).serialize()
-    return {"output_name" : v2_dataset}
+    return {"output_name": v2_dataset}
