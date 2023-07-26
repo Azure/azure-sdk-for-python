@@ -1,5 +1,15 @@
 # Release History
 
+## 1.9.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.9.0 (2023-07-25)
 ### Features Added
 - Added support to enable gpu access (local_enable_gpu) for local deployment.
