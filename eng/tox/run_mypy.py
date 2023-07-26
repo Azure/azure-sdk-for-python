@@ -97,6 +97,7 @@ if __name__ == "__main__":
     print(f"the system BUILD id is {os.getenv('SYSTEM_BUILDID')}")
     print(f"the system DEFINITION id is {os.getenv('SYSTEM_DEFINITIONID')}")
     print(f"the AGENT id is {os.getenv('AGENT_ID')}")
+    print(f"the timeline id is {os.getenv('SYSTEM_TIMELINEID')}")
     print("See https://aka.ms/python/typing-guide for information.\n\n")
     # if args.next and in_ci():
     #     if src_code_error or sample_code_error:
