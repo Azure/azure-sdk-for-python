@@ -17,7 +17,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @recorded_by_proxy_async
     async def test_provider_creation_aad(self, appconfiguration_endpoint_string):
         async with await self.create_aad_client(appconfiguration_endpoint_string) as client:
-            assert client["message"] == "hi"
+            assert client.get("message") == "hi"
             assert client["my_json"]["key"] == "value"
             assert (
                 client["FeatureManagementFeatureFlags"]["Alpha"]

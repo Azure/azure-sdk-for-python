@@ -10,21 +10,21 @@ from azure.appconfiguration import (
     ConfigurationSetting,
     FeatureFlagConfigurationSetting
 )
-
 from azure.appconfiguration.provider import SettingSelector, load
 
 class AppConfigTestCase(AzureRecordedTestCase):
 
     def create_aad_client(self, appconfiguration_endpoint_string, trim_prefixes=[], selects={SettingSelector(key_filter="*", label_filter="\0")}):
         cred = self.get_credential(AzureAppConfigurationClient)
-        client = load(credential=cred, endpoint=appconfiguration_endpoint_string, trim_prefixes=trim_prefixes, selects=selects)
-        setup_configs(client._client)
-        return client
+
+        client = AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
+        setup_configs(client)
+        return load(credential=cred, endpoint=appconfiguration_endpoint_string, trim_prefixes=trim_prefixes, selects=selects)
 
     def create_client(self, appconfiguration_connection_string, trim_prefixes=[], selects={SettingSelector(key_filter="*", label_filter="\0")}):
-        client = load(connection_string=appconfiguration_connection_string, trim_prefixes=trim_prefixes, selects=selects)
-        setup_configs(client._client)
-        return client
+        client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
+        setup_configs(client)
+        return load(connection_string=appconfiguration_connection_string, trim_prefixes=trim_prefixes, selects=selects)
 
 def setup_configs(client):
         client.set_configuration_setting(create_config_setting("message", "\0", "hi"))
