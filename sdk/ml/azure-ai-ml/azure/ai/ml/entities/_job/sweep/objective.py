@@ -28,6 +28,14 @@ class Objective(RestTranslatableMixin):
     """
 
     def __init__(self, goal: str, primary_metric: Optional[str] = None) -> None:
+        """Optimization objective.
+
+        :param goal: Defines supported metric goals for hyperparameter tuning. Acceptable values
+            are: "minimize" or "maximize".
+        :type goal: str
+        :param primary_metric: The name of the metric to optimize.
+        :type primary_metric: str
+        """
         self.goal = goal.lower()
         self.primary_metric = primary_metric
 

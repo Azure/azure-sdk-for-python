@@ -53,11 +53,7 @@ class AzureApplicationCredential(ChainedTokenCredential):
     """
 
     def __init__(
-            self,
-            *,
-            authority: Optional[str] = None,
-            managed_identity_client_id: Optional[str] = None,
-            **kwargs: Any
+        self, *, authority: Optional[str] = None, managed_identity_client_id: Optional[str] = None, **kwargs: Any
     ) -> None:
         authority = normalize_authority(authority) if authority else get_default_authority()
         managed_identity_client_id = managed_identity_client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)

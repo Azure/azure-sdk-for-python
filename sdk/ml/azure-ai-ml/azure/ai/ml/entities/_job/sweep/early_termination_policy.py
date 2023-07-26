@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Optional
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import BanditPolicy as RestBanditPolicy
 from azure.ai.ml._restclient.v2023_04_01_preview.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
@@ -75,10 +74,10 @@ class BanditPolicy(EarlyTerminationPolicy):
     def __init__(
         self,
         *,
-        delay_evaluation: Optional[int] = 0,
-        evaluation_interval: Optional[int] = 0,
-        slack_amount: Optional[float] = 0,
-        slack_factor: Optional[float] = 0,
+        delay_evaluation: int = 0,
+        evaluation_interval: int = 0,
+        slack_amount: float = 0,
+        slack_factor: float = 0,
     ) -> None:
         super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
         self.type = EarlyTerminationPolicyType.BANDIT.lower()
@@ -125,8 +124,8 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
     def __init__(
         self,
         *,
-        delay_evaluation: Optional[int] = 0,
-        evaluation_interval: Optional[int] = 1,
+        delay_evaluation: int = 0,
+        evaluation_interval: int = 1,
     ) -> None:
         super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
         self.type = camel_to_snake(EarlyTerminationPolicyType.MEDIAN_STOPPING)
@@ -169,9 +168,9 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
     def __init__(
         self,
         *,
-        delay_evaluation: Optional[int] = 0,
-        evaluation_interval: Optional[int] = 0,
-        truncation_percentage: Optional[int] = 0,
+        delay_evaluation: int = 0,
+        evaluation_interval: int = 0,
+        truncation_percentage: int = 0,
     ) -> None:
         super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
         self.type = camel_to_snake(EarlyTerminationPolicyType.TRUNCATION_SELECTION)

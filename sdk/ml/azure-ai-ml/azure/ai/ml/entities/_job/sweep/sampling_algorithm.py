@@ -110,7 +110,6 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
         super().__init__()
         self.type = SamplingAlgorithmType.GRID.lower()
 
-    # pylint: disable=no-self-use
     def _to_rest_object(self) -> RestGridSamplingAlgorithm:
         return RestGridSamplingAlgorithm()
 
@@ -138,7 +137,6 @@ class BayesianSamplingAlgorithm(SamplingAlgorithm):
         super().__init__()
         self.type = SamplingAlgorithmType.BAYESIAN.lower()
 
-    # pylint: disable=no-self-use
     def _to_rest_object(self) -> RestBayesianSamplingAlgorithm:
         return RestBayesianSamplingAlgorithm()
 

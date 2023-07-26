@@ -20,12 +20,14 @@ USAGE: python snapshot_samples.py
 import os
 from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting
 from util import print_configuration_setting, print_snapshot
+from uuid import uuid4
 
 
 def main():
     CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
     config_setting1 = ConfigurationSetting(key="my_key1", label="my_label1")
     config_setting2 = ConfigurationSetting(key="my_key2", label="my_label2")
+    snapshot_name = uuid4()
     with AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING) as client:
         client.add_configuration_setting(config_setting1)
         client.add_configuration_setting(config_setting2)
@@ -34,24 +36,24 @@ def main():
         from azure.appconfiguration import ConfigurationSettingFilter
 
         filters = [ConfigurationSettingFilter(key="my_key1", label="my_label1")]
-        response = client.begin_create_snapshot(name="my_snapshot_name", filters=filters)
+        response = client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = response.result()
         print_snapshot(created_snapshot)
         # [END create_snapshot]
         print("")
 
         # [START get_snapshot]
-        received_snapshot = client.get_snapshot(name="my_snapshot_name")
+        received_snapshot = client.get_snapshot(name=snapshot_name)
         # [END get_snapshot]
 
         # [START archive_snapshot]
-        archived_snapshot = client.archive_snapshot(name="my_snapshot_name")
+        archived_snapshot = client.archive_snapshot(name=snapshot_name)
         print_snapshot(archived_snapshot)
         # [END archive_snapshot]
         print("")
 
         # [START recover_snapshot]
-        recovered_snapshot = client.recover_snapshot(name="my_snapshot_name")
+        recovered_snapshot = client.recover_snapshot(name=snapshot_name)
         print_snapshot(recovered_snapshot)
         # [END recover_snapshot]
         print("")
@@ -63,7 +65,7 @@ def main():
         print("")
 
         # [START list_snapshot_configuration_settings]
-        for config_setting in client.list_snapshot_configuration_settings(name="my_snapshot_name"):
+        for config_setting in client.list_snapshot_configuration_settings(name=snapshot_name):
             print_configuration_setting(config_setting)
         # [END list_snapshot_configuration_settings]
 

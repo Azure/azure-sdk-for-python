@@ -241,7 +241,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         """Translate a command job to component.
 
         :param context: Context of command job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated command component.
         """
         from azure.ai.ml.entities import CommandComponent
@@ -268,7 +268,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         """Translate a command job to a pipeline node.
 
         :param context: Context of command job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated command component.
         """
         from azure.ai.ml.entities._builders import Command

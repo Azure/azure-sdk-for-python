@@ -147,7 +147,7 @@ def decode_content(
         ) from exc
 
     try:
-        dict_value = avro_encoder.decode(content, reader)  # type: Dict[str, Any]
+        dict_value: Dict[str, Any]= avro_encoder.decode(content, reader)
     except SchemaResolutionException as exc:
         raise InvalidSchemaError(
             f"Incompatible schemas.\nWriter's Schema: {schema_definition}\nReader's Schema: {readers_schema}",

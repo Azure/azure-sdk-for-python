@@ -234,7 +234,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         :param endpoint_name: Name of endpoint.
         :type endpoint_name: str
-        :param name: (Optional) Name of deployment.
+        :keyword name: (Optional) Name of deployment.
         :type name: str
         :raise: Exception if endpoint_type is not BATCH_ENDPOINT_TYPE
         :return: List of jobs

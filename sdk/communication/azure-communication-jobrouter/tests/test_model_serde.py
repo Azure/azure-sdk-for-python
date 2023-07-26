@@ -3,8 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-
+import datetime
 import unittest
 from azure.communication.jobrouter import (
     ScoringRuleOptions,
@@ -21,7 +20,9 @@ from azure.communication.jobrouter import (
     BestWorkerMode,
     LongestIdleMode,
     RoundRobinMode,
-    DistributionPolicy
+    DistributionPolicy,
+    JobMatchingMode,
+    ScheduleAndSuspendMode,
 )
 
 from azure.communication.jobrouter._router_serializer import _deserialize_from_json, _serialize_to_json
@@ -100,8 +101,23 @@ class TestModelSerializationDeserialization(unittest.TestCase):
             print(serialized_json)
             deserialized_json = _deserialize_from_json("DistributionPolicy", serialized_json)
             print(deserialized_json)
-            print(_serialize_to_json(deserialized_json, "DistributionPolicy"))
+            self.assertEqual(_serialize_to_json(deserialized_json, "DistributionPolicy"),
+                             _serialize_to_json(distribution_policy, "DistributionPolicy"))
             print("--------------------------------------------------------\n")
+
+
+    def test_job_matching_mode_overloads(self):
+        queue_and_match = JobMatchingMode(queue_and_match_mode = {})
+        schedule_and_suspend = JobMatchingMode(
+            schedule_and_suspend_mode = ScheduleAndSuspendMode(schedule_at = datetime.datetime.utcnow()))
+        suspend_mode = JobMatchingMode(suspend_mode = {})
+
+        for m in [queue_and_match, schedule_and_suspend, suspend_mode]:
+            serialized_json = _serialize_to_json(m, "JobMatchingMode")
+            deserialized_json = _deserialize_from_json("JobMatchingMode", serialized_json)
+            self.assertEqual(_serialize_to_json(m, "JobMatchingMode"),
+                             _serialize_to_json(deserialized_json, "JobMatchingMode"))
+
 
 if __name__ == '__main__':
     unittest.main()

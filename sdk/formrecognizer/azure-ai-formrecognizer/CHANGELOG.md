@@ -1,5 +1,29 @@
 # Release History
 
+## 3.3.0 (Unreleased)
+
+This version of the client library defaults to the service API version `2023-07-31`.
+
+### Features Added
+
+### Breaking Changes
+ > Note: The following changes are only breaking from the previous beta. They are not breaking against previous stable versions.
+ 
+- Going forward this library will default to service API version `2023-07-31`.
+- Removed `query_fields` keyword argument from `begin_analyze_document()` and `begin_analyze_document_from_url()`.
+- Removed `kind` property from `DocumentPage`.
+- Removed `images` property from `DocumentPage`.
+- Removed `DocumentImage` model.
+- Removed `annotations` property from `DocumentPage`.
+- Removed `DocumentAnnotation` model.
+- Removed `common_name` property from `DocumentKeyValuePair`.
+- Changed `AnalysisFeature` enum member names and values. Supported enum members are: `OCR_HIGH_RESOLUTION`, `LANGUAGES`, `BARCODES`, `FORMULAS`, `KEY_VALUE_PAIRS`, `STYLE_FONT`.
+
+### Bugs Fixed
+
+### Other Changes
+
+
 ## 3.3.0b1 (2023-04-13)
 
 This version of the client library defaults to the service API version `2023-02-28-preview`.

@@ -23,21 +23,32 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, ContextManager, Iterator, Optional
+from typing import Any, ContextManager, Iterator, Optional, Union
 
 import httpx
-from azure.core.pipeline import Pipeline
-
+from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.rest import HttpRequest
 from azure.core.rest._http_response_impl import HttpResponseImpl
-from azure.core.configuration import ConnectionConfiguration
+from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 
 
 class HttpXTransportResponse(HttpResponseImpl):
+    """HttpX response implementation.
+
+    :param request: The request sent to the server
+    :type request: ~azure.core.rest.HTTPRequest or LegacyHTTPRequest
+    :param httpx.Response httpx_response: The response object returned from the HttpX library
+    :param ContextManager stream_contextmanager: The context manager to stream response data.
+    """
+
     def __init__(
-        self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]
+        self,
+        request: Union[HttpRequest, LegacyHttpRequest],
+        httpx_response: httpx.Response,
+        stream_contextmanager: Optional[ContextManager],
     ) -> None:
         super().__init__(
             request=request,
@@ -50,14 +61,33 @@ class HttpXTransportResponse(HttpResponseImpl):
         )
 
     def read(self) -> bytes:
+        """Read the response's bytes.
+
+        :return: The response's bytes.
+        :rtype: bytes
+        """
         if self._content is None:
             self._content = self.internal_response.read()
         return self.content
 
     def body(self) -> bytes:
+        """Get the body of the response.
+
+        :return: The response's bytes.
+        :rtype: bytes
+        """
         return self.internal_response.content
 
     def stream_download(self, pipeline: Pipeline, **kwargs) -> Iterator[bytes]:
+        """Generator for streaming response data.
+
+        :param pipeline: The pipeline object
+        :type pipeline: ~azure.core.pipeline.Pipeline
+        :keyword bool decompress: If True which is default, will attempt to decode the body based
+            on the *content-encoding* header.
+        :return: An iterator for streaming response data.
+        :rtype: Iterator[bytes]
+        """
         return HttpXStreamDownloadGenerator(pipeline, self, **kwargs)
 
 
@@ -66,7 +96,9 @@ class HttpXStreamDownloadGenerator:
     """Generator for streaming response data.
 
     :param pipeline: The pipeline object
+    :type pipeline: ~azure.core.pipeline.Pipeline
     :param response: The response object.
+    :type response: HttpXTransportResponse
     :keyword bool decompress: If True which is default, will attempt to decode the body based
         on the *content-encoding* header.
     """
@@ -112,6 +144,11 @@ class HttpXTransport(HttpTransport):
             )
 
     def close(self) -> None:
+        """Close the session.
+
+        :return: None
+        :rtype: None
+        """
         if self.client:
             self.client.close()
             self.client = None
@@ -123,7 +160,15 @@ class HttpXTransport(HttpTransport):
     def __exit__(self, *args) -> None:
         self.close()
 
-    def send(self, request: HttpRequest, **kwargs) -> HttpXTransportResponse:
+    def send(self, request: Union[HttpRequest, LegacyHttpRequest], **kwargs) -> HttpXTransportResponse:
+        """Send a request and get back a response.
+
+        :param request: The request object to be sent.
+        :type request: ~azure.core.rest.HTTPRequest or LegacyHTTPRequest
+        :keyword bool stream: Whether to stream the response. Defaults to False.
+        :return: An HTTPResponse object.
+        :rtype: ~azure.core.experimental.transport.HttpXTransportResponse
+        """
         stream_response = kwargs.pop("stream", False)
         timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
         # not needed here as its already handled during init
@@ -153,8 +198,8 @@ class HttpXTransport(HttpTransport):
             httpx.ReadTimeout,
             httpx.ProtocolError,
         ) as err:
-            raise ServiceResponseError(err, error=err)
+            raise ServiceResponseError(err, error=err) from err
         except httpx.RequestError as err:
-            raise ServiceRequestError(err, error=err)
+            raise ServiceRequestError(err, error=err) from err
 
         return HttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
