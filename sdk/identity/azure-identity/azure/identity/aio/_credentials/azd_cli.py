@@ -23,7 +23,7 @@ from ..._credentials.azd_cli import (
     parse_token,
     sanitize_output,
 )
-from ..._internal import resolve_tenant
+from ..._internal import resolve_tenant, within_dac
 
 
 class AzureDeveloperCliCredential(AsyncContextManager):
@@ -72,11 +72,9 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
-        _is_chained: bool = False,
     ) -> None:
 
         self.tenant_id = tenant_id
-        self._is_chained = _is_chained
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
@@ -113,7 +111,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
 
         if tenant:
             command += " --tenant-id " + tenant
-        output = await _run_command(command, self._process_timeout, _is_chained=self._is_chained)
+        output = await _run_command(command, self._process_timeout)
 
         token = parse_token(output)
         if not token:
@@ -123,7 +121,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
                 f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
                 f"https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot."
             )
-            if self._is_chained:
+            if within_dac.get():
                 raise CredentialUnavailableError(message=message)
             raise ClientAuthenticationError(message=message)
 
@@ -133,7 +131,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         """Calling this method is unnecessary"""
 
 
-async def _run_command(command: str, timeout: int, _is_chained: bool = False) -> str:
+async def _run_command(command: str, timeout: int) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
     if shutil.which(EXECUTABLE_NAME) is None:
         raise CredentialUnavailableError(message=CLI_NOT_FOUND)
@@ -175,6 +173,6 @@ async def _run_command(command: str, timeout: int, _is_chained: bool = False) ->
         raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
     message = sanitize_output(stderr) if stderr else "Failed to invoke Azure Developer CLI"
-    if _is_chained:
+    if within_dac.get():
         raise CredentialUnavailableError(message=message)
     raise ClientAuthenticationError(message=message)

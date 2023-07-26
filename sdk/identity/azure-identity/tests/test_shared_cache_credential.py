@@ -19,16 +19,12 @@ from azure.identity._internal.shared_token_cache import (
     NO_ACCOUNTS,
     NO_MATCHING_ACCOUNTS,
 )
-from azure.identity._internal import get_default_authority
+from azure.identity._internal import get_default_authority, within_dac
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest
 from urllib.parse import urlparse
-
-try:
-    from unittest.mock import MagicMock, Mock, patch
-except ImportError:  # python < 3.3
-    from mock import MagicMock, Mock, patch  # type: ignore
+from unittest.mock import MagicMock, Mock, patch
 
 from helpers import (
     build_aad_response,
@@ -828,6 +824,21 @@ def test_client_capabilities():
     assert PublicClientApplication.call_count == 1
     _, kwargs = PublicClientApplication.call_args
     assert kwargs["client_capabilities"] is None
+
+
+def test_within_dac_error():
+    def send(request, **_):
+        # expecting only the discovery requests triggered by creating an msal.PublicClientApplication
+        # because the cache is empty--the credential shouldn't send a token request
+        return get_discovery_response("https://localhost/tenant")
+
+    record = AuthenticationRecord("tenant-id", "client_id", "authority", "home_account_id", "username")
+    transport = Mock(send=send)
+    credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=TokenCache())
+    within_dac.set(True)
+    with patch("azure.identity._credentials.silent.PublicClientApplication") as PublicClientApplication:
+        with pytest.raises(CredentialUnavailableError):  # (cache is empty)
+            credential.get_token("scope")
 
 
 def test_claims_challenge():

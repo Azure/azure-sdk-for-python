@@ -14,7 +14,7 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
-from .._internal import AuthCodeRedirectServer, InteractiveCredential, wrap_exceptions
+from .._internal import AuthCodeRedirectServer, InteractiveCredential, wrap_exceptions, within_dac
 
 
 class InteractiveBrowserCredential(InteractiveCredential):
@@ -78,7 +78,6 @@ class InteractiveBrowserCredential(InteractiveCredential):
         else:
             self._parsed_url = None
 
-        self._is_chained = kwargs.pop("_is_chained", False)
         self._login_hint = kwargs.pop("login_hint", None)
         self._timeout = kwargs.pop("timeout", 300)
         self._server_class = kwargs.pop("_server_class", AuthCodeRedirectServer)
@@ -148,11 +147,11 @@ class InteractiveBrowserCredential(InteractiveCredential):
         except socket.error as ex:
             raise CredentialUnavailableError(message="Couldn't start an HTTP server.") from ex
         if "access_token" not in result and "error_description" in result:
-            if self._is_chained:
+            if within_dac.get():
                 raise CredentialUnavailableError(message=result["error_description"])
             raise ClientAuthenticationError(message=result.get("error_description"))
         if "access_token" not in result:
-            if self._is_chained:
+            if within_dac.get():
                 raise CredentialUnavailableError(message="Failed to authenticate user")
             raise ClientAuthenticationError(message="Failed to authenticate user")
 
