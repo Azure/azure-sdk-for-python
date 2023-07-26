@@ -13,7 +13,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import resolve_tenant, validate_tenant_id
+from .._internal import resolve_tenant, validate_tenant_id, within_dac
 from .._internal.decorators import wrap_exceptions
 from .._internal.msal_client import MsalClient
 from .._internal.shared_token_cache import NO_TOKEN
@@ -38,7 +38,6 @@ class SilentAuthenticationCredential:
         # authenticate in the tenant that produced the record unless "tenant_id" specifies another
         self._tenant_id = tenant_id or self._auth_record.tenant_id
         validate_tenant_id(self._tenant_id)
-        self._is_chained = kwargs.pop("_is_chained", False)
         self._cache = kwargs.pop("_cache", None)
         self._cache_persistence_options = kwargs.pop("cache_persistence_options", None)
         self._client_applications: Dict[str, PublicClientApplication] = {}
@@ -61,7 +60,7 @@ class SilentAuthenticationCredential:
             self._initialize()
 
         if not self._cache:
-            if self._is_chained:
+            if within_dac.get():
                 raise CredentialUnavailableError(message="Shared token cache unavailable")
             raise ClientAuthenticationError(message="Shared token cache unavailable")
 

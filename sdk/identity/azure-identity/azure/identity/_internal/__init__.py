@@ -14,6 +14,7 @@ from .utils import (
     resolve_tenant,
     validate_tenant_id,
     within_credential_chain,
+    within_dac,
 )
 
 
@@ -47,6 +48,7 @@ __all__ = [
     "normalize_authority",
     "resolve_tenant",
     "within_credential_chain",
+    "within_dac",
     "wrap_exceptions",
     "validate_tenant_id",
 ]
