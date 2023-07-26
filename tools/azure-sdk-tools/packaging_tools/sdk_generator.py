@@ -304,7 +304,7 @@ def main(generate_input, generate_output):
                 check_api_version_in_subfolder(sdk_code_path)
 
             # use multiapi combiner to combine multiapi package
-            if package_name in ("azure-mgmt-network", "azure-mgmt-computex"):
+            if package_name in ("azure-mgmt-network"):
                 _LOGGER.info(f"start to combine multiapi package: {package_name}")
                 multiapi_combiner(sdk_code_path, package_name)
 
