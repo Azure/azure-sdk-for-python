@@ -287,8 +287,7 @@ if __name__ == "__main__":
     print(args.config)
 
     json_config = json.loads(args.config)
-    print(json_config[0].name)
-
+    print(json_config[0]["name"])
 
     # output_source_location = create_combined_sdist(
     #     args.distribution_directory,
