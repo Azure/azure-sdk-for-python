@@ -9,9 +9,11 @@ steps:
     inputs:
       versionSpec: $(PythonVersion)
 
-  - pwsh: |
-      $json = "${{ convertToJson(parameters.CondaArtifacts) }}"
-    displayName: 'Save Building JSON as variable'
+  - task: PythonScript@0
+    displayName: 'Invoke build script against argument'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/build_conda_artifacts.py'
+      arguments: -c '${{ convertToJson(parameters.CondaArtifacts) }}'
 
   # - pwsh: |
   #     Write-Host "$(ARTIFACT_JSON)"

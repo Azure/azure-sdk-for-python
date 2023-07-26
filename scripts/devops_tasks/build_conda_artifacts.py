@@ -26,6 +26,7 @@ import os
 import shutil
 import re
 import yaml
+import json
 
 from subprocess import check_call
 from distutils.dir_util import copy_tree
@@ -263,96 +264,35 @@ def get_summary(ci_yml, artifact_name):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Build a Conda Package, given a properly formatted build directory, and input configuration. This script assumes that the build directory has been set up w/ the necessary sdists in each location."
-    )
-
-    parser.add_argument(
-        "-d",
-        "--distribution-directory",
-        dest="distribution_directory",
-        help="The output conda sdist will be dropped into this directory under a folder named the same as argument artifact_name.",
-        required=True,
-    )
-
-    parser.add_argument(
-        "-b",
-        "--build-directory",
-        dest="build_directory",
-        help="The 'working' directory. This top level path will contain all the necessary sdist code from the appropriate historical tag. EG: <build-directory>/azure-storage-blob, <build-directory/azure-storage-queue",
-        required=True,
-    )
-
-    parser.add_argument(
-        "-m",
-        "--meta-yml",
-        dest="meta_yml",
-        help="The path to the meta yaml that will be used to generate this conda distribution.",
-        required=True,
-    )
-
-    parser.add_argument(
-        "-r",
-        "--common-root",
-        dest="common_root",
-        help="The common root namespace. For instance, when outputting the artifact 'azure-storage', the common root will be azure/storage.",
-        required=False,
-    )
-
-    parser.add_argument(
-        "-n",
-        "--artifact-name",
-        dest="artifact_name",
-        help="The name of the output conda package.",
-        required=True,
-    )
-
-    parser.add_argument(
-        "-s",
-        "--service-name",
-        dest="service",
-        help="The name of the service this package is being generated for.",
-        required=True,
-    )
-
-    parser.add_argument(
-        "-e",
-        "--environment_config",
-        dest="environment_config",
-        help="The location of the yml config file used to create the conda environments. This file has necessary common configuration information within.",
-        required=True,
+        description="Build a set of conda packages based on a json configuration bundle."
     )
 
     parser.add_argument(
         "-c",
-        "--ci_yml",
-        dest="ci_yml",
-        help="The location of the ci.yml that is used to define our conda artifacts. Used when to easily grab summary information.",
+        "--config",
+        dest="config",
+        help="The json blob describing which conda packages should be assembled.",
         required=True,
     )
 
+    # parser.add_argument(
+    #     "-d",
+    #     "--distribution-directory",
+    #     dest="distribution_directory",
+    #     help="The output conda sdist will be dropped into this directory under a folder named the same as argument artifact_name.",
+    #     required=True,
+    # )
+
     args = parser.parse_args()
-    output_source_location = create_combined_sdist(
-        args.distribution_directory,
-        args.build_directory,
-        args.artifact_name,
-        args.common_root,
-        args.service,
-        args.meta_yml,
-        args.environment_config,
-    )
 
-    summary = get_summary(args.ci_yml, args.artifact_name)
+    print(args.config)
 
-    if output_source_location:
-        print(
-            "##vso[task.setvariable variable={}]{}".format(
-                args.service.upper() + "_SOURCE_DISTRIBUTION", output_source_location
-            )
-        )
-
-    if summary:
-        print(
-            "##vso[task.setvariable variable={}]{}".format(
-                args.service.upper() + "_SUMMARY", summary
-            )
-        )
+    # output_source_location = create_combined_sdist(
+    #     args.distribution_directory,
+    #     args.build_directory,
+    #     args.artifact_name,
+    #     args.common_root,
+    #     args.service,
+    #     args.meta_yml,
+    #     args.environment_config,
+    # )
