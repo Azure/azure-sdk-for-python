@@ -38,13 +38,25 @@ def extract_sdk_folder(python_md: List[str]) -> str:
 
 
 @return_origin_path
-def multiapi_combiner(sdk_code_path: str):
+def multiapi_combiner(sdk_code_path: str, package_name: str):
     os.chdir(sdk_code_path)
     check_call(
         f"python {str(Path('../../../tools/azure-sdk-tools/packaging_tools/multiapi_combiner.py'))} --pkg-path={os.getcwd()}",
         shell=True,
     )
     check_call("pip install -e .", shell=True)
+
+    # do not package code of v20XX_XX_XX
+    if Path("MANIFEST.in").exists():
+        with open("MANIFEST.in", "rw") as file_stream:
+            content = file_stream.readlines()
+            handled_content = [line for line in content if "prune" not in line]
+            package_folder = package_name.replace("-", "/")
+            if package_name != "azure-mgmt-resource":
+                handled_content.append(f"prune {package_folder}/v20*\n")
+            else:
+                subfolders = [s for s in Path(package_folder).iterdir() if s.is_dir() and not s.name.startswith("_")]
+                handled_content.extend([f"prune {s.as_posix()}/v20*\n" for s in subfolders])
 
 
 def del_outdated_folder(readme: str):
@@ -79,7 +91,7 @@ def get_related_swagger(readme_content: List[str], tag: str) -> List[str]:
     result = []
     for idx in range(len(readme_content)):
         line = readme_content[idx]
-        if all(tag in line, "```" in line, "tag" in line, "==" in line, "yaml" in line):
+        if tag in line and "```" in line and "tag" in line and "==" in line and "yaml" in line:
             idx += 1
             while idx < len(readme_content):
                 if "```" in readme_content[idx]:
@@ -155,8 +167,9 @@ def update_metadata_for_multiapi_package(spec_folder: str, input_readme: str):
 
     with open(python_readme, "r") as file_in:
         python_md_content = file_in.readlines()
-    is_multiapi = "multiapi: true" in ("".join(python_md_content))
+    is_multiapi = "multiapi: true" in "".join(python_md_content)
     if not is_multiapi:
+        _LOGGER.info(f"do not find multiapi configuration in {python_readme}")
         return
 
     sdk_folder = extract_sdk_folder(python_md_content)
@@ -186,7 +199,7 @@ def update_metadata_for_multiapi_package(spec_folder: str, input_readme: str):
     with open(python_readme, "w") as file_out:
         file_out.writelines(after_handle)
 
-    with open(meta_path, "r") as file_out:
+    with open(meta_path, "w") as file_out:
         json.dump(meta, file_out, indent=2)
 
 
@@ -291,7 +304,7 @@ def main(generate_input, generate_output):
             # use multiapi combiner to combine multiapi package
             if package_name in ("azure-mgmt-network"):
                 _LOGGER.info(f"start to combine multiapi package: {package_name}")
-                multiapi_combiner(sdk_code_path)
+                multiapi_combiner(sdk_code_path, package_name)
 
     # remove duplicates
     for value in result.values():
