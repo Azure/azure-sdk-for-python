@@ -17,7 +17,9 @@ steps:
     displayName: 'Invoke build script against argument'
     inputs:
       scriptPath: 'scripts/devops_tasks/build_conda_artifacts.py'
-      arguments: -c "${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}"
+      arguments: |
+        -c "${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}"
+        -w "$(Build.SourcesDirectory)/conda/conda-recipes"
 
   # - pwsh: |
   #     Write-Host "$(ARTIFACT_JSON)"

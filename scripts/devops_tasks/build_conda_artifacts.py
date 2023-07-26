@@ -5,20 +5,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-# Used to generate conda artifacts given a properly formatted build folder
-#
-#   EXAMPLE: examine the CondaArtifacts in /sdk/storage/meta.yaml
-#
-#   Grab the source code from each of the tags in the CondaArtifact.
-#
-#   Format the directory that you pass to the "build_directory" argument in this way
-#   <build directory>
-#       /azure-storage-blob <-- package folder from tag specified
-#           /setup.py
-#           /...
-#       /azure-storage-queue
-#       /azure-storage-file-datalake
-#       /azure-storage-fileshare
+# Used to generate conda artifacts given a properly formatted build folder given a properly formatted
+# json targeting document. Find out what one of those looks like at eng/pipelines/templates/stages/conda-sdk-client.yml#L28
 
 import argparse
 import sys
@@ -261,6 +249,21 @@ def get_summary(ci_yml, artifact_name):
     return SUMMARY_TEMPLATE.format(", ".join(pkg_list))
 
 
+def output_workload(json_config):
+    """Show all packages and what order they will be built in."""
+    breakpoint()
+
+def assemble_source(json_config):
+    """If given a common root/package, this function will be used to clone slices of the azure-sdk-for-python repo and to download packages as they were at release.
+    If given an https:// url, will instead attempt to download and unzip a package tar.gz.
+    """
+    pass
+
+def build_conda_packages(json_config):
+    """Conda builds each individually assembled conda package folder."""
+    pass
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Build a set of conda packages based on a json configuration bundle."
@@ -274,20 +277,29 @@ if __name__ == "__main__":
         required=True,
     )
 
-    # parser.add_argument(
-    #     "-d",
-    #     "--distribution-directory",
-    #     dest="distribution_directory",
-    #     help="The output conda sdist will be dropped into this directory under a folder named the same as argument artifact_name.",
-    #     required=True,
-    # )
+    parser.add_argument(
+        "-w",
+        "--work-folder",
+        dest="work_folder",
+        help="What directory will we assemble the conda packages in?",
+        required=True,
+    )
 
     args = parser.parse_args()
 
     print(args.config)
 
     json_config = json.loads(args.config)
-    print(json_config[0]["name"])
+
+
+    # print(json_config[0]["name"])
+
+
+    output_workload(json_config)
+
+    assemble_source(json_config)
+
+    build_conda_packages(json_config)
 
     # output_source_location = create_combined_sdist(
     #     args.distribution_directory,
