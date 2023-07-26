@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Unpin OTel SDK/API version
+    ([#310](https://github.com/microsoft/ApplicationInsights-Python/pull/310))
+
 ### Breaking Changes
 
 ### Bugs Fixed
