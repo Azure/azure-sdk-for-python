@@ -650,12 +650,6 @@ class Serializer:
             with open(f"{self.code_model.get_root_of_code(False)}/{default_api_version}/models/_patch.py", "r") as rfd:
                 wfd.write(rfd.read())
 
-    def remove_versioned_files(self):
-        root_of_code = self.code_model.get_root_of_code(False)
-        for api_version_folder_stem in self.code_model.api_version_to_folder_api_version.values():
-            api_version_folder = root_of_code / api_version_folder_stem
-            shutil.rmtree(api_version_folder, ignore_errors=True)
-
     def remove_top_level_files(self, async_mode: bool):
         top_level_files = [
             self.code_model.client.generated_filename,
