@@ -57,7 +57,7 @@ def hdfs_pw_file() -> str:
 
 
 @pytest.fixture
-def one_lake_file() -> str:
+def one_lake_credential_less_file() -> str:
     return "./tests/test_configs/datastore/credential_less_one_lake.yml"
 
 

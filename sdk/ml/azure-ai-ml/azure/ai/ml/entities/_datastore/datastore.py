@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01.models import Datastore as DatastoreData, DatastoreType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType as DatastoreTypePreview
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
@@ -121,7 +122,7 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
             ds_type = AzureDataLakeGen1Datastore
         elif type == camel_to_snake(DatastoreType.AZURE_DATA_LAKE_GEN2):
             ds_type = AzureDataLakeGen2Datastore
-        elif type == camel_to_snake(DatastoreType.ONE_LAKE):
+        elif type == camel_to_snake(DatastoreTypePreview.ONE_LAKE):
             ds_type = OneLakeDatastore
         # disable unless preview release
         # elif type == camel_to_snake(DatastoreTypePreview.HDFS):
