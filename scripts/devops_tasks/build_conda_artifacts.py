@@ -26,7 +26,6 @@ import os
 import shutil
 import re
 import json
-import yaml
 
 from subprocess import check_call
 from distutils.dir_util import copy_tree
