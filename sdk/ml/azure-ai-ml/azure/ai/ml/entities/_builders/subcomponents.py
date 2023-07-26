@@ -8,6 +8,8 @@
 
 from mldesigner import command_component, Output
 
+from azure.ai.ml.constants._common import DefaultOpenEncoding
+
 
 def save_mltable_yaml(path, mltable_paths):
     import os
@@ -25,7 +27,7 @@ def save_mltable_yaml(path, mltable_paths):
     # To the MLTable's inputs
     mltable_file_content = "\n".join(["paths:"] + [f"- folder : {path}" for path in mltable_paths])
 
-    with open(save_path, "w") as f:
+    with open(save_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         f.write(mltable_file_content)
 
 

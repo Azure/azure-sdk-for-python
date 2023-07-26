@@ -29,11 +29,6 @@ from .operations import (
     AccessReviewInstancesOperations,
     AccessReviewScheduleDefinitionsAssignedForMyApprovalOperations,
     AccessReviewScheduleDefinitionsOperations,
-    AlertConfigurationsOperations,
-    AlertDefinitionsOperations,
-    AlertIncidentsOperations,
-    AlertOperationOperations,
-    AlertsOperations,
     Operations,
     ScopeAccessReviewDefaultSettingsOperations,
     ScopeAccessReviewHistoryDefinitionInstanceOperations,
@@ -145,28 +140,15 @@ class AuthorizationManagementClient:  # pylint: disable=client-accepts-api-versi
      TenantLevelAccessReviewInstanceContactedReviewersOperations operations
     :vartype tenant_level_access_review_instance_contacted_reviewers:
      azure.mgmt.authorization.v2021_12_01_preview.aio.operations.TenantLevelAccessReviewInstanceContactedReviewersOperations
-    :ivar alerts: AlertsOperations operations
-    :vartype alerts: azure.mgmt.authorization.v2021_12_01_preview.aio.operations.AlertsOperations
-    :ivar alert_configurations: AlertConfigurationsOperations operations
-    :vartype alert_configurations:
-     azure.mgmt.authorization.v2021_12_01_preview.aio.operations.AlertConfigurationsOperations
-    :ivar alert_definitions: AlertDefinitionsOperations operations
-    :vartype alert_definitions:
-     azure.mgmt.authorization.v2021_12_01_preview.aio.operations.AlertDefinitionsOperations
-    :ivar alert_incidents: AlertIncidentsOperations operations
-    :vartype alert_incidents:
-     azure.mgmt.authorization.v2021_12_01_preview.aio.operations.AlertIncidentsOperations
-    :ivar alert_operation: AlertOperationOperations operations
-    :vartype alert_operation:
-     azure.mgmt.authorization.v2021_12_01_preview.aio.operations.AlertOperationOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-     Retry-After header is present.
+    :keyword api_version: Api Version. Default value is "2021-12-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -179,98 +161,91 @@ class AuthorizationManagementClient:  # pylint: disable=client-accepts-api-versi
         self._config = AuthorizationManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
+        )
         self.access_review_history_definitions = AccessReviewHistoryDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.access_review_history_definition = AccessReviewHistoryDefinitionOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.access_review_history_definition_instance = AccessReviewHistoryDefinitionInstanceOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.access_review_history_definition_instances = AccessReviewHistoryDefinitionInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.access_review_schedule_definitions = AccessReviewScheduleDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.access_review_instances = AccessReviewInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.access_review_instance = AccessReviewInstanceOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.access_review_instance_decisions = AccessReviewInstanceDecisionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.access_review_instance_contacted_reviewers = AccessReviewInstanceContactedReviewersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.access_review_default_settings = AccessReviewDefaultSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.scope_access_review_history_definitions = ScopeAccessReviewHistoryDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.scope_access_review_history_definition = ScopeAccessReviewHistoryDefinitionOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.scope_access_review_history_definition_instance = ScopeAccessReviewHistoryDefinitionInstanceOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.scope_access_review_history_definition_instances = ScopeAccessReviewHistoryDefinitionInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.scope_access_review_schedule_definitions = ScopeAccessReviewScheduleDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.scope_access_review_instances = ScopeAccessReviewInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.scope_access_review_instance = ScopeAccessReviewInstanceOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.scope_access_review_instance_decisions = ScopeAccessReviewInstanceDecisionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.scope_access_review_instance_contacted_reviewers = ScopeAccessReviewInstanceContactedReviewersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.scope_access_review_default_settings = ScopeAccessReviewDefaultSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.access_review_schedule_definitions_assigned_for_my_approval = (
             AccessReviewScheduleDefinitionsAssignedForMyApprovalOperations(
-                self._client, self._config, self._serialize, self._deserialize
+                self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
             )
         )
         self.access_review_instances_assigned_for_my_approval = AccessReviewInstancesAssignedForMyApprovalOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.access_review_instance_my_decisions = AccessReviewInstanceMyDecisionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
         )
         self.tenant_level_access_review_instance_contacted_reviewers = (
             TenantLevelAccessReviewInstanceContactedReviewersOperations(
-                self._client, self._config, self._serialize, self._deserialize
+                self._client, self._config, self._serialize, self._deserialize, "2021-12-01-preview"
             )
         )
-        self.alerts = AlertsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.alert_configurations = AlertConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.alert_definitions = AlertDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.alert_incidents = AlertIncidentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.alert_operation = AlertOperationOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

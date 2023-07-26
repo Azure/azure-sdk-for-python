@@ -61,19 +61,18 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
             Studio Code
         """
         if self._unavailable_reason:
-            error_message = self._unavailable_reason \
-                            + '\n' \
-                              "Visit https://aka.ms/azsdk/python/identity/vscodecredential/troubleshoot" \
-                              " to troubleshoot this issue."
+            error_message = (
+                self._unavailable_reason + "\n"
+                "Visit https://aka.ms/azsdk/python/identity/vscodecredential/troubleshoot"
+                " to troubleshoot this issue."
+            )
             raise CredentialUnavailableError(message=error_message)
         if not self._client:
             raise CredentialUnavailableError("Initialization failed")
 
         return await super().get_token(*scopes, **kwargs)
 
-    async def _acquire_token_silently(
-        self, *scopes: str, **kwargs: Any
-    ) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         self._client = cast(AadClient, self._client)
         return self._client.get_cached_access_token(scopes, **kwargs)
 

@@ -29,6 +29,7 @@ from helpers import (
     urlsafeb64_decode,
     mock_response,
     msal_validating_transport,
+    new_msal_validating_transport,
     Request,
 )
 
@@ -86,7 +87,7 @@ def test_no_scopes():
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
-    transport = msal_validating_transport(
+    transport = new_msal_validating_transport(
         requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token="**"))]
     )
 
@@ -100,7 +101,7 @@ def test_policies_configurable():
 
 
 def test_user_agent():
-    transport = msal_validating_transport(
+    transport = new_msal_validating_transport(
         requests=[Request(required_headers={"User-Agent": USER_AGENT})],
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
     )
@@ -109,13 +110,16 @@ def test_user_agent():
 
     credential.get_token("scope")
 
+
 def test_tenant_id():
-    transport = msal_validating_transport(
+    transport = new_msal_validating_transport(
         requests=[Request(required_headers={"User-Agent": USER_AGENT})],
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
     )
 
-    credential = CertificateCredential("tenant-id", "client-id", PEM_CERT_PATH, transport=transport, additionally_allowed_tenants=['*'])
+    credential = CertificateCredential(
+        "tenant-id", "client-id", PEM_CERT_PATH, transport=transport, additionally_allowed_tenants=["*"]
+    )
 
     credential.get_token("scope", tenant_id="tenant_id")
 
@@ -313,10 +317,10 @@ def test_persistent_cache_multiple_clients(cert_path, cert_password):
 
     access_token_a = "token a"
     access_token_b = "not " + access_token_a
-    transport_a = msal_validating_transport(
+    transport_a = new_msal_validating_transport(
         requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_a))]
     )
-    transport_b = msal_validating_transport(
+    transport_b = new_msal_validating_transport(
         requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_b))]
     )
 
@@ -347,12 +351,12 @@ def test_persistent_cache_multiple_clients(cert_path, cert_password):
     scope = "scope"
     token_a = credential_a.get_token(scope)
     assert token_a.token == access_token_a
-    assert transport_a.send.call_count == 3  # two MSAL discovery requests, one token request
+    assert transport_a.send.call_count == 2  # two MSAL discovery requests, one token request
 
     # B should get a different token for the same scope
     token_b = credential_b.get_token(scope)
     assert token_b.token == access_token_b
-    assert transport_b.send.call_count == 3
+    assert transport_b.send.call_count == 2
 
     assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2
 
@@ -389,7 +393,7 @@ def test_multitenant_authentication(cert_path, cert_password):
         cert_path,
         password=cert_password,
         transport=Mock(send=send),
-        additionally_allowed_tenants=['*']
+        additionally_allowed_tenants=["*"],
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -420,7 +424,12 @@ def test_multitenant_authentication_backcompat(cert_path, cert_password):
         return mock_response(json_payload=build_aad_response(access_token=token))
 
     credential = CertificateCredential(
-        expected_tenant, "client-id", cert_path, password=cert_password, transport=Mock(send=send), additionally_allowed_tenants=['*']
+        expected_tenant,
+        "client-id",
+        cert_path,
+        password=cert_password,
+        transport=Mock(send=send),
+        additionally_allowed_tenants=["*"],
     )
 
     token = credential.get_token("scope")

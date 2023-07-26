@@ -66,10 +66,10 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             'community_galleries': '2022-03-03',
             'community_gallery_image_versions': '2022-03-03',
             'community_gallery_images': '2022-03-03',
-            'disk_accesses': '2022-07-02',
-            'disk_encryption_sets': '2022-07-02',
-            'disk_restore_point': '2022-07-02',
-            'disks': '2022-07-02',
+            'disk_accesses': '2023-01-02',
+            'disk_encryption_sets': '2023-01-02',
+            'disk_restore_point': '2023-01-02',
+            'disks': '2023-01-02',
             'galleries': '2022-03-03',
             'gallery_application_versions': '2022-03-03',
             'gallery_applications': '2022-03-03',
@@ -80,7 +80,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             'shared_galleries': '2022-03-03',
             'shared_gallery_image_versions': '2022-03-03',
             'shared_gallery_images': '2022-03-03',
-            'snapshots': '2022-07-02',
+            'snapshots': '2023-01-02',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -148,6 +148,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2022-08-01: :mod:`v2022_08_01.models<azure.mgmt.compute.v2022_08_01.models>`
            * 2022-09-04: :mod:`v2022_09_04.models<azure.mgmt.compute.v2022_09_04.models>`
            * 2022-11-01: :mod:`v2022_11_01.models<azure.mgmt.compute.v2022_11_01.models>`
+           * 2023-01-02: :mod:`v2023_01_02.models<azure.mgmt.compute.v2023_01_02.models>`
            * 2023-03-01: :mod:`v2023_03_01.models<azure.mgmt.compute.v2023_03_01.models>`
         """
         if api_version == '2015-06-15':
@@ -260,6 +261,9 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             return models
         elif api_version == '2022-11-01':
             from .v2022_11_01 import models
+            return models
+        elif api_version == '2023-01-02':
+            from .v2023_01_02 import models
             return models
         elif api_version == '2023-03-01':
             from .v2023_03_01 import models
@@ -689,6 +693,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-12-01: :class:`DiskAccessesOperations<azure.mgmt.compute.v2021_12_01.operations.DiskAccessesOperations>`
            * 2022-03-02: :class:`DiskAccessesOperations<azure.mgmt.compute.v2022_03_02.operations.DiskAccessesOperations>`
            * 2022-07-02: :class:`DiskAccessesOperations<azure.mgmt.compute.v2022_07_02.operations.DiskAccessesOperations>`
+           * 2023-01-02: :class:`DiskAccessesOperations<azure.mgmt.compute.v2023_01_02.operations.DiskAccessesOperations>`
         """
         api_version = self._get_api_version('disk_accesses')
         if api_version == '2020-05-01':
@@ -709,6 +714,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_03_02.operations import DiskAccessesOperations as OperationClass
         elif api_version == '2022-07-02':
             from .v2022_07_02.operations import DiskAccessesOperations as OperationClass
+        elif api_version == '2023-01-02':
+            from .v2023_01_02.operations import DiskAccessesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'disk_accesses'".format(api_version))
         self._config.api_version = api_version
@@ -729,6 +736,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-12-01: :class:`DiskEncryptionSetsOperations<azure.mgmt.compute.v2021_12_01.operations.DiskEncryptionSetsOperations>`
            * 2022-03-02: :class:`DiskEncryptionSetsOperations<azure.mgmt.compute.v2022_03_02.operations.DiskEncryptionSetsOperations>`
            * 2022-07-02: :class:`DiskEncryptionSetsOperations<azure.mgmt.compute.v2022_07_02.operations.DiskEncryptionSetsOperations>`
+           * 2023-01-02: :class:`DiskEncryptionSetsOperations<azure.mgmt.compute.v2023_01_02.operations.DiskEncryptionSetsOperations>`
         """
         api_version = self._get_api_version('disk_encryption_sets')
         if api_version == '2019-07-01':
@@ -753,6 +761,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_03_02.operations import DiskEncryptionSetsOperations as OperationClass
         elif api_version == '2022-07-02':
             from .v2022_07_02.operations import DiskEncryptionSetsOperations as OperationClass
+        elif api_version == '2023-01-02':
+            from .v2023_01_02.operations import DiskEncryptionSetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'disk_encryption_sets'".format(api_version))
         self._config.api_version = api_version
@@ -769,6 +779,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-12-01: :class:`DiskRestorePointOperations<azure.mgmt.compute.v2021_12_01.operations.DiskRestorePointOperations>`
            * 2022-03-02: :class:`DiskRestorePointOperations<azure.mgmt.compute.v2022_03_02.operations.DiskRestorePointOperations>`
            * 2022-07-02: :class:`DiskRestorePointOperations<azure.mgmt.compute.v2022_07_02.operations.DiskRestorePointOperations>`
+           * 2023-01-02: :class:`DiskRestorePointOperations<azure.mgmt.compute.v2023_01_02.operations.DiskRestorePointOperations>`
         """
         api_version = self._get_api_version('disk_restore_point')
         if api_version == '2020-09-30':
@@ -785,6 +796,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_03_02.operations import DiskRestorePointOperations as OperationClass
         elif api_version == '2022-07-02':
             from .v2022_07_02.operations import DiskRestorePointOperations as OperationClass
+        elif api_version == '2023-01-02':
+            from .v2023_01_02.operations import DiskRestorePointOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'disk_restore_point'".format(api_version))
         self._config.api_version = api_version
@@ -811,6 +824,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-12-01: :class:`DisksOperations<azure.mgmt.compute.v2021_12_01.operations.DisksOperations>`
            * 2022-03-02: :class:`DisksOperations<azure.mgmt.compute.v2022_03_02.operations.DisksOperations>`
            * 2022-07-02: :class:`DisksOperations<azure.mgmt.compute.v2022_07_02.operations.DisksOperations>`
+           * 2023-01-02: :class:`DisksOperations<azure.mgmt.compute.v2023_01_02.operations.DisksOperations>`
         """
         api_version = self._get_api_version('disks')
         if api_version == '2016-04-30-preview':
@@ -847,6 +861,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_03_02.operations import DisksOperations as OperationClass
         elif api_version == '2022-07-02':
             from .v2022_07_02.operations import DisksOperations as OperationClass
+        elif api_version == '2023-01-02':
+            from .v2023_01_02.operations import DisksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'disks'".format(api_version))
         self._config.api_version = api_version
@@ -1496,6 +1512,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-12-01: :class:`SnapshotsOperations<azure.mgmt.compute.v2021_12_01.operations.SnapshotsOperations>`
            * 2022-03-02: :class:`SnapshotsOperations<azure.mgmt.compute.v2022_03_02.operations.SnapshotsOperations>`
            * 2022-07-02: :class:`SnapshotsOperations<azure.mgmt.compute.v2022_07_02.operations.SnapshotsOperations>`
+           * 2023-01-02: :class:`SnapshotsOperations<azure.mgmt.compute.v2023_01_02.operations.SnapshotsOperations>`
         """
         api_version = self._get_api_version('snapshots')
         if api_version == '2016-04-30-preview':
@@ -1532,6 +1549,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_03_02.operations import SnapshotsOperations as OperationClass
         elif api_version == '2022-07-02':
             from .v2022_07_02.operations import SnapshotsOperations as OperationClass
+        elif api_version == '2023-01-02':
+            from .v2023_01_02.operations import SnapshotsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'snapshots'".format(api_version))
         self._config.api_version = api_version
