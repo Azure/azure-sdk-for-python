@@ -5,8 +5,9 @@
 
 # pylint: disable=protected-access, too-many-lines
 
+import sys
 import datetime
-from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional, Mapping, Literal
+from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional, Mapping
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
@@ -26,6 +27,10 @@ from ._helpers import (
     _get_deserialize,
 )
 
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
 
 TargetAuthorization = NewType('TargetAuthorization', Dict[str, str])
 
@@ -3793,7 +3798,7 @@ class AzureBlobFileListSource:
             container_url=model.container_url,
             file_list=model.file_list
         )
-    
+
     def _to_generated(self) -> AzureBlobFileListContentSource:
         return AzureBlobFileListContentSource(container_url=self.container_url, file_list=self.file_list)
 
@@ -3919,7 +3924,7 @@ class ClassifierDocumentTypeDetails:
         if self.source_kind == "azureBlobFileList":
             return GeneratedClassifierDocumentTypeDetails(azure_blob_file_list_source=self.source._to_generated())
         return GeneratedClassifierDocumentTypeDetails(azure_blob_source=self.source._to_generated())
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of ClassifierDocumentTypeDetails.
 
