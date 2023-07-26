@@ -25,7 +25,6 @@ from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str,
 from ._shared.uploads import IterStreamer
 from ._shared.uploads_async import AsyncIterStreamer
 from ._shared.request_handlers import (
-    add_feature_flag_to_user_agent,
     add_metadata_headers,
     get_length,
     read_length,
@@ -423,15 +422,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         kwargs['blob_settings'] = self._config
         kwargs['max_concurrency'] = max_concurrency
         kwargs['encryption_options'] = encryption_options
-        # Add to request context to adjust user agent string for encryption features
+        # Add feature flag to user agent for encryption
         if self.key_encryption_key:
-            user_agent = add_feature_flag_to_user_agent(
-                self._config.user_agent_policy.user_agent,
-                self._sdk_moniker,
-                get_feature_flag(self.encryption_version))
-
-            kwargs['user_agent'] = user_agent
-            kwargs['user_agent_overwrite'] = True
+            self.add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
 
         if blob_type == BlobType.BlockBlob:
             kwargs['client'] = self._client.block_blob
@@ -774,15 +767,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
 
-        # Add to request context to adjust user agent string for encryption features
+        # Add feature flag to user agent for encryption
         if self.key_encryption_key or self.key_resolver_function:
-            user_agent = add_feature_flag_to_user_agent(
-                self._config.user_agent_policy.user_agent,
-                self._sdk_moniker,
-                get_feature_flag(self.encryption_version))
-
-            kwargs['user_agent'] = user_agent
-            kwargs['user_agent_overwrite'] = True
+            self.add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
 
         options = {
             'clients': self._client,

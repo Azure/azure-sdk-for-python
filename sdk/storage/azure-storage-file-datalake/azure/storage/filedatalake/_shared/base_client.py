@@ -319,6 +319,14 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         except HttpResponseError as error:
             process_storage_error(error)
 
+    def add_feature_flag_to_user_agent(self, features: int, request_options: Dict[str, Any]) -> None:
+        user_agent: str = self._config.user_agent_policy.user_agent
+        moniker_index = user_agent.find(self._sdk_moniker) + len(self._sdk_moniker)
+        user_agent = f"{user_agent[:moniker_index]} azfeatures/{features}{user_agent[moniker_index:]}"
+
+        request_options['user_agent'] = user_agent
+        request_options['user_agent_overwrite'] = True
+
 class TransportWrapper(HttpTransport):
     """Wrapper class that ensures that an inner client created
     by a `get_client` method does not close the outer transport for the parent

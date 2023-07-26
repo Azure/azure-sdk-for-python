@@ -269,8 +269,3 @@ def _make_body_from_sub_request(sub_request):
     sub_request_body.append(_HTTP_LINE_ENDING)
 
     return ''.join(sub_request_body).encode()
-
-
-def add_feature_flag_to_user_agent(user_agent: str, moniker: str, features: int) -> str:
-    moniker_index = user_agent.find(moniker) + len(moniker)
-    return f"{user_agent[:moniker_index]} azfeatures/{features}{user_agent[moniker_index:]}"
