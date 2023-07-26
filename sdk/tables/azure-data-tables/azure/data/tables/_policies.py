@@ -7,6 +7,7 @@
 import time
 from typing import Any, Dict
 from wsgiref.handlers import format_date_time
+
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -34,7 +35,7 @@ def set_next_host_location(settings: Dict[str, Any], request: PipelineRequest) -
     :type request: ~azure.core.pipeline.PipelineRequest
     :return: None
     """
-    if request.http_request.method not in ['GET', 'HEAD']:
+    if request.http_request.method not in ["GET", "HEAD"]:
         return
     try:
         if settings["retry_secondary"] and settings["hosts"] and all(settings["hosts"].values()):
@@ -51,7 +52,6 @@ def set_next_host_location(settings: Dict[str, Any], request: PipelineRequest) -
 
 
 class StorageHeadersPolicy(HeadersPolicy):
-
     def on_request(self, request: PipelineRequest) -> None:
         super(StorageHeadersPolicy, self).on_request(request)
 
@@ -82,9 +82,7 @@ class StorageHosts(SansIOHTTPPolicy):
             # Lock retries to the specific location
             request.context.options["retry_to_secondary"] = False
             if use_location not in self.hosts:
-                raise ValueError(
-                    f"Attempting to use undefined host location {use_location}"
-                )
+                raise ValueError(f"Attempting to use undefined host location {use_location}")
             if use_location != location_mode:
                 # Update request URL to use the specified location
                 updated = parsed_url._replace(netloc=self.hosts[use_location])
@@ -142,7 +140,7 @@ class TablesRetryPolicy(RetryPolicy):
         :keyword int timeout: Timeout setting for the operation in seconds, default is 604800s (7 days).
         """
         super(TablesRetryPolicy, self).__init__(**kwargs)
-        self.retry_to_secondary = kwargs.get('retry_to_secondary', False)
+        self.retry_to_secondary = kwargs.get("retry_to_secondary", False)
 
     def is_retry(self, settings, response):
         """Is this method/status code retryable? (Based on allowlists and control
@@ -159,7 +157,7 @@ class TablesRetryPolicy(RetryPolicy):
         """
         should_retry = super(TablesRetryPolicy, self).is_retry(settings, response)
         status = response.http_response.status_code
-        if status == 404 and settings['mode'] == LocationMode.SECONDARY:
+        if status == 404 and settings["mode"] == LocationMode.SECONDARY:
             # Response code 404 should be retried if secondary was used.
             return True
         return should_retry
@@ -187,7 +185,7 @@ class TablesRetryPolicy(RetryPolicy):
         :type retry_settings: Dict
         """
         super(TablesRetryPolicy, self).update_context(context, retry_settings)
-        context['location_mode'] = retry_settings['mode']
+        context["location_mode"] = retry_settings["mode"]
 
     def update_request(self, request, retry_settings):
         """Updates the pipeline request before attempting to retry.
@@ -213,7 +211,7 @@ class TablesRetryPolicy(RetryPolicy):
         retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)
-        absolute_timeout = retry_settings['timeout']
+        absolute_timeout = retry_settings["timeout"]
         is_response_error = True
 
         while retry_active:
@@ -248,7 +246,7 @@ class TablesRetryPolicy(RetryPolicy):
             finally:
                 end_time = time.time()
                 if absolute_timeout:
-                    absolute_timeout -= (end_time - start_time)
+                    absolute_timeout -= end_time - start_time
 
         self.update_context(response.context, retry_settings)
         return response

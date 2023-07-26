@@ -20,7 +20,7 @@ except ImportError:
     AsyncHttpTransport = None  # type: ignore
 
 try:
-    from yarl import URL # cspell:disable-line
+    from yarl import URL  # cspell:disable-line
 except ImportError:
     pass
 
@@ -88,9 +88,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         self.is_emulated = is_emulated
 
     def _get_headers(self, request, headers_to_sign):
-        headers = dict(
-            (name.lower(), value) for name, value in request.headers.items() if value
-        )
+        headers = dict((name.lower(), value) for name, value in request.headers.items() if value)
         if "content-length" in headers and headers["content-length"] == "0":
             del headers["content-length"]
         return "\n".join(headers.get(x, "") for x in headers_to_sign) + "\n"
@@ -187,7 +185,7 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
         *scopes: str,
         discover_tenant: bool = True,
         discover_scopes: bool = True,
-        **kwargs
+        **kwargs,
     ) -> None:
         self._discover_tenant = discover_tenant
         self._discover_scopes = discover_scopes
@@ -228,43 +226,33 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
 def _configure_credential(credential: AzureNamedKeyCredential) -> SharedKeyCredentialPolicy:
     ...
 
+
 @overload
 def _configure_credential(credential: SharedKeyCredentialPolicy) -> SharedKeyCredentialPolicy:
     ...
+
 
 @overload
 def _configure_credential(credential: AzureSasCredential) -> AzureSasCredentialPolicy:
     ...
 
+
 @overload
 def _configure_credential(credential: TokenCredential) -> BearerTokenChallengePolicy:
     ...
+
 
 @overload
 def _configure_credential(credential: None) -> None:
     ...
 
+
 def _configure_credential(
-    credential: Optional[
-        Union[
-            AzureNamedKeyCredential,
-            AzureSasCredential,
-            TokenCredential,
-            SharedKeyCredentialPolicy
-        ]
-    ]
-) -> Optional[
-    Union[
-        BearerTokenChallengePolicy,
-        AzureSasCredentialPolicy,
-        SharedKeyCredentialPolicy
-    ]
-]:
+    credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, SharedKeyCredentialPolicy]]
+) -> Optional[Union[BearerTokenChallengePolicy, AzureSasCredentialPolicy, SharedKeyCredentialPolicy]]:
     if hasattr(credential, "get_token"):
         credential = cast(TokenCredential, credential)
-        return BearerTokenChallengePolicy(
-            credential, STORAGE_OAUTH_SCOPE
-        )
+        return BearerTokenChallengePolicy(credential, STORAGE_OAUTH_SCOPE)
     if isinstance(credential, SharedKeyCredentialPolicy):
         return credential
     if isinstance(credential, AzureSasCredential):
