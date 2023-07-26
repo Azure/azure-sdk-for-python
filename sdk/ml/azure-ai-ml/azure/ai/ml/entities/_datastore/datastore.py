@@ -167,7 +167,7 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
             return AzureBlobDatastore._from_rest_object(datastore_resource)
         if datastore_type == DatastoreType.AZURE_FILE:
             return AzureFileDatastore._from_rest_object(datastore_resource)
-        if datastore_type == DatastoreType.ONE_LAKE:
+        if datastore_type == DatastoreTypePreview.ONE_LAKE:
             return OneLakeDatastore._from_rest_object(datastore_resource)
         # disable unless preview release
         # elif datastore_type == DatastoreTypePreview.HDFS:
