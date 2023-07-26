@@ -48,15 +48,17 @@ def multiapi_combiner(sdk_code_path: str, package_name: str):
 
     # do not package code of v20XX_XX_XX
     if Path("MANIFEST.in").exists():
-        with open("MANIFEST.in", "rw") as file_stream:
-            content = file_stream.readlines()
-            handled_content = [line for line in content if "prune" not in line]
-            package_folder = package_name.replace("-", "/")
-            if package_name != "azure-mgmt-resource":
-                handled_content.append(f"prune {package_folder}/v20*\n")
-            else:
-                subfolders = [s for s in Path(package_folder).iterdir() if s.is_dir() and not s.name.startswith("_")]
-                handled_content.extend([f"prune {s.as_posix()}/v20*\n" for s in subfolders])
+        with open("MANIFEST.in", "r") as file_in:
+            content = file_in.readlines()
+    handled_content = [line for line in content if "prune" not in line]
+    package_folder = package_name.replace("-", "/")
+    if package_name != "azure-mgmt-resource":
+        handled_content.append(f"prune {package_folder}/v20*\n")
+    else:
+        subfolders = [s for s in Path(package_folder).iterdir() if s.is_dir() and not s.name.startswith("_")]
+        handled_content.extend([f"prune {s.as_posix()}/v20*\n" for s in subfolders])
+    with open("MANIFEST.in", "w") as file_out:
+        file_out.writelines(handled_content)
 
 
 def del_outdated_folder(readme: str):
@@ -302,7 +304,7 @@ def main(generate_input, generate_output):
                 check_api_version_in_subfolder(sdk_code_path)
 
             # use multiapi combiner to combine multiapi package
-            if package_name in ("azure-mgmt-network"):
+            if package_name in ("azure-mgmt-network", "azure-mgmt-computex"):
                 _LOGGER.info(f"start to combine multiapi package: {package_name}")
                 multiapi_combiner(sdk_code_path, package_name)
 
