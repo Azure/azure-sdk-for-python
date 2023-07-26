@@ -26,6 +26,7 @@ import os
 import shutil
 import re
 import json
+import yaml
 
 from subprocess import check_call
 from distutils.dir_util import copy_tree
@@ -285,9 +286,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     print(args.config)
-
-    json_config = json.loads(args.config)
-    print(json_config[0].name)
+    config = yaml.safe_load(args.config)
+    print(config)
 
 
     # output_source_location = create_combined_sdist(
