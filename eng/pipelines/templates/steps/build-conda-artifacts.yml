@@ -9,6 +9,10 @@ steps:
     inputs:
       versionSpec: $(PythonVersion)
 
+  - pwsh: |
+      pip install disutils
+    displayName: Install build script requirements
+
   - task: PythonScript@0
     displayName: 'Invoke build script against argument'
     inputs:

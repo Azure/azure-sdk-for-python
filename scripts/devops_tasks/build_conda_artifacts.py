@@ -25,7 +25,6 @@ import sys
 import os
 import shutil
 import re
-import yaml
 import json
 
 from subprocess import check_call
@@ -286,6 +285,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     print(args.config)
+
+    json_config = json.loads(args.config)
+    print(json_config[0].name)
+
 
     # output_source_location = create_combined_sdist(
     #     args.distribution_directory,
