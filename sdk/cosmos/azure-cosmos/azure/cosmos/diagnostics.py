@@ -27,13 +27,6 @@ SDK, please use our CosmosHttpLoggingPolicy outlined in our README.
 import warnings
 
 
-def __getattr__(self, name):
-    warnings.warn("The `diagnostics.py` file is deprecated and will be removed in the future. For logging " +
-                  "diagnostics information for the SDK, please use our CosmosHttpLoggingPolicy. For more " +
-                  "information on this, please see our README.",
-                  DeprecationWarning)
-
-
 class RecordDiagnostics(object):
     """This file is currently deprecated and will be removed in the future. Please use our CosmosHttpLoggingPolicy
     for logging SDK diagnostics moving forward. More information on this can be found in our README.
@@ -96,3 +89,10 @@ class RecordDiagnostics(object):
         if key in self._common:
             return self._headers[key]
         raise AttributeError(name)
+
+
+def __getattr__(self, name):
+    warnings.warn("The `diagnostics.py` file is deprecated and will be removed in the future. For logging " +
+                  "diagnostics information for the SDK, please use our CosmosHttpLoggingPolicy. For more " +
+                  "information on this, please see our README.",
+                  DeprecationWarning)
