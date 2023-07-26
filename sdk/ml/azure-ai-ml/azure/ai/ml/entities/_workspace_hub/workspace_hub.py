@@ -85,6 +85,9 @@ class WorkspaceHub(Workspace):
         :type identity: IdentityConfiguration
         :param primary_user_assigned_identity: The workspaceHub's primary user assigned identity
         :type primary_user_assigned_identity: str
+        :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
+            The flag can only be set at the creation phase, it can't be updated.
+        :type enable_data_isolation: bool
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
