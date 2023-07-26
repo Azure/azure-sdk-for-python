@@ -12,7 +12,7 @@ from sample_utilities import get_authority, get_credential
 
 
 async def main():
-    endpoint = os.environ.get("AZURE_APPCONFIG_ENDPOINT")
+    endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
     key_vault_uri = os.environ.get("AZURE_KEYVAULT_URI")
     authority = get_authority(endpoint)
     credential = get_credential(authority, is_async=True)
