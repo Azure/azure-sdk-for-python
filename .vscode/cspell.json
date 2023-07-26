@@ -134,6 +134,7 @@
     "amqps",
     "apim",
     "Asal",
+    "asgi",
     "astimezone",
     "AsyncIterable",
     "asyncio",
@@ -809,19 +810,58 @@
       ]
     },
     {
-      "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*.py",
+      "filename": "sdk/monitor/azure-monitor-opentelemetry*/**/*",
       "words": [
-        "ikey",
-        "semconv"
-      ]
-    },
-    {
-      "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*",
-      "words": [
+        "blrp",
+        "configurators",
+        "dbapi",
+        "grpc",
+        "opentelemetry",
         "otel",
         "OTLP",
         "otlp",
-        "grpc"
+        "speced",
+        "pkgutils",
+        "psycopg",
+        "uninstrument",
+        "uninstrumented"
+      ]
+    },
+    {
+      "filename": "sdk/monitor/azure-monitor-opentelemetry*/**/*.py",
+      "words": [
+        "asgi",
+        "ikey",
+        "msecs",
+        "mycontainer",
+        "semconv",
+        "updown"
+      ]
+    },
+    {
+      "filename": "sdk/monitor/azure-monitor-opentelemetry/azure/monitor/opentelemetry/_vendor/**/*.py",
+      "words": [
+        "aiopg",
+        "asgiref",
+        "asyncpg",
+        "boto",
+        "botocore",
+        "Cbar",
+        "funcs",
+        "grpcio",
+        "islast",
+        "libpq",
+        "owais",
+        "psutil",
+        "pydantic",
+        "pymongo",
+        "pymysql",
+        "remoulade",
+        "setifnotnone",
+        "sklearn",
+        "starlette",
+        "tortoiseorm",
+        "trysetip"
       ]
     },
     {
