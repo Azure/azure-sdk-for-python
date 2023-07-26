@@ -17,7 +17,7 @@ steps:
     displayName: 'Invoke build script against argument'
     inputs:
       scriptPath: 'scripts/devops_tasks/build_conda_artifacts.py'
-      arguments: -c '${{ parameters.CondaArtifacts }}'
+      arguments: -c "${{ parameters.CondaArtifacts }}"
 
   # - pwsh: |
   #     Write-Host "$(ARTIFACT_JSON)"
