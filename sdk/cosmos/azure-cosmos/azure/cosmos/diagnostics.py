@@ -27,6 +27,13 @@ SDK, please use our CosmosHttpLoggingPolicy outlined in our README.
 import warnings
 
 
+def __getattr__(self, name):
+    warnings.warn("The `diagnostics.py` file is deprecated and will be removed in the future. For logging " +
+                  "diagnostics information for the SDK, please use our CosmosHttpLoggingPolicy. For more " +
+                  "information on this, please see our README.",
+                  DeprecationWarning)
+
+
 class RecordDiagnostics(object):
     """This file is currently deprecated and will be removed in the future. Please use our CosmosHttpLoggingPolicy
     for logging SDK diagnostics moving forward. More information on this can be found in our README.
@@ -85,10 +92,6 @@ class RecordDiagnostics(object):
         self._request_charge += float(headers.get("x-ms-request-charge", 0))
 
     def __getattr__(self, name):
-        warnings.warn("The `diagnostics.py` file is deprecated and will be removed in the future. For logging " +
-                      "diagnostics information for the SDK, please use our CosmosHttpLoggingPolicy. For more " +
-                      "information on this, please see our README.",
-                      DeprecationWarning)
         key = "x-ms-" + name.replace("_", "-")
         if key in self._common:
             return self._headers[key]
