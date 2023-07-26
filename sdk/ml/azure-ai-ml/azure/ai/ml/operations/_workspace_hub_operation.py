@@ -164,7 +164,9 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
     # @monitor_with_activity(logger, "Hub.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
+    def begin_delete(
+        self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
+    ) -> LROPoller:
         """Delete a WorkspaceHub.
 
         :param name: Name of the WorkspaceHub
@@ -173,6 +175,9 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             i.e., container registry, storage account, key vault.
             The default is False. Set to True to delete these resources.
         :type delete_dependent_resources: bool
+        :param permanently_delete: Workspaces are soft-deleted by default to allow recovery of workspace data.
+            Set this flag to true to override the soft-delete behavior and permanently delete your workspace.
+        :type permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
@@ -182,7 +187,9 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
         ):
             raise ValidationError("{0} is not a WorkspaceHub".format(name))
-        if hasattr(rest_workspace_obj, 'workspace_hub_config') and hasattr(rest_workspace_obj.workspace_hub_config, 'additional_workspace_storage_accounts'):
+        if hasattr(rest_workspace_obj, "workspace_hub_config") and hasattr(
+            rest_workspace_obj.workspace_hub_config, "additional_workspace_storage_accounts"
+        ):
             for storageaccount in rest_workspace_obj.workspace_hub_config.additional_workspace_storage_accounts:
                 delete_resource_by_arm_id(
                     self._credentials,
@@ -191,4 +198,9 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
                     ArmConstants.AZURE_MGMT_STORAGE_API_VERSION,
                 )
 
-        return super().begin_delete(name=name, delete_dependent_resources=delete_dependent_resources, **kwargs)
+        return super().begin_delete(
+            name=name,
+            delete_dependent_resources=delete_dependent_resources,
+            permanently_delete=permanently_delete,
+            **kwargs,
+        )

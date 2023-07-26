@@ -3,11 +3,12 @@ from unittest.mock import DEFAULT, Mock
 import pytest
 from pytest_mock import MockFixture
 
-from azure.ai.ml import load_workspace
+from azure.ai.ml import load_workspace_hub
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import (
     WorkspaceHub,
     Workspace,
+    WorkspaceHubConfig,
 )
 from azure.ai.ml.operations import WorkspaceHubOperations
 from azure.core.polling import LROPoller
@@ -100,3 +101,11 @@ class TestWorkspaceHubOperation:
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
         with pytest.raises(Exception):
             mock_workspace_hub_operation.begin_delete("randstr", delete_dependent_resources=True)
+
+    def test_load_workspace_hub_from_yaml(self, mock_workspace_hub_operation: WorkspaceHubOperations):
+        params_override = []
+        hub = load_workspace_hub(
+            "./tests/test_configs/workspace/workspacehub_min.yaml", params_override=params_override
+        )
+        assert isinstance(hub.enable_data_isolation, bool)
+        assert isinstance(hub.workspace_hub_config, WorkspaceHubConfig)
