@@ -159,6 +159,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
         # base class will raise for other errors
         return result
 
+
 def _open_browser(url):
     opened = webbrowser.open(url)
     if not opened:
