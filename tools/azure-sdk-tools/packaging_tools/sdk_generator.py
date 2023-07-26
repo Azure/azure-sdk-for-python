@@ -92,7 +92,7 @@ def get_related_swagger(readme_content: List[str], tag: str) -> List[str]:
 
 
 def get_last_commit_info(files: List[str]) -> str:
-    result = [getoutput(f'git log --pretty="format:%ai%H" {f}').split("\n") for f in files]
+    result = [getoutput(f'git log -1 --pretty="format:%ai %H" {f}').strip('\n ') + " " + f for f in files]
     result.sort()
     return result[-1]
 
@@ -111,12 +111,18 @@ def choose_tag_and_update_meta(
     while idx < len(source):
         tag = source[idx].split("tag:")[-1].strip("\n ")
         related_files = get_related_swagger(readme_content, tag)
-        commit_info = get_last_commit_info(related_files)
-        recorded_info = meta.get(tag, "")
-        # there may be new commit after last release
-        if need_regenerate or commit_info > recorded_info:
-            meta[tag] = commit_info
-            target.append(source[idx])
+        if related_files:
+            commit_info = get_last_commit_info(related_files)
+            recorded_info = meta.get(tag, "")
+            # there may be new commit after last release
+            if need_regenerate or commit_info > recorded_info:
+                _LOGGER.info(f"update tag: {tag} with commit info {commit_info}")
+                meta[tag] = commit_info
+                target.append(source[idx])
+            else:
+                _LOGGER.info(f"skip tag: {tag} since commit info doesn't change")
+        else:
+            _LOGGER.warning(f"do not find related swagger for tag: {tag}")
         idx += 1
         if "tag" not in source[idx]:
             break
@@ -132,8 +138,8 @@ def extract_version_info(config: Dict[str, Any]) -> str:
 def if_need_regenerate(meta: Dict[str, Any]) -> bool:
     with open(str(Path("../azure-sdk-for-python", CONFIG_FILE)), "r") as file_in:
         config = json.load(file_in)
-    current_info = config["meta"]["autorest_options"]["version"] + "".join(config["meta"]["autorest_options"]["use"])
-    recorded_info = meta["autorest"] + "".join(meta["use"])
+    current_info = config["meta"]["autorest_options"]["version"] + "".join(sorted(config["meta"]["autorest_options"]["use"]))
+    recorded_info = meta["autorest"] + "".join(sorted(meta["use"]))
     return recorded_info != current_info
 
 
@@ -155,11 +161,11 @@ def update_metadata_for_multiapi_package(spec_folder: str, input_readme: str):
 
     sdk_folder = extract_sdk_folder(python_md_content)
     if not sdk_folder:
-        _LOGGER.warning("don't find valid sdk folder")
+        _LOGGER.warning(f"don't find valid sdk folder in {python_readme}")
         return
     meta_path = Path("../azure-sdk-for-python/sdk", sdk_folder, "_meta.json")
     if not meta_path.exists():
-        _LOGGER.warning(f"don't find meta file: {meta_path}")
+        _LOGGER.warning(f"don't find _meta.json file: {meta_path}")
         return
 
     with open(meta_path, "r") as file_in:
