@@ -84,6 +84,15 @@ class ComponentOperations(_ScopeDependentOperations):
     :type preflight_operation: Optional[~azure.ai.ml._vendor.azure_resources.operations.DeploymentsOperations]
     :param kwargs: Additional keyword arguments.
     :type kwargs: Dict
+
+    .. admonition:: Example:
+        :class: tip
+        .. literalinclude:: ../samples/ml_samples_component_configurations.py
+            :start-after: [START configure_ComponentOperations]
+            :end-before: [END configure_ComponentOperations]
+            :language: python
+            :dedent: 8
+            :caption: Configuring ComponentOperations.
     """
 
     def __init__(

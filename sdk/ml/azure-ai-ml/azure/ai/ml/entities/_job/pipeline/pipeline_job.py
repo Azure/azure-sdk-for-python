@@ -99,6 +99,15 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
     :type tags: dict[str, str], optional
     :param kwargs: A dictionary of additional configuration parameters. Defaults to None
     :type kwargs: dict, optional
+
+    .. admonition:: Example:
+        :class: tip
+        .. literalinclude:: ../samples/ml_samples_pipeline_job_configurations.py
+            :start-after: [START configure_PipelineJob_and_PipelineJobSettings]
+            :end-before: [END configure_PipelineJob_and_PipelineJobSettings]
+            :language: python
+            :dedent: 8
+            :caption: Shows how to create a pipeline using this class.
     """
 
     def __init__(

@@ -18,6 +18,15 @@ class PipelineJobSettings(_AttrDict):
     :type continue_on_step_failure: bool, optional
     :param force_rerun: Flag indicating whether to force rerun pipeline execution.
     :type force_rerun: bool, optional
+
+    .. admonition:: Example:
+        :class: tip
+        .. literalinclude:: ../samples/ml_samples_pipeline_job_configurations.py
+            :start-after: [START configure_PipelineJob_and_PipelineJobSettings]
+            :end-before: [END configure_PipelineJob_and_PipelineJobSettings]
+            :language: python
+            :dedent: 8
+            :caption: Shows how to set pipeline properties using this class.
     """
 
     def __init__(
