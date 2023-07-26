@@ -31,7 +31,6 @@ from ._models_py3 import BareMetalMachineReplaceParameters
 from ._models_py3 import BareMetalMachineRunCommandParameters
 from ._models_py3 import BareMetalMachineRunDataExtractsParameters
 from ._models_py3 import BareMetalMachineRunReadCommandsParameters
-from ._models_py3 import BareMetalMachineValidateHardwareParameters
 from ._models_py3 import BgpAdvertisement
 from ._models_py3 import BgpServiceLoadBalancerConfiguration
 from ._models_py3 import BmcKeySet
@@ -111,12 +110,10 @@ from ._models_py3 import ServiceLoadBalancerBgpPeer
 from ._models_py3 import ServicePrincipalInformation
 from ._models_py3 import SshPublicKey
 from ._models_py3 import StorageAppliance
-from ._models_py3 import StorageApplianceCommandSpecification
 from ._models_py3 import StorageApplianceConfigurationData
 from ._models_py3 import StorageApplianceEnableRemoteVendorManagementParameters
 from ._models_py3 import StorageApplianceList
 from ._models_py3 import StorageAppliancePatchParameters
-from ._models_py3 import StorageApplianceRunReadCommandsParameters
 from ._models_py3 import StorageApplianceSkuSlot
 from ._models_py3 import StorageProfile
 from ._models_py3 import SystemData
@@ -132,7 +129,6 @@ from ._models_py3 import VirtualMachineList
 from ._models_py3 import VirtualMachinePatchParameters
 from ._models_py3 import VirtualMachinePlacementHint
 from ._models_py3 import VirtualMachinePowerOffParameters
-from ._models_py3 import VirtualMachineVolumeParameters
 from ._models_py3 import Volume
 from ._models_py3 import VolumeList
 from ._models_py3 import VolumePatchParameters
@@ -146,7 +142,6 @@ from ._network_cloud_mgmt_client_enums import AvailabilityLifecycle
 from ._network_cloud_mgmt_client_enums import BareMetalMachineCordonStatus
 from ._network_cloud_mgmt_client_enums import BareMetalMachineDetailedStatus
 from ._network_cloud_mgmt_client_enums import BareMetalMachineEvacuate
-from ._network_cloud_mgmt_client_enums import BareMetalMachineHardwareValidationCategory
 from ._network_cloud_mgmt_client_enums import BareMetalMachineHardwareValidationResult
 from ._network_cloud_mgmt_client_enums import BareMetalMachineKeySetDetailedStatus
 from ._network_cloud_mgmt_client_enums import BareMetalMachineKeySetPrivilegeLevel
@@ -260,7 +255,6 @@ __all__ = [
     "BareMetalMachineRunCommandParameters",
     "BareMetalMachineRunDataExtractsParameters",
     "BareMetalMachineRunReadCommandsParameters",
-    "BareMetalMachineValidateHardwareParameters",
     "BgpAdvertisement",
     "BgpServiceLoadBalancerConfiguration",
     "BmcKeySet",
@@ -340,12 +334,10 @@ __all__ = [
     "ServicePrincipalInformation",
     "SshPublicKey",
     "StorageAppliance",
-    "StorageApplianceCommandSpecification",
     "StorageApplianceConfigurationData",
     "StorageApplianceEnableRemoteVendorManagementParameters",
     "StorageApplianceList",
     "StorageAppliancePatchParameters",
-    "StorageApplianceRunReadCommandsParameters",
     "StorageApplianceSkuSlot",
     "StorageProfile",
     "SystemData",
@@ -361,7 +353,6 @@ __all__ = [
     "VirtualMachinePatchParameters",
     "VirtualMachinePlacementHint",
     "VirtualMachinePowerOffParameters",
-    "VirtualMachineVolumeParameters",
     "Volume",
     "VolumeList",
     "VolumePatchParameters",
@@ -374,7 +365,6 @@ __all__ = [
     "BareMetalMachineCordonStatus",
     "BareMetalMachineDetailedStatus",
     "BareMetalMachineEvacuate",
-    "BareMetalMachineHardwareValidationCategory",
     "BareMetalMachineHardwareValidationResult",
     "BareMetalMachineKeySetDetailedStatus",
     "BareMetalMachineKeySetPrivilegeLevel",
