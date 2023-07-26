@@ -24,14 +24,14 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from collections.abc import Awaitable
-from typing import Callable, Any, Tuple, Generic, TypeVar, Generator
+from typing import Callable, Any, Tuple, Generic, TypeVar, Generator, Awaitable
 
 from ..exceptions import AzureError
-from ._poller import NoPolling as _NoPolling
+from ._poller import _SansIONoPolling
 
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
+DeserializationCallbackType = Any
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -39,7 +39,9 @@ _LOGGER = logging.getLogger(__name__)
 class AsyncPollingMethod(Generic[PollingReturnType_co]):
     """ABC class for polling method."""
 
-    def initialize(self, client: Any, initial_response: Any, deserialization_callback: Any) -> None:
+    def initialize(
+        self, client: Any, initial_response: Any, deserialization_callback: DeserializationCallbackType
+    ) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
     async def run(self) -> None:
@@ -58,20 +60,27 @@ class AsyncPollingMethod(Generic[PollingReturnType_co]):
         raise TypeError("Polling method '{}' doesn't support get_continuation_token".format(self.__class__.__name__))
 
     @classmethod
-    def from_continuation_token(cls, continuation_token: str, **kwargs) -> Tuple[Any, Any, Callable]:
+    def from_continuation_token(
+        cls, continuation_token: str, **kwargs: Any
+    ) -> Tuple[Any, Any, DeserializationCallbackType]:
         raise TypeError("Polling method '{}' doesn't support from_continuation_token".format(cls.__name__))
 
 
-class AsyncNoPolling(_NoPolling):
+class AsyncNoPolling(_SansIONoPolling[PollingReturnType_co], AsyncPollingMethod[PollingReturnType_co]):
     """An empty async poller that returns the deserialized initial response."""
 
-    async def run(self):  # pylint:disable=invalid-overridden-method
+    async def run(self) -> None:  # pylint:disable=invalid-overridden-method
         """Empty run, no polling.
         Just override initial run to add "async"
         """
 
 
-async def async_poller(client, initial_response, deserialization_callback, polling_method):
+async def async_poller(
+    client: Any,
+    initial_response: Any,
+    deserialization_callback: Callable[[Any], PollingReturnType_co],
+    polling_method: AsyncPollingMethod[PollingReturnType_co],
+) -> PollingReturnType_co:
     """Async Poller for long running operations.
 
     .. deprecated:: 1.5.0
@@ -86,12 +95,14 @@ async def async_poller(client, initial_response, deserialization_callback, polli
     :type deserialization_callback: callable or msrest.serialization.Model
     :param polling_method: The polling strategy to adopt
     :type polling_method: ~azure.core.polling.PollingMethod
+    :return: The final resource at the end of the polling.
+    :rtype: any or None
     """
     poller = AsyncLROPoller(client, initial_response, deserialization_callback, polling_method)
     return await poller
 
 
-class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable):
+class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable[PollingReturnType_co]):
     """Async poller for long running operations.
 
     :param client: A pipeline service client
@@ -109,7 +120,7 @@ class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable):
         self,
         client: Any,
         initial_response: Any,
-        deserialization_callback: Callable,
+        deserialization_callback: Callable[[Any], PollingReturnType_co],
         polling_method: AsyncPollingMethod[PollingReturnType_co],
     ):
         self._polling_method = polling_method
@@ -124,7 +135,11 @@ class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable):
         self._polling_method.initialize(client, initial_response, deserialization_callback)
 
     def polling_method(self) -> AsyncPollingMethod[PollingReturnType_co]:
-        """Return the polling method associated to this poller."""
+        """Return the polling method associated to this poller.
+
+        :return: The polling method associated to this poller.
+        :rtype: ~azure.core.polling.AsyncPollingMethod
+        """
         return self._polling_method
 
     def continuation_token(self) -> str:
@@ -137,7 +152,7 @@ class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable):
 
     @classmethod
     def from_continuation_token(
-        cls, polling_method: AsyncPollingMethod[PollingReturnType_co], continuation_token: str, **kwargs
+        cls, polling_method: AsyncPollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
     ) -> "AsyncLROPoller[PollingReturnType_co]":
         (
             client,
@@ -158,6 +173,7 @@ class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable):
         """Return the result of the long running operation.
 
         :returns: The deserialized resource of the long running operation, if one is available.
+        :rtype: any or None
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
         await self.wait()

@@ -306,6 +306,7 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
                  servicebus_namespace_parameter_name=SERVICEBUS_NAMESPACE_PARAM,
                  servicebus_topic_parameter_name=SERVICEBUS_TOPIC_PARAM,
                  requires_session=False,
+                 lock_duration='PT60S',
                  disable_recording=True, playback_fake_resource=None,
                  client_kwargs=None, random_name_enabled=True):
         super(ServiceBusSubscriptionPreparer, self).__init__(name_prefix,
@@ -319,8 +320,9 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
         self.parameter_name = parameter_name
         if random_name_enabled:
             self.resource_moniker = self.name_prefix + "sbsub"
-        self.set_cache(use_cache, requires_session)
+        self.set_cache(use_cache, requires_session, lock_duration)
         self.requires_session=requires_session
+        self.lock_duration = lock_duration
         if random_name_enabled:
             self.resource_moniker = self.name_prefix + "sbqueue"
 
@@ -339,7 +341,8 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
                         topic.name,
                         name,
                         SBSubscription(
-                            requires_session=self.requires_session
+                            requires_session=self.requires_session,
+                            lock_duration=self.lock_duration,
                         )
                     )
                     break

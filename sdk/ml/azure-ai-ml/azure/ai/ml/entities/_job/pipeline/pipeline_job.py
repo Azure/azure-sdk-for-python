@@ -33,7 +33,6 @@ from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
-from azure.ai.ml.entities._inputs_outputs.group_input import GroupInput
 
 # from azure.ai.ml.entities._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._credentials import (
@@ -43,6 +42,7 @@ from azure.ai.ml.entities._credentials import (
     _BaseJobIdentityConfiguration,
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._inputs_outputs.group_input import GroupInput
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
@@ -52,7 +52,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.job_service import JobServiceBase
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineIOMixin
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineJobIOMixin
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
@@ -62,7 +62,7 @@ from azure.ai.ml.exceptions import ErrorTarget, UserErrorException
 module_logger = logging.getLogger(__name__)
 
 
-class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatableMixin):
+class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidatableMixin):
     """Pipeline job.
 
     You should not instantiate this class directly. Instead, you should
@@ -125,13 +125,13 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             ComponentSource.DSL,
             ComponentSource.YAML_COMPONENT,
         ]:
-            self._inputs = self._build_inputs_dict(component.inputs, inputs)
+            self._inputs = self._build_inputs_dict(inputs, input_definition_dict=component.inputs)
             # for pipeline component created pipeline jobs,
             # it's output should have same value with the component outputs
             self._outputs = self._build_pipeline_outputs_dict(component.outputs)
         else:
             # Build inputs/outputs dict without meta when definition not available
-            self._inputs = self._build_inputs_dict_without_meta(inputs)
+            self._inputs = self._build_inputs_dict(inputs)
             # for node created pipeline jobs,
             # it's output should have same value with the given outputs
             self._outputs = self._build_pipeline_outputs_dict(outputs=outputs)
@@ -149,7 +149,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         self._jobs = (jobs or {}) if isinstance(component, str) else {}
 
         self.component: Union[PipelineComponent, str] = component
-        if "type" not in kwargs.keys():
+        if "type" not in kwargs:
             kwargs["type"] = JobType.PIPELINE
         if isinstance(component, PipelineComponent):
             description = component.description if description is None else description
@@ -438,7 +438,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         (Write a pipeline job as node in yaml is not supported presently.)
 
         :param context: Context of command job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated command component.
         """
         component = self._to_component(context, **kwargs)
@@ -632,7 +632,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         """Translate a pipeline job to pipeline component.
 
         :param context: Context of pipeline job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated pipeline component.
         """
         ignored_keys = PipelineComponent._check_ignored_keys(self)

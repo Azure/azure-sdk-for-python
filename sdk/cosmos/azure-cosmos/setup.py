@@ -54,7 +54,7 @@ setup(
     maintainer_email="askdocdb@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Natural Language :: English",
         "Operating System :: OS Independent",

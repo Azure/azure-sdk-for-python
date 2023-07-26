@@ -9,7 +9,7 @@ stages:
       MatrixReplace:
         - TestSamples=.*/true
       SupportedClouds: 'Public,UsGov,China'
-      Clouds: 'Prod,Canary'
+      Clouds: 'Prod'
       # This is a specific request from the formrecognizer service team
       # their claim is that the full matrix ends up stress-testing their service.
       # As such, the canary test runs should run on a reduced matrix.
@@ -17,12 +17,6 @@ stages:
         Prod:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           Location: $(LOCATION)
-        Canary:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-          Location: 'centraluseuap'
-          MatrixFilters:
-            - OSVmImage=^(?!macOS).*
-            - PythonVersion=^(?!pypy3).*
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           Location: 'westus2'

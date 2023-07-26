@@ -74,6 +74,7 @@ def mock_data_operation(
         service_client=mock_aml_services_2022_10_01,
         datastore_operations=mock_datastore_operations,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
+        all_operations=mock_machinelearning_client._operation_container,
     )
 
 

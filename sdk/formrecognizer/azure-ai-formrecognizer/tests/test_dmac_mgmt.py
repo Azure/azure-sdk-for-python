@@ -205,7 +205,7 @@ class TestManagement(FormRecognizerTest):
             assert classifier.expires_on
             for doc_type, source in classifier.doc_types.items():
                 assert doc_type
-                assert source.azure_blob_source or source.azure_blob_file_list_source
+                assert source.source
 
         # check failed op
         if failed_op:
@@ -244,6 +244,6 @@ class TestManagement(FormRecognizerTest):
             with dtc.get_document_analysis_client() as dac:
                 assert transport.session is not None
                 dac.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg).wait()
-                assert dac._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW
+                assert dac._api_version == DocumentAnalysisApiVersion.V2023_07_31
             dtc.get_resource_details()
             assert transport.session is not None

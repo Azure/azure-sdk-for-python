@@ -1,16 +1,36 @@
 # Release History
 
-## 11.4.0b4 (Unreleased)
+## 11.4.0b7 (Unreleased)
 
 ### Features Added
-
-- Added `workload_identity_tenant_id` support in `DefaultAzureCredential`.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 11.4.0b6 (2023-07-11)
+
+### Features Added
+
+- Added `top_k` support for `VectorSearch`.
+
+## 11.4.0b5 (2023-07-11)
+
+### Features Added
+
+- Exposed `azure.search.documents.models.Vector`.
+
+## 11.4.0b4 (2023-07-11)
+
+### Features Added
+
+- Added `VectorSearch` support.
+
+### Breaking Changes
+
+- Deprecated `SentimentSkillV1` and `EntityRecognitionSkillV1`.
 
 ## 11.4.0b3 (2023-02-07)
 

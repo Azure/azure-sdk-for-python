@@ -21,6 +21,7 @@ USAGE:
 
 import os
 
+
 def speller():
     # [START speller]
     from azure.core.credentials import AzureKeyCredential
@@ -31,14 +32,13 @@ def speller():
     api_key = os.getenv("AZURE_SEARCH_API_KEY")
 
     credential = AzureKeyCredential(api_key)
-    client = SearchClient(endpoint=endpoint,
-                          index_name=index_name,
-                          credential=credential)
+    client = SearchClient(endpoint=endpoint, index_name=index_name, credential=credential)
     results = list(client.search(search_text="luxury", query_language="en-us", query_speller="lexicon"))
 
     for result in results:
-        print("{}\n{}\n)".format(result["HotelId"], result["HotelName"]))
+        print("{}\n{}\n)".format(result["hotelId"], result["hotelName"]))
     # [END speller]
+
 
 def semantic_ranking():
     # [START semantic_ranking]
@@ -50,15 +50,21 @@ def semantic_ranking():
     api_key = os.getenv("AZURE_SEARCH_API_KEY")
 
     credential = AzureKeyCredential(api_key)
-    client = SearchClient(endpoint=endpoint,
-                          index_name=index_name,
-                          credential=credential)
-    results = list(client.search(search_text="luxury", query_type="semantic", semantic_configuration_name="semantic_config_name", query_language="en-us"))
+    client = SearchClient(endpoint=endpoint, index_name=index_name, credential=credential)
+    results = list(
+        client.search(
+            search_text="luxury",
+            query_type="semantic",
+            semantic_configuration_name="semantic_config_name",
+            query_language="en-us",
+        )
+    )
 
     for result in results:
-        print("{}\n{}\n)".format(result["HotelId"], result["HotelName"]))
+        print("{}\n{}\n)".format(result["hotelId"], result["hotelName"]))
     # [END semantic_ranking]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     speller()
     semantic_ranking()

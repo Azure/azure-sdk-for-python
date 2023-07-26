@@ -347,7 +347,7 @@ def resolve_pipeline_parameters(pipeline_parameters: dict, remove_empty=False):
     """
 
     if pipeline_parameters is None:
-        return
+        return None
     if not isinstance(pipeline_parameters, dict):
         raise ValidationException(
             message="pipeline_parameters must in dict {parameter: value} format.",

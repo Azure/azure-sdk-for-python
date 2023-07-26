@@ -52,8 +52,18 @@ def _account_to_string(account):
     return "(username: {}, tenant: {})".format(username, tenant_id)
 
 
-def _filtered_accounts(accounts, username=None, tenant_id=None):
-    """yield accounts matching username and/or tenant_id"""
+def _filtered_accounts(
+    accounts: Iterable[CacheItem], username: Optional[str] = None, tenant_id: Optional[str] = None
+) -> List[CacheItem]:
+    """Return accounts matching username and/or tenant_id.
+
+    :param accounts: accounts from the MSAL cache
+    :type accounts: Iterable[CacheItem]
+    :param str username: an account's username
+    :param str tenant_id: an account's tenant ID
+    :return: accounts matching username and/or tenant_id
+    :rtype: list[CacheItem]
+    """
 
     filtered_accounts = []
     for account in accounts:
@@ -72,16 +82,17 @@ def _filtered_accounts(accounts, username=None, tenant_id=None):
 
 class SharedTokenCacheBase(ABC):
     def __init__(
-            self,
-            username: Optional[str] = None,
-            *,
-            authority: Optional[str] = None,
-            tenant_id: Optional[str] = None,
-            **kwargs: Any
+        self,
+        username: Optional[str] = None,
+        *,
+        authority: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        **kwargs: Any
     ) -> None:  # pylint:disable=unused-argument
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         environment = urlparse(self._authority).netloc
         self._environment_aliases = KNOWN_ALIASES.get(environment) or frozenset((environment,))
+        self._is_chained = kwargs.pop("_is_chained", False)
         self._username = username
         self._tenant_id = tenant_id
         self._cache = kwargs.pop("_cache", None)
@@ -98,9 +109,7 @@ class SharedTokenCacheBase(ABC):
         self._load_cache()
         if self._cache:
             # pylint:disable=protected-access
-            self._client = self._get_auth_client(
-                authority=self._authority, cache=self._cache, **self._client_kwargs
-            )
+            self._client = self._get_auth_client(authority=self._authority, cache=self._cache, **self._client_kwargs)
 
         self._initialized = True
 
@@ -111,8 +120,9 @@ class SharedTokenCacheBase(ABC):
                 # user's default cache regardless of whether it's encrypted. It doesn't create a new cache. If the
                 # default cache exists, the user must have created it earlier. If it's unencrypted, the user must
                 # have allowed that.
-                options = self._cache_persistence_options or \
-                    TokenCachePersistenceOptions(allow_unencrypted_storage=True)
+                options = self._cache_persistence_options or TokenCachePersistenceOptions(
+                    allow_unencrypted_storage=True
+                )
                 self._cache = _load_persistent_cache(options)
             except Exception:  # pylint:disable=broad-except
                 pass
@@ -122,7 +132,13 @@ class SharedTokenCacheBase(ABC):
         pass
 
     def _get_cache_items_for_authority(self, credential_type: msal.TokenCache.CredentialType) -> List[CacheItem]:
-        """yield cache items matching this credential's authority or one of its aliases"""
+        """Return cache items matching this credential's authority or one of its aliases.
+
+        :param credential_type: the type of credential to look for in the cache
+        :type credential_type: msal.TokenCache.CredentialType
+        :return: a list of cache items
+        :rtype: list[CacheItem]
+        """
 
         items = []
         for item in self._cache.find(credential_type):
@@ -132,7 +148,11 @@ class SharedTokenCacheBase(ABC):
         return items
 
     def _get_accounts_having_matching_refresh_tokens(self) -> Iterable[CacheItem]:
-        """returns an iterable of cached accounts which have a matching refresh token"""
+        """Returns an iterable of cached accounts which have a matching refresh token.
+
+        :return: an iterable of cached accounts
+        :rtype: Iterable[CacheItem]
+        """
 
         refresh_tokens = self._get_cache_items_for_authority(msal.TokenCache.CredentialType.REFRESH_TOKEN)
         all_accounts = self._get_cache_items_for_authority(msal.TokenCache.CredentialType.ACCOUNT)
@@ -152,8 +172,14 @@ class SharedTokenCacheBase(ABC):
         return accounts.values()
 
     @wrap_exceptions
-    def _get_account(self, username: Optional[str] = None, tenant_id: Optional[str] = None)  -> CacheItem:
-        """returns exactly one account which has a refresh token and matches username and/or tenant_id"""
+    def _get_account(self, username: Optional[str] = None, tenant_id: Optional[str] = None) -> CacheItem:
+        """Returns exactly one account which has a refresh token and matches username and/or tenant_id.
+
+        :param str username: an account's username
+        :param str tenant_id: an account's tenant ID
+        :return: an account
+        :rtype: CacheItem
+        """
 
         accounts = self._get_accounts_having_matching_refresh_tokens()
         if not accounts:
@@ -215,6 +241,7 @@ class SharedTokenCacheBase(ABC):
     def supported() -> bool:
         """Whether the shared token cache is supported on the current platform.
 
+        :return: True if the shared token cache is supported on the current platform.
         :rtype: bool
         """
         return platform.system() in {"Darwin", "Linux", "Windows"}

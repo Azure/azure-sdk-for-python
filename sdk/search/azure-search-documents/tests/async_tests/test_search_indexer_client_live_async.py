@@ -9,8 +9,11 @@ from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient
 from azure.search.documents.indexes.models import (
-    SearchIndex, SearchIndexer, SearchIndexerDataContainer,
-    SearchIndexerDataSourceConnection)
+    SearchIndex,
+    SearchIndexer,
+    SearchIndexerDataContainer,
+    SearchIndexerDataSourceConnection,
+)
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
@@ -18,7 +21,6 @@ from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 
 class TestSearchIndexerClientTestAsync(AzureRecordedTestCase):
-
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
@@ -45,17 +47,11 @@ class TestSearchIndexerClientTestAsync(AzureRecordedTestCase):
             name=f"{name}-ds",
             type="azureblob",
             connection_string=storage_cs,
-            container=SearchIndexerDataContainer(name=container_name)
+            container=SearchIndexerDataContainer(name=container_name),
         )
         ds = await client.create_data_source_connection(data_source_connection)
 
-        fields = [
-        {
-          "name": "hotelId",
-          "type": "Edm.String",
-          "key": True,
-          "searchable": False
-        }]
+        fields = [{"name": "hotelId", "type": "Edm.String", "key": True, "searchable": False}]
         index = SearchIndex(name=f"{name}-hotels", fields=fields)
         ind = await index_client.create_index(index)
         return SearchIndexer(name=name, data_source_name=ds.name, target_index_name=ind.name)
@@ -111,14 +107,14 @@ class TestSearchIndexerClientTestAsync(AzureRecordedTestCase):
         indexer = await self._prepare_indexer(client, index_client, storage_cs, name, container_name)
         await client.create_indexer(indexer)
         await client.reset_indexer(name)
-        assert (await client.get_indexer_status(name)).last_result.status.lower() in ('inprogress', 'reset')
+        assert (await client.get_indexer_status(name)).last_result.status.lower() in ("inprogress", "reset")
 
     async def _test_run_indexer(self, client, index_client, storage_cs, container_name):
         name = "run"
         indexer = await self._prepare_indexer(client, index_client, storage_cs, name, container_name)
         await client.create_indexer(indexer)
         await client.run_indexer(name)
-        assert (await client.get_indexer_status(name)).status == 'running'
+        assert (await client.get_indexer_status(name)).status == "running"
 
     async def _test_get_indexer_status(self, client, index_client, storage_cs, container_name):
         name = "get-status"

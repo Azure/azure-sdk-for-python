@@ -2,12 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use,protected-access
+# pylint: disable=unused-argument,protected-access
 
 import copy
 import logging
 import os
 import re
+import traceback
 import typing
 from abc import abstractmethod
 from pathlib import Path
@@ -16,30 +17,17 @@ from typing import List, Optional
 from marshmallow import RAISE, fields
 from marshmallow.exceptions import ValidationError
 from marshmallow.fields import _T, Field, Nested
-from marshmallow.utils import (
-    FieldInstanceResolutionError,
-    from_iso_datetime,
-    resolve_field_instance,
-)
+from marshmallow.utils import FieldInstanceResolutionError, from_iso_datetime, resolve_field_instance
 
-from ..._utils._arm_id_utils import (
-    AMLVersionedArmId,
-    is_ARM_id_for_resource,
-    parse_name_label,
-    parse_name_version,
-)
+from ..._utils._arm_id_utils import AMLVersionedArmId, is_ARM_id_for_resource, parse_name_label, parse_name_version
 from ..._utils._experimental import _is_warning_cached
-from ..._utils.utils import (
-    is_data_binding_expression,
-    is_valid_node_name,
-    load_file,
-    load_yaml,
-)
+from ..._utils.utils import is_data_binding_expression, is_valid_node_name, load_file, load_yaml
 from ...constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
     BASE_PATH_CONTEXT_KEY,
     CONDA_FILE,
+    DefaultOpenEncoding,
     DOCKER_FILE_NAME,
     EXPERIMENTAL_FIELD_MESSAGE,
     EXPERIMENTAL_LINK_MESSAGE,
@@ -51,9 +39,7 @@ from ...constants._common import (
     RESOURCE_ID_FORMAT,
     AzureMLResourceType,
 )
-from ...entities._job.pipeline._attr_dict import (
-    try_get_non_arbitrary_attr_for_potential_attr_dict,
-)
+from ...entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
 from ...exceptions import ValidationException
 from ..core.schema import PathAwareSchema
 
@@ -81,7 +67,7 @@ class StringTransformedEnum(Field):
 
     def _serialize(self, value, attr, obj, **kwargs):
         if not value:
-            return
+            return None
         if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
             return value if self.pass_original else self.casing_transform(value)
         raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
@@ -484,8 +470,18 @@ class UnionField(fields.Field):
                 return schema.deserialize(value, attr, data, **kwargs)
             except ValidationError as e:
                 errors.append(e.normalized_messages())
-            except (ValidationException, FileNotFoundError, TypeError) as e:
+            except ValidationException as e:
+                # ValidationException is explicitly raised in project code so usually easy to locate with error message
                 errors.append([str(e)])
+            except (FileNotFoundError, TypeError) as e:
+                # FileNotFoundError and TypeError can be raised in system code, so we need to add more information
+                # TODO: consider if it's possible to handle those errors in their directly relative
+                #  code instead of in UnionField
+                trace = traceback.format_exc().splitlines()
+                if len(trace) >= 3:
+                    errors.append([f"{trace[-1]} from {trace[-3]} {trace[-2]}"])
+                else:
+                    errors.append([f"{e.__class__.__name__}: {e}"])
             finally:
                 # Revert base path to original path when job schema fail to deserialize job. For example, when load
                 # parallel job with component file reference starting with FILE prefix, maybe first CommandSchema will
@@ -567,19 +563,22 @@ class TypeSensitiveUnionField(UnionField):
         self._type_sensitive_fields_dict[type_name].insert(0, field)
         self.insert_union_field(field)
 
-    def _raise_simplified_error_base_on_type(self, e, value, attr):
-        """If value doesn't have type, raise original error; If value has type.
+    def _simplified_error_base_on_type(self, e, value, attr) -> Exception:
+        """Returns a simplified error based on value type
 
-        & its type doesn't match any allowed types, raise "Value {} not in set {}"; If value has type & its type matches
-        at least 1 field, return the first matched error message;
+        :return: Returns
+         * e if value doesn't havetype
+         * ValidationError("Value {} not in set {}") if value type not in allowed types
+         * First Matched Error message if value has type and type matches atleast one field
+        :rtype: Exception
         """
         value_type = try_get_non_arbitrary_attr_for_potential_attr_dict(value, self.type_field_name)
         if value_type is None:
             # if value has no type field, raise original error
-            raise e
+            return e
         if value_type not in self.allowed_types:
             # if value has type field but its value doesn't match any allowed value, raise ValidationError directly
-            raise ValidationError(
+            return ValidationError(
                 message={self.type_field_name: f"Value {value_type!r} passed is not in set {self.allowed_types}"},
                 field_name=attr,
             )
@@ -591,9 +590,9 @@ class TypeSensitiveUnionField(UnionField):
             # for nested schema, type field won't be within error only if type field value is matched
             # then return first matched error message
             if self.type_field_name not in error:
-                raise ValidationError(message=error, field_name=attr)
+                return ValidationError(message=error, field_name=attr)
         # shouldn't reach here
-        raise e
+        return e
 
     def _serialize(self, value, attr, obj, **kwargs):
         union_fields = self._union_fields[:]
@@ -607,7 +606,7 @@ class TypeSensitiveUnionField(UnionField):
         try:
             return super(TypeSensitiveUnionField, self)._serialize(value, attr, obj, **kwargs)
         except ValidationError as e:
-            self._raise_simplified_error_base_on_type(e, value, attr)
+            raise self._simplified_error_base_on_type(e, value, attr)
         finally:
             self._union_fields = union_fields
 
@@ -625,7 +624,7 @@ class TypeSensitiveUnionField(UnionField):
                 target_path.resolve()
             if target_path.is_file():
                 self.context[BASE_PATH_CONTEXT_KEY] = target_path.parent
-                with target_path.open() as f:
+                with target_path.open(encoding=DefaultOpenEncoding.READ) as f:
                     return yaml.safe_load(f)
         except Exception:  # pylint: disable=broad-except
             pass
@@ -637,12 +636,12 @@ class TypeSensitiveUnionField(UnionField):
         except ValidationError as e:
             if isinstance(value, str) and self._allow_load_from_yaml:
                 value = self._try_load_from_yaml(value)
-            self._raise_simplified_error_base_on_type(e, value, attr)
+            raise self._simplified_error_base_on_type(e, value, attr)
 
 
 def ComputeField(**kwargs):
     """
-    :param required : if set to True, it is not possible to pass None
+    :keyword required: if set to True, it is not possible to pass None
     :type required: bool
     """
     return UnionField(
@@ -659,7 +658,7 @@ def ComputeField(**kwargs):
 
 def CodeField(**kwargs):
     """
-    :param required : if set to True, it is not possible to pass None
+    :keyword required: if set to True, it is not possible to pass None
     :type required: bool
     """
     return UnionField(
@@ -681,8 +680,8 @@ def DistributionField(**kwargs):
     from azure.ai.ml._schema.job.distribution import (
         MPIDistributionSchema,
         PyTorchDistributionSchema,
-        TensorFlowDistributionSchema,
         RayDistributionSchema,
+        TensorFlowDistributionSchema,
     )
 
     return UnionField(

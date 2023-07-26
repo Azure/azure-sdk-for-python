@@ -71,10 +71,12 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         *,
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
-        process_timeout: int = 10
+        process_timeout: int = 10,
+        _is_chained: bool = False,
     ) -> None:
 
         self.tenant_id = tenant_id
+        self._is_chained = _is_chained
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
@@ -89,7 +91,9 @@ class AzureDeveloperCliCredential(AsyncContextManager):
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure Developer CLI.
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure Developer CLI
           but didn't receive an access token.
@@ -109,16 +113,19 @@ class AzureDeveloperCliCredential(AsyncContextManager):
 
         if tenant:
             command += " --tenant-id " + tenant
-        output = await _run_command(command, self._process_timeout)
+        output = await _run_command(command, self._process_timeout, _is_chained=self._is_chained)
 
         token = parse_token(output)
         if not token:
             sanitized_output = sanitize_output(output)
-            raise ClientAuthenticationError(
-                message="Unexpected output from Azure CLI: '{}'. \n"
-                        "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-                        "https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot.".format(sanitized_output)
+            message = (
+                f"Unexpected output from Azure CLI: '{sanitized_output}'. \n"
+                f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                f"https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot."
             )
+            if self._is_chained:
+                raise CredentialUnavailableError(message=message)
+            raise ClientAuthenticationError(message=message)
 
         return token
 
@@ -126,7 +133,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         """Calling this method is unnecessary"""
 
 
-async def _run_command(command: str, timeout: int) -> str:
+async def _run_command(command: str, timeout: int, _is_chained: bool = False) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
     if shutil.which(EXECUTABLE_NAME) is None:
         raise CredentialUnavailableError(message=CLI_NOT_FOUND)
@@ -144,7 +151,7 @@ async def _run_command(command: str, timeout: int) -> str:
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
             cwd=working_directory,
-            env=dict(os.environ, NO_COLOR="true")
+            env=dict(os.environ, NO_COLOR="true"),
         )
         stdout_b, stderr_b = await asyncio.wait_for(proc.communicate(), timeout)
         output = stdout_b.decode()
@@ -168,4 +175,6 @@ async def _run_command(command: str, timeout: int) -> str:
         raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
     message = sanitize_output(stderr) if stderr else "Failed to invoke Azure Developer CLI"
+    if _is_chained:
+        raise CredentialUnavailableError(message=message)
     raise ClientAuthenticationError(message=message)

@@ -496,6 +496,9 @@ from azure.core.pipeline.policies import (
 |  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
 |  |  | retry_mode | x | x | Fixed or exponential delay between attempts, default is exponential. |
 |  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
+| SensitiveHeaderCleanupPolicy | SansIOHTTPPolicy | | | | |
+|  |  | blocked_redirect_headers | x | | The headers to clean up when redirecting to another domain. |
+|  |  | disable_redirect_cleanup | x | | Opt out cleaning up sensitive headers when redirecting to another domain. |
 
 ### The Pipeline
 

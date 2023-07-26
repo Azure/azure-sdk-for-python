@@ -27,6 +27,7 @@ from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import
 from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
 from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
 from azure.ai.ml.entities._endpoint.online_endpoint import OnlineEndpoint
+from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
 from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
 from azure.ai.ml.entities._job.job import Job
@@ -63,7 +64,7 @@ def load_common(
         Must be provided, and is assumed to be assigned by other internal
         functions that call this.
     :type relative_origin: str
-    :param params_override: _description_, defaults to None
+    :keyword params_override: _description_, defaults to None
     :type params_override: list, optional
     :return: _description_
     :rtype: Resource
@@ -161,12 +162,12 @@ def load_job(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
@@ -192,12 +193,12 @@ def load_workspace(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
 
@@ -222,12 +223,12 @@ def load_registry(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
 
@@ -252,12 +253,12 @@ def load_datastore(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Datastore cannot be successfully validated.
@@ -283,12 +284,12 @@ def load_code(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Code cannot be successfully validated.
@@ -314,12 +315,12 @@ def load_compute(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
 
@@ -356,21 +357,21 @@ def load_component(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :param client: An MLClient instance.
+    :keyword client: An MLClient instance.
     :type client: MLClient
-    :param name: Name of the component.
+    :keyword name: Name of the component.
     :type name: str
-    :param version: Version of the component.
+    :keyword version: Version of the component.
     :type version: str
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
     :return: A function that can be called with parameters to get a `azure.ai.ml.entities.Component`
@@ -412,12 +413,12 @@ def load_model(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
@@ -443,12 +444,12 @@ def load_data(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully validated.
@@ -474,12 +475,12 @@ def load_environment(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Environment cannot be successfully validated.
@@ -505,12 +506,12 @@ def load_online_deployment(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Online Deployment cannot be successfully validated.
@@ -536,12 +537,12 @@ def load_batch_deployment(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
 
@@ -566,12 +567,12 @@ def load_model_batch_deployment(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
 
@@ -596,12 +597,12 @@ def load_pipeline_component_batch_deployment(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
 
@@ -626,12 +627,12 @@ def load_online_endpoint(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Online Endpoint cannot be successfully validated.
@@ -661,7 +662,7 @@ def load_batch_endpoint(
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
 
@@ -686,12 +687,12 @@ def load_workspace_connection(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
 
@@ -720,7 +721,7 @@ def load_schedule(
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
 
@@ -744,12 +745,12 @@ def load_feature_store(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :return: Loaded feature store object.
@@ -773,12 +774,12 @@ def load_feature_set(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureSet cannot be successfully validated.
@@ -804,12 +805,12 @@ def load_feature_store_entity(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureStoreEntity cannot be successfully validated.
@@ -818,6 +819,34 @@ def load_feature_store_entity(
     :rtype: FeatureStoreEntity
     """
     return load_common(FeatureStoreEntity, source, relative_origin, **kwargs)
+
+
+def load_workspace_hub(
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
+    relative_origin: Optional[str] = None,
+    **kwargs,
+) -> WorkspaceHub:
+    """Load a WorkspaceHub object from a yaml file.
+    :param source: The local yaml source of a WorkspaceHub. Must be either a
+        path to a local file, or an already-open file.
+        If the source is a path, it will be open and read.
+        An exception is raised if the file does not exist.
+        If the source is an open file, the file will be read directly,
+        and an exception is raised if the file is not readable.
+    :type source: Union[PathLike, str, io.TextIOWrapper]
+    :param relative_origin: The origin to be used when deducing
+        the relative locations of files referenced in the parsed yaml.
+        Defaults to the inputted source's directory if it is a file or file path input.
+        Defaults to "./" if the source is a stream input with no name value.
+    :type relative_origin: str
+    :param params_override: Fields to overwrite on top of the yaml file.
+        Format is [{"field1": "value1"}, {"field2": "value2"}]
+    :type params_override: List[Dict]
+    :return: Loaded WorkspaceHub object.
+    :rtype: WorkspaceHub
+    """
+    return load_common(WorkspaceHub, source, relative_origin, **kwargs)
 
 
 @experimental

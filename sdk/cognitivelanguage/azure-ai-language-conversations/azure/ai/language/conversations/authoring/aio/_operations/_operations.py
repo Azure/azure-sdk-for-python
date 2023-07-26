@@ -72,7 +72,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ConversationAuthoringClientOperationsMixin(
+class ConversationAuthoringClientOperationsMixin(  # pylint: disable=name-too-long
     ConversationAuthoringClientMixinABC
 ):  # pylint: disable=too-many-public-methods
     @distributed_trace
