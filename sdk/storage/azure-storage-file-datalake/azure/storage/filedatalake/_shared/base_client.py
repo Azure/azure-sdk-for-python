@@ -106,7 +106,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip('/')
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
-        self._config, self._pipeline = self._create_pipeline(self.credential, storage_sdk=service, **kwargs)
+        self._sdk_moniker = f"storage-{service}/{VERSION}"
+        self._config, self._pipeline = self._create_pipeline(self.credential, sdk_moniker=self._sdk_moniker, **kwargs)
 
     def __enter__(self):
         self._client.__enter__()
@@ -410,8 +411,7 @@ def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
-    config.user_agent_policy = UserAgentPolicy(
-        sdk_moniker=f"storage-{kwargs.pop('storage_sdk')}/{VERSION}", **kwargs)
+    config.user_agent_policy = UserAgentPolicy(sdk_moniker=kwargs.pop('sdk_moniker'), **kwargs)
     config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
