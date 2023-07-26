@@ -204,6 +204,7 @@ class RemoteRenderingClient(object):
     def list_asset_conversions(self, **kwargs):
         # type: (...) -> ItemPaged[AssetConversion]
         """ Gets conversions for the remote rendering account.
+        :return: An iterator like instance of AssetConversion
         :rtype: ItemPaged[AssetConversion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -254,7 +255,7 @@ class RemoteRenderingClient(object):
             session_id=session_id,
             **kwargs)
 
-    def get_rendering_session_poller(self, **kwargs):
+    def get_rendering_session_poller(self, **kwargs): # pylint: disable=client-method-missing-tracing-decorator
         # type: (Any) -> LROPoller[RenderingSession]
         """
         Returns a poller for an existing rendering session by session id or a continuation token retrieved from a
@@ -342,6 +343,7 @@ class RemoteRenderingClient(object):
         """
         List rendering sessions in the 'Ready' or 'Starting' state. Does not return stopped or failed rendering
             sessions.
+        :return: A pageable list of rendering sessions
         :rtype: ItemPaged[RenderingSession]
         :raises ~azure.core.exceptions.HttpResponseError:
         """

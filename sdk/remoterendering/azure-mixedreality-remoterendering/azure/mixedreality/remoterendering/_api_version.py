@@ -17,7 +17,10 @@ class RemoteRenderingApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 def validate_api_version(api_version):
     # type: (str) -> None
-    """Raise ValueError if api_version is invalid """
+    """Raise ValueError if api_version is invalid
+
+    :param str api_version: The api version to validate
+    """
     if not api_version:
         return
 
@@ -28,4 +31,4 @@ def validate_api_version(api_version):
             "Unsupported API version '{}'. Please select from:\n{}".format(
                 api_version, ", ".join(v.value for v in RemoteRenderingApiVersion)
             )
-        )
+        ) from None

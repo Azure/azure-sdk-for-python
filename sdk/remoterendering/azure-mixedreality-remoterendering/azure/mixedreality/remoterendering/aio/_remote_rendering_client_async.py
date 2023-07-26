@@ -163,7 +163,7 @@ class RemoteRenderingClient(object):
                                                                   conversion_id=conversion_id,
                                                                   **kwargs)
 
-    async def get_asset_conversion_poller(self, **kwargs):
+    async def get_asset_conversion_poller(self, **kwargs): # pylint: disable=client-method-missing-tracing-decorator-async
         # type: (Any) -> AsyncLROPoller[AssetConversion]
         """
         Returns a poller for an existing conversion by conversion id or a continuation token retrieved from a previous
@@ -211,6 +211,7 @@ class RemoteRenderingClient(object):
         # type: (...) -> AsyncItemPaged[AssetConversion]
         """
         Gets conversions for the remote rendering account.
+        :return: An async iterable of AssetConversion
         :rtype: AsyncItemPaged[AssetConversion]
         """
         return self._client.remote_rendering.list_conversions(account_id=self._account_id, **kwargs)  # type: ignore
@@ -258,7 +259,7 @@ class RemoteRenderingClient(object):
         '''
         return await self._client.remote_rendering.get_session(self._account_id, session_id=session_id, **kwargs)
 
-    async def get_rendering_session_poller(self, **kwargs):
+    async def get_rendering_session_poller(self, **kwargs): # pylint: disable=client-method-missing-tracing-decorator-async
         # type: (Any) -> AsyncLROPoller[RenderingSession]
         """
         Returns a poller for an existing rendering session by session id or a continuation token retrieved from a
@@ -343,6 +344,7 @@ class RemoteRenderingClient(object):
         """
         List rendering sessions in the 'Ready' or 'Starting' state. Does not return stopped or failed rendering
             sessions.
+        :return: An async pageable list of RenderingSession
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mixedreality.remoterendering.RenderingSession]
         """
         return self._client.remote_rendering.list_sessions(account_id=self._account_id, **kwargs)  # type: ignore
