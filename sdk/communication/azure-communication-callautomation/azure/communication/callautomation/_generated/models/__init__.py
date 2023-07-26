@@ -58,10 +58,10 @@ from ._models import RemoveParticipantRequest
 from ._models import RemoveParticipantResponse
 from ._models import RemoveParticipantSucceeded
 from ._models import ResultInformation
-from ._models import SendDtmfCompleted
-from ._models import SendDtmfFailed
-from ._models import SendDtmfRequest
-from ._models import SendDtmfResult
+from ._models import SendDtmfTonesCompleted
+from ._models import SendDtmfTonesFailed
+from ._models import SendDtmfTonesRequest
+from ._models import SendDtmfTonesResult
 from ._models import SpeechOptions
 from ._models import SpeechResult
 from ._models import SsmlSource
@@ -142,10 +142,10 @@ __all__ = [
     "RemoveParticipantResponse",
     "RemoveParticipantSucceeded",
     "ResultInformation",
-    "SendDtmfCompleted",
-    "SendDtmfFailed",
-    "SendDtmfRequest",
-    "SendDtmfResult",
+    "SendDtmfTonesCompleted",
+    "SendDtmfTonesFailed",
+    "SendDtmfTonesRequest",
+    "SendDtmfTonesResult",
     "SpeechOptions",
     "SpeechResult",
     "SsmlSource",

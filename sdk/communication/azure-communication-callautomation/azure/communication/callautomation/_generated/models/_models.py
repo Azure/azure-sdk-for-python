@@ -2658,8 +2658,8 @@ class ResultInformation(_serialization.Model):
         self.message = message
 
 
-class SendDtmfCompleted(_serialization.Model):
-    """SendDtmfCompleted.
+class SendDtmfTonesCompleted(_serialization.Model):
+    """SendDtmfTonesCompleted.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -2713,8 +2713,8 @@ class SendDtmfCompleted(_serialization.Model):
         self.result_information = result_information
 
 
-class SendDtmfFailed(_serialization.Model):
-    """SendDtmfFailed.
+class SendDtmfTonesFailed(_serialization.Model):
+    """SendDtmfTonesFailed.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -2768,8 +2768,8 @@ class SendDtmfFailed(_serialization.Model):
         self.result_information = result_information
 
 
-class SendDtmfRequest(_serialization.Model):
-    """SendDtmfRequest.
+class SendDtmfTonesRequest(_serialization.Model):
+    """SendDtmfTonesRequest.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2816,8 +2816,8 @@ class SendDtmfRequest(_serialization.Model):
         self.operation_context = operation_context
 
 
-class SendDtmfResult(_serialization.Model):
-    """SendDtmfResult.
+class SendDtmfTonesResult(_serialization.Model):
+    """SendDtmfTonesResult.
 
     :ivar operation_context: The operation context provided by client.
     :vartype operation_context: str
