@@ -97,16 +97,15 @@ def query_items_with_continuation_token(container):
     item_pages = query_iterable.by_page()
     first_page = item_pages.next()
     continuation_token = item_pages.continuation_token
-    second_page_items = list(item_pages.next())
 
-    # Now we use the continuation token from the first page to immediately access the second page and compare items
+    # Other code logic where you only need the first page of results would go here
+
+    # Now we use the continuation token from the first page to pick up where we left off and
+    # access the second page of items
     items_from_continuation = query_iterable.by_page(continuation_token)
     second_page_items_with_continuation = list(items_from_continuation.next())
 
-    assert second_page_items == second_page_items_with_continuation
-
-    print('The single items in the second page are {} and {}.'.format(second_page_items[0].get("id"),
-                                                                      second_page_items_with_continuation[0].get("id")))
+    print('The single items in the second page are {}.'.format(second_page_items_with_continuation[0].get("id")))
 
 
 def replace_item(container, doc_id):
