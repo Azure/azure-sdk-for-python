@@ -53,7 +53,7 @@ def get_configs():
             "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
         )
     )
-    configs.append(create_config_setting("secret", "prod", "{\"uri\":\"" + os.getenv("KEYVAULT_SECRET_URL") + "/secrets/TestSecret\"}", "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"))
+    configs.append(create_config_setting("secret", "prod", "{\"uri\":\"" + os.getenv("KEYVAULT_SECRET_URL") + "\"}", "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"))
     return configs
 
 def create_config_setting(key, label, value, content_type="text/plain"):
