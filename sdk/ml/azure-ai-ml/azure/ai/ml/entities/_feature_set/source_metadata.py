@@ -27,7 +27,7 @@ class SourceMetadata(object):
     ):
         if type != "custom":
             if not (path and not dict and not source_process_code):
-                msg = f"Only path should be provided when source type is {type}"
+                msg = f"Cannot provide source_process_code or kwargs for {type} feature source."
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
@@ -37,7 +37,7 @@ class SourceMetadata(object):
                 )
         else:
             if not (dict and source_process_code and not path):
-                msg = f"Only kwargs and source_process_code should be provided when source type is {type}"
+                msg = "You cannot provide path for custom feature source."
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
