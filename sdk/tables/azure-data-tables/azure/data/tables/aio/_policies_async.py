@@ -6,11 +6,7 @@
 import time
 
 from azure.core.pipeline.policies import AsyncRetryPolicy
-from azure.core.exceptions import (
-    AzureError,
-    ClientAuthenticationError,
-    ServiceRequestError
-)
+from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError
 
 from .._models import LocationMode
 from .._policies import set_next_host_location
@@ -64,7 +60,7 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
         :keyword int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
         """
         super(AsyncTablesRetryPolicy, self).__init__(**kwargs)
-        self.retry_to_secondary = kwargs.get('retry_to_secondary', False)
+        self.retry_to_secondary = kwargs.get("retry_to_secondary", False)
 
     def is_retry(self, settings, response):
         """Is this method/status code retryable? (Based on allowlists and control
@@ -82,7 +78,7 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
         """
         should_retry = super(AsyncTablesRetryPolicy, self).is_retry(settings, response)
         status = response.http_response.status_code
-        if status == 404 and settings['mode'] == LocationMode.SECONDARY:
+        if status == 404 and settings["mode"] == LocationMode.SECONDARY:
             # Response code 404 should be retried if secondary was used.
             return True
         return should_retry
@@ -110,7 +106,7 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
         :type retry_settings: Dict
         """
         super(AsyncTablesRetryPolicy, self).update_context(context, retry_settings)
-        context['location_mode'] = retry_settings['mode']
+        context["location_mode"] = retry_settings["mode"]
 
     def update_request(self, request, retry_settings):
         """Updates the pipeline request before attempting to retry.
@@ -135,7 +131,7 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
         retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)
-        absolute_timeout = retry_settings['timeout']
+        absolute_timeout = retry_settings["timeout"]
         is_response_error = True
 
         while retry_active:
@@ -170,7 +166,7 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
             finally:
                 end_time = time.time()
                 if absolute_timeout:
-                    absolute_timeout -= (end_time - start_time)
+                    absolute_timeout -= end_time - start_time
 
         self.update_context(response.context, retry_settings)
         return response
