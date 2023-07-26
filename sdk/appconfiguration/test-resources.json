@@ -71,6 +71,7 @@
         "roleDefinitionId": "[format('/subscriptions/{0}/providers/Microsoft.Authorization/roleDefinitions/5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b', subscription().subscriptionId)]",
         "uniqueAzConfigName": "[format('{0}-{1}', parameters('baseName'), parameters('azConfigPrefix'))]",
         "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('azConfigPrefix'), parameters('azConfigEndpointSuffix'))]",
+        "azureKeyVaultUrl": "[format('https://{0}{1}', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]",
         "azureKeyVaultSecretUrl": "[format('https://{0}{1}/secrets/TestSecret', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]"
     },
     "resources": [
@@ -197,6 +198,10 @@
         "APPCONFIGURATION_ENDPOINT_STRING": {
             "type": "string",
             "value": "[variables('endpointValue')]"
+        },
+        "KEYVAULT_URL": {
+            "type": "string",
+            "value": "[variables('azureKeyVaultUrl')]"
         },
         "KEYVAULT_SECRET_URL": {
             "type": "string",

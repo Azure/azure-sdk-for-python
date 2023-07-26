@@ -9,7 +9,7 @@ import os
 from sample_utilities import get_authority, get_credential
 
 endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
-key_vault_uri = os.environ.get("AZURE_KEYVAULT_URI")
+key_vault_uri = os.environ.get("KEYVAULT_URL")
 authority = get_authority(endpoint)
 credential = get_credential(authority)
 
