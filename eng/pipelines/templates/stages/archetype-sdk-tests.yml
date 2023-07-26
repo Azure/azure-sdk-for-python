@@ -208,3 +208,16 @@ stages:
                 --service="${{ parameters.ServiceDirectory }}"
                 --toxenv="next-pyright"
                 --disablecov
+
+          - task: PythonScript@0
+            displayName: 'Run Ruff'
+            continueOnError: true
+            inputs:
+              scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+              arguments: >-
+                "azure*" 
+                --mark_arg="${{ parameters.TestMarkArgument }}" 
+                --service="${{ parameters.ServiceDirectory }}" 
+                --toxenv="ruff"
+                --disablecov
+            env: ${{ parameters.EnvVars }}

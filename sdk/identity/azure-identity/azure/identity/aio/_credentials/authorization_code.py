@@ -52,14 +52,14 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
             await self._client.__aexit__()
 
     def __init__(
-            self,
-            tenant_id: str,
-            client_id: str,
-            authorization_code: str,
-            redirect_uri: str,
-            *,
-            client_secret: Optional[str] = None,
-            **kwargs
+        self,
+        tenant_id: str,
+        client_id: str,
+        authorization_code: str,
+        redirect_uri: str,
+        *,
+        client_secret: Optional[str] = None,
+        **kwargs
     ) -> None:
         self._authorization_code: Optional[str] = authorization_code
         self._client_id = client_id
@@ -90,9 +90,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         """
         return await super().get_token(*scopes, **kwargs)
 
-    async def _acquire_token_silently(
-        self, *scopes: str, **kwargs: Any
-    ) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:

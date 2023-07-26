@@ -1,5 +1,25 @@
 # Release History
 
+## 1.0.0b16 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Unpin Opentelemetry SDK/API.
+    ([#31253](https://github.com/Azure/azure-sdk-for-python/pull/31253))
+
+## 1.0.0b15 (2023-07-17)
+
+### Features Added
+
+- Upgrading to OpenTelemetry SDK/API 1.19.
+    ([#31170](https://github.com/Azure/azure-sdk-for-python/pull/31170))
+
 ## 1.0.0b14 (2023-06-09)
 
 ### Features Added

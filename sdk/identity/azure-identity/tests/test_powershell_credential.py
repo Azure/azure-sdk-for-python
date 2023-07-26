@@ -292,6 +292,7 @@ def test_multitenant_authentication():
         token = credential.get_token("scope")
         assert token.token == first_token
 
+
 def test_multitenant_authentication_not_allowed():
     expected_token = "***"
 

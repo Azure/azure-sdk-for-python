@@ -72,8 +72,12 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         **kwargs: Any,  # pylint: disable=unused-argument
     ) -> MetricExportResult:
         """Exports a batch of metric data
-        :param metrics: Open Telemetry Metric(s) to export.
+
+        :param metrics_data: OpenTelemetry Metric(s) to export.
         :type metrics_data: Sequence[~opentelemetry.sdk.metrics._internal.point.MetricsData]
+        :param timeout_millis: The maximum amount of time to wait for each export. Not currently used.
+        :type timeout_millis: float
+        :return: The result of the export.
         :rtype: ~opentelemetry.sdk.metrics.export.MetricExportResult
         """
         envelopes = []
@@ -104,10 +108,8 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         self,
         timeout_millis: float = 10_000,
     ) -> bool:
-        """
-        Ensure that export of any metrics currently received by the exporter
-        are completed as soon as possible.
-        """
+        # Ensure that export of any metrics currently received by the exporter are completed as soon as possible.
+
         return True
 
     def shutdown(
@@ -118,6 +120,9 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         """Shuts down the exporter.
 
         Called when the SDK is shut down.
+
+        :param timeout_millis: The maximum amount of time to wait for shutdown. Not currently used.
+        :type timeout_millis: float
         """
         self.storage.close()
 
@@ -148,7 +153,8 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
 
         :param str conn_str: The connection string to be used for authentication.
         :keyword str api_version: The service API version used. Defaults to latest.
-        :returns an instance of ~AzureMonitorMetricExporter
+        :return: An instance of ~AzureMonitorMetricExporter
+        :rtype ~azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter
         """
         return cls(connection_string=conn_str, **kwargs)
 

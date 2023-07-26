@@ -20,7 +20,7 @@ except ImportError:
     AsyncHttpTransport = None  # type: ignore
 
 try:
-    from yarl import URL # cspell:disable-line
+    from yarl import URL  # cspell:disable-line
 except ImportError:
     pass
 
@@ -38,7 +38,11 @@ class AzureSigningError(ClientAuthenticationError):
 
 
 class _HttpChallenge(object):  # pylint:disable=too-few-public-methods
-    """Represents a parsed HTTP WWW-Authentication Bearer challenge from a server."""
+    """Represents a parsed HTTP WWW-Authentication Bearer challenge from a server.
+
+    :param challenge: The WWW-Authenticate header of the challenge response.
+    :type challenge: str
+    """
 
     def __init__(self, challenge):
         if not challenge:
@@ -78,16 +82,13 @@ class _HttpChallenge(object):  # pylint:disable=too-few-public-methods
         self.resource = self._parameters.get("resource") or self._parameters.get("resource_id") or ""
 
 
-# pylint: disable=no-self-use
 class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
     def __init__(self, credential, is_emulated=False):
         self._credential = credential
         self.is_emulated = is_emulated
 
     def _get_headers(self, request, headers_to_sign):
-        headers = dict(
-            (name.lower(), value) for name, value in request.headers.items() if value
-        )
+        headers = dict((name.lower(), value) for name, value in request.headers.items() if value)
         if "content-length" in headers and headers["content-length"] == "0":
             del headers["content-length"]
         return "\n".join(headers.get(x, "") for x in headers_to_sign) + "\n"
@@ -139,7 +140,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         except Exception as ex:
             # Wrap any error that occurred as signing error
             # Doing so will clarify/locate the source of problem
-            raise _wrap_exception(ex, AzureSigningError)
+            raise _wrap_exception(ex, AzureSigningError) from ex
 
     def on_request(self, request: PipelineRequest) -> None:
         self.sign_request(request)
@@ -184,7 +185,7 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
         *scopes: str,
         discover_tenant: bool = True,
         discover_scopes: bool = True,
-        **kwargs
+        **kwargs,
     ) -> None:
         self._discover_tenant = discover_tenant
         self._discover_scopes = discover_scopes
@@ -198,6 +199,7 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
         :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
         :returns: a bool indicating whether the policy should send the request
+        :rtype: bool
         """
         if not self._discover_tenant and not self._discover_scopes:
             # We can't discover the tenant or use a different scope; the request will fail because it hasn't changed
@@ -224,43 +226,33 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
 def _configure_credential(credential: AzureNamedKeyCredential) -> SharedKeyCredentialPolicy:
     ...
 
+
 @overload
 def _configure_credential(credential: SharedKeyCredentialPolicy) -> SharedKeyCredentialPolicy:
     ...
+
 
 @overload
 def _configure_credential(credential: AzureSasCredential) -> AzureSasCredentialPolicy:
     ...
 
+
 @overload
 def _configure_credential(credential: TokenCredential) -> BearerTokenChallengePolicy:
     ...
+
 
 @overload
 def _configure_credential(credential: None) -> None:
     ...
 
+
 def _configure_credential(
-    credential: Optional[
-        Union[
-            AzureNamedKeyCredential,
-            AzureSasCredential,
-            TokenCredential,
-            SharedKeyCredentialPolicy
-        ]
-    ]
-) -> Optional[
-    Union[
-        BearerTokenChallengePolicy,
-        AzureSasCredentialPolicy,
-        SharedKeyCredentialPolicy
-    ]
-]:
+    credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, SharedKeyCredentialPolicy]]
+) -> Optional[Union[BearerTokenChallengePolicy, AzureSasCredentialPolicy, SharedKeyCredentialPolicy]]:
     if hasattr(credential, "get_token"):
         credential = cast(TokenCredential, credential)
-        return BearerTokenChallengePolicy(
-            credential, STORAGE_OAUTH_SCOPE
-        )
+        return BearerTokenChallengePolicy(credential, STORAGE_OAUTH_SCOPE)
     if isinstance(credential, SharedKeyCredentialPolicy):
         return credential
     if isinstance(credential, AzureSasCredential):
@@ -268,5 +260,5 @@ def _configure_credential(
     if isinstance(credential, AzureNamedKeyCredential):
         return SharedKeyCredentialPolicy(credential)
     if credential is not None:
-        raise TypeError("Unsupported credential: {}".format(credential))
+        raise TypeError(f"Unsupported credential: {credential}")
     return None
