@@ -6,13 +6,16 @@
 # pylint: disable=protected-access, too-many-lines
 
 import datetime
-from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional
+from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional, Mapping, Literal
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.v2023_07_31.models import (
     DocumentModelDetails as ModelDetails,
     DocumentClassifierDetails as ClassifierDetails,
+    AzureBlobFileListContentSource,
+    AzureBlobContentSource,
+    ClassifierDocumentTypeDetails as GeneratedClassifierDocumentTypeDetails,
     Error
 )
 from ._helpers import (
@@ -2999,7 +3002,9 @@ class DocumentParagraph:
 class DocumentBarcode:
     """A barcode object."""
 
-    kind: str
+    kind: Literal["QRCode", "PDF417", "UPCA", "UPCE", "Code39", "Code128", "EAN8", "EAN13",
+                  "DataBar", "Code93", "Codabar", "DataBarExpanded", "ITF", "MicroQRCode",
+                  "Aztec", "DataMatrix", "MaxiCode"]
     """Barcode kind. Known values are "QRCode", "PDF417", "UPCA", "UPCE",
      "Code39", "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar", "DataBarExpanded", "ITF",
      "MicroQRCode", "Aztec", "DataMatrix", "MaxiCode"."""
@@ -3078,7 +3083,7 @@ class DocumentBarcode:
 class DocumentFormula:
     """A formula object."""
 
-    kind: str
+    kind: Literal["inline", "display"]
     """Formula kind. Known values are "inline", "display"."""
     value: str
     """LaTex expression describing the formula."""
@@ -3765,6 +3770,8 @@ class AzureBlobFileListSource:
     """Azure Blob Storage container URL."""
     file_list: str
     """Path to a JSONL file within the container specifying a subset of documents for training."""
+    _kind: Literal["azureBlobFileList"]
+    """Kind of training source."""
 
     def __init__(  # pylint: disable=unused-argument
         self,
@@ -3773,6 +3780,7 @@ class AzureBlobFileListSource:
     ) -> None:
         self.container_url = container_url
         self.file_list = file_list
+        self._kind = "azureBlobFileList"
 
     def __repr__(self) -> str:
         return (
@@ -3785,6 +3793,9 @@ class AzureBlobFileListSource:
             container_url=model.container_url,
             file_list=model.file_list
         )
+    
+    def _to_generated(self) -> AzureBlobFileListContentSource:
+        return AzureBlobFileListContentSource(container_url=self.container_url, file_list=self.file_list)
 
     def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of AzureBlobFileListSource.
@@ -3818,6 +3829,8 @@ class AzureBlobSource:
     """Azure Blob Storage container URL."""
     prefix: Optional[str]
     """Blob name prefix."""
+    _kind: Literal["azureBlob"]
+    """Kind of training source."""
 
     def __init__(  # pylint: disable=unused-argument
         self,
@@ -3827,6 +3840,7 @@ class AzureBlobSource:
     ) -> None:
         self.container_url = container_url
         self.prefix = prefix
+        self._kind = "azureBlob"
 
     def __repr__(self) -> str:
         return (
@@ -3839,6 +3853,9 @@ class AzureBlobSource:
             container_url=model.container_url,
             prefix=model.prefix
         )
+
+    def _to_generated(self) -> AzureBlobContentSource:
+        return AzureBlobContentSource(container_url=self.container_url, prefix=self.prefix)
 
     def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of AzureBlobSource.
@@ -3868,6 +3885,9 @@ class AzureBlobSource:
 class ClassifierDocumentTypeDetails:
     """Training data source."""
 
+    source_kind: Literal["azureBlob", "azureBlobFileList"]
+    """Type of training data source, known values are: "azureBlob" and "azureBlobFileList"."""
+
     source: Union[AzureBlobSource, AzureBlobFileListSource]
     """Content source containing the training data."""
 
@@ -3875,11 +3895,12 @@ class ClassifierDocumentTypeDetails:
         self,
         source: Union[AzureBlobSource, AzureBlobFileListSource]
     ) -> None:
+        self.source_kind = source._kind
         self.source = source
 
     def __repr__(self) -> str:
         return (
-            f"ClassifierDocumentTypeDetails(source={repr(self.source)})"
+            f"ClassifierDocumentTypeDetails(source_kind={self.source_kind}, source={repr(self.source)})"
         )
 
     @classmethod
@@ -3894,6 +3915,11 @@ class ClassifierDocumentTypeDetails:
             source=source,
         )
 
+    def _to_generated(self) -> GeneratedClassifierDocumentTypeDetails:
+        if self.source_kind == "azureBlobFileList":
+            return GeneratedClassifierDocumentTypeDetails(azure_blob_file_list_source=self.source._to_generated())
+        return GeneratedClassifierDocumentTypeDetails(azure_blob_source=self.source._to_generated())
+    
     def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of ClassifierDocumentTypeDetails.
 
@@ -3901,6 +3927,7 @@ class ClassifierDocumentTypeDetails:
         :rtype: Dict[str, Any]
         """
         return {
+            "source_kind": self.source_kind,
             "source": self.source.to_dict() if self.source else None,
         }
 
@@ -3913,8 +3940,9 @@ class ClassifierDocumentTypeDetails:
         :rtype: ClassifierDocumentTypeDetails
         """
         source = data.get("source", None)
-        if source is not None:
-            if source.get("file_list") is not None:
+        kind = data.get("source_kind", None)
+        if source is not None and kind is not None:
+            if kind == "azureBlobFileList":
                 source = AzureBlobFileListSource.from_dict(source)
             else:
                 source = AzureBlobSource.from_dict(source)
@@ -3936,7 +3964,7 @@ class DocumentClassifierDetails:
     """Date and time (UTC) when the document classifier will expire."""
     api_version: str
     """API version used to create this document classifier."""
-    doc_types: Dict[str, ClassifierDocumentTypeDetails]
+    doc_types: Mapping[str, ClassifierDocumentTypeDetails]
     """List of document types to classify against."""
 
     def __init__(
