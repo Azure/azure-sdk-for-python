@@ -76,6 +76,8 @@ class AzureAsyncOperationPolling(OperationResourcePolling):
         # type: (PipelineResponseType) -> Optional[str]
         """If a final GET is needed, returns the URL.
 
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: The pipeline response object.
+        :return: The URL to poll for the final GET.
         :rtype: str
         """
         if (
@@ -97,19 +99,29 @@ class BodyContentPolling(LongRunningOperation):
 
     def can_poll(self, pipeline_response):
         # type: (PipelineResponseType) -> bool
-        """Answer if this polling method could be used."""
+        """Answer if this polling method could be used.
+
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: The pipeline response object.
+        :return: True if this polling method could be used.
+        :rtype: bool
+        """
         response = pipeline_response.http_response
         return response.request.method in ["PUT", "PATCH"]
 
     def get_polling_url(self):
         # type: () -> str
-        """Return the polling URL."""
+        """Return the polling URL.
+        :return: The polling URL.
+        :rtype: str
+        """
         return self._initial_response.http_response.request.url
 
     def get_final_get_url(self, pipeline_response):
         # type: (PipelineResponseType) -> Optional[str]
         """If a final GET is needed, returns the URL.
 
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: The pipeline response object.
+        :return: The URL to poll for the final GET.
         :rtype: str
         """
         return None
@@ -118,7 +130,9 @@ class BodyContentPolling(LongRunningOperation):
         # type: (PipelineResponseType) -> str
         """Process first response after initiating long running operation.
 
-        :param azure.core.pipeline.PipelineResponse response: initial REST call response.
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: initial REST call response.
+        :return: Status string.
+        :rtype: str
         """
         self._initial_response = pipeline_response
         response = pipeline_response.http_response
@@ -143,6 +157,7 @@ class BodyContentPolling(LongRunningOperation):
 
         :param azure.core.pipeline.transport.HttpResponse response: latest REST call response.
         :returns: Status if found, else 'None'.
+        :rtype: str or None
         """
         if _is_empty(response):
             return None
@@ -154,7 +169,9 @@ class BodyContentPolling(LongRunningOperation):
         """Process the latest status update retrieved from the same URL as
         the previous request.
 
-        :param azure.core.pipeline.PipelineResponse response: latest REST call response.
+        :param ~azure.core.pipeline.PipelineResponse pipeline_response: latest REST call response.
+        :return: Status string.
+        :rtype: str
         :raises: BadResponse if status not 200 or 204.
         """
         response = pipeline_response.http_response

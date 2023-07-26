@@ -44,13 +44,7 @@ class TokenCachePersistenceOptions:
         always try to encrypt its data.
     """
 
-    def __init__(
-            self,
-            *,
-            allow_unencrypted_storage: bool = False,
-            name: str = "msal.cache",
-            **kwargs: Any
-    ) -> None:
+    def __init__(self, *, allow_unencrypted_storage: bool = False, name: str = "msal.cache", **kwargs: Any) -> None:
         # pylint:disable=unused-argument
         self.allow_unencrypted_storage = allow_unencrypted_storage
         self.name = name

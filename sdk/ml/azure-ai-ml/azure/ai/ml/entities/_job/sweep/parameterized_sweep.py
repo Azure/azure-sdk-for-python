@@ -138,13 +138,13 @@ class ParameterizedSweep:
     ) -> None:
         """Set limits for Sweep node. Leave parameters as None if you don't want to update corresponding values.
 
-        :param max_concurrent_trials: maximum concurrent trial number.
+        :keyword max_concurrent_trials: maximum concurrent trial number.
         :type max_concurrent_trials: int
-        :param max_total_trials: maximum total trial number.
+        :keyword max_total_trials: maximum total trial number.
         :type max_total_trials: int
-        :param timeout: total timeout in seconds for sweep node
+        :keyword timeout: total timeout in seconds for sweep node
         :type timeout: int
-        :param trial_timeout: timeout in seconds for each trial
+        :keyword trial_timeout: timeout in seconds for each trial
         :type trial_timeout: int
         """
         if self._limits is None:
@@ -167,10 +167,10 @@ class ParameterizedSweep:
     def set_objective(self, *, goal: Optional[str] = None, primary_metric: Optional[str] = None) -> None:
         """Set the sweep object.. Leave parameters as None if you don't want to update corresponding values.
 
-        :param goal: Defines supported metric goals for hyperparameter tuning. Acceptable values are:
+        :keyword goal: Defines supported metric goals for hyperparameter tuning. Acceptable values are:
         "minimize", "maximize".
         :type goal: str
-        :param primary_metric: Name of the metric to optimize.
+        :keyword primary_metric: Name of the metric to optimize.
         :type primary_metric: str
         """
 

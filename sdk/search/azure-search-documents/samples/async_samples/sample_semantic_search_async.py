@@ -37,7 +37,7 @@ async def speller():
     results = await client.search(search_text="luxury", query_language="en-us", query_speller="lexicon")
 
     async for result in results:
-        print("{}\n{}\n)".format(result["HotelId"], result["HotelName"]))
+        print("{}\n{}\n)".format(result["hotelId"], result["hotelName"]))
     # [END speller_async]
 
 
@@ -55,7 +55,7 @@ async def semantic_ranking():
     results = list(client.search(search_text="luxury", query_type="semantic", query_language="en-us"))
 
     for result in results:
-        print("{}\n{}\n)".format(result["HotelId"], result["HotelName"]))
+        print("{}\n{}\n)".format(result["hotelId"], result["hotelName"]))
     # [END semantic_ranking_async]
 
 
