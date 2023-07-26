@@ -5,12 +5,12 @@
 # --------------------------------------------------------------------------
 from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.provider import SettingSelector
-from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
+from .testcase import AppConfigTestCase
 
 
-class TestAppConfigurationProvider(AzureRecordedTestCase):
+class TestAppConfigurationProvider(AppConfigTestCase):
     async def build_provider(
         self, connection_string, trim_prefixes=[], selects={SettingSelector(key_filter="*", label_filter="\0")}
     ):
