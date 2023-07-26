@@ -201,7 +201,7 @@
         },
         "KEYVAULT_URL": {
             "type": "string",
-            "value": "[variables('azureKeyVaultUrl')]"
+            "value": "[variables('azureKeyVaultUrl')] + '/'"
         },
         "KEYVAULT_SECRET_URL": {
             "type": "string",
