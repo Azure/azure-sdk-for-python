@@ -238,6 +238,9 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         # Act
         self.bsc.key_encryption_key = None
         blob.upload_blob(content, overwrite=True)
+
+        # Set kek to None to test only resolver for download
+        blob.key_encryption_key = None
         data = blob.download_blob().readall()
 
         # Assert

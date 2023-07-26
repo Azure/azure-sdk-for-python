@@ -240,6 +240,9 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         self.bsc.key_encryption_key = None
         with mock.patch('os.urandom', mock_urandom):
             await blob.upload_blob(content, overwrite=True)
+
+        # Set kek to None to test only resolver for download
+        blob.key_encryption_key = None
         data = await (await blob.download_blob()).readall()
 
         # Assert

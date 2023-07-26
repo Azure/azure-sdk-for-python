@@ -270,6 +270,17 @@ def is_encryption_v2(encryption_data: Optional[_EncryptionData]) -> bool:
     return encryption_data and encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2
 
 
+def get_feature_flag(encryption_version: str) -> int:
+    """
+    Returns the azfeatures feature flag for the specific encryption version.
+
+    :param str encryption_version: The version of encryption being used.
+    :return: The azfeatures flags int value.
+    :rtype: int
+    """
+    return 1 if encryption_version == _ENCRYPTION_PROTOCOL_V1 else 2
+
+
 def get_adjusted_upload_size(length: int, encryption_version: str) -> int:
     """
     Get the adjusted size of the blob upload which accounts for
