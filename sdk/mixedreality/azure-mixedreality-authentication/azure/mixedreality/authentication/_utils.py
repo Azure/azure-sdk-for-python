@@ -17,6 +17,10 @@ def convert_to_access_token(token_response_message):
     # type: (StsTokenResponseMessage) -> AccessToken
     """
     Converts the specified token response message to an AccessToken.
+
+    :param StsTokenResponseMessage token_response_message: The token response message.
+    :return: AccessToken
+    :rtype: ~azure.core.credentials.AccessToken
     """
     if not token_response_message:
         raise ValueError("token_response_message must be a non-empty string.")
@@ -32,6 +36,7 @@ def retrieve_jwt_expiration_timestamp(jwt_value):
 
     :param str jwt_value: The JWT value.
     :returns: int
+    :rtype: int
     """
     if not jwt_value:
         raise ValueError("jwt_value must be a non-empty string.")
@@ -49,12 +54,12 @@ def retrieve_jwt_expiration_timestamp(jwt_value):
         padded_base64_payload = base64.b64decode(parts[1] + "===").decode('utf-8')
         payload = json.loads(padded_base64_payload)
     except ValueError:
-        raise ValueError("Unable to decode the JWT.")
+        raise ValueError("Unable to decode the JWT.") from None
 
     try:
         exp = payload['exp']
     except KeyError:
-        raise ValueError("Invalid JWT payload structure. No expiration.")
+        raise ValueError("Invalid JWT payload structure. No expiration.") from None
 
     return int(exp)
 
@@ -66,6 +71,9 @@ def generate_cv_base():
     """
     Seed function to randomly generate a 16 character base64 encoded string for
     the Correlation Vector's base value.
+
+    :return: str
+    :rtype: str
     """
     result = ''
 

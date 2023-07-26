@@ -66,7 +66,7 @@ class MixedRealityStsClient(object): # pylint: disable=client-accepts-api-versio
             if not endpoint_url.lower().startswith('http'):
                 endpoint_url = "https://" + endpoint_url
         except AttributeError:
-            raise ValueError("Host URL must be a string.")
+            raise ValueError("Host URL must be a string.") from None
 
         parsed_url = urlparse(endpoint_url.rstrip('/'))
         if not parsed_url.netloc:
