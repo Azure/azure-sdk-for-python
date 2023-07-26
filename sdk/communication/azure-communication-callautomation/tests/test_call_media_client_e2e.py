@@ -204,15 +204,15 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
             caller_call_connection.start_continuous_dtmf_recognition(target_participant=target_phone)
 
             # send DTMF tones
-            send_dtmf_result = caller_call_connection.send_dtmf(tones=[DtmfTone.POUND], target_participant=target_phone)
-            if send_dtmf_result is None:
-                raise ValueError("Invalid send_dtmf_result")
+            send_dtmf_tones_result = caller_call_connection.send_dtmf_tones(tones=[DtmfTone.POUND], target_participant=target_phone)
+            if send_dtmf_tones_result is None:
+                raise ValueError("Invalid send_dtmf_tones_result")
 
             self.wait_for_messages(unique_id, timedelta(seconds=8))
-            send_dtmf_completed_event = self.check_for_event(event_type='SendDtmfCompleted',
+            send_dtmf_tones_completed_event = self.check_for_event(event_type='SendDtmfTonesCompleted',
                                                              call_connection_id=caller_connection_id)
-            if send_dtmf_completed_event is None:
-                raise ValueError("SendDtmfCompleted event is None")
+            if send_dtmf_tones_completed_event is None:
+                raise ValueError("SendDtmfTonesCompleted event is None")
 
             # check DTMF tone received events to receiver
             self.wait_for_messages(unique_id, timedelta(seconds=8))

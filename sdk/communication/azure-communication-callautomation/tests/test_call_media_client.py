@@ -22,7 +22,7 @@ from azure.communication.callautomation._generated.models import (
     RecognizeOptions,
     DtmfOptions,
     ContinuousDtmfRecognitionRequest,
-    SendDtmfRequest,
+    SendDtmfTonesRequest,
 )
 from azure.communication.callautomation._generated.models._enums import (
     RecognizeInputType,
@@ -286,26 +286,26 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_continuous_dtmf_recognition_request.operation_context,
                          actual_stop_continuous_dtmf_recognition.operation_context)
 
-    def test_send_dtmf(self):
-        mock_send_dtmf = Mock()
-        self.call_media_operations.send_dtmf = mock_send_dtmf
-        self.call_connection_client.send_dtmf(tones=self.tones,
-                                              target_participant=self.target_user,
-                                              operation_context=self.operation_context)
+    def test_send_dtmf_tones(self):
+        mock_send_dtmf_tones = Mock()
+        self.call_media_operations.send_dtmf_tones = mock_send_dtmf_tones
+        self.call_connection_client.send_dtmf_tones(tones=self.tones,
+                                                    target_participant=self.target_user,
+                                                    operation_context=self.operation_context)
 
-        expected_send_dtmf_request = SendDtmfRequest(
+        expected_send_dtmf_tones_request = SendDtmfTonesRequest(
             tones=self.tones,
             target_participant=serialize_identifier(self.target_user),
             operation_context=self.operation_context)
 
-        mock_send_dtmf.assert_called_once()
-        actual_call_connection_id = mock_send_dtmf.call_args[0][0]
-        actual_send_dtmf_request = mock_send_dtmf.call_args[0][1]
+        mock_send_dtmf_tones.assert_called_once()
+        actual_call_connection_id = mock_send_dtmf_tones.call_args[0][0]
+        actual_send_dtmf_tones_request = mock_send_dtmf_tones.call_args[0][1]
 
         self.assertEqual(self.call_connection_id, actual_call_connection_id)
-        self.assertEqual(expected_send_dtmf_request.target_participant,
-                         actual_send_dtmf_request.target_participant)
-        self.assertEqual(expected_send_dtmf_request.tones,
-                         actual_send_dtmf_request.tones)
-        self.assertEqual(expected_send_dtmf_request.operation_context,
-                         actual_send_dtmf_request.operation_context)
+        self.assertEqual(expected_send_dtmf_tones_request.target_participant,
+                         actual_send_dtmf_tones_request.target_participant)
+        self.assertEqual(expected_send_dtmf_tones_request.tones,
+                         actual_send_dtmf_tones_request.tones)
+        self.assertEqual(expected_send_dtmf_tones_request.operation_context,
+                         actual_send_dtmf_tones_request.operation_context)

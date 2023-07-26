@@ -22,7 +22,7 @@ from ._models import (
     RemoveParticipantResult,
     TransferCallResult,
     MuteParticipantResult,
-    SendDtmfResult,
+    SendDtmfTonesResult,
 )
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._generated.models import (
@@ -32,7 +32,7 @@ from ._generated.models import (
     PlayRequest,
     RecognizeRequest,
     ContinuousDtmfRecognitionRequest,
-    SendDtmfRequest,
+    SendDtmfTonesRequest,
     DtmfOptions,
     SpeechOptions,
     PlayOptions,
@@ -584,14 +584,14 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
             **kwargs)
 
     @distributed_trace
-    def send_dtmf(
+    def send_dtmf_tones(
         self,
         tones: List[Union[str, 'DtmfTone']],
         target_participant: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
         **kwargs
-    ) -> SendDtmfResult:
+    ) -> SendDtmfTonesResult:
         """Send Dtmf tones to this call.
 
         :param tones: List of tones to be sent to target participant.
@@ -600,23 +600,23 @@ class CallConnectionClient(object): # pylint: disable=client-accepts-api-version
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
-        :return: SendDtmfResult
-        :rtype: ~azure.communication.callautomation.SendDtmfResult
+        :return: SendDtmfTonesResult
+        :rtype: ~azure.communication.callautomation.SendDtmfTonesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        send_dtmf_request = SendDtmfRequest(
+        send_dtmf_tones_request = SendDtmfTonesRequest(
             tones=tones,
             target_participant=serialize_identifier(target_participant),
             operation_context=operation_context)
 
-        response = self._call_media_client.send_dtmf(
+        response = self._call_media_client.send_dtmf_tones(
             self._call_connection_id,
-            send_dtmf_request,
+            send_dtmf_tones_request,
             repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
             **kwargs)
 
-        return SendDtmfResult._from_generated(response)  # pylint:disable=protected-access
+        return SendDtmfTonesResult._from_generated(response)  # pylint:disable=protected-access
 
     @distributed_trace
     def mute_participant(
