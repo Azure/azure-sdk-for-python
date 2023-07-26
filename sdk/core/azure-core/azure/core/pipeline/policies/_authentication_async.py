@@ -5,22 +5,27 @@
 # -------------------------------------------------------------------------
 import asyncio
 import time
-from typing import TYPE_CHECKING, Any, Awaitable, Optional, cast
+from typing import TYPE_CHECKING, Any, Awaitable, Optional, cast, TypeVar
 
 from azure.core.credentials import AccessToken
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import (
     _BearerTokenCredentialPolicyBase,
 )
+from azure.core.pipeline.transport import AsyncHttpResponse as LegacyAsyncHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._tools_async import await_result
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
+
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
-class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
+class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """Adds a bearer token Authorization header to requests.
 
     :param credential: The credential.
@@ -36,7 +41,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         self._scopes = scopes
         self._token: Optional["AccessToken"] = None
 
-    async def on_request(self, request: "PipelineRequest") -> None:
+    async def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """Adds a bearer token Authorization header to request and sends request to next policy.
 
         :param request: The pipeline request object to be modified.
@@ -52,7 +57,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
                     self._token = await await_result(self._credential.get_token, *self._scopes)
         request.http_request.headers["Authorization"] = "Bearer " + cast(AccessToken, self._token).token
 
-    async def authorize_request(self, request: "PipelineRequest", *scopes: str, **kwargs: Any) -> None:
+    async def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
 
         Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
@@ -65,7 +70,9 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
             self._token = await await_result(self._credential.get_token, *scopes, **kwargs)
         request.http_request.headers["Authorization"] = "Bearer " + cast(AccessToken, self._token).token
 
-    async def send(self, request: "PipelineRequest") -> "PipelineResponse":
+    async def send(
+        self, request: PipelineRequest[HTTPRequestType]
+    ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
         """Authorize request with a bearer token and send it to the next policy
 
         :param request: The pipeline request object
@@ -101,7 +108,11 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
 
         return response
 
-    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+    async def on_challenge(
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, AsyncHTTPResponseType],
+    ) -> bool:
         """Authorize request according to an authentication challenge
 
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.
@@ -114,7 +125,11 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         # pylint:disable=unused-argument
         return False
 
-    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> Optional[Awaitable[None]]:
+    def on_response(
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, AsyncHTTPResponseType],
+    ) -> Optional[Awaitable[None]]:
         """Executed after the request comes back from the next policy.
 
         :param request: Request to be modified after returning from the policy.
@@ -123,7 +138,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         :type response: ~azure.core.pipeline.PipelineResponse
         """
 
-    def on_exception(self, request: "PipelineRequest") -> None:
+    def on_exception(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """Executed when an exception is raised while executing the next policy.
 
         This method is executed inside the exception handler.

@@ -64,7 +64,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
 
         :param name: Name of a specific FeatureStoreEntity asset, optional.
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived FeatureStoreEntity assets.
+        :keyword list_view_type: View type for including/excluding (for example) archived FeatureStoreEntity assets.
         Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeatureStoreEntity objects

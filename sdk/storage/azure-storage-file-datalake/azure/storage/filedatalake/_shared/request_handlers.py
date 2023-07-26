@@ -4,10 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
-    TYPE_CHECKING
-)
+from typing import Dict, Optional
 
 import logging
 from os import fstat
@@ -15,8 +12,6 @@ import stat
 from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
 
 import isodate
-
-from azure.core.exceptions import raise_with_traceback
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -45,12 +40,9 @@ def serialize_iso(attr):
         date = f"{utc.tm_year:04}-{utc.tm_mon:02}-{utc.tm_mday:02}T{utc.tm_hour:02}:{utc.tm_min:02}:{utc.tm_sec:02}"
         return date + 'Z'
     except (ValueError, OverflowError) as err:
-        msg = "Unable to serialize datetime object."
-        raise_with_traceback(ValueError, msg, err)
+        raise ValueError("Unable to serialize datetime object.") from err
     except AttributeError as err:
-        msg = "ISO-8601 object must be valid Datetime object."
-        raise_with_traceback(TypeError, msg, err)
-
+        raise TypeError("ISO-8601 object must be valid datetime object.") from err
 
 def get_length(data):
     length = None
@@ -164,11 +156,12 @@ def serialize_batch_body(requests, batch_id):
 
     Serializes the requests in this batch to a single HTTP mixed/multipart body.
 
-    :param list[~azure.core.pipeline.transport.HttpRequest] requests:
+    :param List[~azure.core.pipeline.transport.HttpRequest] requests:
         a list of sub-request for the batch request
     :param str batch_id:
         to be embedded in batch sub-request delimiter
-    :return: The body bytes for this batch.
+    :returns: The body bytes for this batch.
+    :rtype: bytes
     """
 
     if requests is None or len(requests) == 0:
@@ -206,7 +199,8 @@ def _get_batch_request_delimiter(batch_id, is_prepend_dashes=False, is_append_da
         Whether to include the starting dashes. Used in the body, but non on defining the delimiter.
     :param bool is_append_dashes:
         Whether to include the ending dashes. Used in the body on the closing delimiter only.
-    :return: The delimiter, WITHOUT a trailing newline.
+    :returns: The delimiter, WITHOUT a trailing newline.
+    :rtype: str
     """
 
     prepend_dashes = '--' if is_prepend_dashes else ''
@@ -231,7 +225,8 @@ def _make_body_from_sub_request(sub_request):
 
      :param ~azure.core.pipeline.transport.HttpRequest sub_request:
         Request to serialize.
-     :return: The serialized sub-request in bytes
+     :returns: The serialized sub-request in bytes
+     :rtype: bytes
      """
 
     # put the sub-request's headers into a list for efficient str concatenation

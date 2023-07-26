@@ -114,9 +114,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         managed_identity_client_id = kwargs.pop(
             "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
         )
-        workload_identity_client_id = kwargs.pop(
-            "workload_identity_client_id", managed_identity_client_id
-        )
+        workload_identity_client_id = kwargs.pop("workload_identity_client_id", managed_identity_client_id)
         workload_identity_tenant_id = kwargs.pop(
             "workload_identity_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
@@ -142,11 +140,14 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_workload_identity_credential:
             if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
                 client_id = workload_identity_client_id
-                credentials.append(WorkloadIdentityCredential(
-                    client_id=cast(str, client_id),
-                    tenant_id=workload_identity_tenant_id,
-                    file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
-                    **kwargs))
+                credentials.append(
+                    WorkloadIdentityCredential(
+                        client_id=cast(str, client_id),
+                        tenant_id=workload_identity_tenant_id,
+                        file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                        **kwargs
+                    )
+                )
         if not exclude_managed_identity_credential:
             credentials.append(
                 ManagedIdentityCredential(
@@ -159,15 +160,19 @@ class DefaultAzureCredential(ChainedTokenCredential):
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities
                 shared_cache = SharedTokenCacheCredential(
-                    username=shared_cache_username, tenant_id=shared_cache_tenant_id, authority=authority, **kwargs
+                    username=shared_cache_username,
+                    tenant_id=shared_cache_tenant_id,
+                    authority=authority,
+                    _is_chained=True,
+                    **kwargs
                 )
                 credentials.append(shared_cache)
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
-            credentials.append(VisualStudioCodeCredential(**vscode_args))
+            credentials.append(VisualStudioCodeCredential(_is_chained=True, **vscode_args))
         if not exclude_cli_credential:
-            credentials.append(AzureCliCredential(process_timeout=process_timeout))
+            credentials.append(AzureCliCredential(process_timeout=process_timeout, _is_chained=True))
         if not exclude_powershell_credential:
             credentials.append(AzurePowerShellCredential(process_timeout=process_timeout))
         if not exclude_developer_cli_credential:

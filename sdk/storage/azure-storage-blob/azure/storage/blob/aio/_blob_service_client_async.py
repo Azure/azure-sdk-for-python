@@ -625,6 +625,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
+        :returns: The recovered soft-deleted ContainerClient.
         :rtype: ~azure.storage.blob.aio.ContainerClient
         """
         new_name = kwargs.pop('new_name', None)

@@ -26,7 +26,6 @@ import asyncio
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
-from azure.search.documents.models import Vector
 
 service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
@@ -67,7 +66,7 @@ def get_hotel_index(name: str):
             name="descriptionVector",
             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
             searchable=True,
-            dimensions=1536,
+            vector_search_dimensions=1536,
             vector_search_configuration="my-vector-config",
         ),
         SearchableField(
@@ -86,40 +85,40 @@ def get_hotel_documents():
             "hotelId": "1",
             "hotelName": "Fancy Stay",
             "description": "Best hotel in town if you like luxury hotels.",
-            "DescriptionVector": get_embeddings("Best hotel in town if you like luxury hotels."),
+            "descriptionVector": get_embeddings("Best hotel in town if you like luxury hotels."),
             "category": "Luxury",
         },
         {
-            "HotelId": "2",
-            "HotelName": "Roach Motel",
-            "Description": "Cheapest hotel in town. Infact, a motel.",
-            "DescriptionVector": get_embeddings("Cheapest hotel in town. Infact, a motel."),
-            "Category": "Budget",
+            "hotelId": "2",
+            "hotelName": "Roach Motel",
+            "descrdescriptioniption": "Cheapest hotel in town. Infact, a motel.",
+            "descriptionVector": get_embeddings("Cheapest hotel in town. Infact, a motel."),
+            "category": "Budget",
         },
         {
-            "HotelId": "3",
-            "HotelName": "EconoStay",
-            "Description": "Very popular hotel in town.",
-            "DescriptionVector": get_embeddings("Very popular hotel in town."),
-            "Category": "Budget",
+            "hotelId": "3",
+            "hotelName": "EconoStay",
+            "description": "Very popular hotel in town.",
+            "descriptionVector": get_embeddings("Very popular hotel in town."),
+            "category": "Budget",
         },
         {
-            "HotelId": "4",
-            "HotelName": "Modern Stay",
-            "Description": "Modern architecture, very polite staff and very clean. Also very affordable.",
-            "DescriptionVector": get_embeddings(
+            "hotelId": "4",
+            "hotelName": "Modern Stay",
+            "description": "Modern architecture, very polite staff and very clean. Also very affordable.",
+            "descriptionVector": get_embeddings(
                 "Modern architecture, very polite staff and very clean. Also very affordable."
             ),
-            "Category": "Luxury",
+            "category": "Luxury",
         },
         {
-            "HotelId": "5",
-            "HotelName": "Secret Point",
-            "Description": "One of the best hotel in town. The hotel is ideally located on the main commercial artery of the city in the heart of New York.",
-            "DescriptionVector": get_embeddings(
+            "hotelId": "5",
+            "hotelName": "Secret Point",
+            "description": "One of the best hotel in town. The hotel is ideally located on the main commercial artery of the city in the heart of New York.",
+            "descriptionVector": get_embeddings(
                 "One of the best hotel in town. The hotel is ideally located on the main commercial artery of the city in the heart of New York."
             ),
-            "Category": "Boutique",
+            "category": "Boutique",
         },
     ]
     return docs
@@ -134,7 +133,9 @@ async def single_vector_search():
     async with search_client:
         results = await search_client.search(
             search_text="",
-            vector=Vector(value=get_embeddings(query), k=3, fields="descriptionVector"),
+            vector=get_embeddings(query),
+            top_k=3,
+            vector_fields="descriptionVector",
             select=["hotelId", "hotelName"],
         )
 
@@ -152,7 +153,9 @@ async def single_vector_search_with_filter():
     async with search_client:
         results = await search_client.search(
             search_text="",
-            vector=Vector(value=get_embeddings(query), k=3, fields="descriptionVector"),
+            vector=get_embeddings(query),
+            top_k=3,
+            vector_fields="descriptionVector",
             filter="category eq 'Luxury'",
             select=["hotelId", "hotelName"],
         )
@@ -171,7 +174,9 @@ async def simple_hybrid_search():
     async with search_client:
         results = await search_client.search(
             search_text=query,
-            vector=Vector(value=get_embeddings(query), k=3, fields="descriptionVector"),
+            vector=get_embeddings(query),
+            top_k=3,
+            vector_fields="descriptionVector",
             select=["hotelId", "hotelName"],
         )
         print(await results.get_answers())

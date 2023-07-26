@@ -106,6 +106,7 @@ def main():
                     "storageaccounts": [
                         {
                             "container": "hdinsight-autoscale-tes-2019-06-18t05-49-16-591z",
+                            "enableSecureChannel": True,
                             "isDefault": True,
                             "key": "storagekey",
                             "name": "mystorage.blob.core.windows.net",
@@ -119,6 +120,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2021-06-01/examples/CreateHDInsightClusterWithAutoscaleConfig.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/preview/2023-04-15-preview/examples/CreateHDInsightClusterWithAutoscaleConfig.json
 if __name__ == "__main__":
     main()

@@ -25,6 +25,4 @@
 # --------------------------------------------------------------------------
 from ._schema_registry_client_async import SchemaRegistryClient
 
-__all__ = [
-    "SchemaRegistryClient"
-]
+__all__ = ["SchemaRegistryClient"]

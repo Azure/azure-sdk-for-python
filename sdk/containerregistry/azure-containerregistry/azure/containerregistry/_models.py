@@ -61,14 +61,16 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
     :ivar bool can_read: Read Permissions for an artifact.
     :ivar bool can_list: List Permissions for an artifact.
     :ivar architecture: CPU Architecture of an artifact.
-    :vartype architecture: Optional[~azure.containerregistry.ArtifactArchitecture]
+        Note: any value not listed in enum ArtifactArchitecture will be string type.
+    :vartype architecture: Optional[Union[str, ~azure.containerregistry.ArtifactArchitecture]]
     :ivar created_on: Time and date an artifact was created.
     :vartype created_on: Optional[~datetime.datetime]
     :ivar Optional[str] digest: Digest for the artifact.
     :ivar last_updated_on: Time and date an artifact was last updated.
     :vartype last_updated_on: Optional[~datetime.datetime]
     :ivar operating_system: Operating system for the artifact.
-    :vartype operating_system: Optional[~azure.containerregistry.ArtifactOperatingSystem]
+        Note: any value not listed in enum ArtifactOperatingSystem will be string type.
+    :vartype operating_system: Optional[Union[str, ~azure.containerregistry.ArtifactOperatingSystem]]
     :ivar Optional[str] repository_name: Repository name the artifact belongs to.
     :ivar Optional[int] size_in_bytes: Size of the artifact.
     :ivar Optional[List[str]] tags: Tags associated with a registry artifact.
@@ -76,14 +78,18 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
 
     def __init__(self, **kwargs):
         self._architecture = kwargs.get("cpu_architecture", None)
-        if self._architecture is not None:
+        try:
             self._architecture = ArtifactArchitecture(self._architecture)
+        except ValueError:
+            pass
         self._created_on = kwargs.get("created_on", None)
         self._digest = kwargs.get("digest", None)
         self._last_updated_on = kwargs.get("last_updated_on", None)
         self._operating_system = kwargs.get("operating_system", None)
-        if self._operating_system is not None:
+        try:
             self._operating_system = ArtifactOperatingSystem(self._operating_system)
+        except ValueError:
+            pass
         self._repository_name = kwargs.get("repository_name", None)
         self._registry = kwargs.get("registry", None)
         self._size_in_bytes = kwargs.get("size_in_bytes", None)

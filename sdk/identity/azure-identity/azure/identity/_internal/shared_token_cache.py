@@ -53,7 +53,7 @@ def _account_to_string(account):
 
 
 def _filtered_accounts(
-        accounts: Iterable[CacheItem], username: Optional[str] = None, tenant_id: Optional[str] = None
+    accounts: Iterable[CacheItem], username: Optional[str] = None, tenant_id: Optional[str] = None
 ) -> List[CacheItem]:
     """Return accounts matching username and/or tenant_id.
 
@@ -82,16 +82,17 @@ def _filtered_accounts(
 
 class SharedTokenCacheBase(ABC):
     def __init__(
-            self,
-            username: Optional[str] = None,
-            *,
-            authority: Optional[str] = None,
-            tenant_id: Optional[str] = None,
-            **kwargs: Any
+        self,
+        username: Optional[str] = None,
+        *,
+        authority: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        **kwargs: Any
     ) -> None:  # pylint:disable=unused-argument
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         environment = urlparse(self._authority).netloc
         self._environment_aliases = KNOWN_ALIASES.get(environment) or frozenset((environment,))
+        self._is_chained = kwargs.pop("_is_chained", False)
         self._username = username
         self._tenant_id = tenant_id
         self._cache = kwargs.pop("_cache", None)
@@ -108,9 +109,7 @@ class SharedTokenCacheBase(ABC):
         self._load_cache()
         if self._cache:
             # pylint:disable=protected-access
-            self._client = self._get_auth_client(
-                authority=self._authority, cache=self._cache, **self._client_kwargs
-            )
+            self._client = self._get_auth_client(authority=self._authority, cache=self._cache, **self._client_kwargs)
 
         self._initialized = True
 
@@ -121,8 +120,9 @@ class SharedTokenCacheBase(ABC):
                 # user's default cache regardless of whether it's encrypted. It doesn't create a new cache. If the
                 # default cache exists, the user must have created it earlier. If it's unencrypted, the user must
                 # have allowed that.
-                options = self._cache_persistence_options or \
-                    TokenCachePersistenceOptions(allow_unencrypted_storage=True)
+                options = self._cache_persistence_options or TokenCachePersistenceOptions(
+                    allow_unencrypted_storage=True
+                )
                 self._cache = _load_persistent_cache(options)
             except Exception:  # pylint:disable=broad-except
                 pass
@@ -172,7 +172,7 @@ class SharedTokenCacheBase(ABC):
         return accounts.values()
 
     @wrap_exceptions
-    def _get_account(self, username: Optional[str] = None, tenant_id: Optional[str] = None)  -> CacheItem:
+    def _get_account(self, username: Optional[str] = None, tenant_id: Optional[str] = None) -> CacheItem:
         """Returns exactly one account which has a refresh token and matches username and/or tenant_id.
 
         :param str username: an account's username

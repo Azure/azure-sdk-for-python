@@ -506,14 +506,14 @@ def test_app_service_2019_08_01():
 
     # when configuration for both API versions is present, the credential should prefer the most recent
     with mock.patch.dict(
-            MANAGED_IDENTITY_ENVIRON,
-            {
-                EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
-                EnvironmentVariables.IDENTITY_HEADER: new_secret,
-                EnvironmentVariables.MSI_ENDPOINT: endpoint,
-                EnvironmentVariables.MSI_SECRET: secret,
-            },
-            clear=True,
+        MANAGED_IDENTITY_ENVIRON,
+        {
+            EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
+            EnvironmentVariables.IDENTITY_HEADER: new_secret,
+            EnvironmentVariables.MSI_ENDPOINT: endpoint,
+            EnvironmentVariables.MSI_SECRET: secret,
+        },
+        clear=True,
     ):
         token = ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope)
         assert token.token == access_token
@@ -550,14 +550,14 @@ def test_app_service_2019_08_01_tenant_id():
 
     # when configuration for both API versions is present, the credential should prefer the most recent
     with mock.patch.dict(
-            MANAGED_IDENTITY_ENVIRON,
-            {
-                EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
-                EnvironmentVariables.IDENTITY_HEADER: new_secret,
-                EnvironmentVariables.MSI_ENDPOINT: endpoint,
-                EnvironmentVariables.MSI_SECRET: secret,
-            },
-            clear=True,
+        MANAGED_IDENTITY_ENVIRON,
+        {
+            EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
+            EnvironmentVariables.IDENTITY_HEADER: new_secret,
+            EnvironmentVariables.MSI_ENDPOINT: endpoint,
+            EnvironmentVariables.MSI_SECRET: secret,
+        },
+        clear=True,
     ):
         token = ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope, tenant_id="tenant_id")
         assert token.token == access_token

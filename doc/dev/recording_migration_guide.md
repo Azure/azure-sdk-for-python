@@ -121,5 +121,5 @@ For more details, refer to the documentation in [tests.md][recording_updates].
 [generate_assets_json]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/transition-scripts/generate-assets-json.ps1
 [git_setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
 [powershell]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-latest
-[recording_updates]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#run-tests-with-out-of-repo-recordings
+[recording_updates]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#update-test-recordings
 [transition_script]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/testproxy/transition-scripts

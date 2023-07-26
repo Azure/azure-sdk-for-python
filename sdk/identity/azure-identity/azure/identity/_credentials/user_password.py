@@ -59,13 +59,7 @@ class UsernamePasswordCredential(InteractiveCredential):
             :caption: Create a UsernamePasswordCredential.
     """
 
-    def __init__(
-            self,
-            client_id: str,
-            username: str,
-            password: str,
-            **kwargs: Any
-    ) -> None:
+    def __init__(self, client_id: str, username: str, password: str, **kwargs: Any) -> None:
         # The base class will accept an AuthenticationRecord, allowing this credential to authenticate silently the
         # first time it's asked for a token. However, we want to ensure this first authentication is not silent, to
         # validate the given password. This class therefore doesn't document the authentication_record argument, and we

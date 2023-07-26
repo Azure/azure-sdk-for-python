@@ -383,7 +383,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
             node = self._component(*args, **kwargs)
             # merge inputs
             for name, original_input in self.inputs.items():
-                if name not in kwargs.keys():
+                if name not in kwargs:
                     # use setattr here to make sure owner of input won't change
                     setattr(node.inputs, name, original_input._data)
                 # get outputs

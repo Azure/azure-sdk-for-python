@@ -124,8 +124,9 @@ class FileSystemOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -148,7 +149,7 @@ class FileSystemOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {"url": "{url}/{filesystem}"}
+    create.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def set_properties(  # pylint: disable=inconsistent-return-statements
@@ -225,8 +226,9 @@ class FileSystemOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -246,7 +248,7 @@ class FileSystemOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_properties.metadata = {"url": "{url}/{filesystem}"}
+    set_properties.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -296,8 +298,9 @@ class FileSystemOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -321,7 +324,7 @@ class FileSystemOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {"url": "{url}/{filesystem}"}
+    get_properties.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -393,8 +396,9 @@ class FileSystemOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -412,7 +416,7 @@ class FileSystemOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {"url": "{url}/{filesystem}"}
+    delete.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def list_paths(
@@ -497,8 +501,9 @@ class FileSystemOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -523,7 +528,7 @@ class FileSystemOperations:
 
         return deserialized
 
-    list_paths.metadata = {"url": "{url}/{filesystem}"}
+    list_paths.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def list_blob_hierarchy_segment(
@@ -620,8 +625,9 @@ class FileSystemOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -647,4 +653,4 @@ class FileSystemOperations:
 
         return deserialized
 
-    list_blob_hierarchy_segment.metadata = {"url": "{url}/{filesystem}"}
+    list_blob_hierarchy_segment.metadata = {"url": "{url}"}

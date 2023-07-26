@@ -97,7 +97,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         """Translate a parallel job to component job.
 
         :param context: Context of parallel job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated parallel component.
         """
         from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -126,7 +126,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         """Translate a parallel job to a pipeline node.
 
         :param context: Context of parallel job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated parallel component.
         """
         from azure.ai.ml.entities._builders import Parallel

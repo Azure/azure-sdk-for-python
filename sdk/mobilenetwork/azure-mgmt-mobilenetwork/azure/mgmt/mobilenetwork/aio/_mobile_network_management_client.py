@@ -18,8 +18,10 @@ from ._configuration import MobileNetworkManagementClientConfiguration
 from .operations import (
     AttachedDataNetworksOperations,
     DataNetworksOperations,
+    DiagnosticsPackagesOperations,
     MobileNetworksOperations,
     Operations,
+    PacketCapturesOperations,
     PacketCoreControlPlaneVersionsOperations,
     PacketCoreControlPlanesOperations,
     PacketCoreDataPlanesOperations,
@@ -45,10 +47,15 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
      azure.mgmt.mobilenetwork.aio.operations.AttachedDataNetworksOperations
     :ivar data_networks: DataNetworksOperations operations
     :vartype data_networks: azure.mgmt.mobilenetwork.aio.operations.DataNetworksOperations
+    :ivar diagnostics_packages: DiagnosticsPackagesOperations operations
+    :vartype diagnostics_packages:
+     azure.mgmt.mobilenetwork.aio.operations.DiagnosticsPackagesOperations
     :ivar mobile_networks: MobileNetworksOperations operations
     :vartype mobile_networks: azure.mgmt.mobilenetwork.aio.operations.MobileNetworksOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.mobilenetwork.aio.operations.Operations
+    :ivar packet_captures: PacketCapturesOperations operations
+    :vartype packet_captures: azure.mgmt.mobilenetwork.aio.operations.PacketCapturesOperations
     :ivar packet_core_control_planes: PacketCoreControlPlanesOperations operations
     :vartype packet_core_control_planes:
      azure.mgmt.mobilenetwork.aio.operations.PacketCoreControlPlanesOperations
@@ -72,11 +79,11 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
     :vartype slices: azure.mgmt.mobilenetwork.aio.operations.SlicesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-11-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-06-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -93,7 +100,7 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
         self._config = MobileNetworkManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -103,8 +110,12 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
             self._client, self._config, self._serialize, self._deserialize
         )
         self.data_networks = DataNetworksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.diagnostics_packages = DiagnosticsPackagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.mobile_networks = MobileNetworksOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.packet_captures = PacketCapturesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.packet_core_control_planes = PacketCoreControlPlanesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -150,5 +161,5 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

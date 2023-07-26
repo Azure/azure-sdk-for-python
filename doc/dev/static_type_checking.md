@@ -127,7 +127,7 @@ Almost anything can be used as a type in annotations.
    like [collections](https://docs.python.org/3/library/collections.html)
    or [collections.abc](https://docs.python.org/3/library/collections.abc.html), or external packages
 3) Types from the [typing](https://docs.python.org/3/library/typing.html)
-   or [typing_extensions](https://github.com/python/typing/tree/master/typing_extensions) modules
+   or [typing_extensions](https://github.com/python/typing_extensions) modules
 4) Built-in generic types, like `list` or `dict`*.
    > *Note: Supported in Python 3.9+. For <3.9, You must include `from __future__ import annotations` import to be able to pass in generic `list[str]` as a type hint rather than `typing.List[str]`.
 
