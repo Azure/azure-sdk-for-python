@@ -211,25 +211,19 @@ def _reprocess_error(decoded_error, identifiers=None):
         message = decoded_error.message
         authentication_failed = "Server failed to authenticate the request"
         invalid_input = (
-            "The number of keys specified in the URI does not match number of key properties \" \"for the resource"
+            "The number of keys specified in the URI does not match number of key properties for the resource"
         )
         invalid_query_parameter_value = "Value for one of the query parameters specified in the request URI is invalid"
         invalid_url = "Request url is invalid"
         properties_need_value = "The values are not specified for all properties in the entity"
         table_does_not_exist = "The table specified does not exist"
         if (  # pylint: disable=too-many-boolean-expressions
-            error_code == "AuthenticationFailed"
-            and authentication_failed in message
-            or error_code == "InvalidInput"
-            and invalid_input in message
-            or error_code == "InvalidInput"
-            and invalid_url in message
-            or error_code == "InvalidQueryParameterValue"
-            and invalid_query_parameter_value in message
-            or error_code == "PropertiesNeedValue"
-            and properties_need_value in message
-            or error_code == "TableNotFound"
-            and table_does_not_exist in message
+            (error_code == "AuthenticationFailed" and authentication_failed in message)
+            or (error_code == "InvalidInput" and invalid_input in message)
+            or (error_code == "InvalidInput" and invalid_url in message)
+            or (error_code == "InvalidQueryParameterValue" and invalid_query_parameter_value in message)
+            or (error_code == "PropertiesNeedValue" and properties_need_value in message)
+            or (error_code == "TableNotFound" and table_does_not_exist in message)
         ):
             args_list = list(decoded_error.args)
             args_list[0] += (
