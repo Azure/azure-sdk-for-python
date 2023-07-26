@@ -615,7 +615,7 @@ class ModelOperations(_ScopeDependentOperations):
             if self._registry_name:
                 # create ARM id for the target environment
                 if package_request.target_environment_name:
-                    package_request.target_environment_id = f"azureml://subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/amlsdkv2022307/providers/Microsoft.MachineLearningServices/workspaces/amlsdkv2022307-ws/environments/ggg/versions/3"
+                    package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/ggg"
 
             package_request = package_request._to_rest_object()
 

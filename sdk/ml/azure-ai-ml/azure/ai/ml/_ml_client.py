@@ -238,13 +238,18 @@ class MLClient:
                     self._credential,
                 )
                 workspace_details = ws_ops.get(workspace_reference)
-                workspace_location = workspace_details.location
+                # import debugpy
+                # debugpy.connect(("localhost", 5678))
+                # debugpy.breakpoint()
+                workspace_location, workspace_id = workspace_details.location, workspace_details._workspace_id
 
             self._service_client_10_2021_dataplanepreview, resource_group_name, subscription_id = get_registry_client(
                 self._credential, registry_name, workspace_location, **kwargs
             )
 
-        self._operation_scope = OperationScope(subscription_id, resource_group_name, workspace_name, registry_name)
+        self._operation_scope = OperationScope(
+            subscription_id, resource_group_name, workspace_name, registry_name, workspace_id, workspace_location
+        )
 
         # Cannot send multiple base_url as azure-cli sets the base_url automatically.
         kwargs.pop("base_url", None)
