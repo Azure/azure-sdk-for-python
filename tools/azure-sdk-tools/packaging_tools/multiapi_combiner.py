@@ -10,12 +10,9 @@ import inspect
 import json
 import argparse
 from pathlib import Path
-import shutil
 from typing import Dict, Optional, List, Any, TypeVar, Callable, Set
 
 from jinja2 import PackageLoader, Environment
-
-PACKAGING_TOOLS_DIR = (Path(__file__) / "..").resolve()
 
 
 def _get_metadata(path: Path) -> Dict[str, Any]:
