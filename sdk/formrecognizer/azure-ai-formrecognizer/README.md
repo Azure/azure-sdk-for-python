@@ -30,17 +30,17 @@ Azure Form Recognizer is a cloud service that uses machine learning to analyze t
 Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer --pre
+pip install azure-ai-formrecognizer
 ```
 
-> Note: This version of the client library defaults to the `2023-02-28-preview` version of the service.
+> Note: This version of the client library defaults to the `2023-07-31` version of the service.
 
 This table shows the relationship between SDK versions and supported API versions of the service:
 
 |SDK version|Supported API version of service
 |-|-
-|3.3.0bX - Latest beta release | 2.0, 2.1, 2022-08-31, 2023-02-28-preview (default)
-|3.2.X - Latest GA release | 2.0, 2.1, 2022-08-31 (default)
+|3.3.X - Latest GA release | 2.0, 2.1, 2022-08-31, 2023-07-31 (default)
+|3.2.X | 2.0, 2.1, 2022-08-31 (default)
 |3.1.X| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
@@ -51,7 +51,7 @@ This table shows the relationship between SDK versions and supported API version
 
 |API version|Supported clients
 |-|-
-|2023-02-28-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
+|2023-07-31 | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2022-08-31 | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2.1 | FormRecognizerClient and FormTrainingClient
 |2.0 | FormRecognizerClient and FormTrainingClient

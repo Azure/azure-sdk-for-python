@@ -23,8 +23,12 @@ from ._base_client import parse_connection_str, TablesBaseClient
 from ._entity import TableEntity
 from ._error import _decode_error, _process_table_error, _reprocess_error, _reraise_error, _validate_tablename_error
 from ._generated.models import SignedIdentifier, TableProperties
-from ._serialize import(
-    serialize_iso, _parameter_filter_substitution, _get_match_headers, _add_entity_properties, _prepare_key
+from ._serialize import (
+    serialize_iso,
+    _parameter_filter_substitution,
+    _get_match_headers,
+    _add_entity_properties,
+    _prepare_key,
 )
 from ._deserialize import deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
 from ._table_batch import TableBatchOperations, EntityType, TransactionOperationType
@@ -41,13 +45,13 @@ class TableClient(TablesBaseClient):
     :ivar str api_version: The service API version.
     """
 
-    def __init__( # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint: str,
         table_name: str,
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """Create TableClient from a Credential.
 
@@ -108,7 +112,7 @@ class TableClient(TablesBaseClient):
         table_url: str,
         *,
         credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]] = None,
-        **kwargs
+        **kwargs,
     ) -> "TableClient":
         """A client to interact with a specific Table.
 
@@ -160,7 +164,7 @@ class TableClient(TablesBaseClient):
                 table=self.table_name,
                 timeout=timeout,
                 cls=kwargs.pop("cls", None) or _return_headers_and_deserialized,
-                **kwargs
+                **kwargs,
             )
         except HttpResponseError as error:
             _process_table_error(error, table_name=self.table_name)
@@ -177,9 +181,7 @@ class TableClient(TablesBaseClient):
         return output
 
     @distributed_trace
-    def set_table_access_policy(
-        self, signed_identifiers: Dict[str, Optional[TableAccessPolicy]], **kwargs
-    ) -> None:
+    def set_table_access_policy(self, signed_identifiers: Dict[str, Optional[TableAccessPolicy]], **kwargs) -> None:
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
         :param signed_identifiers: Access policies to set for the table
@@ -303,7 +305,7 @@ class TableClient(TablesBaseClient):
             partition_key = entity["PartitionKey"]
             row_key = entity["RowKey"]
         except (TypeError, IndexError):
-            partition_key = kwargs.pop('partition_key', None)
+            partition_key = kwargs.pop("partition_key", None)
             if partition_key is None:
                 partition_key = args[0]
             row_key = kwargs.pop("row_key", None)
@@ -328,7 +330,7 @@ class TableClient(TablesBaseClient):
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
                 if_match=if_match,
-                **kwargs
+                **kwargs,
             )
         except HttpResponseError as error:
             if error.status_code == 404:
@@ -360,7 +362,7 @@ class TableClient(TablesBaseClient):
                 table=self.table_name,
                 table_entity_properties=entity,  # type: ignore
                 cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                **kwargs
+                **kwargs,
             )
         except HttpResponseError as error:
             decoded = _decode_error(error.response, error.message)
@@ -424,7 +426,7 @@ class TableClient(TablesBaseClient):
                     table_entity_properties=entity,  # type: ignore
                     if_match=if_match,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                    **kwargs
+                    **kwargs,
                 )
             elif mode == UpdateMode.MERGE:
                 metadata, content = self._client.table.merge_entity(  # type: ignore
@@ -434,7 +436,7 @@ class TableClient(TablesBaseClient):
                     if_match=if_match,
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                    **kwargs
+                    **kwargs,
                 )
             else:
                 raise ValueError(f"Mode type '{mode}' is not supported.")
@@ -550,7 +552,7 @@ class TableClient(TablesBaseClient):
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
                 select=user_select,
-                **kwargs
+                **kwargs,
             )
         except HttpResponseError as error:
             _process_table_error(error, table_name=self.table_name)
@@ -590,7 +592,7 @@ class TableClient(TablesBaseClient):
                     row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                    **kwargs
+                    **kwargs,
                 )
             elif mode == UpdateMode.REPLACE:
                 metadata, content = self._client.table.update_entity(  # type: ignore
@@ -599,7 +601,7 @@ class TableClient(TablesBaseClient):
                     row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                    **kwargs
+                    **kwargs,
                 )
             else:
                 raise ValueError(
@@ -610,9 +612,7 @@ class TableClient(TablesBaseClient):
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
-    def submit_transaction(
-        self, operations: Iterable[TransactionOperationType], **kwargs
-    ) -> List[Mapping[str, Any]]:
+    def submit_transaction(self, operations: Iterable[TransactionOperationType], **kwargs) -> List[Mapping[str, Any]]:
         """Commit a list of operations as a single transaction.
 
         If any one of these operations fails, the entire transaction will be rejected.
@@ -645,7 +645,7 @@ class TableClient(TablesBaseClient):
             self._client._config,  # pylint: disable=protected-access
             self.table_name,
             is_cosmos_endpoint=self._cosmos_endpoint,
-            **kwargs
+            **kwargs,
         )
         try:
             for operation in operations:

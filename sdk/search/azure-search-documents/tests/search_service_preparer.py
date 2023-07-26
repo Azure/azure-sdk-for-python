@@ -16,7 +16,7 @@ from devtools_testutils import EnvironmentVariableLoader
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 
 SERVICE_URL_FMT = "https://{}.{}/indexes?api-version=2021-04-30-Preview"
 TIME_TO_SLEEP = 3
@@ -77,8 +77,14 @@ def _clean_up_indexers(endpoint, api_key):
         client.delete_indexer(indexer)
     for datasource in client.get_data_source_connection_names():
         client.delete_data_source_connection(datasource)
-    for skillset in client.get_skillset_names():
-        client.delete_skillset(skillset)
+    try:
+        for skillset in client.get_skillset_names():
+            client.delete_skillset(skillset)
+    except HttpResponseError as ex:
+        if "skillset related operations are not enabled in this region" in ex.message.lower():
+            pass
+        else:
+            raise
 
 
 def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
