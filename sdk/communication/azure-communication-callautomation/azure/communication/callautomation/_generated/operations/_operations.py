@@ -3072,7 +3072,7 @@ class CallMediaOperations:
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param send_dtmf_tones_request: The send dtmf request. Required.
+        :param send_dtmf_tones_request: The send dtmf tones request. Required.
         :type send_dtmf_tones_request: ~azure.communication.callautomation.models.SendDtmfTonesRequest
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
@@ -3111,7 +3111,7 @@ class CallMediaOperations:
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param send_dtmf_tones_request: The send dtmf request. Required.
+        :param send_dtmf_tones_request: The send dtmf tones request. Required.
         :type send_dtmf_tones_request: IO
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
@@ -3149,8 +3149,8 @@ class CallMediaOperations:
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param send_dtmf_tones_request: The send dtmf request. Is either a SendDtmfTonesRequest type or
-         a IO type. Required.
+        :param send_dtmf_tones_request: The send dtmf tones request. Is either a SendDtmfTonesRequest
+         type or a IO type. Required.
         :type send_dtmf_tones_request: ~azure.communication.callautomation.models.SendDtmfTonesRequest
          or IO
         :keyword repeatability_request_id: If specified, the client directs that the request is

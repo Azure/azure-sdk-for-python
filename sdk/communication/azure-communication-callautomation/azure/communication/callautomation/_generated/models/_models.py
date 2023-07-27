@@ -2775,7 +2775,7 @@ class SendDtmfTonesRequest(_serialization.Model):
 
     :ivar tones: List of tones to be sent to target participant. Required.
     :vartype tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
-    :ivar target_participant: Target participant of send DTMF. Required.
+    :ivar target_participant: Target participant of send Dtmf tones. Required.
     :vartype target_participant:
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar operation_context: The value to identify context of the operation.
@@ -2804,7 +2804,7 @@ class SendDtmfTonesRequest(_serialization.Model):
         """
         :keyword tones: List of tones to be sent to target participant. Required.
         :paramtype tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
-        :keyword target_participant: Target participant of send DTMF. Required.
+        :keyword target_participant: Target participant of send Dtmf tones. Required.
         :paramtype target_participant:
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword operation_context: The value to identify context of the operation.
