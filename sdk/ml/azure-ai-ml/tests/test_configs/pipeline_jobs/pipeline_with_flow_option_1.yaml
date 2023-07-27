@@ -1,0 +1,59 @@
+type: pipeline
+
+name: simplePipelineJobWithFlow
+description: The hello world pipeline job with flow option 1
+
+compute: "azureml:cpu-cluster"
+
+inputs:
+  job_data:
+    type: uri_file
+    path: "../test_data/flow_input_data.jsonl"
+
+outputs:
+  anonymous_command_output: ${{parent.jobs.anonymous_command_flow.outputs.output_data}}
+
+jobs:
+  # inline flow not supported to avoid letting user providing inputs/outputs port
+  anonymous_command_flow:
+    type: command
+    component: ../flows/some_flow/flow.dag.yaml
+    inputs:
+      data: ${{parent.inputs.job_data}}
+      groundtruth: "${data.answer}"
+      prediction: "${run.outputs.category}"
+      connections.node_name.connection: another_connection
+      connections.node_name.deployment_name: deployment_name
+
+  anonymous_parallel_flow:
+    type: parallel
+    # type of the component will be determined by node type
+    component: ../flows/some_flow/flow.dag.yaml
+    inputs:
+      data: ${{parent.inputs.job_data}}
+      groundtruth: "${data.answer}"
+      prediction: "${run.outputs.category}"
+      connections.node_name.connection: another_connection
+      connections.node_name.deployment_name: deployment_name
+
+  registered_parallel_flow:
+    type: parallel
+    component: azureml:flow_name:flow_version_for_parallel
+    logging_level: INFO
+    instance_count: 2
+    inputs:
+      data: ${{parent.inputs.job_data}}
+      groundtruth: "${data.answer}"
+      prediction: "${run.outputs.category}"
+      connections.node_name.connection: another_connection
+      connections.node_name.deployment_name: deployment_name
+
+  registered_command_flow:
+    type: command
+    component: azureml:flow_name:flow_version_for_command
+    inputs:
+      data: ${{parent.inputs.job_data}}
+      groundtruth: "${data.answer}"
+      prediction: "${run.outputs.category}"
+      connections.node_name.connection: another_connection
+      connections.node_name.deployment_name: deployment_name

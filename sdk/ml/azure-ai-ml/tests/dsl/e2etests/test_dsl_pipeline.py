@@ -3285,68 +3285,72 @@ class TestDSLPipeline(AzureRecordedTestCase):
         job_res = client.jobs.create_or_update(job=pipeline_job, experiment_name="test_unknown_field")
         assert job_res.jobs["node"].unknown_field == "${{parent.inputs.input}}"
 
-    def test_flow_in_pipeline_sdk(self, client):
-        # option 1: with a component spec
-        # then  this component spec won't fit standard component schema, like user can't specify input/output ports
-        flow_component = load_component("./tests/test_configs/components/flow_component.yml")
-        # type: Flow
-
-        # option 2: no component spec
-        # then we'd better avoid extra parameters like columns_mapping
-        flow_component = load_component(
-            source="./tests/test_configs/flows/some_flow/flow.dag.yaml",
-            # name & version are optional just like in regular components
-            name="custom_name",
-            version="custom_version",
-            # we can remove this parameter if we propose that only default variant is supported in pipeline
-            # variant="custom_variant",
-            # this is just the default value, so it should be okay to not specify it here
-            # columns_mapping={
-            #     "groundtruth": "${data.answer}",
-            # }
+    def test_flow_in_pipeline_option_1(self, client):
+        """
+        Shared benefits: no need to download component.code to re-create it in another workspace; naturally support
+          maintaining flow definition flow in git repo.
+        Shared drawbacks: do not support variant
+        Option 1: Type of the component will be determined on client-side.
+        Benefit: Relatively easy to implement - nearly no change to service side.
+        Drawback: Need to add a different parameter for component load function like this:
+            load_component(path, type="command")
+        """
+        component = load_component(
+            "./tests/test_configs/pipeline_jobs/pipeline_with_flow.yaml",
+            # type will be parallel by default
+            type="command",
+            # TODO: should we generate flow.tools.json on loading?
+            # azure-ai-ml should not depend on promptflow, which means we should not generate flow.tools.json in client-side
+            # my proposal is to letting user:
+            # either provide runtime here
+            # or run a specific command to update flow.tools.json in promptflow (will it be ignored by default?)
+            # note that MT won't be able to verify the flow.tools.json, it will lead to runtime error directly
+            runtime="promptflow-runtime"
         )
-        # type: Flow
+        assert component.type == "command"
 
-        @dsl.pipeline
-        def pipeline_with_anonymous_flow():
-            flow_node = flow_component(
-                data=Input(path="./tests/test_data/flow_input_data.jsonl"),
-                groundtruth="${data.answer}",
-                prediction="${run.outputs.category}",
-                connections={
-                    "node_name": {
-                        "connection": "another_connection",
-                        "deployment_name": "deployment_name",
-                    }
-                }
-            )
-            # TODO: how should we specify environment variables?
-            flow_node.environment_variables = {
-                "key": "value"
-            }
+        with pytest.raises(Exception, match="Flow component cannot be edited."):
+            component.inputs.groundtruth.default_value = "${{data.answer}}"
 
-            flow_params = {
-                "groundtruth": "${data.answer}",
-                "prediction": "${run.outputs.category}",
-                "connections": {
-                    "node_name": {
-                        "connection": "another_connection",
-                        "deployment_name": "deployment_name",
-                    }
-                }
-            }
-            flow_node_with_the_same_settings = flow_component(**flow_params)
-            flow_node_with_the_same_settings_2 = flow_component(**flow_params)
+        with pytest.raises(Exception, match="Flow component ports are not readable."):
+            # TODO: do we need this? this is to avoid duplicate logic in SDK and service
+            repr(component.inputs.keys())
 
-        created_flow_component = client.components.create_or_update(flow_component)
-        # can we make its type Flow?
+        # call load_as_component instead of component creation
+        # service side will copy and update the flow definition folder with default variant
+        # so created_component.code is not the same as what is created on client-side
+        created_component = client.components.create_or_update(component)
+        assert created_component.type == "command"
 
-        @dsl.pipeline
-        def pipeline_with_registered_flow():
-            flow_node = created_flow_component(
-                input_data=Input(path="./tests/test_data/flow_input_data.txt"),
-            )
-
-    def test_flow_in_pipeline_yaml(self, client):
         from azure.ai.ml import load_job
-        pipeline = load_job("./tests/test_configs/pipeline_jobs/pipeline_with_flow.yaml")
+
+        pipeline = load_job("./tests/test_configs/pipeline_jobs/pipeline_with_flow_option_1.yaml")
+        _ = client.jobs.create_or_update(
+            pipeline,
+            compute="cpu-cluster",
+        )
+
+
+    def test_flow_in_pipeline_option_2(self, client):
+        """
+        Option 2: Type of the component will be determined on job running.
+        Benefit: No change to component loading interface.
+        Drawback: may involve unclear service-side effort.
+        """
+        # TODO: should we generate flow.tools.json on loading?
+        component = load_component("./tests/test_configs/pipeline_jobs/pipeline_with_flow.yaml", runtime="promptflow-runtime")
+        assert component.type == "flow"
+
+        # Important! we'll need to create a new type of component here
+        # which means even in service-side
+        created_component = client.components.create_or_update(component)
+        assert created_component.type == "flow"
+
+        from azure.ai.ml import load_job
+
+        pipeline = load_job("./tests/test_configs/pipeline_jobs/pipeline_with_flow_option_2.yaml")
+        # service-side will
+        _ = client.jobs.create_or_update(
+            pipeline,
+            compute="cpu-cluster",
+        )
