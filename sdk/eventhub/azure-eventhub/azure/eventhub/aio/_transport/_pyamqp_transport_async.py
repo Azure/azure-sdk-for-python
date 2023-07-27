@@ -190,7 +190,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     _LOGGER.info("Current Thread running %r.", threading.current_thread())
                     if consumer._last_received_event:
                         _LOGGER.info("Last received event: %r.", consumer._last_received_event)
-                    _LOGGER.info("Current consumer offset: %r.", consumer._offset)
+                    if consumer._offset:
+                        _LOGGER.info("Current consumer offset: %r.", consumer._offset)
                     # If optional dependency is not installed, do not retry.
                     if isinstance(exception, ImportError):
                         raise exception
