@@ -145,12 +145,17 @@ class AzureJSONEncoder(JSONEncoder):
 
     def default(self, o):  # pylint: disable=too-many-return-statements
         if _is_model(o):
+            result = {k: v for k, v in o.items()}
             if self.exclude_readonly:
-                readonly_props = [
-                    p._rest_name for p in o._attr_to_rest_field.values() if _is_readonly(p)
-                ]
-                return {k: v for k, v in o.items() if k not in readonly_props}
-            return {k: v for k, v in o.items()}
+                readonly_props = [p._rest_name for p in o._attr_to_rest_field.values() if _is_readonly(p)]
+                for k in readonly_props:
+                    if k in result:
+                        result.pop(k)
+            if self.exclude_none:
+                for k in list(result.keys()):
+                    if result[k] is None or isinstance(result[k], _Null):
+                        result.pop(k)
+            return result
         if isinstance(o, (bytes, bytearray)):
             return base64.b64encode(o).decode()
         if isinstance(o, _Null):
@@ -583,6 +588,15 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
     if not annotation or annotation in [int, float]:
         return None
 
+    # is it a forward ref / in quotes?
+    if isinstance(annotation, (str, typing.ForwardRef)):
+        try:
+            model_name = annotation.__forward_arg__  # type: ignore
+        except AttributeError:
+            model_name = annotation
+        if module is not None:
+            annotation = _get_model(module, model_name)
+
     try:
         if module and _is_model(_get_model(module, annotation)):
             if rf:
@@ -613,22 +627,8 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
     except AttributeError:
         pass
 
-    if getattr(annotation, "__origin__", None) is typing.Union:
-
-        def _deserialize_with_union(union_annotation, obj):
-            for t in union_annotation.__args__:
-                try:
-                    return _deserialize(t, obj, module, rf)
-                except DeserializationError:
-                    pass
-            raise DeserializationError()
-
-        return functools.partial(_deserialize_with_union, annotation)
-
     # is it optional?
     try:
-        # right now, assuming we don't have unions, since we're getting rid of the only
-        # union we used to have in msrest models, which was union of str and enum
         if any(a for a in annotation.__args__ if a == type(None)):
             if_obj_deserializer = _get_deserialize_callable_from_annotation(
                 next(a for a in annotation.__args__ if a != type(None)), module, rf
@@ -645,14 +645,17 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
     except AttributeError:
         pass
 
-    # is it a forward ref / in quotes?
-    if isinstance(annotation, (str, typing.ForwardRef)):
-        try:
-            model_name = annotation.__forward_arg__  # type: ignore
-        except AttributeError:
-            model_name = annotation
-        if module is not None:
-            annotation = _get_model(module, model_name)
+    if getattr(annotation, "__origin__", None) is typing.Union:
+
+        def _deserialize_with_union(union_annotation, obj):
+            for t in union_annotation.__args__:
+                try:
+                    return _deserialize(t, obj, module, rf)
+                except DeserializationError:
+                    pass
+            raise DeserializationError()
+
+        return functools.partial(_deserialize_with_union, annotation)
 
     try:
         if annotation._name == "Dict":
@@ -824,6 +827,7 @@ class _RestField:
             return
         if self._is_model and not _is_model(value):
             obj.__setitem__(self._rest_name, _deserialize(self._type, value))
+            return
         obj.__setitem__(self._rest_name, _serialize(value, self._format))
 
     def _get_deserialize_callable_from_annotation(

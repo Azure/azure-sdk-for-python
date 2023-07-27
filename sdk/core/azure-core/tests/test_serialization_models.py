@@ -8,7 +8,7 @@ import datetime
 from typing import Any, Iterable, List, Literal, Dict, Mapping, Sequence, Set, Tuple, Optional, overload
 import pytest
 import isodate
-from azure.core.serialization import AzureJSONEncoder, Model, rest_field, rest_discriminator
+from azure.core.serialization import AzureJSONEncoder, Model, rest_field, NULL
 
 class BasicResource(Model):
     platform_update_domain_count: int = rest_field(name="platformUpdateDomainCount")  # How many times the platform update domain has been counted
@@ -852,7 +852,6 @@ def test_model_recursion_complex():
     assert isinstance(model.list_of_dict_of_me[0], Dict)
     assert isinstance(model.list_of_dict_of_me[0]["me"], RecursiveModel)
 
-    assert json.loads(json.dumps(dict(model))) == model == dict_response
     assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == model == dict_response
 
 def test_literals():
@@ -1809,7 +1808,8 @@ def test_deserialization_is():
 
     assert x.y.z.zval == isodate.parse_datetime(serialized_datetime)
 
-class ModelWithReadonly(Model):
+
+class InnerModelWithReadonly(Model):
     normal_property: str = rest_field(name="normalProperty")
     readonly_property: str = rest_field(name="readonlyProperty", visibility=["read"])
 
@@ -1824,26 +1824,82 @@ class ModelWithReadonly(Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+
+class ModelWithReadonly(Model):
+    normal_property: str = rest_field(name="normalProperty")
+    readonly_property: str = rest_field(name="readonlyProperty", visibility=["read"])
+    inner_model: InnerModelWithReadonly = rest_field(name="innerModel")
+
+    @overload
+    def __init__(self, *, normal_property: str):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any], /):
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
 def test_readonly():
     # we pass the dict to json, so readonly shouldn't show up in the JSON version
-    model = ModelWithReadonly({"normalProperty": "normal", "readonlyProperty": "readonly"})
-    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {"normalProperty": "normal"}
-    assert model == {"normalProperty": "normal", "readonlyProperty": "readonly"}
+    value = {
+        "normalProperty": "normal",
+        "readonlyProperty": "readonly",
+        "innerModel": {
+            "normalProperty": "normal",
+            "readonlyProperty": "readonly"
+        }
+    }
+    model = ModelWithReadonly(value)
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {"normalProperty": "normal",
+                                                                   "innerModel": {"normalProperty": "normal"}}
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_readonly=False)) == value
+    assert model == value
     assert model["readonlyProperty"] == model.readonly_property == "readonly"
+    assert model["innerModel"]["readonlyProperty"] == model.inner_model.readonly_property == "readonly"
+
 
 def test_readonly_set():
-    model = ModelWithReadonly({"normalProperty": "normal", "readonlyProperty": "readonly"})
+    value = {
+        "normalProperty": "normal",
+        "readonlyProperty": "readonly",
+        "innerModel": {
+            "normalProperty": "normal",
+            "readonlyProperty": "readonly"
+        }
+    }
+
+    model = ModelWithReadonly(value)
     assert model.normal_property == model["normalProperty"] == "normal"
     assert model.readonly_property == model["readonlyProperty"] == "readonly"
+    assert model.inner_model.normal_property == model.inner_model["normalProperty"] == "normal"
+    assert model.inner_model.readonly_property == model.inner_model["readonlyProperty"] == "readonly"
 
-    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {"normalProperty": "normal"}
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {"normalProperty": "normal",
+                                                                   "innerModel": {"normalProperty": "normal"}}
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_readonly=False)) == value
 
     model["normalProperty"] = "setWithDict"
     model["readonlyProperty"] = "setWithDict"
+    model.inner_model["normalProperty"] = "setWithDict"
+    model.inner_model["readonlyProperty"] = "setWithDict"
 
     assert model.normal_property == model["normalProperty"] == "setWithDict"
     assert model.readonly_property == model["readonlyProperty"] == "setWithDict"
-    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {"normalProperty": "setWithDict"}
+    assert model.inner_model.normal_property == model.inner_model["normalProperty"] == "setWithDict"
+    assert model.inner_model.readonly_property == model.inner_model["readonlyProperty"] == "setWithDict"
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {"normalProperty": "setWithDict",
+                                                                   "innerModel": {"normalProperty": "setWithDict"}}
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_readonly=False)) == {
+        "normalProperty": "setWithDict",
+        "readonlyProperty": "setWithDict",
+        "innerModel": {
+            "normalProperty": "setWithDict",
+            "readonlyProperty": "setWithDict"
+        }
+    }
 
 def test_incorrect_initialization():
     class MyModel(Model):
@@ -3352,3 +3408,107 @@ def test_required_prop_not_passed():
     assert model.required_property is None
     with pytest.raises(KeyError):
         model["requiredProperty"]
+
+
+def test_null_serilization():
+    dict_response = {
+        "name": "it's me!",
+        "listOfMe": [
+            {
+                "name": "it's me!",
+            }
+        ],
+        "dictOfMe": {
+            "me": {
+                "name": "it's me!",
+            }
+        },
+        "dictOfListOfMe": {
+            "many mes": [
+                {
+                    "name": "it's me!",
+                }
+            ]
+        },
+        "listOfDictOfMe": None
+    }
+    model = RecursiveModel(dict_response)
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_none=True)) == {
+        "name": "it's me!",
+        "listOfMe": [
+            {"name": "it's me!"}
+        ],
+        "dictOfMe": {
+            "me": {"name": "it's me!"}
+        },
+        "dictOfListOfMe": {
+            "many mes": [
+                {"name": "it's me!"}
+            ]
+        }
+    }
+
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {
+        "name": "it's me!",
+        "listOfMe": [
+            {"name": "it's me!"}
+        ],
+        "dictOfMe": {
+            "me": {"name": "it's me!"}
+        },
+        "dictOfListOfMe": {
+            "many mes": [
+                {"name": "it's me!"}
+            ]
+        },
+        "listOfDictOfMe": None
+    }
+
+    model.list_of_me = NULL
+    model.dict_of_me = None
+    model.list_of_dict_of_me = [
+        {
+            "me": {
+                "name": "it's me!",
+            }
+        }
+    ]
+    model.dict_of_list_of_me["many mes"][0].list_of_me = NULL
+    model.dict_of_list_of_me["many mes"][0].dict_of_me = None
+    model.list_of_dict_of_me[0]["me"].list_of_me = NULL
+    model.list_of_dict_of_me[0]["me"].dict_of_me = None
+
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_none=True)) == {
+        "name": "it's me!",
+        "dictOfListOfMe": {
+            "many mes": [
+                {"name": "it's me!"}
+            ]
+        },
+        "listOfDictOfMe": [
+            {
+                "me": {"name": "it's me!"}
+            }
+        ]
+    }
+
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {
+        "name": "it's me!",
+        "listOfMe": None,
+        "dictOfListOfMe": {
+            "many mes": [
+                {
+                    "name": "it's me!",
+                    "listOfMe": None,
+                }
+            ]
+        },
+        "listOfDictOfMe": [
+            {
+                "me": {
+                    "name": "it's me!",
+                    "listOfMe": None,
+                }
+            }
+        ]
+    }
