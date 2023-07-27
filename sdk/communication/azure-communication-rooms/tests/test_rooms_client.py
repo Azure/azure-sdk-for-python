@@ -90,15 +90,23 @@ class TestRoomsClient(ACSRoomsTestCase):
 
         self.verify_successful_room_response(response=response)
 
-    @pytest.mark.live_test_only
     @recorded_by_proxy
-    def test_create_room_validUntil_7Months_async(self):
+    def test_create_room_validUntil_7Months(self):
         # room attributes
         valid_from =  datetime.now() + timedelta(days=3)
         valid_until = valid_from + timedelta(weeks=29)
 
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until)
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
+
+    @recorded_by_proxy
+    def test_create_room_valid_until_in_past(self):
+        # room attributes
+        valid_until = datetime.now() - timedelta(weeks=1)
+        with pytest.raises(HttpResponseError) as ex:
+            self.rooms_client.create_room(valid_until=valid_until)
             assert str(ex.value.status_code) == "400"
             assert ex.value.message is not None
 
@@ -203,6 +211,21 @@ class TestRoomsClient(ACSRoomsTestCase):
             valid_until = valid_from + timedelta(days=4)
             self.rooms_client.update_room(room_id="invalid_id", valid_from=valid_from, valid_until=valid_until)
             #  assert error is bad request
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
+
+    @recorded_by_proxy
+    def test_update_room_valid_until_in_past(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
+
+        with pytest.raises(HttpResponseError) as ex:
+            # update room attributes
+            valid_from =  datetime.now() - timedelta(days=3)
+            valid_until =  datetime.now() - timedelta(weeks=1)
+            self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+            # delete created room
+            self.rooms_client.delete_room(room_id=create_response.id)
             assert str(ex.value.status_code) == "400"
             assert ex.value.message is not None
 
@@ -521,6 +544,15 @@ class TestRoomsClient(ACSRoomsTestCase):
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.get_room(create_response.id)
             assert str(ex.value.status_code) == "404"
+            assert ex.value.message is not None
+
+    @recorded_by_proxy
+    def test_delete_room_invalid_id(self):
+        # room with no attributes
+        with pytest.raises(HttpResponseError) as ex:
+            # delete created room with invalid id
+            self.rooms_client.delete_room(room_id="123")
+            assert str(ex.value.status_code) == "400"
             assert ex.value.message is not None
 
     def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None):

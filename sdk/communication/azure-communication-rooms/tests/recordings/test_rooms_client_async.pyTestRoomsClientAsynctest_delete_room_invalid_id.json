@@ -1,34 +1,20 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-06-14",
-      "RequestMethod": "POST",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/123?api-version=2023-06-14",
+      "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "135",
-        "Content-Type": "application/json",
-        "Repeatability-First-Sent": "sanitized",
-        "Repeatability-Request-ID": "sanitized",
+        "Content-Length": "0",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
       },
-      "RequestBody": {
-        "validFrom": null,
-        "validUntil": null,
-        "participants": {
-          "wrong_mri": {
-            "role": "Attendee"
-          },
-          "8:acs:sanitized1": {
-            "role": "Presenter"
-          }
-        }
-      },
+      "RequestBody": null,
       "StatusCode": 400,
       "ResponseHeaders": {
         "api-deprecated-versions": "2021-04-07, 2022-02-01",
@@ -45,7 +31,7 @@
       "ResponseBody": {
         "error": {
           "code": "BadRequest",
-          "message": "Invalid format for communication identifier."
+          "message": "Invalid room ID length."
         }
       }
     }
