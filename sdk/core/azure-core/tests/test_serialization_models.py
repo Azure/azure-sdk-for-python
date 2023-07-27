@@ -5,10 +5,11 @@
 import copy
 import json
 import datetime
-from typing import Any, Iterable, List, Literal, Dict, Mapping, Sequence, Set, Tuple, Optional, overload
+from typing import Any, Iterable, List, Literal, Dict, Mapping, Sequence, Set, Tuple, Optional, overload, Union
 import pytest
 import isodate
-from azure.core.serialization import AzureJSONEncoder, Model, rest_field, NULL
+from azure.core.serialization import AzureJSONEncoder, Model, rest_field, NULL, _is_model
+
 
 class BasicResource(Model):
     platform_update_domain_count: int = rest_field(name="platformUpdateDomainCount")  # How many times the platform update domain has been counted
@@ -3512,3 +3513,96 @@ def test_null_serilization():
             }
         ]
     }
+
+
+class BaseModel(Model):
+    name: str = rest_field()
+
+    @overload
+    def __init__(self, *, name: str):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Model1(BaseModel):
+    prop1: int = rest_field()
+
+    @overload
+    def __init__(self, *, name: str, prop1: int):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Model2(BaseModel):
+    prop2: int = rest_field()
+
+    @overload
+    def __init__(self, *, name: str, prop2: int):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+MyNamedUnion = Union["_models.Model1", "_models.Model2"]
+Test = List[int]
+
+
+class ModelWithNamedUnionProperty(Model):
+    named_union: "MyNamedUnion" = rest_field(name="namedUnion")
+
+    @overload
+    def __init__(self, *, named_union: "MyNamedUnion"):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ModelWithSimpleUnionProperty(Model):
+    simple_union: Union[int, List[int]] = rest_field(name="simpleUnion")
+
+    @overload
+    def __init__(self, *, simple_union: Union[int, List[int]]):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+def test_union():
+    simple = ModelWithSimpleUnionProperty(simple_union=1)
+    assert simple.simple_union == simple["simpleUnion"] == 1
+    simple = ModelWithSimpleUnionProperty(simple_union=[1, 2])
+    assert simple.simple_union == simple["simpleUnion"] == [1, 2]
+    named = ModelWithNamedUnionProperty()
+    assert not _is_model(named.named_union)
+    named.named_union = Model1(name="model1", prop1=1)
+    assert _is_model(named.named_union)
+    assert named.named_union == named["namedUnion"] == {"name": "model1", "prop1": 1}
+    named = ModelWithNamedUnionProperty(named_union=Model2(name="model2", prop2=2))
+    assert named.named_union == named["namedUnion"] == {"name": "model2", "prop2": 2}

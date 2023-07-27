@@ -325,7 +325,7 @@ def _get_model(module_name: str, model_name: str):
     models = {
         k: v
         for k, v in sys.modules[module_name].__dict__.items()
-        if isinstance(v, type)
+        if isinstance(v, type) or isinstance(v, typing._GenericAlias)
     }
     module_end = module_name.rsplit(".", 1)[0]
     module = sys.modules[module_end]
@@ -598,7 +598,7 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
             annotation = _get_model(module, model_name)
 
     try:
-        if module and _is_model(_get_model(module, annotation)):
+        if module and _is_model(annotation):
             if rf:
                 rf._is_model = True
 
