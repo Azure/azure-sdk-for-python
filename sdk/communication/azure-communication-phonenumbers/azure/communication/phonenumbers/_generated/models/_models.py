@@ -175,7 +175,8 @@ class OperatorInformation(_serialization.Model):
     :ivar number_type: Type of service associated with the phone number. Known values are:
      "unknown", "other", "geographic", and "mobile".
     :vartype number_type: str or ~azure.communication.phonenumbers.models.OperatorNumberType
-    :ivar iso_country_code: ISO country code associated with the phone number.
+    :ivar iso_country_code: ISO 3166-1 two character ('alpha-2') code associated with the phone
+     number.
     :vartype iso_country_code: str
     :ivar operator_details: Represents metadata describing the operator of a phone number.
     :vartype operator_details: ~azure.communication.phonenumbers.models.OperatorDetails
@@ -203,7 +204,8 @@ class OperatorInformation(_serialization.Model):
         :keyword number_type: Type of service associated with the phone number. Known values are:
          "unknown", "other", "geographic", and "mobile".
         :paramtype number_type: str or ~azure.communication.phonenumbers.models.OperatorNumberType
-        :keyword iso_country_code: ISO country code associated with the phone number.
+        :keyword iso_country_code: ISO 3166-1 two character ('alpha-2') code associated with the phone
+         number.
         :paramtype iso_country_code: str
         :keyword operator_details: Represents metadata describing the operator of a phone number.
         :paramtype operator_details: ~azure.communication.phonenumbers.models.OperatorDetails
