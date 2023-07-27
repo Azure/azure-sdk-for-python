@@ -16,7 +16,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource, resolve_tenant
+from .._internal import _scopes_to_resource, resolve_tenant, within_dac
 from .._internal.decorators import log_get_token
 
 
@@ -46,12 +46,13 @@ class AzureCliCredential:
             :dedent: 4
             :caption: Create an AzureCliCredential.
     """
+
     def __init__(
         self,
         *,
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
-        process_timeout: int = 10
+        process_timeout: int = 10,
     ) -> None:
 
         self.tenant_id = tenant_id
@@ -90,9 +91,7 @@ class AzureCliCredential:
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
         tenant = resolve_tenant(
-            default_tenant=self.tenant_id,
-            additionally_allowed_tenants=self._additionally_allowed_tenants,
-            **kwargs
+            default_tenant=self.tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
         if tenant:
             command += " --tenant " + tenant
@@ -101,10 +100,14 @@ class AzureCliCredential:
         token = parse_token(output)
         if not token:
             sanitized_output = sanitize_output(output)
-            raise ClientAuthenticationError(
-                message="Unexpected output from Azure CLI: '{}'. \n"
-                        "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-                        "https://aka.ms/azsdk/python/identity/azclicredential/troubleshoot.".format(sanitized_output))
+            message = (
+                f"Unexpected output from Azure CLI: '{sanitized_output}'. \n"
+                f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                f"https://aka.ms/azsdk/python/identity/azclicredential/troubleshoot."
+            )
+            if within_dac.get():
+                raise CredentialUnavailableError(message=message)
+            raise ClientAuthenticationError(message=message)
 
         return token
 
@@ -193,6 +196,8 @@ def _run_command(command: str, timeout: int) -> str:
             message = sanitize_output(ex.stderr)
         else:
             message = "Failed to invoke Azure CLI"
+        if within_dac.get():
+            raise CredentialUnavailableError(message=message) from ex
         raise ClientAuthenticationError(message=message) from ex
     except OSError as ex:
         # failed to execute 'cmd' or '/bin/sh'

@@ -23,12 +23,14 @@ user_name = ""  # Required
 def hello_world():
     cred = DefaultAzureCredential()
     token = cred.get_token(scope)
-    r = redis.Redis(host=host,
-                    port=port,
-                    ssl=True,   # ssl connection is required.
-                    username=user_name,
-                    password=token.token,
-                    decode_responses=True)
+    r = redis.Redis(
+        host=host,
+        port=port,
+        ssl=True,  # ssl connection is required.
+        username=user_name,
+        password=token.token,
+        decode_responses=True,
+    )
     r.set("Az:key1", "value1")
     t = r.get("Az:key1")
     print(t)
@@ -38,12 +40,14 @@ def re_authentication():
     _LOGGER = logging.getLogger(__name__)
     cred = DefaultAzureCredential()
     token = cred.get_token(scope)
-    r = redis.Redis(host=host,
-                    port=port,
-                    ssl=True,   # ssl connection is required.
-                    username=user_name,
-                    password=token.token,
-                    decode_responses=True)
+    r = redis.Redis(
+        host=host,
+        port=port,
+        ssl=True,  # ssl connection is required.
+        username=user_name,
+        password=token.token,
+        decode_responses=True,
+    )
     max_retry = 3
     for index in range(max_retry):
         try:
@@ -60,12 +64,14 @@ def re_authentication():
         except redis.ConnectionError:
             _LOGGER.info("Connection lost. Reconnecting.")
             token = cred.get_token(scope)
-            r = redis.Redis(host=host,
-                            port=port,
-                            ssl=True,   # ssl connection is required.
-                            username=user_name,
-                            password=token.token,
-                            decode_responses=True)
+            r = redis.Redis(
+                host=host,
+                port=port,
+                ssl=True,  # ssl connection is required.
+                username=user_name,
+                password=token.token,
+                decode_responses=True,
+            )
         except Exception:
             _LOGGER.info("Unknown failures.")
             break
@@ -74,6 +80,7 @@ def re_authentication():
 def _need_refreshing(token, refresh_offset=300):
     return not token or token.expires_on - time.time() < refresh_offset
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     hello_world()
     re_authentication()

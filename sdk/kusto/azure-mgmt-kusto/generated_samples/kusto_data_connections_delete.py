@@ -29,15 +29,14 @@ def main():
         subscription_id="12345678-1234-1234-1234-123456789098",
     )
 
-    response = client.data_connections.begin_delete(
+    client.data_connections.begin_delete(
         resource_group_name="kustorptest",
         cluster_name="kustoCluster",
         database_name="KustoDatabase8",
         data_connection_name="dataConnectionTest",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2022-12-29/examples/KustoDataConnectionsDelete.json
+# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-05-02/examples/KustoDataConnectionsDelete.json
 if __name__ == "__main__":
     main()

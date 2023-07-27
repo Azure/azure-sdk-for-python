@@ -10,9 +10,10 @@ from typing import Dict, Optional, Any
 from msal import PublicClientApplication
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import resolve_tenant, validate_tenant_id
+from .._internal import resolve_tenant, validate_tenant_id, within_dac
 from .._internal.decorators import wrap_exceptions
 from .._internal.msal_client import MsalClient
 from .._internal.shared_token_cache import NO_TOKEN
@@ -30,11 +31,7 @@ class SilentAuthenticationCredential:
     """
 
     def __init__(
-            self,
-            authentication_record: AuthenticationRecord,
-            *,
-            tenant_id: Optional[str] = None,
-            **kwargs
+        self, authentication_record: AuthenticationRecord, *, tenant_id: Optional[str] = None, **kwargs
     ) -> None:
         self._auth_record = authentication_record
 
@@ -63,7 +60,9 @@ class SilentAuthenticationCredential:
             self._initialize()
 
         if not self._cache:
-            raise CredentialUnavailableError(message="Shared token cache unavailable")
+            if within_dac.get():
+                raise CredentialUnavailableError(message="Shared token cache unavailable")
+            raise ClientAuthenticationError(message="Shared token cache unavailable")
 
         return self._acquire_token_silent(*scopes, **kwargs)
 
@@ -74,8 +73,9 @@ class SilentAuthenticationCredential:
                 # user's default cache regardless of whether it's encrypted. It doesn't create a new cache. If the
                 # default cache exists, the user must have created it earlier. If it's unencrypted, the user must
                 # have allowed that.
-                options = self._cache_persistence_options or \
-                    TokenCachePersistenceOptions(allow_unencrypted_storage=True)
+                options = self._cache_persistence_options or TokenCachePersistenceOptions(
+                    allow_unencrypted_storage=True
+                )
                 self._cache = _load_persistent_cache(options)
             except Exception:  # pylint:disable=broad-except
                 pass
@@ -84,9 +84,7 @@ class SilentAuthenticationCredential:
 
     def _get_client_application(self, **kwargs: Any):
         tenant_id = resolve_tenant(
-            self._tenant_id,
-            additionally_allowed_tenants=self._additionally_allowed_tenants,
-            **kwargs
+            self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
         if tenant_id not in self._client_applications:
             # CP1 = can handle claims challenges (CAE)
@@ -96,7 +94,7 @@ class SilentAuthenticationCredential:
                 authority="https://{}/{}".format(self._auth_record.authority, tenant_id),
                 token_cache=self._cache,
                 http_client=self._client,
-                client_capabilities=capabilities
+                client_capabilities=capabilities,
             )
         return self._client_applications[tenant_id]
 
@@ -134,7 +132,7 @@ class SilentAuthenticationCredential:
             details = result.get("error_description") or result.get("error")
             if details:
                 message += ": {}".format(details)
-            raise CredentialUnavailableError(message=message)
+            raise ClientAuthenticationError(message=message)
 
         # cache doesn't contain a matching refresh (or access) token
         raise CredentialUnavailableError(message=NO_TOKEN.format(self._auth_record.username))

@@ -7,6 +7,7 @@ import os
 
 from uuid import uuid4
 from typing import Any, Dict, List, Optional, Mapping, Union
+
 try:
     from urllib.parse import parse_qs, quote, urlparse
 except ImportError:
@@ -38,12 +39,7 @@ from ._constants import (
     DEFAULT_COSMOS_ENDPOINT_SUFFIX,
     DEFAULT_STORAGE_ENDPOINT_SUFFIX,
 )
-from ._error import (
-    RequestTooLargeError,
-    TableTransactionError,
-    _decode_error,
-    _validate_tablename_error
-)
+from ._error import RequestTooLargeError, TableTransactionError, _decode_error, _validate_tablename_error
 from ._models import LocationMode
 from ._authentication import _configure_credential
 from ._policies import (
@@ -56,16 +52,14 @@ from ._sdk_moniker import SDK_MONIKER
 
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
 # cspell:disable-next-line
-_DEV_CONN_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1" # pylint: disable=line-too-long
+_DEV_CONN_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1"  # pylint: disable=line-too-long
 
 
 def get_api_version(kwargs: Dict[str, Any], default: str) -> str:
     api_version = kwargs.pop("api_version", None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = "\n".join(_SUPPORTED_API_VERSIONS)
-        raise ValueError(
-            f"Unsupported API version '{api_version}'. Please select from:\n{versions}"
-        )
+        raise ValueError(f"Unsupported API version '{api_version}'. Please select from:\n{versions}")
     return api_version or default
 
 
@@ -74,7 +68,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         self,
         account_url: str,
         credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         try:
             if not account_url.lower().startswith("http"):
@@ -87,9 +81,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
 
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
-            raise ValueError(
-                "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
-            )
+            raise ValueError("You need to provide either an AzureSasCredential or AzureNamedKeyCredential")
         self._query_str, credential = format_query_string(sas_token, credential)
         self._location_mode = kwargs.get("location_mode", LocationMode.PRIMARY)
         self._hosts = kwargs.get("_hosts")
@@ -115,7 +107,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "named_key"):
-            self.account_name = self.credential.named_key.name # type: ignore
+            self.account_name = self.credential.named_key.name  # type: ignore
             endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
             secondary_hostname = f"{self.account_name}-secondary.table.{endpoint_suffix}"
 
@@ -123,9 +115,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
             if len(account) > 1:
                 secondary_hostname = parsed_url.netloc.replace(
                     account[0], account[0] + "-secondary"
-                ) + parsed_url.path.replace(
-                    account[0], account[0] + "-secondary"
-                ).rstrip("/")
+                ) + parsed_url.path.replace(account[0], account[0] + "-secondary").rstrip("/")
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
             primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
@@ -214,12 +204,12 @@ class TablesBaseClient(AccountHostsMixin):
     :ivar str api_version: The service API version.
     """
 
-    def __init__( # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint: str,
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """Create TablesBaseClient from a Credential.
 
@@ -236,13 +226,9 @@ class TablesBaseClient(AccountHostsMixin):
             is "2019-02-02".
         :paramtype api_version: str
         """
-        super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs) # type: ignore
-        self._client = AzureTable(
-            self.url,
-            policies=kwargs.pop('policies', self._policies),
-            **kwargs
-        )
-        self._client._config.version = get_api_version(kwargs, self._client._config.version) # type: ignore # pylint: disable=protected-access
+        super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)  # type: ignore
+        self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
+        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore # pylint: disable=protected-access
 
     def __enter__(self):
         self._client.__enter__()
@@ -284,17 +270,15 @@ class TablesBaseClient(AccountHostsMixin):
         policies = [StorageHeadersPolicy()]
 
         changeset = HttpRequest("POST", None)  # type: ignore
-        changeset.set_multipart_mixed(
-            *reqs, policies=policies, boundary=f"changeset_{uuid4()}"  # type: ignore
-        )
+        changeset.set_multipart_mixed(*reqs, policies=policies, boundary=f"changeset_{uuid4()}")  # type: ignore
         request = self._client._client.post(  # pylint: disable=protected-access
             url=f"{self.scheme}://{self._primary_hostname}/$batch",
             headers={
                 "x-ms-version": self.api_version,
                 "DataServiceVersion": "3.0",
                 "MaxDataServiceVersion": "3.0;NetFx",
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                "Content-Type": "application/json",
+                "Accept": "application/json",
             },
         )
         request.set_multipart_mixed(
@@ -307,9 +291,8 @@ class TablesBaseClient(AccountHostsMixin):
         response = pipeline_response.http_response
         if response.status_code == 413:
             raise _decode_error(
-                response,
-                error_message="The transaction request was too large",
-                error_type=RequestTooLargeError)
+                response, error_message="The transaction request was too large", error_type=RequestTooLargeError
+            )
         if response.status_code != 202:
             decoded = _decode_error(response)
             _validate_tablename_error(decoded, table_name)
@@ -320,13 +303,9 @@ class TablesBaseClient(AccountHostsMixin):
         if any(error_parts):
             if error_parts[0].status_code == 413:
                 raise _decode_error(
-                    response,
-                    error_message="The transaction request was too large",
-                    error_type=RequestTooLargeError)
-            decoded = _decode_error(
-                response=error_parts[0],
-                error_type=TableTransactionError
-            )
+                    response, error_message="The transaction request was too large", error_type=RequestTooLargeError
+                )
+            decoded = _decode_error(response=error_parts[0], error_type=TableTransactionError)
             _validate_tablename_error(decoded, table_name)
             raise decoded
         return [extract_batch_part_metadata(p) for p in parts]
@@ -346,6 +325,7 @@ class TransportWrapper(HttpTransport):
     :param transport: The Http Transport instance
     :type transport: ~azure.core.pipeline.transport.HttpTransport
     """
+
     def __init__(self, transport):
         self._transport = transport
 
@@ -409,8 +389,8 @@ def parse_connection_str(conn_str, credential, keyword_args):
 
 def extract_batch_part_metadata(response_part):
     metadata = {}
-    if 'Etag' in response_part.headers:
-        metadata['etag'] = response_part.headers['Etag']
+    if "Etag" in response_part.headers:
+        metadata["etag"] = response_part.headers["Etag"]
     return metadata
 
 
@@ -418,7 +398,8 @@ def format_query_string(sas_token, credential):
     query_str = "?"
     if sas_token and isinstance(credential, AzureSasCredential):
         raise ValueError(
-            "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
+            "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
+        )
     if sas_token and not credential:
         query_str += sas_token
     elif credential:
@@ -429,11 +410,7 @@ def format_query_string(sas_token, credential):
 def parse_query(query_str):
     sas_values = QueryStringConstants.to_list()
     parsed_query = {k: v[0] for k, v in parse_qs(query_str).items()}
-    sas_params = [
-        f"{k}={quote(v, safe='')}"
-        for k, v in parsed_query.items()
-        if k in sas_values
-    ]
+    sas_params = [f"{k}={quote(v, safe='')}" for k, v in parsed_query.items() if k in sas_values]
     sas_token = None
     if sas_params:
         sas_token = "&".join(sas_params)

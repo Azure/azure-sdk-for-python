@@ -15,6 +15,7 @@ from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
+
 class SharedTokenCacheCredential:
     """Authenticates using tokens in the local cache shared between Microsoft applications.
 

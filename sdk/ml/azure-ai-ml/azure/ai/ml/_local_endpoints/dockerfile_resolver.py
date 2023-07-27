@@ -143,8 +143,8 @@ class DockerfileResolver(object):
 
         :param directory_path: absolute path of local directory to write Dockerfile.
         :type directory_path: str
-        :param name: name of Dockerfile prefix
-        :type name: str
+        :param file_prefix: name of Dockerfile prefix
+        :type file_prefix: str
         """
         file_name = f"{file_prefix}.Dockerfile" if file_prefix else "Dockerfile"
         self._local_dockerfile_path = str(Path(directory_path, file_name).resolve())
