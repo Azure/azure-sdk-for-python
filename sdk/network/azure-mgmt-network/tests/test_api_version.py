@@ -13,7 +13,7 @@ from devtools_testutils import (
     recorded_by_proxy,
 )
 
-VERSION = "0.0.0 (it should be stable)"
+VERSION = "24.0.0"
 
 def raw_requst_check(request):
     assert request.http_request.query["api-version"] == API_VERSION
