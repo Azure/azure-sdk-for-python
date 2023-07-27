@@ -29,7 +29,7 @@ from azure.core.exceptions import HttpResponseError
 # Text translation client
 # -------------------------------------------------------------------------
 import text_translation_client
-text_translator = text_translation_client.create_text_translation_client()
+text_translator = text_translation_client.create_text_translation_client_with_endpoint()
 
 # -------------------------------------------------------------------------
 # Get text translation languages

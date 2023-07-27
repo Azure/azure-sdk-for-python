@@ -30,7 +30,7 @@ See the [README][README] of the Text Translator client library for more informat
 
 For many of these operations you can create a new `TextTranslationClient` without any authentication. You will only need your endpoint:
 
-<!-- SNIPPET: text_translation_client.create_text_translation_client -->
+<!-- SNIPPET: text_translation_client.create_text_translation_client_with_endpoint -->
 
 ```python   
  from azure.ai.translation.text import TextTranslationClient
