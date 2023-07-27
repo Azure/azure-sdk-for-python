@@ -5,13 +5,12 @@
 
 # pylint: disable=protected-access, too-many-lines
 
-import sys
 import datetime
 from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional, Mapping
-from typing_extensions import Literal
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
+from typing_extensions import Literal
 from ._generated.v2023_07_31.models import (
     DocumentModelDetails as ModelDetails,
     DocumentClassifierDetails as ClassifierDetails,
