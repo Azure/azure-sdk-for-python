@@ -220,7 +220,7 @@ class TestAutoMLForecasting:
             short_series_handling_config=ShortSeriesHandlingConfiguration.DROP,
             use_stl="season",
             seasonality=3,
-            features_unknown_at_forecast_time='a',
+            features_unknown_at_forecast_time=["Z1"],
         )
 
         # serialize and deserialize again and compare
