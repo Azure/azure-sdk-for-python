@@ -223,22 +223,78 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :param int max_batch_size: Max batch size.
         :param int or None max_wait_time: Max wait time.
         """
-        # pylint:disable=protected-access
-        consumer._callback_task_run = True
-        consumer._last_callback_called_time = time.time()
-        callback_task = asyncio.create_task(
-            PyamqpTransportAsync._callback_task(consumer, batch, max_batch_size, max_wait_time)
-        )
-        receive_task = asyncio.create_task(PyamqpTransportAsync._receive_task(consumer))
+        max_retries = consumer._client._config.max_retries
+        retried_times = 0
+        has_not_fetched_once = True  # ensure one trip when max_wait_time is very small
+        deadline = time.time() + (max_wait_time or 0)  # max_wait_time can be None
 
-        tasks = [callback_task, receive_task]
-        try:
-            await asyncio.gather(*tasks)
-        finally:
-            consumer._callback_task_run = False
-            for t in tasks:
-                if not t.done():
-                    await asyncio.wait([t], timeout=1)
+        while len(consumer._message_buffer) < max_batch_size and time.time() < deadline or has_not_fetched_once:
+            has_not_fetched_once = False
+
+            while retried_times <= max_retries:
+                try:
+                    await consumer._open() # pylint: disable=protected-access
+                    running = await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch)
+                    break
+                except asyncio.CancelledError:
+                    raise
+                except Exception as exception:
+                    if isinstance(exception, ImportError):
+                        raise exception
+                    if (
+                        isinstance(exception, errors.AMQPLinkError)
+                        and exception.condition == errors.ErrorCondition.LinkStolen  # pylint: disable=no-member
+                    ):
+                        raise await consumer._handle_exception(exception)
+                    if not consumer.running:  # exit by close
+                        return
+                    if consumer._last_received_event:
+                        consumer._offset = consumer._last_received_event.offset
+                    last_exception = await consumer._handle_exception(exception)
+                    retried_times += 1
+                    if retried_times > max_retries:
+                        _LOGGER.info(
+                            "%r operation has exhausted retry. Last exception: %r.",
+                            consumer._name,
+                            last_exception,
+                        )
+                        raise last_exception
+            if consumer._message_buffer:
+                async with consumer._message_buffer_lock: # pylint: disable=protected-access
+                    messages = [
+                        consumer._message_buffer.popleft() # pylint: disable=protected-access
+                        for _ in range(min(max_batch_size, len(consumer._message_buffer))) # pylint: disable=protected-access
+                    ]
+                events = [EventData._from_message(message) for message in messages] # pylint: disable=protected-access
+                now_time = time.time()
+                if len(events) > 0:
+                    await consumer._on_event_received(events if batch else events[0]) # pylint: disable=protected-access
+                    consumer._last_callback_called_time = now_time # pylint: disable=protected-access
+                else:
+                    if max_wait_time and (now_time - consumer._last_callback_called_time) > max_wait_time: # pylint: disable=protected-access
+                        # no events received, and need to callback
+                        await consumer._on_event_received([] if batch else None) # pylint: disable=protected-access
+                        consumer._last_callback_called_time = now_time # pylint: disable=protected-access
+                    # backoff a bit to avoid throttling CPU when no events are coming
+                    await asyncio.sleep(0.05)
+
+
+        # pylint:disable=protected-access
+        # consumer._callback_task_run = True
+        # consumer._last_callback_called_time = time.time()
+        # callback_task = asyncio.create_task(
+        #     PyamqpTransportAsync._callback_task(consumer, batch, max_batch_size, max_wait_time)
+        # )
+        # receive_task = asyncio.create_task(PyamqpTransportAsync._receive_task(consumer))
+
+        # tasks = [callback_task, receive_task]
+        # try:
+        #     await asyncio.gather(*tasks)
+        # finally:
+        #     consumer._callback_task_run = False
+        #     for t in tasks:
+        #         if not t.done():
+        #             await asyncio.wait([t], timeout=1)
 
     @staticmethod
     async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):
