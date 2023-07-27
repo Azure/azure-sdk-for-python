@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -16,17 +16,16 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1599",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-xatTyxosI9AlkmxYJGf6aQ\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 27 Jul 2023 16:48:44 GMT",
+        "Date": "Thu, 27 Jul 2023 21:29:45 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AqL65YF8htRDsR6Yg18YiynxAwjuBAAAAOaWVNwOAAAA; expires=Sat, 26-Aug-2023 16:48:45 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Auxl4wYoha9Bs72xNNFPUNfxAwjuBAAAAMLYVNwOAAAA; expires=Sat, 26-Aug-2023 21:29:45 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15922.5 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.15922.5 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -104,8 +103,8 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AqL65YF8htRDsR6Yg18YiynxAwjuBAAAAOaWVNwOAAAA; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
+        "Cookie": "fpc=Auxl4wYoha9Bs72xNNFPUNfxAwjuBAAAAMLYVNwOAAAA; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -115,15 +114,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 27 Jul 2023 16:48:44 GMT",
+        "Date": "Thu, 27 Jul 2023 21:29:45 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AqL65YF8htRDsR6Yg18YiynxAwjuBAAAAOaWVNwOAAAA; expires=Sat, 26-Aug-2023 16:48:45 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Auxl4wYoha9Bs72xNNFPUNfxAwjuBAAAAMLYVNwOAAAA; expires=Sat, 26-Aug-2023 21:29:45 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.15868.6 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.15868.7 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -174,15 +173,15 @@
       }
     },
     {
-      "RequestUri": "https://fake-endpoint.azconfig.io/kv/message?label=%00\u0026api-version=2022-11-01-preview",
+      "RequestUri": "https://fake-endpoint.azconfig.io/kv/message?label=%00\u0026api-version=1.0",
       "RequestMethod": "PUT",
       "RequestHeaders": {
-        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/problem\u002Bjson",
+        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/json, application/problem\u002Bjson",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "94",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-appconfiguration/1.5.0b2 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "key": "message",
@@ -201,39 +200,39 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
-        "Date": "Thu, 27 Jul 2023 16:48:45 GMT",
-        "ETag": "\u0022cfD2NUwSVLgmvRewpblHsOhmY27KvDy4vzfi-ay0E7A\u0022",
-        "Last-Modified": "Thu, 27 Jul 2023 16:48:45 GMT",
+        "Date": "Thu, 27 Jul 2023 21:29:46 GMT",
+        "ETag": "\u0022Hgg1vQmhjR-D2dM3Cw1iOQzL-RZ77J3E4eQutqQ43O4\u0022",
+        "Last-Modified": "Thu, 27 Jul 2023 21:29:46 GMT",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=Njo1IzE3NjMzMjAx;sn=17633201",
+        "Sync-Token": "zAJw6V16=Njo1IzE3NjQ5Mzk0;sn=17649394",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "c8e7868a-d59b-4dca-9039-7851324d9e40",
+        "x-ms-correlation-request-id": "54151012-952c-477b-a5e1-9cf66300ff7c",
         "x-ms-resource-group": "rg-appconfigtests4",
         "x-ms-subscription-id": "77d5ab06-7edd-4eec-bce9-52c11b75bb37",
         "x-ms-tenant-name": "appconfigtests4-azconfig-python"
       },
       "ResponseBody": {
-        "etag": "cfD2NUwSVLgmvRewpblHsOhmY27KvDy4vzfi-ay0E7A",
+        "etag": "Hgg1vQmhjR-D2dM3Cw1iOQzL-RZ77J3E4eQutqQ43O4",
         "key": "message",
         "label": null,
         "content_type": "text/plain",
         "value": "hi",
         "tags": {},
         "locked": false,
-        "last_modified": "2023-07-27T16:48:45\u002B00:00"
+        "last_modified": "2023-07-27T21:29:46\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://fake-endpoint.azconfig.io/kv/message?label=dev\u0026api-version=2022-11-01-preview",
+      "RequestUri": "https://fake-endpoint.azconfig.io/kv/message?label=dev\u0026api-version=1.0",
       "RequestMethod": "PUT",
       "RequestHeaders": {
-        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/problem\u002Bjson",
+        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/json, application/problem\u002Bjson",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "93",
         "Content-Type": "application/json",
-        "Sync-Token": "zAJw6V16=Njo1IzE3NjMzMjAx",
-        "User-Agent": "azsdk-python-appconfiguration/1.5.0b2 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
+        "Sync-Token": "zAJw6V16=Njo1IzE3NjQ5Mzk0",
+        "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "key": "message",
@@ -252,39 +251,39 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
-        "Date": "Thu, 27 Jul 2023 16:48:45 GMT",
-        "ETag": "\u0022BKgWSQfE9IgBfyxB4epCF_3Y3iR6S5V9oHful_QDCVc\u0022",
-        "Last-Modified": "Thu, 27 Jul 2023 16:48:45 GMT",
+        "Date": "Thu, 27 Jul 2023 21:29:46 GMT",
+        "ETag": "\u0022u_ojmPYcVAto9QaF1xucmVsR0tDzpwKDIN4AL3wBfcI\u0022",
+        "Last-Modified": "Thu, 27 Jul 2023 21:29:46 GMT",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=Njo1IzE3NjMzMjAz;sn=17633203",
+        "Sync-Token": "zAJw6V16=Njo1IzE3NjQ5Mzk2;sn=17649396",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "e8279361-232a-4da4-8469-e0ef5e02910a",
+        "x-ms-correlation-request-id": "85b211d0-363e-48bc-aa0b-902f1d88c558",
         "x-ms-resource-group": "rg-appconfigtests4",
         "x-ms-subscription-id": "77d5ab06-7edd-4eec-bce9-52c11b75bb37",
         "x-ms-tenant-name": "appconfigtests4-azconfig-python"
       },
       "ResponseBody": {
-        "etag": "BKgWSQfE9IgBfyxB4epCF_3Y3iR6S5V9oHful_QDCVc",
+        "etag": "u_ojmPYcVAto9QaF1xucmVsR0tDzpwKDIN4AL3wBfcI",
         "key": "message",
         "label": "dev",
         "content_type": "text/plain",
         "value": "test",
         "tags": {},
         "locked": false,
-        "last_modified": "2023-07-27T16:48:45\u002B00:00"
+        "last_modified": "2023-07-27T21:29:46\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://fake-endpoint.azconfig.io/kv/my_json?label=%00\u0026api-version=2022-11-01-preview",
+      "RequestUri": "https://fake-endpoint.azconfig.io/kv/my_json?label=%00\u0026api-version=1.0",
       "RequestMethod": "PUT",
       "RequestHeaders": {
-        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/problem\u002Bjson",
+        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/json, application/problem\u002Bjson",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "118",
         "Content-Type": "application/json",
-        "Sync-Token": "zAJw6V16=Njo1IzE3NjMzMjAz",
-        "User-Agent": "azsdk-python-appconfiguration/1.5.0b2 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
+        "Sync-Token": "zAJw6V16=Njo1IzE3NjQ5Mzk2",
+        "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "key": "my_json",
@@ -303,39 +302,39 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
-        "Date": "Thu, 27 Jul 2023 16:48:45 GMT",
-        "ETag": "\u0022pVV-g-2fExfkI-U8zdaOFpA_Cb76QlV8ymbPbg3VGFg\u0022",
-        "Last-Modified": "Thu, 27 Jul 2023 16:48:45 GMT",
+        "Date": "Thu, 27 Jul 2023 21:29:46 GMT",
+        "ETag": "\u0022XLiaiaZd76ZxFCYe58a1yAhTlHwbaBEkRdk-VdY8vYs\u0022",
+        "Last-Modified": "Thu, 27 Jul 2023 21:29:46 GMT",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=Njo1IzE3NjMzMjA1;sn=17633205",
+        "Sync-Token": "zAJw6V16=Njo1IzE3NjQ5Mzk4;sn=17649398",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "22df4f6c-6a30-4362-b218-9dc516aaad07",
+        "x-ms-correlation-request-id": "2a2efbd6-e07d-47e6-880f-f60c776463a6",
         "x-ms-resource-group": "rg-appconfigtests4",
         "x-ms-subscription-id": "77d5ab06-7edd-4eec-bce9-52c11b75bb37",
         "x-ms-tenant-name": "appconfigtests4-azconfig-python"
       },
       "ResponseBody": {
-        "etag": "pVV-g-2fExfkI-U8zdaOFpA_Cb76QlV8ymbPbg3VGFg",
+        "etag": "XLiaiaZd76ZxFCYe58a1yAhTlHwbaBEkRdk-VdY8vYs",
         "key": "my_json",
         "label": null,
         "content_type": "application/json",
         "value": "{\u0022key\u0022: \u0022value\u0022}",
         "tags": {},
         "locked": false,
-        "last_modified": "2023-07-27T16:48:45\u002B00:00"
+        "last_modified": "2023-07-27T21:29:46\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://fake-endpoint.azconfig.io/kv/test.trimmed?label=%00\u0026api-version=2022-11-01-preview",
+      "RequestUri": "https://fake-endpoint.azconfig.io/kv/test.trimmed?label=%00\u0026api-version=1.0",
       "RequestMethod": "PUT",
       "RequestHeaders": {
-        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/problem\u002Bjson",
+        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/json, application/problem\u002Bjson",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "100",
         "Content-Type": "application/json",
-        "Sync-Token": "zAJw6V16=Njo1IzE3NjMzMjA1",
-        "User-Agent": "azsdk-python-appconfiguration/1.5.0b2 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
+        "Sync-Token": "zAJw6V16=Njo1IzE3NjQ5Mzk4",
+        "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "key": "test.trimmed",
@@ -354,39 +353,39 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
-        "Date": "Thu, 27 Jul 2023 16:48:45 GMT",
-        "ETag": "\u0022JqOALPUwlhrih-zJxoEsy0MJ7dJFyXBBDZLe-a_SZog\u0022",
-        "Last-Modified": "Thu, 27 Jul 2023 16:48:45 GMT",
+        "Date": "Thu, 27 Jul 2023 21:29:46 GMT",
+        "ETag": "\u0022TSAcQPP2Pu-Ni93HQ1-A2-mJmAsuUUqOUrmmnsTljQE\u0022",
+        "Last-Modified": "Thu, 27 Jul 2023 21:29:46 GMT",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=Njo1IzE3NjMzMjA3;sn=17633207",
+        "Sync-Token": "zAJw6V16=Njo1IzE3NjQ5NDAw;sn=17649400",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "5746d1be-7191-41f0-8605-d4b590cbdd16",
+        "x-ms-correlation-request-id": "f3b36ceb-9b13-46a0-84f3-a1b0864f7244",
         "x-ms-resource-group": "rg-appconfigtests4",
         "x-ms-subscription-id": "77d5ab06-7edd-4eec-bce9-52c11b75bb37",
         "x-ms-tenant-name": "appconfigtests4-azconfig-python"
       },
       "ResponseBody": {
-        "etag": "JqOALPUwlhrih-zJxoEsy0MJ7dJFyXBBDZLe-a_SZog",
+        "etag": "TSAcQPP2Pu-Ni93HQ1-A2-mJmAsuUUqOUrmmnsTljQE",
         "key": "test.trimmed",
         "label": null,
         "content_type": "text/plain",
         "value": "key",
         "tags": {},
         "locked": false,
-        "last_modified": "2023-07-27T16:48:45\u002B00:00"
+        "last_modified": "2023-07-27T21:29:46\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://fake-endpoint.azconfig.io/kv/.appconfig.featureflag%2FAlpha?label=%00\u0026api-version=2022-11-01-preview",
+      "RequestUri": "https://fake-endpoint.azconfig.io/kv/.appconfig.featureflag%2FAlpha?label=%00\u0026api-version=1.0",
       "RequestMethod": "PUT",
       "RequestHeaders": {
-        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/problem\u002Bjson",
+        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/json, application/problem\u002Bjson",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "270",
         "Content-Type": "application/json",
-        "Sync-Token": "zAJw6V16=Njo1IzE3NjMzMjA3",
-        "User-Agent": "azsdk-python-appconfiguration/1.5.0b2 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
+        "Sync-Token": "zAJw6V16=Njo1IzE3NjQ5NDAw",
+        "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "key": ".appconfig.featureflag/Alpha",
@@ -405,45 +404,45 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
-        "Date": "Thu, 27 Jul 2023 16:48:45 GMT",
-        "ETag": "\u0022m3oeY9g7-PvYui914i9Vbvu-VLrcu5LA00o3rO3FBzs\u0022",
-        "Last-Modified": "Thu, 27 Jul 2023 16:48:45 GMT",
+        "Date": "Thu, 27 Jul 2023 21:29:46 GMT",
+        "ETag": "\u0022YY6nyJWP85rV8K_l_J0ZHEJNcnxmX3CZy_8xI4c1mN8\u0022",
+        "Last-Modified": "Thu, 27 Jul 2023 21:29:46 GMT",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=Njo1IzE3NjMzMjA5;sn=17633209",
+        "Sync-Token": "zAJw6V16=Njo1IzE3NjQ5NDAy;sn=17649402",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "c6ad6224-5f3f-448e-8d97-cb5b29041e64",
+        "x-ms-correlation-request-id": "b0235ae8-1232-4979-a03b-6249989d8f14",
         "x-ms-resource-group": "rg-appconfigtests4",
         "x-ms-subscription-id": "77d5ab06-7edd-4eec-bce9-52c11b75bb37",
         "x-ms-tenant-name": "appconfigtests4-azconfig-python"
       },
       "ResponseBody": {
-        "etag": "m3oeY9g7-PvYui914i9Vbvu-VLrcu5LA00o3rO3FBzs",
+        "etag": "YY6nyJWP85rV8K_l_J0ZHEJNcnxmX3CZy_8xI4c1mN8",
         "key": ".appconfig.featureflag/Alpha",
         "label": null,
         "content_type": "application/vnd.microsoft.appconfig.ff\u002Bjson;charset=utf-8",
         "value": "{\t\u0022id\u0022: \u0022Alpha\u0022, \u0022description\u0022: \u0022\u0022, \u0022enabled\u0022: false, \u0022conditions\u0022: {\t\u0022client_filters\u0022: []\t}}",
         "tags": {},
         "locked": false,
-        "last_modified": "2023-07-27T16:48:45\u002B00:00"
+        "last_modified": "2023-07-27T21:29:46\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://fake-endpoint.azconfig.io/kv/secret?label=prod\u0026api-version=2022-11-01-preview",
+      "RequestUri": "https://fake-endpoint.azconfig.io/kv/secret?label=prod\u0026api-version=1.0",
       "RequestMethod": "PUT",
       "RequestHeaders": {
-        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/problem\u002Bjson",
+        "Accept": "application/vnd.microsoft.appconfig.kv\u002Bjson, application/json, application/problem\u002Bjson",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "198",
+        "Content-Length": "217",
         "Content-Type": "application/json",
-        "Sync-Token": "zAJw6V16=Njo1IzE3NjMzMjA5",
-        "User-Agent": "azsdk-python-appconfiguration/1.5.0b2 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
+        "Sync-Token": "zAJw6V16=Njo1IzE3NjQ5NDAy",
+        "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "key": "secret",
         "label": "prod",
         "content_type": "application/vnd.microsoft.appconfig.keyvaultref\u002Bjson;charset=utf-8",
-        "value": "{\u0022uri\u0022:\u0022https://fake-key-vault.vault.azure.net/\u0022}",
+        "value": "{\u0022uri\u0022:\u0022https://fake-keyvault.vault.azure.net/secrets/fake-secret/\u0022}",
         "tags": {}
       },
       "StatusCode": 200,
@@ -456,37 +455,37 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kv\u002Bjson; charset=utf-8",
-        "Date": "Thu, 27 Jul 2023 16:48:45 GMT",
-        "ETag": "\u0022D5lms9-f6c7r4_tLYdzCRxa8F9nmYB5CaUZhyogQBOk\u0022",
-        "Last-Modified": "Thu, 27 Jul 2023 16:48:45 GMT",
+        "Date": "Thu, 27 Jul 2023 21:29:46 GMT",
+        "ETag": "\u0022e8YXv37PrmxvATyiTI5WLe9OHFGKE_sqFlXPI_KVYhY\u0022",
+        "Last-Modified": "Thu, 27 Jul 2023 21:29:46 GMT",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=Njo1IzE3NjMzMjEx;sn=17633211",
+        "Sync-Token": "zAJw6V16=Njo1IzE3NjQ5NDA0;sn=17649404",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "b22f27fb-22f9-4f10-9c3e-a901b92add52",
+        "x-ms-correlation-request-id": "66a2913b-9a13-453e-86aa-7220cae04022",
         "x-ms-resource-group": "rg-appconfigtests4",
         "x-ms-subscription-id": "77d5ab06-7edd-4eec-bce9-52c11b75bb37",
         "x-ms-tenant-name": "appconfigtests4-azconfig-python"
       },
       "ResponseBody": {
-        "etag": "D5lms9-f6c7r4_tLYdzCRxa8F9nmYB5CaUZhyogQBOk",
+        "etag": "e8YXv37PrmxvATyiTI5WLe9OHFGKE_sqFlXPI_KVYhY",
         "key": "secret",
         "label": "prod",
         "content_type": "application/vnd.microsoft.appconfig.keyvaultref\u002Bjson;charset=utf-8",
-        "value": "{\u0022uri\u0022:\u0022https://fake-key-vault.vault.azure.net/\u0022}",
+        "value": "{\u0022uri\u0022:\u0022https://fake-keyvault.vault.azure.net/secrets/fake-secret/\u0022}",
         "tags": {},
         "locked": false,
-        "last_modified": "2023-07-27T16:48:45\u002B00:00"
+        "last_modified": "2023-07-27T21:29:46\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://fake-endpoint.azconfig.io/kv?key=message%2A\u0026label=dev\u0026api-version=2022-11-01-preview",
+      "RequestUri": "https://fake-endpoint.azconfig.io/kv?key=message%2A\u0026label=dev\u0026api-version=1.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
-        "Accept": "application/vnd.microsoft.appconfig.kvset\u002Bjson, application/problem\u002Bjson",
+        "Accept": "application/vnd.microsoft.appconfig.kvset\u002Bjson, application/json, application/problem\u002Bjson",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Correlation-Context": "RequestType=Startup",
-        "User-Agent": "python-appconfiguration-provider/1.0.1 azsdk-python-appconfiguration/1.5.0b2 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "python-appconfiguration-provider/1.0.1 azsdk-python-appconfiguration/1.4.0 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -499,11 +498,11 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Type": "application/vnd.microsoft.appconfig.kvset\u002Bjson; charset=utf-8",
-        "Date": "Thu, 27 Jul 2023 16:48:46 GMT",
+        "Date": "Thu, 27 Jul 2023 21:29:46 GMT",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Sync-Token": "zAJw6V16=Njo1IzE3NjMzMjEy;sn=17633212",
+        "Sync-Token": "zAJw6V16=Njo1IzE3NjQ5NDA1;sn=17649405",
         "Transfer-Encoding": "chunked",
-        "x-ms-correlation-request-id": "c8529160-66e5-4a04-9331-2c379981d0f7",
+        "x-ms-correlation-request-id": "05a9855f-8f5d-43c5-9d21-f369c6b03246",
         "x-ms-resource-group": "rg-appconfigtests4",
         "x-ms-subscription-id": "77d5ab06-7edd-4eec-bce9-52c11b75bb37",
         "x-ms-tenant-name": "appconfigtests4-azconfig-python"
@@ -511,14 +510,14 @@
       "ResponseBody": {
         "items": [
           {
-            "etag": "BKgWSQfE9IgBfyxB4epCF_3Y3iR6S5V9oHful_QDCVc",
+            "etag": "u_ojmPYcVAto9QaF1xucmVsR0tDzpwKDIN4AL3wBfcI",
             "key": "message",
             "label": "dev",
             "content_type": "text/plain",
             "value": "test",
             "tags": {},
             "locked": false,
-            "last_modified": "2023-07-27T16:48:45\u002B00:00"
+            "last_modified": "2023-07-27T21:29:46\u002B00:00"
           }
         ]
       }

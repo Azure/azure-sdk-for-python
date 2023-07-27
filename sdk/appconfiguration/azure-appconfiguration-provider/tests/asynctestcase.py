@@ -20,11 +20,11 @@ class AppConfigTestCase(AzureRecordedTestCase):
         self,
         appconfiguration_endpoint_string,
         trim_prefixes=[],
-        selects={SettingSelector(key_filter="*", label_filter="\0")},
+        selects={SettingSelector(key_filter="*", label_filter="\0")}, keyvault_secret_url=None
     ):
         cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
         client = AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
-        await setup_configs(client)
+        await setup_configs(client, keyvault_secret_url)
         return await load(
             credential=cred, endpoint=appconfiguration_endpoint_string, trim_prefixes=trim_prefixes, selects=selects
         )
@@ -33,16 +33,16 @@ class AppConfigTestCase(AzureRecordedTestCase):
         self,
         appconfiguration_connection_string,
         trim_prefixes=[],
-        selects={SettingSelector(key_filter="*", label_filter="\0")},
+        selects={SettingSelector(key_filter="*", label_filter="\0")}, keyvault_secret_url=None
     ):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        await setup_configs(client)
+        await setup_configs(client, keyvault_secret_url)
         return await load(
             connection_string=appconfiguration_connection_string, trim_prefixes=trim_prefixes, selects=selects
         )
 
 
-async def setup_configs(client):
+async def setup_configs(client, keyvault_secret_url):
     async with client:
-        for config in get_configs():
+        for config in get_configs(keyvault_secret_url):
             await client.set_configuration_setting(config)

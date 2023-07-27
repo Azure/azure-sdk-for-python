@@ -15,12 +15,12 @@ class AppConfigTestCase(AzureRecordedTestCase):
         self,
         appconfiguration_endpoint_string,
         trim_prefixes=[],
-        selects={SettingSelector(key_filter="*", label_filter="\0")},
+        selects={SettingSelector(key_filter="*", label_filter="\0")}, keyvault_secret_url=None
     ):
         cred = self.get_credential(AzureAppConfigurationClient)
 
         client = AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
-        setup_configs(client)
+        setup_configs(client, keyvault_secret_url)
         return load(
             credential=cred, endpoint=appconfiguration_endpoint_string, trim_prefixes=trim_prefixes, selects=selects
         )
@@ -29,19 +29,19 @@ class AppConfigTestCase(AzureRecordedTestCase):
         self,
         appconfiguration_connection_string,
         trim_prefixes=[],
-        selects={SettingSelector(key_filter="*", label_filter="\0")},
+        selects={SettingSelector(key_filter="*", label_filter="\0")}, keyvault_secret_url=None
     ):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        setup_configs(client)
+        setup_configs(client, keyvault_secret_url)
         return load(connection_string=appconfiguration_connection_string, trim_prefixes=trim_prefixes, selects=selects)
 
 
-def setup_configs(client):
-    for config in get_configs():
+def setup_configs(client, keyvault_secret_url):
+    for config in get_configs(keyvault_secret_url):
         client.set_configuration_setting(config)
 
 
-def get_configs():
+def get_configs(keyvault_secret_url):
     configs = []
     configs.append(create_config_setting("message", "\0", "hi"))
     configs.append(create_config_setting("message", "dev", "test"))
@@ -59,7 +59,7 @@ def get_configs():
         create_config_setting(
             "secret",
             "prod",
-            '{"uri":"' + os.getenv("KEYVAULT_SECRET_URL") + '"}',
+            '{"uri":"' + keyvault_secret_url + '"}',
             "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
         )
     )

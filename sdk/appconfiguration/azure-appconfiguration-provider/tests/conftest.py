@@ -28,8 +28,4 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(
         value="fake-tenant-id", regex=os.environ.get("APPCONFIGURATION_TENANT_ID", "fake-tenant-id")
     )
-    add_general_string_sanitizer(
-        value="https://fake-key-vault.vault.azure.net/",
-        target=os.environ.get("KEYVAULT_SECRET_URL", "https://fake-key-vault.vault.azure.net/"),
-    )
     add_oauth_response_sanitizer()
