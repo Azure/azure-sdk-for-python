@@ -9,8 +9,8 @@ import datetime
 from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional, Mapping
 from enum import Enum
 from collections import namedtuple
-from azure.core import CaseInsensitiveEnumMeta
 from typing_extensions import Literal
+from azure.core import CaseInsensitiveEnumMeta
 from ._generated.v2023_07_31.models import (
     DocumentModelDetails as ModelDetails,
     DocumentClassifierDetails as ClassifierDetails,
