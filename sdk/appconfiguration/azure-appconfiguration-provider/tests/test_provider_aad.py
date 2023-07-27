@@ -3,9 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.appconfiguration.provider import load, SettingSelector
+from azure.appconfiguration.provider import SettingSelector
 from devtools_testutils import recorded_by_proxy
-from azure.appconfiguration import AzureAppConfigurationClient
 from preparers import app_config_decorator_aad
 from testcase import AppConfigTestCase
 
