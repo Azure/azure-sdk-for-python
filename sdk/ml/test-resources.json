@@ -758,7 +758,7 @@
             "minNodeCount": "[parameters('computeMinNodeCount')]",
             "maxNodeCount": "[parameters('computeMaxNodeCount')]"
           },
-          "vmSize": "[if(equals(parameters('location'), 'eastus2euap'), 'STANDARD_DS2_V2', 'STANDARD_NC6')]",
+          "vmSize": "[if(equals(parameters('location'), 'eastus2euap'), 'STANDARD_DS2_V2', 'STANDARD_NC6S_V3')]",
           "remoteLoginPortPublicAccess": "[parameters('remoteLoginPortPublicAccess')]"
         }
       }
