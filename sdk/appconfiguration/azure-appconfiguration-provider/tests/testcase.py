@@ -35,9 +35,11 @@ class AppConfigTestCase(AzureRecordedTestCase):
         setup_configs(client)
         return load(connection_string=appconfiguration_connection_string, trim_prefixes=trim_prefixes, selects=selects)
 
+
 def setup_configs(client):
     for config in get_configs():
         client.set_configuration_setting(config)
+
 
 def get_configs():
     configs = []
@@ -53,8 +55,16 @@ def get_configs():
             "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
         )
     )
-    configs.append(create_config_setting("secret", "prod", "{\"uri\":\"" + os.getenv("KEYVAULT_SECRET_URL") + "\"}", "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"))
+    configs.append(
+        create_config_setting(
+            "secret",
+            "prod",
+            '{"uri":"' + os.getenv("KEYVAULT_SECRET_URL") + '"}',
+            "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+        )
+    )
     return configs
+
 
 def create_config_setting(key, label, value, content_type="text/plain"):
     return ConfigurationSetting(
