@@ -19,8 +19,8 @@
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "validFrom": "2023-07-30T15:27:52.100893Z",
-        "validUntil": "2023-08-13T15:27:52.100893Z",
+        "validFrom": "2023-07-30T16:42:01.328310Z",
+        "validUntil": "2023-08-13T16:42:01.328310Z",
         "participants": {
           "8:acs:sanitized1": {
             "role": "Presenter"
@@ -33,7 +33,7 @@
         "api-supported-versions": "2023-03-31-preview, 2023-06-14",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "99442775830141624",
+        "Location": "99481181448728840",
         "MS-CV": "sanitized",
         "Repeatability-Result": "accepted",
         "Request-Context": "appId=",
@@ -42,14 +42,14 @@
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
-        "id": "99442775830141624",
-        "createdAt": "2023-07-27T22:27:51.6591201\u002B00:00",
-        "validFrom": "2023-07-30T15:27:52.100893\u002B00:00",
-        "validUntil": "2023-08-13T15:27:52.100893\u002B00:00"
+        "id": "99481181448728840",
+        "createdAt": "2023-07-27T23:42:00.8424488\u002B00:00",
+        "validFrom": "2023-07-30T16:42:01.32831\u002B00:00",
+        "validUntil": "2023-08-13T16:42:01.32831\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99442775830141624?api-version=2023-06-14",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99481181448728840?api-version=2023-06-14",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -76,14 +76,14 @@
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
-        "id": "99442775830141624",
-        "createdAt": "2023-07-27T22:27:51.6591201\u002B00:00",
-        "validFrom": "2023-07-30T15:27:52.100893\u002B00:00",
-        "validUntil": "2023-08-13T15:27:52.100893\u002B00:00"
+        "id": "99481181448728840",
+        "createdAt": "2023-07-27T23:42:00.8424488\u002B00:00",
+        "validFrom": "2023-07-30T16:42:01.32831\u002B00:00",
+        "validUntil": "2023-08-13T16:42:01.32831\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99442775830141624?api-version=2023-06-14",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99481181448728840?api-version=2023-06-14",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",

@@ -91,7 +91,7 @@ class TestRoomsClient(ACSRoomsTestCase):
         self.verify_successful_room_response(response=response)
 
     @recorded_by_proxy
-    def test_create_room_validUntil_7Months(self):
+    def test_create_room_validUntil_seven_months(self):
         # room attributes
         valid_from =  datetime.now() + timedelta(days=3)
         valid_until = valid_from + timedelta(weeks=29)

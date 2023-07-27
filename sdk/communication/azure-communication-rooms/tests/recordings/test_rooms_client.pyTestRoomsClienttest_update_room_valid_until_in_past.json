@@ -28,7 +28,7 @@
         "api-supported-versions": "2023-03-31-preview, 2023-06-14",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "99465492898700044",
+        "Location": "9949007082272782",
         "MS-CV": "sanitized",
         "Repeatability-Result": "accepted",
         "Request-Context": "appId=",
@@ -37,14 +37,14 @@
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
-        "id": "99465492898700044",
-        "createdAt": "2023-07-27T22:27:58.3314765\u002B00:00",
-        "validFrom": "2023-07-27T22:27:58.1241066\u002B00:00",
-        "validUntil": "2024-01-23T22:27:58.1241066\u002B00:00"
+        "id": "9949007082272782",
+        "createdAt": "2023-07-27T23:42:07.4709553\u002B00:00",
+        "validFrom": "2023-07-27T23:42:07.3155981\u002B00:00",
+        "validUntil": "2024-01-23T23:42:07.3155981\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99465492898700044?api-version=2023-06-14",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/9949007082272782?api-version=2023-06-14",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -60,8 +60,8 @@
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "validFrom": "2023-07-24T15:27:59.277685Z",
-        "validUntil": "2023-07-20T15:27:59.277685Z"
+        "validFrom": "2023-07-24T16:42:08.539671Z",
+        "validUntil": "2023-07-20T16:42:08.539671Z"
       },
       "StatusCode": 400,
       "ResponseHeaders": {

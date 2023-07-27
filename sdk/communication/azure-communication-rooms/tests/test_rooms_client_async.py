@@ -90,7 +90,7 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             self.verify_successful_room_response(response=response)
 
     @recorded_by_proxy_async
-    async def test_create_room_validUntil_7Months_async(self):
+    async def test_create_room_validUntil_seven_months_async(self):
         # room attributes
         valid_from =  datetime.now() + timedelta(days=3)
         valid_until = valid_from + timedelta(weeks=29)
@@ -102,7 +102,7 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
                 assert ex.value.message is not None
 
     @recorded_by_proxy_async
-    async def test_create_room_validFrom_7Months_async(self):
+    async def test_create_room_validFrom_seven_months_async(self):
         # room attributes
         valid_from = datetime.now() + timedelta(weeks=29)
 
@@ -223,6 +223,7 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
 
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
+
     @recorded_by_proxy_async
     async def test_update_room_valid_until_in_past_async(self):
         # room with no attributes

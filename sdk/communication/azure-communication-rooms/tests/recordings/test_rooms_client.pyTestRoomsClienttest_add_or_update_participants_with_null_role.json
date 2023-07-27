@@ -39,7 +39,7 @@
         "api-supported-versions": "2023-03-31-preview, 2023-06-14",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "99451271469678846",
+        "Location": "99417384465997287",
         "MS-CV": "sanitized",
         "Repeatability-Result": "accepted",
         "Request-Context": "appId=",
@@ -48,14 +48,14 @@
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
-        "id": "99451271469678846",
-        "createdAt": "2023-07-27T22:28:06.4565746\u002B00:00",
-        "validFrom": "2023-07-27T22:28:06.2466904\u002B00:00",
-        "validUntil": "2024-01-23T22:28:06.2466904\u002B00:00"
+        "id": "99417384465997287",
+        "createdAt": "2023-07-27T23:42:15.9761979\u002B00:00",
+        "validFrom": "2023-07-27T23:42:15.8109615\u002B00:00",
+        "validUntil": "2024-01-23T23:42:15.8109615\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99451271469678846/participants?api-version=2023-06-14",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99417384465997287/participants?api-version=2023-06-14",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -99,7 +99,7 @@
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99451271469678846/participants?api-version=2023-06-14",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99417384465997287/participants?api-version=2023-06-14",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -145,7 +145,7 @@
       "ResponseBody": {}
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99451271469678846/participants?api-version=2023-06-14",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99417384465997287/participants?api-version=2023-06-14",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -193,7 +193,7 @@
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99451271469678846?api-version=2023-06-14",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99417384465997287?api-version=2023-06-14",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",

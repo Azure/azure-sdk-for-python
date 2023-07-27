@@ -7,7 +7,6 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Connection": "keep-alive",
         "Content-Length": "89",
         "Content-Type": "application/json",
         "Repeatability-First-Sent": "sanitized",
@@ -19,8 +18,8 @@
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "validFrom": "2023-07-30T15:27:44.035574Z",
-        "validUntil": "2024-02-18T15:27:44.035574Z"
+        "validFrom": "2023-07-30T16:42:40.597773Z",
+        "validUntil": "2024-02-18T16:42:40.597773Z"
       },
       "StatusCode": 400,
       "ResponseHeaders": {

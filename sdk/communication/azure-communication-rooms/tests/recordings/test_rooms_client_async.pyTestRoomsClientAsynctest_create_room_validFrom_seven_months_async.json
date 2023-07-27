@@ -7,7 +7,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "89",
+        "Content-Length": "64",
         "Content-Type": "application/json",
         "Repeatability-First-Sent": "sanitized",
         "Repeatability-Request-ID": "sanitized",
@@ -18,8 +18,8 @@
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "validFrom": "2023-07-30T15:28:29.798488Z",
-        "validUntil": "2024-02-18T15:28:29.798488Z"
+        "validFrom": "2024-02-15T16:42:41.767874Z",
+        "validUntil": null
       },
       "StatusCode": 400,
       "ResponseHeaders": {
@@ -39,8 +39,8 @@
           "details": [
             {
               "code": "BadArgument",
-              "message": "The time range is incorrect, or larger than 180 days.",
-              "target": "ValidUntil"
+              "message": "Value is incorrect or more than 180 days in the future.",
+              "target": "ValidFrom"
             }
           ]
         }
