@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Unpin Opentelemetry SDK/API.
+    ([#31253](https://github.com/Azure/azure-sdk-for-python/pull/31253))
+
 ## 1.0.0b15 (2023-07-17)
 
 ### Features Added

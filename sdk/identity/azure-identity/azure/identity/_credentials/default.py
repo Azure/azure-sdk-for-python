@@ -8,7 +8,7 @@ from typing import List, TYPE_CHECKING, Any, cast
 
 from azure.core.credentials import AccessToken
 from .._constants import EnvironmentVariables
-from .._internal import get_default_authority, normalize_authority
+from .._internal import get_default_authority, normalize_authority, within_dac
 from .azure_powershell import AzurePowerShellCredential
 from .browser import InteractiveBrowserCredential
 from .chained import ChainedTokenCredential
@@ -170,37 +170,28 @@ class DefaultAzureCredential(ChainedTokenCredential):
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities
                 shared_cache = SharedTokenCacheCredential(
-                    username=shared_cache_username,
-                    tenant_id=shared_cache_tenant_id,
-                    authority=authority,
-                    is_chained=True,
-                    **kwargs
+                    username=shared_cache_username, tenant_id=shared_cache_tenant_id, authority=authority, **kwargs
                 )
                 credentials.append(shared_cache)
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
-            credentials.append(VisualStudioCodeCredential(is_chained=True, **vscode_args))
+            credentials.append(VisualStudioCodeCredential(**vscode_args))
         if not exclude_cli_credential:
-            credentials.append(AzureCliCredential(process_timeout=process_timeout, is_chained=True))
+            credentials.append(AzureCliCredential(process_timeout=process_timeout))
         if not exclude_powershell_credential:
-            credentials.append(AzurePowerShellCredential(process_timeout=process_timeout, is_chained=True))
+            credentials.append(AzurePowerShellCredential(process_timeout=process_timeout))
         if not exclude_developer_cli_credential:
-            credentials.append(AzureDeveloperCliCredential(process_timeout=process_timeout, is_chained=True))
+            credentials.append(AzureDeveloperCliCredential(process_timeout=process_timeout))
         if not exclude_interactive_browser_credential:
             if interactive_browser_client_id:
                 credentials.append(
                     InteractiveBrowserCredential(
-                        tenant_id=interactive_browser_tenant_id,
-                        client_id=interactive_browser_client_id,
-                        is_chained=True,
-                        **kwargs
+                        tenant_id=interactive_browser_tenant_id, client_id=interactive_browser_client_id, **kwargs
                     )
                 )
             else:
-                credentials.append(
-                    InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, is_chained=True, **kwargs)
-                )
+                credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
 
         super(DefaultAzureCredential, self).__init__(*credentials)
 
@@ -226,5 +217,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
             )
             return token
-
-        return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
+        within_dac.set(True)
+        token = super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
+        within_dac.set(False)
+        return token

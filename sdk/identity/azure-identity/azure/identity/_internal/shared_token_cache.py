@@ -92,7 +92,6 @@ class SharedTokenCacheBase(ABC):
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         environment = urlparse(self._authority).netloc
         self._environment_aliases = KNOWN_ALIASES.get(environment) or frozenset((environment,))
-        self._is_chained = kwargs.pop("is_chained", False)
         self._username = username
         self._tenant_id = tenant_id
         self._cache = kwargs.pop("_cache", None)
