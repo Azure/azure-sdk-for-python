@@ -5,4 +5,4 @@
 # license information.
 # --------------------------------------------------------------------------
 
-VERSION = "25.0.0"
+VERSION = "0.0.0 (it should be stable)"
