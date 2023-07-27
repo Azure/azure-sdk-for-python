@@ -167,27 +167,35 @@ class Operation(VersionedObject):
         return any(p for p in self.parameters if p.need_decorator)
 
     @property
-    def need_decorator(self) -> bool:
+    def need_api_version_check(self) -> bool:
         """Whether we need to decorate the method with a decorator
 
         Since this decorator handles both method-level and parameter-level
         checks, we need a decorator if any of them need a check
         """
-        return self.name[0] != "_" and (self._need_method_api_version_check or self._need_params_api_version_check)
+        return not self.name.startswith("_") and (self._need_method_api_version_check or self._need_params_api_version_check)
+
+    @property
+    def need_decorator(self) -> bool:
+        # Azure CLI has special logic to call operation and we have to decorate each public operation with @api_version_validation
+        return not self.name.startswith("_")
 
     @property
     def decorator(self) -> str:
-        retval: List[str] = ["    @api_version_validation("]
-        # only need to validate operations that don't include
-        # all of the api versions of the operation group
-        # because the operation group handles first round of validation
-        if self._need_method_api_version_check:
-            retval.append(f"       method_valid_on={self.api_versions},")
-        if self._need_params_api_version_check:
-            retval.append("        params_valid_on={")
-            retval.extend([f'            "{p.name}": {p.api_versions},' for p in self.parameters if p.need_decorator])
-            retval.append("        }")
-        retval.append("    )")
+        if self.need_api_version_check:
+            retval: List[str] = ["    @api_version_validation("]
+            # only need to validate operations that don't include
+            # all of the api versions of the operation group
+            # because the operation group handles first round of validation
+            if self._need_method_api_version_check:
+                retval.append(f"       method_valid_on={self.api_versions},")
+            if self._need_params_api_version_check:
+                retval.append("        params_valid_on={")
+                retval.extend([f'            "{p.name}": {p.api_versions},' for p in self.parameters if p.need_decorator])
+                retval.append("        }")
+            retval.append("    )")
+        else:
+            retval = ["    @api_version_validation()"]
         return "\n".join(retval)
 
     def _get_op(self, api_version: str, async_mode: bool = False):
