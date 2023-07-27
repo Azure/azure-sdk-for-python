@@ -206,6 +206,10 @@
         "KEYVAULT_SECRET_URL": {
             "type": "string",
             "value": "[variables('azureKeyVaultSecretUrl')]"
+        },
+        "APPCONFIGURATION_KEYVAULT_SECRET_URL": {
+            "type": "string",
+            "value": "[variables('azureKeyVaultSecretUrl')]"
         }
     }
 }
