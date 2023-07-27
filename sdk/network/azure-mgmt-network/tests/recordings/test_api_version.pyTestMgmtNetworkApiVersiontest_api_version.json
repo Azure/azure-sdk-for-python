@@ -220,7 +220,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-network/23.1.0 Python/3.8.9 (Windows-10-10.0.23466-SP0)"
+        "User-Agent": "azsdk-python-mgmt-network/24.0.0 Python/3.8.9 (Windows-10-10.0.23466-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -250,7 +250,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-network/23.1.0 Python/3.8.9 (Windows-10-10.0.23466-SP0)"
+        "User-Agent": "azsdk-python-mgmt-network/24.0.0 Python/3.8.9 (Windows-10-10.0.23466-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
