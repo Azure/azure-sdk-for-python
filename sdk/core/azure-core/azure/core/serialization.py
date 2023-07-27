@@ -580,8 +580,9 @@ class Model(_MyMutableMapping):
             return cls(data)
         return mapped_cls._deserialize(data)  # pylint: disable=protected-access
 
-    def as_dict(self, *, exclude_readonly: bool = True, exclude_none: bool = False):
-        return json.dumps(self, exclude_readonly=exclude_readonly, exclude_none=exclude_none, cls=AzureJSONEncoder)
+    def as_dict(self, *, exclude_readonly: bool = True, exclude_none: bool = False) -> typing.Dict[str, typing.Any]:
+        return json.loads(
+            json.dumps(self, exclude_readonly=exclude_readonly, exclude_none=exclude_none, cls=AzureJSONEncoder))
 
 
 def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-return-statements, too-many-statements

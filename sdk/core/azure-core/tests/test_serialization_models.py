@@ -853,7 +853,7 @@ def test_model_recursion_complex():
     assert isinstance(model.list_of_dict_of_me[0], Dict)
     assert isinstance(model.list_of_dict_of_me[0]["me"], RecursiveModel)
 
-    assert json.loads(model.as_dict()) == model == dict_response
+    assert model.as_dict() == model == dict_response
 
 def test_literals():
 
@@ -1854,7 +1854,7 @@ def test_readonly():
         }
     }
     model = ModelWithReadonly(value)
-    assert json.loads(model.as_dict()) == {"normalProperty": "normal",
+    assert model.as_dict() == {"normalProperty": "normal",
                                                                    "innerModel": {"normalProperty": "normal"}}
     assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_readonly=False)) == value
     assert model == value
@@ -1878,7 +1878,7 @@ def test_readonly_set():
     assert model.inner_model.normal_property == model.inner_model["normalProperty"] == "normal"
     assert model.inner_model.readonly_property == model.inner_model["readonlyProperty"] == "readonly"
 
-    assert json.loads(model.as_dict()) == {"normalProperty": "normal",
+    assert model.as_dict() == {"normalProperty": "normal",
                                                                    "innerModel": {"normalProperty": "normal"}}
     assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_readonly=False)) == value
 
@@ -1891,7 +1891,7 @@ def test_readonly_set():
     assert model.readonly_property == model["readonlyProperty"] == "setWithDict"
     assert model.inner_model.normal_property == model.inner_model["normalProperty"] == "setWithDict"
     assert model.inner_model.readonly_property == model.inner_model["readonlyProperty"] == "setWithDict"
-    assert json.loads(model.as_dict()) == {"normalProperty": "setWithDict",
+    assert model.as_dict() == {"normalProperty": "setWithDict",
                                                                    "innerModel": {"normalProperty": "setWithDict"}}
     assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_readonly=False)) == {
         "normalProperty": "setWithDict",
@@ -3449,7 +3449,7 @@ def test_null_serilization():
         }
     }
 
-    assert json.loads(model.as_dict()) == {
+    assert model.as_dict() == {
         "name": "it's me!",
         "listOfMe": [
             {"name": "it's me!"}
@@ -3493,7 +3493,7 @@ def test_null_serilization():
         ]
     }
 
-    assert json.loads(model.as_dict()) == {
+    assert model.as_dict() == {
         "name": "it's me!",
         "listOfMe": None,
         "dictOfListOfMe": {
@@ -3629,12 +3629,12 @@ def test_as_dict():
         DogComplex(id=1, name="Potato", food="tomato"),
         DogComplex(id=-1, name="Tomato", food="french fries")
     ])
-    assert json.loads(model.as_dict()) == {
+    assert model.as_dict() == {
         "id": 2,
         "name": "Siameeee",
         "color": None
     }
-    assert json.loads(model.as_dict(exclude_none=True, exclude_readonly=False)) == {
+    assert model.as_dict(exclude_none=True, exclude_readonly=False) == {
         "id": 2,
         "name": "Siameeee",
         "hates": [
