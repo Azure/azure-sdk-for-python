@@ -163,6 +163,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             events = [EventData._from_message(message) for message in messages] # pylint: disable=protected-access
             now_time = time.time()
             if len(events) > 0:
+                consumer._last_received_event = events[-1] # pylint: disable=protected-access
                 await consumer._on_event_received(events if batch else events[0]) # pylint: disable=protected-access
                 consumer._last_callback_called_time = now_time # pylint: disable=protected-access
             else:
