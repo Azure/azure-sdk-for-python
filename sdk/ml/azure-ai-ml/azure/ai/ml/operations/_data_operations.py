@@ -635,6 +635,7 @@ class DataOperations(_ScopeDependentOperations):
         path,
         mount_point='/home/azureuser/mount/data',
         mode='ro_mount',
+        debug=False,
         **kwargs,
     ) -> None:
         """Mount a data asset to a local path.
@@ -653,7 +654,7 @@ class DataOperations(_ScopeDependentOperations):
 
         from azureml.dataprep.rslex import fuse_cli
         uri = fuse_cli.build_data_asset_uri(self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path)
-        fuse_cli.call_rslex_fuse_cli(uri, mount_point, read_only)
+        fuse_cli.call_rslex_fuse_cli(uri, mount_point, read_only, debug)
 
     @contextmanager
     def _set_registry_client(self, registry_name: str) -> None:
