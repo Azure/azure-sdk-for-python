@@ -242,6 +242,10 @@ class EventProcessor(
             except TypeError:
                 partition_context._last_received_event = event  # type: ignore  # pylint:disable=protected-access
 
+            _LOGGER.info("EventProcessor received Event Data from partition %r", partition_context.partition_id)
+            _LOGGER.info("EventProcessor received Event %r", partition_context._last_received_event)
+            _LOGGER.info("Consumer set last_received_event %r", self._consumers[partition_context.partition_id]._last_received_event)
+            
             links = []
             is_batch = False
             if is_tracing_enabled():
