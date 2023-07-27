@@ -46,6 +46,8 @@ PoliciesType = Iterable[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
 def cleanup_kwargs_for_transport(kwargs: Dict[str, str]) -> None:
     """Remove kwargs that are not meant for the transport layer.
+    :param kwargs: The keyword arguments.
+    :type kwargs: dict
 
     "insecure_domain_change" is used to indicate that a redirect
       has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy

@@ -60,6 +60,7 @@ from utils import HTTP_REQUESTS, is_rest
 from azure.core.exceptions import AzureError
 from azure.core.pipeline._base import cleanup_kwargs_for_transport
 
+
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_default_http_logging_policy(http_request):
     config = Configuration()
