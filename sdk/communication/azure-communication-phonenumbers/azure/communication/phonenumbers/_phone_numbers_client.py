@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, cast, List, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._client import PhoneNumbersClient as PhoneNumbersClientGen
@@ -37,6 +37,10 @@ if TYPE_CHECKING:
         PurchasedPhoneNumber,
     )
 
+PhoneNumberSearchType = Union[
+    str,
+    List[str],
+]
 
 class PhoneNumbersClient(object):
     """A client to interact with the AzureCommunicationService Phone Numbers gateway.
@@ -434,9 +438,11 @@ class PhoneNumbersClient(object):
         """Searches for operator information for a given list of phone numbers.
 
         :param phone_numbers: The phone number(s) whose operator information should be searched
-        :type phone_numbers: list(str)
+        :type phone_numbers: str or list(str)
         :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
         """
+        if not isinstance(phone_numbers, list):
+            phone_numbers = cast(list(str), [phone_numbers])
         request = OperatorInformationRequest(phone_numbers = phone_numbers)
         return self._phone_number_client.phone_numbers.operator_information_search(
             request,

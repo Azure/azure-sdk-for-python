@@ -391,12 +391,23 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         assert ex.value.message is not None  # type: ignore
 
     @recorded_by_proxy
-    def test_search_operator_information(self):
+    def test_search_operator_information_with_list(self):
         if self.is_playback():
             phone_number = "sanitized"
         else:
             phone_number = self.phone_number
 
         results = self.phone_number_client.search_operator_information([ phone_number ])
+        assert len(results.values) == 1
+        assert results.values[0].phone_number == self.phone_number
+
+    @recorded_by_proxy
+    def test_search_operator_information_with_single_string(self):
+        if self.is_playback():
+            phone_number = "sanitized"
+        else:
+            phone_number = self.phone_number
+
+        results = self.phone_number_client.search_operator_information(phone_number)
         assert len(results.values) == 1
         assert results.values[0].phone_number == self.phone_number
