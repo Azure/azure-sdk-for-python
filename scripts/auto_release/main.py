@@ -119,8 +119,8 @@ class CodegenTestPR:
     """
 
     def __init__(self):
-        self.issue_link = os.getenv('ISSUE_LINK')
-        self.pipeline_link = os.getenv('PIPELINE_LINK')
+        self.issue_link = os.getenv('ISSUE_LINK', '')
+        self.pipeline_link = os.getenv('PIPELINE_LINK', '')
         self.bot_token = os.getenv('AZURESDK_BOT_TOKEN')
         self.spec_readme = os.getenv('SPEC_README', '')
         self.spec_repo = os.getenv('SPEC_REPO', '')
@@ -498,8 +498,9 @@ class CodegenTestPR:
     def zero_version_policy(self):
         if re.match(re.compile('0\.0\.0'), self.next_version):
             api_request = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
-            issue_number = int(self.issue_link.split('/')[-1])
-            api_request.issues.add_labels(issue_number=issue_number, labels=['base-branch-attention'])
+            if self.issue_link:
+                issue_number = int(self.issue_link.split('/')[-1])
+                api_request.issues.add_labels(issue_number=issue_number, labels=['base-branch-attention'])
 
     def get_container_name(self) -> str:
         container_name = current_time_month()
@@ -546,27 +547,28 @@ class CodegenTestPR:
         if changelog == '':
             changelog = 'no new content found by changelog tools!'
 
-        # comment to ask for check from users
-        issue_number = int(self.issue_link.split('/')[-1])
-        api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
-        author = api.issues.get(issue_number=issue_number).user.login
-        body = f'Hi @{author}, Please check whether the package works well and the CHANGELOG info is as below:\n' \
-               f'{self.get_private_package_link()}' \
-               f'```\n' \
-               f'CHANGELOG:\n' \
-               f'{changelog}\n' \
-               f'```\n' \
-               f'* (If you are not a Python User, you can mainly check whether the changelog meets your requirements)\n\n' \
-               f'* (The version of the package is only a temporary version for testing)\n\n' \
-               f'https://github.com/Azure/azure-sdk-for-python/pull/{self.pr_number}'
-        api.issues.create_comment(issue_number=issue_number, body=body)
+        if self.issue_link:
+            # comment to ask for check from users
+            issue_number = int(self.issue_link.split('/')[-1])
+            api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
+            author = api.issues.get(issue_number=issue_number).user.login
+            body = f'Hi @{author}, Please check whether the package works well and the CHANGELOG info is as below:\n' \
+                f'{self.get_private_package_link()}' \
+                f'```\n' \
+                f'CHANGELOG:\n' \
+                f'{changelog}\n' \
+                f'```\n' \
+                f'* (If you are not a Python User, you can mainly check whether the changelog meets your requirements)\n\n' \
+                f'* (The version of the package is only a temporary version for testing)\n\n' \
+                f'https://github.com/Azure/azure-sdk-for-python/pull/{self.pr_number}'
+            api.issues.create_comment(issue_number=issue_number, body=body)
 
-        # comment for hint
-        body = 'Tips: If you have special needs for release date or other things, please let us know. ' \
-               'Otherwise we will follow ' \
-               '[Management-SDK-Release-Cycle](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/761/Management-SDK-Release-Cycle) ' \
-               'to release it before target date'
-        api.issues.create_comment(issue_number=issue_number, body=body)
+            # comment for hint
+            body = 'Tips: If you have special needs for release date or other things, please let us know. ' \
+                'Otherwise we will follow ' \
+                '[Management-SDK-Release-Cycle](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/761/Management-SDK-Release-Cycle) ' \
+                'to release it before target date'
+            api.issues.create_comment(issue_number=issue_number, body=body)
 
     def issue_comment(self):
         self.zero_version_policy()
