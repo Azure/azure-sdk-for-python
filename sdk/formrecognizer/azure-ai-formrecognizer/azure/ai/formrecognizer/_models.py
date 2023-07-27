@@ -3780,7 +3780,7 @@ class AzureBlobFileListSource:
     ) -> None:
         self.container_url = container_url
         self.file_list = file_list
-        self._kind = "azureBlobFileList"
+        self._kind = Literal["azureBlobFileList"]
 
     def __repr__(self) -> str:
         return (
@@ -3838,7 +3838,7 @@ class AzureBlobSource:
     ) -> None:
         self.container_url = container_url
         self.prefix = prefix
-        self._kind = "azureBlob"
+        self._kind = Literal["azureBlob"]
 
     def __repr__(self) -> str:
         return (
