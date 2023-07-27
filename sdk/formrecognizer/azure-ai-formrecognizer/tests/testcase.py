@@ -35,7 +35,7 @@ class FakeTokenCredential(object):
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
 
-    def get_token(self, *args):
+    def get_token(self, *args, **kwargs):
         return self.token
 
 class FormRecognizerTest(AzureRecordedTestCase):
@@ -569,7 +569,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
     def assertDocumentStylesTransformCorrect(self, transformed_styles, raw_styles, **kwargs):
         if transformed_styles == [] and not raw_styles:
             return
-        
+
         for style, expected in zip(transformed_styles, raw_styles):
             assert style.is_handwritten == expected.is_handwritten
             assert style.similar_font_family == expected.similar_font_family
@@ -578,7 +578,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
             assert style.color == expected.color
             assert style.background_color == expected.background_color
             assert style.confidence == expected.confidence
-            
+
             for span, expected_span in zip(style.spans or [], expected.spans or []):
                     self.assertSpanTransformCorrect(span, expected_span)
 
@@ -586,10 +586,10 @@ class FormRecognizerTest(AzureRecordedTestCase):
         if not element or not expected:
             return
         assert element.content == expected.content
-        
+
         for span, expected_span in zip(element.spans or [], expected.spans or []):
                 self.assertSpanTransformCorrect(span, expected_span)
-            
+
         self.assertBoundingRegionsTransformCorrect(element.bounding_regions, expected.bounding_regions)
 
     def assertDocumentTablesTransformCorrect(self, transformed_tables, raw_tables, **kwargs):
@@ -604,7 +604,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
 
             for span, expected_span in zip(table.spans or [], expected.spans or []):
                 self.assertSpanTransformCorrect(span, expected_span)
-            
+
             self.assertBoundingRegionsTransformCorrect(table.bounding_regions, expected.bounding_regions)
 
     def assertDocumentParagraphsTransformCorrect(self, transformed_paragraphs, raw_paragraphs, **kwargs):
@@ -616,7 +616,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
 
             for span, expected_span in zip(par.spans or [], expected.spans or []):
                 self.assertSpanTransformCorrect(span, expected_span)
-            
+
             self.assertBoundingRegionsTransformCorrect(par.bounding_regions, expected.bounding_regions)
 
     def assertDocumentTableCellTransformCorrect(self, transformed_cell, raw_cell, **kwargs):
@@ -638,7 +638,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
 
         for span, expected_span in zip(transformed_cell.spans or [], raw_cell.spans or []):
                 self.assertSpanTransformCorrect(span, expected_span)
-            
+
         self.assertBoundingRegionsTransformCorrect(transformed_cell.bounding_regions, raw_cell.bounding_regions)
 
     def assertDocumentPagesTransformCorrect(self, transformed_pages, raw_pages, **kwargs):
@@ -710,7 +710,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
         for region, expected_region in zip(bounding_regions, expected):
             assert region.page_number == expected_region.page_number
             self.assertBoundingPolygonTransformCorrect(region.polygon, expected_region.polygon)
-            
+
 
     def assertDocumentFieldValueTransformCorrect(self, document_field, expected):
         if expected is None:
