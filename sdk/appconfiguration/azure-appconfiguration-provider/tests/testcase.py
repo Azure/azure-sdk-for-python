@@ -15,7 +15,8 @@ class AppConfigTestCase(AzureRecordedTestCase):
         self,
         appconfiguration_endpoint_string,
         trim_prefixes=[],
-        selects={SettingSelector(key_filter="*", label_filter="\0")}, keyvault_secret_url=None
+        selects={SettingSelector(key_filter="*", label_filter="\0")},
+        keyvault_secret_url=None,
     ):
         cred = self.get_credential(AzureAppConfigurationClient)
 
@@ -29,7 +30,8 @@ class AppConfigTestCase(AzureRecordedTestCase):
         self,
         appconfiguration_connection_string,
         trim_prefixes=[],
-        selects={SettingSelector(key_filter="*", label_filter="\0")}, keyvault_secret_url=None
+        selects={SettingSelector(key_filter="*", label_filter="\0")},
+        keyvault_secret_url=None,
     ):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
         setup_configs(client, keyvault_secret_url)
