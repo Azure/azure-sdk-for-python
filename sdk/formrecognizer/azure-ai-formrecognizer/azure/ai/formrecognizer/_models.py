@@ -8,6 +8,7 @@
 import sys
 import datetime
 from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional, Mapping
+from typing_extensions import Literal
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
@@ -27,10 +28,6 @@ from ._helpers import (
     _get_deserialize,
 )
 
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 TargetAuthorization = NewType('TargetAuthorization', Dict[str, str])
 
