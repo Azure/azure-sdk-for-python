@@ -424,7 +424,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         kwargs['encryption_options'] = encryption_options
         # Add feature flag to user agent for encryption
         if self.key_encryption_key:
-            self.add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
+            self._add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
 
         if blob_type == BlobType.BlockBlob:
             kwargs['client'] = self._client.block_blob
@@ -769,7 +769,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         # Add feature flag to user agent for encryption
         if self.key_encryption_key or self.key_resolver_function:
-            self.add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
+            self._add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
 
         options = {
             'clients': self._client,

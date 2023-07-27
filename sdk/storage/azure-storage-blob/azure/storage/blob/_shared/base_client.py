@@ -319,7 +319,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def add_feature_flag_to_user_agent(self, features: int, request_options: Dict[str, Any]) -> None:
+    def _add_feature_flag_to_user_agent(self, features: int, request_options: Dict[str, Any]) -> None:
         user_agent: str = self._config.user_agent_policy.user_agent
         moniker_index = user_agent.find(self._sdk_moniker) + len(self._sdk_moniker)
         user_agent = f"{user_agent[:moniker_index]} azfeatures/{features}{user_agent[moniker_index:]}"

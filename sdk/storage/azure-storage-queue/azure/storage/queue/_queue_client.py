@@ -505,7 +505,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         time_to_live = kwargs.pop('time_to_live', None)
         timeout = kwargs.pop('timeout', None)
         if self.key_encryption_key:
-            self.add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
+            self._add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
 
         try:
             self._config.message_encode_policy.configure(
@@ -586,7 +586,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
         if self.key_encryption_key or self.key_resolver_function:
-            self.add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
+            self._add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
 
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
@@ -671,7 +671,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout = kwargs.pop('timeout', None)
         max_messages = kwargs.pop('max_messages', None)
         if self.key_encryption_key or self.key_resolver_function:
-            self.add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
+            self._add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
 
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
@@ -754,7 +754,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
         if self.key_encryption_key or self.key_resolver_function:
-            self.add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
+            self._add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
 
         try:
             message_id = message.id
@@ -865,7 +865,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
         timeout = kwargs.pop('timeout', None)
         if self.key_encryption_key or self.key_resolver_function:
-            self.add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
+            self._add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
 
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
