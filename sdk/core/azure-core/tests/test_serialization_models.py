@@ -853,7 +853,7 @@ def test_model_recursion_complex():
     assert isinstance(model.list_of_dict_of_me[0], Dict)
     assert isinstance(model.list_of_dict_of_me[0]["me"], RecursiveModel)
 
-    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == model == dict_response
+    assert json.loads(model.as_dict()) == model == dict_response
 
 def test_literals():
 
@@ -1854,7 +1854,7 @@ def test_readonly():
         }
     }
     model = ModelWithReadonly(value)
-    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {"normalProperty": "normal",
+    assert json.loads(model.as_dict()) == {"normalProperty": "normal",
                                                                    "innerModel": {"normalProperty": "normal"}}
     assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_readonly=False)) == value
     assert model == value
@@ -1878,7 +1878,7 @@ def test_readonly_set():
     assert model.inner_model.normal_property == model.inner_model["normalProperty"] == "normal"
     assert model.inner_model.readonly_property == model.inner_model["readonlyProperty"] == "readonly"
 
-    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {"normalProperty": "normal",
+    assert json.loads(model.as_dict()) == {"normalProperty": "normal",
                                                                    "innerModel": {"normalProperty": "normal"}}
     assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_readonly=False)) == value
 
@@ -1891,7 +1891,7 @@ def test_readonly_set():
     assert model.readonly_property == model["readonlyProperty"] == "setWithDict"
     assert model.inner_model.normal_property == model.inner_model["normalProperty"] == "setWithDict"
     assert model.inner_model.readonly_property == model.inner_model["readonlyProperty"] == "setWithDict"
-    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {"normalProperty": "setWithDict",
+    assert json.loads(model.as_dict()) == {"normalProperty": "setWithDict",
                                                                    "innerModel": {"normalProperty": "setWithDict"}}
     assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_readonly=False)) == {
         "normalProperty": "setWithDict",
@@ -3449,7 +3449,7 @@ def test_null_serilization():
         }
     }
 
-    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {
+    assert json.loads(model.as_dict()) == {
         "name": "it's me!",
         "listOfMe": [
             {"name": "it's me!"}
@@ -3493,7 +3493,7 @@ def test_null_serilization():
         ]
     }
 
-    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {
+    assert json.loads(model.as_dict()) == {
         "name": "it's me!",
         "listOfMe": None,
         "dictOfListOfMe": {
@@ -3515,86 +3515,79 @@ def test_null_serilization():
     }
 
 
-class BaseModel(Model):
-    name: str = rest_field()
-
-    @overload
-    def __init__(self, *, name: str):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Model1(BaseModel):
-    prop1: int = rest_field()
-
-    @overload
-    def __init__(self, *, name: str, prop1: int):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Model2(BaseModel):
-    prop2: int = rest_field()
-
-    @overload
-    def __init__(self, *, name: str, prop2: int):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-MyNamedUnion = Union["_models.Model1", "_models.Model2"]
-Test = List[int]
-
-
-class ModelWithNamedUnionProperty(Model):
-    named_union: "MyNamedUnion" = rest_field(name="namedUnion")
-
-    @overload
-    def __init__(self, *, named_union: "MyNamedUnion"):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ModelWithSimpleUnionProperty(Model):
-    simple_union: Union[int, List[int]] = rest_field(name="simpleUnion")
-
-    @overload
-    def __init__(self, *, simple_union: Union[int, List[int]]):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 def test_union():
+    class BaseModel(Model):
+        name: str = rest_field()
+
+        @overload
+        def __init__(self, *, name: str):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]):
+            ...
+
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+
+    class Model1(BaseModel):
+        prop1: int = rest_field()
+
+        @overload
+        def __init__(self, *, name: str, prop1: int):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]):
+            ...
+
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+
+    class Model2(BaseModel):
+        prop2: int = rest_field()
+
+        @overload
+        def __init__(self, *, name: str, prop2: int):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]):
+            ...
+
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+
+    MyNamedUnion = Union["_models.Model1", "_models.Model2"]
+
+    class ModelWithNamedUnionProperty(Model):
+        named_union: "MyNamedUnion" = rest_field(name="namedUnion")
+
+        @overload
+        def __init__(self, *, named_union: "MyNamedUnion"):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]):
+            ...
+
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+
+    class ModelWithSimpleUnionProperty(Model):
+        simple_union: Union[int, List[int]] = rest_field(name="simpleUnion")
+
+        @overload
+        def __init__(self, *, simple_union: Union[int, List[int]]):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]):
+            ...
+
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+
     simple = ModelWithSimpleUnionProperty(simple_union=1)
     assert simple.simple_union == simple["simpleUnion"] == 1
     simple = ModelWithSimpleUnionProperty(simple_union=[1, 2])
@@ -3606,3 +3599,54 @@ def test_union():
     assert named.named_union == named["namedUnion"] == {"name": "model1", "prop1": 1}
     named = ModelWithNamedUnionProperty(named_union=Model2(name="model2", prop2=2))
     assert named.named_union == named["namedUnion"] == {"name": "model2", "prop2": 2}
+
+
+def test_as_dict():
+    class CatComplex(PetComplex):
+        color: Optional[str] = rest_field(default=None)
+        hates: Optional[List[DogComplex]] = rest_field(default=None, visibility=["read"])
+
+        @overload
+        def __init__(
+                self,
+                *,
+                id: Optional[int] = None,
+                name: Optional[str] = None,
+                food: Optional[str] = None,
+                color: Optional[str] = None,
+                hates: Optional[List[DogComplex]] = None,
+        ):
+            ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any], /):
+            ...
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+    model = CatComplex(id=2, name="Siameeee", hates=[
+        DogComplex(id=1, name="Potato", food="tomato"),
+        DogComplex(id=-1, name="Tomato", food="french fries")
+    ])
+    assert json.loads(model.as_dict()) == {
+        "id": 2,
+        "name": "Siameeee",
+        "color": None
+    }
+    assert json.loads(model.as_dict(exclude_none=True, exclude_readonly=False)) == {
+        "id": 2,
+        "name": "Siameeee",
+        "hates": [
+            {
+                "id": 1,
+                "name": "Potato",
+                "food": "tomato"
+            },
+            {
+                "id": -1,
+                "name": "Tomato",
+                "food": "french fries"
+            }
+        ]
+    }
