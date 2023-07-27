@@ -3772,8 +3772,6 @@ class AzureBlobFileListSource:
     """Azure Blob Storage container URL."""
     file_list: str
     """Path to a JSONL file within the container specifying a subset of documents for training."""
-    _kind: Literal["azureBlobFileList"]
-    """Kind of training source."""
 
     def __init__(  # pylint: disable=unused-argument
         self,
@@ -3831,8 +3829,6 @@ class AzureBlobSource:
     """Azure Blob Storage container URL."""
     prefix: Optional[str]
     """Blob name prefix."""
-    _kind: Literal["azureBlob"]
-    """Kind of training source."""
 
     def __init__(  # pylint: disable=unused-argument
         self,
