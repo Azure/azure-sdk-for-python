@@ -44,6 +44,23 @@ _LOGGER = logging.getLogger(__name__)
 PoliciesType = Iterable[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
 
+def cleanup_kwargs_for_transport(kwargs: Dict[str, str]) -> None:
+    """Remove kwargs that are not meant for the transport layer.
+
+    "insecure_domain_change" is used to indicate that a redirect
+      has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
+      to clean up sensitive headers. We need to remove it before sending the request
+      to the transport layer. This code is needed to handle the case that the
+      SensitiveHeaderCleanupPolicy is not added into the pipeline and "insecure_domain_change" is not popped.
+    "enable_cae" is added to the `get_token` method of the `TokenCredential` protocol.
+    """
+    kwargs_to_remove = ["insecure_domain_change", "enable_cae"]
+    if not kwargs:
+        return
+    for key in kwargs_to_remove:
+        kwargs.pop(key, None)
+
+
 class _SansIOHTTPPolicyRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """Sync implementation of the SansIO policy.
 
@@ -97,12 +114,7 @@ class _TransportRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        # "insecure_domain_change" is used to indicate that a redirect
-        # has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
-        # to clean up sensitive headers. We need to remove it before sending the request
-        # to the transport layer. This code is needed to handle the case that the
-        # SensitiveHeaderCleanupPolicy is not added into the pipeline and "insecure_domain_change" is not popped.
-        request.context.options.pop("insecure_domain_change", False)
+        cleanup_kwargs_for_transport(request.context.options)
         return PipelineResponse(
             request.http_request,
             self._sender.send(request.http_request, **request.context.options),
