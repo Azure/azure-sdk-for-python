@@ -29,6 +29,10 @@ from typing import TypeVar, Generic, Dict, Any, Tuple, List, Optional, overload
 HTTPResponseType_co = TypeVar("HTTPResponseType_co", covariant=True)
 HTTPRequestType_co = TypeVar("HTTPRequestType_co", covariant=True)
 
+# Add these aliases to be backwards compatible with the old names
+HTTPResponseType = HTTPResponseType_co
+HTTPRequestType = HTTPRequestType_co
+
 
 class PipelineContext(Dict[str, Any]):
     """A context object carried by the pipeline request and response containers.
