@@ -95,8 +95,7 @@ class OneLakeDatastore(Datastore):
         return (
             super().__eq__(other)
             and self.one_lake_workspace_name == other.one_lake_workspace_name
-            and self.artifact.artifact_name == other.artifact.artifact_name
-            and self.artifact.artifact_type == other.artifact.artifact_type
+            and self.artifact == other.artifact
             and self.endpoint == other.endpoint
         )
 
