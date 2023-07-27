@@ -184,7 +184,7 @@ class DatastoreOperations(_ScopeDependentOperations):
     ) -> None:
         """Mount a datastore to a local path.
 
-        :param path: The datastore path to mount, in the form of `<datastore_name>` or `azureml://datastores/<datastore_name>`.
+        :param path: The data store path to mount, in the form of `<name>` or `azureml://datastores/<name>`.
         :type name: str
         :param mount_point: A local path used as mount point.
         :type version: str
@@ -195,6 +195,6 @@ class DatastoreOperations(_ScopeDependentOperations):
         assert mode in ['ro_mount', 'rw_mount'], 'mode should be either `ro_mount` or `rw_mount`'
         read_only = mode == 'ro_mount'
 
-        from azureml.dataprep.rslex import fuse_cli
-        uri = fuse_cli.build_datastore_uri(self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path)
-        fuse_cli.call_rslex_fuse_cli(uri, mount_point, read_only, debug)
+        from azureml.dataprep import rslex_fuse_cli
+        uri = rslex_fuse_cli.build_datastore_uri(self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path)
+        rslex_fuse_cli.call_rslex_fuse_cli(uri, mount_point, read_only, debug)
