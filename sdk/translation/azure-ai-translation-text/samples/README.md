@@ -28,12 +28,11 @@ See the [README][README] of the Text Translator client library for more informat
 
 # Create Client
 
-For these operations you can create a new `TextTranslationClient` without any authentication. You will only need your endpoint:
+For many of these operations you can create a new `TextTranslationClient` without any authentication. You will only need your endpoint:
 
-<!-- SNIPPET: text_translation_client.create_text_client_with_endpoint -->
+<!-- SNIPPET: text_translation_client.create_text_translation_client -->
 
-```python
-   
+```python   
  from azure.ai.translation.text import TextTranslationClient
 
  endpoint = os.environ["AZURE_TEXT_TRANSLATION_ENDPOINT"]
@@ -44,6 +43,23 @@ For these operations you can create a new `TextTranslationClient` without any au
 
 The values of the `endpoint` variable can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.
 
+For other samples an overloaded constructor is provided that uses a TextTranslationCredential.  In addition to `endpoint`, this function requires configuring an `apikey` and `region` to create the credential.  The values of the `endpoint`, `apiKey` and `region` variables can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.
+
+The appropriate constructor is invoked in each sample to create a text_translator_client instance.
+
+<!-- SNIPPET: text_translation_client.create_text_translation_client_with_credential -->
+
+```python
+from azure.ai.translation.text import (TextTranslationClient, TranslatorCredential)
+
+endpoint = os.environ["AZURE_TEXT_TRANSLATION_ENDPOINT"]
+apikey = os.environ["AZURE_TEXT_TRANSLATION_APIKEY"]
+region = os.environ["AZURE_TEXT_TRANSLATION_REGION"]   
+credential = TranslatorCredential(apikey, region)
+return TextTranslationClient(endpoint, credential)
+```
+
+<!-- END SNIPPET -->
 
 # Get Languages
 
@@ -161,17 +177,6 @@ except HttpResponseError as exception:
 <!-- END SNIPPET -->
 
 # Translate
-
-## Create a `TextTranslationClient`
-
-To create a new `TextTranslationClient`, you will need the service endpoint and credentials of your Translator resource. In this sample, you will use an `TranslatorCredential`, which you can create with an API key and region.
-
-```Python
-credential = TranslatorCredential("<apiKey>", "<region>")
-text_translator = TextTranslationClient(endpoint="<endpoint>", credential=credential)
-```
-
-The values of the `endpoint`, `apiKey` and `region` variables can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.
 
 ### Translate text
 
@@ -622,7 +627,7 @@ except HttpResponseError as exception:
 
 Returns equivalent words for the source term in the target language.
 
-<!-- SNIPPET: text_translation_dictionary_lookup.get_text_dictionary_lookup -->
+<!-- SNIPPET: text_translation_dictionary_lookup.get_text_translation_dictionary_lookup -->
 
 ```python
 try:
@@ -644,15 +649,44 @@ except HttpResponseError as exception:
 
 <!-- END SNIPPET -->
 
+### Dictionary Examples
+
+Returns grammatical structure and context examples for the source term and target term pair.
+
+<!-- SNIPPET: text_translation_dictionary_examples.get_text_translation_dictionary_examples -->
+
+```python
+try:
+    source_language = "en"
+    target_language = "es"
+    input_text_elements = [ DictionaryExampleTextItem(text = "fly", translation = "volar") ]
+
+    response = text_translator.lookup_dictionary_examples(content = input_text_elements, from_parameter = source_language, to = target_language)
+    dictionary_entry = response[0] if response else None
+
+    if dictionary_entry:
+        print(f"For the given input {len(dictionary_entry.examples)} entries were found in the dictionary.")
+        print(f"First example: '{dictionary_entry.examples[0].target_prefix}{dictionary_entry.examples[0].target_term}{dictionary_entry.examples[0].target_suffix}'.")
+
+except HttpResponseError as exception:
+    print(f"Error Code: {exception.error.code}")
+    print(f"Message: {exception.error.message}")
+```
+
+<!-- END SNIPPET -->
+
+* [Create Client][client_sample]
 * [Translate][translate_sample]
 * [Transliterate][transliterate_sample]
 * [Break Sentence][breaksentence_sample]
 * [Dictionary Lookup][dictionarylookup_sample]
+* [Dictionary Examples][dictionaryexamples_sample]
 
 [README]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/README.md
-[client sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/sample_snippets.py
-[languages_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/Sample1_GetLanguages.md
-[translate_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/Sample2_Translate.md
-[transliterate_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/Sample3_Transliterate.md
-[breaksentence_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/Sample4_BreakSentence.md
-[dictionarylookup_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/Sample5_DictionaryLookup.md
+[client_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/text_translation_client.py
+[languages_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/text_translation_languages.py
+[translate_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/text_translation_translate.md
+[transliterate_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/text_translation_transliterate.py
+[breaksentence_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/text_translation_break_sentence.py
+[dictionarylookup_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/text_translation_dictionary_lookup.py
+[dictionaryexamples_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/text_translation_dictionary_examples.py

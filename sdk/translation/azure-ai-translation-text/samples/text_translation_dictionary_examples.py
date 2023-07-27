@@ -5,13 +5,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: text_translation_transliterate.py
+FILE: text_translation_dictionary_examples.py
 
 DESCRIPTION:
     This file contains sample snippets for the Text Translation service.
 
 USAGE:
-    python text_translation_transliterate.py
+    python text_translation_dictionary_examples.py
 
     Set the text translation endpoint environment variables with your own value before running the samples:
         
@@ -23,9 +23,8 @@ USAGE:
         2) AZURE_TEXT_TRANSLATION_APIKEY - the API key to your Text Translation resource.
         3) AZURE_TEXT_TRANSLATION_REGION - the Azure Region of your Text Translation resource.
 """
-
 from azure.core.exceptions import HttpResponseError
-from azure.ai.translation.text.models import (InputTextItem)
+from azure.ai.translation.text.models import (DictionaryExampleTextItem)
 
 # -------------------------------------------------------------------------
 # Text translation client
@@ -34,23 +33,23 @@ import text_translation_client
 text_translator = text_translation_client.create_text_translation_client_with_credential()
 
 # -------------------------------------------------------------------------
-# Text translation transliteration
+# Dictionary Lookup
 # -------------------------------------------------------------------------
-def get_text_transliteration():
-    # [START get_text_transliteration]
+def get_text_translation_dictionary_examples():
+    # [START get_text_translation_dictionary_examples]
     try:
-        language = "zh-Hans"
-        from_script = "Hans"
-        to_script = "Latn"
-        input_text_elements = [ InputTextItem(text = "这是个测试。") ]
+        source_language = "en"
+        target_language = "es"
+        input_text_elements = [ DictionaryExampleTextItem(text = "fly", translation = "volar") ]
 
-        response = text_translator.transliterate(content = input_text_elements, language = language, from_script = from_script, to_script = to_script)
-        transliteration = response[0] if response else None
+        response = text_translator.lookup_dictionary_examples(content = input_text_elements, from_parameter = source_language, to = target_language)
+        dictionary_entry = response[0] if response else None
 
-        if transliteration:
-            print(f"Input text was transliterated to '{transliteration.script}' script. Transliterated text: '{transliteration.text}'.")
+        if dictionary_entry:
+            print(f"For the given input {len(dictionary_entry.examples)} entries were found in the dictionary.")
+            print(f"First example: '{dictionary_entry.examples[0].target_prefix}{dictionary_entry.examples[0].target_term}{dictionary_entry.examples[0].target_suffix}'.")
 
     except HttpResponseError as exception:
         print(f"Error Code: {exception.error.code}")
         print(f"Message: {exception.error.message}")
-    # [END get_text_transliteration]
+        # [END get_text_translation_dictionary_examples]

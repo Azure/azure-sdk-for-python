@@ -14,9 +14,14 @@ USAGE:
     python text_translation_languages.py
 
     Set the text translation endpoint environment variables with your own value before running the samples:
-        AZURE_TEXT_TRANSLATION_ENDPOINT - the endpoint to your Text Translation resource.
-    Note: the endpoint must be formatted to use the custom domain name for your resource:
+        
+        1) AZURE_TEXT_TRANSLATION_ENDPOINT - the endpoint to your Text Translation resource.
+        Note: the endpoint must be formatted to use the custom domain name for your resource:
         https:\\<NAME-OF-YOUR-RESOURCE>.cognitiveservices.azure.com\
+                    
+    The create_text_translation_client_with_credential call requires additional variables:
+        2) AZURE_TEXT_TRANSLATION_APIKEY - the API key to your Text Translation resource.
+        3) AZURE_TEXT_TRANSLATION_REGION - the Azure Region of your Text Translation resource.
 """
 from azure.core.exceptions import HttpResponseError
 

@@ -14,9 +14,14 @@ USAGE:
     python text_translation_dictionary_lookup.py
 
     Set the text translation endpoint environment variables with your own value before running the samples:
-        AZURE_TEXT_TRANSLATION_ENDPOINT - the endpoint to your Text Translation resource.
-    Note: the endpoint must be formatted to use the custom domain name for your resource:
+        
+        1) AZURE_TEXT_TRANSLATION_ENDPOINT - the endpoint to your Text Translation resource.
+        Note: the endpoint must be formatted to use the custom domain name for your resource:
         https:\\<NAME-OF-YOUR-RESOURCE>.cognitiveservices.azure.com\
+                    
+    The create_text_translation_client_with_credential call requires additional variables:
+        2) AZURE_TEXT_TRANSLATION_APIKEY - the API key to your Text Translation resource.
+        3) AZURE_TEXT_TRANSLATION_REGION - the Azure Region of your Text Translation resource.
 """
 
 from azure.core.exceptions import HttpResponseError
@@ -31,8 +36,8 @@ text_translator = text_translation_client.create_text_translation_client()
 # -------------------------------------------------------------------------
 # Dictionary Lookup
 # -------------------------------------------------------------------------
-def get_text_dictionary_lookup():
-    # [START get_text_dictionary_lookup]
+def get_text_translation_dictionary_lookup():
+    # [START get_text_translation_dictionary_lookup]
     try:
         source_language = "en"
         target_language = "es"
@@ -48,4 +53,4 @@ def get_text_dictionary_lookup():
     except HttpResponseError as exception:
         print(f"Error Code: {exception.error.code}")
         print(f"Message: {exception.error.message}")
-    # [END get_text__dictionary_lookup]
+    # [END get_text_translation_dictionary_lookup]
