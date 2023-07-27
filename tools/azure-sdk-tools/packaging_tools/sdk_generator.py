@@ -28,6 +28,10 @@ from .generate_utils import (
 _LOGGER = logging.getLogger(__name__)
 
 
+def is_multiapi_package(python_md_content: List[str]) -> bool:
+    return "multiapi: true" in "".join(python_md_content)
+
+
 # return relative path like: network/azure-mgmt-network
 def extract_sdk_folder(python_md: List[str]) -> str:
     pattern = ["$(python-sdks-folder)", "azure-mgmt-"]
@@ -70,14 +74,16 @@ def del_outdated_folder(readme: str):
     with open(python_readme, "r") as file_in:
         content = file_in.readlines()
     sdk_folder = extract_sdk_folder(content)
+    is_multiapi = is_multiapi_package(content)
     if sdk_folder:
         sample_folder = Path(f"sdk/{sdk_folder}/generated_samples")
         if sample_folder.exists():
-            if "azure-mgmt-rdbms" not in str(sample_folder):
+            # rdbms is generated from different swagger folder;multiapi package may don't generate every time
+            if "azure-mgmt-rdbms" not in str(sample_folder) and not is_multiapi:
                 shutil.rmtree(sample_folder)
                 _LOGGER.info(f"remove sample folder: {sample_folder}")
             else:
-                _LOGGER.info(f"we don't remove sample folder for rdbms")
+                _LOGGER.info(f"we don't remove sample folder for rdbms or multiapi package")
         else:
             _LOGGER.info(f"sample folder does not exist: {sample_folder}")
     else:
@@ -169,7 +175,7 @@ def update_metadata_for_multiapi_package(spec_folder: str, input_readme: str):
 
     with open(python_readme, "r") as file_in:
         python_md_content = file_in.readlines()
-    is_multiapi = "multiapi: true" in "".join(python_md_content)
+    is_multiapi = is_multiapi_package(python_md_content)
     if not is_multiapi:
         _LOGGER.info(f"do not find multiapi configuration in {python_readme}")
         return
