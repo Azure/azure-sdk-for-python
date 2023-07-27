@@ -84,7 +84,7 @@ def pipeline(
 
     .. admonition:: Example:
         :class: tip
-        .. literalinclude:: ../samples/ml_samples_pipeline_job_configurations.py
+        .. literalinclude:: ../../../../samples/ml_samples_pipeline_job_configurations.py
             :start-after: [START configure_pipeline]
             :end-before: [END configure_pipeline]
             :language: python

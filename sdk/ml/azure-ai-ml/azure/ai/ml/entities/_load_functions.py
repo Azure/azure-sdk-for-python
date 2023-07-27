@@ -366,7 +366,7 @@ def load_component(
 
     .. admonition:: Example:
         :class: tip
-        .. literalinclude:: ../samples/ml_samples_component_configurations.py
+        .. literalinclude:: ../../../../samples/ml_samples_component_configurations.py
             :start-after: [START configure_load_component]
             :end-before: [END configure_load_component]
             :language: python
