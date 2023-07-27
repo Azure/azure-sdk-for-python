@@ -176,19 +176,19 @@ class DatastoreOperations(_ScopeDependentOperations):
     @experimental
     def mount(
         self,
-        path,
-        mount_point='/home/azureuser/mount/data',
-        mode='ro_mount',
-        debug=False,
+        path: str,
+        mount_point: str = '/home/azureuser/mount/data',
+        mode: str = 'ro_mount',
+        debug: bool = False,
         **kwargs,
     ) -> None:
-        """Mount a data asset to a local path.
+        """Mount a datastore to a local path.
 
-        :param path: The data asset path to mount, in the form of `azureml:<name>` or `azureml:<name>:<version>`.
+        :param path: The datastore path to mount, in the form of `<datastore_name>` or `azureml://datastores/<datastore_name>`.
         :type name: str
         :param mount_point: A local path used as mount point.
         :type version: str
-        :param mode: Mount mode. Only `ro_mount` (read-only) is supported for data asset mount.
+        :param mode: Mount mode, either `ro_mount` (read-only) or `rw_mount` (read-write).
         :return: None
         """
 

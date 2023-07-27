@@ -632,10 +632,10 @@ class DataOperations(_ScopeDependentOperations):
     @experimental
     def mount(
         self,
-        path,
-        mount_point='/home/azureuser/mount/data',
-        mode='ro_mount',
-        debug=False,
+        path: str,
+        mount_point: str = '/home/azureuser/mount/data',
+        mode: str = 'ro_mount',
+        debug: bool = False,
         **kwargs,
     ) -> None:
         """Mount a data asset to a local path.
