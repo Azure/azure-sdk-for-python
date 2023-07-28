@@ -1,0 +1,113 @@
+# Note: all fields can be put in a specific component spec. We will see if it's possible to avoid introducing this file
+#   given there are many auto-generated fields, and we want to make them transparent to users.
+
+# option 1: flow.dag.yaml:name
+# option 2: run.yaml:name
+# option 3: flow.meta.yaml:name
+# option 4: pass by load_component in SDK and --name in CLI
+# preferred: option 1, 2, 4 works and option 4 > option 2 > option 1
+name: flow_with_meta
+# option 1: flow.dag.yaml:display_name
+# option 2: run.yaml:display_name
+# option 3: flow.meta.yaml:display_name
+# option 4: pass by load_component(params_override=xxx) in SDK and --set display_name= in CLI
+# preferred: both option 2 and option 1 works and option 2 > option 1
+display_name: flow with meta
+# the same to display_name
+description: flow with meta
+# the same to display_name
+properties: {}
+# the same to display_name
+tags: {}
+
+# option 1 [preferred]: inferred from node type or pass by load_component in SDK.
+# TODO: is it necessary to support `az ml component create` for flow?
+type: parallel
+
+# option 1: auto-generated - hash for anonymous and auto-increment for named?
+# option 2: pass by load_component in SDK and --version in CLI
+# option 3: flow.meta.yaml:version
+# preferred: both option 1 and option 2 works and option 2 > option 1
+# comment: we don't have version in flow but we have that in component
+version: 1
+
+inputs:
+  groundtruth:
+    type: string
+    # option 1 [preferred]: do not support setting this
+    # option 2: flow.dag.yaml:inputs:groundtruth:description
+    description: "ground truth column"
+    # option 1: flow.dag.yaml:inputs:groundtruth:default
+    # option 2: run.yaml:columns_mapping:groundtruth
+    # preferred: both take effect and option 2 > option 1
+    default: "answer"
+  connections.node_name.connection_name:
+    type: string
+    # TODO: seems that we have no place to put this
+    # option 1 [preferred]: do not support setting this but provide a default value like
+    #                       "name of the connection to use on <node_name>"
+    # option 2: flow.dag.yaml:inputs:groundtruth:description
+    description: "connection description"
+    # option 1 [preferred]: run.yaml:columns_mapping:groundtruth
+    # option 2: flow.meta.yaml:connections:node_name:connection_name
+    default: "connection default value"
+  # auto-generated input
+  data:
+    type: uri_folder
+  # auto-generated input
+  run_outputs:
+    type: uri_folder
+outputs:
+  # auto-generated output
+  flow_outputs:
+    type: uri_folder
+  # auto-generated output
+  debug_info:
+    type: uri_folder
+
+# option 1: support default variant only
+# option 2: run.yaml:variant
+# preferred: both take effect and option 2 > option 1
+variant: node.variant_1
+# option 1: require customers to generate flow.tools.json offline and this file shouldn't be ignored
+# option 2: run.yaml:runtime
+# preferred: both take effect and option 1 > option 2
+runtime: promptflow-runtime
+# option 1 [preferred]: flow.dag.yaml:additional_includes - disadvantage: v2 sdk need to understand the addtional_includes in dag.yaml to build code snapshot
+# option 2: flow.meta.yaml:additional_includes
+# option 3: flow.additional_includes - disadvantage: it's not align with v2
+additional_includes:
+  - ../additional/util.py
+
+# option 1 [preferred]: default to be true and allow to overwrite
+#                       by load_component(params_override=xxx) in SDK and --set is_deterministic= in CLI
+# option 2: flow.meta.yaml:is_deterministic - looks strange as there is no such concept in flow
+is_deterministic: true
+
+# option 1 [preferred]: do not support setting this in component level (still support them as node level run settings)
+retry_settings:
+  max_retries: 2
+  timeout: 3600
+logging_level: INFO
+mini_batch_size: 1
+mini_batch_error_threshold: 0
+max_concurrency_per_instance: 1
+error_threshold: -1
+
+task:
+  # option 1 [preferred]: run.yaml:environment_variables
+  # option 2: flow.meta.yaml:environment_variables
+  # option 3: flow.dag.yaml:environment_variables
+  # option 4: pass by load_component(params_override=xxx) in SDK and --set environment_variables= in CLI
+  # TODO: I haven't found this parameter in current generated component spec, need to verify if we need this
+  program_arguments: ... --environment-variables key=value
+  # option 1 [preferred]: build from flow.dag.yaml:environment - disadvantage: v2 sdk need to understand the environment in dag.yaml to build environment
+  environment: mcr.microsoft.com/azureml/openmpi3.1.2-cuda10.1-cudnn7-ubuntu18.04
+  # option 1 [preferred]: parent of flow.dag.yaml
+  # option 2 [preferred]: parent of run.yaml:flow
+  # option 3: parent of flow.meta.yaml:flow
+  code: ./
+  # fixed value
+  append_row_to: ${{outputs.flow_outputs}}
+  # fixed value
+  entry_script: driver/azureml_user/parallel_run/prompt_flow_entry.py

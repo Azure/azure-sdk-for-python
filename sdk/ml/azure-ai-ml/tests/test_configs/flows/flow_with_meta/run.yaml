@@ -10,12 +10,10 @@ path: ./flow.dag.yaml
 additional_includes:
   - ../additional/util.py
 
-local:
-  environment_variables:
-    test_env_var: test_env_var_value
-
-subscription/XXX/resource_group/XXX/workspace/XXX:
-  runtime: promptflow-runtime
-  environment_variables:
-    OPENAI_ENDPOINT: ${my_openai.endpoint}
-  connections:
+runtime: promptflow-runtime
+environment_variables:
+  OPENAI_ENDPOINT: ${my_openai.endpoint}
+connections:
+  node_name:
+    connection: another_connection
+    deployment_name: deployment_name

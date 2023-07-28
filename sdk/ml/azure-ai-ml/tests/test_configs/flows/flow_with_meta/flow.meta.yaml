@@ -4,27 +4,6 @@ description: flow with meta
 tags:
   - flow
 path: ./flow.dag.yaml
-# TODO: this is not "meta"?
-additional_includes:
-  - ../additional/util.py
 
-# TODO: maybe we don't need version
-version: 1
-
-# TODO: promptflow doesn't have this concept for now
-is_deterministic: true
-
-node_variant: variant_1
+variant: node.variant_1
 runtime: promptflow-runtime
-
-# TODO: maybe we don't need below fields
-columns_mapping:
-  groundtruth: ${data.answer}
-connections:
-  node_name:
-    connection: another_connection
-    deployment_name: deployment_name
-
-# TODO: not sure what are they for, just saw them in LoadFlowAsComponentRequest
-vm_size: Standard_D2_v2
-session_id: 1234567890

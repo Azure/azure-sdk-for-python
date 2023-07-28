@@ -1,0 +1,11 @@
+# Note: most fields for command.yaml are the same as parallel.yaml. So just record some field mapping here and ignore those completely the same.
+
+# option 1 [preferred]: inferred from node type or pass by load_component in SDK.
+# TODO: is it necessary to support `az ml component create` for flow?
+type: command
+
+environment: "<task.environment>"
+environment_variables: "<task:program_arguments:environment_variables>"
+code: "<task.code>"
+
+command: "pf flow run_bulk ..."

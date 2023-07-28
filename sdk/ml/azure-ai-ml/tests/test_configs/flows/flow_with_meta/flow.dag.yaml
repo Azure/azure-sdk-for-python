@@ -1,29 +1,3 @@
-name: flow_with_meta
-display_name: flow with meta
-description: flow with meta
-tags:
-  - flow
-additional_includes:
-  - ../additional/util.py
-
-# TODO: maybe we don't need version
-# version: 1
-
-# TODO: promptflow doesn't have this concept for now
-# is_deterministic: true
-
-# TODO: below fields are run related
-#node_variant: variant_1
-#runtime: promptflow-runtime
-#columns_mapping:
-#  groundtruth: ${data.answer}
-#connections:
-#  node_name:
-#    connection: another_connection
-#    deployment_name: deployment_name
-#vm_size: Standard_D2_v2
-#session_id: 1234567890
-
 # TODO: what is the relationship between id and name?
 id: stewieleo
 inputs:

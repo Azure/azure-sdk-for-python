@@ -3289,8 +3289,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         """
         Shared benefits: no need to download component.code to re-create it in another workspace; naturally support
           maintaining flow definition flow in git repo.
-        Shared drawbacks: do not support variant
-        Option 1: Type of the component will be determined on client-side.
+        Solution: Type of the component will be determined on client-side.
         Benefit: Relatively easy to implement - nearly no change to service side.
         Drawback: Need to add a different parameter for component load function like this:
             load_component(path, type="command")
@@ -3309,7 +3308,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             #  note that MT won't be able to verify if flow.tools.json matches the flow definition,
             #  so it will lead to runtime error directly
         )
-        assert component.type == "command"
+        assert component.type == "parallel"
 
         with pytest.raises(Exception, match="Flow component cannot be edited."):
             component.inputs.groundtruth.default_value = "${{data.answer}}"
