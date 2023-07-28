@@ -14,6 +14,7 @@ from ._client_base_async import ConsumerProducerMixin
 from ._async_utils import get_dict_with_loop_if_needed
 from .._common import EventData
 from .._utils import create_properties, event_position_selector
+from ._transport._pyamqp_transport_async import PyamqpTransportAsync
 from .._constants import EPOCH_SYMBOL, TIMEOUT_SYMBOL, RECEIVER_RUNTIME_METRIC_SYMBOL
 
 if TYPE_CHECKING:
@@ -182,7 +183,8 @@ class EventHubConsumer(
         # pylint:disable=protected-access
         message = self._message_buffer.popleft()
         event_data = EventData._from_message(message)
-        event_data._uamqp_message = message
+        if self._amqp_transport != PyamqpTransportAsync:
+            event_data._uamqp_message = message
         self._last_received_event = event_data
         return event_data
 
