@@ -7,6 +7,7 @@ from subprocess import check_call, getoutput
 import shutil
 import re
 import os
+import pytoml as toml
 
 from .swaggertosdk.SwaggerToSdkCore import (
     CONFIG_FILE,
@@ -23,7 +24,9 @@ from .generate_utils import (
     gen_typespec,
     return_origin_path,
     check_api_version_in_subfolder,
+    call_build_config,
 )
+from .conf import CONF_NAME
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -44,25 +47,25 @@ def extract_sdk_folder(python_md: List[str]) -> str:
 @return_origin_path
 def multiapi_combiner(sdk_code_path: str, package_name: str):
     os.chdir(sdk_code_path)
+    _LOGGER.info(f"start to combine multiapi package: {package_name}")
     check_call(
         f"python {str(Path('../../../tools/azure-sdk-tools/packaging_tools/multiapi_combiner.py'))} --pkg-path={os.getcwd()}",
         shell=True,
     )
     check_call("pip install -e .", shell=True)
 
+def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: str):
+    toml_file = Path(sdk_code_path) / CONF_NAME
     # do not package code of v20XX_XX_XX
-    if Path("MANIFEST.in").exists():
-        with open("MANIFEST.in", "r") as file_in:
-            content = file_in.readlines()
-    handled_content = [line for line in content if "prune" not in line]
-    package_folder = package_name.replace("-", "/")
-    if package_name != "azure-mgmt-resource":
-        handled_content.append(f"prune {package_folder}/v20*\n")
+    if toml_file.exists():
+        with open(toml_file, "r") as file_in:
+            content = toml.load(file_in)
+        content["packaging"]["exclude_folder"] = package_name.replace("-", ".") + ".v20*"
+        with open(toml_file, "w") as file_out:
+            toml.dump(content, file_out)
+        call_build_config(package_name, folder_name)
     else:
-        subfolders = [s for s in Path(package_folder).iterdir() if s.is_dir() and not s.name.startswith("_")]
-        handled_content.extend([f"prune {s.as_posix()}/v20*\n" for s in subfolders])
-    with open("MANIFEST.in", "w") as file_out:
-        file_out.writelines(handled_content)
+        _LOGGER.info(f"do not find {toml_file}")
 
 
 def del_outdated_folder(readme: str):
@@ -311,8 +314,8 @@ def main(generate_input, generate_output):
 
             # use multiapi combiner to combine multiapi package
             if package_name in ("azure-mgmt-network"):
-                _LOGGER.info(f"start to combine multiapi package: {package_name}")
                 multiapi_combiner(sdk_code_path, package_name)
+                after_multiapi_combiner(sdk_code_path, package_name, folder_name)
 
     # remove duplicates
     for value in result.values():

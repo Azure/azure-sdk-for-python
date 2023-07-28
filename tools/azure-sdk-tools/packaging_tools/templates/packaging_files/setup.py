@@ -68,6 +68,9 @@ setup(
             {%- for nspkg_name in nspkg_names %}
             "{{ nspkg_name }}",
             {%- endfor %}
+            {%- if exclude_folder %}
+            "{{ exclude_folder }}",
+            {%- endif %}
         ]
     ),
     include_package_data=True,
