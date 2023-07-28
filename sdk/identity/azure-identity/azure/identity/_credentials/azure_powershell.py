@@ -6,7 +6,7 @@ import base64
 import logging
 import subprocess
 import sys
-from typing import List, Tuple, Optional, Any
+from typing import List, Tuple, Optional
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError

@@ -4,7 +4,7 @@
 # ------------------------------------
 import asyncio
 import logging
-from typing import Optional, TYPE_CHECKING, Any
+from typing import Optional, TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken

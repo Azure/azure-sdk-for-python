@@ -4,7 +4,7 @@
 # ------------------------------------
 import asyncio
 import sys
-from typing import cast, List, Any, Optional
+from typing import cast, List, Optional
 from azure.core.credentials import AccessToken
 
 from .._internal import AsyncContextManager
