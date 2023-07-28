@@ -86,9 +86,11 @@ class InputOutputBase(ABC):
         )
         # TODO: remove this
         self._attribute_map = {}
-        if not hasattr(self, "_is_primitive_type"):  # Avoid covering the _is_primitive_type attribute of the subclass
-            self._is_primitive_type = self._type in IOConstants.PRIMITIVE_STR_2_TYPE
         super(InputOutputBase, self).__init__(**kwargs)
+
+    @property
+    def _is_primitive_type(self):
+        return self.type in IOConstants.PRIMITIVE_STR_2_TYPE
 
     @abstractmethod
     def _build_data(self, data, key=None):  # pylint: disable=unused-argument
