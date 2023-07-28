@@ -1,18 +1,11 @@
 # Release History
 
-## 4.0.0b11 (2023-07-21)
+## 4.0.0b11 (2023-07-28)
 
 ### Features Added
 
   - Added operation FailoverGroupsOperations.begin_try_planned_before_forced_failover
   - Model PrivateEndpointConnection has a new parameter group_ids
-  - Model SqlVulnerabilityAssessmentScanRecord has a new parameter last_scan_time
-
-## 4.0.0b11 (2023-06-27)
-
-### Features Added
-
-  - Added operation FailoverGroupsOperations.begin_try_planned_before_forced_failover
   - Model SqlVulnerabilityAssessmentScanRecord has a new parameter last_scan_time
 
 ## 4.0.0b10 (2023-04-11)
