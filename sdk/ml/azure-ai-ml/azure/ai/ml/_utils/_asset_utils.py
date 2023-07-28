@@ -17,9 +17,9 @@ from pathlib import Path
 from platform import system
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Union, cast
 
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from colorama import Fore
 from tqdm import TqdmWarning, tqdm
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 from azure.ai.ml._artifacts._constants import (
     AML_IGNORE_FILE_NAME,
@@ -56,7 +56,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 from azure.ai.ml._restclient.v2023_04_01.models import PendingUploadRequestDto
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry, snake_to_camel
-from azure.ai.ml.constants._common import DefaultOpenEncoding, MAX_AUTOINCREMENT_ATTEMPTS, OrderString
+from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, DefaultOpenEncoding, OrderString
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -293,19 +293,22 @@ def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFil
     # DO NOT change this function unless you change the verification logic together
     actual_path = path
     if os.path.islink(path):
+        # TODO: if A -> B -> C, os.readlink(A) will return B instead of C
         link_path = os.readlink(path)
         actual_path = link_path if os.path.isabs(link_path) else os.path.join(os.path.dirname(path), link_path)
     if os.path.isdir(actual_path):
-        return _get_file_list_content_hash(_get_upload_files_from_folder(actual_path, ignore_file=ignore_file))
+        return _get_file_list_content_hash(get_upload_files_from_folder(actual_path, ignore_file=ignore_file))
     if os.path.isfile(actual_path):
         return _get_file_list_content_hash([(actual_path, Path(actual_path).name)])
     return None
 
 
-def _get_upload_files_from_folder(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> List[str]:
+def get_upload_files_from_folder(
+    path: Union[str, Path], *, prefix: str = "", ignore_file: IgnoreFile = IgnoreFile()
+) -> List[str]:
     upload_paths = []
     for root, _, files in os.walk(path, followlinks=True):
-        upload_paths += list(traverse_directory(root, files, Path(path).resolve(), "", ignore_file=ignore_file))
+        upload_paths += list(traverse_directory(root, files, Path(path).resolve(), prefix, ignore_file=ignore_file))
     return upload_paths
 
 
@@ -365,8 +368,12 @@ def traverse_directory(
     # Refer to https://en.wikipedia.org/wiki/8.3_filename for more details.
     root = convert_windows_path_to_unix(Path(root).resolve())
     source = convert_windows_path_to_unix(Path(source).resolve())
+
+    # TODO: We'd better resolve the paths at beginning
     working_dir = convert_windows_path_to_unix(os.getcwd())
     project_dir = root[len(str(working_dir)) :] + "/"
+
+    # TODO: inner ignore file won't take effect
     file_paths = [
         convert_windows_path_to_unix(os.path.join(root, name))
         for name in files
@@ -584,14 +591,17 @@ def upload_directory(
         )
 
     # Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage
-    upload_paths = []
+    upload_paths = get_upload_files_from_folder(
+        source_path,
+        prefix=prefix,
+        ignore_file=ignore_file,
+    )
     size_dict = {}
     total_size = 0
-    for root, _, files in os.walk(source_path, followlinks=True):
-        upload_paths += list(traverse_directory(root, files, source_path, prefix, ignore_file=ignore_file))
 
     # Get each file's size for progress bar tracking
     for path, _ in upload_paths:
+        # TODO: symbol links are already resolved
         if os.path.islink(path):
             path_size = os.path.getsize(
                 os.readlink(convert_windows_path_to_unix(path))

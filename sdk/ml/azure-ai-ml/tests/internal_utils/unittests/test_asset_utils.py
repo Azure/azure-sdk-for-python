@@ -13,10 +13,10 @@ from azure.ai.ml._utils._asset_utils import (
     get_ignore_file,
     get_object_hash,
     get_directory_size,
-    traverse_directory,
     _check_or_modify_auto_delete_setting,
     _validate_auto_delete_setting_in_data_output,
     _validate_workspace_managed_datastore,
+    get_upload_files_from_folder,
 )
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix
 from azure.ai.ml.exceptions import (
@@ -113,20 +113,21 @@ class TestAssetUtils:
         source_path = Path(storage_test_directory).resolve()
         prefix = source_path.name + "/"
 
-        amlignore_upload_paths = []
-        gitignore_upload_paths = []
-        no_ignore_upload_paths = []
-
-        for root, _, files in os.walk(source_path, followlinks=True):
-            amlignore_upload_paths += list(
-                traverse_directory(root, files, source_path, prefix, ignore_file=amlignore_file)
-            )
-            gitignore_upload_paths += list(
-                traverse_directory(root, files, source_path, prefix, ignore_file=gitignore_file)
-            )
-            no_ignore_upload_paths += list(
-                traverse_directory(root, files, source_path, prefix, ignore_file=no_ignore_file)
-            )
+        amlignore_upload_paths = get_upload_files_from_folder(
+            source_path,
+            prefix=prefix,
+            ignore_file=amlignore_file,
+        )
+        gitignore_upload_paths = get_upload_files_from_folder(
+            source_path,
+            prefix=prefix,
+            ignore_file=gitignore_file,
+        )
+        no_ignore_upload_paths = get_upload_files_from_folder(
+            source_path,
+            prefix=prefix,
+            ignore_file=no_ignore_file,
+        )
 
         assert len(no_ignore_upload_paths) == 7
         assert len(gitignore_upload_paths) == 6
@@ -135,10 +136,10 @@ class TestAssetUtils:
     def test_upload_paths_match(self, storage_test_directory: str) -> None:
         source_path = Path(storage_test_directory).resolve()
         prefix = source_path.name + "/"
-        upload_paths = []
-
-        for root, _, files in os.walk(source_path, followlinks=True):
-            upload_paths += list(traverse_directory(root, files, source_path, prefix))
+        upload_paths = get_upload_files_from_folder(
+            source_path,
+            prefix=prefix,
+        )
 
         for local_path, remote_path in upload_paths:
             remote_path = remote_path.split("/", 2)[-1]  # strip LocalUpload/<asset id> prefix
@@ -165,10 +166,10 @@ class TestAssetUtils:
 
         source_path = Path(storage_test_directory).resolve()
         prefix = "random_prefix/"
-        upload_paths_list = []
-
-        for root, _, files in os.walk(source_path, followlinks=True):
-            upload_paths_list += list(traverse_directory(root, files, source_path, prefix))
+        upload_paths_list = get_upload_files_from_folder(
+            source_path,
+            prefix=prefix,
+        )
 
         local_paths = [i for i, _ in upload_paths_list]
         remote_paths = [j for _, j in upload_paths_list]
