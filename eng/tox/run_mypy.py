@@ -17,7 +17,7 @@ from ci_tools.environment_exclusions import (
     is_check_enabled, is_typing_ignored
 )
 from ci_tools.variables import in_ci
-# from vnext_helpers import create_vnext_issue
+from vnext_helpers import create_vnext_issue
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -89,25 +89,9 @@ if __name__ == "__main__":
         except CalledProcessError as sample_err:
             sample_code_error = sample_err
 
-    print(f"the build id is {os.getenv('BUILD_BUILDID')}")
-    print(f"the build URI is {os.getenv('BUILD_BUILDURI')}")
-    print(f"the environment id is {os.getenv('ENVIRONMENT_ID')}")
-    print(f"the environment RESOURCE id is {os.getenv('ENVIRONMENT_RESOURCEID')}")
-    print(f"the system job id is {os.getenv('SYSTEM_JOBID')}")
-    print(f"the system job name is {os.getenv('SYSTEM_JOBNAME')}")
-    print(f"the system job display name is {os.getenv('SYSTEM_JOBDISPLAYNAME')}")
-    print(f"the system PHASE name is {os.getenv('SYSTEM_PHASENAME')}")
-    print(f"the system PHASE display name is {os.getenv('SYSTEM_PHASEDISPLAYNAME')}")
-    print(f"the system STAGE name is {os.getenv('SYSTEM_STAGENAME')}")
-    print(f"the system STAGE display name is {os.getenv('SYSTEM_STAGEDISPLAYNAME')}")
-    print(f"the system BUILD id is {os.getenv('SYSTEM_BUILDID')}")
-    print(f"the system DEFINITION id is {os.getenv('SYSTEM_DEFINITIONID')}")
-    print(f"the AGENT id is {os.getenv('AGENT_ID')}")
-    print(f"the timeline id is {os.getenv('SYSTEM_TIMELINEID')}")
-    print("See https://aka.ms/python/typing-guide for information.\n\n")
-    # if args.next and in_ci():
-    #     if src_code_error or sample_code_error:
-    #         create_vnext_issue(package_name)
+    if args.next and in_ci():
+        if src_code_error or sample_code_error:
+            create_vnext_issue(package_name)
 
     if src_code_error and sample_code_error:
         raise Exception(
