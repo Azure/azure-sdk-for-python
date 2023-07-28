@@ -35,20 +35,6 @@ class StoredProcedureParameter(DictMixin, RestTranslatableMixin):
 class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-instance-attributes
     """Define a database class for a DataTransfer Component or Job.
 
-    Example usage:
-    - For querying a database table:
-        source_database = Database(query='SELECT * FROM my_table', connection='azureml:my_azuresql_connection')
-    - For invoking a stored procedure with parameters:
-        stored_procedure_params = [
-            {'name': 'job', 'value': 'Engineer', 'type': 'String'},
-            {'name': 'department', 'value': 'Engineering', 'type': 'String'}
-        ]
-        source_database = Database(
-            stored_procedure='SelectEmployeeByJobAndDepartment',
-            stored_procedure_params=stored_procedure_params,
-            connection='azureml:my_azuresql_connection'
-        )
-
     :param query: The SQL query to retrieve data from the database.
     :type query: str, optional
     :param table_name: The name of the database table.
@@ -62,6 +48,15 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
     :type connection: str, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the Database object cannot be successfully validated.
         Details will be provided in the error message.
+
+    .. admonition:: Example:
+        :class: tip
+        .. literalinclude:: ../../../../../samples/ml_samples_input_output_configurations.py
+            :start-after: [START configure_database]
+            :end-before: [END configure_database]
+            :language: python
+            :dedent: 8
+            :caption: Create a database and querying a database table.
     """
 
     _EMPTY = Parameter.empty

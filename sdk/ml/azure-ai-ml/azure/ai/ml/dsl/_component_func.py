@@ -53,7 +53,7 @@ def to_component_func(entity: ComponentEntity, component_creation_func) -> Calla
     """Convert a ComponentEntity to a callable component function.
 
     :param entity: The ComponentEntity to convert.
-    :type entity: ComponentEntity
+    :type entity: ~azure.ai.ml.entities.Component
     :param component_creation_func: The function for creating a component.
     :type component_creation_func: Callable
     :return: The callable component function.

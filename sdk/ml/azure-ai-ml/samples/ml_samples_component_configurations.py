@@ -51,23 +51,6 @@ class ComponentConfigurationOptions(object):
         component_func = load_component(client=ml_client, name=component.name, version="1")
         # [END configure_load_component]
 
-        # [START configure_ComponentOperations]
-        from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-            AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
-        )
-        from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-        from azure.ai.ml.operations import ComponentOperations
-
-        operations = ComponentOperations(
-            operation_scope=OperationScope(
-                subscription_id=subscription_id, resource_group_name=resource_group, workspace_name=workspace_name
-            ),
-            operation_config=OperationConfig(show_progress=True, enable_telemetry=True),
-            service_client=ServiceClient102021Dataplane(credential=credential, subscription_id=subscription_id),
-            all_operations=ml_client._operation_container,
-        )
-        # [END configure_ComponentOperations]
-
 
 if __name__ == "__main__":
     sample = ComponentConfigurationOptions()

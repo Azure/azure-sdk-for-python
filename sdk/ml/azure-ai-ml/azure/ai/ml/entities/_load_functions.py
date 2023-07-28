@@ -371,7 +371,7 @@ def load_component(
             :end-before: [END configure_load_component]
             :language: python
             :dedent: 8
-            :caption: Configuring load component.
+            :caption: Loading a Component object from a YAML file.
     """
 
     client = kwargs.pop("client", None)
