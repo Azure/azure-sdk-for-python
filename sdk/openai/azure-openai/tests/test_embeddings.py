@@ -48,9 +48,6 @@ class TestEmbeddings(AzureRecordedTestCase):
         assert embedding.data[0].index is not None
         assert len(embedding.data[0].embedding) > 0
 
-    @pytest.mark.skip("openai.error.InvalidRequestError: Too many inputs. The max number of inputs is 1. "
-                      "We hope to increase the number of inputs per request soon. Please contact us through "
-                      "an Azure support request at: https://go.microsoft.com/fwlink/?linkid=2213926 for further questions")
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure
     def test_embedding_batched(self, azure_openai_creds, api_type):
