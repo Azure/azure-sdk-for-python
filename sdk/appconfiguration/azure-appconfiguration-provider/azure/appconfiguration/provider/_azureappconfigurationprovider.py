@@ -28,16 +28,9 @@ from azure.appconfiguration import (  # pylint:disable=no-name-in-module
     SecretReferenceConfigurationSetting,
 )
 from azure.core import MatchConditions
-from azure.core.exceptions import (
-    HttpResponseError,
-    ServiceRequestError,
-    ServiceResponseError
-)
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
-from ._models import (
-    AzureAppConfigurationKeyVaultOptions,
-    SettingSelector
-)
+from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_PREFIX,
@@ -296,7 +289,7 @@ class _RefreshTimer:
         self._attempts = 1
 
     def retry(self) -> None:
-        self._next_refresh_time = time.time() + self._calculate_backoff()/1000
+        self._next_refresh_time = time.time() + self._calculate_backoff() / 1000
         self._attempts += 1
 
     def needs_refresh(self) -> bool:
@@ -343,7 +336,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         self._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
 
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
-        self._refresh_on: Mapping[Tuple[str, str]: Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
+        self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
         self._update_lock = Lock()
@@ -360,11 +353,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             with self._update_lock:
                 for (key, label), etag in self._refresh_on.items():
                     updated_sentinel = self._client.get_configuration_setting(
-                        key=key,
-                        label=label,
-                        etag=etag,
-                        match_condition=MatchConditions.IfModified,
-                        **kwargs
+                        key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, **kwargs
                     )
                     if updated_sentinel is not None:
                         logging.debug(
@@ -421,7 +410,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         # Let's check whether any of the settings configured for refresh don't actually exist
         # This should only happen during the initial `load_all`, not subsequent refreshes.
         no_etag = [(key, label) for (key, label), etag in self._refresh_on.items() if etag is None]
-        #if Any(no_etag):
+        # if Any(no_etag):
         #    raise ValueError(
         #        "The following key,label pairs are not found in the AppConfig, and cannot be refreshed: %r",
         #        no_etag

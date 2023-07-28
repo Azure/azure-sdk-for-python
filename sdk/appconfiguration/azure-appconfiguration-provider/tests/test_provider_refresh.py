@@ -10,13 +10,10 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from azure.appconfiguration import AzureAppConfigurationClient
 from preparers import app_config_decorator_aad
 
+
 class TestAppConfigurationProvider(AzureRecordedTestCase, unittest.TestCase):
     def build_provider_aad(
-        self,
-        endpoint,
-        trim_prefixes=[],
-        selects={SettingSelector(key_filter="*", label_filter="\0")},
-        refresh_on=None
+        self, endpoint, trim_prefixes=[], selects={SettingSelector(key_filter="*", label_filter="\0")}, refresh_on=None
     ):
         cred = self.get_credential(AzureAppConfigurationClient)
         return load(
@@ -38,9 +35,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase, unittest.TestCase):
     @recorded_by_proxy
     @app_config_decorator_aad
     def test_refresh(self, appconfiguration_endpoint_string):
-        client = self.build_provider_aad(
-            appconfiguration_endpoint_string, refresh_on=[SentinelKey("refresh_message")]
-        )
+        client = self.build_provider_aad(appconfiguration_endpoint_string, refresh_on=[SentinelKey("refresh_message")])
         assert client["refresh_message"] == "original value"
         assert client["my_json"]["key"] == "value"
         assert (

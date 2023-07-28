@@ -55,6 +55,7 @@ class SettingSelector:
         self.key_filter = key_filter
         self.label_filter = label_filter
 
+
 class SentinelKey(NamedTuple):
     key: str
     label: str = EMPTY_LABEL
