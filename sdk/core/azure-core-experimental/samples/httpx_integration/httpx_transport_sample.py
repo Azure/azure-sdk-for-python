@@ -17,13 +17,15 @@ key = os.environ["AZURE_LANGUAGE_KEY"]
 
 credential = AzureKeyCredential(key)
 
-text_analytics_client = TextAnalyticsClient(
-    endpoint=endpoint,
-    credential=credential,
-    transport=HttpXTransport(),
-)
-
-document = ["This is an example document."]
-
-poller = text_analytics_client.begin_abstractive_summary(document)
-abstractive_summary_results = poller.result()
+with TextAnalyticsClient(endpoint=endpoint, credential=credential, transport=HttpXTransport(),) as text_analytics_client:
+    document = ["This is an example document."]
+    poller = text_analytics_client.begin_abstract_summary(document)
+    abstract_summary_results = poller.result()
+    for result in abstract_summary_results:
+        if result.kind == "AbstractiveSummarization":
+            print("Summaries abstracted:")
+            [print(f"{summary.text}\n") for summary in result.summaries]
+        elif result.is_error is True:
+            print("...Is an error with code '{}' and message '{}'".format(
+                result.error.code, result.error.message
+            ))
