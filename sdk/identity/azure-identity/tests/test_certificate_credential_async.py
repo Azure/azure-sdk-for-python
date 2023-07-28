@@ -99,6 +99,7 @@ async def test_user_agent():
 
     await credential.get_token("scope")
 
+
 @pytest.mark.asyncio
 async def test_tenant_id():
     transport = async_validating_transport(
@@ -106,7 +107,9 @@ async def test_tenant_id():
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
     )
 
-    credential = CertificateCredential("tenant-id", "client-id", PEM_CERT_PATH, transport=transport, additionally_allowed_tenants=['*'])
+    credential = CertificateCredential(
+        "tenant-id", "client-id", PEM_CERT_PATH, transport=transport, additionally_allowed_tenants=["*"]
+    )
 
     await credential.get_token("scope", tenant_id="tenant_id")
 
@@ -300,7 +303,7 @@ async def test_multitenant_authentication(cert_path, cert_password):
         cert_path,
         password=cert_password,
         transport=Mock(send=send),
-        additionally_allowed_tenants=['*']
+        additionally_allowed_tenants=["*"],
     )
     token = await credential.get_token("scope")
     assert token.token == first_token
@@ -329,7 +332,12 @@ async def test_multitenant_authentication_backcompat(cert_path, cert_password):
         return mock_response(json_payload=build_aad_response(access_token=token))
 
     credential = CertificateCredential(
-        expected_tenant, "client-id", cert_path, password=cert_password, transport=Mock(send=send), additionally_allowed_tenants=['*']
+        expected_tenant,
+        "client-id",
+        cert_path,
+        password=cert_password,
+        transport=Mock(send=send),
+        additionally_allowed_tenants=["*"],
     )
 
     token = await credential.get_token("scope")

@@ -40,8 +40,6 @@ def _get_sorted_filtered_logs(
 ) -> List[str]:
     """Filters log file names, sorts, and returns list starting with where we left off last iteration.
 
-    :param run_details:
-    :type run_details: dict
     :param processed_logs: dictionary tracking the state of how many lines of each file have been written out
     :type processed_logs: dict[str, int]
     :param job_type: the job type to filter log files

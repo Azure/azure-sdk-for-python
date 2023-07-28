@@ -22,6 +22,7 @@ class StaticTokenCredential(object):
     quite limited. An application using it must ensure the token is valid and contains all claims required by any
     service client given an instance of this credential.
     """
+
     def __init__(self, access_token):
         # type: (Union[str, AccessToken]) -> None
         if isinstance(access_token, AccessToken):
@@ -39,6 +40,7 @@ class StaticTokenCredential(object):
 
 class MsalTokenCredential(object):
     """Uses an MSAL client directly to obtain access tokens with an interactive flow."""
+
     def __init__(self, tenant_id, client_id):
         # type: (str, str) -> None
         self._app = msal.PublicClientApplication(

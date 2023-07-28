@@ -181,12 +181,12 @@ class BestWorkerMode(DistributionMode):
     :vartype bypass_selectors: bool
     :ivar scoring_rule: A rule of one of the following types:
 
-     StaticRule:  A rule providing static rules that always return the same result, regardless of
+     StaticRouterRule:  A rule providing static rules that always return the same result, regardless of
      input.
-     DirectMapRule:  A rule that return the same labels as the input labels.
-     ExpressionRule: A rule providing inline expression rules.
-     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
-     WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+     DirectMapRouterRule:  A rule that return the same labels as the input labels.
+     ExpressionRouterRule: A rule providing inline expression rules.
+     FunctionRouterRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     WebhookRouterRule: A rule providing a binding to a webserver following OAuth2.0 authentication
      protocol.
     :vartype scoring_rule: ~azure.communication.jobrouter.RouterRule
     :ivar scoring_rule_options: Encapsulates all options that can be passed as parameters for
@@ -234,12 +234,12 @@ class BestWorkerMode(DistributionMode):
         :paramtype bypass_selectors: bool
         :keyword scoring_rule: A rule of one of the following types:
 
-         StaticRule:  A rule providing static rules that always return the same result, regardless of
+         StaticRouterRule:  A rule providing static rules that always return the same result, regardless of
          input.
-         DirectMapRule:  A rule that return the same labels as the input labels.
-         ExpressionRule: A rule providing inline expression rules.
-         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
-         WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+         DirectMapRouterRule:  A rule that return the same labels as the input labels.
+         ExpressionRouterRule: A rule providing inline expression rules.
+         FunctionRouterRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         WebhookRouterRule: A rule providing a binding to a webserver following OAuth2.0 authentication
          protocol.
         :paramtype scoring_rule: ~azure.communication.jobrouter.RouterRule
         :keyword scoring_rule_options: Encapsulates all options that can be passed as parameters for
@@ -420,12 +420,12 @@ class ClassificationPolicy:
     :vartype queue_selectors: list[~azure.communication.jobrouter.QueueSelectorAttachment]
     :ivar prioritization_rule: A rule of one of the following types:
 
-     StaticRule:  A rule providing static rules that always return the same result, regardless of
+     StaticRouterRule:  A rule providing static rules that always return the same result, regardless of
      input.
-     DirectMapRule:  A rule that return the same labels as the input labels.
-     ExpressionRule: A rule providing inline expression rules.
-     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
-     WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+     DirectMapRouterRule:  A rule that return the same labels as the input labels.
+     ExpressionRouterRule: A rule providing inline expression rules.
+     FunctionRouterRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     WebhookRouterRule: A rule providing a binding to a webserver following OAuth2.0 authentication
      protocol.
     :vartype prioritization_rule: ~azure.communication.jobrouter.RouterRule
     :ivar worker_selectors: The worker label selectors to attach to a given job.
@@ -464,12 +464,12 @@ class ClassificationPolicy:
         :paramtype queue_selectors: list[~azure.communication.jobrouter.QueueSelectorAttachment]
         :keyword prioritization_rule: A rule of one of the following types:
 
-         StaticRule:  A rule providing static rules that always return the same result, regardless of
+         StaticRouterRule:  A rule providing static rules that always return the same result, regardless of
          input.
-         DirectMapRule:  A rule that return the same labels as the input labels.
-         ExpressionRule: A rule providing inline expression rules.
-         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
-         WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+         DirectMapRouterRule:  A rule that return the same labels as the input labels.
+         ExpressionRouterRule: A rule providing inline expression rules.
+         FunctionRouterRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         WebhookRouterRule: A rule providing a binding to a webserver following OAuth2.0 authentication
          protocol.
         :paramtype prioritization_rule: ~azure.communication.jobrouter.RouterRule
         :keyword worker_selectors: The worker label selectors to attach to a given job.
@@ -661,12 +661,12 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment):
     :vartype kind: Literal["conditional"]
     :ivar condition: A rule of one of the following types:
 
-     StaticRule:  A rule providing static rules that always return the same result, regardless of
+     StaticRouterRule:  A rule providing static rules that always return the same result, regardless of
      input.
-     DirectMapRule:  A rule that return the same labels as the input labels.
-     ExpressionRule: A rule providing inline expression rules.
-     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
-     WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+     DirectMapRouterRule:  A rule that return the same labels as the input labels.
+     ExpressionRouterRule: A rule providing inline expression rules.
+     FunctionRouterRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     WebhookRouterRule: A rule providing a binding to a webserver following OAuth2.0 authentication
      protocol. Required.
     :vartype condition: ~azure.communication.jobrouter.RouterRule
     :ivar queue_selectors: The queue selectors to attach. Required.
@@ -691,12 +691,12 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment):
         """
         :keyword condition: A rule of one of the following types:
 
-         StaticRule:  A rule providing static rules that always return the same result, regardless of
+         StaticRouterRule:  A rule providing static rules that always return the same result, regardless of
          input.
-         DirectMapRule:  A rule that return the same labels as the input labels.
-         ExpressionRule: A rule providing inline expression rules.
-         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
-         WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+         DirectMapRouterRule:  A rule that return the same labels as the input labels.
+         ExpressionRouterRule: A rule providing inline expression rules.
+         FunctionRouterRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         WebhookRouterRule: A rule providing a binding to a webserver following OAuth2.0 authentication
          protocol. Required.
         :paramtype condition: ~azure.communication.jobrouter.RouterRule
         :keyword queue_selectors: The queue selectors to attach. Required.
@@ -756,12 +756,12 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment):
     :vartype kind: Literal["conditional"]
     :ivar condition: A rule of one of the following types:
 
-     StaticRule:  A rule providing static rules that always return the same result, regardless of
+     StaticRouterRule:  A rule providing static rules that always return the same result, regardless of
      input.
-     DirectMapRule:  A rule that return the same labels as the input labels.
-     ExpressionRule: A rule providing inline expression rules.
-     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
-     WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+     DirectMapRouterRule:  A rule that return the same labels as the input labels.
+     ExpressionRouterRule: A rule providing inline expression rules.
+     FunctionRouterRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     WebhookRouterRule: A rule providing a binding to a webserver following OAuth2.0 authentication
      protocol. Required.
     :vartype condition: ~azure.communication.jobrouter.RouterRule
     :ivar worker_selectors: The worker selectors to attach. Required.
@@ -786,12 +786,12 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment):
         """
         :keyword condition: A rule of one of the following types:
 
-         StaticRule:  A rule providing static rules that always return the same result, regardless of
+         StaticRouterRule:  A rule providing static rules that always return the same result, regardless of
          input.
-         DirectMapRule:  A rule that return the same labels as the input labels.
-         ExpressionRule: A rule providing inline expression rules.
-         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
-         WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+         DirectMapRouterRule:  A rule that return the same labels as the input labels.
+         ExpressionRouterRule: A rule providing inline expression rules.
+         FunctionRouterRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         WebhookRouterRule: A rule providing a binding to a webserver following OAuth2.0 authentication
          protocol. Required.
         :paramtype condition: ~azure.communication.jobrouter.RouterRule
         :keyword worker_selectors: The worker selectors to attach. Required.
@@ -837,12 +837,12 @@ class DeclineJobOfferRequest:
 class RouterRule:
     """A rule of one of the following types:
 
-    StaticRule:  A rule providing static rules that always return the same result, regardless of
+    StaticRouterRule:  A rule providing static rules that always return the same result, regardless of
     input.
-    DirectMapRule:  A rule that return the same labels as the input labels.
-    ExpressionRule: A rule providing inline expression rules.
-    AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
-    WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+    DirectMapRouterRule:  A rule that return the same labels as the input labels.
+    ExpressionRouterRule: A rule providing inline expression rules.
+    FunctionRouterRule: A rule providing a binding to an HTTP Triggered Azure Function.
+    WebhookRouterRule: A rule providing a binding to a webserver following OAuth2.0 authentication
     protocol.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1256,12 +1256,13 @@ class JobMatchingMode:
      "suspendMode".
     :vartype mode_type: str or ~azure.communication.jobrouter.JobMatchModeType
     :ivar queue_and_match_mode: Any object.
-    :vartype queue_and_match_mode: JSON
-    :ivar schedule_and_suspend_mode:
+    :vartype queue_and_match_mode: ~collections.abc.MutableMapping[str, Any]
+    :ivar schedule_and_suspend_mode: Describes a matching mode used for scheduling jobs to be queued at a future time.
+     At the specified time, matching worker to a job will not start automatically.
     :vartype schedule_and_suspend_mode:
      ~azure.communication.jobrouter.ScheduleAndSuspendMode
     :ivar suspend_mode: Any object.
-    :vartype suspend_mode: JSON
+    :vartype suspend_mode: ~collections.abc.MutableMapping[str, Any]
     """
 
     _validation = {
@@ -1292,7 +1293,7 @@ class JobMatchingMode:
         :paramtype mode_type: Literal["queueAndMatchMode"]
 
         :keyword queue_and_match_mode: Any object.
-        :paramtype queue_and_match_mode: JSON
+        :paramtype queue_and_match_mode: ~collections.abc.MutableMapping[str, Any]
         """
 
     @overload
@@ -1308,7 +1309,8 @@ class JobMatchingMode:
         :keyword mode_type: Known values are: "scheduleAndSuspendMode".
         :paramtype mode_type: Literal["scheduleAndSuspendMode"]
 
-        :keyword schedule_and_suspend_mode:
+        :keyword schedule_and_suspend_mode: Describes a matching mode used for scheduling jobs to be queued at a
+         future time. At the specified time, matching worker to a job will not start automatically.
         :paramtype schedule_and_suspend_mode:
          ~azure.communication.jobrouter.ScheduleAndSuspendMode
         """
@@ -1327,7 +1329,7 @@ class JobMatchingMode:
         :paramtype mode_type: Literal["suspendMode"]
 
         :keyword suspend_mode: Any object.
-        :paramtype suspend_mode: JSON
+        :paramtype suspend_mode: ~collections.abc.MutableMapping[str, Any]
         """
 
 
@@ -1337,12 +1339,13 @@ class JobMatchingMode:
          "suspendMode".
         :paramtype mode_type: str or ~azure.communication.jobrouter.JobMatchModeType
         :keyword queue_and_match_mode: Any object.
-        :paramtype queue_and_match_mode: JSON
-        :keyword schedule_and_suspend_mode:
+        :paramtype queue_and_match_mode: ~collections.abc.MutableMapping[str, Any]
+        :keyword schedule_and_suspend_mode: Describes a matching mode used for scheduling jobs to be queued at a
+         future time. At the specified time, matching worker to a job will not start automatically.
         :paramtype schedule_and_suspend_mode:
          ~azure.communication.jobrouter.ScheduleAndSuspendMode
         :keyword suspend_mode: Any object.
-        :paramtype suspend_mode: JSON
+        :paramtype suspend_mode: ~collections.abc.MutableMapping[str, Any]
         """
         self.queue_and_match_mode = kwargs.pop('queue_and_match_mode', None)
         self.schedule_and_suspend_mode = kwargs.pop('schedule_and_suspend_mode', None)
@@ -1831,12 +1834,12 @@ class RouterJob:  # pylint: disable=too-many-instance-attributes
      list[~azure.communication.jobrouter.RouterWorkerSelector]
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
      engines to make decisions.
-    :vartype labels: dict[str, any]
+    :vartype labels: dict[str, Union[int, float, str, bool]]
     :ivar assignments: A collection of the assignments of the job.
      Key is AssignmentId.
     :vartype assignments: dict[str, ~azure.communication.jobrouter.RouterJobAssignment]
     :ivar tags: A set of non-identifying attributes attached to this job.
-    :vartype tags: dict[str, any]
+    :vartype tags: dict[str, Union[int, float, str, bool]]
     :ivar notes: Notes attached to a job, sorted by timestamp.
     :vartype notes: dict[str, str]
     :ivar scheduled_at: If set, job will be scheduled to be enqueued at a given time.
@@ -1909,9 +1912,9 @@ class RouterJob:  # pylint: disable=too-many-instance-attributes
          list[~azure.communication.jobrouter.RouterWorkerSelector]
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
-        :paramtype labels: dict[str, any]
+        :paramtype labels: dict[str, Union[int, float, str, bool]]
         :keyword tags: A set of non-identifying attributes attached to this job.
-        :paramtype tags: dict[str, any]
+        :paramtype tags: dict[str, Union[int, float, str, bool]]
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: dict[str, str]
         :keyword matching_mode:
@@ -2257,7 +2260,7 @@ class RouterQueueSelector:
      "lessThanEqual", "greaterThan", and "greaterThanEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.LabelOperator
     :ivar value: The value to compare against the actual label value with the given operator.
-    :vartype value: JSON
+    :vartype value: Union[int, float, str, bool]
     """
 
     _validation = {
@@ -2286,7 +2289,7 @@ class RouterQueueSelector:
          "lessThanEqual", "greaterThan", and "greaterThanEqual".
         :paramtype label_operator: str or ~azure.communication.jobrouter.LabelOperator
         :keyword value: The value to compare against the actual label value with the given operator.
-        :paramtype value: JSON
+        :paramtype value: Union[int, float, str, bool]
         """
         self.key = key
         self.label_operator = label_operator
@@ -2359,15 +2362,15 @@ class RouterWorker:  # pylint: disable=too-many-instance-attributes
      "inactive".
     :vartype state: str or ~azure.communication.jobrouter.RouterWorkerState
     :ivar queue_assignments: The queue(s) that this worker can receive work from.
-    :vartype queue_assignments: dict[str, JSON]
+    :vartype queue_assignments: dict[str, ~collections.abc.MutableMapping[str, Any]]
     :ivar total_capacity: The total capacity score this worker has to manage multiple concurrent
      jobs.
     :vartype total_capacity: int
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
      engines to make decisions.
-    :vartype labels: dict[str, any]
+    :vartype labels: dict[str, Union[int, float, str, bool]]
     :ivar tags: A set of non-identifying attributes attached to this worker.
-    :vartype tags: dict[str, any]
+    :vartype tags: dict[str, Union[int, float, str, bool]]
     :ivar channel_configurations: The channel(s) this worker can handle and their impact on the
      workers capacity.
     :vartype channel_configurations: dict[str,
@@ -2417,15 +2420,15 @@ class RouterWorker:  # pylint: disable=too-many-instance-attributes
     ) -> None:
         """
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
-        :paramtype queue_assignments: dict[str, JSON]
+        :paramtype queue_assignments: dict[str, ~collections.abc.MutableMapping[str, Any]]
         :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
          jobs.
         :paramtype total_capacity: int
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
-        :paramtype labels: dict[str, any]
+        :paramtype labels: dict[str, Union[int, float, str, bool]]
         :keyword tags: A set of non-identifying attributes attached to this worker.
-        :paramtype tags: dict[str, any]
+        :paramtype tags: dict[str, Union[int, float, str, bool]]
         :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
          workers capacity.
         :paramtype channel_configurations: dict[str,
@@ -2539,7 +2542,7 @@ class RouterWorkerSelector:
      "lessThanEqual", "greaterThan", and "greaterThanEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.LabelOperator
     :ivar value: The value to compare against the actual label value with the given operator.
-    :vartype value: JSON
+    :vartype value: Union[int, float, str, bool]
     :ivar expires_after_seconds: Describes how long this label selector is valid in seconds.
     :vartype expires_after_seconds: float
     :ivar expedite: Pushes the job to the front of the queue as long as this selector is active.
@@ -2584,7 +2587,7 @@ class RouterWorkerSelector:
          "lessThanEqual", "greaterThan", and "greaterThanEqual".
         :paramtype label_operator: str or ~azure.communication.jobrouter.LabelOperator
         :keyword value: The value to compare against the actual label value with the given operator.
-        :paramtype value: JSON
+        :paramtype value: Union[int, float, str, bool]
         :keyword expires_after_seconds: Describes how long this label selector is valid in seconds.
         :paramtype expires_after_seconds: float
         :keyword expedite: Pushes the job to the front of the queue as long as this selector is active.
@@ -2608,12 +2611,12 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment):
     :vartype kind: Literal["rule-engine"]
     :ivar rule: A rule of one of the following types:
 
-     StaticRule:  A rule providing static rules that always return the same result, regardless of
+     StaticRouterRule:  A rule providing static rules that always return the same result, regardless of
      input.
-     DirectMapRule:  A rule that return the same labels as the input labels.
-     ExpressionRule: A rule providing inline expression rules.
-     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
-     WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+     DirectMapRouterRule:  A rule that return the same labels as the input labels.
+     ExpressionRouterRule: A rule providing inline expression rules.
+     FunctionRouterRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     WebhookRouterRule: A rule providing a binding to a webserver following OAuth2.0 authentication
      protocol. Required.
     :vartype rule: ~azure.communication.jobrouter.RouterRule
     """
@@ -2632,12 +2635,12 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment):
         """
         :keyword rule: A rule of one of the following types:
 
-         StaticRule:  A rule providing static rules that always return the same result, regardless of
+         StaticRouterRule:  A rule providing static rules that always return the same result, regardless of
          input.
-         DirectMapRule:  A rule that return the same labels as the input labels.
-         ExpressionRule: A rule providing inline expression rules.
-         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
-         WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+         DirectMapRouterRule:  A rule that return the same labels as the input labels.
+         ExpressionRouterRule: A rule providing inline expression rules.
+         FunctionRouterRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         WebhookRouterRule: A rule providing a binding to a webserver following OAuth2.0 authentication
          protocol. Required.
         :paramtype rule: ~azure.communication.jobrouter.RouterRule
         """
@@ -2655,12 +2658,12 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment):
     :vartype kind: Literal["rule-engine"]
     :ivar rule: A rule of one of the following types:
 
-     StaticRule:  A rule providing static rules that always return the same result, regardless of
+     StaticRouterRule:  A rule providing static rules that always return the same result, regardless of
      input.
-     DirectMapRule:  A rule that return the same labels as the input labels.
-     ExpressionRule: A rule providing inline expression rules.
-     AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
-     WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+     DirectMapRouterRule:  A rule that return the same labels as the input labels.
+     ExpressionRouterRule: A rule providing inline expression rules.
+     FunctionRouterRule: A rule providing a binding to an HTTP Triggered Azure Function.
+     WebhookRouterRule: A rule providing a binding to a webserver following OAuth2.0 authentication
      protocol. Required.
     :vartype rule: ~azure.communication.jobrouter.RouterRule
     """
@@ -2679,12 +2682,12 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment):
         """
         :keyword rule: A rule of one of the following types:
 
-         StaticRule:  A rule providing static rules that always return the same result, regardless of
+         StaticRouterRule:  A rule providing static rules that always return the same result, regardless of
          input.
-         DirectMapRule:  A rule that return the same labels as the input labels.
-         ExpressionRule: A rule providing inline expression rules.
-         AzureFunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
-         WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+         DirectMapRouterRule:  A rule that return the same labels as the input labels.
+         ExpressionRouterRule: A rule providing inline expression rules.
+         FunctionRouterRule: A rule providing a binding to an HTTP Triggered Azure Function.
+         WebhookRouterRule: A rule providing a binding to a webserver following OAuth2.0 authentication
          protocol. Required.
         :paramtype rule: ~azure.communication.jobrouter.RouterRule
         """
@@ -2827,7 +2830,7 @@ class StaticRouterRule(RouterRule):
     :ivar kind: The type discriminator describing a sub-type of Rule. Required.
     :vartype kind: Literal["static-rule"]
     :ivar value: The static value this rule always returns.
-    :vartype value: JSON
+    :vartype value: ~collections.abc.MutableMapping[str, Any]
     """
 
     _validation = {
@@ -2842,7 +2845,7 @@ class StaticRouterRule(RouterRule):
     def __init__(self, *, value: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword value: The static value this rule always returns.
-        :paramtype value: JSON
+        :paramtype value: ~collections.abc.MutableMapping[str, Any]
         """
         super().__init__(**kwargs)
         self.kind: Literal["static-rule"] = "static-rule"

@@ -175,6 +175,7 @@ def test_multitenant_authentication_class():
             token = AzureDeveloperCliCredential(tenant_id=second_tenant).get_token("scope")
             assert token.token == second_token
 
+
 def test_multitenant_authentication():
     default_tenant = "first-tenant"
     first_token = "***"
@@ -211,6 +212,7 @@ def test_multitenant_authentication():
             token = credential.get_token("scope")
             assert token.token == first_token
 
+
 def test_multitenant_authentication_not_allowed():
     expected_tenant = "expected-tenant"
     expected_token = "***"
@@ -234,8 +236,6 @@ def test_multitenant_authentication_not_allowed():
             token = credential.get_token("scope")
             assert token.token == expected_token
 
-            with mock.patch.dict(
-                "os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}
-            ):
+            with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
                 token = credential.get_token("scope", tenant_id="un" + expected_tenant)
             assert token.token == expected_token

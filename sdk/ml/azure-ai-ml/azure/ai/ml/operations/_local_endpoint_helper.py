@@ -45,8 +45,6 @@ class _LocalEndpointHelper(object):
 
         :param endpoint: OnlineEndpoint object with information from user yaml.
         :type endpoint: OnlineEndpoint
-        :param operation_message: Output string for operation messages.
-        :type operation_message: str
         """
         try:
             if endpoint is None:
@@ -97,8 +95,8 @@ class _LocalEndpointHelper(object):
     def get(self, endpoint_name: str) -> OnlineEndpoint:
         """Get a local endpoint.
 
-        :param name: Name of endpoint.
-        :type name: str
+        :param endpoint_name: Name of endpoint.
+        :type endpoint_name: str
         :return OnlineEndpoint:
         """
         endpoint = self._endpoint_stub.get(endpoint_name=endpoint_name)
@@ -145,8 +143,6 @@ class _LocalEndpointHelper(object):
 
         :param name: Name of endpoint to delete.
         :type name: str
-        :param deployment_name: Name of specific deployment to delete.
-        :type deployment_name: str
         """
         endpoint_stub = self._endpoint_stub.get(endpoint_name=name)
         if endpoint_stub:

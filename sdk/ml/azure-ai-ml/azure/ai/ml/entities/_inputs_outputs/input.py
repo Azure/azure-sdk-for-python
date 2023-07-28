@@ -313,7 +313,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def _parse_and_validate(self, val):
         """Parse the val passed from the command line and validate the value.
 
-        :param str_val: The input string value from the command line.
+        :param val: The input string value from the command line.
         :return: The parsed value, an exception will be raised if the value is invalid.
         """
         if self._is_primitive_type:

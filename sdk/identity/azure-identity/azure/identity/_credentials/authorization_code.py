@@ -41,12 +41,7 @@ class AuthorizationCodeCredential(GetTokenMixin):
     """
 
     def __init__(
-            self,
-            tenant_id: str,
-            client_id: str,
-            authorization_code: str,
-            redirect_uri: str,
-            **kwargs: Any
+        self, tenant_id: str, client_id: str, authorization_code: str, redirect_uri: str, **kwargs: Any
     ) -> None:
         self._authorization_code: Optional[str] = authorization_code
         self._client_id = client_id
@@ -89,9 +84,7 @@ class AuthorizationCodeCredential(GetTokenMixin):
         # pylint:disable=useless-super-delegation
         return super(AuthorizationCodeCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(
-        self, *scopes: str, **kwargs
-    ) -> Optional[AccessToken]:
+    def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     def _request_token(self, *scopes: str, **kwargs) -> AccessToken:
