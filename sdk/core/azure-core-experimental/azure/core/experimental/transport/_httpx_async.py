@@ -124,12 +124,15 @@ class AsyncHttpXTransport(AsyncHttpTransport):
     """Implements a basic async httpx HTTP sender
 
     :keyword httpx.AsyncClient client: HTTPX client to use instead of the default one
+    :keyword bool client_owner: Decide if the client provided by user is owned by this transport. Default to True.
+    :keyword bool use_env_settings: Uses proxy settings from environment. Defaults to True.
     """
 
-    def __init__(self, *, client: Optional[httpx.AsyncClient] = None, **kwargs: Any) -> None:
+    def __init__(self, *, client: Optional[httpx.AsyncClient] = None, client_owner: bool = True, use_env_settings: bool = True, **kwargs: Any) -> None:
         self.client = client
         self.connection_config = ConnectionConfiguration(**kwargs)
-        self._use_env_settings = kwargs.pop("use_env_settings", True)
+        self._client_owner = client_owner
+        self._use_env_settings = use_env_settings
 
     async def open(self) -> None:
         if self.client is None:
@@ -140,7 +143,7 @@ class AsyncHttpXTransport(AsyncHttpTransport):
             )
 
     async def close(self) -> None:
-        if self.client:
+        if self._client_owner and self.client:
             await self.client.aclose()
             self.client = None
 
