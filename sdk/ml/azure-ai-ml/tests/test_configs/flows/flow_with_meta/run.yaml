@@ -1,0 +1,21 @@
+# not sure if a run should have a name
+name: flow_with_run_config
+display_name: flow with run config
+tags:
+  - flow
+
+path: ./flow.dag.yaml
+
+# It will be weird if we put additional includes here given it's shared by all runs
+additional_includes:
+  - ../additional/util.py
+
+local:
+  environment_variables:
+    test_env_var: test_env_var_value
+
+subscription/XXX/resource_group/XXX/workspace/XXX:
+  runtime: promptflow-runtime
+  environment_variables:
+    OPENAI_ENDPOINT: ${my_openai.endpoint}
+  connections:
