@@ -9,11 +9,13 @@ from typing import IO, AnyStr, Optional, Type, Union
 
 from marshmallow import ValidationError
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import load_yaml
+from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackage
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._assets._artifacts.data import Data
-from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
+from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
@@ -23,8 +25,8 @@ from azure.ai.ml.entities._compute.compute import Compute
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 from azure.ai.ml.entities._deployment.model_batch_deployment import ModelBatchDeployment
-from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
+from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
 from azure.ai.ml.entities._endpoint.online_endpoint import OnlineEndpoint
 from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
@@ -37,9 +39,7 @@ from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, _ValidationResultBuilder
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackage
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml._utils._experimental import experimental
 
 module_logger = logging.getLogger(__name__)
 
@@ -338,18 +338,6 @@ def load_component(
 ) -> Union[CommandComponent, ParallelComponent, PipelineComponent]:
     """Load component from local or remote to a component function.
 
-    For example:
-
-    .. code-block:: python
-
-        # Load a local component to a component function.
-        component_func = load_component(source="custom_component/component_spec.yaml")
-        # Load a remote component to a component function.
-        component_func = load_component(client=ml_client, name="my_component", version=1)
-
-        # Consuming the component func
-        component = component_func(param1=xxx, param2=xxx)
-
     :param source: The local yaml source of a component. Must be either a
         path to a local file, or an already-open file.
         If the source is a path, it will be open and read.
@@ -376,6 +364,15 @@ def load_component(
 
     :return: A function that can be called with parameters to get a `azure.ai.ml.entities.Component`
     :rtype: Union[CommandComponent, ParallelComponent, PipelineComponent]
+
+    .. admonition:: Example:
+        :class: tip
+        .. literalinclude:: ../../../../samples/ml_samples_component_configurations.py
+            :start-after: [START configure_load_component]
+            :end-before: [END configure_load_component]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Component object from a YAML file.
     """
 
     client = kwargs.pop("client", None)
