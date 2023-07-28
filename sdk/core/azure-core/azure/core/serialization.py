@@ -329,8 +329,11 @@ def _get_model(module_name: str, model_name: str):
         if isinstance(v, type) or isinstance(v, typing._GenericAlias)
     }
     module_end = module_name.rsplit(".", 1)[0]
-    module = sys.modules[module_end]
-    models.update({k: v for k, v in module.__dict__.items() if isinstance(v, type)})
+    models.update({
+        k: v
+        for k, v in sys.modules[module_end].__dict__.items()
+        if isinstance(v, type) or isinstance(v, typing._GenericAlias)
+    })
     if isinstance(model_name, str):
         model_name = model_name.split(".")[-1]
     if model_name not in models:
@@ -581,8 +584,28 @@ class Model(_MyMutableMapping):
         return mapped_cls._deserialize(data)  # pylint: disable=protected-access
 
     def as_dict(self, *, exclude_readonly: bool = True, exclude_none: bool = False) -> typing.Dict[str, typing.Any]:
-        return json.loads(
-            json.dumps(self, exclude_readonly=exclude_readonly, exclude_none=exclude_none, cls=AzureJSONEncoder))
+        result = {}
+        if exclude_readonly:
+            readonly_props = [p._rest_name for p in self._attr_to_rest_field.values() if _is_readonly(p)]
+        for k, v in self.items():
+            if exclude_readonly and k in readonly_props:
+                continue
+            if exclude_none and (v is None or isinstance(v, _Null)):
+                continue
+            result[k] = Model._as_dict_value(v)
+        return result
+
+    @staticmethod
+    def _as_dict_value(v: typing.Any) -> typing.Any:
+        if v is None or isinstance(v, _Null):
+            return None
+        elif isinstance(v, (list, tuple, set)):
+            return [Model._as_dict_value(x) for x in v]
+        elif isinstance(v, dict):
+            return {dk: Model._as_dict_value(dv) for dk, dv in v.items()}
+        else:
+            return v.as_dict() if hasattr(v, "as_dict") else v
+
 
 
 def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-return-statements, too-many-statements
@@ -820,7 +843,9 @@ class _RestField:
         item = obj.get(self._rest_name)
         if item is None:
             return item
-        return _deserialize(self._type, _serialize(item, self._format), rf=self)
+        if self._is_model:
+            return item
+        return _deserialize(self._type, item, rf=self)
 
     def __set__(self, obj: Model, value) -> None:
         if value is None:
@@ -830,8 +855,10 @@ class _RestField:
             except KeyError:
                 pass
             return
-        if self._is_model and not _is_model(value):
-            obj.__setitem__(self._rest_name, _deserialize(self._type, value))
+        if self._is_model:
+            if not _is_model(value):
+                value = _deserialize(self._type, value)
+            obj.__setitem__(self._rest_name, value)
             return
         obj.__setitem__(self._rest_name, _serialize(value, self._format))
 
