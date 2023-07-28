@@ -169,6 +169,7 @@ class HttpXTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~azure.core.experimental.transport.HttpXTransportResponse
         """
+        self.open()
         stream_response = kwargs.pop("stream", False)
         timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
         # not needed here as its already handled during init
