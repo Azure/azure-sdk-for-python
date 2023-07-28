@@ -854,10 +854,7 @@ class TestComponent:
                 # unknown field optional will be ignored
                 "type": "AnyDirectory",
             },
-            "primitive_is_control": {
-                "is_control": True,
-                "type": "boolean",
-            },
+            "primitive_is_control": {"type": "boolean"},
         }
         assert component._to_rest_object().properties.component_spec["outputs"] == expected_outputs
         assert component._validate().passed is True, repr(component._validate())
