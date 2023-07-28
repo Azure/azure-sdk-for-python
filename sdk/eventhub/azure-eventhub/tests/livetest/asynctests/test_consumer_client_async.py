@@ -54,6 +54,11 @@ async def test_receive_storage_checkpoint_async(connstr_senders, uamqp_transport
     assert len(sequence_numbers_0) == 10
     assert len(sequence_numbers_1) == 10
 
+    try:
+        await checkpoint_store_aio._container_client.delete_container()
+    except:
+        pass
+
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_no_partition_async(connstr_senders, uamqp_transport):
