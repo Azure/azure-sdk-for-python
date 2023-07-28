@@ -5,13 +5,13 @@ import logging
 import re
 import uuid
 from abc import ABC
-from typing import Dict, Union
+from typing import Dict, Union  # pylint: disable=unused-import
 
 from marshmallow import ValidationError
 
 from azure.ai.ml._utils.utils import is_data_binding_expression, is_internal_components_enabled
 from azure.ai.ml.constants._common import CommonYamlFields
-from azure.ai.ml.constants._component import ControlFlowType, ComponentSource
+from azure.ai.ml.constants._component import ComponentSource, ControlFlowType
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._validation import SchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType
@@ -24,12 +24,15 @@ module_logger = logging.getLogger(__name__)
 
 # ControlFlowNode did not inherit from BaseNode since it doesn't have inputs/outputs like other nodes.
 class ControlFlowNode(YamlTranslatableMixin, SchemaValidatableMixin, ABC):
-    """Base class for control flow node in pipeline.
+    """Base class for control flow node in the pipeline.
 
     Please do not directly use this class.
+
+    :param kwargs: Additional keyword arguments.
+    :type kwargs: Dict[str, Union[Any]]
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         # TODO(1979547): refactor this
         _source = kwargs.pop("_source", None)
         self._source = _source if _source else ComponentSource.DSL
@@ -44,6 +47,11 @@ class ControlFlowNode(YamlTranslatableMixin, SchemaValidatableMixin, ABC):
 
     @property
     def type(self):
+        """Get the type of the control flow node.
+
+        :return: The type of the control flow node.
+        :rtype: self._type
+        """
         return self._type
 
     def _to_dict(self) -> Dict:
@@ -71,12 +79,17 @@ class ControlFlowNode(YamlTranslatableMixin, SchemaValidatableMixin, ABC):
 
 
 class LoopNode(ControlFlowNode, ABC):
-    """Base class for loop node in pipeline.
+    """Base class for loop node in the pipeline.
 
     Please do not directly use this class.
+
+    :param body: The body of the loop node.
+    :type body: ~azure.ai.ml.entities._builders.BaseNode
+    :param kwargs: Additional keyword arguments.
+    :type kwargs: Dict[str, Union[Any]]
     """
 
-    def __init__(self, *, body: Union[BaseNode], **kwargs):
+    def __init__(self, *, body: BaseNode, **kwargs) -> None:
         self._body = body
         super(LoopNode, self).__init__(**kwargs)
         # always set the referenced control flow node instance id to the body.
@@ -84,6 +97,11 @@ class LoopNode(ControlFlowNode, ABC):
 
     @property
     def body(self):
+        """Get the body of the loop node.
+
+        :return: The body of the loop node.
+        :rtype: ~azure.ai.ml.entities._builders.BaseNode
+        """
         return self._body
 
     @classmethod
