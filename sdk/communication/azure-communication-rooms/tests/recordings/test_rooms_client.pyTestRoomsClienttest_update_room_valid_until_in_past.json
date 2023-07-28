@@ -7,7 +7,8 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "142",
+        "Connection": "keep-alive",
+        "Content-Length": "39",
         "Content-Type": "application/json",
         "Repeatability-First-Sent": "sanitized",
         "Repeatability-Request-ID": "sanitized",
@@ -19,15 +20,7 @@
       },
       "RequestBody": {
         "validFrom": null,
-        "validUntil": null,
-        "participants": {
-          "8:acs:sanitized1": {
-            "role": "Presenter"
-          },
-          "8:acs:sanitized3": {
-            "role": "Attendee"
-          }
-        }
+        "validUntil": null
       },
       "StatusCode": 201,
       "ResponseHeaders": {
@@ -35,7 +28,7 @@
         "api-supported-versions": "2023-03-31-preview, 2023-06-14",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "99457535671731701",
+        "Location": "9949007082272782",
         "MS-CV": "sanitized",
         "Repeatability-Result": "accepted",
         "Request-Context": "appId=",
@@ -44,38 +37,56 @@
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
-        "id": "99457535671731701",
-        "createdAt": "2023-07-27T23:42:38.3602391\u002B00:00",
-        "validFrom": "2023-07-27T23:42:38.098783\u002B00:00",
-        "validUntil": "2024-01-23T23:42:38.098783\u002B00:00"
+        "id": "9949007082272782",
+        "createdAt": "2023-07-27T23:42:07.4709553\u002B00:00",
+        "validFrom": "2023-07-27T23:42:07.3155981\u002B00:00",
+        "validUntil": "2024-01-23T23:42:07.3155981\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/99457535671731701?api-version=2023-06-14",
-      "RequestMethod": "DELETE",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/9949007082272782?api-version=2023-06-14",
+      "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "0",
+        "Connection": "keep-alive",
+        "Content-Length": "89",
+        "Content-Type": "application/merge-patch\u002Bjson",
         "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
       },
-      "RequestBody": null,
-      "StatusCode": 204,
+      "RequestBody": {
+        "validFrom": "2023-07-24T16:42:08.539671Z",
+        "validUntil": "2023-07-20T16:42:08.539671Z"
+      },
+      "StatusCode": 400,
       "ResponseHeaders": {
-        "api-deprecated-versions": "2021-04-07, 2022-02-01",
-        "api-supported-versions": "2023-03-31-preview, 2023-06-14",
+        "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Request-Context": "appId=",
+        "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
-        "X-Cache": "CONFIG_NOCACHE"
+        "X-Cache": "CONFIG_NOCACHE",
+        "x-ms-error-code": "BadRequest"
       },
-      "ResponseBody": null
+      "ResponseBody": {
+        "error": {
+          "code": "BadRequest",
+          "message": "The request could not be understood by the server due to malformed syntax.",
+          "details": [
+            {
+              "code": "BadArgument",
+              "message": "The time range end is in the past.",
+              "target": "ValidUntil"
+            }
+          ]
+        }
+      }
     }
   ],
   "Variables": {}
