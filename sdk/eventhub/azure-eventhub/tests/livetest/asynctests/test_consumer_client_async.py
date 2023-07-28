@@ -13,7 +13,7 @@ from azure.eventhub._constants import ALL_PARTITIONS
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_storage_checkpoint(connstr_senders, uamqp_transport, checkpoint_store_aio, schedule_update_properties):
+async def test_receive_storage_checkpoint_async(connstr_senders, uamqp_transport, checkpoint_store_aio, schedule_update_properties):
     connection_str, senders = connstr_senders
 
     for i in range(10):
