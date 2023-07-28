@@ -3076,7 +3076,7 @@ class TextSource(_serialization.Model):
          />`.
         :paramtype source_locale: str
         :keyword voice_kind: Voice kind type. Known values are: "male" and "female".
-        :paramtype voice_kind: str or ~azure.communication.callautomation.VoiceKind
+        :paramtype voice_kind: str or ~azure.communication.callautomation.models.VoiceKind
         :keyword voice_name: Voice name to be played
          Refer to available Text-to-speech voices here: :code:`<seealso
          href="https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
