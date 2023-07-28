@@ -54,6 +54,7 @@ def multiapi_combiner(sdk_code_path: str, package_name: str):
     )
     check_call("pip install -e .", shell=True)
 
+@return_origin_path
 def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: str):
     toml_file = Path(sdk_code_path) / CONF_NAME
     # do not package code of v20XX_XX_XX
@@ -64,6 +65,9 @@ def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: 
         with open(toml_file, "w") as file_out:
             toml.dump(content, file_out)
         call_build_config(package_name, folder_name)
+
+        os.chdir(sdk_code_path)
+        check_call("pip install -e .", shell=True)
     else:
         _LOGGER.info(f"do not find {toml_file}")
 
