@@ -73,6 +73,7 @@ class InputOutputBase(ABC):
                           azure.ai.ml.Input,
                           azure.ai.ml.Output]
         """
+        super(InputOutputBase, self).__init__(**kwargs)
         self._meta = meta
         self._original_data = data
         self._data = self._build_data(data)
@@ -86,7 +87,8 @@ class InputOutputBase(ABC):
         )
         # TODO: remove this
         self._attribute_map = {}
-        super(InputOutputBase, self).__init__(**kwargs)
+        if not hasattr(self, "_is_primitive_type"):  # Avoid covering the _is_primitive_type attribute of the subclass
+            self._is_primitive_type = self._type in IOConstants.PRIMITIVE_STR_2_TYPE
 
     @abstractmethod
     def _build_data(self, data, key=None):  # pylint: disable=unused-argument
