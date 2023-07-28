@@ -191,6 +191,7 @@ class CustomMonitoringSignalSchema(metaclass=PatchedSchemaMeta):
     metric_thresholds = fields.List(NestedField(CustomMonitoringMetricThresholdSchema))
     input_datasets = fields.Dict(keys=fields.Str(), values=NestedField(MonitorInputDataSchema))
     alert_notification = fields.Bool()
+    data_window_size = fields.Int()
 
     @pre_dump
     def predump(self, data, **kwargs):

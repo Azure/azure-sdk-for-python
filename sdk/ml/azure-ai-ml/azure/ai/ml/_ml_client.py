@@ -48,6 +48,9 @@ from azure.ai.ml._restclient.v2023_04_01_preview import (
 from azure.ai.ml._restclient.v2023_04_01 import (
     AzureMachineLearningWorkspaces as ServiceClient042023,
 )
+from azure.ai.ml._restclient.v2023_06_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient062023Preview,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -96,6 +99,7 @@ from azure.ai.ml.operations import (
     RegistryOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
+    WorkspaceHubOperations,
 )
 from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
@@ -288,6 +292,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_06_2023_preview = ServiceClient062023Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         # A general purpose, user-configurable pipeline for making
         # http requests
         self._requests_pipeline = HttpPipeline(**kwargs)
@@ -322,7 +333,7 @@ class MLClient:
 
         self._workspaces = WorkspaceOperations(
             self._operation_scope,
-            self._service_client_04_2023_preview,
+            self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
@@ -331,7 +342,7 @@ class MLClient:
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
-            self._service_client_04_2023_preview,
+            self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
             **kwargs,
@@ -520,6 +531,15 @@ class MLClient:
             self._operation_scope, self._operation_config, self._service_client_04_2023_preview, **ops_kwargs
         )
 
+        self._workspace_hubs = WorkspaceHubOperations(
+            self._operation_scope,
+            self._service_client_06_2023_preview,
+            self._operation_container,
+            self._credential,
+            **app_insights_handler_kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs)
+
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
         self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
@@ -666,6 +686,15 @@ class MLClient:
         :rtype: FeatureSetOperations
         """
         return self._featuresets
+
+    @property
+    @experimental
+    def workspace_hubs(self) -> WorkspaceHubOperations:
+        """A collection of hubs related operations.
+        :return: Hub Operations
+        :rtype: HubOperations
+        """
+        return self._workspace_hubs
 
     @property
     @experimental

@@ -8,11 +8,13 @@ from typing import Any, Dict, Union, NamedTuple
 
 from azure.core import CaseInsensitiveEnumMeta
 
+
 class TableEntity(dict):
     """
     An Entity dictionary with additional metadata
 
     """
+
     _metadata = {}  # type: Dict[str, Any]
 
     @property

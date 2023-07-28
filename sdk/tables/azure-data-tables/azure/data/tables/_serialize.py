@@ -40,7 +40,7 @@ def _prepare_key(keyvalue: str) -> str:
     try:
         return keyvalue.replace("'", "''")
     except AttributeError as exc:
-        raise TypeError('PartitionKey or RowKey must be of type string.') from exc
+        raise TypeError("PartitionKey or RowKey must be of type string.") from exc
 
 
 def _parameter_filter_substitution(parameters: Dict[str, str], query_filter: str) -> str:
@@ -53,9 +53,9 @@ def _parameter_filter_substitution(parameters: Dict[str, str], query_filter: str
     :rtype: str
     """
     if parameters:
-        filter_strings = query_filter.split(' ')
+        filter_strings = query_filter.split(" ")
         for index, word in enumerate(filter_strings):
-            if word[0] == '@':
+            if word[0] == "@":
                 val = parameters[word[1:]]
                 if val in [True, False]:
                     filter_strings[index] = str(val).lower()
@@ -72,12 +72,12 @@ def _parameter_filter_substitution(parameters: Dict[str, str], query_filter: str
                     filter_strings[index] = f"guid'{str(val)}'"
                 elif isinstance(val, bytes):
                     v = str(hexlify(val))
-                    if v[0] == 'b': # Python 3 adds a 'b' and quotations, python 2.7 does neither
+                    if v[0] == "b":  # Python 3 adds a 'b' and quotations, python 2.7 does neither
                         v = v[2:-1]
                     filter_strings[index] = f"X'{v}'"
                 else:
                     filter_strings[index] = f"'{_prepare_key(val)}'"
-        return ' '.join(filter_strings)
+        return " ".join(filter_strings)
     return query_filter
 
 
@@ -122,14 +122,14 @@ def _to_entity_guid(value):
 
 def _to_entity_int32(value):
     value = int(value)
-    if value >= 2 ** 31 or value < -(2 ** 31):
+    if value >= 2**31 or value < -(2**31):
         raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT32))
     return None, value
 
 
 def _to_entity_int64(value):
     int_value = int(value)
-    if int_value >= 2 ** 63 or int_value < -(2 ** 63):
+    if int_value >= 2**63 or int_value < -(2**63):
         raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT64))
     return EdmType.INT64, str(value)
 

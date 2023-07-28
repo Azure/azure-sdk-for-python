@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed a bug in deserializing and serializing Snapshot when `filters` property is `None`.
 
 ### Other Changes
 

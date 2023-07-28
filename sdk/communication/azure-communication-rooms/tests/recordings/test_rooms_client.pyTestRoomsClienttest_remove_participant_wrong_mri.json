@@ -12,7 +12,7 @@
         "Content-Type": "application/json",
         "Repeatability-First-Sent": "sanitized",
         "Repeatability-Request-ID": "sanitized",
-        "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
@@ -36,7 +36,7 @@
         "api-supported-versions": "2023-03-31-preview, 2023-06-14",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "9942938799231282",
+        "Location": "99457861856649567",
         "MS-CV": "sanitized",
         "Repeatability-Result": "accepted",
         "Request-Context": "appId=",
@@ -45,14 +45,14 @@
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
-        "id": "9942938799231282",
-        "createdAt": "2023-07-05T22:17:32.0894525\u002B00:00",
-        "validFrom": "2023-07-05T22:17:32.0179966\u002B00:00",
-        "validUntil": "2024-01-01T22:17:32.0179966\u002B00:00"
+        "id": "99457861856649567",
+        "createdAt": "2023-07-27T23:42:27.9358382\u002B00:00",
+        "validFrom": "2023-07-27T23:42:27.792649\u002B00:00",
+        "validUntil": "2024-01-23T23:42:27.792649\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/9942938799231282/participants?api-version=2023-06-14",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99457861856649567/participants?api-version=2023-06-14",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -61,7 +61,7 @@
         "Connection": "keep-alive",
         "Content-Length": "37",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
@@ -74,7 +74,8 @@
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "api-supported-versions": "2022-02-01, 2023-03-31-preview, 2023-06-14",
+        "api-deprecated-versions": "2022-02-01",
+        "api-supported-versions": "2023-03-31-preview, 2023-06-14",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
@@ -92,7 +93,7 @@
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/rooms/9942938799231282?api-version=2023-06-14",
+      "RequestUri": "https://sanitized.communication.azure.com/rooms/99457861856649567?api-version=2023-06-14",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -100,7 +101,7 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",

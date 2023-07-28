@@ -16,7 +16,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource, resolve_tenant
+from .._internal import _scopes_to_resource, resolve_tenant, within_dac
 from .._internal.decorators import log_get_token
 
 
@@ -53,11 +53,9 @@ class AzureCliCredential:
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
-        is_chained: bool = False,
     ) -> None:
 
         self.tenant_id = tenant_id
-        self._is_chained = is_chained
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
@@ -97,7 +95,7 @@ class AzureCliCredential:
         )
         if tenant:
             command += " --tenant " + tenant
-        output = _run_command(command, self._process_timeout, is_chained=self._is_chained)
+        output = _run_command(command, self._process_timeout)
 
         token = parse_token(output)
         if not token:
@@ -107,7 +105,7 @@ class AzureCliCredential:
                 f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
                 f"https://aka.ms/azsdk/python/identity/azclicredential/troubleshoot."
             )
-            if self._is_chained:
+            if within_dac.get():
                 raise CredentialUnavailableError(message=message)
             raise ClientAuthenticationError(message=message)
 
@@ -165,7 +163,7 @@ def sanitize_output(output: str) -> str:
     return re.sub(r"\"accessToken\": \"(.*?)(\"|$)", "****", output)
 
 
-def _run_command(command: str, timeout: int, is_chained: bool = False) -> str:
+def _run_command(command: str, timeout: int) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
     if shutil.which(EXECUTABLE_NAME) is None:
         raise CredentialUnavailableError(message=CLI_NOT_FOUND)
@@ -198,7 +196,7 @@ def _run_command(command: str, timeout: int, is_chained: bool = False) -> str:
             message = sanitize_output(ex.stderr)
         else:
             message = "Failed to invoke Azure CLI"
-        if is_chained:
+        if within_dac.get():
             raise CredentialUnavailableError(message=message) from ex
         raise ClientAuthenticationError(message=message) from ex
     except OSError as ex:

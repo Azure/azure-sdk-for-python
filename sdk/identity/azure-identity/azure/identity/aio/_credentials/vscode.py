@@ -5,12 +5,14 @@
 from typing import cast, Optional, Any
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 from ..._exceptions import CredentialUnavailableError
 from .._internal import AsyncContextManager
 from .._internal.aad_client import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.decorators import log_get_token_async
 from ..._credentials.vscode import _VSCodeCredentialBase
+from ..._internal import within_dac
 
 
 class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, GetTokenMixin):
@@ -69,7 +71,12 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
             raise CredentialUnavailableError(message=error_message)
         if not self._client:
             raise CredentialUnavailableError("Initialization failed")
-
+        if within_dac.get():
+            try:
+                token = await super().get_token(*scopes, **kwargs)
+                return token
+            except ClientAuthenticationError as ex:
+                raise CredentialUnavailableError(message=ex.message) from ex
         return await super().get_token(*scopes, **kwargs)
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:

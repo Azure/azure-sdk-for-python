@@ -83,11 +83,20 @@ def init_new_service(package_name, folder_name, is_typespec = False):
 
 
 def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, spec_folder, input_readme):
+    package_folder = Path(sdk_folder, folder_name, package_name)
+    if not package_folder.exists():
+        _LOGGER.info(f"Fail to save metadata since package folder doesn't exist: {package_folder}")
+        return
+    if not (package_folder / "_meta.json").exists():
+        metadata = {}
+    else:
+        with open(str(package_folder / "_meta.json"), "r") as file_in:
+            metadata = json.load(file_in)
 
-    metadata = {
+    metadata.update({
         "commit": data["headSha"],
         "repository_url": data["repoHttpsUrl"],
-    }
+    })
     if "meta" in config:
         readme_file = str(Path(spec_folder, input_readme))
         global_conf = config["meta"]
@@ -112,12 +121,6 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
         metadata.update(config)
 
     _LOGGER.info("Metadata json:\n {}".format(json.dumps(metadata, indent=2)))
-
-    package_folder = Path(sdk_folder, folder_name, package_name).expanduser()
-    if not os.path.exists(package_folder):
-        _LOGGER.info(f"Package folder doesn't exist: {package_folder}")
-        _LOGGER.info("Failed to save metadata.")
-        return
 
     metadata_file_path = os.path.join(package_folder, "_meta.json")
     with open(metadata_file_path, "w") as writer:

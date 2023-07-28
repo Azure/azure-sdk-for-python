@@ -8,7 +8,7 @@ from typing import List, TYPE_CHECKING, Any, cast
 
 from azure.core.credentials import AccessToken
 from ..._constants import EnvironmentVariables
-from ..._internal import get_default_authority, normalize_authority
+from ..._internal import get_default_authority, normalize_authority, within_dac
 from .azure_cli import AzureCliCredential
 from .azd_cli import AzureDeveloperCliCredential
 from .azure_powershell import AzurePowerShellCredential
@@ -160,19 +160,15 @@ class DefaultAzureCredential(ChainedTokenCredential):
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities
                 shared_cache = SharedTokenCacheCredential(
-                    username=shared_cache_username,
-                    tenant_id=shared_cache_tenant_id,
-                    authority=authority,
-                    is_chained=True,
-                    **kwargs
+                    username=shared_cache_username, tenant_id=shared_cache_tenant_id, authority=authority, **kwargs
                 )
                 credentials.append(shared_cache)
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
-            credentials.append(VisualStudioCodeCredential(is_chained=True, **vscode_args))
+            credentials.append(VisualStudioCodeCredential(**vscode_args))
         if not exclude_cli_credential:
-            credentials.append(AzureCliCredential(process_timeout=process_timeout, is_chained=True))
+            credentials.append(AzureCliCredential(process_timeout=process_timeout))
         if not exclude_powershell_credential:
             credentials.append(AzurePowerShellCredential(process_timeout=process_timeout))
         if not exclude_developer_cli_credential:
@@ -197,5 +193,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         """
         if self._successful_credential:
             return await self._successful_credential.get_token(*scopes, **kwargs)
-
-        return await super().get_token(*scopes, **kwargs)
+        within_dac.set(True)
+        token = await super().get_token(*scopes, **kwargs)
+        within_dac.set(False)
+        return token

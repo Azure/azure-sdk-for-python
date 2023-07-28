@@ -13,7 +13,7 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .azure_cli import get_safe_working_dir
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource, resolve_tenant
+from .._internal import _scopes_to_resource, resolve_tenant, within_dac
 from .._internal.decorators import log_get_token
 
 
@@ -67,11 +67,9 @@ class AzurePowerShellCredential:
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
-        is_chained: bool = False
     ) -> None:
 
         self.tenant_id = tenant_id
-        self._is_chained = is_chained
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
@@ -109,7 +107,7 @@ class AzurePowerShellCredential:
         )
         command_line = get_command_line(scopes, tenant_id)
         output = run_command_line(command_line, self._process_timeout)
-        token = parse_token(output, is_chained=self._is_chained)
+        token = parse_token(output)
         return token
 
 
@@ -155,13 +153,13 @@ def start_process(args: List[str]) -> "subprocess.Popen":
     return proc
 
 
-def parse_token(output: str, is_chained: bool = False) -> AccessToken:
+def parse_token(output: str) -> AccessToken:
     for line in output.split():
         if line.startswith("azsdk%"):
             _, token, expires_on = line.split("%")
             return AccessToken(token, int(expires_on))
 
-    if is_chained:
+    if within_dac.get():
         raise CredentialUnavailableError(message='Unexpected output from Get-AzAccessToken: "{}"'.format(output))
     raise ClientAuthenticationError(message='Unexpected output from Get-AzAccessToken: "{}"'.format(output))
 
