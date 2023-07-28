@@ -160,7 +160,7 @@ async def test_redeem_token():
         credential = get_credential(_client=mock_client)
         token = await credential.get_token("scope")
         assert token is expected_token
-        token_by_refresh_token.assert_called_with(("scope",), expected_value)
+        token_by_refresh_token.assert_called_with(("scope",), expected_value, claims=None, tenant_id=None)
 
 
 @pytest.mark.asyncio
