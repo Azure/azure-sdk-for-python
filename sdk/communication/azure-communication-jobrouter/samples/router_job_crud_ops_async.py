@@ -261,7 +261,7 @@ class RouterJobSamplesAsync(object):
         router_client = JobRouterClient.from_connection_string(conn_str = connection_string)
 
         async with router_client:
-            reclassify_job_result = await router_client.reclassify_job(job_id = job_id)
+            await router_client.reclassify_job(job_id = job_id)
 
             print(f"Successfully re-classified router")
         # [END reclassify_job_async]
@@ -328,7 +328,7 @@ class RouterJobSamplesAsync(object):
 
             try:
                 # [START decline_job_offer_async]
-                decline_job_offer_result = await router_client.decline_job_offer(
+                await router_client.decline_job_offer(
                     worker_id = worker_id,
                     offer_id = offer_id
                 )
@@ -353,7 +353,7 @@ class RouterJobSamplesAsync(object):
 
             assignment_id = [k for k, v in queried_job.assignments.items()][0]
 
-            complete_job_result = await router_client.complete_job(
+            await router_client.complete_job(
                 job_id = job_id,
                 assignment_id = assignment_id
             )
@@ -364,7 +364,7 @@ class RouterJobSamplesAsync(object):
         # [END complete_job_async]
 
         # [START close_job_async]
-            close_job_result = await router_client.close_job(
+            await router_client.close_job(
                 job_id = job_id,
                 assignment_id = assignment_id
             )

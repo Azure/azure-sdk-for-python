@@ -486,6 +486,27 @@
             "metadata": {
                 "description": "A flag to determine if workspace has data isolation enabled. The flag can only be set at the creation phase, it can't be updated."
             }
+        },
+        "workspace_hub_config" : {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Additional configuration for WorkspaceHub."
+            }
+        },
+        "existing_workspaces" : {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "A list of existing workspaces used by Hub to perform convert."
+            }
+        },
+        "workspace_hub" : {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Resource Id of Hub used for lean workspace."
+            }
         }
     },
     "variables": {
@@ -518,7 +539,8 @@
         "defaultPEConnections": "[array(variables('privateEndpointSettings'))]",
         "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]",
         "offlineStoreConnectionName": "[if(equals(parameters('offline_store_connection_name'), ''), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]",
-        "onlineStoreConnectionName": "[if(equals(parameters('online_store_connection_name'), ''), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]"
+        "onlineStoreConnectionName": "[if(equals(parameters('online_store_connection_name'), ''), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]",
+        "isWorkspaceHub": "[equals(parameters('kind'), 'hub')]"
     },
     "resources": [
         {
@@ -631,7 +653,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'), not(variables('isWorkspaceHub')))]",
             "type": "Microsoft.OperationalInsights/workspaces",
             "tags": "[parameters('tagValues')]",
             "apiVersion": "2020-08-01",
@@ -643,7 +665,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'), not(variables('isWorkspaceHub')))]",
             "type": "Microsoft.Insights/components",
             "tags": "[parameters('tagValues')]",
             "apiVersion": "2020-02-02-preview",
@@ -678,7 +700,7 @@
                 "description": "[parameters('description')]",
                 "storageAccount": "[variables('storageAccount')]",
                 "keyVault": "[variables('keyVault')]",
-                "applicationInsights": "[variables('applicationInsights')]",
+                "applicationInsights": "[if(variables('isWorkspaceHub'), json('null'), variables('applicationInsights'))]",
                 "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
                 "hbiWorkspace": "[parameters('confidential_data')]",
                 "imageBuildCompute": "[parameters('imageBuildCompute')]",
@@ -704,7 +726,9 @@
                     "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
                     "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
                 },
-                "enableDataIsolation": "[parameters('enable_data_isolation')]"
+                "enableDataIsolation": "[parameters('enable_data_isolation')]",
+                "workspaceHubConfig": "[parameters('workspace_hub_config')]",
+                "existingWorkspaces": "[parameters('existing_workspaces')]"
             }
         },
         {

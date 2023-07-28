@@ -19,6 +19,7 @@
 
 ### Features Added
 - Added support to enable gpu access (local_enable_gpu) for local deployment.
+- Added support for workspaceHub and Project workspace
 
 ### Other Changes
 

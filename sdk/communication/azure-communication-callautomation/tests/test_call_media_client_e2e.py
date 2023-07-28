@@ -98,7 +98,7 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
             caller_call_connection = CallConnectionClient.from_connection_string(self.connection_str, create_call_result.call_connection_id)
             file_source = FileSource(url=play_source_uri)
 
-            caller_call_connection.play_media_to_all(
+            caller_call_connection.play_media(
                 play_source=file_source,
             )
 
