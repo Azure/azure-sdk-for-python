@@ -235,11 +235,11 @@ def get_text_translation_alignment():
 def get_text_translation_sentence_length():
     # [START get_text_translation_sentence_length]
     try:
-        include_alignment = True
+        include_sentence_length = True
         target_languages = ["cs"]
-        input_text_elements = [ InputTextItem(text = "The answer lies in machine translation.") ]
+        input_text_elements = [ InputTextItem(text = "The answer lies in machine translation. This is a test.") ]
 
-        response = text_translator.translate(content = input_text_elements, to = target_languages, include_alignment = include_alignment)
+        response = text_translator.translate(content = input_text_elements, to = target_languages, include_sentence_length=include_sentence_length)
         translation = response[0] if response else None
 
         if translation:
@@ -248,8 +248,9 @@ def get_text_translation_sentence_length():
                 print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
             for translated_text in translation.translations:
                 print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-                if (translated_text.alignment):
-                    print(f"Alignments: {translated_text.alignment.proj}")
+                if (translated_text.sent_len):
+                    print(f"Source Sentence length: {translated_text.sent_len.src_sent_len}")
+                    print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
 
     except HttpResponseError as exception:
         print(f"Error Code: {exception.error.code}")

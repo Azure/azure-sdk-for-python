@@ -37,7 +37,7 @@ text_translator = text_translation_client.create_text_translation_client_with_en
 def get_text_translation_languages():
     # [START get_text_translation_languages]
     try:
-        response = response = text_translator.get_languages()
+        response = text_translator.get_languages()
 
         print(f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}")
         print(f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}")
@@ -67,7 +67,7 @@ def get_text_translation_languages_scope():
     # [START get_text_translation_languages_scope]
     try:
         scope = "translation"
-        response = response = text_translator.get_languages(scope=scope)
+        response = text_translator.get_languages(scope=scope)
 
         print(f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}")
         print(f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}")
@@ -97,7 +97,7 @@ def get_text_translation_languages_culture():
     # [START get_text_translation_languages_culture]
     try:
         accept_language = "es"
-        response = response = text_translator.get_languages(accept_language=accept_language)
+        response = text_translator.get_languages(accept_language=accept_language)
 
         print(f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}")
         print(f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}")

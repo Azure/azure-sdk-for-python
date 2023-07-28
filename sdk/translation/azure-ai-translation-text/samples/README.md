@@ -28,15 +28,12 @@ See the [README][README] of the Text Translator client library for more informat
 
 # Create Client
 
-For many of these operations you can create a new `TextTranslationClient` without any authentication. You will only need your endpoint:
+For some of these operations you can create a new `TextTranslationClient` without any authentication. You will only need your endpoint:
 
 <!-- SNIPPET: text_translation_client.create_text_translation_client_with_endpoint -->
 
-```python   
- from azure.ai.translation.text import TextTranslationClient
-
- endpoint = os.environ["AZURE_TEXT_TRANSLATION_ENDPOINT"]
- return TextTranslationClient(endpoint)
+```python
+text_translator = TextTranslationClient(endpoint)
 ```
 
 <!-- END SNIPPET -->
@@ -45,18 +42,13 @@ The values of the `endpoint` variable can be retrieved from environment variable
 
 For other samples an overloaded constructor is provided that uses a TextTranslationCredential.  In addition to `endpoint`, this function requires configuring an `apikey` and `region` to create the credential.  The values of the `endpoint`, `apiKey` and `region` variables can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.
 
-The appropriate constructor is invoked in each sample to create a text_translator_client instance.
+The appropriate constructor is invoked in each sample to create a `TextTranslationClient` instance.
 
 <!-- SNIPPET: text_translation_client.create_text_translation_client_with_credential -->
 
 ```python
-from azure.ai.translation.text import (TextTranslationClient, TranslatorCredential)
-
-endpoint = os.environ["AZURE_TEXT_TRANSLATION_ENDPOINT"]
-apikey = os.environ["AZURE_TEXT_TRANSLATION_APIKEY"]
-region = os.environ["AZURE_TEXT_TRANSLATION_REGION"]   
-credential = TranslatorCredential(apikey, region)
-return TextTranslationClient(endpoint, credential)
+   credential = TranslatorCredential(apikey, region)
+   text_translator = TextTranslationClient(endpoint, credential)
 ```
 
 <!-- END SNIPPET -->
@@ -73,7 +65,7 @@ This will return language metadata from all supported scopes.
 
 ```python
 try:
-    response = response = text_translator.get_languages()
+    response = text_translator.get_languages()
 
     print(f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}")
     print(f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}")
@@ -110,7 +102,7 @@ You can limit the scope of the response of the languages API by providing the op
 ```python
 try:
     scope = "translation"
-    response = response = text_translator.get_languages(scope=scope)
+    response = text_translator.get_languages(scope=scope)
 
     print(f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}")
     print(f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}")
@@ -148,7 +140,7 @@ Names are provided in the English language when a target language is not specifi
 ```python
 try:
     accept_language = "es"
-    response = response = text_translator.get_languages(accept_language=accept_language)
+    response = text_translator.get_languages(accept_language=accept_language)
 
     print(f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}")
     print(f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}")
@@ -482,11 +474,11 @@ You can ask translator service to include sentence boundaries for the input text
 
 ```python
 try:
-    include_alignment = True
+    include_sentence_length = True
     target_languages = ["cs"]
-    input_text_elements = [ InputTextItem(text = "The answer lies in machine translation.") ]
+    input_text_elements = [ InputTextItem(text = "The answer lies in machine translation. This is a test.") ]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages, include_alignment = include_alignment)
+    response = text_translator.translate(content = input_text_elements, to = target_languages, include_sentence_length=include_sentence_length)
     translation = response[0] if response else None
 
     if translation:
@@ -495,8 +487,9 @@ try:
             print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-            if (translated_text.alignment):
-                print(f"Alignments: {translated_text.alignment.proj}")
+            if (translated_text.sent_len):
+                print(f"Source Sentence length: {translated_text.sent_len.src_sent_len}")
+                print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
 
 except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
@@ -685,7 +678,7 @@ except HttpResponseError as exception:
 [README]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/README.md
 [client_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/text_translation_client.py
 [languages_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/text_translation_languages.py
-[translate_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/text_translation_translate.md
+[translate_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/text_translation_translate.py
 [transliterate_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/text_translation_transliterate.py
 [breaksentence_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/text_translation_break_sentence.py
 [dictionarylookup_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/text_translation_dictionary_lookup.py

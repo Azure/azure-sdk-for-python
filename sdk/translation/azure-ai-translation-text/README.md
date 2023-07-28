@@ -58,18 +58,13 @@ az cognitiveservices account keys list --resource-group <your-resource-group-nam
 Once you have the value for the API key and Region, create an `TranslatorCredential`. This will allow you to
 update the API key without creating a new client.
 
-With the value of the endpoint, `TranslatorCredential` and a `Region`, you can create the [TextTranslationClient][client_sample]:
+With the value of the `endpoint`, `credential` and a `region`, you can create the [TextTranslationClient][client_sample]:
 
 <!-- SNIPPET: text_translation_client.create_text_translation_client_with_credential -->
 
 ```python
-from azure.ai.translation.text import (TextTranslationClient, TranslatorCredential)
-
-endpoint = os.environ["AZURE_TEXT_TRANSLATION_ENDPOINT"]
-apikey = os.environ["AZURE_TEXT_TRANSLATION_APIKEY"]
-region = os.environ["AZURE_TEXT_TRANSLATION_REGION"]   
-credential = TranslatorCredential(apikey, region)
-return TextTranslationClient(endpoint, credential)
+   credential = TranslatorCredential(apikey, region)
+   text_translator = TextTranslationClient(endpoint, credential)
 ```
 
 <!-- END SNIPPET -->
@@ -97,7 +92,7 @@ Gets the set of languages currently supported by other operations of the Transla
 
 ```python
 try:
-    response = response = text_translator.get_languages()
+    response = text_translator.get_languages()
 
     print(f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}")
     print(f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}")
@@ -199,11 +194,11 @@ Identifies the positioning of sentence boundaries in a piece of text.
 
 ```python
 try:
-    include_alignment = True
+    include_sentence_length = True
     target_languages = ["cs"]
-    input_text_elements = [ InputTextItem(text = "The answer lies in machine translation.") ]
+    input_text_elements = [ InputTextItem(text = "The answer lies in machine translation. This is a test.") ]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages, include_alignment = include_alignment)
+    response = text_translator.translate(content = input_text_elements, to = target_languages, include_sentence_length=include_sentence_length)
     translation = response[0] if response else None
 
     if translation:
@@ -212,8 +207,9 @@ try:
             print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-            if (translated_text.alignment):
-                print(f"Alignments: {translated_text.alignment.proj}")
+            if (translated_text.sent_len):
+                print(f"Source Sentence length: {translated_text.sent_len.src_sent_len}")
+                print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
 
 except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
