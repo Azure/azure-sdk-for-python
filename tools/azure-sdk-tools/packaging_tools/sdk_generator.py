@@ -132,23 +132,26 @@ def choose_tag_and_update_meta(
         readme_content = file_in.readlines()
 
     while idx < len(source):
-        tag = source[idx].split("tag:")[-1].strip("\n ")
-        related_files = get_related_swagger(readme_content, tag)
-        if related_files:
-            commit_info = get_last_commit_info(related_files)
-            recorded_info = meta.get(tag, "")
-            # there may be new commit after last release
-            if need_regenerate or commit_info > recorded_info:
-                _LOGGER.info(f"update tag: {tag} with commit info {commit_info}")
-                meta[tag] = commit_info
-                target.append(source[idx])
-            else:
-                _LOGGER.info(f"skip tag: {tag} since commit info doesn't change")
-        else:
-            _LOGGER.warning(f"do not find related swagger for tag: {tag}")
-        idx += 1
-        if "tag" not in source[idx]:
+        if "```" in source[idx]:
             break
+        if "tag:" in source[idx]:
+            tag = source[idx].split("tag:")[-1].strip("\n ")
+            related_files = get_related_swagger(readme_content, tag)
+            if related_files:
+                commit_info = get_last_commit_info(related_files)
+                recorded_info = meta.get(tag, "")
+                # there may be new commit after last release
+                if need_regenerate or commit_info > recorded_info:
+                    _LOGGER.info(f"update tag: {tag} with commit info {commit_info}")
+                    meta[tag] = commit_info
+                    target.append(source[idx])
+                else:
+                    _LOGGER.info(f"skip tag: {tag} since commit info doesn't change")
+            else:
+                _LOGGER.warning(f"do not find related swagger for tag: {tag}")
+        else:
+            target.append(source[idx])
+        idx += 1
     return idx
 
 
