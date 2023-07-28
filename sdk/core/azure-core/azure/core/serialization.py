@@ -9,7 +9,6 @@
 
 import calendar
 import functools
-import json
 import sys
 import base64
 import re
@@ -139,7 +138,7 @@ def _is_readonly(p):
 class AzureJSONEncoder(JSONEncoder):
     """A JSON encoder that's capable of serializing datetime objects and bytes."""
 
-    def __init__(self, *args, exclude_readonly: bool = True, exclude_none: bool = False, **kwargs):
+    def __init__(self, *args, exclude_readonly: bool = False, exclude_none: bool = False, **kwargs):
         super().__init__(*args, **kwargs)
         self.exclude_readonly = exclude_readonly
         self.exclude_none = exclude_none
@@ -583,7 +582,7 @@ class Model(_MyMutableMapping):
             return cls(data)
         return mapped_cls._deserialize(data)  # pylint: disable=protected-access
 
-    def as_dict(self, *, exclude_readonly: bool = True, exclude_none: bool = False) -> typing.Dict[str, typing.Any]:
+    def as_dict(self, *, exclude_readonly: bool = False, exclude_none: bool = False) -> typing.Dict[str, typing.Any]:
         result = {}
         if exclude_readonly:
             readonly_props = [p._rest_name for p in self._attr_to_rest_field.values() if _is_readonly(p)]
