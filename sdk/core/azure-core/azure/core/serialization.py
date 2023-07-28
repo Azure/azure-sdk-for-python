@@ -591,19 +591,26 @@ class Model(_MyMutableMapping):
                 continue
             if exclude_none and (v is None or isinstance(v, _Null)):
                 continue
-            result[k] = Model._as_dict_value(v)
+            result[k] = Model._as_dict_value(v, exclude_readonly=exclude_readonly, exclude_none=exclude_none)
         return result
 
     @staticmethod
-    def _as_dict_value(v: typing.Any) -> typing.Any:
+    def _as_dict_value(v: typing.Any, exclude_readonly: bool = False, exclude_none: bool = False) -> typing.Any:
         if v is None or isinstance(v, _Null):
             return None
         elif isinstance(v, (list, tuple, set)):
-            return [Model._as_dict_value(x) for x in v]
+            return [
+                Model._as_dict_value(x, exclude_readonly=exclude_readonly, exclude_none=exclude_none)
+                for x in v
+            ]
         elif isinstance(v, dict):
-            return {dk: Model._as_dict_value(dv) for dk, dv in v.items()}
+            return {
+                dk: Model._as_dict_value(dv, exclude_readonly=exclude_readonly, exclude_none=exclude_none)
+                for dk, dv in v.items()
+            }
         else:
-            return v.as_dict() if hasattr(v, "as_dict") else v
+            return v.as_dict(exclude_readonly=exclude_readonly, exclude_none=exclude_none) \
+                if hasattr(v, "as_dict") else v
 
 
 

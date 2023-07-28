@@ -1854,9 +1854,9 @@ def test_readonly():
         }
     }
     model = ModelWithReadonly(value)
-    assert model.as_dict() == {"normalProperty": "normal",
-                                                                   "innerModel": {"normalProperty": "normal"}}
-    assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_readonly=False)) == value
+    assert model.as_dict(exclude_readonly=True) == {"normalProperty": "normal",
+                                                    "innerModel": {"normalProperty": "normal"}}
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == value
     assert model == value
     assert model["readonlyProperty"] == model.readonly_property == "readonly"
     assert model["innerModel"]["readonlyProperty"] == model.inner_model.readonly_property == "readonly"
@@ -1878,9 +1878,9 @@ def test_readonly_set():
     assert model.inner_model.normal_property == model.inner_model["normalProperty"] == "normal"
     assert model.inner_model.readonly_property == model.inner_model["readonlyProperty"] == "readonly"
 
-    assert model.as_dict() == {"normalProperty": "normal",
-                                                                   "innerModel": {"normalProperty": "normal"}}
-    assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_readonly=False)) == value
+    assert model.as_dict(exclude_readonly=True) == {"normalProperty": "normal",
+                                                    "innerModel": {"normalProperty": "normal"}}
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == value
 
     model["normalProperty"] = "setWithDict"
     model["readonlyProperty"] = "setWithDict"
@@ -1891,9 +1891,9 @@ def test_readonly_set():
     assert model.readonly_property == model["readonlyProperty"] == "setWithDict"
     assert model.inner_model.normal_property == model.inner_model["normalProperty"] == "setWithDict"
     assert model.inner_model.readonly_property == model.inner_model["readonlyProperty"] == "setWithDict"
-    assert model.as_dict() == {"normalProperty": "setWithDict",
-                                                                   "innerModel": {"normalProperty": "setWithDict"}}
-    assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_readonly=False)) == {
+    assert model.as_dict(exclude_readonly=True) == {"normalProperty": "setWithDict",
+                                                    "innerModel": {"normalProperty": "setWithDict"}}
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {
         "normalProperty": "setWithDict",
         "readonlyProperty": "setWithDict",
         "innerModel": {
@@ -3629,7 +3629,7 @@ def test_as_dict():
         DogComplex(id=1, name="Potato", food="tomato"),
         DogComplex(id=-1, name="Tomato", food="french fries")
     ])
-    assert model.as_dict() == {
+    assert model.as_dict(exclude_none=False, exclude_readonly=True) == {
         "id": 2,
         "name": "Siameeee",
         "color": None
