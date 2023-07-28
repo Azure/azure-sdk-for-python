@@ -29,12 +29,11 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.backend.reconnect(
+    client.backend.reconnect(
         resource_group_name="rg1",
         service_name="apimService1",
         backend_id="proxybackend",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementBackendReconnect.json

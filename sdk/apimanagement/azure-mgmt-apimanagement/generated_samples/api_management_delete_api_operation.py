@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.api_operation.delete(
+    client.api_operation.delete(
         resource_group_name="rg1",
         service_name="apimService1",
         api_id="57d2ef278aa04f0888cba3f3",
         operation_id="57d2ef278aa04f0ad01d6cdc",
         if_match="*",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementDeleteApiOperation.json

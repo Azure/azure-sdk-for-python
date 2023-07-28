@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.group_user.delete(
+    client.group_user.delete(
         resource_group_name="rg1",
         service_name="apimService1",
         group_id="templategroup",
         user_id="59307d350af58404d8a26300",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementDeleteGroupUser.json

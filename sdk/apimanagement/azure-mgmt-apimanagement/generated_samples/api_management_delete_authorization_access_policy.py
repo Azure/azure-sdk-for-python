@@ -29,7 +29,7 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.authorization_access_policy.delete(
+    client.authorization_access_policy.delete(
         resource_group_name="rg1",
         service_name="apimService1",
         authorization_provider_id="aadwithauthcode",
@@ -37,7 +37,6 @@ def main():
         authorization_access_policy_id="fe0bed83-631f-4149-bd0b-0464b1bc7cab",
         if_match="*",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementDeleteAuthorizationAccessPolicy.json

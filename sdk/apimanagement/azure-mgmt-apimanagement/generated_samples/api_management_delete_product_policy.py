@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.product_policy.delete(
+    client.product_policy.delete(
         resource_group_name="rg1",
         service_name="apimService1",
         product_id="testproduct",
         policy_id="policy",
         if_match="*",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementDeleteProductPolicy.json

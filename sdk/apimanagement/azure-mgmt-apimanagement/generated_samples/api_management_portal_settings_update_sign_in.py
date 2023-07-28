@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.sign_in_settings.update(
+    client.sign_in_settings.update(
         resource_group_name="rg1",
         service_name="apimService1",
         if_match="*",
         parameters={"properties": {"enabled": True}},
     )
-    print(response)
 
 
 # x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementPortalSettingsUpdateSignIn.json

@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.notification_recipient_email.delete(
+    client.notification_recipient_email.delete(
         resource_group_name="rg1",
         service_name="apimService1",
         notification_name="RequestPublisherNotificationMessage",
         email="contoso@live.com",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementDeleteNotificationRecipientEmail.json

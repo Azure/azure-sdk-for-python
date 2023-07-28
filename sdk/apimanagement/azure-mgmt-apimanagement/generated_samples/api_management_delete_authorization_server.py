@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.authorization_server.delete(
+    client.authorization_server.delete(
         resource_group_name="rg1",
         service_name="apimService1",
         authsid="newauthServer2",
         if_match="*",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementDeleteAuthorizationServer.json

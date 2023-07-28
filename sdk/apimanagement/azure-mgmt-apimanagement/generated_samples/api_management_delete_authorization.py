@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.authorization.delete(
+    client.authorization.delete(
         resource_group_name="rg1",
         service_name="apimService1",
         authorization_provider_id="aadwithauthcode",
         authorization_id="authz1",
         if_match="*",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementDeleteAuthorization.json
