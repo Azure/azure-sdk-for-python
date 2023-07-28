@@ -379,7 +379,7 @@ class CodegenTestPR:
                     break
 
         for file in files:
-            if '_version.py' in file:
+            if Path(file).name == '_version.py':
                 modify_file(file, edit_version_file)
 
     def check_version(self):
