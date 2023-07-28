@@ -58,6 +58,14 @@ class TestEmbeddingsAsync(AzureRecordedTestCase):
         kwargs = {"model": azure_openai_creds["embeddings_model"]} if api_type == "openai" \
           else {"deployment_id": azure_openai_creds["embeddings_name"]}
         embedding = await openai.Embedding.acreate(input=["hello world", "second input"], **kwargs)
+        assert embedding.object == "list"
+        assert embedding.model
+        assert embedding.usage.prompt_tokens is not None
+        assert embedding.usage.total_tokens is not None
+        assert len(embedding.data) == 2
+        assert embedding.data[0].object == "embedding"
+        assert embedding.data[0].index is not None
+        assert len(embedding.data[0].embedding) > 0
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
