@@ -132,7 +132,14 @@ class HttpXTransport(HttpTransport):
     :keyword bool use_env_settings: Uses proxy settings from environment. Defaults to True.
     """
 
-    def __init__(self, *, client: Optional[httpx.Client] = None, client_owner: bool = True, use_env_settings: bool = True, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        client: Optional[httpx.Client] = None,
+        client_owner: bool = True,
+        use_env_settings: bool = True,
+        **kwargs: Any
+    ) -> None:
         self.client = client
         self.connection_config = ConnectionConfiguration(**kwargs)
         self.client_owner = client_owner
