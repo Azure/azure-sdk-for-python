@@ -27,7 +27,7 @@ from typing import Any, AsyncIterator, ContextManager, Optional, Union
 
 import httpx
 from azure.core.configuration import ConnectionConfiguration
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.core.exceptions import DecodeError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
@@ -96,12 +96,14 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
         on the *content-encoding* header.
     """
 
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpXTransportResponse, *_, **kwargs) -> None:
+    def __init__(
+        self, pipeline: Pipeline, response: AsyncHttpXTransportResponse, *, decompress: bool = True, **kwargs
+    ) -> None:
         self.pipeline = pipeline
         self.response = response
-        decompress = kwargs.pop("decompress", True)
+        should_decompress = decompress
 
-        if decompress:
+        if should_decompress:
             self.iter_content_func = self.response.internal_response.aiter_bytes()
         else:
             self.iter_content_func = self.response.internal_response.aiter_raw()
@@ -118,6 +120,10 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
         except StopAsyncIteration:
             self.response.internal_response.close()
             raise
+        except httpx.DecodingError as ex:
+            if len(ex.args) > 1:
+                raise DecodeError(ex.args[0]) from ex
+            raise DecodeError("Failed to decode.") from ex
 
 
 class AsyncHttpXTransport(AsyncHttpTransport):
