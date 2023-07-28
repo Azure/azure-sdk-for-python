@@ -119,8 +119,8 @@ class ManagedIdentityCredential:
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
 
-        :keyword str claims: not used by this credential; any value provided will be ignored.
-        :keyword str tenant_id: not used by this credential; any value provided will be ignored.
+        :keyword str claims: not supported by this credential.
+        :keyword str tenant_id: not supported by this credential.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken

@@ -66,7 +66,7 @@ class SharedTokenCacheCredential:
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure
-        :keyword str tenant_id: not used by this credential; any value provided will be ignored.
+        :keyword str tenant_id: not supported by this credential.
         :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
             token. Defaults to False.
 

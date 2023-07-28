@@ -64,7 +64,7 @@ class GetTokenMixin(abc.ABC):
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-        :keyword str claims: not used by this credential; any value provided will be ignored.
+        :keyword str claims: not supported by this credential.
         :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
             token. Defaults to False.
 
