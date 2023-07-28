@@ -17,7 +17,13 @@ key = os.environ["AZURE_LANGUAGE_KEY"]
 
 credential = AzureKeyCredential(key)
 
-with TextAnalyticsClient(endpoint=endpoint, credential=credential, transport=HttpXTransport(),) as text_analytics_client:
+text_analytics_client = TextAnalyticsClient(
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key),
+        transport=HttpXTransport(),
+    )
+
+with text_analytics_client:
     document = ["This is an example document."]
     poller = text_analytics_client.begin_abstract_summary(document)
     abstract_summary_results = poller.result()
