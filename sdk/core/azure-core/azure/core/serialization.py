@@ -145,7 +145,7 @@ class AzureJSONEncoder(JSONEncoder):
 
     def default(self, o):  # pylint: disable=too-many-return-statements
         if _is_model(o):
-            result = {k: v for k, v in o.items()}
+            result = dict(o.items())
             if self.exclude_readonly:
                 readonly_props = [p._rest_name for p in o._attr_to_rest_field.values() if _is_readonly(p)]
                 for k in readonly_props:
@@ -325,13 +325,13 @@ def _get_model(module_name: str, model_name: str):
     models = {
         k: v
         for k, v in sys.modules[module_name].__dict__.items()
-        if isinstance(v, type) or isinstance(v, typing._GenericAlias)
+        if isinstance(v, (type, typing._GenericAlias))
     }
     module_end = module_name.rsplit(".", 1)[0]
     models.update({
         k: v
         for k, v in sys.modules[module_end].__dict__.items()
-        if isinstance(v, type) or isinstance(v, typing._GenericAlias)
+        if isinstance(v, (type, typing._GenericAlias))
     })
     if isinstance(model_name, str):
         model_name = model_name.split(".")[-1]
@@ -598,19 +598,18 @@ class Model(_MyMutableMapping):
     def _as_dict_value(v: typing.Any, exclude_readonly: bool = False, exclude_none: bool = False) -> typing.Any:
         if v is None or isinstance(v, _Null):
             return None
-        elif isinstance(v, (list, tuple, set)):
+        if isinstance(v, (list, tuple, set)):
             return [
                 Model._as_dict_value(x, exclude_readonly=exclude_readonly, exclude_none=exclude_none)
                 for x in v
             ]
-        elif isinstance(v, dict):
+        if isinstance(v, dict):
             return {
                 dk: Model._as_dict_value(dv, exclude_readonly=exclude_readonly, exclude_none=exclude_none)
                 for dk, dv in v.items()
             }
-        else:
-            return v.as_dict(exclude_readonly=exclude_readonly, exclude_none=exclude_none) \
-                if hasattr(v, "as_dict") else v
+        return v.as_dict(exclude_readonly=exclude_readonly, exclude_none=exclude_none) \
+            if hasattr(v, "as_dict") else v
 
 
 
