@@ -115,7 +115,8 @@ section of a tileset.
 
 ```python
 from azure.maps.render import MapsRenderClient
-
+credential = AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY"))
+maps_render_client = MapsRenderClient(credential=credential)
 result = maps_render_client.get_map_attribution(
     tileset_id=TilesetID.MICROSOFT_BASE,
     zoom=6,
@@ -137,7 +138,8 @@ control (Web SDK) and Android SDK.
 
 ```python
 from azure.maps.render import MapsRenderClient
-
+credential = AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY"))
+maps_render_client = MapsRenderClient(credential=credential)
 result = maps_render_client.get_map_tile(
     tileset_id=TilesetID.MICROSOFT_BASE,
     z=6,
@@ -153,7 +155,8 @@ This request will give metadata for a tileset.
 
 ```python
 from azure.maps.render import MapsRenderClient
-
+credential = AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY"))
+maps_render_client = MapsRenderClient(credential=credential)
 result = maps_render_client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
 ```
 
@@ -167,7 +170,8 @@ And also save the result to file as png.
 
 ```python
 from azure.maps.render import MapsRenderClient
-
+credential = AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY"))
+maps_render_client = MapsRenderClient(credential=credential)
 result = maps_render_client.get_map_static_image(img_format="png", center=(52.41064,4.84228))
 # Save result to file as png
 file = open('result.png', 'wb')
@@ -181,7 +185,8 @@ This request will serve copyright information for Render Tile service.
 
 ```python
 from azure.maps.render import MapsRenderClient
-
+credential = AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY"))
+maps_render_client = MapsRenderClient(credential=credential)
 result = maps_render_client.get_copyright_for_world()
 ```
 
