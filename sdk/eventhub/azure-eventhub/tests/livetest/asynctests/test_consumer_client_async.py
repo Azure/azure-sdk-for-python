@@ -1,5 +1,6 @@
 import pytest
 import asyncio
+import threading
 
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
@@ -8,6 +9,50 @@ from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.aio._eventprocessor.in_memory_checkpoint_store import InMemoryCheckpointStore
 from azure.eventhub._constants import ALL_PARTITIONS
 
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_receive_storage_checkpoint(connstr_senders, uamqp_transport, checkpoint_store_aio, schedule_update_properties):
+    connection_str, senders = connstr_senders
+
+    for i in range(10):
+        senders[0].send(EventData("Test EventData"))
+        senders[1].send(EventData("Test EventData"))
+
+    try:
+        await checkpoint_store_aio._container_client.create_container()
+    except:
+        pass
+
+    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', checkpoint_store=checkpoint_store_aio, uamqp_transport=uamqp_transport)
+
+    sequence_numbers_0 = []
+    sequence_numbers_1 = []
+    async def on_event(partition_context, event):
+        await partition_context.update_checkpoint(event)
+        sequence_num = event.sequence_number
+        if partition_context.partition_id == "0":
+            if sequence_num in sequence_numbers_0:
+                assert False
+            sequence_numbers_0.append(sequence_num)
+        else:
+            if sequence_num in sequence_numbers_1:
+                assert False
+            sequence_numbers_1.append(sequence_num)
+
+    async with client:
+        task = asyncio.ensure_future(
+            client.receive(on_event, starting_position="-1"))
+        t = threading.Timer(2, schedule_update_properties)
+        t.start()
+        await asyncio.sleep(10)
+
+
+ 
+    await task
+    assert len(sequence_numbers_0) == 10
+    assert len(sequence_numbers_1) == 10
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
