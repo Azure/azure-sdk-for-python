@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 from typing import Optional, Callable, TYPE_CHECKING, Union, Awaitable, Mapping, Any
 from ._constants import EMPTY_LABEL
+from typing import NamedTuple
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -53,3 +54,7 @@ class SettingSelector:
     def __init__(self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL):
         self.key_filter = key_filter
         self.label_filter = label_filter
+
+class SentinelKey(NamedTuple):
+    key: str
+    label: str = EMPTY_LABEL

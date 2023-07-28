@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from collections import namedtuple
 from azure.appconfiguration.provider import load
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
+    SentinelKey,
 )
 import os
 import time
@@ -31,10 +31,8 @@ def my_callback_on_fail():
     print("Refresh failed!")
 
 
-# Connecting to Azure App Configuration using connection string
-RefreshItem = namedtuple("RefreshItem", ["key", "label"], defaults=[None, "\0"])
-
-config = load(connection_string=connection_string, refresh_all=[RefreshItem("message")], refresh_interval=1)
+# Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message changes
+config = load(connection_string=connection_string, refresh_on=[SentinelKey("message")], refresh_interval=1)
 
 print(config["message"])
 print(config["my_json"]["key"])

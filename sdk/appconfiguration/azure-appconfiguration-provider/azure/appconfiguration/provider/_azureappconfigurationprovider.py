@@ -67,8 +67,7 @@ def load(
     selects: Optional[List[SettingSelector]] = None,
     trim_prefixes: Optional[List[str]] = None,
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
-    refresh_all: Optional[List[Tuple[str, str]]] = None,
-    refresh_only: Optional[List[Tuple[str, str]]] = None,
+    refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
     **kwargs
 ) -> "AzureAppConfigurationProvider":
@@ -84,12 +83,9 @@ def load(
     :paramtype trim_prefixes: Optional[List[str]]
     :keyword key_vault_options: Options for resolving Key Vault references
     :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
-    :keyword refresh_all: One or more settings whos modification will trigger a full refresh after a fixed interval.
+    :keyword refresh_on: One or more settings whos modification will trigger a full refresh after a fixed interval.
     This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
-    :paramtype refresh_all: List[Tuple[str, str]]
-    :keyword refresh_only: One or more specific settings that will be refreshed after a fixed interval.
-    This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
-    :paramtype refresh_only: List[Tuple[str, str]]
+    :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
     """
@@ -102,8 +98,7 @@ def load(
     selects: Optional[List[SettingSelector]] = None,
     trim_prefixes: Optional[List[str]] = None,
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
-    refresh_all: Optional[List[Tuple[str, str]]] = None,
-    refresh_only: Optional[List[Tuple[str, str]]] = None,
+    refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
     **kwargs
 ) -> "AzureAppConfigurationProvider":
@@ -117,12 +112,9 @@ def load(
     :paramtype trim_prefixes: Optional[List[str]]
     :keyword key_vault_options: Options for resolving Key Vault references
     :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
-    :keyword refresh_all: One or more settings whos modification will trigger a full refresh after a fixed interval.
+    :keyword refresh_on: One or more settings whos modification will trigger a full refresh after a fixed interval.
     This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
-    :paramtype refresh_all: List[Tuple[str, str]]
-    :keyword refresh_only: One or more specific settings that will be refreshed after a fixed interval.
-    This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
-    :paramtype refresh_only: List[Tuple[str, str]]
+    :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
     """
@@ -157,10 +149,10 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     provider._load_all()
 
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
-    for (key, label), etag in provider._refresh_all.items():
+    for (key, label), etag in provider._refresh_on.items():
         if not etag:
             sentinel = provider._client.get_configuration_setting(key, label)
-            provider._refresh_all[(key, label)] = sentinel.etag
+            provider._refresh_on[(key, label)] = sentinel.etag
     return provider
 
 
@@ -350,16 +342,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         trim_prefixes: List[str] = kwargs.pop("trim_prefixes", [])
         self._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
 
-        refresh_all: List[Tuple[str, str]] = kwargs.pop("refresh_all", None) or []
-        refresh_only: List[Tuple[str, str]] = kwargs.pop("refresh_only", None) or []
-        self._refresh_all: Mapping[Tuple[str, str]: Optional[str]] = {_build_sentinel(s): None for s in refresh_all}
-        self._refresh_only: Mapping[Tuple[str, str]: Optional[str]] = {_build_sentinel(s): None for s in refresh_only}
+        refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
+        self._refresh_on: Mapping[Tuple[str, str]: Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
         self._update_lock = Lock()
 
     def refresh(self, **kwargs) -> None:
-        if not self._refresh_all and not self._refresh_only:
+        if not self._refresh_on:
             logging.debug("Refresh called but no refresh options set.")
             return
 
@@ -368,7 +358,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             return
         try:
             with self._update_lock:
-                for (key, label), etag in self._refresh_all.items():
+                for (key, label), etag in self._refresh_on.items():
                     updated_sentinel = self._client.get_configuration_setting(
                         key=key,
                         label=label,
@@ -384,30 +374,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                         )
                         self._load_all(**kwargs)
                         # TODO: We need to reset all etags, not just the one that triggered it, could cause extra refreshes.
-                        self._refresh_all[(key, label)] = updated_sentinel.etag
+                        self._refresh_on[(key, label)] = updated_sentinel.etag
                         self._refresh_timer.reset()
                         return
-
-                for (key, label), etag in self._refresh_only.items():
-                    updated_sentinel = self._client.get_configuration_setting(
-                        key=key,
-                        label=label,
-                        etag=etag,
-                        match_condition=MatchConditions.IfModified,
-                        **kwargs
-                    )
-                    if updated_sentinel is not None:
-                        logging.debug(
-                            "Refresh triggered for key: %s label: %s",
-                            key,
-                            label,
-                        )
-                        self._dict[self._proccess_key_name(updated_sentinel)] = self._proccess_key_value(
-                                updated_sentinel
-                            )
-                        self._refresh_only[(key, label)] = updated_sentinel.etag
-                        # TODO: Should we wait to do this until all refreshes are done?
-                        self._refresh_timer.reset()
         except (ServiceRequestError, ServiceResponseError) as e:
             logging.debug("Failed to refresh, retrying: %r", e)
             self._refresh_timer.retry()
@@ -446,12 +415,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                 # Every time we run load_all, we should update the etag of our refresh sentinels
                 # so they stay up-to-date.
                 # Sentinel keys will have unprocessed key names, so we need to use the original key.
-                if (config.key, config.label) in self._refresh_only:
-                    self._refresh_only[(config.key, config.label)] = config.etag
+                if (config.key, config.label) in self._refresh_on:
+                    self._refresh_on[(config.key, config.label)] = config.etag
 
         # Let's check whether any of the settings configured for refresh don't actually exist
         # This should only happen during the initial `load_all`, not subsequent refreshes.
-        no_etag = [(key, label) for (key, label), etag in self._refresh_only.items() if etag is None]
+        no_etag = [(key, label) for (key, label), etag in self._refresh_on.items() if etag is None]
         #if Any(no_etag):
         #    raise ValueError(
         #        "The following key,label pairs are not found in the AppConfig, and cannot be refreshed: %r",
