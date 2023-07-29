@@ -8,7 +8,7 @@ import platform
 import os
 
 from datetime import datetime, timedelta
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -22,9 +22,11 @@ from azure.data.tables import (
 )
 from azure.data.tables.aio import TableServiceClient, TableClient
 from azure.data.tables._constants import DEFAULT_COSMOS_ENDPOINT_SUFFIX
-from test_table_client_cosmos import validate_standard_account_endpoints
+from azure.identity import DefaultAzureCredential
 
+from test_table_client_cosmos import validate_standard_account_endpoints
 from _shared.asynctestcase import AsyncTableTestCase
+from preparers import cosmos_decorator
 from async_preparers import cosmos_decorator_async
 
 SERVICES = {
@@ -231,12 +233,82 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             )
             async for e in entities:
                 pass
-            await client.delete_table()
 
         with pytest.raises(ValueError) as ex:
             client = TableClient.from_table_url(sas_url, credential=AzureSasCredential(sas_token))
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
+
+        async with TableClient.from_table_url(sas_url, credential=DefaultAzureCredential()) as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            with pytest.raises(HttpResponseError) as ex:
+                async for e in entities:
+                    pass
+            ex_msg = "Authorization header doesn't confirm to the required format. Please verify and try again."
+            assert ex_msg in str(ex.value)
+
+        async with TableClient.from_table_url(sas_url, credential=tables_primary_cosmos_account_key) as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            async for e in entities:
+                pass
+            await client.delete_table()
+
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_client_with_token_credential(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        base_url = self.account_url(tables_cosmos_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+
+        async with TableServiceClient(base_url, credential=DefaultAzureCredential()) as client:
+            await client.create_table(table_name)
+            name_filter = "TableName eq '{}'".format(table_name)
+            count = 0
+            result = client.query_tables(name_filter)
+            async for table in result:
+                count += 1
+            assert count == 1
+
+        async with TableClient(base_url, table_name, credential=DefaultAzureCredential()) as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            async for e in entities:
+                pass
+
+        async with TableClient.from_table_url(
+            f"{base_url}/{table_name}", credential=DefaultAzureCredential()
+        ) as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            async for e in entities:
+                pass
+
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_client_without_credential(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        base_url = self.account_url(tables_cosmos_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+
+        with pytest.raises(ValueError) as ex:
+            client = TableServiceClient(base_url)
+        assert str(ex.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
+
+        with pytest.raises(ValueError) as ex:
+            client = TableClient(base_url, table_name)
+        assert str(ex.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
+
+        with pytest.raises(ValueError) as ex:
+            client = TableClient.from_table_url(f"{base_url}/{table_name}")
+        assert str(ex.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
 
 
 class TestTableClientCosmosAsyncUnitTests(AsyncTableTestCase):

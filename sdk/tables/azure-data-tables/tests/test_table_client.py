@@ -16,8 +16,8 @@ from azure.data.tables import (
     AccountSasPermissions,
     ResourceTypes,
     generate_account_sas,
+    __version__ as VERSION,
 )
-from azure.data.tables import __version__ as VERSION
 from azure.data.tables._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
 from azure.data.tables._error import _validate_storage_tablename
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -25,7 +25,6 @@ from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, Clie
 from azure.identity import DefaultAzureCredential
 
 from _shared.testcase import TableTestCase
-
 from preparers import tables_decorator
 
 SERVICES = {
@@ -253,12 +252,74 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
             )
             for e in entities:
                 pass
-            client.delete_table()
 
         with pytest.raises(ValueError) as ex:
             client = TableClient.from_table_url(sas_url, credential=AzureSasCredential(sas_token))
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
+
+        with TableClient.from_table_url(sas_url, credential=DefaultAzureCredential()) as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            for e in entities:
+                pass
+
+        with TableClient.from_table_url(sas_url, credential=tables_primary_storage_account_key) as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            for e in entities:
+                pass
+            client.delete_table()
+
+    @tables_decorator
+    @recorded_by_proxy
+    def test_client_with_token_credential(self, tables_storage_account_name, tables_primary_storage_account_key):
+        base_url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+
+        with TableServiceClient(base_url, credential=DefaultAzureCredential()) as client:
+            client.create_table(table_name)
+            name_filter = "TableName eq '{}'".format(table_name)
+            result = client.query_tables(name_filter)
+            assert len(list(result)) == 1
+
+        with TableClient(base_url, table_name, credential=DefaultAzureCredential()) as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            for e in entities:
+                pass
+
+        with TableClient.from_table_url(f"{base_url}/{table_name}", credential=DefaultAzureCredential()) as client:
+            entities = client.query_entities(
+                query_filter="PartitionKey eq @pk",
+                parameters={"pk": "dummy-pk"},
+            )
+            for e in entities:
+                pass
+
+    @tables_decorator
+    @recorded_by_proxy
+    def test_client_without_credential(self, tables_storage_account_name, tables_primary_storage_account_key):
+        base_url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+
+        with pytest.raises(ValueError) as ex:
+            client = TableServiceClient(base_url)
+        assert str(ex.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
+
+        with pytest.raises(ValueError) as ex:
+            client = TableClient(base_url, table_name)
+        assert str(ex.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
+
+        with pytest.raises(ValueError) as ex:
+            client = TableClient.from_table_url(f"{base_url}/{table_name}")
+        assert str(ex.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
 
 
 # --Helpers-----------------------------------------------------------------
