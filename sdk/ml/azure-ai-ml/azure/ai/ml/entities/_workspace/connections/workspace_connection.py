@@ -9,18 +9,19 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     ManagedIdentityAuthTypeWorkspaceConnectionProperties,
     NoneAuthTypeWorkspaceConnectionProperties,
     PATAuthTypeWorkspaceConnectionProperties,
     SASAuthTypeWorkspaceConnectionProperties,
     ServicePrincipalAuthTypeWorkspaceConnectionProperties,
     UsernamePasswordAuthTypeWorkspaceConnectionProperties,
+    ApiKeyAuthWorkspaceConnectionProperties
 )
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     ConnectionAuthType,
     AccessKeyAuthTypeWorkspaceConnectionProperties,
 )
@@ -35,6 +36,7 @@ from azure.ai.ml.entities._credentials import (
     ServicePrincipalConfiguration,
     UsernamePasswordConfiguration,
     AccessKeyConfiguration,
+    ApiKeyConfiguration,
 )
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
@@ -76,6 +78,7 @@ class WorkspaceConnection(Resource):
             ManagedIdentityConfiguration,
             ServicePrincipalConfiguration,
             AccessKeyConfiguration,
+            ApiKeyConfiguration,
         ],
         metadata: Optional[Dict[str, Any]] = None,
         **kwargs,
@@ -120,6 +123,7 @@ class WorkspaceConnection(Resource):
         ManagedIdentityConfiguration,
         ServicePrincipalConfiguration,
         AccessKeyConfiguration,
+        ApiKeyConfiguration,
     ]:
         """Credentials for workspace connection.
 
@@ -131,6 +135,7 @@ class WorkspaceConnection(Resource):
             ManagedIdentityConfiguration,
             ServicePrincipalCredentialsConfiguration,
             AccessKeyCredentialsConfiguration,
+            ApiKeyConfiguration,
         ]
         """
         return self._credentials
@@ -201,6 +206,8 @@ class WorkspaceConnection(Resource):
             credentials = UsernamePasswordConfiguration._from_workspace_connection_rest_object(properties.credentials)
         if properties.auth_type == ConnectionAuthType.ACCESS_KEY:
             credentials = AccessKeyConfiguration._from_workspace_connection_rest_object(properties.credentials)
+        if properties.auth_type == ConnectionAuthType.API_KEY:
+            credentials = ApiKeyConfiguration._from_workspace_connection_rest_object(properties.credentials)
         if properties.auth_type == ConnectionAuthType.SERVICE_PRINCIPAL:
             credentials = ServicePrincipalConfiguration._from_workspace_connection_rest_object(properties.credentials)
 
@@ -231,6 +238,8 @@ class WorkspaceConnection(Resource):
             workspace_connection_properties_class = UsernamePasswordAuthTypeWorkspaceConnectionProperties
         elif auth_type == camel_to_snake(ConnectionAuthType.ACCESS_KEY):
             workspace_connection_properties_class = AccessKeyAuthTypeWorkspaceConnectionProperties
+        elif auth_type == camel_to_snake(ConnectionAuthType.API_KEY):
+            workspace_connection_properties_class = ApiKeyAuthWorkspaceConnectionProperties
         elif auth_type == camel_to_snake(ConnectionAuthType.SAS):
             workspace_connection_properties_class = SASAuthTypeWorkspaceConnectionProperties
         elif auth_type == camel_to_snake(ConnectionAuthType.SERVICE_PRINCIPAL):
