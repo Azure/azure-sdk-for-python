@@ -26,8 +26,8 @@
 
 from typing import TypeVar, Generic, Dict, Any, Tuple, List, Optional, overload
 
-HTTPResponseType = TypeVar("HTTPResponseType", covariant=True)
-HTTPRequestType = TypeVar("HTTPRequestType", covariant=True)
+HTTPResponseType = TypeVar("HTTPResponseType", covariant=True)  # pylint: disable=typevar-name-incorrect-variance
+HTTPRequestType = TypeVar("HTTPRequestType", covariant=True)    # pylint: disable=typevar-name-incorrect-variance
 
 
 class PipelineContext(Dict[str, Any]):
