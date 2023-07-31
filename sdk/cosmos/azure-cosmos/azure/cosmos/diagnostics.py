@@ -66,7 +66,7 @@ class _RecordDiagnostics(object):
 
     @property
     def headers(self):
-        return self._headers
+        return CaseInsensitiveDict(self._headers)
 
     @property
     def body(self):
