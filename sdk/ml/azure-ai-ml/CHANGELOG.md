@@ -1,10 +1,25 @@
 # Release History
 
+
+## 1.10.0 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
+- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
+  (instead of the default behavior for python < 3.15, which uses locale specific encodings)
+
 ## 1.9.0 (Unreleased)
 
 ### Features Added
 - Added support to enable gpu access (local_enable_gpu) for local deployment.
 - Added support for new workspace connection types: azure_open_ai, cognitive_search, and cognitive_service.
+- Added support for workspaceHub and Project workspace
 
 ### Other Changes
 

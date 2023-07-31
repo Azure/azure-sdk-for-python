@@ -44,7 +44,7 @@
 /sdk/agrifood/azure-agrifood-farming/                                @bhargav-kansagara
 
 # PRLabel: %Azure.Identity
-/sdk/identity/                                                       @pvaneck @schaabs @xiangyan99
+/sdk/identity/                                                       @pvaneck @xiangyan99 @Azure/azsdk-identity
 
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
@@ -318,7 +318,7 @@
 /sdk/personalizer/                                                   @sharathmalladi
 
 # PRLabel: %Graph
-/sdk/graphrbac/                                                      @msyyc @Wzb123456789
+/sdk/graphrbac/                                                      @msyyc @ChenxiJiang333
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @annatisch @YalinLi0312
@@ -863,7 +863,7 @@
 # ServiceLabel: %SecurityInsights %Service Attention
 #/<NotInRepo>/          @amirkeren
 
-# ServiceLabel: %IoT/CLI %Service Attention
+# ServiceLabel: %IoT - CLI %Service Attention
 #/<NotInRepo>/          @Azure/azure-iot-cli-triage
 
 # ServiceLabel: %Communication %Service Attention
@@ -952,7 +952,7 @@
 
 
 # Management Plane
-/**/*mgmt*/                                                          @Wzb123456789 @msyyc
+/**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
 
 
 ###########

@@ -46,12 +46,7 @@ class SetImagePropertiesAsync(object):
         # Instantiate an instance of ContainerRegistryClient
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Set permissions on image "library/hello-world:v1"
-            await client.update_manifest_properties(
-                "library/hello-world",
-                "v1",
-                can_write=False,
-                can_delete=False
-            )        
+            await client.update_manifest_properties("library/hello-world", "v1", can_write=False, can_delete=False)
         # After this update, if someone were to push an update to `<registry endpoint>\library\hello-world:v1`,
         # it would fail. It's worth noting that if this image also had another tag, such as `latest`,
         # and that tag did not have permissions set to prevent reads or deletes, the image could still be

@@ -93,7 +93,7 @@ class NodeIOMixin:
         accessing attribute, eg: node1.inputs.xxx.
 
         :param inputs: Provided kwargs when parameterizing component func.
-        :param input_definition_dict: Static input definition dict. If not provided, will build inputs without meta.
+        :keyword input_definition_dict: Static input definition dict. If not provided, will build inputs without meta.
         :return: Built dynamic input attribute dict.
         """
         if input_definition_dict is not None:
@@ -360,7 +360,7 @@ class NodeWithGroupInputMixin(NodeIOMixin):
         """Build an input attribute dict so user can get/set inputs by
         accessing attribute, eg: node1.inputs.xxx.
 
-        :param input_definition_dict: Input definition dict from component entity.
+        :keyword input_definition_dict: Input definition dict from component entity.
         :param inputs: Provided kwargs when parameterizing component func.
         :return: Built input attribute dict.
         """
@@ -401,7 +401,7 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         """Build an input attribute dict so user can get/set inputs by
         accessing attribute, eg: node1.inputs.xxx.
 
-        :param input_definition_dict: Input definition dict from component entity.
+        :keyword input_definition_dict: Input definition dict from component entity.
         :param inputs: Provided kwargs when parameterizing component func.
         :return: Built input attribute dict.
         """
@@ -415,7 +415,6 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         """Build an output object for pipeline and copy settings from source output.
 
         :param name: Output name.
-        :param meta: Output metadata.
         :param data: Output data.
         :return: Built output object.
         """

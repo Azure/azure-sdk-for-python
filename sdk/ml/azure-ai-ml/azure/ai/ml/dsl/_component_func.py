@@ -8,12 +8,18 @@ from typing import Callable, Mapping
 
 from azure.ai.ml.dsl._dynamic import KwParameter, create_kw_function_from_parameters
 from azure.ai.ml.entities import Component as ComponentEntity
-from azure.ai.ml.entities._component.datatransfer_component import DataTransferImportComponent
 from azure.ai.ml.entities._builders import Command
+from azure.ai.ml.entities._component.datatransfer_component import DataTransferImportComponent
 
 
 def get_dynamic_input_parameter(inputs: Mapping):
-    """Return the dynamic parameter of the definition's input ports."""
+    """Return the dynamic parameter of the definition's input ports.
+
+    :param inputs: The mapping of input names to input objects.
+    :type inputs: Mapping
+    :return: The list of dynamic parameters.
+    :rtype: List[~azure.ai.ml.dsl._dynamic.KwParameter]
+    """
     return [
         KwParameter(
             name=name,
@@ -26,7 +32,13 @@ def get_dynamic_input_parameter(inputs: Mapping):
 
 
 def get_dynamic_source_parameter(source):
-    """Return the dynamic parameter of the definition's source port."""
+    """Return the dynamic parameter of the definition's source port.
+
+    :param source: The source object.
+    :type source: Any
+    :return: The list of dynamic parameters.
+    :rtype: List[~azure.ai.ml.dsl._dynamic.KwParameter]
+    """
     return [
         KwParameter(
             name="source",
@@ -38,6 +50,15 @@ def get_dynamic_source_parameter(source):
 
 
 def to_component_func(entity: ComponentEntity, component_creation_func) -> Callable[..., Command]:
+    """Convert a ComponentEntity to a callable component function.
+
+    :param entity: The ComponentEntity to convert.
+    :type entity: ~azure.ai.ml.entities.Component
+    :param component_creation_func: The function for creating a component.
+    :type component_creation_func: Callable
+    :return: The callable component function.
+    :rtype: Callable[..., ~azure.ai.ml.entities._builders.Command]
+    """
     func_name = "[component] {}".format(entity.display_name)
 
     func_docstring_lines = []

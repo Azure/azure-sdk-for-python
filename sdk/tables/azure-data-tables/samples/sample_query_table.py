@@ -55,7 +55,7 @@ class SampleTablesQuery(object):
             try:
                 table_client.create_table()
             except ResourceExistsError:
-                print(u"Table already exists")
+                print("Table already exists")
 
             for i in range(25):
                 e = copy.deepcopy(entity_template)
@@ -63,7 +63,7 @@ class SampleTablesQuery(object):
                 e["Name"] = random.choice(names)
                 e["Brand"] = random.choice(brands)
                 e["Color"] = random.choice(colors)
-                e["Value"] = random.randint(0, 100) # type: ignore[assignment]
+                e["Value"] = random.randint(0, 100)  # type: ignore[assignment]
                 table_client.create_entity(entity=e)
 
     def sample_query_entities(self):
@@ -87,13 +87,13 @@ class SampleTablesQuery(object):
                 print("Entities with name: marker")
                 parameters = {"name": "marker"}
                 name_filter = "Name eq @name"
-                headers = {"Accept" : "application/json;odata=nometadata"}
+                headers = {"Accept": "application/json;odata=nometadata"}
                 queried_entities = table_client.query_entities(
                     query_filter=name_filter, select=["Brand", "Color"], parameters=parameters, headers=headers
                 )
                 for entity_chosen in queried_entities:
                     print(entity_chosen)
-                
+
                 print("Sample for querying entities with multiple params:")
                 print("Entities with name: marker and brand: Crayola")
                 parameters = {"name": "marker", "brand": "Crayola"}
@@ -106,7 +106,7 @@ class SampleTablesQuery(object):
 
                 print("Sample for querying entities' values:")
                 print("Entities with 25 < Value < 50")
-                parameters = {"lower": 25, "upper": 50} # type: ignore
+                parameters = {"lower": 25, "upper": 50}  # type: ignore
                 name_filter = "Value gt @lower and Value lt @upper"
                 queried_entities = table_client.query_entities(
                     query_filter=name_filter, select=["Value"], parameters=parameters

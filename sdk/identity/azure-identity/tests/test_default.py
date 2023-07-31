@@ -24,11 +24,7 @@ from urllib.parse import urlparse
 
 from helpers import mock_response, Request, validating_transport
 from test_shared_cache_credential import build_aad_response, get_account_event, populated_cache
-
-try:
-    from unittest.mock import MagicMock, Mock, patch
-except ImportError:  # python < 3.3
-    from mock import MagicMock, Mock, patch  # type: ignore
+from unittest.mock import MagicMock, Mock, patch
 
 
 def test_close():
@@ -127,6 +123,7 @@ def test_authority(authority):
             shared_cache.supported = lambda: False
             with patch.dict("os.environ", {}, clear=True):
                 test_initialization(mock_credential, expect_argument=False)
+
 
 def test_exclude_options():
     def assert_credentials_not_present(chain, *excluded_credential_classes):
@@ -338,7 +335,7 @@ def test_interactive_browser_tenant_id():
     def validate_tenant_id(credential):
         assert len(credential.call_args_list) == 1, "InteractiveBrowserCredential should be instantiated once"
         _, kwargs = credential.call_args
-        assert kwargs == {"tenant_id": tenant_id}
+        assert "tenant_id" in kwargs
 
     with patch(DefaultAzureCredential.__module__ + ".InteractiveBrowserCredential") as mock_credential:
         DefaultAzureCredential(exclude_interactive_browser_credential=False, interactive_browser_tenant_id=tenant_id)

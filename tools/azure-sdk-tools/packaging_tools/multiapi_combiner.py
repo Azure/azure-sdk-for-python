@@ -10,12 +10,9 @@ import inspect
 import json
 import argparse
 from pathlib import Path
-import shutil
 from typing import Dict, Optional, List, Any, TypeVar, Callable, Set
 
 from jinja2 import PackageLoader, Environment
-
-PACKAGING_TOOLS_DIR = (Path(__file__) / "..").resolve()
 
 
 def _get_metadata(path: Path) -> Dict[str, Any]:
@@ -476,9 +473,9 @@ class Serializer:
         )
 
     def _get_file_path_from_module(self, module_name: str, strip_api_version: bool) -> Path:
-        module_stem = module_name.strip(f"{self.code_model.module_name}.")
+        module_stem = module_name.replace(f"{self.code_model.module_name}.", "")
         if strip_api_version:
-            module_stem = module_stem.strip(f"{self.code_model.default_folder_api_version}.")
+            module_stem = module_stem.replace(f"{self.code_model.default_folder_api_version}.", "")
         return self.code_model.get_root_of_code(False) / Path(module_stem.replace(".", "/"))
 
     def _get_operations_folder_module(self, async_mode: bool, *, api_version: Optional[str] = None) -> str:
@@ -650,12 +647,6 @@ class Serializer:
             with open(f"{self.code_model.get_root_of_code(False)}/{default_api_version}/models/_patch.py", "r") as rfd:
                 wfd.write(rfd.read())
 
-    def remove_versioned_files(self):
-        root_of_code = self.code_model.get_root_of_code(False)
-        for api_version_folder_stem in self.code_model.api_version_to_folder_api_version.values():
-            api_version_folder = root_of_code / api_version_folder_stem
-            shutil.rmtree(api_version_folder, ignore_errors=True)
-
     def remove_top_level_files(self, async_mode: bool):
         top_level_files = [
             self.code_model.client.generated_filename,
@@ -667,7 +658,6 @@ class Serializer:
             remove_file(f"{self.code_model.get_root_of_code(async_mode)}/{file}.py")
 
     def remove_old_code(self):
-        self.remove_versioned_files()
         self.remove_top_level_files(async_mode=False)
         self.remove_top_level_files(async_mode=True)
 
