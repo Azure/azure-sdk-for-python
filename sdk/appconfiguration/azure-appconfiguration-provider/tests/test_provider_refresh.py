@@ -6,36 +6,19 @@
 import time
 import unittest
 from azure.appconfiguration.provider import load, SettingSelector, SentinelKey
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import recorded_by_proxy
 from azure.appconfiguration import AzureAppConfigurationClient
 from preparers import app_config_decorator_aad
+from testcase import AppConfigTestCase
 
 
-class TestAppConfigurationProvider(AzureRecordedTestCase, unittest.TestCase):
-    def build_provider_aad(
-        self, endpoint, trim_prefixes=[], selects={SettingSelector(key_filter="*", label_filter="\0")}, refresh_on=None
-    ):
-        cred = self.get_credential(AzureAppConfigurationClient)
-        return load(
-            credential=cred,
-            endpoint=endpoint,
-            trim_prefixes=trim_prefixes,
-            selects=selects,
-            refresh_on=refresh_on,
-            refresh_interval=1,
-        )
-
-    def build_provider_aad_empty_refresh(
-        self, endpoint, trim_prefixes=[], selects={SettingSelector(key_filter="*", label_filter="\0")}
-    ):
-        cred = self.get_credential(AzureAppConfigurationClient)
-        return load(credential=cred, endpoint=endpoint, trim_prefixes=trim_prefixes, selects=selects)
+class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
 
     # method: refresh
     @recorded_by_proxy
     @app_config_decorator_aad
-    def test_refresh(self, appconfiguration_endpoint_string):
-        client = self.build_provider_aad(appconfiguration_endpoint_string, refresh_on=[SentinelKey("refresh_message")])
+    def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
+        client = self.create_aad_client(appconfiguration_endpoint_string, keyvault_secret_url=appconfiguration_keyvault_secret_url, refresh_on=[SentinelKey("refresh_message")], refresh_interval=1)
         assert client["refresh_message"] == "original value"
         assert client["my_json"]["key"] == "value"
         assert (
@@ -77,8 +60,8 @@ class TestAppConfigurationProvider(AzureRecordedTestCase, unittest.TestCase):
     # method: refresh
     @recorded_by_proxy
     @app_config_decorator_aad
-    def test_empty_refresh(self, appconfiguration_endpoint_string):
-        client = self.build_provider_aad_empty_refresh(appconfiguration_endpoint_string)
+    def test_empty_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
+        client = self.create_aad_client(appconfiguration_endpoint_string, keyvault_secret_url=appconfiguration_keyvault_secret_url)
         assert client["refresh_message"] == "original value"
         assert client["non_refreshed_message"] == "Static"
         assert client["my_json"]["key"] == "value"
