@@ -184,8 +184,8 @@ class EventHubConsumer(
         # pylint:disable=protected-access
         message = self._message_buffer.popleft()
         event_data = EventData._from_message(message)
-        if self._amqp_transport.KIND != "pyamqp":
-            event_data._uamqp_message = message    # pylint: disable=pointless-statement
+        if self._amqp_transport.KIND == "uamqp":
+            event_data._uamqp_message = message
         self._last_received_event = event_data
         return event_data
 
