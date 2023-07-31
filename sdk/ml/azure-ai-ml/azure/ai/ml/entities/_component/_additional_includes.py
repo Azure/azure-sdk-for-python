@@ -190,7 +190,9 @@ class AdditionalIncludes:
         zip_file = dst_path / zip_additional_include.name
         with zipfile.ZipFile(zip_file, "w") as zf:
             zf.write(folder_to_zip, os.path.relpath(folder_to_zip, folder_to_zip.parent))  # write root in zip
-            for path, _ in get_upload_files_from_folder(folder_to_zip, ignore_file=ignore_file):
+            paths = [path for path, _ in get_upload_files_from_folder(folder_to_zip, ignore_file=ignore_file)]
+            # sort the paths to make sure the zip file (namelist) is deterministic
+            for path in sorted(paths):
                 zf.write(path, os.path.relpath(path, folder_to_zip.parent))
 
     def _get_resolved_additional_include_configs(self) -> List[str]:

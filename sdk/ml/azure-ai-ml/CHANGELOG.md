@@ -7,6 +7,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue that code asset doesn't work with relative symbol links.
+
 ### Breaking Changes
 
 ### Other Changes
