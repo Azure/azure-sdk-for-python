@@ -148,7 +148,7 @@ class HttpXTransport(HttpTransport):
     ) -> None:
         self.client = client
         self.connection_config = ConnectionConfiguration(**kwargs)
-        self.client_owner = client_owner
+        self._client_owner = client_owner
         self._use_env_settings = use_env_settings
 
     def open(self) -> None:
