@@ -20,6 +20,7 @@ Translator Service is a cloud-based neural machine translation service that is p
 * Transliterate
 * Break Sentence
 * Dictionary Lookup
+* Dictionary Examples
 
 See the [README][README] of the Text Translator client library for more information, including useful links and instructions.
 
@@ -31,7 +32,6 @@ See the [README][README] of the Text Translator client library for more informat
 For some of these operations you can create a new `TextTranslationClient` without any authentication. You will only need your endpoint:
 
 <!-- SNIPPET: text_translation_client.create_text_translation_client_with_endpoint -->
-
 ```python
 text_translator = TextTranslationClient(endpoint)
 ```
@@ -178,17 +178,16 @@ Translate text from known source language to target language.
 
 ```python
 try:
+    source_language = "en"
     target_languages = ["cs"]
-    input_text_elements = [ 
-        InputTextItem(text = "This is a test."),
-        InputTextItem(text = "Esto es una prueba."),
-        InputTextItem(text = "Dies ist ein Test.")]
+    input_text_elements = [ InputTextItem(text = "This is a test") ]
 
-    translations = text_translator.translate(content = input_text_elements, to = target_languages)
+    response = text_translator.translate(content = input_text_elements, to = target_languages, from_parameter = source_language)
+    translation = response[0] if response else None
 
-    for translation in translations:
-        print(f"Detected languages of the input text: {translation.detected_language.language if translation.detected_language else None} with score: {translation.detected_language.score if translation.detected_language else None}.")
-        print(f"Text was translated to: '{translation.translations[0].to if translation.translations else None}' and the result is: '{translation.translations[0].text if translation.translations else None}'.")
+    if translation:
+        for translated_text in translation.translations:
+            print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
@@ -205,21 +204,22 @@ You can omit source language of the input text. In this case, API will try to au
 
 > Note you can use `suggestedFrom` parameter that specifies a fallback language if the language of the input text can't be identified. Language autodetection is applied when the from parameter is omitted. If detection fails, the suggestedFrom language will be assumed.
 
-<!-- SNIPPET: text_translation_translate.get_text_translation -->
+<!-- SNIPPET: text_translation_translate.get_text_translation_auto -->
 
 ```python
 try:
     target_languages = ["cs"]
-    input_text_elements = [ 
-        InputTextItem(text = "This is a test."),
-        InputTextItem(text = "Esto es una prueba."),
-        InputTextItem(text = "Dies ist ein Test.")]
+    input_text_elements = [ InputTextItem(text = "This is a test") ]
 
-    translations = text_translator.translate(content = input_text_elements, to = target_languages)
+    response = text_translator.translate(content = input_text_elements, to = target_languages)
+    translation = response[0] if response else None
 
-    for translation in translations:
-        print(f"Detected languages of the input text: {translation.detected_language.language if translation.detected_language else None} with score: {translation.detected_language.score if translation.detected_language else None}.")
-        print(f"Text was translated to: '{translation.translations[0].to if translation.translations else None}' and the result is: '{translation.translations[0].text if translation.translations else None}'.")
+    if translation:
+        detected_language = translation.detected_language
+        if detected_language:
+            print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+        for translated_text in translation.translations:
+            print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
     print(f"Error Code: {exception.error.code}")
@@ -350,21 +350,19 @@ except HttpResponseError as exception:
 
 It's sometimes useful to exclude specific content from translation. You can use the attribute class=notranslate to specify content that should remain in its original language. In the following example, the content inside the first div element won't be translated, while the content in the second div element will be translated.
 
-<!-- SNIPPET: text_translation_translate.get_text_translation_type -->
+<!-- SNIPPET: text_translation_translate.get_text_translation_exclude -->
 
 ```python
 try:
     text_type = TextType.HTML
+    source_language = "en"
     target_languages = ["cs"]
-    input_text_elements = [ InputTextItem(text = "<html><body>This <b>is</b> a test.</body></html>") ]
+    input_text_elements = [ InputTextItem(text = "<div class=\"notranslate\">This will not be translated.</div><div>This will be translated. </div>") ]
 
-    response = text_translator.translate(content = input_text_elements, to = target_languages, text_type = text_type)
+    response = text_translator.translate(content = input_text_elements, to = target_languages, from_parameter = source_language, text_type=text_type)
     translation = response[0] if response else None
 
     if translation:
-        detected_language = translation.detected_language
-        if detected_language:
-            print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
         for translated_text in translation.translations:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
@@ -531,6 +529,7 @@ except HttpResponseError as exception:
 
 <!-- END SNIPPET -->
 
+# Transliterate
 
 ### Transliterate Text
 
@@ -557,6 +556,8 @@ except HttpResponseError as exception:
 ```
 
 <!-- END SNIPPET -->
+
+# Break Sentence
 
 ### Break Sentence with language and script parameters
 
@@ -615,6 +616,8 @@ except HttpResponseError as exception:
 ```
 
 <!-- END SNIPPET -->
+
+# Dictionary
 
 ### Dictionary Lookup
 

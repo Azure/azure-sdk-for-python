@@ -39,22 +39,42 @@ text_translator = text_translation_client.create_text_translation_client_with_cr
 def get_text_translation():
     # [START get_text_translation]
     try:
+        source_language = "en"
         target_languages = ["cs"]
-        input_text_elements = [ 
-            InputTextItem(text = "This is a test."),
-            InputTextItem(text = "Esto es una prueba."),
-            InputTextItem(text = "Dies ist ein Test.")]
+        input_text_elements = [ InputTextItem(text = "This is a test") ]
 
-        translations = text_translator.translate(content = input_text_elements, to = target_languages)
+        response = text_translator.translate(content = input_text_elements, to = target_languages, from_parameter = source_language)
+        translation = response[0] if response else None
 
-        for translation in translations:
-            print(f"Detected languages of the input text: {translation.detected_language.language if translation.detected_language else None} with score: {translation.detected_language.score if translation.detected_language else None}.")
-            print(f"Text was translated to: '{translation.translations[0].to if translation.translations else None}' and the result is: '{translation.translations[0].text if translation.translations else None}'.")
+        if translation:
+            for translated_text in translation.translations:
+                print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
     except HttpResponseError as exception:
         print(f"Error Code: {exception.error.code}")
         print(f"Message: {exception.error.message}")
     # [END get_text_translation]
+
+def get_text_translation_auto():
+    # [START get_text_translation_auto]
+    try:
+        target_languages = ["cs"]
+        input_text_elements = [ InputTextItem(text = "This is a test") ]
+
+        response = text_translator.translate(content = input_text_elements, to = target_languages)
+        translation = response[0] if response else None
+
+        if translation:
+            detected_language = translation.detected_language
+            if detected_language:
+                print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
+            for translated_text in translation.translations:
+                print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
+
+    except HttpResponseError as exception:
+        print(f"Error Code: {exception.error.code}")
+        print(f"Message: {exception.error.message}")
+    # [END get_text_translation_auto]
 
 def get_text_translation_with_transliteration():
     # [START get_text_translation_with_transliteration]
