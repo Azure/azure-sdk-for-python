@@ -36,11 +36,10 @@ from azure.search.documents.indexes.models import (
     SearchableField,
 )
 
-client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
-
 
 def create_index():
     # [START create_index]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
@@ -65,6 +64,7 @@ def create_index():
 
 def get_index():
     # [START get_index]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     result = client.get_index(name)
     # [END get_index]
@@ -72,6 +72,7 @@ def get_index():
 
 def update_index():
     # [START update_index]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
@@ -100,6 +101,7 @@ def update_index():
 
 def delete_index():
     # [START delete_index]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     client.delete_index(name)
     # [END delete_index]
