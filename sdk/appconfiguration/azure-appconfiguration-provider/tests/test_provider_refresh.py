@@ -13,12 +13,16 @@ from testcase import AppConfigTestCase
 
 
 class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
-
     # method: refresh
     @recorded_by_proxy
     @app_config_decorator_aad
     def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
-        client = self.create_aad_client(appconfiguration_endpoint_string, keyvault_secret_url=appconfiguration_keyvault_secret_url, refresh_on=[SentinelKey("refresh_message")], refresh_interval=1)
+        client = self.create_aad_client(
+            appconfiguration_endpoint_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            refresh_on=[SentinelKey("refresh_message")],
+            refresh_interval=1,
+        )
         assert client["refresh_message"] == "original value"
         assert client["my_json"]["key"] == "value"
         assert (
@@ -61,7 +65,9 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     @recorded_by_proxy
     @app_config_decorator_aad
     def test_empty_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
-        client = self.create_aad_client(appconfiguration_endpoint_string, keyvault_secret_url=appconfiguration_keyvault_secret_url)
+        client = self.create_aad_client(
+            appconfiguration_endpoint_string, keyvault_secret_url=appconfiguration_keyvault_secret_url
+        )
         assert client["refresh_message"] == "original value"
         assert client["non_refreshed_message"] == "Static"
         assert client["my_json"]["key"] == "value"

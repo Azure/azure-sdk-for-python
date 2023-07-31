@@ -25,7 +25,12 @@ class AppConfigTestCase(AzureRecordedTestCase):
         client = AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
         setup_configs(client, keyvault_secret_url)
         return load(
-            credential=cred, endpoint=appconfiguration_endpoint_string, trim_prefixes=trim_prefixes, selects=selects, refresh_on=refresh_on, refresh_interval=refresh_interval
+            credential=cred,
+            endpoint=appconfiguration_endpoint_string,
+            trim_prefixes=trim_prefixes,
+            selects=selects,
+            refresh_on=refresh_on,
+            refresh_interval=refresh_interval,
         )
 
     def create_client(
@@ -39,7 +44,13 @@ class AppConfigTestCase(AzureRecordedTestCase):
     ):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
         setup_configs(client, keyvault_secret_url)
-        return load(connection_string=appconfiguration_connection_string, trim_prefixes=trim_prefixes, selects=selects, refresh_on=refresh_on, refresh_interval=refresh_interval)
+        return load(
+            connection_string=appconfiguration_connection_string,
+            trim_prefixes=trim_prefixes,
+            selects=selects,
+            refresh_on=refresh_on,
+            refresh_interval=refresh_interval,
+        )
 
 
 def setup_configs(client, keyvault_secret_url):
