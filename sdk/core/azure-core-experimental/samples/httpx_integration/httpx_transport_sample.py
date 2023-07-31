@@ -18,10 +18,10 @@ key = os.environ["AZURE_LANGUAGE_KEY"]
 credential = AzureKeyCredential(key)
 
 text_analytics_client = TextAnalyticsClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key),
-        transport=HttpXTransport(),
-    )
+    endpoint=endpoint,
+    credential=AzureKeyCredential(key),
+    transport=HttpXTransport(),
+)
 
 with text_analytics_client:
     document = ["This is an example document."]
@@ -32,6 +32,4 @@ with text_analytics_client:
             print("Summaries abstracted:")
             [print(f"{summary.text}\n") for summary in result.summaries]
         elif result.is_error is True:
-            print("...Is an error with code '{}' and message '{}'".format(
-                result.error.code, result.error.message
-            ))
+            print("...Is an error with code '{}' and message '{}'".format(result.error.code, result.error.message))
