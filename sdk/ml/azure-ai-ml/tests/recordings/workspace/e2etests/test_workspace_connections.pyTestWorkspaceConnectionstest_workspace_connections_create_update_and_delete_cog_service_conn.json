@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000-ws/connections/e2etest_wps_conn_test_293634771765?api-version=2023-06-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_293634771765?api-version=2023-06-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -52,7 +52,7 @@
       "ResponseBody": {
         "tags": null,
         "location": null,
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000-ws/connections/e2etest_wps_conn_test_293634771765",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_293634771765",
         "name": "e2etest_wps_conn_test_293634771765",
         "type": "Microsoft.MachineLearningServices/workspaces/connections",
         "properties": {
@@ -77,7 +77,7 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000-ws/connections/e2etest_wps_conn_test_293634771765?api-version=2023-06-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_293634771765?api-version=2023-06-01-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -107,7 +107,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000-ws/connections/e2etest_wps_conn_test_293634771765?api-version=2023-06-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_293634771765?api-version=2023-06-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -164,7 +164,7 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000-ws/connections?category=S3\u0026api-version=2023-06-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections?category=S3\u0026api-version=2023-06-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -201,7 +201,7 @@
           {
             "tags": null,
             "location": null,
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000-ws/connections/e2etest_wps_conn_test_627466009958",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_627466009958",
             "name": "e2etest_wps_conn_test_627466009958",
             "type": "Microsoft.MachineLearningServices/workspaces/connections",
             "properties": {
@@ -224,7 +224,7 @@
           {
             "tags": null,
             "location": null,
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000-ws/connections/e2etest_wps_conn_test_161806830481",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_161806830481",
             "name": "e2etest_wps_conn_test_161806830481",
             "type": "Microsoft.MachineLearningServices/workspaces/connections",
             "properties": {
@@ -247,7 +247,7 @@
           {
             "tags": null,
             "location": null,
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000-ws/connections/e2etest_wps_conn_test_523583235205",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_523583235205",
             "name": "e2etest_wps_conn_test_523583235205",
             "type": "Microsoft.MachineLearningServices/workspaces/connections",
             "properties": {
@@ -270,7 +270,7 @@
           {
             "tags": null,
             "location": null,
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000-ws/connections/e2etest_wps_conn_test_613958136992",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_613958136992",
             "name": "e2etest_wps_conn_test_613958136992",
             "type": "Microsoft.MachineLearningServices/workspaces/connections",
             "properties": {
@@ -293,7 +293,7 @@
           {
             "tags": null,
             "location": null,
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000-ws/connections/e2etest_wps_conn_test_318500907310",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_318500907310",
             "name": "e2etest_wps_conn_test_318500907310",
             "type": "Microsoft.MachineLearningServices/workspaces/connections",
             "properties": {
@@ -316,7 +316,7 @@
           {
             "tags": null,
             "location": null,
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000-ws/connections/e2etest_wps_conn_test_379725609997",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_379725609997",
             "name": "e2etest_wps_conn_test_379725609997",
             "type": "Microsoft.MachineLearningServices/workspaces/connections",
             "properties": {
@@ -339,7 +339,7 @@
           {
             "tags": null,
             "location": null,
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000-ws/connections/e2etest_wps_conn_test_820888260016",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_820888260016",
             "name": "e2etest_wps_conn_test_820888260016",
             "type": "Microsoft.MachineLearningServices/workspaces/connections",
             "properties": {
@@ -362,7 +362,7 @@
           {
             "tags": null,
             "location": null,
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000-ws/connections/e2etest_wps_conn_test_57111056169",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_57111056169",
             "name": "e2etest_wps_conn_test_57111056169",
             "type": "Microsoft.MachineLearningServices/workspaces/connections",
             "properties": {
@@ -385,7 +385,7 @@
           {
             "tags": null,
             "location": null,
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000-ws/connections/e2etest_wps_conn_test_587716458091",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_587716458091",
             "name": "e2etest_wps_conn_test_587716458091",
             "type": "Microsoft.MachineLearningServices/workspaces/connections",
             "properties": {
