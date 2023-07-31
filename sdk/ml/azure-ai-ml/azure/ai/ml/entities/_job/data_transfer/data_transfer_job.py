@@ -65,7 +65,7 @@ class DataTransferJob(Job, JobIOMixin):
     :type task: str
     :param data_copy_mode: data copy mode in copy task, possible value is "merge_with_overwrite", "fail_if_conflict".
     :type data_copy_mode: str
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
 
@@ -179,7 +179,7 @@ class DataTransferCopyJob(DataTransferJob):
         """Translate a data transfer copy job to component.
 
         :param context: Context of data transfer job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated data transfer copy component.
         """
         from azure.ai.ml.entities._component.datatransfer_component import (
@@ -204,7 +204,7 @@ class DataTransferCopyJob(DataTransferJob):
         """Translate a data transfer copy job to a pipeline node.
 
         :param context: Context of data transfer job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated data transfer component.
         """
         from azure.ai.ml.entities._builders import DataTransferCopy
@@ -249,7 +249,7 @@ class DataTransferImportJob(DataTransferJob):
         """Translate a data transfer import job to component.
 
         :param context: Context of data transfer job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated data transfer import component.
         """
 
@@ -264,7 +264,7 @@ class DataTransferImportJob(DataTransferJob):
         """Translate a data transfer import job to a pipeline node.
 
         :param context: Context of data transfer job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated data transfer import node.
         """
         from azure.ai.ml.entities._builders import DataTransferImport
@@ -309,7 +309,7 @@ class DataTransferExportJob(DataTransferJob):
         """Translate a data transfer export job to component.
 
         :param context: Context of data transfer job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated data transfer export component.
         """
         if self.sink.type == ExternalDataType.DATABASE:
@@ -328,7 +328,7 @@ class DataTransferExportJob(DataTransferJob):
         """Translate a data transfer export job to a pipeline node.
 
         :param context: Context of data transfer job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated data transfer export node.
         """
         from azure.ai.ml.entities._builders import DataTransferExport

@@ -1,25 +1,24 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Union, List, Optional
 import re
+from typing import Dict, List, Optional, Union
 
 from azure.ai.ml import Output
-from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.control_flow_job import FLScatterGatherSchema
+from azure.ai.ml.constants import JobType
+from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.dsl import pipeline
+from azure.ai.ml.dsl._do_while import do_while
+from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
+from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
-from azure.ai.ml.constants import JobType
-
-from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
-from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._validation import MutableValidationResult
-from azure.ai.ml.dsl._do_while import do_while
-from azure.ai.ml.dsl import pipeline
-from .subcomponents import create_scatter_output_table
 
+from .subcomponents import create_scatter_output_table
 
 # TODO 2293610: add support for more types of outputs besides uri_folder and mltable
 # Likely types that ought to be mergeable: string, int, uri_file
@@ -44,8 +43,31 @@ ANCHORING_PATH_ROOT = "root"
 class FLScatterGather(ControlFlowNode, NodeIOMixin):
     """A node which creates a federated learning scatter-gather loop as a pipeline subgraph.
     Intended for use inside a pipeline job. This is initialized when calling
-    dsl.fl_scatter_gather() or when loading a serialized version of this node from YAML.
+    `dsl.fl_scatter_gather()` or when loading a serialized version of this node from YAML.
     Please do not manually initialize this class.
+
+    :param silo_configs: List of federated learning silo configurations.
+    :type silo_configs: List[~azure.ai.ml.entities._assets.federated_learning_silo.FederatedLearningSilo]
+    :param silo_component: Component representing the silo for federated learning.
+    :type silo_component: ~azure.ai.ml.entities.Component
+    :param aggregation_component: Component representing the aggregation step.
+    :type aggregation_component: ~azure.ai.ml.entities.Component
+    :param aggregation_compute: The compute resource for the aggregation step.
+    :type aggregation_compute: str, optional
+    :param aggregation_datastore: The datastore for the aggregation step.
+    :type aggregation_datastore: str, optional
+    :param shared_silo_kwargs: Keyword arguments shared across all silos.
+    :type shared_silo_kwargs: dict, optional
+    :param aggregation_kwargs: Keyword arguments specific to the aggregation step.
+    :type aggregation_kwargs: dict, optional
+    :param silo_to_aggregation_argument_map: Mapping of silo to aggregation arguments.
+    :type silo_to_aggregation_argument_map: dict, optional
+    :param aggregation_to_silo_argument_map: Mapping of aggregation to silo arguments.
+    :type aggregation_to_silo_argument_map: dict, optional
+    :param max_iterations: The maximum number of iterations for the scatter-gather loop.
+    :type max_iterations: int, optional
+    :param create_default_mappings_if_needed: Whether to create default argument mappings if needed.
+    :type create_default_mappings_if_needed: bool, optional
     """
 
     # See node class for input descriptions, no point maintaining
@@ -65,7 +87,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         max_iterations: int = 1,
         create_default_mappings_if_needed: bool = False,
         **kwargs,
-    ):
+    ) -> None:
         # auto-create X_to_Y_argument_map values if allowed and needed.
         if create_default_mappings_if_needed:
             # pylint: disable=line-too-long
@@ -130,6 +152,13 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         )
 
     def scatter_gather(self):
+        """Executes the scatter-gather loop by creating and executing a pipeline subgraph.
+        Returns the outputs of the final aggregation step.
+
+        :return: Outputs of the final aggregation step.
+        :rtype: list[~azure.ai.ml.Output]
+        """
+
         @pipeline(
             name="Scatter gather",
             description="It includes all steps that need to be executed in silo and aggregation",
@@ -470,6 +499,33 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         max_iterations: int,
         raise_error=False,
     ) -> MutableValidationResult:
+        """Validates the inputs for the scatter-gather node.
+
+        :param silo_configs: List of federated learning silo configurations.
+        :type silo_configs: List[~azure.ai.ml.entities._assets.federated_learning_silo.FederatedLearningSilo]
+        :param silo_component: Component representing the silo for federated learning.
+        :type silo_component: ~azure.ai.ml.entities.Component
+        :param aggregation_component: Component representing the aggregation step.
+        :type aggregation_component: ~azure.ai.ml.entities.Component
+        :param shared_silo_kwargs: Keyword arguments shared across all silos.
+        :type shared_silo_kwargs: Dict
+        :param aggregation_compute: The compute resource for the aggregation step.
+        :type aggregation_compute: str
+        :param aggregation_datastore: The datastore for the aggregation step.
+        :type aggregation_datastore: str
+        :param aggregation_kwargs: Keyword arguments specific to the aggregation step.
+        :type aggregation_kwargs: Dict
+        :param silo_to_aggregation_argument_map: Mapping of silo to aggregation arguments.
+        :type silo_to_aggregation_argument_map: Dict
+        :param aggregation_to_silo_argument_map: Mapping of aggregation to silo arguments.
+        :type aggregation_to_silo_argument_map: Dict
+        :param max_iterations: The maximum number of iterations for the scatter-gather loop.
+        :type max_iterations: int
+        :param raise_error: Whether to raise an exception if validation fails. Defaults to False.
+        :type raise_error: bool
+        :return: The validation result.
+        :rtype: ~azure.ai.ml.entities._validation.MutableValidationResult
+        """
         validation_result = cls._create_empty_validation_result()
 
         # saved values for validation later on
@@ -783,6 +839,11 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
     @property
     def outputs(self) -> Dict[str, Union[str, Output]]:
+        """Get the outputs of the scatter-gather node.
+
+        :return: The outputs of the scatter-gather node.
+        :rtype: Dict[str, Union[str, ~azure.ai.ml.Output]]
+        """
         return self._outputs
 
     @classmethod

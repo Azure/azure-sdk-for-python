@@ -12,12 +12,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 
 from ._generated.models import TableServiceProperties
-from ._models import (
-    TablePropertiesPaged,
-    service_stats_deserialize,
-    service_properties_deserialize,
-    TableItem
-)
+from ._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize, TableItem
 from ._base_client import parse_connection_str, TablesBaseClient, TransportWrapper
 from ._models import LocationMode
 from ._error import _process_table_error, _reprocess_error
@@ -79,7 +74,7 @@ class TableServiceClient(TablesBaseClient):
         return f"{self.scheme}://{hostname}{self._query_str}"
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs) -> 'TableServiceClient':
+    def from_connection_string(cls, conn_str: str, **kwargs) -> "TableServiceClient":
         """Create TableServiceClient from a connection string.
 
         :param str conn_str: A connection string to an Azure Storage or Cosmos account.
@@ -95,9 +90,7 @@ class TableServiceClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Authenticating a TableServiceClient from a connection_string
         """
-        endpoint, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, keyword_args=kwargs
-        )
+        endpoint, credential = parse_connection_str(conn_str=conn_str, credential=None, keyword_args=kwargs)
         return cls(endpoint, credential=credential, **kwargs)
 
     @distributed_trace
@@ -154,13 +147,13 @@ class TableServiceClient(TablesBaseClient):
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        cors = kwargs.pop('cors', None)
+        cors = kwargs.pop("cors", None)
         if cors:
             cors = [c._to_generated() for c in cors]  # pylint:disable=protected-access
         props = TableServiceProperties(
-            logging=kwargs.pop('analytics_logging', None),
-            hour_metrics=kwargs.pop('hour_metrics', None),
-            minute_metrics=kwargs.pop('minute_metrics', None),
+            logging=kwargs.pop("analytics_logging", None),
+            hour_metrics=kwargs.pop("hour_metrics", None),
+            minute_metrics=kwargs.pop("minute_metrics", None),
             cors=cors,  # type: ignore
         )
         try:
@@ -267,9 +260,7 @@ class TableServiceClient(TablesBaseClient):
                 :caption: Querying tables in a storage account
         """
         parameters = kwargs.pop("parameters", None)
-        query_filter = _parameter_filter_substitution(
-            parameters, query_filter
-        )
+        query_filter = _parameter_filter_substitution(parameters, query_filter)
         top = kwargs.pop("results_per_page", None)
 
         command = functools.partial(self._client.table.query, **kwargs)
@@ -318,8 +309,8 @@ class TableServiceClient(TablesBaseClient):
 
         """
         pipeline = Pipeline(  # type: ignore
-            transport=TransportWrapper(self._client._client._pipeline._transport), # pylint: disable = protected-access
-            policies=self._policies
+            transport=TransportWrapper(self._client._client._pipeline._transport),  # pylint: disable = protected-access
+            policies=self._policies,
         )
         return TableClient(
             self.url,
@@ -329,5 +320,5 @@ class TableServiceClient(TablesBaseClient):
             pipeline=pipeline,
             location_mode=self._location_mode,
             _hosts=self._hosts,
-            **kwargs
+            **kwargs,
         )

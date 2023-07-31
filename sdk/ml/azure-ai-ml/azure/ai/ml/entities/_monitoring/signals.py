@@ -546,7 +546,7 @@ class ModelPerformanceSignal(ModelSignal):
 
 @experimental
 class CustomMonitoringSignal(RestTranslatableMixin):
-    """Feature attribution drift signal
+    """Custom signal
 
     :ivar type: The type of the signal
     :vartype type: str
@@ -561,6 +561,9 @@ class CustomMonitoringSignal(RestTranslatableMixin):
     :param component_id: ARM ID of the component resource used to
         calculate the custom metrics.
     :type component_id: str
+    :param data_window_size: The number of days a single monitor looks back
+        over the target
+    :type data_window_size: int
     """
 
     def __init__(
@@ -570,14 +573,17 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         metric_thresholds: List[CustomMonitoringMetricThreshold],
         component_id: str,
         alert_enabled: bool = True,
+        data_window_size: Optional[int] = None,
     ):
         self.type = MonitorSignalType.CUSTOM
         self.input_datasets = input_datasets
         self.metric_thresholds = metric_thresholds
         self.component_id = component_id
         self.alert_enabled = alert_enabled
+        self.data_window_size = data_window_size
 
     def _to_rest_object(self, **kwargs) -> RestCustomMonitoringSignal:  # pylint:disable=unused-argument
+        default_data_window_size = kwargs.get("default_data_window_size")
         return RestCustomMonitoringSignal(
             component_id=self.component_id,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
@@ -587,6 +593,9 @@ class CustomMonitoringSignal(RestTranslatableMixin):
             if self.input_datasets
             else None,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
+            lookback_period=to_iso_duration_format_days(self.data_window_size)
+            if self.data_window_size
+            else default_data_window_size,
         )
 
     @classmethod

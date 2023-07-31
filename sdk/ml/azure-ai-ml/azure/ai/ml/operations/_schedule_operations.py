@@ -118,7 +118,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     ) -> Iterable[Schedule]:
         """List schedules in specified workspace.
 
-        :param list_view_type: View type for including/excluding (for example)
+        :keyword list_view_type: View type for including/excluding (for example)
             archived schedules. Default: ENABLED_ONLY.
         :type list_view_type: Optional[ScheduleListViewType]
         :return: An iterator to list Schedule.
@@ -294,8 +294,8 @@ class ScheduleOperations(_ScopeDependentOperations):
                 model_inputs_version = in_reg.asset_version
                 model_outputs_name = out_reg.asset_name
                 model_outputs_version = out_reg.asset_version
-                mdc_input_enabled_str = deployment_data_collector.get("model_inputs").enabled
-                mdc_output_enabled_str = deployment_data_collector.get("model_outputs").enabled
+                mdc_input_enabled_str = deployment_data_collector.collections.get("model_inputs").enabled
+                mdc_output_enabled_str = deployment_data_collector.collections.get("model_outputs").enabled
             else:
                 model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
                 model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
@@ -328,7 +328,6 @@ class ScheduleOperations(_ScopeDependentOperations):
                     target=ErrorTarget.SCHEDULE,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-
         # resolve ARM id for each signal and populate any defaults if needed
         for signal_name, signal in schedule.create_monitor.monitoring_signals.items():
             if signal.type == MonitorSignalType.CUSTOM:

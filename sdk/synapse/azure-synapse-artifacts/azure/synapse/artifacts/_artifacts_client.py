@@ -31,6 +31,7 @@ from .operations import (
     NotebookOperations,
     PipelineOperations,
     PipelineRunOperations,
+    RunNotebookOperations,
     SparkConfigurationOperations,
     SparkJobDefinitionOperations,
     SqlPoolsOperations,
@@ -51,6 +52,8 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     :ivar link_connection: LinkConnectionOperations operations
     :vartype link_connection: azure.synapse.artifacts.operations.LinkConnectionOperations
+    :ivar run_notebook: RunNotebookOperations operations
+    :vartype run_notebook: azure.synapse.artifacts.operations.RunNotebookOperations
     :ivar kql_scripts: KqlScriptsOperations operations
     :vartype kql_scripts: azure.synapse.artifacts.operations.KqlScriptsOperations
     :ivar kql_script: KqlScriptOperations operations
@@ -117,6 +120,7 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.link_connection = LinkConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.run_notebook = RunNotebookOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kql_scripts = KqlScriptsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kql_script = KqlScriptOperations(self._client, self._config, self._serialize, self._deserialize)
         self.metastore = MetastoreOperations(self._client, self._config, self._serialize, self._deserialize)

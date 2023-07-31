@@ -362,7 +362,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
         scheduled_time = datetime.datetime.utcnow() + datetime.timedelta(0, 30)
         scheduled_time_utc = recorded_variables.setdefault("scheduled_time_utc", _datetime_as_isostr(scheduled_time))
 
-        matching_mode = JobMatchingMode.initialize_schedule_and_suspend_mode(
+        matching_mode = JobMatchingMode(
             schedule_and_suspend_mode = ScheduleAndSuspendMode(
                 schedule_at = recorded_variables["scheduled_time_utc"]))
 
@@ -1068,7 +1068,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
         scheduled_time = datetime.datetime.utcnow() + datetime.timedelta(0, 30)
         scheduled_time_utc = recorded_variables.setdefault("scheduled_time_utc", _datetime_as_isostr(scheduled_time))
 
-        matching_mode = JobMatchingMode.initialize_schedule_and_suspend_mode(
+        matching_mode = JobMatchingMode(
             schedule_and_suspend_mode = ScheduleAndSuspendMode(
                 schedule_at = recorded_variables["scheduled_time_utc"]))
 

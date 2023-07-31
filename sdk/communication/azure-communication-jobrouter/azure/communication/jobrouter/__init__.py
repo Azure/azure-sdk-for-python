@@ -64,6 +64,11 @@ from ._models import (
     RouterJobItem,
     JobMatchingMode,
     ScheduleAndSuspendMode,
+    QueueSelectorAttachment,
+    WorkerSelectorAttachment,
+    RouterRule,
+    ExceptionAction,
+    ExceptionTrigger,
 )
 
 
@@ -80,9 +85,11 @@ __all__ = [
     'DistributionMode',
     'DistributionPolicy',
     'DistributionPolicyItem',
+    'ExceptionAction',
     'ExceptionPolicy',
     'ExceptionPolicyItem',
     'ExceptionRule',
+    'ExceptionTrigger',
     'ExpressionRouterRule',
     'ExpressionRouterRuleLanguage',
     'FunctionRouterRule',
@@ -98,6 +105,7 @@ __all__ = [
     'PassThroughWorkerSelectorAttachment',
     'QueueLengthExceptionTrigger',
     'QueueWeightedAllocation',
+    'QueueSelectorAttachment',
     'ReclassifyExceptionAction',
     'RoundRobinMode',
     'RouterJob',
@@ -110,6 +118,7 @@ __all__ = [
     'RouterQueueItem',
     'RouterQueueSelector',
     'RouterQueueStatistics',
+    'RouterRule',
     'RouterWorker',
     'RouterWorkerAssignment',
     'RouterWorkerItem',
@@ -128,7 +137,8 @@ __all__ = [
     'WaitTimeExceptionTrigger',
     'WeightedAllocationQueueSelectorAttachment',
     'WeightedAllocationWorkerSelectorAttachment',
-    'WorkerWeightedAllocation'
+    'WorkerWeightedAllocation',
+    'WorkerSelectorAttachment'
 ]
 
 __version__ = VERSION

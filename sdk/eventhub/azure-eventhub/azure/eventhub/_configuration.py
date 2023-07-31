@@ -36,10 +36,12 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.custom_endpoint_hostname = None
         self.hostname = kwargs.pop("hostname")
         uamqp_transport = kwargs.pop("uamqp_transport")
+        self.socket_timeout = kwargs.get("socket_timeout", .2)
 
         if self.http_proxy or self.transport_type.value == TransportType.AmqpOverWebsocket.value:
             self.transport_type = TransportType.AmqpOverWebsocket
             self.connection_port = DEFAULT_AMQP_WSS_PORT
+            self.socket_timeout = kwargs.get("socket_timeout", 1)
             if not uamqp_transport:
                 self.hostname += "/$servicebus/websocket"
 

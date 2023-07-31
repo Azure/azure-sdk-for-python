@@ -243,6 +243,7 @@ models. Indexes can also define suggesters, lexical analyzers, and more.
 <!-- SNIPPET:sample_index_crud_operations.create_index -->
 
 ```python
+client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 name = "hotels"
 fields = [
     SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),

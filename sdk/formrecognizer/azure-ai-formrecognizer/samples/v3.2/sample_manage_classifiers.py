@@ -31,7 +31,7 @@ def sample_manage_classifiers():
     from azure.ai.formrecognizer import (
         DocumentModelAdministrationClient,
         ClassifierDocumentTypeDetails,
-        AzureBlobContentSource,
+        AzureBlobSource,
     )
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
@@ -46,12 +46,12 @@ def sample_manage_classifiers():
     poller = document_model_admin_client.begin_build_document_classifier(
         doc_types={
             "IRS-1040-A": ClassifierDocumentTypeDetails(
-                azure_blob_source=AzureBlobContentSource(
+                source=AzureBlobSource(
                     container_url=container_sas_url, prefix="IRS-1040-A/train"
                 )
             ),
             "IRS-1040-D": ClassifierDocumentTypeDetails(
-                azure_blob_source=AzureBlobContentSource(
+                source=AzureBlobSource(
                     container_url=container_sas_url, prefix="IRS-1040-D/train"
                 )
             ),

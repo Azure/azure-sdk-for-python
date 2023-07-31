@@ -113,10 +113,10 @@ def set_pipeline_settings(
 
     This function should be called inside a `dsl.pipeline` decorated function, otherwise will raise exception.
 
-    :param on_init: On_init job node or name. On init job will be executed before all other jobs, \
+    :keyword on_init: On_init job node or name. On init job will be executed before all other jobs, \
                 it should not have data connections to regular nodes.
     :type on_init: Union[BaseNode, str]
-    :param on_finalize: On_finalize job node or name. On finalize job will be executed after pipeline run \
+    :keyword on_finalize: On_finalize job node or name. On finalize job will be executed after pipeline run \
                 finishes (completed/failed/canceled), it should not have data connections to regular nodes.
     :type on_finalize: Union[BaseNode, str]
     :return:

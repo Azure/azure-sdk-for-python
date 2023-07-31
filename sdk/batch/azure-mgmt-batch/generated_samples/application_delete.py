@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.application.delete(
+    client.application.delete(
         resource_group_name="default-azurebatch-japaneast",
         account_name="sampleacct",
         application_name="app1",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2022-10-01/examples/ApplicationDelete.json
+# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2023-05-01/examples/ApplicationDelete.json
 if __name__ == "__main__":
     main()
