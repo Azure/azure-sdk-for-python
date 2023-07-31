@@ -8,7 +8,7 @@ import datetime
 from typing import Any, Iterable, List, Literal, Dict, Mapping, Sequence, Set, Tuple, Optional, overload, Union
 import pytest
 import isodate
-from azure.core.serialization import AzureJSONEncoder, Model, rest_field, NULL, _is_model
+from azure.core.serialization import AzureJSONEncoder, Model, rest_field, NULL, _is_model, rest_discriminator
 
 
 class BasicResource(Model):
@@ -3515,89 +3515,95 @@ def test_null_serilization():
     }
 
 
+class UnionBaseModel(Model):
+    name: str = rest_field()
+
+    @overload
+    def __init__(self, *, name: str):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+class UnionModel1(UnionBaseModel):
+    prop1: int = rest_field()
+
+    @overload
+    def __init__(self, *, name: str, prop1: int):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+class UnionModel2(UnionBaseModel):
+    prop2: int = rest_field()
+
+    @overload
+    def __init__(self, *, name: str, prop2: int):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+MyNamedUnion = Union["UnionModel1", "UnionModel2"]
+
+
+class ModelWithNamedUnionProperty(Model):
+    named_union: "MyNamedUnion" = rest_field(name="namedUnion")
+
+    @overload
+    def __init__(self, *, named_union: "MyNamedUnion"):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ModelWithSimpleUnionProperty(Model):
+    simple_union: Union[int, List[int]] = rest_field(name="simpleUnion")
+
+    @overload
+    def __init__(self, *, simple_union: Union[int, List[int]]):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 def test_union():
-    class BaseModel(Model):
-        name: str = rest_field()
-
-        @overload
-        def __init__(self, *, name: str):
-            ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]):
-            ...
-
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            super().__init__(*args, **kwargs)
-
-    class Model1(BaseModel):
-        prop1: int = rest_field()
-
-        @overload
-        def __init__(self, *, name: str, prop1: int):
-            ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]):
-            ...
-
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            super().__init__(*args, **kwargs)
-
-    class Model2(BaseModel):
-        prop2: int = rest_field()
-
-        @overload
-        def __init__(self, *, name: str, prop2: int):
-            ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]):
-            ...
-
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            super().__init__(*args, **kwargs)
-
-    MyNamedUnion = Union["_models.Model1", "_models.Model2"]
-
-    class ModelWithNamedUnionProperty(Model):
-        named_union: "MyNamedUnion" = rest_field(name="namedUnion")
-
-        @overload
-        def __init__(self, *, named_union: "MyNamedUnion"):
-            ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]):
-            ...
-
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            super().__init__(*args, **kwargs)
-
-    class ModelWithSimpleUnionProperty(Model):
-        simple_union: Union[int, List[int]] = rest_field(name="simpleUnion")
-
-        @overload
-        def __init__(self, *, simple_union: Union[int, List[int]]):
-            ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]):
-            ...
-
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            super().__init__(*args, **kwargs)
-
     simple = ModelWithSimpleUnionProperty(simple_union=1)
     assert simple.simple_union == simple["simpleUnion"] == 1
     simple = ModelWithSimpleUnionProperty(simple_union=[1, 2])
     assert simple.simple_union == simple["simpleUnion"] == [1, 2]
     named = ModelWithNamedUnionProperty()
     assert not _is_model(named.named_union)
-    named.named_union = Model1(name="model1", prop1=1)
+    named.named_union = UnionModel1(name="model1", prop1=1)
     assert _is_model(named.named_union)
     assert named.named_union == named["namedUnion"] == {"name": "model1", "prop1": 1}
-    named = ModelWithNamedUnionProperty(named_union=Model2(name="model2", prop2=2))
+    named = ModelWithNamedUnionProperty(named_union=UnionModel2(name="model2", prop2=2))
+    assert named.named_union == named["namedUnion"] == {"name": "model2", "prop2": 2}
+    named = ModelWithNamedUnionProperty({"namedUnion": {"name": "model2", "prop2": 2}})
     assert named.named_union == named["namedUnion"] == {"name": "model2", "prop2": 2}
 
 
@@ -3650,3 +3656,164 @@ def test_as_dict():
             }
         ]
     }
+
+
+class Fish(Model):
+    __mapping__: Dict[str, Model] = {}
+    age: int = rest_field()
+    kind: Literal[None] = rest_discriminator(name="kind")
+
+    @overload
+    def __init__(self, *, age: int, ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind: Literal[None] = None
+
+
+class Shark(Fish, discriminator="shark"):
+    __mapping__: Dict[str, Model] = {}
+    kind: Literal["shark"] = rest_discriminator(name="kind")
+    sharktype: Literal[None] = rest_discriminator(name="sharktype")
+
+    @overload
+    def __init__(self, *, age: int, ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind: Literal["shark"] = "shark"
+        self.sharktype: Literal[None] = None
+
+
+class GoblinShark(Shark, discriminator="goblin"):
+    sharktype: Literal["goblin"] = rest_discriminator(name="sharktype")
+
+    @overload
+    def __init__(self, *, age: int, ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.sharktype: Literal["goblin"] = "goblin"
+
+
+class Salmon(Fish, discriminator="salmon"):
+    kind: Literal["salmon"] = rest_discriminator(name="kind")
+    friends: Optional[List["_models.Fish"]] = rest_field()
+    hate: Optional[Dict[str, "_models.Fish"]] = rest_field()
+    partner: Optional["_models.Fish"] = rest_field()
+
+    @overload
+    def __init__(
+            self,
+            *,
+            age: int,
+            friends: Optional[List["_models.Fish"]] = None,
+            hate: Optional[Dict[str, "_models.Fish"]] = None,
+            partner: Optional["_models.Fish"] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind: Literal["salmon"] = "salmon"
+
+
+class SawShark(Shark, discriminator="saw"):
+    sharktype: Literal["saw"] = rest_discriminator(name="sharktype")
+
+    @overload
+    def __init__(self, *, age: int, ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.sharktype: Literal["saw"] = "saw"
+
+
+def test_discriminator():
+    input = {
+        "age": 1,
+        "kind": "salmon",
+        "partner": {
+            "age": 2,
+            "kind": "shark",
+            "sharktype": "saw",
+        },
+        "friends": [
+            {
+                "age": 2,
+                "kind": "salmon",
+                "partner": {
+                    "age": 3,
+                    "kind": "salmon",
+                },
+                "hate": {
+                    "key1": {
+                        "age": 4,
+                        "kind": "salmon",
+                    },
+                    "key2": {
+                        "age": 2,
+                        "kind": "shark",
+                        "sharktype": "goblin",
+                    },
+                },
+            },
+            {
+                "age": 3,
+                "kind": "shark",
+                "sharktype": "goblin",
+            },
+        ],
+        "hate": {
+            "key3": {
+                "age": 3,
+                "kind": "shark",
+                "sharktype": "saw",
+            },
+            "key4": {
+                "age": 2,
+                "kind": "salmon",
+                "friends": [
+                    {
+                        "age": 1,
+                        "kind": "salmon",
+                    },
+                    {
+                        "age": 4,
+                        "kind": "shark",
+                        "sharktype": "goblin",
+                    },
+                ],
+            },
+        },
+    }
+
+    model = Salmon(input)
+    assert model == input
+    assert model.partner.age == 2
+    assert model.partner == SawShark(age=2)
+    assert model.friends[0].hate["key2"] == GoblinShark(age=2)

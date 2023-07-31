@@ -562,25 +562,24 @@ class Model(_MyMutableMapping):
                 base.__mapping__[discriminator or cls.__name__] = cls  # type: ignore  # pylint: disable=no-member
 
     @classmethod
-    def _get_discriminator(cls) -> typing.Optional[str]:
+    def _get_discriminator(cls, exist_discriminators) -> typing.Optional[str]:
         for v in cls.__dict__.values():
-            if (
-                    isinstance(v, _RestField) and v._is_discriminator
-            ):  # pylint: disable=protected-access
+            if isinstance(v, _RestField) and v._is_discriminator and v._rest_name not in exist_discriminators:  # pylint: disable=protected-access
                 return v._rest_name  # pylint: disable=protected-access
         return None
 
     @classmethod
-    def _deserialize(cls, data):
+    def _deserialize(cls, data, exist_discriminators):
         if not hasattr(cls, "__mapping__"):  # pylint: disable=no-member
             return cls(data)
-        discriminator = cls._get_discriminator()
+        discriminator = cls._get_discriminator(exist_discriminators)
+        exist_discriminators.append(discriminator)
         mapped_cls = cls.__mapping__.get(
             data.get(discriminator), cls
         )  # pylint: disable=no-member
         if mapped_cls == cls:
             return cls(data)
-        return mapped_cls._deserialize(data)  # pylint: disable=protected-access
+        return mapped_cls._deserialize(data, exist_discriminators)  # pylint: disable=protected-access
 
     def as_dict(self, *, exclude_readonly: bool = False, exclude_none: bool = False) -> typing.Dict[str, typing.Any]:
         result = {}
@@ -679,16 +678,17 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
         pass
 
     if getattr(annotation, "__origin__", None) is typing.Union:
+        deserializers = [_get_deserialize_callable_from_annotation(arg, module, rf) for arg in annotation.__args__]
 
-        def _deserialize_with_union(union_annotation, obj):
-            for t in union_annotation.__args__:
+        def _deserialize_with_union(deserializers, obj):
+            for deserializer in deserializers:
                 try:
-                    return _deserialize(t, obj, module, rf)
+                    return _deserialize(deserializer, obj)
                 except DeserializationError:
                     pass
             raise DeserializationError()
 
-        return functools.partial(_deserialize_with_union, annotation)
+        return functools.partial(_deserialize_with_union, deserializers)
 
     try:
         if annotation._name == "Dict":
@@ -794,7 +794,7 @@ def _deserialize_with_callable(
                 # for unknown value, return raw value
                 return value
         if isinstance(deserializer, type) and issubclass(deserializer, Model):
-            return deserializer._deserialize(value)
+            return deserializer._deserialize(value, [])
         return typing.cast(typing.Callable[[typing.Any], typing.Any], deserializer)(
             value
         )
