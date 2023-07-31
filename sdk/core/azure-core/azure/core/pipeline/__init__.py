@@ -126,7 +126,7 @@ class PipelineContext(Dict[str, Any]):
         return super(PipelineContext, self).pop(*args)
 
 
-class PipelineRequest(Generic[HTTPRequestType_co]):
+class PipelineRequest(Generic[HTTPRequestType]):
     """A pipeline request object.
 
     Container for moving the HttpRequest through the pipeline.
