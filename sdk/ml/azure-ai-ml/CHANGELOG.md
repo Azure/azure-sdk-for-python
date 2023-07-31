@@ -4,6 +4,7 @@
 
 ### Features Added
 - Added support to enable gpu access (local_enable_gpu) for local deployment.
+- Added support of known future features at forecast time for dnn in AutoML Forecasting jobs.
 
 ### Other Changes
 
