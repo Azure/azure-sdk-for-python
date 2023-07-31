@@ -24,10 +24,11 @@ IMPORTANT: This file has been marked for deprecation and will be removed in the 
 SDK, please use our CosmosHttpLoggingPolicy outlined in our README.
 """
 
+from azure.core.utils import CaseInsensitiveDict
 import warnings
 
 
-class RecordDiagnostics(object):
+class _RecordDiagnostics(object):
     """This file is currently deprecated and will be removed in the future. Please use our CosmosHttpLoggingPolicy
     for logging SDK diagnostics moving forward. More information on this can be found in our README.
 
@@ -59,7 +60,7 @@ class RecordDiagnostics(object):
     }
 
     def __init__(self):
-        self._headers = {}
+        self._headers = CaseInsensitiveDict()
         self._body = None
         self._request_charge = 0
 
@@ -84,15 +85,21 @@ class RecordDiagnostics(object):
 
         self._request_charge += float(headers.get("x-ms-request-charge", 0))
 
-    def __getattr__(self, name):
-        key = "x-ms-" + name.replace("_", "-")
-        if key in self._common:
-            return self._headers[key]
-        raise AttributeError(name)
+    # def __getattr__(self, name):
+    #     key = "x-ms-" + name.replace("_", "-")
+    #     if key in self._common:
+    #         return self._headers[key]
+    #     raise AttributeError(name)
 
 
-# def __getattr__(name):
-#     warnings.warn("The `diagnostics.py` file is deprecated and will be removed in the future. For logging " +
-#                   "diagnostics information for the SDK, please use our CosmosHttpLoggingPolicy. For more " +
-#                   "information on this, please see our README.",
-#                   DeprecationWarning)
+def __getattr__(name):
+    if name == 'RecordDiagnostics':
+        warnings.warn(
+            "RecordDiagnostics is deprecated and should not be used. " +
+            "For logging diagnostics information for the SDK, please use our CosmosHttpLoggingPolicy. " +
+            "For more information on this, please see our README.",
+            DeprecationWarning
+        )
+        return _RecordDiagnostics
+
+    raise AttributeError(f"module 'azure.cosmos.diagnostics' has no attribute {name}")
