@@ -39,7 +39,7 @@ async def authentication_with_api_key_credential_async():
     async with search_client:
         result = await search_client.get_document_count()
 
-    print("There are {} documents in the {} search index.".format(result, repr(index_name)))
+    print("There are {} documents in the {} search index.".format(result, index_name))
 
 
 async def authentication_service_client_with_api_key_credential_async():
@@ -69,7 +69,7 @@ async def authentication_with_aad():
     async with search_client:
         result = await search_client.get_document_count()
 
-    print("There are {} documents in the {} search index.".format(result, repr(index_name)))
+    print("There are {} documents in the {} search index.".format(result, index_name))
 
 
 async def authentication_service_client_with_aad():
