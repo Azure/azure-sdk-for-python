@@ -1,10 +1,29 @@
 # Release History
 
-## 1.0.0b10 (Unreleased)
+## 1.0.0b11 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b10 (2023-07-11)
 
 ### Features Added
 
 - Enabled the use of the `context` keyword argument for passing in context headers of a parent span. This will be the parent context used when creating the span. ([#30411](https://github.com/Azure/azure-sdk-for-python/pull/30411))
+
+### Breaking Changes
+
+- Remapped certain attributes to converge with OpenTelemetry semantic conventions ([#29203](https://github.com/Azure/azure-sdk-for-python/pull/29203)):
+    - `x-ms-client-request-id` -> `az.client_request_id`,
+    - `x-ms-request-id` -> `az.service_request_id`,
+    - `http.user_agent` -> `user_agent.original`,
+    - `message_bus.destination` -> `messaging.destination.name`,
+    - `peer.address` -> `net.peer.name`,
 
 ### Other Changes
 

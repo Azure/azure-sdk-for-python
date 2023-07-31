@@ -35,9 +35,11 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
     def export(
         self, batch: Sequence[LogData], **kwargs: Any  # pylint: disable=unused-argument
     ) -> LogExportResult:
-        """Export log data
-        :param batch: Open Telemetry LogData(s) to export.
-        :type batch: Sequence[~opentelemetry._logs.LogData]
+        """Export log data.
+
+        :param batch: OpenTelemetry LogData(s) to export.
+        :type batch: ~typing.Sequence[~opentelemetry._logs.LogData]
+        :return: The result of the export.
         :rtype: ~opentelemetry.sdk._logs.export.LogData
         """
         envelopes = [self._log_to_envelope(log) for log in batch]
@@ -77,6 +79,7 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         :param str conn_str: The connection string to be used for authentication.
         :keyword str api_version: The service API version used. Defaults to latest.
         :returns an instance of ~AzureMonitorLogExporter
+        :rtype ~azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter
         """
         return cls(connection_string=conn_str, **kwargs)
 

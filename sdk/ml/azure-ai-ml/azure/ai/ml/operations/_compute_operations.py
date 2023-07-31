@@ -48,7 +48,7 @@ class ComputeOperations(_ScopeDependentOperations):
     def list(self, *, compute_type: Optional[str] = None) -> Iterable[Compute]:
         """List computes of the workspace.
 
-        :param compute_type: the type of the compute to be listed, defaults to amlcompute
+        :keyword compute_type: the type of the compute to be listed, defaults to amlcompute
         :type compute_type: str
         :return: An iterator like instance of Compute objects
         :rtype: ~azure.core.paging.ItemPaged[Compute]
@@ -183,7 +183,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         :param name: The name of the compute.
         :type name: str
-        :param action: Action to perform. Possible values: ["Delete", "Detach"]. Defaults to "Delete".
+        :keyword action: Action to perform. Possible values: ["Delete", "Detach"]. Defaults to "Delete".
         :type action: Optional[str]
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -250,7 +250,7 @@ class ComputeOperations(_ScopeDependentOperations):
     def list_usage(self, *, location: Optional[str] = None) -> Iterable[Usage]:
         """Gets the current usage information as well as limits for AML resources for given subscription and location.
 
-        :param location: The location for which resource usage is queried.
+        :keyword location: The location for which resource usage is queried.
             If location not provided , defaults to workspace location
         :type location: str
         :return: An iterator over current usage info
@@ -268,7 +268,7 @@ class ComputeOperations(_ScopeDependentOperations):
     def list_sizes(self, *, location: Optional[str] = None, compute_type: Optional[str] = None) -> Iterable[VmSize]:
         """Returns supported VM Sizes in a location.
 
-        :param location: The location upon which virtual-machine-sizes is queried.
+        :keyword location: The location upon which virtual-machine-sizes is queried.
             If location not provided, defaults to workspace location.
         :type location: str
 

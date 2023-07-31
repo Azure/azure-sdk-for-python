@@ -10,9 +10,9 @@ from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import (
+from azure.core.pipeline.transport import (  # pylint:disable=non-abstract-transport-import,no-name-in-module
     RequestsTransport,
-)  # pylint:disable=non-abstract-transport-import,no-name-in-module
+)
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     DistributedTracingPolicy,
@@ -24,8 +24,6 @@ from azure.core.pipeline.policies import (
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import (
-    HttpResponseError,
-    ClientAuthenticationError,
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceModifiedError,
@@ -195,7 +193,6 @@ class AzureAppConfigurationClient:
         select = kwargs.pop("fields", None)
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
-        error_map = {401: ClientAuthenticationError}
 
         try:
             return self._impl.get_key_values(  # type: ignore
@@ -203,12 +200,8 @@ class AzureAppConfigurationClient:
                 key=key_filter,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
-                error_map=error_map,
                 **kwargs
             )
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response) from error
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
@@ -233,7 +226,7 @@ class AzureAppConfigurationClient:
         :type match_condition: ~azure.core.MatchConditions
         :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :return: The matched ConfigurationSetting object
-        :rtype: ~azure.appconfiguration.ConfigurationSetting
+        :rtype: ~azure.appconfiguration.ConfigurationSetting or None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`, \
             :class:`~azure.core.exceptions.ResourceNotFoundError`, \
@@ -248,15 +241,13 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
+        error_map = {}  # type: Dict[int, Any]
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        if match_condition == MatchConditions.IfModified:
-            error_map[304] = ResourceNotModifiedError
+            error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
+            error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+            error_map.update({412: ResourceExistsError})
 
         try:
             key_value = self._impl.get_key_value(
@@ -270,9 +261,6 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_generated(key_value)
         except ResourceNotModifiedError:
             return None
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response) from error
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
@@ -303,7 +291,7 @@ class AzureAppConfigurationClient:
         """
         key_value = configuration_setting._to_generated()
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
-        error_map = {401: ClientAuthenticationError, 412: ResourceExistsError}
+        error_map = {412: ResourceExistsError}
         try:
             key_value_added = self._impl.put_key_value(
                 entity=key_value,
@@ -314,9 +302,6 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
             )
             return ConfigurationSetting._from_generated(key_value_added)
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response) from error
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
@@ -362,15 +347,15 @@ class AzureAppConfigurationClient:
         """
         key_value = configuration_setting._to_generated()
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
-        error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}
+        error_map = {409: ResourceReadOnlyError}  # type: Dict[int, Any]
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
+            error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
+            error_map.update({412: ResourceNotModifiedError})
         if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
+            error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+            error_map.update({412: ResourceExistsError})
 
         try:
             key_value_set = self._impl.put_key_value(
@@ -383,16 +368,13 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
             )
             return ConfigurationSetting._from_generated(key_value_set)
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response) from error
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
     @distributed_trace
-    def delete_configuration_setting(
+    def delete_configuration_setting(  # pylint:disable=delete-operation-wrong-return-type
         self, key: str, label: Optional[str] = None, **kwargs
-    ) -> ConfigurationSetting:  # pylint:disable=delete-operation-wrong-return-type
+    ) -> ConfigurationSetting:
         """Delete a ConfigurationSetting if it exists
 
         :param key: key used to identify the ConfigurationSetting
@@ -423,15 +405,15 @@ class AzureAppConfigurationClient:
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
-        error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}
+        error_map = {409: ResourceReadOnlyError}  # type: Dict[int, Any]
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
+            error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
+            error_map.update({412: ResourceNotModifiedError})
         if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
+            error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+            error_map.update({412: ResourceExistsError})
 
         try:
             key_value_deleted = self._impl.delete_key_value(
@@ -442,9 +424,6 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
             )
             return ConfigurationSetting._from_generated(key_value_deleted)  # type: ignore
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response) from error
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
@@ -489,7 +468,6 @@ class AzureAppConfigurationClient:
         select = kwargs.pop("fields", None)
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
-        error_map = {401: ClientAuthenticationError}
 
         try:
             return self._impl.get_revisions(  # type: ignore
@@ -497,12 +475,8 @@ class AzureAppConfigurationClient:
                 key=key_filter,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
-                error_map=error_map,
                 **kwargs
             )
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response) from error
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
@@ -536,17 +510,16 @@ class AzureAppConfigurationClient:
             read_only_config_setting = client.set_read_only(config_setting)
             read_only_config_setting = client.set_read_only(config_setting, read_only=False)
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
-
+        error_map = {}  # type: Dict[int, Any]
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
+            error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
+            error_map.update({412: ResourceNotModifiedError})
         if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
+            error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+            error_map.update({412: ResourceExistsError})
 
         try:
             if read_only:
@@ -568,9 +541,6 @@ class AzureAppConfigurationClient:
                     **kwargs
                 )
             return ConfigurationSetting._from_generated(key_value)
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response) from error
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
@@ -604,6 +574,7 @@ class AzureAppConfigurationClient:
         :return: A poller for create snapshot operation. Call `result()` on this object to wait for the
             operation to complete and get the created snapshot.
         :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.Snapshot]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         snapshot = Snapshot(
             filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
@@ -616,7 +587,7 @@ class AzureAppConfigurationClient:
                 ),
             )
         except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     @distributed_trace
     def archive_snapshot(
@@ -637,18 +608,29 @@ class AzureAppConfigurationClient:
         :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag.
         :return: The Snapshot returned from the service.
         :rtype: ~azure.appconfiguration.Snapshot
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
+        error_map = {}  # type: Dict[int, Any]
+        if match_condition == MatchConditions.IfNotModified:
+            error_map.update({412: ResourceModifiedError})
+        if match_condition == MatchConditions.IfModified:
+            error_map.update({412: ResourceNotModifiedError})
+        if match_condition == MatchConditions.IfPresent:
+            error_map.update({412: ResourceNotFoundError})
+        if match_condition == MatchConditions.IfMissing:
+            error_map.update({412: ResourceExistsError})
         try:
             generated_snapshot = self._impl.update_snapshot(
                 name=name,
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.ARCHIVED),
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
+                error_map=error_map,
                 **kwargs
             )
             return Snapshot._from_generated(generated_snapshot)
         except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     @distributed_trace
     def recover_snapshot(
@@ -668,18 +650,29 @@ class AzureAppConfigurationClient:
         :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag.
         :return: The Snapshot returned from the service.
         :rtype: ~azure.appconfiguration.Snapshot
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
+        error_map = {}  # type: Dict[int, Any]
+        if match_condition == MatchConditions.IfNotModified:
+            error_map.update({412: ResourceModifiedError})
+        if match_condition == MatchConditions.IfModified:
+            error_map.update({412: ResourceNotModifiedError})
+        if match_condition == MatchConditions.IfPresent:
+            error_map.update({412: ResourceNotFoundError})
+        if match_condition == MatchConditions.IfMissing:
+            error_map.update({412: ResourceExistsError})
         try:
             generated_snapshot = self._impl.update_snapshot(
                 name=name,
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.READY),
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
+                error_map=error_map,
                 **kwargs
             )
             return Snapshot._from_generated(generated_snapshot)
         except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     @distributed_trace
     def get_snapshot(self, name: str, *, fields: Optional[List[str]] = None, **kwargs) -> Snapshot:
@@ -690,6 +683,7 @@ class AzureAppConfigurationClient:
         :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields.
         :return: The Snapshot returned from the service.
         :rtype: ~azure.appconfiguration.Snapshot
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         try:
             generated_snapshot = self._impl.get_snapshot(
@@ -697,7 +691,7 @@ class AzureAppConfigurationClient:
             )
             return Snapshot._from_generated(generated_snapshot)
         except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     @distributed_trace
     def list_snapshots(
@@ -716,6 +710,7 @@ class AzureAppConfigurationClient:
         :keyword list[str] status: Filter results based on snapshot keys.
         :return: An iterator of :class:`~azure.appconfiguration.Snapshot`
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.Snapshot]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         try:
             return self._impl.get_snapshots(  # type: ignore
@@ -726,7 +721,7 @@ class AzureAppConfigurationClient:
                 **kwargs
             )
         except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     @distributed_trace
     def list_snapshot_configuration_settings(
@@ -740,6 +735,7 @@ class AzureAppConfigurationClient:
         :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSetting]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         if fields:
             fields = ["locked" if x == "read_only" else x for x in fields]
@@ -753,7 +749,7 @@ class AzureAppConfigurationClient:
                 **kwargs
             )
         except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")
+            raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     def update_sync_token(self, token: str) -> None:
         """Add a sync token to the internal list of tokens.

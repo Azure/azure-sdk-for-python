@@ -7,7 +7,7 @@
 from threading import Lock, Condition, Timer, TIMEOUT_MAX, Event
 from datetime import timedelta
 from typing import Any
-import six
+
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
 
@@ -32,7 +32,7 @@ class CommunicationTokenCredential(object):
     _DEFAULT_AUTOREFRESH_INTERVAL_MINUTES = 10
 
     def __init__(self, token: str, **kwargs: Any):
-        if not isinstance(token, six.string_types):
+        if not isinstance(token, str):
             raise TypeError("Token must be a string.")
         self._token = create_access_token(token)
         self._token_refresher = kwargs.pop("token_refresher", None)
@@ -49,6 +49,8 @@ class CommunicationTokenCredential(object):
     def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         # type (*str, **Any) -> AccessToken
         """The value of the configured token.
+        :param any scopes: Scopes to be added to the token.
+        :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken
         """
         if self._proactive_refresh and self._is_closed.is_set():

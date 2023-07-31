@@ -1,5 +1,16 @@
 # Release History
 
+## 1.5.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- Fixed a bug in deserializing and serializing Snapshot when `filters` property is `None`.
+
+### Other Changes
+
 ## 1.5.0b1 (2023-07-11)
 
 ### Features Added

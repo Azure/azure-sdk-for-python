@@ -23,14 +23,20 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import TypeVar
 from azure.core.exceptions import TooManyRedirectsError
 from azure.core.pipeline import PipelineResponse, PipelineRequest
+from azure.core.pipeline.transport import AsyncHttpResponse as LegacyAsyncHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from . import AsyncHTTPPolicy
 from ._redirect import RedirectPolicyBase, domain_changed
 from ._utils import get_domain
 
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
-class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):
+
+class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """An async redirect policy.
 
     An async redirect policy in the pipeline can be configured directly or per operation.
@@ -48,7 +54,9 @@ class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):
             :caption: Configuring an async redirect policy.
     """
 
-    async def send(self, request: PipelineRequest) -> PipelineResponse:
+    async def send(
+        self, request: PipelineRequest[HTTPRequestType]
+    ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
         """Sends the PipelineRequest object to the next policy.
         Uses redirect settings to send the request to redirect endpoint if necessary.
 

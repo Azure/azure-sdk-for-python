@@ -15,7 +15,6 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
     - [Tox](#tox)
     - [The `devtools_testutils` package](#the-devtools_testutils-package)
     - [Write or run tests](#write-or-run-tests)
-        - [Perform one-time test proxy setup](#perform-one-time-test-proxy-setup)
         - [Set up test resources](#set-up-test-resources)
         - [Configure credentials](#configure-credentials)
         - [Start the test proxy server](#start-the-test-proxy-server)
@@ -23,7 +22,7 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
         - [Write your tests](#write-your-tests)
         - [Configure live or playback testing mode](#configure-live-or-playback-testing-mode)
         - [Run and record tests](#run-and-record-tests)
-        - [Run tests with out-of-repo recordings](#run-tests-with-out-of-repo-recordings)
+        - [Update test recordings](#update-test-recordings)
         - [Sanitize secrets](#sanitize-secrets)
             - [Special case: SAS tokens](#special-case-sas-tokens)
     - [Functional vs. unit tests](#functional-vs-unit-tests)
@@ -166,10 +165,6 @@ the
 Newer SDK tests utilize the [Azure SDK Tools Test Proxy][proxy_general_docs] to record and playback HTTP interactions.
 To migrate an existing test suite to use the test proxy, or to learn more about using the test proxy, refer to the
 [test proxy migration guide][proxy_migration_guide].
-
-### Perform one-time test proxy setup
-
-The test proxy uses a self-signed certificate to communicate with HTTPS. Follow the general setup instructions [here][proxy_cert_docs] to trust this certificate locally.
 
 ### Set up test resources
 

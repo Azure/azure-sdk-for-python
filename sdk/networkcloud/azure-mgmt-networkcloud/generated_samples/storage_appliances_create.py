@@ -26,7 +26,7 @@ from azure.mgmt.networkcloud import NetworkCloudMgmtClient
 def main():
     client = NetworkCloudMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="123e4567-e89b-12d3-a456-426655440000",
     )
 
     response = client.storage_appliances.begin_create_or_update(
@@ -34,13 +34,13 @@ def main():
         storage_appliance_name="storageApplianceName",
         storage_appliance_parameters={
             "extendedLocation": {
-                "name": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ExtendedLocation/customLocations/clusterExtendedLocationName",
+                "name": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ExtendedLocation/customLocations/clusterExtendedLocationName",
                 "type": "CustomLocation",
             },
             "location": "location",
             "properties": {
                 "administratorCredentials": {"password": "{password}", "username": "adminUser"},
-                "rackId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/racks/rackName",
+                "rackId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/racks/rackName",
                 "rackSlot": 1,
                 "serialNumber": "BM1219XXX",
                 "storageApplianceSkuId": "684E-3B16-399E",
@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2022-12-12-preview/examples/StorageAppliances_Create.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2023-05-01-preview/examples/StorageAppliances_Create.json
 if __name__ == "__main__":
     main()

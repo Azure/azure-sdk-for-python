@@ -105,6 +105,7 @@ known_content_issues:
   - ['sdk/media/azure-media-analytics-edge/README.md', '#4554']
   - ['sdk/remoterendering/azure-mixedreality-remoterendering/README.md', '#4554']
   - ['sdk/modelsrepository/azure-iot-modelsrepository/README.md', '#4554']
+  - ['sdk/openai/azure-openai/README.md', '#4554']
 
   # common.
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'common']

@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Iterable
+from typing import Iterable, Optional
 
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as RunHistoryServiceClient
 from azure.ai.ml._restclient.runhistory.models import GetRunDataRequest, GetRunDataResult, Run, RunDetails
@@ -53,7 +53,7 @@ class RunOperations(_ScopeDependentOperations):
             cls=lambda objs: [self._translate_from_rest_object(obj) for obj in objs],
         )
 
-    def _translate_from_rest_object(self, job_object: Run) -> _BaseJob:
+    def _translate_from_rest_object(self, job_object: Run) -> Optional[_BaseJob]:
         """Handle errors during list operation."""
         try:
             from_rest_job = Job._from_rest_object(job_object)
@@ -67,7 +67,7 @@ class RunOperations(_ScopeDependentOperations):
             )
             return from_rest_job
         except JobParsingError:
-            pass
+            return None
 
     def get_run_data(self, run_id: str) -> GetRunDataResult:
         run_data_request = GetRunDataRequest(

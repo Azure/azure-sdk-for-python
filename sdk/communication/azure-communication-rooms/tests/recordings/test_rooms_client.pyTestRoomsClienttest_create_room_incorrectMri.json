@@ -12,7 +12,7 @@
         "Content-Type": "application/json",
         "Repeatability-First-Sent": "sanitized",
         "Repeatability-Request-ID": "sanitized",
-        "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",

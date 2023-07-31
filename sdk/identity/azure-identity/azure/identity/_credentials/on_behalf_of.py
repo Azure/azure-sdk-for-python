@@ -17,6 +17,7 @@ from .._internal.interactive import _build_auth_record
 from .._internal.msal_credentials import MsalCredential
 from .. import AuthenticationRecord
 
+
 class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
     """Authenticates a service principal via the on-behalf-of flow.
 
@@ -64,12 +65,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
             :caption: Create an OnBehalfOfCredential.
     """
 
-    def __init__(
-            self,
-            tenant_id: str,
-            client_id: str,
-            **kwargs: Any
-    ) -> None:
+    def __init__(self, tenant_id: str, client_id: str, **kwargs: Any) -> None:
         self._assertion = kwargs.pop("user_assertion", None)
         if not self._assertion:
             raise TypeError('"user_assertion" is required.')
@@ -85,9 +81,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 )
             except ValueError as ex:
                 # client_certificate isn't a valid cert.
-                message = (
-                    '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
-                )
+                message = '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
                 raise ValueError(message) from ex
         elif client_secret:
             credential = client_secret
@@ -95,16 +89,12 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
             raise TypeError('Either "client_certificate" or "client_secret" must be provided')
 
         super(OnBehalfOfCredential, self).__init__(
-            client_id=client_id,
-            client_credential=credential,
-            tenant_id=tenant_id,
-            **kwargs)
+            client_id=client_id, client_credential=credential, tenant_id=tenant_id, **kwargs
+        )
         self._auth_record: Optional[AuthenticationRecord] = None
 
     @wrap_exceptions
-    def _acquire_token_silently(
-        self, *scopes: str, **kwargs: Any
-    ) -> Optional[AccessToken]:
+    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         if self._auth_record:
             claims = kwargs.get("claims")
             app = self._get_app(**kwargs)

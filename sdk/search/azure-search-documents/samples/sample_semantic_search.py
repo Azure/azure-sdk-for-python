@@ -36,7 +36,7 @@ def speller():
     results = list(client.search(search_text="luxury", query_language="en-us", query_speller="lexicon"))
 
     for result in results:
-        print("{}\n{}\n)".format(result["HotelId"], result["HotelName"]))
+        print("{}\n{}\n)".format(result["hotelId"], result["hotelName"]))
     # [END speller]
 
 
@@ -61,7 +61,7 @@ def semantic_ranking():
     )
 
     for result in results:
-        print("{}\n{}\n)".format(result["HotelId"], result["HotelName"]))
+        print("{}\n{}\n)".format(result["hotelId"], result["hotelName"]))
     # [END semantic_ranking]
 
 

@@ -685,7 +685,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
                 response.read()  # type: ignore
         return cls.deserialize_from_text(response.text(encoding), mime_type, response=response)
 
-    def on_request(self, request: PipelineRequest) -> None:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         options = request.context.options
         response_encoding = options.pop("response_encoding", self._response_encoding)
         if response_encoding:
