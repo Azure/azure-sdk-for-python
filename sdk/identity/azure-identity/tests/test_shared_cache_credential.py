@@ -19,16 +19,12 @@ from azure.identity._internal.shared_token_cache import (
     NO_ACCOUNTS,
     NO_MATCHING_ACCOUNTS,
 )
-from azure.identity._internal import get_default_authority
+from azure.identity._internal import get_default_authority, within_dac
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest
 from urllib.parse import urlparse
-
-try:
-    from unittest.mock import MagicMock, Mock, patch
-except ImportError:  # python < 3.3
-    from mock import MagicMock, Mock, patch  # type: ignore
+from unittest.mock import MagicMock, Mock, patch
 
 from helpers import (
     build_aad_response,
@@ -46,7 +42,7 @@ def test_close():
     transport = MagicMock()
     credential = SharedTokenCacheCredential(transport=transport, _cache=TokenCache())
     with pytest.raises(CredentialUnavailableError):
-        credential.get_token('scope')
+        credential.get_token("scope")
 
     assert not transport.__enter__.called
     assert not transport.__exit__.called
@@ -60,7 +56,7 @@ def test_context_manager():
     transport = MagicMock()
     credential = SharedTokenCacheCredential(transport=transport, _cache=TokenCache())
     with pytest.raises(CredentialUnavailableError):
-        credential.get_token('scope')
+        credential.get_token("scope")
 
     assert not transport.__enter__.called
     assert not transport.__exit__.called
@@ -143,7 +139,7 @@ def test_tenant_id():
     credential = SharedTokenCacheCredential(
         _cache=populated_cache(get_account_event("test@user", "uid", "utid")),
         transport=transport,
-        additionally_allowed_tenants=['*']
+        additionally_allowed_tenants=["*"],
     )
 
     credential.get_token("scope", tenant_id="tenant_id")
@@ -751,7 +747,7 @@ def test_writes_to_cache():
 
 
 def test_initialization():
-    """the credential should attempt to load the cache only once, when it's first needed"""
+    """the credential should attempt to load the cache when it's needed and no cache has been established."""
 
     with patch("azure.identity._internal.shared_token_cache._load_persistent_cache") as mock_cache_loader:
         mock_cache_loader.side_effect = Exception("it didn't work")
@@ -759,10 +755,13 @@ def test_initialization():
         credential = SharedTokenCacheCredential()
         assert mock_cache_loader.call_count == 0
 
-        for _ in range(2):
-            with pytest.raises(CredentialUnavailableError, match="Shared token cache unavailable"):
-                credential.get_token("scope")
-            assert mock_cache_loader.call_count == 1
+        with pytest.raises(CredentialUnavailableError, match="Shared token cache unavailable"):
+            credential.get_token("scope")
+        assert mock_cache_loader.call_count == 1
+
+        with pytest.raises(CredentialUnavailableError, match="Shared token cache unavailable"):
+            credential.get_token("scope")
+        assert mock_cache_loader.call_count == 2
 
 
 def test_initialization_with_cache_options():
@@ -774,7 +773,17 @@ def test_initialization_with_cache_options():
 
         with pytest.raises(CredentialUnavailableError):
             credential.get_token("scope")
-        mock_cache_loader.assert_called_once_with(options)
+        assert mock_cache_loader.call_count == 1
+        args, _ = mock_cache_loader.call_args
+        assert args[0] == options
+        assert args[1] is False  # is_cae is False.
+
+        with pytest.raises(CredentialUnavailableError):
+            credential.get_token("scope", enable_cae=True)
+        assert mock_cache_loader.call_count == 2
+        args, _ = mock_cache_loader.call_args
+        assert args[0] == options
+        assert args[1] is True  # is_cae is True.
 
 
 def test_authentication_record_authenticating_tenant():
@@ -800,7 +809,7 @@ def test_authentication_record_authenticating_tenant():
 
 
 def test_client_capabilities():
-    """the credential should configure MSAL for capability CP1 unless AZURE_IDENTITY_DISABLE_CP1 is set"""
+    """the credential should configure MSAL for capability CP1 only if enable_cae is passed."""
 
     def send(request, **_):
         # expecting only the discovery requests triggered by creating an msal.PublicClientApplication
@@ -815,19 +824,31 @@ def test_client_capabilities():
         with pytest.raises(ClientAuthenticationError):  # (cache is empty)
             credential.get_token("scope")
 
-    assert PublicClientApplication.call_count == 1
-    _, kwargs = PublicClientApplication.call_args
-    assert kwargs["client_capabilities"] == ["CP1"]
+        assert PublicClientApplication.call_count == 1
+        _, kwargs = PublicClientApplication.call_args
+        assert kwargs["client_capabilities"] is None
 
+        with pytest.raises(ClientAuthenticationError):
+            credential.get_token("scope", enable_cae=True)
+        assert PublicClientApplication.call_count == 2
+        _, kwargs = PublicClientApplication.call_args
+        assert kwargs["client_capabilities"] == ["CP1"]
+
+
+def test_within_dac_error():
+    def send(request, **_):
+        # expecting only the discovery requests triggered by creating an msal.PublicClientApplication
+        # because the cache is empty--the credential shouldn't send a token request
+        return get_discovery_response("https://localhost/tenant")
+
+    record = AuthenticationRecord("tenant-id", "client_id", "authority", "home_account_id", "username")
+    transport = Mock(send=send)
     credential = SharedTokenCacheCredential(transport=transport, authentication_record=record, _cache=TokenCache())
+    within_dac.set(True)
     with patch("azure.identity._credentials.silent.PublicClientApplication") as PublicClientApplication:
-        with patch.dict("os.environ", {"AZURE_IDENTITY_DISABLE_CP1": "true"}):
-            with pytest.raises(ClientAuthenticationError):  # (cache is empty)
-                credential.get_token("scope")
-
-    assert PublicClientApplication.call_count == 1
-    _, kwargs = PublicClientApplication.call_args
-    assert kwargs["client_capabilities"] is None
+        with pytest.raises(CredentialUnavailableError):  # (cache is empty)
+            credential.get_token("scope")
+    within_dac.set(False)
 
 
 def test_claims_challenge():
@@ -877,7 +898,7 @@ def test_multitenant_authentication():
     cache = populated_cache(expected_account)
 
     credential = SharedTokenCacheCredential(
-        authority=authority, transport=Mock(send=send), _cache=cache, additionally_allowed_tenants=['*']
+        authority=authority, transport=Mock(send=send), _cache=cache, additionally_allowed_tenants=["*"]
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -928,7 +949,7 @@ def test_multitenant_authentication_auth_record():
         transport=Mock(send=send),
         authentication_record=record,
         _cache=cache,
-        additionally_allowed_tenants = ['*']
+        additionally_allowed_tenants=["*"],
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -973,6 +994,7 @@ def populated_cache(*accounts):
         cache.add(account)
     cache.add = lambda *_, **__: None  # prevent anything being added to the cache
     return cache
+
 
 def test_multitenant_authentication_not_allowed():
     default_tenant = "organizations"

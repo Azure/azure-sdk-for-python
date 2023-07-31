@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
 from azure.ai.ml._utils.utils import dump_yaml_to_file, get_all_data_binding_expressions, load_yaml
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, DefaultOpenEncoding
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 from azure.ai.ml.exceptions import UserErrorException
 
@@ -330,10 +330,11 @@ class PipelineExpression(PipelineExpressionMixin):
             _postfix: List[str],
             _expression_inputs: Dict[str, ExpressionInput],
         ) -> Tuple[List[str], dict]:
-            if not _component_output._meta.is_control:
+            if not _component_output._meta._is_control_or_primitive_type:
                 error_message = (
                     f"Component output {_component_output._port_name} in expression must have "
-                    f'"is_control" field with value {True!r}, got {_component_output._meta.is_control!r}'
+                    f'"is_control" field or is a primitive type with value {True!r}, '
+                    f"got {_component_output._meta._is_control_or_primitive_type!r}"
                 )
                 raise UserErrorException(message=error_message, no_personal_data_message=error_message)
             _name = _component_output._port_name
@@ -545,13 +546,13 @@ class PipelineExpression(PipelineExpressionMixin):
     def _create_component(self):
         def _generate_python_file(_folder: Path) -> None:
             _folder.mkdir()
-            with open(_folder / "expression_component.py", "w") as _f:
+            with open(_folder / "expression_component.py", "w", encoding=DefaultOpenEncoding.WRITE) as _f:
                 _f.write(self._component_code)
 
         def _generate_yaml_file(_path: Path) -> None:
             _data_folder = Path(__file__).parent / "data"
             # update YAML content from template and dump
-            with open(_data_folder / "expression_component_template.yml", "r") as _f:
+            with open(_data_folder / "expression_component_template.yml", "r", encoding=DefaultOpenEncoding.READ) as _f:
                 _data = load_yaml(_f)
             _data["display_name"] = f"Expression: {self.expression}"
             _data["inputs"] = {}

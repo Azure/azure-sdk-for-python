@@ -79,13 +79,11 @@ __all__ = [
 ]
 
 
+# This function is added to deal with HandleItem which is a generated model that
+# was mistakenly added to the module exports. It has been removed import and __all__
+# to prevent it from showing in intellisense/docs but we handle it here to prevent
+# breaking any existing code which may have imported it.
 def __getattr__(name):
-    """
-    This function is added to deal with HandleItem which is a generated model that
-    was mistakenly added to the module exports. It has been removed import and __all__
-    to prevent it from showing in intellisense/docs but we handle it here to prevent
-    breaking any existing code which may have imported it.
-    """
     if name == 'HandleItem':
         from ._generated.models import HandleItem
         warnings.warn(

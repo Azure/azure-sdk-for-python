@@ -61,24 +61,6 @@ request = client.sent_shares.begin_create_or_replace(
 response = request.result()
 # [END create_a_sent_share]
 
-# Get a sent share
-# [START get_a_sent_share]
-get_response = client.sent_shares.get(sent_share_id=str(sent_share_id))
-# [END get_a_sent_share]
-
-# Delete a sent share
-# [START delete_a_sent_share]
-delete_request = client.sent_shares.begin_delete(sent_share_id=str(sent_share_id))
-delete_response = delete_request.result()
-# [END delete_a_sent_share]
-
-# Get all sent shares
-# [START get_all_sent_shares]
-list_request = client.sent_shares.list(
-    reference_name=str(sent_share["properties.artifact.storeReference.referenceName"]),
-    orderby="properties/createdAt desc")
-# [END get_all_sent_shares]
-
 # Send a user invitation
 # [START send_a_user_invitation]
 from datetime import date
@@ -120,7 +102,40 @@ invitation_response = client.sent_shares.create_invitation(
     sent_share_invitation=sent_share_invitation)
 # [END send_a_service_invitation]
 
+# Get a sent share
+# [START get_a_sent_share]
+get_response = client.sent_shares.get(sent_share_id=str(sent_share_id))
+# [END get_a_sent_share]
+
+# Get all sent shares
+# [START get_all_sent_shares]
+list_request = client.sent_shares.list(
+    reference_name=str(sent_share["properties.artifact.storeReference.referenceName"]),
+    order_by="properties/createdAt desc")
+# [END get_all_sent_shares]
+
+# Delete a sent share
+# [START delete_a_sent_share]
+delete_request = client.sent_shares.begin_delete(sent_share_id=str(sent_share_id))
+delete_response = delete_request.result()
+# [END delete_a_sent_share]
+
+# Get a sent share invitation (new)
+# [START get_a_sent_share_invitation]
+get_invitation_request = client.sent_shares.get_invitation(
+    sent_share_id=str(sent_share_id), 
+    sent_share_invitation_id=str(sent_share_invitation_id))
+#[END get_a_sent_share_invitation]
+
 # View sent invitations
 # [START view_sent_invitations]
 list_request = client.sent_shares.list_invitations(sent_share_id=str(sent_share_id))
 # [END view_sent_invitations]
+
+# Delete a sent share invitation (new)
+# [START delete_a_sent_share_invitation]
+delete_invitation_request = client.sent_shares.begin_delete_invitation(
+    sent_share_id=str(sent_share_id),
+    sent_share_invitation_id=str(sent_share_invitation_id))
+delete_invitation_response = delete_invitation_request.result()
+# [END delete_a_sent_share_invitation]

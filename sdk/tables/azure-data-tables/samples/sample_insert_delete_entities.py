@@ -35,10 +35,8 @@ class InsertDeleteEntity(object):
         self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
         self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
-        self.connection_string = (
-            "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-                self.account_name, self.access_key, self.endpoint_suffix
-            )
+        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            self.account_name, self.access_key, self.endpoint_suffix
         )
         self.table_name = "SampleInsertDelete"
 
@@ -51,7 +49,7 @@ class InsertDeleteEntity(object):
             "last_updated": datetime.today(),
             "product_id": uuid4(),
             "inventory_count": 42,
-            "barcode": b"135aefg8oj0ld58" # cspell:disable-line
+            "barcode": b"135aefg8oj0ld58",  # cspell:disable-line
         }
 
     def create_entity(self):
@@ -79,7 +77,7 @@ class InsertDeleteEntity(object):
         from azure.core.exceptions import ResourceExistsError
         from azure.core.credentials import AzureNamedKeyCredential
 
-        credential = AzureNamedKeyCredential(self.account_name, self.access_key) # type: ignore[arg-type]
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key)  # type: ignore[arg-type]
         with TableClient(endpoint=self.endpoint, table_name=self.table_name, credential=credential) as table_client:
 
             # Create entity to delete (to showcase etag)

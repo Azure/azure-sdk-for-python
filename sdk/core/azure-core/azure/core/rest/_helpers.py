@@ -67,6 +67,8 @@ FilesType = Union[Mapping[str, FileType], Sequence[Tuple[str, FileType]]]
 ContentTypeBase = Union[str, bytes, Iterable[bytes]]
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
+DataType = Optional[Union[bytes, Dict[str, Union[str, int]]]]
+
 ########################### HELPER SECTION #################################
 
 
@@ -179,7 +181,7 @@ def decode_to_text(encoding: Optional[str], content: bytes) -> str:
 
 
 class HttpRequestBackcompatMixin:
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> Any:
         backcompat_attrs = [
             "files",
             "data",
@@ -200,7 +202,7 @@ class HttpRequestBackcompatMixin:
         attr = _pad_attr_name(attr, backcompat_attrs)
         return self.__getattribute__(attr)
 
-    def __setattr__(self, attr, value):
+    def __setattr__(self, attr: str, value: Any) -> None:
         backcompat_attrs = [
             "multipart_mixed_info",
             "files",
@@ -211,7 +213,7 @@ class HttpRequestBackcompatMixin:
         super(HttpRequestBackcompatMixin, self).__setattr__(attr, value)
 
     @property
-    def _multipart_mixed_info(self):
+    def _multipart_mixed_info(self) -> Optional[Tuple[Sequence[Any], Sequence[Any], str, Dict[str, Any]]]:
         """DEPRECATED: Information used to make multipart mixed requests.
         This is deprecated and will be removed in a later release.
 
@@ -224,7 +226,7 @@ class HttpRequestBackcompatMixin:
             return None
 
     @_multipart_mixed_info.setter
-    def _multipart_mixed_info(self, val):
+    def _multipart_mixed_info(self, val: Optional[Tuple[Sequence[Any], Sequence[Any], str, Dict[str, Any]]]):
         """DEPRECATED: Set information to make multipart mixed requests.
         This is deprecated and will be removed in a later release.
 
@@ -233,7 +235,7 @@ class HttpRequestBackcompatMixin:
         self._multipart_mixed_info_val = val
 
     @property
-    def _query(self):
+    def _query(self) -> Dict[str, Any]:
         """DEPRECATED: Query parameters passed in by user
         This is deprecated and will be removed in a later release.
 
@@ -246,7 +248,7 @@ class HttpRequestBackcompatMixin:
         return {}
 
     @property
-    def _body(self):
+    def _body(self) -> DataType:
         """DEPRECATED: Body of the request. You should use the `content` property instead
         This is deprecated and will be removed in a later release.
 
@@ -256,7 +258,7 @@ class HttpRequestBackcompatMixin:
         return self._data
 
     @_body.setter
-    def _body(self, val):
+    def _body(self, val: DataType) -> None:
         """DEPRECATED: Set the body of the request
         This is deprecated and will be removed in a later release.
 
@@ -264,7 +266,7 @@ class HttpRequestBackcompatMixin:
         """
         self._data = val
 
-    def _format_parameters(self, params):
+    def _format_parameters(self, params: MutableMapping[str, str]) -> None:
         """DEPRECATED: Format the query parameters
         This is deprecated and will be removed in a later release.
         You should pass the query parameters through the kwarg `params`
@@ -272,7 +274,7 @@ class HttpRequestBackcompatMixin:
 
         :param dict params: Query parameters
         """
-        return _format_parameters_helper(self, params)
+        _format_parameters_helper(self, params)
 
     def _set_streamed_data_body(self, data):
         """DEPRECATED: Set the streamed request body.
@@ -367,7 +369,7 @@ class HttpRequestBackcompatMixin:
         :param requests: Requests to be sent in the multipart request
         :type requests: list[HttpRequest]
         """
-        self.multipart_mixed_info = (
+        self.multipart_mixed_info: Tuple[Sequence[Any], Sequence[Any], str, Dict[str, Any]] = (
             requests,
             kwargs.pop("policies", []),
             kwargs.pop("boundary", None),

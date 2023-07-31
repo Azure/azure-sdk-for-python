@@ -137,6 +137,11 @@ class EventHubConsumerClient(
     :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
      False and the Pure Python AMQP library will be used as the underlying transport.
     :paramtype uamqp_transport: bool
+    :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+     wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+     and 1 for TransportType.AmqpOverWebsocket. If EventHubsConnectionError errors are occurring due to write
+     timing out, a larger than default value may need to be passed in. This is for advanced usage scenarios
+     and ordinarily the default value should be sufficient.
 
     .. admonition:: Example:
 

@@ -175,6 +175,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     def instance_count(self) -> int:
         """The number of instances or nodes to be used by the compute target.
 
+        :return: The number of instances or nodes.
         :rtype: int
         """
         return self.resources.instance_count if self.resources else None
@@ -183,8 +184,8 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     def instance_count(self, value: int) -> None:
         """Sets the number of instances or nodes to be used by the compute target.
 
-        :param value: The number of instances of nodes to be used by the compute target. Defaults to 1.
-        :type instance_count: int
+        :param value: The number of instances or nodes to be used by the compute target. Defaults to 1.
+        :type value: int
         """
         if not value:
             return
@@ -253,8 +254,11 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     def _validate_early_available_output(self) -> MutableValidationResult:
         validation_result = self._create_empty_validation_result()
         for name, output in self.outputs.items():
-            if output.early_available is True and output.is_control is not True:
-                msg = f"Early available output {name!r} requires is_control as True, got {output.is_control!r}."
+            if output.early_available is True and output._is_control_or_primitive_type is not True:
+                msg = (
+                    f"Early available output {name!r} requires is_control as True or output is primitive type, "
+                    f"got {output._is_control_or_primitive_type!r}."
+                )
                 validation_result.append_error(message=msg, yaml_path=f"outputs.{name}")
         return validation_result
 
