@@ -6,6 +6,7 @@
 ### Features Added
 
 ### Bugs Fixed
+- Local job runs will no longer fail if Docker registry has no username/password
 
 ### Breaking Changes
 
