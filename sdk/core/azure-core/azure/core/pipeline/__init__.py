@@ -138,12 +138,12 @@ class PipelineRequest(Generic[HTTPRequestType_co]):
     :type context: ~azure.core.pipeline.PipelineContext
     """
 
-    def __init__(self, http_request: HTTPRequestType_co, context: PipelineContext) -> None:
+    def __init__(self, http_request: HTTPRequestType, context: PipelineContext) -> None:
         self.http_request = http_request
         self.context = context
 
 
-class PipelineResponse(Generic[HTTPRequestType_co, HTTPResponseType_co]):
+class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
     """A pipeline response object.
 
     The PipelineResponse interface exposes an HTTP response object as it returns through the pipeline of Policy objects.
@@ -163,8 +163,8 @@ class PipelineResponse(Generic[HTTPRequestType_co, HTTPResponseType_co]):
 
     def __init__(
         self,
-        http_request: HTTPRequestType_co,
-        http_response: HTTPResponseType_co,
+        http_request: HTTPRequestType,
+        http_response: HTTPResponseType,
         context: PipelineContext,
     ) -> None:
         self.http_request = http_request
