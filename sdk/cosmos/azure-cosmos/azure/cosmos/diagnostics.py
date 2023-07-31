@@ -85,11 +85,11 @@ class _RecordDiagnostics(object):
 
         self._request_charge += float(headers.get("x-ms-request-charge", 0))
 
-    # def __getattr__(self, name):
-    #     key = "x-ms-" + name.replace("_", "-")
-    #     if key in self._common:
-    #         return self._headers[key]
-    #     raise AttributeError(name)
+    def __getattr__(self, name):
+        key = "x-ms-" + name.replace("_", "-")
+        if key in self._common:
+            return self._headers[key]
+        raise AttributeError(name)
 
 
 def __getattr__(name):
