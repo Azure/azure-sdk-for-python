@@ -240,7 +240,7 @@ class ODataV4Format:
 class AzureError(Exception):
     """Base exception for all errors.
 
-    :param message: The message object stringified as 'message' attribute
+    :param object message: The message object stringified as 'message' attribute
     :keyword error: The original exception if any
     :paramtype error: Exception
 
@@ -255,7 +255,7 @@ class AzureError(Exception):
      and will be `None` where continuation is either unavailable or not applicable.
     """
 
-    def __init__(self, message: Optional[str], *args: Any, **kwargs: Any) -> None:
+    def __init__(self, message: Optional[object], *args: Any, **kwargs: Any) -> None:
         self.inner_exception: Optional[BaseException] = kwargs.get("error")
 
         exc_info = sys.exc_info()
@@ -305,8 +305,7 @@ class ServiceResponseTimeoutError(ServiceResponseError):
 class HttpResponseError(AzureError):
     """A request was made, and a non-success status code was received from the service.
 
-    :param message: HttpResponse's error message
-    :type message: string
+    :param object message: The message object stringified as 'message' attribute
     :param response: The response that triggered the exception.
     :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
 
@@ -323,7 +322,7 @@ class HttpResponseError(AzureError):
     """
 
     def __init__(
-        self, message: Optional[str] = None, response: "Optional[AllHTTPResponseType]" = None, **kwargs: Any
+        self, message: Optional[object] = None, response: "Optional[AllHTTPResponseType]" = None, **kwargs: Any
     ) -> None:
         # Don't want to document this one yet.
         error_format = kwargs.get("error_format", ODataV4Format)
