@@ -22,7 +22,7 @@ class OneLakeDatastore(Datastore):
     :param name: Name of the datastore.
     :type name: str
     :param artifact: OneLake Artifact. Only LakeHouse artifacts are currently supported.
-    :type artifact: OneLakeArtifact
+    :type artifact: ~azure.ai.ml.entities.OneLakeArtifact
     :param one_lake_workspace_name: OneLake workspace name/GUID. ex) 01234567-abcd-1234-5678-012345678901
     :type one_lake_workspace_name: str
     :param endpoint: OneLake endpoint to use for the datastore. ex) https://onelake.dfs.fabric.microsoft.com
@@ -34,7 +34,9 @@ class OneLakeDatastore(Datastore):
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param credentials: Credentials to use to authenticate against OneLake.
-    :type credentials: Union[ServicePrincipalConfiguration, NoneCredentialConfiguration]
+    :type credentials: Union[
+        ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.NoneCredentialConfiguration
+        ]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
