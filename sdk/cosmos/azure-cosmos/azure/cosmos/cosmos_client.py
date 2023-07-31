@@ -243,13 +243,13 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     def create_database(  # pylint: disable=redefined-builtin
         self,
         id,  # type: str
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
         **kwargs  # type: Any
     ):
         # type: (...) -> DatabaseProxy
         """
         Create a new database with the given ID (name).
-
         :param str id: ID (name) of the database to create.
         :param offer_throughput: The provisioned throughput for this offer.
         :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
@@ -262,9 +262,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
-
         .. admonition:: Example:
-
             .. literalinclude:: ../samples/examples.py
                 :start-after: [START create_database]
                 :end-before: [END create_database]
@@ -276,6 +274,12 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            request_options["populateQueryMetrics"] = populate_query_metrics
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
@@ -287,20 +291,19 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     def create_database_if_not_exists(  # pylint: disable=redefined-builtin
         self,
         id,  # type: str
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
         **kwargs  # type: Any
     ):
         # type: (...) -> DatabaseProxy
         """
         Create the database if it does not exist already.
-
         If the database already exists, the existing settings are returned.
-
         ..note::
             This function does not check or update existing database settings or
             offer throughput if they differ from what is passed in.
-
         :param str id: ID (name) of the database to read or create.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :param offer_throughput: The provisioned throughput for this offer.
         :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword str session_token: Token for use with Session consistency.
@@ -316,12 +319,14 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         try:
             database_proxy = self.get_database_client(id)
             database_proxy.read(
+                populate_query_metrics=populate_query_metrics,
                 **kwargs
             )
             return database_proxy
         except CosmosResourceNotFoundError:
             return self.create_database(
                 id,
+                populate_query_metrics=populate_query_metrics,
                 offer_throughput=offer_throughput,
                 **kwargs
             )
@@ -350,11 +355,11 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     def list_databases(
         self,
         max_item_count=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """List the databases in a Cosmos DB SQL database account.
-
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -366,6 +371,12 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            feed_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
         if response_hook:
@@ -379,11 +390,11 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         parameters=None,  # type: Optional[List[str]]
         enable_cross_partition_query=None,  # type: Optional[bool]
         max_item_count=None,  # type:  Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """Query the databases in a Cosmos DB SQL database account.
-
         :param str query: The Azure Cosmos DB SQL query to execute.
         :param List[str] parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param bool enable_cross_partition_query: Allow scan on the queries which couldn't be
@@ -401,6 +412,12 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            feed_options["populateQueryMetrics"] = populate_query_metrics
 
         if query:
             # This is currently eagerly evaluated in order to capture the headers
@@ -420,11 +437,11 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     def delete_database(
         self,
         database,  # type: Union[str, DatabaseProxy, Dict[str, Any]]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Delete the database with the given ID (name).
-
         :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
             instance of the database to delete.
         :type database: Union[str, Dict[str, str], ~azure.cosmos.DatabaseProxy]
@@ -439,6 +456,12 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            request_options["populateQueryMetrics"] = populate_query_metrics
 
         database_link = self._get_database_link(database)
         self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)

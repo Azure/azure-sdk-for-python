@@ -38,6 +38,7 @@ from .documents import IndexingMode
 
 __all__ = ("DatabaseProxy",)
 
+
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
@@ -115,8 +116,10 @@ class DatabaseProxy(object):
         return self._properties
 
     @distributed_trace
-    def read(self, **kwargs):
-        # type: (Any) -> Dict[str, Any]
+    def read(self,
+             populate_query_metrics=None,  # pylint:disable=docstring-missing-param
+             **kwargs):
+        # type: (Optional[bool], Any) -> Dict[str, Any]
         """Read the database properties.
 
         :keyword str session_token: Token for use with Session consistency.
@@ -131,6 +134,12 @@ class DatabaseProxy(object):
         database_link = CosmosClient._get_database_link(self)
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            request_options["populateQueryMetrics"] = populate_query_metrics
 
         self._properties = self.client_connection.ReadDatabase(
             database_link, options=request_options, **kwargs
@@ -148,6 +157,7 @@ class DatabaseProxy(object):
         partition_key,  # type: ~azure.cosmos.partition_key.PartitionKey
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
@@ -155,9 +165,7 @@ class DatabaseProxy(object):
     ):
         # type: (...) -> ContainerProxy
         """Create a new container with the given ID (name).
-
         If a container with the given ID already exists, a CosmosResourceExistsError is raised.
-
         :param str id: ID (name) of container to create.
         :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
         :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
@@ -178,9 +186,7 @@ class DatabaseProxy(object):
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
-
         .. admonition:: Example:
-
             .. literalinclude:: ../samples/examples.py
                 :start-after: [START create_container]
                 :end-before: [END create_container]
@@ -188,7 +194,6 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: Create a container with default settings:
                 :name: create_container
-
             .. literalinclude:: ../samples/examples.py
                 :start-after: [START create_container_with_settings]
                 :end-before: [END create_container_with_settings]
@@ -213,13 +218,18 @@ class DatabaseProxy(object):
             definition["uniqueKeyPolicy"] = unique_key_policy
         if conflict_resolution_policy is not None:
             definition["conflictResolutionPolicy"] = conflict_resolution_policy
-
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         if analytical_storage_ttl is not None:
             definition["analyticalStorageTtl"] = analytical_storage_ttl
 
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            request_options["populateQueryMetrics"] = populate_query_metrics
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         data = self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
@@ -237,6 +247,7 @@ class DatabaseProxy(object):
         partition_key,  # type: Any
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
@@ -244,11 +255,9 @@ class DatabaseProxy(object):
     ):
         # type: (...) -> ContainerProxy
         """Create a container if it does not exist already.
-
         If the container already exists, the existing settings are returned.
         Note: it does not check or update the existing container settings or offer throughput
         if they differ from what was passed into the method.
-
         :param id: ID (name) of container to read or create.
         :param partition_key: The partition key to use for the container.
         :param indexing_policy: The indexing policy to apply to the container.
@@ -270,11 +279,11 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
         """
-
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         try:
             container_proxy = self.get_container_client(id)
             container_proxy.read(
+                populate_query_metrics=populate_query_metrics,
                 **kwargs
             )
             return container_proxy
@@ -284,6 +293,7 @@ class DatabaseProxy(object):
                 partition_key=partition_key,
                 indexing_policy=indexing_policy,
                 default_ttl=default_ttl,
+                populate_query_metrics=populate_query_metrics,
                 offer_throughput=offer_throughput,
                 unique_key_policy=unique_key_policy,
                 conflict_resolution_policy=conflict_resolution_policy,
@@ -294,11 +304,11 @@ class DatabaseProxy(object):
     def delete_container(
         self,
         container,  # type: Union[str, ContainerProxy, Dict[str, Any]]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Delete a container.
-
         :param container: The ID (name) of the container to delete. You can either
             pass in the ID of the container to delete, a :class:`ContainerProxy` instance or
             a dict representing the properties of the container.
@@ -314,6 +324,12 @@ class DatabaseProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            request_options["populateQueryMetrics"] = populate_query_metrics
 
         collection_link = self._get_container_link(container)
         result = self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
@@ -351,7 +367,10 @@ class DatabaseProxy(object):
         return ContainerProxy(self.client_connection, self.database_link, id_value)
 
     @distributed_trace
-    def list_containers(self, max_item_count=None, **kwargs):
+    def list_containers(self,
+                        max_item_count=None,
+                        populate_query_metrics=None, # pylint:disable=docstring-missing-param
+                        **kwargs):
         # type: (Optional[int], Optional[bool], Any) -> Iterable[Dict[str, Any]]
         """List the containers in the database.
 
@@ -376,6 +395,12 @@ class DatabaseProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            feed_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.ReadContainers(
             database_link=self.database_link, options=feed_options, **kwargs
@@ -390,11 +415,11 @@ class DatabaseProxy(object):
         query=None,  # type: Optional[str]
         parameters=None,  # type: Optional[List[Dict[str, Any]]]
         max_item_count=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """List the properties for containers in the current database.
-
         :param str query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :type parameters: List[Dict[str, Any]]
@@ -409,6 +434,12 @@ class DatabaseProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            feed_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.QueryContainers(
             database_link=self.database_link,
@@ -428,14 +459,13 @@ class DatabaseProxy(object):
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         **kwargs  # type: Any
     ):
         # type: (...) -> ContainerProxy
         """Reset the properties of the container.
-
         Property changes are persisted immediately. Any properties not specified
         will be reset to their default values.
-
         :param container: The ID (name), dict representing the properties or
             :class:`ContainerProxy` instance of the container to be replaced.
         :type container: Union[str, ContainerProxy, Dict[str, Any]]
@@ -444,6 +474,7 @@ class DatabaseProxy(object):
         :param int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
@@ -457,9 +488,7 @@ class DatabaseProxy(object):
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the container after replace completed.
         :rtype: ~azure.cosmos.ContainerProxy
-
         .. admonition:: Example:
-
             .. literalinclude:: ../samples/examples.py
                 :start-after: [START reset_container_properties]
                 :end-before: [END reset_container_properties]
@@ -471,6 +500,12 @@ class DatabaseProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            request_options["populateQueryMetrics"] = populate_query_metrics
 
         container_id = self._get_container_id(container)
         container_link = self._get_container_link(container_id)
@@ -636,10 +671,10 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def replace_user(
-        self,
-        user,  # type: Union[str, UserProxy, Dict[str, Any]]
-        body,  # type: Dict[str, Any]
-        **kwargs  # type: Any
+            self,
+            user,  # type: Union[str, UserProxy, Dict[str, Any]]
+            body,  # type: Dict[str, Any]
+            **kwargs  # type: Any
     ):
         # type: (...) -> UserProxy
         """Replaces the specified user if it exists in the container.

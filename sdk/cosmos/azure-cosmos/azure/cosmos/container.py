@@ -145,23 +145,25 @@ class ContainerProxy(object):
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-
-        populate_partition_key_range_statistics = args[0] if args else kwargs.pop(
+        populate_query_metrics = args[0] if args else kwargs.pop('populate_query_metrics', None)
+        if populate_query_metrics:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+        populate_partition_key_range_statistics = args[1] if args and len(args) > 1 else kwargs.pop(
             "populate_partition_key_range_statistics", None)
-        populate_quota_info = args[1] if args and len(args) > 1 else kwargs.pop("populate_quota_info", None)
+        populate_quota_info = args[2] if args and len(args) > 2 else kwargs.pop("populate_quota_info", None)
         if populate_partition_key_range_statistics is not None:
             request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
         if populate_quota_info is not None:
             request_options["populateQuotaInfo"] = populate_quota_info
-
         collection_link = self.container_link
         self._properties = self.client_connection.ReadContainer(
             collection_link, options=request_options, **kwargs
         )
-
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
-
         return cast('Dict[str, Any]', self._properties)
 
     @distributed_trace
@@ -169,12 +171,12 @@ class ContainerProxy(object):
         self,
         item,  # type: Union[str, Dict[str, Any]]
         partition_key,  # type: Any
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         post_trigger_include=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Get the item identified by `item`.
-
         :param item: The ID (name) or dict representing item to retrieve.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the item to retrieve.
@@ -189,9 +191,7 @@ class ContainerProxy(object):
         :returns: Dict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :rtype: dict[str, Any]
-
         .. admonition:: Example:
-
             .. literalinclude:: ../samples/examples.py
                 :start-after: [START update_item]
                 :end-before: [END update_item]
@@ -206,6 +206,12 @@ class ContainerProxy(object):
 
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            request_options["populateQueryMetrics"] = populate_query_metrics
 
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
@@ -223,11 +229,11 @@ class ContainerProxy(object):
     def read_all_items(
         self,
         max_item_count=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """List all the items in the container.
-
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -242,6 +248,12 @@ class ContainerProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            feed_options["populateQueryMetrics"] = populate_query_metrics
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
@@ -314,7 +326,7 @@ class ContainerProxy(object):
         enable_cross_partition_query=None,  # type: Optional[bool]
         max_item_count=None,  # type: Optional[int]
         enable_scan_in_query=None,  # type: Optional[bool]
-        populate_query_metrics=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
@@ -410,15 +422,14 @@ class ContainerProxy(object):
         self,
         item,  # type: Union[str, Dict[str, Any]]
         body,  # type: Dict[str, Any]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         pre_trigger_include=None,  # type: Optional[str]
         post_trigger_include=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Replaces the specified item if it exists in the container.
-
         If the item does not already exist in the container, an exception is raised.
-
         :param item: The ID (name) or dict representing item to be replaced.
         :type item: Union[str, Dict[str, Any]]
         :param body: A dict-like object representing the item to replace.
@@ -440,6 +451,12 @@ class ContainerProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         request_options["disableAutomaticIdGeneration"] = True
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
@@ -456,16 +473,15 @@ class ContainerProxy(object):
     def upsert_item(
         self,
         body,  # type: Dict[str, Any]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         pre_trigger_include=None,  # type: Optional[str]
         post_trigger_include=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Insert or update the specified item.
-
         If the item already exists in the container, it is replaced. If the item
         does not already exist, it is inserted.
-
         :param body: A dict-like object representing the item to update or insert.
         :type body: Dict[str, Any]
         :param str pre_trigger_include: trigger id to be used as pre operation trigger.
@@ -483,6 +499,12 @@ class ContainerProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         request_options["disableAutomaticIdGeneration"] = True
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
@@ -502,6 +524,7 @@ class ContainerProxy(object):
     def create_item(
         self,
         body,  # type: Dict[str, Any]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         pre_trigger_include=None,  # type: Optional[str]
         post_trigger_include=None,  # type: Optional[str]
         indexing_directive=None,  # type: Optional[Union[int, ~azure.cosmos.documents.IndexingDirective]]
@@ -509,10 +532,8 @@ class ContainerProxy(object):
     ):
         # type: (...) -> Dict[str, Any]
         """Create an item in the container.
-
         To update or replace an existing item, use the
         :func:`ContainerProxy.upsert_item` method.
-
         :param body: A dict-like object representing the item to create.
         :type body: Dict[str, Any]
         :param str pre_trigger_include: trigger id to be used as pre operation trigger.
@@ -535,6 +556,12 @@ class ContainerProxy(object):
         response_hook = kwargs.pop('response_hook', None)
 
         request_options["disableAutomaticIdGeneration"] = not kwargs.pop('enable_automatic_id_generation', False)
+        if populate_query_metrics:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
@@ -601,15 +628,14 @@ class ContainerProxy(object):
         self,
         item,  # type: Union[Dict[str, Any], str]
         partition_key,  # type: Union[str, int, float, bool]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         pre_trigger_include=None,  # type: Optional[str]
         post_trigger_include=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Delete the specified item from the container.
-
         If the item does not already exist in the container, an exception is raised.
-
         :param item: The ID (name) or dict representing item to be deleted.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: Specifies the partition key value for the item.
@@ -630,6 +656,12 @@ class ContainerProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                UserWarning,
+            )
+            request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
