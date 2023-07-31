@@ -149,8 +149,7 @@ class AzureJSONEncoder(JSONEncoder):
             if self.exclude_readonly:
                 readonly_props = [p._rest_name for p in o._attr_to_rest_field.values() if _is_readonly(p)]
                 for k in readonly_props:
-                    if k in result:
-                        result.pop(k)
+                    result.pop(k, None)
             if self.exclude_none:
                 for k in list(result.keys()):
                     if result[k] is None or isinstance(result[k], _Null):
