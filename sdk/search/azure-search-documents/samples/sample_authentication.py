@@ -53,6 +53,37 @@ def authentication_service_client_with_api_key_credential():
     # [END create_search_service_client_with_key]
 
 
+def authentication_with_aad():
+    # [START authentication_with_aad]
+    from azure.identity import DefaultAzureCredential
+    from azure.search.documents import SearchClient
+
+    service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
+    index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
+    credential = DefaultAzureCredential()
+
+    search_client = SearchClient(service_endpoint, index_name, credential)
+    # [END authentication_with_aad]
+
+    result = search_client.get_document_count()
+
+    print("There are {} documents in the {} search index.".format(result, repr(index_name)))
+
+
+def authentication_service_client_with_aad():
+    # [START authentication_service_client_with_aad]
+    from azure.identity import DefaultAzureCredential
+    from azure.search.documents.indexes import SearchIndexClient
+
+    service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
+    credential = DefaultAzureCredential()
+
+    search_client = SearchIndexClient(service_endpoint, credential)
+    # [END authentication_service_client_with_aad]
+
+
 if __name__ == "__main__":
     authentication_with_api_key_credential()
     authentication_service_client_with_api_key_credential()
+    authentication_with_aad()
+    authentication_service_client_with_aad()
