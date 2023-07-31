@@ -502,7 +502,6 @@ class QueryTest(unittest.TestCase):
             query_iterable = created_collection.query_items(query=query, enable_cross_partition_query=True)
             try:
                 list(query_iterable)
-                print("we here mate")
                 self.fail()
             except exceptions.CosmosHttpResponseError as e:
                 self.assertEqual(e.status_code, 400)
