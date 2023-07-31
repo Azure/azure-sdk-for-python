@@ -58,7 +58,11 @@ def uamqp_transport(request):
 
 @pytest.fixture(scope="session")    
 def storage_connection_str():
-    return os.environ['AZURE_STORAGE_CONN_STR']
+    try:
+        return os.environ['AZURE_STORAGE_CONN_STR']
+    except KeyError:
+        pytest.skip('AZURE_STORAGE_CONN_STR undefined')
+        return
 
 @pytest.fixture()    
 def checkpoint_store(storage_connection_str):
