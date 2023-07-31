@@ -36,12 +36,10 @@ _LOGGER = logging.getLogger(__name__)
 if TYPE_CHECKING:
     from azure.core.pipeline.policies import RequestHistory
     from .pipeline.transport import (
-        HttpTransport,
-        HttpRequest as LegacyHttpRequest,
         HttpResponse as LegacyHttpResponse,
         AsyncHttpResponse as LegacyAsyncHttpResponse,
     )
-    from .rest import HttpRequest, HttpResponse, AsyncHttpResponse
+    from .rest import HttpResponse, AsyncHttpResponse
 
     AllHTTPResponseType = Union[LegacyHttpResponse, HttpResponse, LegacyAsyncHttpResponse, AsyncHttpResponse]
 
@@ -124,7 +122,7 @@ class ErrorMap(Generic[KeyType, ValueType]):
         return self._default_error
 
 
-def map_error(status_code: int, response: HTTPResponseType, error_map: Mapping[int, Type[Any]]) -> None:
+def map_error(status_code: int, response: "AllHTTPResponseType", error_map: Mapping[int, Type[Any]]) -> None:
     if not error_map:
         return
     error_type = error_map.get(status_code)
@@ -332,7 +330,7 @@ class HttpResponseError(AzureError):
 
         self.reason: Optional[str] = None
         self.status_code: Optional[int] = None
-        self.response = response
+        self.response: "Optional[AllHTTPResponseType]" = response
         if response:
             self.reason = response.reason
             self.status_code = response.status_code
