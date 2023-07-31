@@ -64,7 +64,8 @@ class SharedTokenCacheCredential:
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure
-
+        :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
@@ -100,20 +101,28 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
-        if not self._initialized:
-            self._initialize()
+        if not self._client_initialized:
+            self._initialize_client()
 
-        if not self._cache:
-            raise CredentialUnavailableError(message="Shared token cache unavailable")
+        is_cae = bool(kwargs.get("enable_cae", False))
+        token_cache = self._cae_cache if is_cae else self._cache
 
-        account = self._get_account(self._username, self._tenant_id)
+        # Try to load the cache if it is None.
+        if not token_cache:
+            token_cache = self._initialize_cache(is_cae=is_cae)
 
-        token = self._get_cached_access_token(scopes, account)
+            # If the cache is still None, raise an error.
+            if not token_cache:
+                raise CredentialUnavailableError(message="Shared token cache unavailable")
+
+        account = self._get_account(self._username, self._tenant_id, is_cae=is_cae)
+
+        token = self._get_cached_access_token(scopes, account, is_cae=is_cae)
         if token:
             return token
 
         # try each refresh token, returning the first access token acquired
-        for refresh_token in self._get_refresh_tokens(account):
+        for refresh_token in self._get_refresh_tokens(account, is_cae=is_cae):
             token = self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)
             return token
 

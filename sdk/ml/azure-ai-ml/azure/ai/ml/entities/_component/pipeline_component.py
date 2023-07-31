@@ -37,7 +37,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class PipelineComponent(Component):
-    """Pipeline component, currently used to store components in a azure.ai.ml.dsl.pipeline.
+    """Pipeline component, currently used to store components in an azure.ai.ml.dsl.pipeline.
 
     :param name: Name of the component.
     :type name: str
@@ -49,11 +49,14 @@ class PipelineComponent(Component):
     :type tags: dict
     :param display_name: Display name of the component.
     :type display_name: str
-    :type inputs: Component inputs
-    :param outputs: Outputs of the component.
-    :type outputs: Component outputs
-    :param jobs: Id to components dict inside pipeline definition.
-    :type jobs: OrderedDict[str, Component]
+    :param inputs: Component inputs.
+    :type inputs: dict
+    :param outputs: Component outputs.
+    :type outputs: dict
+    :param jobs: Id to components dict inside the pipeline definition.
+    :type jobs: Dict[str, ~azure.ai.ml.entities._builders.BaseNode]
+    :param is_deterministic: Whether the pipeline component is deterministic.
+    :type is_deterministic: bool
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if PipelineComponent cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -71,7 +74,7 @@ class PipelineComponent(Component):
         jobs: Optional[Dict[str, BaseNode]] = None,
         is_deterministic: Optional[bool] = None,
         **kwargs,
-    ):
+    ) -> None:
         kwargs[COMPONENT_TYPE] = NodeType.PIPELINE
         super().__init__(
             name=name,
@@ -283,7 +286,11 @@ class PipelineComponent(Component):
 
     @property
     def jobs(self) -> Dict[str, BaseNode]:
-        """Return a dictionary from component variable name to component object."""
+        """Return a dictionary from component variable name to component object.
+
+        :return: Dictionary mapping component variable names to component objects.
+        :rtype: Dict[str, ~azure.ai.ml.entities._builders.BaseNode]
+        """
         return self._jobs
 
     def _get_anonymous_hash(self) -> str:
