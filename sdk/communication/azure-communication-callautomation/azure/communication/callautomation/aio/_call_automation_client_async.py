@@ -154,7 +154,7 @@ class CallAutomationClient(object):
         callback_url: str,
         *,
         operation_context: Optional[str] = None,
-        azure_cognitive_services_endpoint_url: Optional[str] = None,
+        cognitive_services_endpoint: Optional[str] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Create a call connection request to a target identity.
@@ -165,9 +165,9 @@ class CallAutomationClient(object):
         :type callback_url: str
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
-        :keyword azure_cognitive_services_endpoint_url:
+        :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
-        :paramtype azure_cognitive_services_endpoint_url: str
+        :paramtype cognitive_services_endpoint: str
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -181,7 +181,7 @@ class CallAutomationClient(object):
             source=serialize_communication_user_identifier(
                 self.source) if self.source else None,
             operation_context=operation_context,
-            azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url
+            cognitive_services_endpoint=cognitive_services_endpoint
         )
 
         result = await self._client.create_call(
@@ -202,7 +202,7 @@ class CallAutomationClient(object):
         source_caller_id_number: Optional['PhoneNumberIdentifier'] = None,
         source_display_name: Optional[str] = None,
         operation_context: Optional[str] = None,
-        azure_cognitive_services_endpoint_url: Optional[str] = None,
+        cognitive_services_endpoint: Optional[str] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """ Create a call connection request to a list of multiple target identities.
@@ -219,9 +219,9 @@ class CallAutomationClient(object):
         :paramtype source_display_name: str
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
-        :keyword azure_cognitive_services_endpoint_url:
+        :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
-        :paramtype azure_cognitive_services_endpoint_url: str
+        :paramtype cognitive_services_endpoint: str
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -236,7 +236,7 @@ class CallAutomationClient(object):
             source=serialize_identifier(
                 self.source) if self.source else None,
             operation_context=operation_context,
-            azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url
+            cognitive_services_endpoint=cognitive_services_endpoint
         )
 
         result = await self._client.create_call(
@@ -254,7 +254,7 @@ class CallAutomationClient(object):
         incoming_call_context: str,
         callback_url: str,
         *,
-        azure_cognitive_services_endpoint_url: Optional[str] = None,
+        cognitive_services_endpoint: Optional[str] = None,
         operation_context: Optional[str] = None,
         **kwargs
     ) -> CallConnectionProperties:
@@ -265,9 +265,9 @@ class CallAutomationClient(object):
         :type incoming_call_context: str
         :param callback_url: The call back url for receiving events.
         :type callback_url: str
-        :keyword azure_cognitive_services_endpoint_url:
+        :keyword cognitive_services_endpoint:
          The endpoint url of the Azure Cognitive Services resource attached.
-        :paramtype azure_cognitive_services_endpoint_url: str
+        :paramtype cognitive_services_endpoint: str
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
         :return: CallConnectionProperties
@@ -277,7 +277,7 @@ class CallAutomationClient(object):
         answer_call_request = AnswerCallRequest(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_url,
-            azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url,
+            cognitive_services_endpoint=cognitive_services_endpoint,
             answered_by=serialize_communication_user_identifier(
                 self.source) if self.source else None,
             operation_context=operation_context

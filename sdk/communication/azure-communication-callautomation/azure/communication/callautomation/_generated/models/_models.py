@@ -267,9 +267,9 @@ class AnswerCallRequest(_serialization.Model):
     :vartype callback_uri: str
     :ivar operation_context: A customer set value used to track the answering of a call.
     :vartype operation_context: str
-    :ivar azure_cognitive_services_endpoint_url: The endpoint URL of the Azure Cognitive Services
-     resource attached.
-    :vartype azure_cognitive_services_endpoint_url: str
+    :ivar cognitive_services_endpoint: The endpoint URL of the Azure Cognitive Services resource
+     attached.
+    :vartype cognitive_services_endpoint: str
     :ivar answered_by: The identifier of the call automation entity which answers the call.
     :vartype answered_by:
      ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
@@ -284,7 +284,7 @@ class AnswerCallRequest(_serialization.Model):
         "incoming_call_context": {"key": "incomingCallContext", "type": "str"},
         "callback_uri": {"key": "callbackUri", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "azure_cognitive_services_endpoint_url": {"key": "azureCognitiveServicesEndpointUrl", "type": "str"},
+        "cognitive_services_endpoint": {"key": "cognitiveServicesEndpoint", "type": "str"},
         "answered_by": {"key": "answeredBy", "type": "CommunicationUserIdentifierModel"},
     }
 
@@ -294,7 +294,7 @@ class AnswerCallRequest(_serialization.Model):
         incoming_call_context: str,
         callback_uri: str,
         operation_context: Optional[str] = None,
-        azure_cognitive_services_endpoint_url: Optional[str] = None,
+        cognitive_services_endpoint: Optional[str] = None,
         answered_by: Optional["_models.CommunicationUserIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
@@ -305,9 +305,9 @@ class AnswerCallRequest(_serialization.Model):
         :paramtype callback_uri: str
         :keyword operation_context: A customer set value used to track the answering of a call.
         :paramtype operation_context: str
-        :keyword azure_cognitive_services_endpoint_url: The endpoint URL of the Azure Cognitive
-         Services resource attached.
-        :paramtype azure_cognitive_services_endpoint_url: str
+        :keyword cognitive_services_endpoint: The endpoint URL of the Azure Cognitive Services resource
+         attached.
+        :paramtype cognitive_services_endpoint: str
         :keyword answered_by: The identifier of the call automation entity which answers the call.
         :paramtype answered_by:
          ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
@@ -316,7 +316,7 @@ class AnswerCallRequest(_serialization.Model):
         self.incoming_call_context = incoming_call_context
         self.callback_uri = callback_uri
         self.operation_context = operation_context
-        self.azure_cognitive_services_endpoint_url = azure_cognitive_services_endpoint_url
+        self.cognitive_services_endpoint = cognitive_services_endpoint
         self.answered_by = answered_by
 
 
@@ -1226,9 +1226,9 @@ class CreateCallRequest(_serialization.Model):
     :vartype operation_context: str
     :ivar callback_uri: The callback URI. Required.
     :vartype callback_uri: str
-    :ivar azure_cognitive_services_endpoint_url: The identifier of the Cognitive Service resource
-     assigned to this call.
-    :vartype azure_cognitive_services_endpoint_url: str
+    :ivar cognitive_services_endpoint: The identifier of the Cognitive Service resource assigned to
+     this call.
+    :vartype cognitive_services_endpoint: str
     """
 
     _validation = {
@@ -1243,7 +1243,7 @@ class CreateCallRequest(_serialization.Model):
         "source": {"key": "source", "type": "CommunicationUserIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "callback_uri": {"key": "callbackUri", "type": "str"},
-        "azure_cognitive_services_endpoint_url": {"key": "azureCognitiveServicesEndpointUrl", "type": "str"},
+        "cognitive_services_endpoint": {"key": "cognitiveServicesEndpoint", "type": "str"},
     }
 
     def __init__(
@@ -1255,7 +1255,7 @@ class CreateCallRequest(_serialization.Model):
         source_display_name: Optional[str] = None,
         source: Optional["_models.CommunicationUserIdentifierModel"] = None,
         operation_context: Optional[str] = None,
-        azure_cognitive_services_endpoint_url: Optional[str] = None,
+        cognitive_services_endpoint: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1275,9 +1275,9 @@ class CreateCallRequest(_serialization.Model):
         :paramtype operation_context: str
         :keyword callback_uri: The callback URI. Required.
         :paramtype callback_uri: str
-        :keyword azure_cognitive_services_endpoint_url: The identifier of the Cognitive Service
-         resource assigned to this call.
-        :paramtype azure_cognitive_services_endpoint_url: str
+        :keyword cognitive_services_endpoint: The identifier of the Cognitive Service resource assigned
+         to this call.
+        :paramtype cognitive_services_endpoint: str
         """
         super().__init__(**kwargs)
         self.targets = targets
@@ -1286,7 +1286,7 @@ class CreateCallRequest(_serialization.Model):
         self.source = source
         self.operation_context = operation_context
         self.callback_uri = callback_uri
-        self.azure_cognitive_services_endpoint_url = azure_cognitive_services_endpoint_url
+        self.cognitive_services_endpoint = cognitive_services_endpoint
 
 
 class DtmfOptions(_serialization.Model):
@@ -1511,8 +1511,8 @@ class MuteParticipantsRequest(_serialization.Model):
         self.operation_context = operation_context
 
 
-class MuteParticipantsResponse(_serialization.Model):
-    """The response payload for muting participants from the call.
+class MuteParticipantsResult(_serialization.Model):
+    """The result payload for muting participants from the call.
 
     :ivar operation_context: The operation context provided by client.
     :vartype operation_context: str
@@ -1863,11 +1863,10 @@ class PlaySource(_serialization.Model):
     :vartype play_source_cache_id: str
     :ivar file: Defines the file source info to be used for play.
     :vartype file: ~azure.communication.callautomation.models.FileSource
-    :ivar text_source: Defines the text source info to be used for play.
-    :vartype text_source: ~azure.communication.callautomation.models.TextSource
-    :ivar ssml_source: Defines the ssml(Speech Synthesis Markup Language) source info to be used
-     for play.
-    :vartype ssml_source: ~azure.communication.callautomation.models.SsmlSource
+    :ivar text: Defines the text source info to be used for play.
+    :vartype text: ~azure.communication.callautomation.models.TextSource
+    :ivar ssml: Defines the ssml(Speech Synthesis Markup Language) source info to be used for play.
+    :vartype ssml: ~azure.communication.callautomation.models.SsmlSource
     """
 
     _validation = {
@@ -1878,8 +1877,8 @@ class PlaySource(_serialization.Model):
         "kind": {"key": "kind", "type": "str"},
         "play_source_cache_id": {"key": "playSourceCacheId", "type": "str"},
         "file": {"key": "file", "type": "FileSource"},
-        "text_source": {"key": "textSource", "type": "TextSource"},
-        "ssml_source": {"key": "ssmlSource", "type": "SsmlSource"},
+        "text": {"key": "text", "type": "TextSource"},
+        "ssml": {"key": "ssml", "type": "SsmlSource"},
     }
 
     def __init__(
@@ -1888,8 +1887,8 @@ class PlaySource(_serialization.Model):
         kind: Union[str, "_models.PlaySourceType"],
         play_source_cache_id: Optional[str] = None,
         file: Optional["_models.FileSource"] = None,
-        text_source: Optional["_models.TextSource"] = None,
-        ssml_source: Optional["_models.SsmlSource"] = None,
+        text: Optional["_models.TextSource"] = None,
+        ssml: Optional["_models.SsmlSource"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1900,18 +1899,18 @@ class PlaySource(_serialization.Model):
         :paramtype play_source_cache_id: str
         :keyword file: Defines the file source info to be used for play.
         :paramtype file: ~azure.communication.callautomation.models.FileSource
-        :keyword text_source: Defines the text source info to be used for play.
-        :paramtype text_source: ~azure.communication.callautomation.models.TextSource
-        :keyword ssml_source: Defines the ssml(Speech Synthesis Markup Language) source info to be used
-         for play.
-        :paramtype ssml_source: ~azure.communication.callautomation.models.SsmlSource
+        :keyword text: Defines the text source info to be used for play.
+        :paramtype text: ~azure.communication.callautomation.models.TextSource
+        :keyword ssml: Defines the ssml(Speech Synthesis Markup Language) source info to be used for
+         play.
+        :paramtype ssml: ~azure.communication.callautomation.models.SsmlSource
         """
         super().__init__(**kwargs)
         self.kind = kind
         self.play_source_cache_id = play_source_cache_id
         self.file = file
-        self.text_source = text_source
-        self.ssml_source = ssml_source
+        self.text = text
+        self.ssml = ssml
 
 
 class RecognizeCanceled(_serialization.Model):
@@ -2659,8 +2658,8 @@ class ResultInformation(_serialization.Model):
         self.message = message
 
 
-class SendDtmfCompleted(_serialization.Model):
-    """SendDtmfCompleted.
+class SendDtmfTonesCompleted(_serialization.Model):
+    """SendDtmfTonesCompleted.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -2714,8 +2713,8 @@ class SendDtmfCompleted(_serialization.Model):
         self.result_information = result_information
 
 
-class SendDtmfFailed(_serialization.Model):
-    """SendDtmfFailed.
+class SendDtmfTonesFailed(_serialization.Model):
+    """SendDtmfTonesFailed.
 
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -2769,14 +2768,14 @@ class SendDtmfFailed(_serialization.Model):
         self.result_information = result_information
 
 
-class SendDtmfRequest(_serialization.Model):
-    """SendDtmfRequest.
+class SendDtmfTonesRequest(_serialization.Model):
+    """SendDtmfTonesRequest.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar tones: List of tones to be sent to target participant. Required.
     :vartype tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
-    :ivar target_participant: Target participant of send DTMF. Required.
+    :ivar target_participant: Target participant of send Dtmf tones. Required.
     :vartype target_participant:
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar operation_context: The value to identify context of the operation.
@@ -2805,7 +2804,7 @@ class SendDtmfRequest(_serialization.Model):
         """
         :keyword tones: List of tones to be sent to target participant. Required.
         :paramtype tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
-        :keyword target_participant: Target participant of send DTMF. Required.
+        :keyword target_participant: Target participant of send Dtmf tones. Required.
         :paramtype target_participant:
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword operation_context: The value to identify context of the operation.
@@ -2817,8 +2816,8 @@ class SendDtmfRequest(_serialization.Model):
         self.operation_context = operation_context
 
 
-class SendDtmfResponse(_serialization.Model):
-    """SendDtmfResponse.
+class SendDtmfTonesResult(_serialization.Model):
+    """SendDtmfTonesResult.
 
     :ivar operation_context: The operation context provided by client.
     :vartype operation_context: str
@@ -3035,8 +3034,8 @@ class TextSource(_serialization.Model):
      href="https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
      />`.
     :vartype source_locale: str
-    :ivar voice_gender: Voice gender type. Known values are: "male" and "female".
-    :vartype voice_gender: str or ~azure.communication.callautomation.models.Gender
+    :ivar voice_kind: Voice kind type. Known values are: "male" and "female".
+    :vartype voice_kind: str or ~azure.communication.callautomation.models.VoiceKind
     :ivar voice_name: Voice name to be played
      Refer to available Text-to-speech voices here: :code:`<seealso
      href="https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
@@ -3053,7 +3052,7 @@ class TextSource(_serialization.Model):
     _attribute_map = {
         "text": {"key": "text", "type": "str"},
         "source_locale": {"key": "sourceLocale", "type": "str"},
-        "voice_gender": {"key": "voiceGender", "type": "str"},
+        "voice_kind": {"key": "voiceKind", "type": "str"},
         "voice_name": {"key": "voiceName", "type": "str"},
         "custom_voice_endpoint_id": {"key": "customVoiceEndpointId", "type": "str"},
     }
@@ -3063,7 +3062,7 @@ class TextSource(_serialization.Model):
         *,
         text: str,
         source_locale: Optional[str] = None,
-        voice_gender: Optional[Union[str, "_models.Gender"]] = None,
+        voice_kind: Optional[Union[str, "_models.VoiceKind"]] = None,
         voice_name: Optional[str] = None,
         custom_voice_endpoint_id: Optional[str] = None,
         **kwargs: Any
@@ -3076,8 +3075,8 @@ class TextSource(_serialization.Model):
          href="https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
          />`.
         :paramtype source_locale: str
-        :keyword voice_gender: Voice gender type. Known values are: "male" and "female".
-        :paramtype voice_gender: str or ~azure.communication.callautomation.models.Gender
+        :keyword voice_kind: Voice kind type. Known values are: "male" and "female".
+        :paramtype voice_kind: str or ~azure.communication.callautomation.models.VoiceKind
         :keyword voice_name: Voice name to be played
          Refer to available Text-to-speech voices here: :code:`<seealso
          href="https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
@@ -3089,7 +3088,7 @@ class TextSource(_serialization.Model):
         super().__init__(**kwargs)
         self.text = text
         self.source_locale = source_locale
-        self.voice_gender = voice_gender
+        self.voice_kind = voice_kind
         self.voice_name = voice_name
         self.custom_voice_endpoint_id = custom_voice_endpoint_id
 

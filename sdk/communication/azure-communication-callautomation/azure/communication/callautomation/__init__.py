@@ -14,15 +14,15 @@ from ._models import (
     FileSource,
     TextSource,
     SsmlSource,
-    Choice,
+    RecognitionChoice,
     CallParticipant,
     RecordingProperties,
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult,
     ChannelAffinity,
-    MuteParticipantsResult,
-    SendDtmfResult
+    MuteParticipantResult,
+    SendDtmfTonesResult
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -43,7 +43,7 @@ from ._generated.models._enums import (
     DtmfTone,
     CallConnectionState,
     RecordingState,
-    Gender
+    VoiceKind
 )
 __all__ = [
     # clients
@@ -57,7 +57,7 @@ __all__ = [
     "FileSource",
     "TextSource",
     "SsmlSource",
-    "Choice",
+    "RecognitionChoice",
     "ChannelAffinity",
 
     # models for output
@@ -67,8 +67,8 @@ __all__ = [
     "AddParticipantResult",
     "RemoveParticipantResult",
     "TransferCallResult",
-    "MuteParticipantsResult",
-    "SendDtmfResult",
+    "MuteParticipantResult",
+    "SendDtmfTonesResult",
 
     # common ACS communication identifier
     "CommunicationIdentifier",
@@ -89,6 +89,6 @@ __all__ = [
     "DtmfTone",
     "CallConnectionState",
     "RecordingState",
-    "Gender"
+    "VoiceKind"
 ]
 __version__ = VERSION
