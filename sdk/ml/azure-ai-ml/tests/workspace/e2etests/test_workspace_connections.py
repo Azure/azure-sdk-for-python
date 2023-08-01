@@ -7,7 +7,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient, load_workspace_connection
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ConnectionAuthType, ConnectionCategory
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import WorkspaceConnection
 

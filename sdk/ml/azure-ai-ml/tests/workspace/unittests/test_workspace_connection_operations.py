@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from azure.ai.ml import load_workspace_connection
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionCategory
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionCategory
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import PatTokenConfiguration, WorkspaceConnection
@@ -20,7 +20,7 @@ def mock_credential() -> Mock:
 def mock_workspace_connection_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2022_01_01_preview: Mock,
+    mock_aml_services_2023_06_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
 ) -> WorkspaceConnectionsOperations:
