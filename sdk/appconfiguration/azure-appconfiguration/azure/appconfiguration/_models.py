@@ -29,21 +29,21 @@ class ConfigurationSetting(Model):
     """A configuration value.
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: The value of the configuration setting
+    :ivar value: The value of the configuration setting.
     :vartype value: str
-    :ivar etag: Entity tag (etag) of the object
+    :ivar etag: Entity tag (etag) of the object.
     :vartype etag: str
-    :ivar key:
+    :ivar key: The key of the configuration setting.
     :vartype key: str
-    :ivar label:
+    :ivar label: The label of the configuration setting.
     :vartype label: str
-    :ivar content_type:
+    :ivar content_type: The content_type of the configuration setting.
     :vartype content_type: str
     :ivar last_modified:
     :vartype last_modified: datetime
     :ivar read_only:
     :vartype read_only: bool
-    :ivar tags:
+    :ivar tags: The tags assigned to the configuration setting.
     :vartype tags: dict[str, str]
     """
 
@@ -134,19 +134,19 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     :paramtype enabled: bool
     :keyword filters: Filters that must run on the client and be evaluated as true for the feature to be considered enabled.
     :paramtype filters: list[dict[str, Any]]
-    :ivar label: A label used to group this configuration setting with others.
+    :ivar label: The label used to group this configuration setting with others.
     :vartype label: str
-    :ivar display_name: A name for the feature to use for display rather than the ID.
+    :ivar display_name: The name for the feature to use for display rather than the ID.
     :vartype display_name: str
-    :ivar description: A description of the feature.
+    :ivar description: The description of the feature.
     :vartype description: str
-    :ivar content_type:
+    :ivar content_type: The content_type of the configuration setting.
     :vartype content_type: str
     :ivar last_modified:
     :vartype last_modified: datetime
     :ivar read_only:
     :vartype read_only: bool
-    :ivar tags:
+    :ivar tags: The tags assigned to the configuration setting.
     :vartype tags: dict[str, str]
     """
 
@@ -265,15 +265,15 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar etag: Entity tag (etag) of the object
+    :ivar etag: Entity tag (etag) of the object.
     :vartype etag: str
-    :param key:
+    :param key: The key of the configuration setting.
     :type key: str
-    :param secret_id:
+    :param secret_id: The identity of the configuration setting.
     :type secret_id: str
-    :ivar label:
+    :ivar label: The label used to group this configuration setting with others.
     :vartype label: str
-    :ivar content_type:
+    :ivar content_type: The content_type of the configuration setting.
     :vartype content_type: str
     :ivar value: The value of the configuration setting
     :vartype value: dict[str, Any]
@@ -281,7 +281,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     :vartype last_modified: datetime
     :ivar read_only:
     :vartype read_only: bool
-    :ivar tags:
+    :ivar tags: The tags assigned to the configuration setting.
     :vartype tags: dict[str, str]
     """
 
