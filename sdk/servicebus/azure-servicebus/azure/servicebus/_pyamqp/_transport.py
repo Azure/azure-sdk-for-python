@@ -285,9 +285,9 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     # if getaddrinfo succeeded before for another address
                     # family, reraise the previous socket.error since it's more
                     # relevant to users
-                    raise e if e is not None else socket.error( # pylint: disable=raise-missing-from
+                    raise e if e is not None else socket.error(
                         "failed to resolve broker hostname"
-                    )
+                    ) from None
                 continue  # pragma: no cover
 
             # now that we have address(es) for the hostname, connect to broker
