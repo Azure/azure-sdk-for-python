@@ -57,49 +57,41 @@ module_logger = logging.getLogger(__name__)
 
 
 class Sweep(ParameterizedSweep, BaseNode):
-    """Base class for sweep node, used for command component version
-    consumption.
+    """
+    Base class for sweep node.
 
-    You should not instantiate this class directly. Instead, you should
-    create from builder function: sweep.
-
-    :param trial: Id or instance of the command component/job to be run for the step
-    :type trial: Union[CommandComponent, str]
-    :param compute: Compute definition containing the compute information for the step
+    This class should not be instantiated directly. Instead, it should be created via the builder function: sweep.
+    
+    :param trial: The ID or instance of the command component or job to be run for the step.
+    :type trial: Union[~azure.ai.ml.entities.CommandComponent, str]
+    :param compute: The compute definition containing the compute information for the step.
     :type compute: str
-    :param limits: limits in running the sweep node.
-    :type limits: SweepJobLimits
-    :param sampling_algorithm: sampling algorithm to sample inside search space
-    :type sampling_algorithm: str, valid values: random, grid or bayesian
-    :param objective: the objective used to pick target run with the local optimal hyperparameter in search space.
-    :type objective: Objective
-    :param early_termination_policy: early termination policy of the sweep node.
-    :type early_termination_policy: Union[
-    ~azure.mgmt.machinelearningservices.models.BanditPolicy,
-    ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
-    ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
-    :param search_space: hyperparameter search space to run trials.
-    :type search_space: Dict[str, Union[~azure.ai.ml.entities.Choice,
-    ~azure.ai.ml.entities.LogNormal,
-    ~azure.ai.ml.entities.LogUniform,
-    ~azure.ai.ml.entities.Normal,
-    ~azure.ai.ml.entities.QLogNormal,
-    ~azure.ai.ml.entities.QLogUniform,
-    ~azure.ai.ml.entities.QNormal,
-    ~azure.ai.ml.entities.QUniform,
-    ~azure.ai.ml.entities.Randint,
-    ~azure.ai.ml.entities.Uniform]]
-    :param inputs: Inputs to the command.
-    :type inputs: Dict[str, Union[Input, str, bool, int, float]]
+    :param limits: The limits for the sweep node.
+    :type limits: ~azure.ai.ml.sweep.SweepJobLimits
+    :param sampling_algorithm: The sampling algorithm to use to sample inside the search space.
+        Accepted values are: "random", "grid", or "bayesian".
+    :type sampling_algorithm: str
+    :param objective: The objective used to determine the target run with the local optimal
+        hyperparameter in search space.
+    :type objective: ~azure.ai.ml.sweep.Objective
+    :param early_termination_policy: The early termination policy of the sweep node.
+    :type early_termination_policy: Union[~azure.mgmt.machinelearningservices.models.BanditPolicy,
+        ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
+        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+    :param search_space: The hyperparameter search space to run trials in.
+    :type search_space: Dict[str, Union[~azure.ai.ml.entities.Choice, ~azure.ai.ml.entities.LogNormal,
+        ~azure.ai.ml.entities.LogUniform, ~azure.ai.ml.entities.Normal, ~azure.ai.ml.entities.QLogNormal,
+        ~azure.ai.ml.entities.QLogUniform, ~azure.ai.ml.entities.QNormal, ~azure.ai.ml.entities.QUniform,
+        ~azure.ai.ml.entities.Randint, ~azure.ai.ml.entities.Uniform]]
+    :param inputs: Mapping of input data bindings used in the job.
+    :type inputs: Dict[str, Union[~azure.ai.ml.Input, str, bool, int, float]]
     :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Dict[str, Union[str, Output]]
-    :param identity: Identity that training job will use while running on compute.
-    :type identity: Union[
-        ManagedIdentityConfiguration,
-        AmlTokenConfiguration,
-        UserIdentityConfiguration]
-    :param queue_settings: Queue settings for the job.
-    :type queue_settings: QueueSettings
+    :type outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
+    :param identity: The identity that the training job will use while running on compute.
+    :type identity: Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
+        ~azure.ai.ml.UserIdentityConfiguration]
+    :param queue_settings: The queue settings for the job.
+    :type queue_settings: ~azure.ai.ml.entities.QueueSettings
     """
 
     def __init__(
@@ -156,8 +148,11 @@ class Sweep(ParameterizedSweep, BaseNode):
         self._init = False
 
     @property
-    def trial(self):
-        """Id or instance of the command component/job to be run for the step."""
+    def trial(self) -> CommandComponent:
+        """The ID or instance of the command component or job to be run for the step.
+
+        :rtype: ~azure.ai.ml.entities.CommandComponent
+        """
         return self._component
 
     @property
@@ -167,12 +162,23 @@ class Sweep(ParameterizedSweep, BaseNode):
         str, Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform]
     ]:
         """Dictionary of the hyperparameter search space.
-        The key is the name of the hyperparameter and the value is the parameter expression.
+
+        Each key is the name of a hyperparameter and its value is the parameter expression.
+
+        :rtype: Dict[str, Union[~azure.ai.ml.entities.Choice, ~azure.ai.ml.entities.LogNormal,
+            ~azure.ai.ml.entities.LogUniform, ~azure.ai.ml.entities.Normal, ~azure.ai.ml.entities.QLogNormal,
+            ~azure.ai.ml.entities.QLogUniform, ~azure.ai.ml.entities.QNormal, ~azure.ai.ml.entities.QUniform,
+            ~azure.ai.ml.entities.Randint, ~azure.ai.ml.entities.Uniform]]
         """
         return self._search_space
 
     @search_space.setter
-    def search_space(self, values: Dict[str, Dict[str, Union[str, int, float, dict]]]):
+    def search_space(self, values: Dict[str, Dict[str, Union[str, int, float, dict]]]) -> None:
+        """Sets the search space for the sweep job.
+
+        :param values: The search space to set.
+        :type values: Dict[str, Dict[str, Union[str, int, float, dict]]]
+        """
         search_space = {}
         for name, value in values.items():
             # If value is a SearchSpace object, directly pass it to job.search_space[name]
@@ -372,10 +378,21 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     @property
     def early_termination(self) -> Union[str, EarlyTerminationPolicy]:
+        """The early termination policy for the sweep job.
+
+        :rtype: Union[str, ~azure.ai.ml.sweep.BanditPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy,
+            ~azure.ai.ml.sweep.TruncationSelectionPolicy]
+        """
         return self._early_termination
 
     @early_termination.setter
-    def early_termination(self, value: Union[EarlyTerminationPolicy, Dict[str, Union[str, float, int, bool]]]):
+    def early_termination(self, value: Union[EarlyTerminationPolicy, Dict[str, Union[str, float, int, bool]]]) -> None:
+        """Sets the early termination policy for the sweep job.
+
+        :param value: The early termination policy for the sweep job.
+        :type value: Union[~azure.ai.ml.sweep.BanditPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy,
+            ~azure.ai.ml.sweep.TruncationSelectionPolicy, dict[str, Union[str, float, int, bool]]]
+        """
         if isinstance(value, dict):
             early_termination_schema = EarlyTerminationField()
             value = early_termination_schema._deserialize(value=value, attr=None, data=None)
