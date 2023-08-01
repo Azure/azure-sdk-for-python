@@ -23,16 +23,17 @@ configuration_setting = ConfigurationSetting(key="message", value="Hello World!"
 client.set_configuration_setting(configuration_setting=configuration_setting)
 
 
-def my_callback():
-    print("Refreshed!")
-
-
 def my_callback_on_fail():
     print("Refresh failed!")
 
 
 # Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message changes
-config = load(connection_string=connection_string, refresh_on=[SentinelKey("message")], refresh_interval=1)
+config = load(
+    connection_string=connection_string,
+    refresh_on=[SentinelKey("message")],
+    refresh_interval=1,
+    on_refresh_error=my_callback_on_fail,
+)
 
 print(config["message"])
 print(config["my_json"]["key"])

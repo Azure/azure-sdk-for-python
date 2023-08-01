@@ -300,7 +300,7 @@ class _RefreshTimer:
         return time.time() >= self._next_refresh_time
 
     def _calculate_backoff(self) -> float:
-        max_attempts = 30
+        max_attempts = 63
         millisecond = 1000  # 1 Second in milliseconds
 
         min_backoff_milliseconds = self._min_backoff * millisecond
@@ -378,6 +378,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             # Need more service specific details here, raising for now.
             if _is_retryable_error(e):
                 self._refresh_timer.retry()
+                return
             if self._on_refresh_error:
                 self._on_refresh_error(e)
                 return
@@ -410,15 +411,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                 # Sentinel keys will have unprocessed key names, so we need to use the original key.
                 if (config.key, config.label) in self._refresh_on:
                     self._refresh_on[(config.key, config.label)] = config.etag
-
-        # Let's check whether any of the settings configured for refresh don't actually exist
-        # This should only happen during the initial `load_all`, not subsequent refreshes.
-        no_etag = [(key, label) for (key, label), etag in self._refresh_on.items() if etag is None]
-        # if Any(no_etag):
-        #    raise ValueError(
-        #        "The following key,label pairs are not found in the AppConfig, and cannot be refreshed: %r",
-        #        no_etag
-        #    )
         self._dict = configuration_settings
 
     def _proccess_key_name(self, config):
@@ -449,8 +441,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         """
         Returns the value of the specified key.
         """
-        with self._update_lock:
-            return self._dict[key]
+        return self._dict[key]
 
     def __iter__(self) -> Iterable[str]:
         return self._dict.__iter__()
@@ -472,7 +463,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         :return: A list of keys loaded from Azure App Configuration.
         :rtype: Iterable[str]
         """
-        return self._dict.keys()
+        with self._update_lock:
+            return self._dict.keys()
 
     def items(self) -> Iterable[Tuple[str, str]]:
         """
