@@ -360,7 +360,7 @@ class AsyncTransport(
                     # This behavior is linux specific and only on async. sync Linux & async/sync Windows & Mac raised
                     # ConnectionAborted or ConnectionReset errors which properly end up in a retry loop.
                     if exc.errno in [110]:
-                        raise ConnectionAbortedError('The connection was closed abruptly.') # pylint: disable=raise-missing-from
+                        raise ConnectionAbortedError('The connection was closed abruptly.') from exc
                     # ssl.sock.read may cause ENOENT if the
                     # operation couldn't be performed (Issue celery#1414).
                     if exc.errno in _errnos:
@@ -385,8 +385,8 @@ class AsyncTransport(
         try:
             self.writer.write(s)
             await self.writer.drain()
-        except AttributeError as exc:
-            raise IOError("Connection has already been closed") from exc
+        except AttributeError:
+            raise IOError("Connection has already been closed") from None
 
     async def close(self):
         async with self.socket_lock:
@@ -458,11 +458,10 @@ class WebSocketTransportAsync(
         try:
             from aiohttp import ClientSession, ClientConnectorError # pylint: disable=networking-import-outside-azure-core-transport
             from urllib.parse import urlsplit
-        except ImportError as exc:
+        except ImportError:
             raise ImportError(
                 "Please install aiohttp library to use async websocket transport."
-            ) from exc
-
+            ) from None
         if username or password:
             from aiohttp import BasicAuth # pylint: disable=networking-import-outside-azure-core-transport
 

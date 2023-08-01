@@ -79,10 +79,10 @@ def set_cloexec(fd, cloexec):  # noqa # pylint: disable=inconsistent-return-stat
         return
     try:
         FD_CLOEXEC = fcntl.FD_CLOEXEC
-    except AttributeError as exc:
+    except AttributeError:
         raise NotImplementedError(
             "close-on-exec flag not supported on this platform",
-        ) from exc
+        ) from None
     flags = fcntl.fcntl(fd, fcntl.F_GETFD)
     if cloexec:
         flags |= FD_CLOEXEC
@@ -734,10 +734,10 @@ class WebSocketTransport(_AbstractTransport):
                 WebSocketTimeoutException,
                 WebSocketConnectionClosedException
             )
-        except ImportError as exc:
+        except ImportError:
             raise ImportError(
                 "Please install websocket-client library to use sync websocket transport."
-            ) from exc
+            ) from None
         try:
             self.sock = create_connection(
                 url="wss://{}".format(self._custom_endpoint or self._host),
