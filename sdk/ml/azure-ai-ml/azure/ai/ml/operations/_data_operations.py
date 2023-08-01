@@ -652,9 +652,9 @@ class DataOperations(_ScopeDependentOperations):
         read_only = mode == 'ro_mount'
         assert read_only, 'read-write mount for data asset is not supported yet'
 
-        from azureml.dataprep import rslex_fuse_cli
-        uri = rslex_fuse_cli.build_data_asset_uri(self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path)
-        rslex_fuse_cli.call_rslex_fuse_cli(uri, mount_point, read_only, debug)
+        from azureml.dataprep import rslex_fuse_subprocess_wrapper
+        uri = rslex_fuse_subprocess_wrapper.build_data_asset_uri(self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path)
+        rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(uri, mount_point, read_only, debug)
 
     @contextmanager
     def _set_registry_client(self, registry_name: str) -> None:
