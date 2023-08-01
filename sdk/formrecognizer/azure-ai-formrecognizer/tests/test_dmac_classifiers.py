@@ -14,7 +14,7 @@ from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
 from conftest import skip_flaky_test
-from azure.ai.formrecognizer import ClassifierDocumentTypeDetails, AzureBlobSource, AzureBlobFileListSource, DocumentClassifierDetails
+from azure.ai.formrecognizer import ClassifierDocumentTypeDetails, BlobSource, BlobFileListSource, DocumentClassifierDetails
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
@@ -29,31 +29,31 @@ class TestClassifier(FormRecognizerTest):
         poller = client.begin_build_document_classifier(
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
-                    source=AzureBlobSource(
+                    source=BlobSource(
                         container_url=formrecognizer_training_data_classifier,
                         prefix="IRS-1040-A/train"
                     )
                 ),
                 "IRS-1040-B": ClassifierDocumentTypeDetails(
-                    source=AzureBlobSource(
+                    source=BlobSource(
                         container_url=formrecognizer_training_data_classifier,
                         prefix="IRS-1040-B/train"
                     )
                 ),
                 "IRS-1040-C": ClassifierDocumentTypeDetails(
-                    source=AzureBlobSource(
+                    source=BlobSource(
                         container_url=formrecognizer_training_data_classifier,
                         prefix="IRS-1040-C/train"
                     )
                 ),
                 "IRS-1040-D": ClassifierDocumentTypeDetails(
-                    source=AzureBlobSource(
+                    source=BlobSource(
                         container_url=formrecognizer_training_data_classifier,
                         prefix="IRS-1040-D/train"
                     )
                 ),
                 "IRS-1040-E": ClassifierDocumentTypeDetails(
-                    source=AzureBlobSource(
+                    source=BlobSource(
                         container_url=formrecognizer_training_data_classifier,
                         prefix="IRS-1040-E/train"
                     )
@@ -81,31 +81,31 @@ class TestClassifier(FormRecognizerTest):
         poller = client.begin_build_document_classifier(
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
-                    source=AzureBlobFileListSource(
+                    source=BlobFileListSource(
                         container_url=formrecognizer_training_data_classifier,
                         file_list="IRS-1040-A.jsonl"
                     )
                 ),
                 "IRS-1040-B": ClassifierDocumentTypeDetails(
-                    source=AzureBlobFileListSource(
+                    source=BlobFileListSource(
                         container_url=formrecognizer_training_data_classifier,
                         file_list="IRS-1040-B.jsonl"
                     )
                 ),
                 "IRS-1040-C": ClassifierDocumentTypeDetails(
-                    source=AzureBlobFileListSource(
+                    source=BlobFileListSource(
                         container_url=formrecognizer_training_data_classifier,
                         file_list="IRS-1040-C.jsonl"
                     )
                 ),
                 "IRS-1040-D": ClassifierDocumentTypeDetails(
-                    source=AzureBlobFileListSource(
+                    source=BlobFileListSource(
                         container_url=formrecognizer_training_data_classifier,
                         file_list="IRS-1040-D.jsonl"
                     )
                 ),
                 "IRS-1040-E": ClassifierDocumentTypeDetails(
-                    source=AzureBlobFileListSource(
+                    source=BlobFileListSource(
                         container_url=formrecognizer_training_data_classifier,
                         file_list="IRS-1040-E.jsonl"
                     )
@@ -135,13 +135,13 @@ class TestClassifier(FormRecognizerTest):
         poller = client.begin_build_document_classifier(
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
-                    source=AzureBlobSource(
+                    source=BlobSource(
                         container_url=formrecognizer_training_data_classifier,
                         prefix="IRS-1040-A/train"
                     )
                 ),
                 "IRS-1040-B": ClassifierDocumentTypeDetails(
-                    source=AzureBlobSource(
+                    source=BlobSource(
                         container_url=formrecognizer_training_data_classifier,
                         prefix="IRS-1040-B/train"
                     )
@@ -168,13 +168,13 @@ class TestClassifier(FormRecognizerTest):
         poller = client.begin_build_document_classifier(
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
-                    source=AzureBlobSource(
+                    source=BlobSource(
                         container_url=formrecognizer_training_data_classifier,
                         prefix="IRS-1040-A/train"
                     )
                 ),
                 "IRS-1040-B": ClassifierDocumentTypeDetails(
-                    source=AzureBlobSource(
+                    source=BlobSource(
                         container_url=formrecognizer_training_data_classifier,
                         prefix="IRS-1040-B/train"
                     )
