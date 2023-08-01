@@ -18,7 +18,7 @@ def api_version_validation(**kwargs):
             if kwargs.pop("enable_api_version_validation", True) and (params_valid_on or method_valid_on) :
                 func_name = func.__name__
                 try:
-                    client = args[0]
+                    client = args[0] if args else (kwargs.get("self") or kwargs.get("client"))
                     client_api_version = client._get_api_version(func_name)  # pylint: disable=protected-access
                 except AttributeError:
                     client_api_version = client._api_version  # pylint: disable=protected-access
