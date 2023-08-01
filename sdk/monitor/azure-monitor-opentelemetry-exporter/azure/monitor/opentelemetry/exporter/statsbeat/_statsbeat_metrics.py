@@ -23,6 +23,16 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_RETRY_NAME,
     _REQ_SUCCESS_NAME,
     _REQ_THROTTLE_NAME,
+    _CLOUD_RESOURCE_ID_RESOURCE_ATTRIBUTE,
+    _WEBSITE_SITE_NAME,
+    _REGION_NAME,
+    _WEBSITE_SITE_NAME,
+    _WEBSITE_HOME_STAMPNAME,
+    _WEBSITE_HOSTNAME,
+    _WEBSITE_INSTANCE_ID,
+    _WEBSITE_OWNER_NAME,
+    _WEBSITE_RESOURCE_GROUP,
+    _WEBSITE_SLOT_NAME,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP_LOCK,
@@ -142,17 +152,17 @@ class _StatsbeatMetrics:
         rpId = ''
         os_type = platform.system()
         # rp, rpId
-        if os.environ.get("WEBSITE_SITE_NAME") is not None:
+        if os.environ.get(_WEBSITE_SITE_NAME) is not None:
             # Web apps
             rp = _RP_NAMES[0]
             rpId = '{}/{}'.format(
-                        os.environ.get("WEBSITE_SITE_NAME"),
-                        os.environ.get("WEBSITE_HOME_STAMPNAME", '')
+                        os.environ.get(_WEBSITE_SITE_NAME),
+                        os.environ.get(_WEBSITE_HOME_STAMPNAME, '')
             )
         elif os.environ.get("FUNCTIONS_WORKER_RUNTIME") is not None:
             # Function apps
             rp = _RP_NAMES[1]
-            rpId = os.environ.get("WEBSITE_HOSTNAME")
+            rpId = os.environ.get(_WEBSITE_HOSTNAME)
         elif self._vm_retry and self._get_azure_compute_metadata():
             # VM
             rp = _RP_NAMES[2]

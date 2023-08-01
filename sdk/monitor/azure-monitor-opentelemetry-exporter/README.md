@@ -74,6 +74,25 @@ from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 exporter = AzureMonitorTraceExporter()
 ```
 
+#### Resource Detectors
+
+OpenTelemetry Python has an experimental feature whereby [Resource Detectors][resource_detector_docs] can be injected to Resource Attributes. This package includes a resource detector for Azure App Service. This detector fills out the following Resource Attributes:
+ * `service.name`
+ * `cloud.provider`
+ * `cloud.platform`
+ * `cloud.resource_id`
+ * `cloud.region`
+ * `deployment.environment`
+ * `host.id`
+ * `service.instance.id`
+ * `azure.app.service.stamp`
+ 
+ For more information, see the [Semantic Conventions for Cloud Resource Attributes][cloud_sem_conv]
+
+ To enable the App Service Resource Detector, add `azure_monitor_opentelemetry_app_service_resource_detector` to the `OTEL_EXPERIMENTAL_RESOURCE_DETECTORS` environment variable:
+
+ `export OTEL_EXPERIMENTAL_RESOURCE_DETECTORS=azure_monitor_opentelemetry_app_service_resource_detector`
+
 ## Key concepts
 
 Some of the key concepts for the Azure monitor exporter include:
@@ -665,6 +684,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 <!-- LINKS -->
 [aad_for_ai_docs]: https://learn.microsoft.com/azure/azure-monitor/app/azure-ad-authentication?tabs=python
 [api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-opentelemetry-exporter-azuremonitor/1.0.0b2/index.html
+[cloud_sem_conv]: https://opentelemetry.io/docs/specs/otel/resource/semantic_conventions/cloud/
 [exporter_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples
 [product_docs]: https://docs.microsoft.com/azure/azure-monitor/overview
 [azure_sub]: https://azure.microsoft.com/free/
@@ -691,6 +711,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [metric_reader]:https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#metricreader
 [metric_reference]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/azure/monitor/opentelemetry/exporter/export/metrics/_exporter.py
 [ot_metrics_sdk]: https://opentelemetry-python.readthedocs.io/en/stable/sdk/metrics.html
+[resource_detector_docs]: https://opentelemetry.io/docs/specs/otel/resource/sdk/#detecting-resource-information-from-the-environment
 [trace_concept]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#tracing-signal
 [span]: https://opentelemetry-python.readthedocs.io/en/stable/api/trace.html?highlight=TracerProvider#opentelemetry.trace.Span
 [tracer]: https://opentelemetry-python.readthedocs.io/en/stable/api/trace.html?highlight=TracerProvider#opentelemetry.trace.Tracer

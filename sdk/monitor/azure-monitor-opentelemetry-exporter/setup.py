@@ -100,6 +100,9 @@ setup(
         ],
         "opentelemetry_traces_sampler": [
             "azure_monitor_opentelemetry_sampler = azure.monitor.opentelemetry.exporter.export.trace._sampling:azure_monitor_opentelemetry_sampler_factory"
+        ],
+        "opentelemetry_resource_detector": [
+            "azure_monitor_opentelemetry_app_service_resource_detector = azure.monitor.opentelemetry.exporter.resource.app_service_resource_detector:AzureAppServiceResourceDetector",
         ]
     }
 )

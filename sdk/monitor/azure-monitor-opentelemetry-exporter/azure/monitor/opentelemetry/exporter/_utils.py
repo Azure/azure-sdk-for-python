@@ -19,7 +19,10 @@ from opentelemetry.sdk.util import ns_to_iso_str
 
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
-from azure.monitor.opentelemetry.exporter._constants import _INSTRUMENTATIONS_BIT_MAP
+from azure.monitor.opentelemetry.exporter._constants import (
+    _INSTRUMENTATIONS_BIT_MAP,
+    _WEBSITE_SITE_NAME,
+)
 
 
 # Workaround for missing version file
@@ -27,7 +30,7 @@ opentelemetry_version = version("opentelemetry-sdk")
 
 
 def _is_on_app_service():
-    return "WEBSITE_SITE_NAME" in environ
+    return _WEBSITE_SITE_NAME in environ
 
 
 def _is_attach_enabled():
