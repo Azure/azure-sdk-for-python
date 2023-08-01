@@ -49,3 +49,4 @@ yarl
 importlib-metadata
 azure-identity
 openai
+azureml-dataprep-rslex
