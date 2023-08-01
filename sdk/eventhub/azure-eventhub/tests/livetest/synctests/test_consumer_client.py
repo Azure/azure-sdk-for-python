@@ -43,8 +43,7 @@ async def test_receive_storage_checkpoint(connstr_senders, uamqp_transport, chec
     with client:
         worker = threading.Thread(target=client.receive,
                                   args=(on_event,),
-                                  kwargs={"starting_position": "-1",
-                                          "partition_id": "0"})
+                                  kwargs={"starting_position": "-1"})
         worker.start()
 
         t = threading.Timer(2, schedule_update_properties)
