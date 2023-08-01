@@ -489,19 +489,19 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
 
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
 
         # Create the client directly instead of going through the create_confidentialledger_client
         # as we don't need any additional setup.
         credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
-        client = self.create_client_from_credential(
+        self.create_client_from_credential(
             ConfidentialLedgerClient,
             credential=credential,
             endpoint=confidentialledger_endpoint,
-            # self.network_certificate_path is set via self.set_ledger_identity
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
 
-        self.tls_cert_convenience_actions(client)
+        await self.tls_cert_convenience_actions(confidentialledger_id)
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy_async
@@ -509,24 +509,25 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
 
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
 
         # Create the client directly instead of going through the create_confidentialledger_client
         # as we don't need any additional setup.
         certificate_credential = ConfidentialLedgerCertificateCredential(
             certificate_path=self.user_certificate_path
         )
-        client = ConfidentialLedgerClient(
+        ConfidentialLedgerClient(
             credential=certificate_credential,
             endpoint=confidentialledger_endpoint,
-            # self.network_certificate_path is set via self.set_ledger_identity
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
 
-        self.tls_cert_convenience_actions(client)
+        await self.tls_cert_convenience_actions(confidentialledger_id)
 
-    def tls_cert_convenience_actions(self, _):
-        # Simply check that the certificate file is present and populated.
+    async def tls_cert_convenience_actions(self, confidentialledger_id: str):
         with open(self.network_certificate_path) as infile:
             certificate = infile.read()
 
-        assert certificate
+        expected_cert = await self.set_ledger_identity_async(confidentialledger_id)
+
+        assert certificate == expected_cert
