@@ -481,7 +481,8 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             assert quote["raw"]
             assert quote["quoteVersion"]
 
-    # Must use recorded_by_proxy (non-async) because the constructor is synchronous.
+    # Must use recorded_by_proxy (non-async) because the constructor makes a synchronous call that
+    # will be ignored by the proxy when running in recorded mode.
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
     def test_tls_cert_convenience_aad_user(self, **kwargs):
@@ -505,7 +506,8 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
         self.tls_cert_convenience_actions(confidentialledger_id)
 
-    # Must use recorded_by_proxy (non-async) because the constructor is synchronous.
+    # Must use recorded_by_proxy (non-async) because the constructor makes a synchronous call that
+    # will be ignored by the proxy when running in recorded mode.
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
     def test_tls_cert_convenience_cert_user(self, **kwargs):
