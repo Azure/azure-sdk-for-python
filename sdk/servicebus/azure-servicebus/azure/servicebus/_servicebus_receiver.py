@@ -107,8 +107,6 @@ class ServiceBusReceiver(
      specified Topic the client connects to.
     :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
      receiver will automatically stop receiving. The default value is None, meaning no timeout.
-     If there is session enabled queue or topic and NEXT_AVAILABLE_SESSION is specified,
-     max_wait_time will wait for that time to receive a message from any session before the operations times out.
     :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
      are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
      lock period before they will be removed from the queue. Messages received with RECEIVE_AND_DELETE
