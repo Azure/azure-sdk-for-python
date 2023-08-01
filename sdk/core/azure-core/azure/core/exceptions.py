@@ -39,10 +39,10 @@ from typing import (
     TypeVar,
     Generic,
     Dict,
-    Protocol,
     runtime_checkable,
     TYPE_CHECKING,
 )
+from typing_extensions import Protocol
 from types import TracebackType
 
 _LOGGER = logging.getLogger(__name__)
