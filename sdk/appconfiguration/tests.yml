@@ -5,6 +5,7 @@ stages:
     parameters:
       ServiceDirectory: appconfiguration
       SupportedClouds: 'Public,UsGov,China'
+      TestTimeoutInMinutes: 240
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)

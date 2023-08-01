@@ -29,6 +29,7 @@ from contextlib import AbstractAsyncContextManager
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 from ._tools_async import await_result as _await_result
+from ._base import cleanup_kwargs_for_transport
 from .transport import AsyncHttpTransport
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
@@ -98,12 +99,7 @@ class _AsyncTransportRunner(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        # "insecure_domain_change" is used to indicate that a redirect
-        # has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
-        # to clean up sensitive headers. We need to remove it before sending the request
-        # to the transport layer. This code is needed to handle the case that the
-        # SensitiveHeaderCleanupPolicy is not added into the pipeline and "insecure_domain_change" is not popped.
-        request.context.options.pop("insecure_domain_change", False)
+        cleanup_kwargs_for_transport(request.context.options)
         return PipelineResponse(
             request.http_request,
             await self._sender.send(request.http_request, **request.context.options),

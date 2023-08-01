@@ -26,35 +26,53 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     response = client.network_to_network_interconnects.begin_create(
-        resource_group_name="resourceGroupName",
-        network_fabric_name="FabricName",
-        network_to_network_interconnect_name="DefaultNNI",
+        resource_group_name="example-rg",
+        network_fabric_name="example-fabric",
+        network_to_network_interconnect_name="example-nni",
         body={
             "properties": {
+                "egressAclId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/accessControlLists/example-acl",
+                "exportRoutePolicy": {
+                    "exportIpv4RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/example-routePolicy",
+                    "exportIpv6RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/example-routePolicy",
+                },
+                "importRoutePolicy": {
+                    "importIpv4RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/example-routePolicy",
+                    "importIpv6RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/example-routePolicy",
+                },
+                "ingressAclId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/accessControlLists/example-acl",
                 "isManagementType": "True",
-                "layer2Configuration": {"mtu": 1500, "portCount": 10},
-                "layer3Configuration": {
-                    "exportRoutePolicyId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName2",
-                    "importRoutePolicyId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName1",
-                    "peerASN": 50272,
-                    "primaryIpv4Prefix": "172.31.0.0/31",
-                    "primaryIpv6Prefix": "3FFE:FFFF:0:CD30::a0/126",
-                    "secondaryIpv4Prefix": "172.31.0.20/31",
-                    "secondaryIpv6Prefix": "3FFE:FFFF:0:CD30::a4/126",
-                    "vlanId": 2064,
+                "layer2Configuration": {
+                    "interfaces": [
+                        "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/networkDevices/example-networkDevice/networkInterfaces/example-networkInterface"
+                    ],
+                    "mtu": 1500,
                 },
                 "nniType": "CE",
-                "useOptionB": "False",
+                "npbStaticRouteConfiguration": {
+                    "bfdConfiguration": {"intervalInMilliSeconds": 300, "multiplier": 25},
+                    "ipv4Routes": [{"nextHop": ["21.20.20.20"], "prefix": "20.0.0.12/30"}],
+                    "ipv6Routes": [{"nextHop": ["4FFE:FFFF:0:CD30::ac"], "prefix": "3FFE:FFFF:0:CD30::ac/127"}],
+                },
+                "optionBLayer3Configuration": {
+                    "peerASN": 61234,
+                    "primaryIpv4Prefix": "10.0.0.12/30",
+                    "primaryIpv6Prefix": "4FFE:FFFF:0:CD30::a8/127",
+                    "secondaryIpv4Prefix": "40.0.0.14/30",
+                    "secondaryIpv6Prefix": "6FFE:FFFF:0:CD30::ac/127",
+                    "vlanId": 1234,
+                },
+                "useOptionB": "True",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/NetworkToNetworkInterconnects_Create_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/NetworkToNetworkInterconnects_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

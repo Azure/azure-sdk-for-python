@@ -207,7 +207,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
             client.register_schema(schemaregistry_group, name, schema_str, format)
         if exc_info.type is HttpResponseError:
             response_content = json.loads(exc_info.value.response.content)
-            assert any([(m in response_content["Message"]) for m in ["Name does not resolve", "Unable to find a record"]])
+            assert any([(m in response_content["Message"]) for m in ["Name does not resolve", "Unable to find a record", "No such host is known"]])
 
     @SchemaRegistryEnvironmentVariableLoader()
     @pytest.mark.parametrize("format, schema_str", format_params, ids=format_ids)

@@ -91,11 +91,12 @@ def _build_auth_record(response):
 
 class InteractiveCredential(MsalCredential, ABC):
     def __init__(
-            self,
-            *,
-            authentication_record: Optional[AuthenticationRecord] = None,
-            disable_automatic_authentication: bool = False,
-            **kwargs: Any) -> None:
+        self,
+        *,
+        authentication_record: Optional[AuthenticationRecord] = None,
+        disable_automatic_authentication: bool = False,
+        **kwargs: Any
+    ) -> None:
         self._disable_automatic_authentication = disable_automatic_authentication
         self._auth_record = authentication_record
         if self._auth_record:
@@ -121,7 +122,8 @@ class InteractiveCredential(MsalCredential, ABC):
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
           claims challenge following an authorization failure
         :keyword str tenant_id: optional tenant to include in the token request.
-
+        :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks

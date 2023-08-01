@@ -36,18 +36,18 @@ async def filter_query():
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-    select = ("HotelName", "Rating")
+    select = ("hotelName", "rating")
     async with search_client:
         results = await search_client.search(
             search_text="WiFi",
             filter="Address/StateProvince eq 'FL' and Address/Country eq 'USA'",
             select=",".join(select),
-            order_by="Rating desc",
+            order_by="rating desc",
         )
 
         print("Florida hotels containing 'WiFi', sorted by Rating:")
         async for result in results:
-            print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
+            print("    Name: {} (rating {})".format(result["hotelName"], result["rating"]))
     # [END filter_query_async]
 
 

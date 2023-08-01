@@ -39,6 +39,7 @@ from azure.ai.ml.constants._common import (
     AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    DefaultOpenEncoding,
 )
 
 module_logger = logging.getLogger(__name__)
@@ -196,7 +197,7 @@ def load_file(file_path: str) -> str:
     # exceptions.py via _get_mfe_url_override
 
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
             cfg = f.read()
     except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
@@ -225,7 +226,7 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
     # exceptions.py via _get_mfe_url_override
 
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
             cfg = json.load(f)
     except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
@@ -245,8 +246,10 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     # via CLI, which is then populated through CLArgs.
     """Load a local YAML file.
 
-    :param file_path: The relative or absolute path to the local file.
-    :type file_path: str
+    :param source: Either
+       * The relative or absolute path to the local file.
+       * A readable File-like object
+    :type source: Optional[Union[AnyStr, PathLike, IO]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if file or folder cannot be successfully loaded.
         Details will be provided in the error message.
     :return: A dictionary representation of the local file's contents.
@@ -262,7 +265,7 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
 
     if isinstance(source, (str, os.PathLike)):
         try:
-            cm = open(source, "r")
+            cm = open(source, "r", encoding=DefaultOpenEncoding.READ)
         except OSError as e:
             msg = "No such file or directory: {}"
             raise ValidationException(
@@ -361,7 +364,7 @@ def dump_yaml_to_file(
 
     if isinstance(dest, (str, os.PathLike)):
         try:
-            cm = open(dest, "w")
+            cm = open(dest, "w", encoding=DefaultOpenEncoding.WRITE)
         except OSError as e:  # FileNotFoundError introduced in Python 3
             msg = "No such file or directory: {}"
             raise ValidationException(
@@ -774,7 +777,8 @@ def try_enable_internal_components(*, force=False):
     """Try to enable internal components for the current process. This is the only function outside _internal that
     references _internal.
 
-    :param force: Force enable internal components even if enabled before.
+    :keyword force: Force enable internal components even if enabled before.
+    :type force: bool
     """
     if is_internal_components_enabled():
         from azure.ai.ml._internal import enable_internal_components_in_pipeline
@@ -896,7 +900,7 @@ def write_to_shared_file(file_path: Union[str, PathLike], content: str):
     :param file_path: Path to the file.
     :param content: Content to write to the file.
     """
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         f.write(content)
 
     # share_mode means read/write for owner, group and others
@@ -971,7 +975,7 @@ def get_valid_dot_keys_with_wildcard(
     :type root: Dict[str, Any]
     :param dot_key_wildcard: Dot key with wildcard, e.g. "a.*.c".
     :type dot_key_wildcard: str
-    :param validate_func: Validation function. It takes two parameters: the root node and the dot key parts.
+    :keyword validate_func: Validation function. It takes two parameters: the root node and the dot key parts.
     If None, no validation will be performed.
     :type validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]]
     :return: List of valid dot keys.

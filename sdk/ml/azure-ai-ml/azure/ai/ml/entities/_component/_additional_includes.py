@@ -17,7 +17,7 @@ from azure.ai.ml.constants._common import AzureDevopsArtifactsType
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 
 from ..._utils._artifact_utils import ArtifactCache
-from ..._utils._asset_utils import IgnoreFile, traverse_directory
+from ..._utils._asset_utils import IgnoreFile, get_upload_files_from_folder
 from ..._utils.utils import is_concurrent_component_registration_enabled, is_private_preview_enabled
 from ...entities._util import _general_copy
 from .._assets import Code
@@ -27,13 +27,23 @@ PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
 
 
 class AdditionalIncludes:
+    """Initialize the AdditionalIncludes object.
+
+    :param origin_code_value: The origin code value.
+    :type origin_code_value: Union[None, str]
+    :param base_path: The base path for origin code path and additional include configs.
+    :type base_path: Path
+    :param configs: The additional include configs.
+    :type configs: List[Union[str, dict]], optional
+    """
+
     def __init__(
         self,
         *,
         origin_code_value: Union[None, str],
         base_path: Path,
         configs: List[Union[str, dict]] = None,
-    ):
+    ) -> None:
         self._base_path = base_path
         self._origin_code_value = origin_code_value
         self._origin_configs = configs
@@ -42,6 +52,9 @@ class AdditionalIncludes:
     def origin_configs(self):
         """The origin additional include configs.
         Artifact additional include configs haven't been resolved in this property.
+
+        :return: The origin additional include configs.
+        :rtype: List[Union[str, dict]]
         """
         return self._origin_configs or []
 
@@ -49,6 +62,9 @@ class AdditionalIncludes:
     def resolved_code_path(self) -> Union[None, Path]:
         """The resolved origin code path based on base path, if code path is not specified, return None.
         We shouldn't change this property name given it's referenced in mldesigner.
+
+        :return: The resolved origin code path.
+        :rtype: Union[None, Path]
         """
         if self._origin_code_value is None:
             return None
@@ -58,12 +74,20 @@ class AdditionalIncludes:
 
     @property
     def base_path(self) -> Path:
-        """Base path for origin code path and additional include configs."""
+        """Base path for origin code path and additional include configs.
+
+        :return: The base path.
+        :rtype: Path
+        """
         return self._base_path
 
     @property
     def with_includes(self):
-        """Whether the additional include configs have been provided."""
+        """Whether the additional include configs have been provided.
+
+        :return: True if additional include configs have been provided, False otherwise.
+        :rtype: bool
+        """
         return len(self.origin_configs) != 0
 
     @classmethod
@@ -190,9 +214,10 @@ class AdditionalIncludes:
         zip_file = dst_path / zip_additional_include.name
         with zipfile.ZipFile(zip_file, "w") as zf:
             zf.write(folder_to_zip, os.path.relpath(folder_to_zip, folder_to_zip.parent))  # write root in zip
-            for root, _, files in os.walk(folder_to_zip, followlinks=True):
-                for path, _ in traverse_directory(root, files, str(folder_to_zip), "", ignore_file=ignore_file):
-                    zf.write(path, os.path.relpath(path, folder_to_zip.parent))
+            paths = [path for path, _ in get_upload_files_from_folder(folder_to_zip, ignore_file=ignore_file)]
+            # sort the paths to make sure the zip file (namelist) is deterministic
+            for path in sorted(paths):
+                zf.write(path, os.path.relpath(path, folder_to_zip.parent))
 
     def _get_resolved_additional_include_configs(self) -> List[str]:
         """
@@ -301,6 +326,11 @@ class AdditionalIncludes:
         return validation_result
 
     def validate(self) -> MutableValidationResult:
+        """Validate the AdditionalIncludes object.
+
+        :return: The validation result.
+        :rtype: ~azure.ai.ml.entities._validation.MutableValidationResult
+        """
         validation_result = _ValidationResultBuilder.success()
         for additional_include_config in self.origin_configs:
             validation_result.merge_with(self._validate_additional_include_config(additional_include_config))
@@ -334,9 +364,13 @@ class AdditionalIncludes:
 
     @contextmanager
     def merge_local_code_and_additional_includes(self) -> Path:
-        """Merge code and potential additional includes into a temp folder and return the absolute path of it.
-        If no additional includes is specified, just return absolute path of original code path;
-        If no original code path is specified, just return None.
+        """Merge code and potential additional includes into a temporary folder and return the absolute path of it.
+
+        If no additional includes are specified, just return the absolute path of the original code path.
+        If no original code path is specified, return None.
+
+        :return: The absolute path of the merged code and additional includes.
+        :rtype: Path
         """
         if not self.with_includes:
             if self.resolved_code_path is None:

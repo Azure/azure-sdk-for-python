@@ -19,19 +19,24 @@ from .operations import (
     AccessControlListsOperations,
     ExternalNetworksOperations,
     InternalNetworksOperations,
+    InternetGatewayRulesOperations,
+    InternetGatewaysOperations,
     IpCommunitiesOperations,
     IpExtendedCommunitiesOperations,
     IpPrefixesOperations,
     L2IsolationDomainsOperations,
     L3IsolationDomainsOperations,
+    NeighborGroupsOperations,
     NetworkDeviceSkusOperations,
     NetworkDevicesOperations,
     NetworkFabricControllersOperations,
     NetworkFabricSkusOperations,
     NetworkFabricsOperations,
     NetworkInterfacesOperations,
-    NetworkRackSkusOperations,
+    NetworkPacketBrokersOperations,
     NetworkRacksOperations,
+    NetworkTapRulesOperations,
+    NetworkTapsOperations,
     NetworkToNetworkInterconnectsOperations,
     Operations,
     RoutePoliciesOperations,
@@ -48,6 +53,12 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-vers
     :ivar access_control_lists: AccessControlListsOperations operations
     :vartype access_control_lists:
      azure.mgmt.managednetworkfabric.aio.operations.AccessControlListsOperations
+    :ivar internet_gateways: InternetGatewaysOperations operations
+    :vartype internet_gateways:
+     azure.mgmt.managednetworkfabric.aio.operations.InternetGatewaysOperations
+    :ivar internet_gateway_rules: InternetGatewayRulesOperations operations
+    :vartype internet_gateway_rules:
+     azure.mgmt.managednetworkfabric.aio.operations.InternetGatewayRulesOperations
     :ivar ip_communities: IpCommunitiesOperations operations
     :vartype ip_communities: azure.mgmt.managednetworkfabric.aio.operations.IpCommunitiesOperations
     :ivar ip_extended_communities: IpExtendedCommunitiesOperations operations
@@ -67,6 +78,9 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-vers
     :ivar external_networks: ExternalNetworksOperations operations
     :vartype external_networks:
      azure.mgmt.managednetworkfabric.aio.operations.ExternalNetworksOperations
+    :ivar neighbor_groups: NeighborGroupsOperations operations
+    :vartype neighbor_groups:
+     azure.mgmt.managednetworkfabric.aio.operations.NeighborGroupsOperations
     :ivar network_device_skus: NetworkDeviceSkusOperations operations
     :vartype network_device_skus:
      azure.mgmt.managednetworkfabric.aio.operations.NetworkDeviceSkusOperations
@@ -88,23 +102,28 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-vers
     :ivar network_to_network_interconnects: NetworkToNetworkInterconnectsOperations operations
     :vartype network_to_network_interconnects:
      azure.mgmt.managednetworkfabric.aio.operations.NetworkToNetworkInterconnectsOperations
-    :ivar network_rack_skus: NetworkRackSkusOperations operations
-    :vartype network_rack_skus:
-     azure.mgmt.managednetworkfabric.aio.operations.NetworkRackSkusOperations
+    :ivar network_packet_brokers: NetworkPacketBrokersOperations operations
+    :vartype network_packet_brokers:
+     azure.mgmt.managednetworkfabric.aio.operations.NetworkPacketBrokersOperations
     :ivar network_racks: NetworkRacksOperations operations
     :vartype network_racks: azure.mgmt.managednetworkfabric.aio.operations.NetworkRacksOperations
+    :ivar network_tap_rules: NetworkTapRulesOperations operations
+    :vartype network_tap_rules:
+     azure.mgmt.managednetworkfabric.aio.operations.NetworkTapRulesOperations
+    :ivar network_taps: NetworkTapsOperations operations
+    :vartype network_taps: azure.mgmt.managednetworkfabric.aio.operations.NetworkTapsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.managednetworkfabric.aio.operations.Operations
     :ivar route_policies: RoutePoliciesOperations operations
     :vartype route_policies: azure.mgmt.managednetworkfabric.aio.operations.RoutePoliciesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-02-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-06-15". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -129,6 +148,12 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-vers
         self.access_control_lists = AccessControlListsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.internet_gateways = InternetGatewaysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.internet_gateway_rules = InternetGatewayRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.ip_communities = IpCommunitiesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.ip_extended_communities = IpExtendedCommunitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -146,6 +171,7 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-vers
         self.external_networks = ExternalNetworksOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.neighbor_groups = NeighborGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.network_device_skus = NetworkDeviceSkusOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -163,10 +189,14 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=client-accepts-api-vers
         self.network_to_network_interconnects = NetworkToNetworkInterconnectsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.network_rack_skus = NetworkRackSkusOperations(
+        self.network_packet_brokers = NetworkPacketBrokersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.network_racks = NetworkRacksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.network_tap_rules = NetworkTapRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_taps = NetworkTapsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.route_policies = RoutePoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
 

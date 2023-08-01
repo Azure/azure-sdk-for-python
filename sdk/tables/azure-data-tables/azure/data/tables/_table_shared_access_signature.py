@@ -162,9 +162,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
     """
 
     def __init__(self, credential: AzureNamedKeyCredential):
-        super(TableSharedAccessSignature, self).__init__(
-            credential, x_ms_version=X_MS_VERSION
-        )
+        super(TableSharedAccessSignature, self).__init__(credential, x_ms_version=X_MS_VERSION)
 
     def generate_table(
         self,
@@ -252,17 +250,13 @@ class TableSharedAccessSignature(SharedAccessSignature):
         :rtype: str
         """
         sas = _TableSharedAccessHelper()
-        sas.add_base(
-            permission, expiry, start, ip_address_or_range, protocol, X_MS_VERSION
-        )
+        sas.add_base(permission, expiry, start, ip_address_or_range, protocol, X_MS_VERSION)
         sas.add_id(policy_id)
         sas.add_table_access_ranges(table_name, start_pk, start_rk, end_pk, end_rk)
 
         # Table names must be signed lower case
         resource_path = table_name.lower()
-        sas.add_resource_signature(
-            self.account_name, self.account_key, "table", resource_path
-        )
+        sas.add_resource_signature(self.account_name, self.account_key, "table", resource_path)
 
         return sas.get_token()
 

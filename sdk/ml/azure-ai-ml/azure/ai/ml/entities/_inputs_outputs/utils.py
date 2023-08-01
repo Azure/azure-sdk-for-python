@@ -18,7 +18,13 @@ SUPPORTED_RETURN_TYPES_PRIMITIVE = list(IOConstants.PRIMITIVE_TYPE_2_STR.keys())
 
 
 def is_group(obj):
-    """Return True if obj is a group or an instance of a parameter group class."""
+    """Return True if obj is a group or an instance of a parameter group class.
+
+    :param obj: The object to check.
+    :type obj: Any
+    :return: True if obj is a group or an instance, False otherwise.
+    :rtype: bool
+    """
     return hasattr(obj, IOConstants.GROUP_ATTR_NAME)
 
 

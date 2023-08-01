@@ -1,14 +1,11 @@
 # Release History
 
-## 1.28.1 (Unreleased)
+## 1.29.0 (2023-08-03)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- A keyword argument `enable_cae` was added to the `get_token` method of the `TokenCredential` protocol.  #31012
+- `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now accept `enable_cae` keyword arguments in their constructors. This is used in determining if [Continuous Access Evaluation (CAE)](https://learn.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation) should be enabled for each `get_token` request.  #31012
 
 ## 1.28.0 (2023-07-06)
 

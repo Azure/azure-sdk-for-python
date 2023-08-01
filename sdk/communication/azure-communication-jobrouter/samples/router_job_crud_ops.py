@@ -146,7 +146,9 @@ class RouterJobSamples(object):
         from datetime import datetime, timedelta
         from azure.communication.jobrouter import (
             JobRouterClient,
-            RouterJob
+            RouterJob,
+            JobMatchingMode,
+            ScheduleAndSuspendMode
         )
 
         # set `connection_string` to an existing ACS endpoint
@@ -187,8 +189,8 @@ class RouterJobSamples(object):
                 queue_id = queue_id,
                 priority = 10,
                 channel_reference = "12345",
-                scheduled_time_utc = datetime.utcnow() + timedelta(0, 30),  # scheduled after 30 secs
-                unavailable_for_matching = True
+                matching_mode = JobMatchingMode(schedule_and_suspend_mode = ScheduleAndSuspendMode(
+                    schedule_at = datetime.utcnow() + timedelta(0, 30)))
             )
         )
         print(f"Scheduled job has been successfully created with status: {router_scheduled_job.status}")
@@ -251,7 +253,7 @@ class RouterJobSamples(object):
 
         router_client = JobRouterClient.from_connection_string(conn_str = connection_string)
 
-        reclassify_job_result = router_client.reclassify_job(job_id = job_id)
+        router_client.reclassify_job(job_id = job_id)
 
         print(f"Successfully re-classified job")
         # [END reclassify_job]
@@ -316,7 +318,7 @@ class RouterJobSamples(object):
 
         try:
             # [START decline_job_offer]
-            decline_job_offer_result = router_client.decline_job_offer(
+            router_client.decline_job_offer(
                 worker_id = worker_id,
                 offer_id = offer_id,
                 reoffer_time_utc = datetime.utcnow() + timedelta(0, 30)  # re-offer after 30 secs
@@ -341,7 +343,7 @@ class RouterJobSamples(object):
 
         assignment_id = [k for k, v in queried_job.assignments.items()][0]
 
-        complete_job_result = router_client.complete_job(
+        router_client.complete_job(
             job_id = job_id,
             assignment_id = assignment_id
         )
@@ -352,7 +354,7 @@ class RouterJobSamples(object):
         # [END complete_job]
 
         # [START close_job]
-        close_job_result = router_client.close_job(
+        router_client.close_job(
             job_id = job_id,
             assignment_id = assignment_id
         )
