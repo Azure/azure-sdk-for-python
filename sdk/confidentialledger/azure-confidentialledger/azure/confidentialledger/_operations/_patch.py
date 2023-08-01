@@ -53,14 +53,14 @@ class BaseStatePollingMethod:
         self._latest_response = {}
 
         self._retry_not_found = retry_not_found
-        self._received_not_found_exception = False
+        self._not_found_count = 0
 
     def initialize(self, client, initial_response, deserialization_callback):  # pylint: disable=unused-argument
         self._evaluate_response(initial_response)
         self._deserialization_callback = deserialization_callback
 
     def _evaluate_response(self, response: JSON) -> None:
-        self._status = "finished" if response["state"] == self._desired_state else "polling"
+        self._status = "finished" if response.get("state", None) == self._desired_state else "polling"
         self._latest_response = response
 
     def status(self) -> str:
@@ -97,12 +97,12 @@ class StatePollingMethod(BaseStatePollingMethod, PollingMethod):
                     response = self._operation()
                     self._evaluate_response(response)
                 except ResourceNotFoundError:
-                    # We'll allow one instance of resource not found to account for replication
-                    # delay.
-                    if not self._retry_not_found or self._received_not_found_exception:
-                        raise
+                    # We'll allow some instances of resource not found to account for replication
+                    # delay if session stickiness is lost.
+                    self._not_found_count += 1
 
-                    self._received_not_found_exception = True
+                    if not self._retry_not_found or self._not_found_count >=3:
+                        raise
 
                 if not self.finished():
                     time.sleep(self._polling_interval_s)
@@ -263,7 +263,15 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
                 transaction_id=transaction_id, **kwargs
             )
 
-        initial_response = operation()
+        try:
+            initial_response = operation()
+        except ResourceNotFoundError:
+            if polling is False and polling is None:
+                raise
+
+            # This method allows for temporary resource not found errors, which may occur if session
+            # stickiness is lost and there is replication lag.
+            initial_response = {}
 
         if polling is True:
             polling_method = cast(PollingMethod, StatePollingMethod(operation, "Committed", lro_delay, True))
