@@ -4743,23 +4743,24 @@ class ResourceDetails:
     """Details regarding the Form Recognizer resource.
 
     .. versionadded:: 2023-07-31
-        The *custom_neural_document_model_builds* property.
+        The *neural_document_model_quota* property.
     """
 
     custom_document_models: CustomDocumentModelsDetails
     """Details regarding the custom models under the Form Recognizer resource."""
-    custom_neural_document_model_builds: QuotaDetails
+    neural_document_model_quota: QuotaDetails
+    """Quota details regarding the custom neural document model builds under the Form Recognizer resource."""
 
     def __init__(
         self,
         **kwargs: Any
     ) -> None:
         self.custom_document_models = kwargs.get("custom_document_models", None)
-        self.custom_neural_document_model_builds = kwargs.get("custom_neural_document_model_builds", None)
+        self.neural_document_model_quota = kwargs.get("neural_document_model_quota", None)
 
     def __repr__(self) -> str:
         return f"ResourceDetails(custom_document_models={repr(self.custom_document_models)}, " \
-               f"custom_neural_document_model_builds={repr(self.custom_neural_document_model_builds)})"
+               f"neural_document_model_quota={repr(self.neural_document_model_quota)})"
 
     @classmethod
     def _from_generated(cls, info):
@@ -4768,7 +4769,7 @@ class ResourceDetails:
         return cls(
             custom_document_models=CustomDocumentModelsDetails._from_generated(info.custom_document_models)
             if info.custom_document_models else None,
-            custom_neural_document_model_builds=QuotaDetails._from_generated(custom_neural_builds)
+            neural_document_model_quota=QuotaDetails._from_generated(custom_neural_builds)
             if custom_neural_builds else None,
         )
 
@@ -4782,8 +4783,8 @@ class ResourceDetails:
                 "custom_document_models": self.custom_document_models.to_dict()
                 if self.custom_document_models
                 else None,
-                "custom_neural_document_model_builds": self.custom_neural_document_model_builds.to_dict()
-                if self.custom_neural_document_model_builds
+                "neural_document_model_quota": self.neural_document_model_quota.to_dict()
+                if self.neural_document_model_quota
                 else None,
             }
 
@@ -4799,9 +4800,9 @@ class ResourceDetails:
             custom_document_models=CustomDocumentModelsDetails.from_dict(
                 data.get("custom_document_models")  # type: ignore
             ) if data.get("custom_document_models") else None,
-            custom_neural_document_model_builds=QuotaDetails.from_dict(
-                data.get("custom_neural_document_model_builds")  # type: ignore
-            ) if data.get("custom_neural_document_model_builds") else None,
+            neural_document_model_quota=QuotaDetails.from_dict(
+                data.get("neural_document_model_quota")  # type: ignore
+            ) if data.get("neural_document_model_quota") else None,
         )
 
 
