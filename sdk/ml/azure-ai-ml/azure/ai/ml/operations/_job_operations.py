@@ -297,7 +297,7 @@ class JobOperations(_ScopeDependentOperations):
         try:
             return self._resolve_azureml_id(Job._from_rest_object(job_object))
         except JobParsingError:
-            pass
+            return None
 
     @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
@@ -830,7 +830,10 @@ class JobOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        is_batch_job = job_details.tags.get("azureml.batchrun", None) == "true"
+        is_batch_job = (
+            job_details.tags.get("azureml.batchrun", None) == "true"
+            and job_details.tags.get("azureml.jobtype", None) != PipelineConstants.PIPELINE_JOB_TYPE
+        )
         outputs = {}
         download_path = Path(download_path)
         artifact_directory_name = "artifacts"
@@ -1008,7 +1011,7 @@ class JobOperations(_ScopeDependentOperations):
 
         if isinstance(job, PipelineJob):
             # Resolve top-level inputs
-            self._resolve_pipeline_job_inputs(job, job._base_path)
+            self._resolve_job_inputs(self._flatten_group_inputs(job.inputs), job._base_path)
             # inputs in sub-pipelines has been resolved in
             # self._resolve_arm_id_or_azureml_id(job, self._orchestrators.get_asset_arm_id)
             # as they are part of the pipeline component
@@ -1088,20 +1091,21 @@ class JobOperations(_ScopeDependentOperations):
         for entry in entries:
             self._resolve_job_input(entry, base_path)
 
-    def _resolve_pipeline_job_inputs(self, job: PipelineJob, base_path: str):
-        """resolve pipeline job inputs as ARM id or remote url."""
-        inputs = []
+    # TODO: move it to somewhere else?
+    @classmethod
+    def _flatten_group_inputs(cls, inputs):
+        """Get flatten values from an InputDict."""
+        input_values = []
         # Flatten inputs for pipeline job
-        for key, item in job.inputs.items():
+        for key, item in inputs.items():
             if isinstance(item, _GroupAttrDict):
-                inputs.extend(item.flatten(group_parameter_name=key))
+                input_values.extend(item.flatten(group_parameter_name=key))
             else:
                 # skip resolving inferred optional input without path (in do-while + dynamic input case)
                 if isinstance(item._data, Input) and not item._data.path and item._meta._is_inferred_optional:
                     continue
-                inputs.append(item._data)
-        for entry in inputs:
-            self._resolve_job_input(entry, base_path)
+                input_values.append(item._data)
+        return input_values
 
     def _resolve_job_input(self, entry: Union[Input, str, bool, int, float], base_path: str) -> None:
         """resolve job input as ARM id or remote url."""
@@ -1316,9 +1320,7 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_automl_job(  # pylint: disable=no-self-use
-        self, job: Job, resolver: Callable, inside_pipeline: bool
-    ) -> Job:
+    def _resolve_arm_id_for_automl_job(self, job: Job, resolver: Callable, inside_pipeline: bool) -> Job:
         """Resolve arm_id for AutoMLJob."""
         # AutoML does not have dependency uploads. Only need to resolve reference to arm id.
 

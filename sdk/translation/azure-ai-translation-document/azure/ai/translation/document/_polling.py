@@ -17,7 +17,7 @@ from azure.core.polling.base_polling import (
 
 from azure.core.exceptions import HttpResponseError, ODataV4Format
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import (
+from azure.core.rest import (
     HttpResponse,
     AsyncHttpResponse,
     HttpRequest,

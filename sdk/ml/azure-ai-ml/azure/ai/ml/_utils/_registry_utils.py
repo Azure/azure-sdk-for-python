@@ -104,7 +104,7 @@ def get_sas_uri_for_registry_asset(service_client, name, version, resource_group
             registry_name=registry,
             body=body,
         )
-        sas_uri = res.blob_reference_for_consumption.credential.sas_uri
+        sas_uri = res.blob_reference_for_consumption.credential.additional_properties["sasUri"]
     except HttpResponseError as e:
         # "Asset already exists" exception is thrown from service with error code 409, that we need to ignore
         if e.status_code == 409:
@@ -173,7 +173,7 @@ def get_storage_details_for_registry_assets(
     if sas_uri.blob_reference_for_consumption.credential.credential_type == "no_credentials":
         return sas_uri.blob_reference_for_consumption.blob_uri, "NoCredentials"
 
-    return sas_uri.blob_reference_for_consumption.credential.sas_uri, "SAS"
+    return sas_uri.blob_reference_for_consumption.credential.additional_properties["sasUri"], "SAS"
 
 
 def get_registry_client(credential, registry_name, **kwargs):

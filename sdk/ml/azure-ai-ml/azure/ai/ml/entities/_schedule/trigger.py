@@ -51,11 +51,13 @@ class TriggerBase(RestTranslatableMixin, ABC):
         self.time_zone = time_zone
 
     @classmethod
-    def _from_rest_object(cls, obj: RestTriggerBase) -> Union["CronTrigger", "RecurrenceTrigger"]:
+    def _from_rest_object(cls, obj: RestTriggerBase) -> Optional[Union["CronTrigger", "RecurrenceTrigger"]]:
         if obj.trigger_type == RestTriggerType.RECURRENCE:
             return RecurrenceTrigger._from_rest_object(obj)
         if obj.trigger_type == RestTriggerType.CRON:
             return CronTrigger._from_rest_object(obj)
+
+        return None
 
 
 class RecurrencePattern(RestTranslatableMixin):

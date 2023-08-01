@@ -75,6 +75,7 @@ from ..._schema.job.distribution import (
     RayDistributionSchema,
     TensorFlowDistributionSchema,
 )
+from .._job.pipeline._io import NodeWithGroupInputMixin
 from .._util import (
     convert_ordered_dict_to_dict,
     from_rest_dict_to_dummy_rest_object,
@@ -88,7 +89,7 @@ from .sweep import Sweep
 module_logger = logging.getLogger(__name__)
 
 
-class Command(BaseNode):
+class Command(BaseNode, NodeWithGroupInputMixin):
     """Base class for command node, used for command component version consumption.
 
     You should not instantiate this class directly. Instead, you should
@@ -461,7 +462,7 @@ class Command(BaseNode):
     ) -> None:
         """Set resources for Command.
 
-        :param instance_type: The type of compute instance to run the job on. If not specified, the job will run on
+        :keyword instance_type: The type of compute instance to run the job on. If not specified, the job will run on
             the default compute target.
         :type instance_type: Optional[Union[str, list[str]]]
         :param instance_count: The number of instances to run the job on. If not specified, the job will run on a
@@ -512,7 +513,7 @@ class Command(BaseNode):
     def set_limits(self, *, timeout: int, **kwargs) -> None:  # pylint: disable=unused-argument
         """Set limits for Command.
 
-        :param timeout: The timeout for the job in seconds.
+        :keyword timeout: The timeout for the job in seconds.
         :type timeout: int
 
         .. admonition:: Example:
@@ -585,10 +586,10 @@ class Command(BaseNode):
         in the current Command node will be used as its trial component. A command node can sweep
         multiple times, and the generated sweep node will share the same trial component.
 
-        :param primary_metric: The primary metric of the sweep objective - e.g. AUC (Area Under the Curve).
+        :keyword primary_metric: The primary metric of the sweep objective - e.g. AUC (Area Under the Curve).
         The metric must be logged while running the trial component.
         :type primary_metric: str
-        :param goal: The goal of the Sweep objective. Accepted values are "minimize" or "maximize".
+        :keyword goal: The goal of the Sweep objective. Accepted values are "minimize" or "maximize".
         :type goal: str
         :param sampling_algorithm: The sampling algorithm to use inside the search space.
             Acceptable values are "random", "grid", or "bayesian". Defaults to "random".
@@ -620,7 +621,7 @@ class Command(BaseNode):
             "Standard", or "Premium".
         :type job_tier: Optional[str]
         :param priority: **Experimental** The compute priority. Accepted values are "low",
-            "medium", and "high". Defaults to "medium".
+            "medium", and "high".
         :type priority: Optional[str]
         :return: A Sweep node with the component from current Command node as its trial component.
         :rtype: ~azure.ai.ml.entities.Sweep
@@ -852,7 +853,7 @@ class Command(BaseNode):
             node = self._component(*args, **kwargs)
             # merge inputs
             for name, original_input in self.inputs.items():
-                if name not in kwargs.keys():
+                if name not in kwargs:
                     # use setattr here to make sure owner of input won't change
                     setattr(node.inputs, name, original_input._data)
                     node._job_inputs[name] = original_input._data

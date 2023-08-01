@@ -23,7 +23,7 @@ class Output(_InputOutputBase):
     :param type: The type of the data output. Accepted values are 'uri_folder', 'uri_file', 'mltable', 'mlflow_model',
         'custom_model', and user-defined types.
     :type type: str
-    :param path: The cloud path where the output should be stored.
+    :param path: The remote path where the output should be stored.
     :type path: str
     :param mode: The access mode of the data output. Accepted values are:
         'rw_mount': Read-write mount the data,
@@ -38,6 +38,15 @@ class Output(_InputOutputBase):
     :param version: The version used to register the output as a Data or Model asset. A version can be set only
         when name is set.
     :type version: str
+    :param is_control: Determine if the output is a control output.
+    :type is_control: bool, optional
+    :param early_available: Mark the output for early node orchestration.
+    :type early_available: bool, optional
+    :param intellectual_property: Intellectual property associated with the output.
+        It can be an instance of `IntellectualProperty` or a dictionary that will be used to create an instance.
+    :type intellectual_property: Union[
+        ~azure.ai.ml.entities._assets.intellectual_property.IntellectualProperty,
+        dict], optional
 
     .. admonition:: Example:
 
@@ -49,9 +58,11 @@ class Output(_InputOutputBase):
             :caption: Creating a CommandJob with a folder output.
     """
 
+    _IO_KEYS = ["name", "version", "path", "type", "mode", "description", "is_control", "early_available"]
+
     @overload
     def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None) -> None:
-        """Define a URI folder output for a Component or Job.
+        """Define a URI folder output.
 
         :param type: The type of the data output. Can only be set to "uri_folder".
         :type type: str
@@ -74,7 +85,7 @@ class Output(_InputOutputBase):
 
     @overload
     def __init__(self, type: Literal["uri_file"] = "uri_file", path=None, mode=None, description=None):
-        """Define a URI file output for a Component or Job.
+        """Define a URI file outputS.
 
         :param type: The type of the data output. Can only be set to 'uri_file'.
         :type type: str
@@ -127,7 +138,7 @@ class Output(_InputOutputBase):
 
     def _to_dict(self):
         """Convert the Output object to a dict."""
-        keys = ["name", "version", "path", "type", "mode", "description", "is_control", "early_available"]
+        keys = self._IO_KEYS
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 

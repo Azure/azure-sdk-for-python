@@ -148,7 +148,7 @@ class Resource(abc.ABC):
         :type yaml_path: typing.Optional[typing.Union[typing.PathLike, str]]
         :param params_override: Parameters to override, defaults to None
         :type params_override: typing.Optional[list]
-        :param kwargs: A dictionary of additional configuration parameters.
+        :keyword kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         :return: Resource
         :rtype: Resource
@@ -161,7 +161,7 @@ class Resource(abc.ABC):
     ):
         """Get arm resource.
 
-        :param kwargs: A dictionary of additional configuration parameters.
+        :keyword kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
 
         :return: Resource
@@ -178,7 +178,7 @@ class Resource(abc.ABC):
     def _get_arm_resource_and_params(self, **kwargs):
         """Get arm resource and parameters.
 
-        :param kwargs: A dictionary of additional configuration parameters.
+        :keyword kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
 
         :return: Resource and parameters

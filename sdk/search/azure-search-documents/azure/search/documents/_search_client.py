@@ -100,6 +100,7 @@ class SearchClient(HeadersMixin):
     def get_document_count(self, **kwargs: Any) -> int:
         """Return the number of documents in the Azure search index.
 
+        :return: The count of documents in the index
         :rtype: int
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -111,9 +112,10 @@ class SearchClient(HeadersMixin):
 
         :param key: The primary key value for the document to retrieve
         :type key: str
-        :param selected_fields: a allowlist of fields to include in the results
-        :type selected_fields: List[str]
-        :rtype:  Dict
+        :param selected_fields: an allow-list of fields to include in the results
+        :type selected_fields: list[str]
+        :return: The document as stored in the Azure search index
+        :rtype:  dict
 
         .. admonition:: Example:
 
@@ -176,7 +178,7 @@ class SearchClient(HeadersMixin):
         :keyword bool include_total_count: A value that specifies whether to fetch the total count of
          results. Default is false. Setting this value to true may have a performance impact. Note that
          the count returned is an approximation.
-        :keyword List[str] facets: The list of facet expressions to apply to the search query. Each facet
+        :keyword list[str] facets: The list of facet expressions to apply to the search query. Each facet
          expression contains a field name, optionally followed by a comma-separated list of name:value
          pairs.
         :keyword str filter: The OData $filter expression to apply to the search query.
@@ -190,7 +192,7 @@ class SearchClient(HeadersMixin):
          must be covered by a search query in order for the query to be reported as a success. This
          parameter can be useful for ensuring search availability even for services with only one
          replica. The default is 100.
-        :keyword List[str] order_by: The list of OData $orderby expressions by which to sort the results. Each
+        :keyword list[str] order_by: The list of OData $orderby expressions by which to sort the results. Each
          expression can be either a field name or a call to either the geo.distance() or the
          search.score() functions. Each expression can be followed by asc to indicate ascending, and
          desc to indicate descending. The default is ascending order. Ties will be broken by the match
@@ -200,13 +202,13 @@ class SearchClient(HeadersMixin):
          'simple'. Use 'full' if your query uses the Lucene query syntax. Possible values include:
          'simple', 'full', "semantic".
         :paramtype query_type: str or ~azure.search.documents.models.QueryType
-        :keyword List[str] scoring_parameters: The list of parameter values to be used in scoring functions (for
+        :keyword list[str] scoring_parameters: The list of parameter values to be used in scoring functions (for
          example, referencePointParameter) using the format name-values. For example, if the scoring
          profile defines a function with a parameter called 'mylocation' the parameter string would be
          "mylocation--122.2,44.8" (without the quotes).
         :keyword str scoring_profile: The name of a scoring profile to evaluate match scores for matching
          documents in order to sort the results.
-        :keyword List[str] search_fields: The list of field names to which to scope the full-text search. When
+        :keyword list[str] search_fields: The list of field names to which to scope the full-text search. When
          using fielded search (fieldName:searchExpression) in a full Lucene query, the field names of
          each fielded search expression take precedence over any field names listed in this parameter.
         :keyword search_mode: A value that specifies whether any or all of the search terms must be
@@ -239,11 +241,11 @@ class SearchClient(HeadersMixin):
         :keyword bool query_caption_highlight: This parameter is only valid if the query type is 'semantic' when
          query caption is set to 'extractive'. Determines whether highlighting is enabled.
          Defaults to 'true'.
-        :keyword List[str] semantic_fields: The list of field names used for semantic search.
+        :keyword list[str] semantic_fields: The list of field names used for semantic search.
         :keyword semantic_configuration_name: The name of the semantic configuration that will be used when
          processing documents for queries of type semantic.
         :paramtype semantic_configuration_name: str
-        :keyword List[str] select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
+        :keyword list[str] select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
          in the schema are included.
         :keyword int skip: The number of search results to skip. This value cannot be greater than 100,000.
          If you need to scan documents in sequence, but cannot use $skip due to this limitation,
@@ -325,7 +327,7 @@ class SearchClient(HeadersMixin):
         semantic_configuration = semantic_configuration_name
         vector_option = None
         if vector or top_k or vector_fields:
-            vector_option = Vector(value=vector, top_k=top_k, fields=vector_fields)
+            vector_option = Vector(value=vector, k=top_k, fields=vector_fields)
 
         query = SearchQuery(
             search_text=search_text,
@@ -401,19 +403,20 @@ class SearchClient(HeadersMixin):
          must be covered by a suggestions query in order for the query to be reported as a success. This
          parameter can be useful for ensuring search availability even for services with only one
          replica. The default is 80.
-        :keyword List[str] order_by: The list of OData $orderby expressions by which to sort the results. Each
+        :keyword list[str] order_by: The list of OData $orderby expressions by which to sort the results. Each
          expression can be either a field name or a call to either the geo.distance() or the
          search.score() functions. Each expression can be followed by asc to indicate ascending, or desc
          to indicate descending. The default is ascending order. Ties will be broken by the match scores
          of documents. If no $orderby is specified, the default sort order is descending by document
          match score. There can be at most 32 $orderby clauses.
-        :keyword List[str] search_fields: The list of field names to search for the specified search text. Target
+        :keyword list[str] search_fields: The list of field names to search for the specified search text. Target
          fields must be included in the specified suggester.
-        :keyword List[str] select: The list of fields to retrieve. If unspecified, only the key field will be
+        :keyword list[str] select: The list of fields to retrieve. If unspecified, only the key field will be
          included in the results.
         :keyword int top: The number of suggestions to retrieve. The value must be a number between 1 and
          100. The default is 5.
-        :rtype:  List[Dict]
+        :return: List of documents.
+        :rtype:  list[Dict]
 
         .. admonition:: Example:
 
@@ -485,7 +488,7 @@ class SearchClient(HeadersMixin):
          must be covered by an autocomplete query in order for the query to be reported as a success.
          This parameter can be useful for ensuring search availability even for services with only one
          replica. The default is 80.
-        :keyword List[str] search_fields: The list of field names to consider when querying for auto-completed
+        :keyword list[str] search_fields: The list of field names to consider when querying for auto-completed
          terms. Target fields must be included in the specified suggester.
         :keyword int top: The number of auto-completed terms to retrieve. This must be a value between 1 and
          100. The default is 5.
@@ -521,6 +524,7 @@ class SearchClient(HeadersMixin):
         results = [r.as_dict() for r in response.results]
         return results
 
+    # pylint:disable=client-method-missing-tracing-decorator
     def upload_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
         """Upload documents to the Azure search index.
 
@@ -529,8 +533,9 @@ class SearchClient(HeadersMixin):
         replaced in the update case.
 
         :param documents: A list of documents to upload.
-        :type documents: List[Dict]
-        :rtype:  List[IndexingResult]
+        :type documents: list[dict]
+        :return: List of IndexingResult
+        :rtype:  list[IndexingResult]
 
         .. admonition:: Example:
 
@@ -548,6 +553,7 @@ class SearchClient(HeadersMixin):
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
+    # pylint:disable=client-method-missing-tracing-decorator, delete-operation-wrong-return-type
     def delete_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
         """Delete documents from the Azure search index
 
@@ -561,8 +567,9 @@ class SearchClient(HeadersMixin):
         result in a 200 status code.
 
         :param documents: A list of documents to delete.
-        :type documents: List[Dict]
-        :rtype:  List[IndexingResult]
+        :type documents: list[dict]
+        :return: List of IndexingResult
+        :rtype:  list[IndexingResult]
 
         .. admonition:: Example:
 
@@ -580,6 +587,7 @@ class SearchClient(HeadersMixin):
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
+    # pylint:disable=client-method-missing-tracing-decorator
     def merge_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
         """Merge documents in to existing documents in the Azure search index.
 
@@ -589,8 +597,9 @@ class SearchClient(HeadersMixin):
         to collections of primitive and complex types.
 
         :param documents: A list of documents to merge.
-        :type documents: List[Dict]
-        :rtype:  List[IndexingResult]
+        :type documents: list[dict]
+        :return: List of IndexingResult
+        :rtype:  list[IndexingResult]
 
         .. admonition:: Example:
 
@@ -608,6 +617,7 @@ class SearchClient(HeadersMixin):
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
+    # pylint:disable=client-method-missing-tracing-decorator
     def merge_or_upload_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
         """Merge documents in to existing documents in the Azure search index,
         or upload them if they do not yet exist.
@@ -617,8 +627,9 @@ class SearchClient(HeadersMixin):
         behaves like `upload_documents` with a new document.
 
         :param documents: A list of documents to merge or upload.
-        :type documents: List[Dict]
-        :rtype:  List[IndexingResult]
+        :type documents: list[dict]
+        :return: List of IndexingResult
+        :rtype:  list[IndexingResult]
         """
         batch = IndexDocumentsBatch()
         batch.add_merge_or_upload_actions(documents)
@@ -633,7 +644,8 @@ class SearchClient(HeadersMixin):
 
         :param batch: A batch of document operations to perform.
         :type batch: IndexDocumentsBatch
-        :rtype:  List[IndexingResult]
+        :return: List of IndexingResult
+        :rtype:  list[IndexingResult]
         :raises :class:`~azure.search.documents.RequestEntityTooLargeError`
         """
         return self._index_documents_actions(actions=batch.actions, **kwargs)

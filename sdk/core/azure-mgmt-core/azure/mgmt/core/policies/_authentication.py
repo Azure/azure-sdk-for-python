@@ -56,6 +56,7 @@ class ARMChallengeAuthenticationPolicy(BearerTokenCredentialPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
         :param ~azure.core.pipeline.PipelineResponse response: ARM's response
         :returns: a bool indicating whether the policy should send the request
+        :rtype: bool
         """
 
         challenge = response.http_response.headers.get("WWW-Authenticate")
@@ -149,6 +150,7 @@ def _parse_claims_challenge(challenge: str) -> Optional[str]:
         error_description="User session has been revoked",
         claims="eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwgInZhbHVlIjoiMTYwMzc0MjgwMCJ9fX0="
 
+    :param str challenge: The authentication challenge
     :return: the challenge's "claims" parameter or None, if it doesn't contain that parameter
     """
     encoded_claims = None

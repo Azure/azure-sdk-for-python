@@ -32,6 +32,7 @@ from azure.ai.ml.constants._common import (
     INVOCATION_BASH_FILE,
     INVOCATION_BAT_FILE,
     LOCAL_JOB_FAILURE_MSG,
+    DefaultOpenEncoding,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
@@ -85,7 +86,7 @@ def _get_creationflags_and_startupinfo_for_background_process(
         args["stderr"] = subprocess.STDOUT
 
     # filter entries with value None
-    return {arg_name: args[arg_name] for arg_name in args if args[arg_name]}
+    return {k: v for (k, v) in args.items() if v}
 
 
 def patch_invocation_script_serialization(invocation_path: Path) -> None:
@@ -112,7 +113,7 @@ def invoke_command(project_temp_dir: Path) -> None:
 
     env = os.environ.copy()
     env.pop("AZUREML_TARGET_TYPE", None)
-    subprocess.Popen(
+    subprocess.Popen(  # pylint: disable=consider-using-with
         invoked_command,
         cwd=project_temp_dir,
         env=env,
@@ -203,8 +204,12 @@ class CommonRuntimeHelper:
             self.common_runtime_temp_folder,
             CommonRuntimeHelper.VM_BOOTSTRAPPER_FILE_NAME,
         )
-        self.stdout = open(os.path.join(self.common_runtime_temp_folder, "stdout"), "w+")
-        self.stderr = open(os.path.join(self.common_runtime_temp_folder, "stderr"), "w+")
+        self.stdout = open(  # pylint: disable=consider-using-with
+            os.path.join(self.common_runtime_temp_folder, "stdout"), "w+", encoding=DefaultOpenEncoding.WRITE
+        )
+        self.stderr = open(  # pylint: disable=consider-using-with
+            os.path.join(self.common_runtime_temp_folder, "stderr"), "w+", encoding=DefaultOpenEncoding.WRITE
+        )
 
     def get_docker_client(self, registry: Dict[str, str]) -> "docker.DockerClient":
         """Retrieves the Docker client for performing docker operations.
@@ -227,12 +232,12 @@ class CommonRuntimeHelper:
         if registry:
             try:
                 client.login(
-                    username=registry["username"],
-                    password=registry["password"],
-                    registry=registry["url"],
+                    username=registry.get("username"),
+                    password=registry.get("password"),
+                    registry=registry.get("url"),
                 )
             except Exception as e:
-                raise RuntimeError(self.DOCKER_LOGIN_FAILURE_MSG.format(registry["url"], e)) from e
+                raise RuntimeError(self.DOCKER_LOGIN_FAILURE_MSG.format(registry.get("url"), e)) from e
         else:
             raise RuntimeError("Registry information is missing from bootstrapper configuration.")
 
@@ -344,7 +349,7 @@ class CommonRuntimeHelper:
 
         env = self.LOCAL_JOB_ENV_VARS
 
-        process = subprocess.Popen(
+        process = subprocess.Popen(  # pylint: disable=consider-using-with
             cmd,
             env=env,
             stdout=subprocess.PIPE,
@@ -397,23 +402,25 @@ def start_run_if_local(
     token = credential.get_token(ws_base_url + "/.default").token
     (zip_content, snapshot_id) = get_execution_service_response(job_definition, token, requests_pipeline)
 
-    if os.name != "nt":
-        cr_helper = CommonRuntimeHelper(job_definition.name)
-        bootstrapper_info, job_spec = cr_helper.get_common_runtime_info_from_response(zip_content)
-        cr_helper.get_bootstrapper_binary(bootstrapper_info)
-        bootstrapper_process = None
+    # TODO: re-enable this once CommonRuntime error is fixed (2578431)
+    # if os.name != "nt":
+    #     cr_helper = CommonRuntimeHelper(job_definition.name)
+    #     bootstrapper_info, job_spec = cr_helper.get_common_runtime_info_from_response(zip_content)
+    #     cr_helper.get_bootstrapper_binary(bootstrapper_info)
+    #     bootstrapper_process = None
 
-        bootstrapper_process = cr_helper.execute_bootstrapper(cr_helper.vm_bootstrapper_full_path, job_spec)
-        while not os.path.exists(
-            cr_helper.common_runtime_temp_folder
-        ) and not cr_helper.check_bootstrapper_process_status(bootstrapper_process):
-            time.sleep(3)
-    else:
-        try:
-            temp_dir = unzip_to_temporary_file(job_definition, zip_content)
-            invoke_command(temp_dir)
-        except Exception as e:
-            raise Exception(LOCAL_JOB_FAILURE_MSG.format(e)) from e
+    #     bootstrapper_process = cr_helper.execute_bootstrapper(cr_helper.vm_bootstrapper_full_path, job_spec)
+    #     while not os.path.exists(
+    #         cr_helper.common_runtime_temp_folder
+    #     ) and not cr_helper.check_bootstrapper_process_status(bootstrapper_process):
+    #         time.sleep(3)
+    # else:
+    try:
+        temp_dir = unzip_to_temporary_file(job_definition, zip_content)
+        invoke_command(temp_dir)
+    except Exception as e:
+        raise Exception(LOCAL_JOB_FAILURE_MSG.format(e)) from e
+
     return snapshot_id
 
 

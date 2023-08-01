@@ -7,10 +7,18 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 # pylint: disable=too-many-lines
-from typing import Awaitable
 import sys
 import datetime
-from typing import List, Union, Any, IO, AsyncIterator, Optional, AsyncIterable
+from typing import (
+    List,
+    Union,
+    Any,
+    IO,
+    AsyncIterator,
+    Optional,
+    AsyncIterable,
+    Awaitable,
+)
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import (

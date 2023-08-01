@@ -8,25 +8,27 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "subscription-key": "AzureMapsSubscriptionKey",
-        "User-Agent": "azsdk-python-maps-render/unknown Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-maps-render/unknown Python/3.10.5 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "max-age=86400",
-        "Content-Length": "81",
+        "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 06 Oct 2022 06:50:55 GMT",
-        "ETag": "W/\u0022f3cfa19fc3c68912b94faa097ee62351\u0022",
+        "Date": "Tue, 27 Jun 2023 13:49:20 GMT",
+        "ETag": "W/\u0022ed42b665849015a4f2aece6170490d5b\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West US 2",
-        "X-MSEdge-Ref": "Ref A: 8E47AD95A8F2417B99DCB4D5EB4930ED Ref B: TPE30EDGE0920 Ref C: 2022-10-06T06:50:56Z"
+        "X-MSEdge-Ref": "Ref A: AFDD15F4AB334EA2A7983FC565A4AAA6 Ref B: TPE30EDGE0613 Ref C: 2023-06-27T13:49:20Z"
       },
       "ResponseBody": {
         "formatVersion": "0.0.1",
-        "copyrightsCaption": "\u00A9 1992 - 2022 TomTom."
+        "copyrightsCaption": "\u00A9TomTom"
       }
     }
   ],

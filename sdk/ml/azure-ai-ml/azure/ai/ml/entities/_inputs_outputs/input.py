@@ -26,7 +26,7 @@ from .utils import _get_param_with_standard_annotation, _remove_empty_values
 
 
 class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
-    """Defines an input for a Component or Job.
+    """Initialize an Input object.
 
     :param type: The type of the data input. Accepted values are:
         'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', 'integer', 'number', 'string', 'boolean'
@@ -50,7 +50,11 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     :param optional: Specifies if the input is optional.
     :type optional: bool
     :param description: Description of the input
-    :type description: str
+    :type description: str, optional
+    :param datastore: The datastore to upload local files to.
+    :type datastore: str, optional
+    :param intellectual_property: Intellectual property for the input.
+    :type intellectual_property: IntellectualProperty, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
         Details will be provided in the error message.
 
@@ -65,6 +69,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     """
 
     _EMPTY = Parameter.empty
+    _IO_KEYS = ["path", "type", "mode", "description", "default", "min", "max", "enum", "optional", "datastore"]
 
     @overload
     def __init__(
@@ -77,7 +82,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         **kwargs,
     ) -> None:
-        """Defines a URI folder input for a Component or Job.
+        """Initialize a uri_folder input.
 
         :param type: The type of the data input. Can only be set to "uri_folder".
         :type type: str
@@ -109,7 +114,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         **kwargs,
     ) -> None:
-        """Defines a number input for a Component or Job.
+        """Initialize a number input.
 
         :param type: The type of the data input. Can only be set to "number".
         :type type: str
@@ -141,7 +146,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         **kwargs,
     ) -> None:
-        """Defines an integer input for a Component or Job.
+        """Initialize an integer input.
 
         :param type: The type of the data input. Can only be set to "integer".
         :type type: str
@@ -157,8 +162,6 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type optional: bool
         :param description: Description of the input
         :type description: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
-            Details will be provided in the error message.
         """
 
     @overload
@@ -171,16 +174,16 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         **kwargs,
     ) -> None:
-        """Defines a string input for a Component or Job.
+        """Initialize a string input.
 
         :param type: The type of the data input. Can only be set to "string".
         :type type: str
-        :param default: The default value of this input. When a `default` is set, the input will be optional
-        :type default: str
-        :param optional: Determine if this input is optional
-        :type optional: bool
-        :param description: Description of the input
-        :type description: str
+        :param default: The default value of this input. When a `default` is set, the input will be optional.
+        :type default: str, optional
+        :param optional: Determine if this input is optional.
+        :type optional: bool, optional
+        :param description: Description of the input.
+        :type description: str, optional
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
             Details will be provided in the error message.
         """
@@ -195,7 +198,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         **kwargs,
     ) -> None:
-        """Defines a boolean input for a Component or Job.
+        """Initialize a bool input.
 
         :param type: The type of the data input. Can only be set to "boolean".
         :type type: str
@@ -292,7 +295,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
     def _to_dict(self):
         """Convert the Input object to a dict."""
-        keys = ["path", "type", "mode", "description", "default", "min", "max", "enum", "optional", "datastore"]
+        keys = self._IO_KEYS
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 
@@ -303,7 +306,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :return: The parsed value.
         """
         if self.type == "integer":
-            return int(val)
+            return int(float(val))  # backend returns 10.0，for integer， parse it to float before int
         if self.type == "number":
             return float(val)
         if self.type == "boolean":
@@ -325,7 +328,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def _parse_and_validate(self, val):
         """Parse the val passed from the command line and validate the value.
 
-        :param str_val: The input string value from the command line.
+        :param val: The input string value from the command line.
         :return: The parsed value, an exception will be raised if the value is invalid.
         """
         if self._is_primitive_type:

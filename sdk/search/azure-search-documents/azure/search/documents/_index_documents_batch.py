@@ -116,6 +116,7 @@ class IndexDocumentsBatch:
     def dequeue_actions(self, **kwargs: Any) -> List[IndexAction]:  # pylint: disable=unused-argument
         """Get the list of currently configured index actions and clear it.
 
+        :return: the current actions
         :rtype: List[IndexAction]
         """
         with self._lock:
@@ -125,7 +126,11 @@ class IndexDocumentsBatch:
 
     def enqueue_actions(self, new_actions: Union[IndexAction, List[IndexAction]], **kwargs: Any) -> None:
         # pylint: disable=unused-argument
-        """Enqueue a list of index actions to index."""
+        """Enqueue a list of index actions to index.
+
+        :param new_actions: the actions to enqueue
+        :type new_actions: IndexAction or List[IndexAction]
+        """
         if isinstance(new_actions, IndexAction):
             with self._lock:
                 self._actions.append(new_actions)

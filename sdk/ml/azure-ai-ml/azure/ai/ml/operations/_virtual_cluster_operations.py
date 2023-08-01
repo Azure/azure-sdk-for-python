@@ -68,7 +68,7 @@ class VirtualClusterOperations:
     def list(self, *, scope: Optional[str] = None) -> Iterable[Dict]:
         """List virtual clusters a user has access to.
 
-        :param scope: scope of the listing, "subscription" or None, defaults to None.
+        :keyword scope: scope of the listing, "subscription" or None, defaults to None.
             If None, list virtual clusters across all subscriptions a customer has access to.
         :type scope: str, optional
         :return: An iterator like instance of dictionaries.

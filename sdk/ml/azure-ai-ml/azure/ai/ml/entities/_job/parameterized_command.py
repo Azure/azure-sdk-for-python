@@ -82,7 +82,7 @@ class ParameterizedCommand:
         ] = None,
         environment: Optional[Union[Environment, str]] = None,
         queue_settings: Optional[QueueSettings] = None,
-        **kwargs,
+        **kwargs: Dict,
     ) -> None:
         super().__init__(**kwargs)
         self.command = command
@@ -110,7 +110,7 @@ class ParameterizedCommand:
         return self._distribution
 
     @distribution.setter
-    def distribution(self, value) -> None:
+    def distribution(self, value: Union[dict, PyTorchDistribution, MpiDistribution]) -> None:
         """Sets the configuration for the distributed command component or job.
 
         :param value: The distribution configuration for distributed jobs.
@@ -138,7 +138,7 @@ class ParameterizedCommand:
         return self._resources
 
     @resources.setter
-    def resources(self, value) -> None:
+    def resources(self, value: Union[dict, JobResourceConfiguration]) -> None:
         """Sets the compute resource configuration for the command component or job.
 
         :param value: The compute resource configuration for the command component or job.

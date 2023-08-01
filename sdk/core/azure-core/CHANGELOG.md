@@ -1,14 +1,18 @@
 # Release History
 
-## 1.28.0 (Unreleased)
+## 1.29.0 (2023-08-03)
 
 ### Features Added
 
-- Add header name parameter to RequestIdPolicy #30772
+- A keyword argument `enable_cae` was added to the `get_token` method of the `TokenCredential` protocol.  #31012
+- `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now accept `enable_cae` keyword arguments in their constructors. This is used in determining if [Continuous Access Evaluation (CAE)](https://learn.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation) should be enabled for each `get_token` request.  #31012
 
-### Breaking Changes
+## 1.28.0 (2023-07-06)
 
-### Bugs Fixed
+### Features Added
+
+- Added header name parameter to `RequestIdPolicy`. #30772
+- Added `SensitiveHeaderCleanupPolicy` that cleans up sensitive headers if a redirect happens and the new destination is in another domain. #28349
 
 ### Other Changes
 

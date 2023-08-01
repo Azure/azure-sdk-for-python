@@ -31,8 +31,9 @@ class BaseProperty(dict):
     def __getattr__(self, key: str) -> Any:
         if key.startswith("_"):
             super().__getattribute__(key)
-        else:
-            return self[key]
+            return None
+
+        return self[key]
 
     def __repr__(self) -> str:
         return json.dumps(self.as_dict())

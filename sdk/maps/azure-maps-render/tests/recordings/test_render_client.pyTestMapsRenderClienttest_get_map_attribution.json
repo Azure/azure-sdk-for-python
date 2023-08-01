@@ -8,23 +8,25 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "subscription-key": "AzureMapsSubscriptionKey",
-        "User-Agent": "azsdk-python-maps-render/unknown Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-maps-render/unknown Python/3.10.5 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "Content-Length": "98",
+        "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 06 Oct 2022 06:50:54 GMT",
+        "Date": "Tue, 27 Jun 2023 13:49:19 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West US 2",
-        "X-MSEdge-Ref": "Ref A: 4363EC4FCC2E4692ADEF04967DF73721 Ref B: TPE30EDGE0920 Ref C: 2022-10-06T06:50:54Z"
+        "X-MSEdge-Ref": "Ref A: 9C952979FE3747718FAE364E07DAA4DF Ref B: TPE30EDGE0613 Ref C: 2023-06-27T13:49:19Z"
       },
       "ResponseBody": {
         "copyrights": [
-          "\u003Ca data-azure-maps-attribution-tileset=\u0022microsoft.base\u0022\u003E\u0026copy;2022 TomTom\u003C/a\u003E"
+          "\u003Ca data-azure-maps-attribution-dynamic=\u0022true\u0022 data-azure-maps-attribution-tileset=\u0022microsoft.core.vector\u0022\u003E\u0026copy;2023 TomTom\u003C/a\u003E"
         ]
       }
     }

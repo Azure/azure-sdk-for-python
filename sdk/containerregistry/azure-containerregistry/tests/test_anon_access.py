@@ -14,7 +14,7 @@ from azure.containerregistry import (
     ContainerRegistryClient,
 )
 
-from testcase import ContainerRegistryTestClass
+from testcase import ContainerRegistryTestClass, is_public_endpoint
 from constants import HELLO_WORLD
 from preparer import acr_preparer
 from devtools_testutils import recorded_by_proxy
@@ -24,7 +24,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_list_repository_names(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -46,7 +46,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_list_repository_names_by_page(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -73,7 +73,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_get_repository_properties(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -87,7 +87,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_list_manifest_properties(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -102,7 +102,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_get_manifest_properties(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -117,7 +117,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_list_tag_properties(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -132,7 +132,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_delete_repository(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -144,7 +144,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_delete_tag(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -156,7 +156,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_delete_manifest(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -168,7 +168,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_update_repository_properties(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -180,7 +180,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_update_tag_properties(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -192,7 +192,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_update_manifest_properties(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -203,18 +203,18 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
 
 def test_set_api_version():
-    containerregistry_endpoint="https://fake_url.azurecr.io"
+    containerregistry_endpoint = "https://fake_url.azurecr.io"
 
     with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
         assert client._client._config.api_version == "2021-07-01"
 
     with ContainerRegistryClient(
-        endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15-preview"
+        endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version="2019-08-15-preview"
     ) as client:
         assert client._client._config.api_version == "2019-08-15-preview"
 
     with pytest.raises(ValueError):
         with ContainerRegistryClient(
-            endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15"
+            endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version="2019-08-15"
         ) as client:
             pass

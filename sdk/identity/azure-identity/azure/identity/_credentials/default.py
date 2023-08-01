@@ -8,7 +8,7 @@ from typing import List, TYPE_CHECKING, Any, cast
 
 from azure.core.credentials import AccessToken
 from .._constants import EnvironmentVariables
-from .._internal import get_default_authority, normalize_authority
+from .._internal import get_default_authority, normalize_authority, within_dac
 from .azure_powershell import AzurePowerShellCredential
 from .browser import InteractiveBrowserCredential
 from .chained import ChainedTokenCredential
@@ -121,9 +121,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         managed_identity_client_id = kwargs.pop(
             "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
         )
-        workload_identity_client_id = kwargs.pop(
-            "workload_identity_client_id", managed_identity_client_id
-        )
+        workload_identity_client_id = kwargs.pop("workload_identity_client_id", managed_identity_client_id)
         workload_identity_tenant_id = kwargs.pop(
             "workload_identity_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
@@ -152,11 +150,14 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_workload_identity_credential:
             if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
                 client_id = workload_identity_client_id
-                credentials.append(WorkloadIdentityCredential(
-                    client_id=cast(str, client_id),
-                    tenant_id=workload_identity_tenant_id,
-                    file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
-                    **kwargs))
+                credentials.append(
+                    WorkloadIdentityCredential(
+                        client_id=cast(str, client_id),
+                        tenant_id=workload_identity_tenant_id,
+                        file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                        **kwargs
+                    )
+                )
         if not exclude_managed_identity_credential:
             credentials.append(
                 ManagedIdentityCredential(
@@ -204,7 +205,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
 
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
 
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
           `message` attribute listing each authentication attempt and its error message.
@@ -215,5 +217,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
             )
             return token
-
-        return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
+        within_dac.set(True)
+        token = super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)
+        within_dac.set(False)
+        return token

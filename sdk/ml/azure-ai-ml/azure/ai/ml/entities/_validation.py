@@ -455,7 +455,7 @@ class SchemaValidatableMixin:
     @classmethod
     def _get_skip_fields_in_schema_validation(
         cls,
-    ) -> typing.List[str]:  # pylint: disable=no-self-use
+    ) -> typing.List[str]:
         """Get the fields that should be skipped in schema validation.
 
         Override this method to add customized validation logic.

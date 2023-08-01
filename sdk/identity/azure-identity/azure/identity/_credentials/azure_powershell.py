@@ -13,7 +13,7 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .azure_cli import get_safe_working_dir
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource, resolve_tenant
+from .._internal import _scopes_to_resource, resolve_tenant, within_dac
 from .._internal.decorators import log_get_token
 
 
@@ -60,12 +60,13 @@ class AzurePowerShellCredential:
             :dedent: 4
             :caption: Create an AzurePowerShellCredential.
     """
+
     def __init__(
         self,
         *,
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
-        process_timeout: int = 10
+        process_timeout: int = 10,
     ) -> None:
 
         self.tenant_id = tenant_id
@@ -93,7 +94,8 @@ class AzurePowerShellCredential:
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
 
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke Azure PowerShell, or
           no account is authenticated
@@ -101,9 +103,7 @@ class AzurePowerShellCredential:
           receive an access token
         """
         tenant_id = resolve_tenant(
-            default_tenant=self.tenant_id,
-            additionally_allowed_tenants=self._additionally_allowed_tenants,
-            **kwargs
+            default_tenant=self.tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
         command_line = get_command_line(scopes, tenant_id)
         output = run_command_line(command_line, self._process_timeout)
@@ -132,8 +132,9 @@ def run_command_line(command_line: List[str], timeout: int) -> str:
             proc.kill()
         error = CredentialUnavailableError(
             message="Failed to invoke PowerShell.\n"
-                    "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-                    "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.")
+            "To mitigate this issue, please refer to the troubleshooting guidelines here at "
+            "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot."
+        )
         raise error from ex
 
     raise_for_error(proc.returncode, stdout, stderr)
@@ -142,7 +143,7 @@ def run_command_line(command_line: List[str], timeout: int) -> str:
 
 def start_process(args: List[str]) -> "subprocess.Popen":
     working_directory = get_safe_working_dir()
-    proc = subprocess.Popen(
+    proc = subprocess.Popen(  # pylint:disable=consider-using-with
         args,
         cwd=working_directory,
         stdout=subprocess.PIPE,
@@ -158,6 +159,8 @@ def parse_token(output: str) -> AccessToken:
             _, token, expires_on = line.split("%")
             return AccessToken(token, int(expires_on))
 
+    if within_dac.get():
+        raise CredentialUnavailableError(message='Unexpected output from Get-AzAccessToken: "{}"'.format(output))
     raise ClientAuthenticationError(message='Unexpected output from Get-AzAccessToken: "{}"'.format(output))
 
 

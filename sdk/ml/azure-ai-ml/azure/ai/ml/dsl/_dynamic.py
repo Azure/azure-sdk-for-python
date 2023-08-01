@@ -13,9 +13,20 @@ module_logger = logging.getLogger(__name__)
 
 
 class KwParameter(Parameter):
-    """A keyword only parameter with a default value."""
+    """A keyword-only parameter with a default value.
 
-    def __init__(self, name, default, annotation=Parameter.empty, _type="str", _optional=False):
+    :param name: The name of the parameter.
+    :type name: str
+    :param default: The default value of the parameter.
+    :param annotation: The annotation type of the parameter, defaults to `Parameter.empty`.
+    :type annotation: Any, optional
+    :param _type: The type of the parameter, defaults to "str".
+    :type _type: str, optional
+    :param _optional: Indicates if the parameter is optional, defaults to False.
+    :type _optional: bool, optional
+    """
+
+    def __init__(self, name, default, annotation=Parameter.empty, _type="str", _optional=False) -> None:
         super().__init__(name, Parameter.KEYWORD_ONLY, default=default, annotation=annotation)
         self._type = _type
         self._optional = _optional
@@ -108,7 +119,22 @@ def create_kw_function_from_parameters(
     func_name: str,
     documentation: str,
 ) -> Callable:
-    """Create a new keyword only function with provided parameters."""
+    """Create a new keyword-only function with provided parameters.
+
+    :param func: The original function to be wrapped.
+    :type func: Callable
+    :param parameters: The sequence of parameters for the new function.
+    :type parameters: Sequence[Parameter]
+    :param flattened_group_keys: The list of valid group keys.
+    :type flattened_group_keys: list
+    :param func_name: The name of the new function.
+    :type func_name: str
+    :param documentation: The documentation string for the new function.
+    :type documentation: str
+    :return: The new keyword-only function.
+    :rtype: Callable
+    :raises ValidationException: If the provided function parameters are not keyword-only.
+    """
     if any(p.default == p.empty or p.kind != Parameter.KEYWORD_ONLY for p in parameters):
         msg = "This function only accept keyword only parameters."
         raise ValidationException(

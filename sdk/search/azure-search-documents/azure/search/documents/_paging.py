@@ -59,13 +59,19 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         return self._first_page_iterator_instance
 
     def get_facets(self) -> Optional[Dict]:
-        """Return any facet results if faceting was requested."""
+        """Return any facet results if faceting was requested.
+
+        :return: facet results
+        :rtype: dict or None
+        """
         return self._first_iterator_instance().get_facets()
 
     def get_coverage(self) -> float:
         """Return the coverage percentage, if `minimum_coverage` was
         specificied for the query.
 
+        :return: coverage percentage
+        :rtype: float
         """
         return self._first_iterator_instance().get_coverage()
 
@@ -73,11 +79,17 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         """Return the count of results if `include_total_count` was
         set for the query.
 
+        :return: count of results
+        :rtype: int
         """
         return self._first_iterator_instance().get_count()
 
     def get_answers(self) -> Optional[List[AnswerResult]]:
-        """Return answers."""
+        """Return answers.
+
+        :return: answers
+        :rtype: list[~azure.search.documents.models.AnswerResult] or None
+        """
         return self._first_iterator_instance().get_answers()
 
 

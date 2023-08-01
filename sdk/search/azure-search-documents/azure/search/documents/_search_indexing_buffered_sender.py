@@ -102,7 +102,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     def actions(self) -> List[IndexAction]:
         """The list of currently index actions in queue to index.
 
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return self._index_documents_batch.actions
 
@@ -207,7 +207,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         """Queue upload documents actions.
 
         :param documents: A list of documents to upload.
-        :type documents: List[Dict]
+        :type documents: list[dict]
         """
         actions = self._index_documents_batch.add_upload_actions(documents)
         self._callback_new(actions)
@@ -218,7 +218,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         """Queue delete documents actions
 
         :param documents: A list of documents to delete.
-        :type documents: List[Dict]
+        :type documents: list[dict]
         """
         actions = self._index_documents_batch.add_delete_actions(documents)
         self._callback_new(actions)
@@ -229,7 +229,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         """Queue merge documents actions
 
         :param documents: A list of documents to merge.
-        :type documents: List[Dict]
+        :type documents: list[dict]
         """
         actions = self._index_documents_batch.add_merge_actions(documents)
         self._callback_new(actions)
@@ -241,7 +241,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         """Queue merge documents or upload documents actions
 
         :param documents: A list of documents to merge or upload.
-        :type documents: List[Dict]
+        :type documents: list[dict]
         """
         actions = self._index_documents_batch.add_merge_or_upload_actions(documents)
         self._callback_new(actions)
@@ -253,7 +253,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
 
         :param batch: A batch of document operations to perform.
         :type batch: IndexDocumentsBatch
-        :rtype:  List[IndexingResult]
+        :return: Indexing result of each action in the batch.
+        :rtype:  list[IndexingResult]
         :raises :class:`~azure.search.documents.RequestEntityTooLargeError`
         """
         return self._index_documents_actions(actions=batch.actions, **kwargs)
@@ -268,7 +269,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         try:
             batch_response = self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
             return cast(List[IndexingResult], batch_response.results)
-        except RequestEntityTooLargeError:
+        except RequestEntityTooLargeError as ex:
             if len(actions) == 1:
                 raise
             pos = round(len(actions) / 2)
@@ -277,7 +278,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             now = int(time.time())
             remaining = timeout - (now - begin_time)
             if remaining < 0:
-                raise ServiceResponseTimeoutError("Service response time out")
+                raise ServiceResponseTimeoutError("Service response time out") from ex
             batch_response_first_half = self._index_documents_actions(
                 actions=actions[:pos], error_map=error_map, timeout=remaining, **kwargs
             )
@@ -288,7 +289,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             now = int(time.time())
             remaining = timeout - (now - begin_time)
             if remaining < 0:
-                raise ServiceResponseTimeoutError("Service response time out")
+                raise ServiceResponseTimeoutError("Service response time out") from ex
             batch_response_second_half = self._index_documents_actions(
                 actions=actions[pos:], error_map=error_map, timeout=remaining, **kwargs
             )

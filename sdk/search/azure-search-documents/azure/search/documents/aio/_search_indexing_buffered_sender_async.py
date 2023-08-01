@@ -100,13 +100,17 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @property
     def actions(self) -> List[IndexAction]:
         """The list of currently index actions in queue to index.
-        :rtype: List[IndexAction]
+        :return: The list of currently index actions in queue to index.
+        :rtype: list[IndexAction]
         """
         return self._index_documents_batch.actions
 
     @distributed_trace_async
-    async def close(self, **kwargs) -> None:  # pylint: disable=unused-argument
-        """Close the :class:`~azure.search.documents.aio.SearchClient` session."""
+    async def close(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
+        """Close the :class:`~azure.search.documents.aio.SearchClient` session.
+        :return: None
+        :rtype: None
+        """
         await self._cleanup(flush=True)
         return await self._client.close()
 
@@ -206,7 +210,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     async def upload_documents(self, documents: List[Dict], **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Queue upload documents actions.
         :param documents: A list of documents to upload.
-        :type documents: List[Dict]
+        :type documents: list[dict]
         """
         actions = await self._index_documents_batch.add_upload_actions(documents)
         await self._callback_new(actions)
@@ -216,7 +220,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     async def delete_documents(self, documents: List[Dict], **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Queue delete documents actions
         :param documents: A list of documents to delete.
-        :type documents: List[Dict]
+        :type documents: list[Dict]
         """
         actions = await self._index_documents_batch.add_delete_actions(documents)
         await self._callback_new(actions)
@@ -226,7 +230,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     async def merge_documents(self, documents: List[Dict], **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Queue merge documents actions
         :param documents: A list of documents to merge.
-        :type documents: List[Dict]
+        :type documents: list[dict]
         """
         actions = await self._index_documents_batch.add_merge_actions(documents)
         await self._callback_new(actions)
@@ -237,7 +241,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         # pylint: disable=unused-argument
         """Queue merge documents or upload documents actions
         :param documents: A list of documents to merge or upload.
-        :type documents: List[Dict]
+        :type documents: list[dict]
         """
         actions = await self._index_documents_batch.add_merge_or_upload_actions(documents)
         await self._callback_new(actions)
@@ -249,7 +253,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
 
         :param batch: A batch of document operations to perform.
         :type batch: IndexDocumentsBatch
-        :rtype:  List[IndexingResult]
+        :return: Indexing result for each action in the batch.
+        :rtype:  list[IndexingResult]
         :raises :class:`~azure.search.documents.RequestEntityTooLargeError`
         """
         return await self._index_documents_actions(actions=batch.actions, **kwargs)
@@ -264,7 +269,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         try:
             batch_response = await self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
             return cast(List[IndexingResult], batch_response.results)
-        except RequestEntityTooLargeError:
+        except RequestEntityTooLargeError as ex:
             if len(actions) == 1:
                 raise
             pos = round(len(actions) / 2)
@@ -273,7 +278,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             now = int(time.time())
             remaining = timeout - (now - begin_time)
             if remaining < 0:
-                raise ServiceResponseTimeoutError("Service response time out")
+                raise ServiceResponseTimeoutError("Service response time out") from ex
             batch_response_first_half = await self._index_documents_actions(
                 actions=actions[:pos], error_map=error_map, **kwargs
             )
@@ -284,7 +289,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             now = int(time.time())
             remaining = timeout - (now - begin_time)
             if remaining < 0:
-                raise ServiceResponseTimeoutError("Service response time out")
+                raise ServiceResponseTimeoutError("Service response time out") from ex
             batch_response_second_half = await self._index_documents_actions(
                 actions=actions[pos:], error_map=error_map, **kwargs
             )

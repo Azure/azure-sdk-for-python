@@ -252,7 +252,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         :param params_override: Fields to overwrite on top of the yaml file.
             Format is [{"field1": "value1"}, {"field2": "value2"}], defaults to None
         :type params_override: List[Dict], optional
-        :param kwargs: A dictionary of additional configuration parameters.
+        :keyword kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         :raises Exception: An exception
         :return: Loaded job object.

@@ -32,6 +32,7 @@ def odata(statement: str, **kwargs: Any) -> str:
 
     :param statement: An OData query string to prepare
     :type statement: str
+    :return: The prepared OData query string
     :rtype: str
 
     .. admonition:: Example:
@@ -41,11 +42,9 @@ def odata(statement: str, **kwargs: Any) -> str:
 
 
     """
-    kw = dict(kwargs)
-    for key in kw:
-        value = kw[key]
+    for key, value in kwargs.items():
         if isinstance(value, str):
             value = value.replace("'", "''")
-            if "'{{{}}}'".format(key) not in statement:
-                kw[key] = "'{}'".format(value)
-    return statement.format(**kw)
+            if f"'{{{key}}}'" not in statement:
+                kwargs[key] = f"'{value}'"
+    return statement.format(**kwargs)

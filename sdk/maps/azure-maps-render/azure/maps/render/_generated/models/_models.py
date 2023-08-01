@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, TYPE_CHECKING
+from typing import Any, List, Optional, TYPE_CHECKING
 
 from .. import _serialization
 
@@ -41,7 +41,7 @@ class Copyright(_serialization.Model):
         "regions": {"key": "regions", "type": "[RegionCopyrights]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.format_version = None
@@ -70,7 +70,7 @@ class CopyrightCaption(_serialization.Model):
         "copyrights_caption": {"key": "copyrightsCaption", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.format_version = None
@@ -98,7 +98,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -138,7 +138,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -149,7 +149,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.maps.render.models.ErrorDetail
@@ -159,7 +160,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.maps.render.models.ErrorDetail
@@ -179,7 +180,7 @@ class MapAttribution(_serialization.Model):
         "copyrights": {"key": "copyrights", "type": "[str]"},
     }
 
-    def __init__(self, *, copyrights: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, copyrights: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword copyrights: A list of copyright strings.
         :paramtype copyrights: list[str]
@@ -281,8 +282,8 @@ class MapTileset(_serialization.Model):  # pylint: disable=too-many-instance-att
         max_zoom: Optional[int] = None,
         bounds: Optional[List[float]] = None,
         center: Optional[List[float]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tilejson: Describes the version of the TileJSON spec that is implemented by this JSON
          object.
@@ -369,7 +370,7 @@ class RegionCopyrights(_serialization.Model):
         "country": {"key": "country", "type": "RegionCopyrightsCountry"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.copyrights = None
@@ -397,7 +398,7 @@ class RegionCopyrightsCountry(_serialization.Model):
         "label": {"key": "label", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.iso3 = None

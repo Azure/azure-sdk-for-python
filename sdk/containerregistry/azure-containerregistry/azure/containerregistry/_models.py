@@ -53,7 +53,7 @@ class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WINDOWS = "windows"
 
 
-class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-attributes
+class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attributes
     """Represents properties of a registry artifact.
 
     :ivar bool can_delete: Delete Permissions for an artifact.
@@ -61,14 +61,16 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     :ivar bool can_read: Read Permissions for an artifact.
     :ivar bool can_list: List Permissions for an artifact.
     :ivar architecture: CPU Architecture of an artifact.
-    :vartype architecture: Optional[~azure.containerregistry.ArtifactArchitecture]
+        Note: any value not listed in enum ArtifactArchitecture will be string type.
+    :vartype architecture: Optional[Union[str, ~azure.containerregistry.ArtifactArchitecture]]
     :ivar created_on: Time and date an artifact was created.
     :vartype created_on: Optional[~datetime.datetime]
     :ivar Optional[str] digest: Digest for the artifact.
     :ivar last_updated_on: Time and date an artifact was last updated.
     :vartype last_updated_on: Optional[~datetime.datetime]
     :ivar operating_system: Operating system for the artifact.
-    :vartype operating_system: Optional[~azure.containerregistry.ArtifactOperatingSystem]
+        Note: any value not listed in enum ArtifactOperatingSystem will be string type.
+    :vartype operating_system: Optional[Union[str, ~azure.containerregistry.ArtifactOperatingSystem]]
     :ivar Optional[str] repository_name: Repository name the artifact belongs to.
     :ivar Optional[int] size_in_bytes: Size of the artifact.
     :ivar Optional[List[str]] tags: Tags associated with a registry artifact.
@@ -76,14 +78,18 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
 
     def __init__(self, **kwargs):
         self._architecture = kwargs.get("cpu_architecture", None)
-        if self._architecture is not None:
+        try:
             self._architecture = ArtifactArchitecture(self._architecture)
+        except ValueError:
+            pass
         self._created_on = kwargs.get("created_on", None)
         self._digest = kwargs.get("digest", None)
         self._last_updated_on = kwargs.get("last_updated_on", None)
         self._operating_system = kwargs.get("operating_system", None)
-        if self._operating_system is not None:
+        try:
             self._operating_system = ArtifactOperatingSystem(self._operating_system)
+        except ValueError:
+            pass
         self._repository_name = kwargs.get("repository_name", None)
         self._registry = kwargs.get("registry", None)
         self._size_in_bytes = kwargs.get("size_in_bytes", None)
@@ -153,10 +159,10 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
 
     @property
     def fully_qualified_reference(self) -> str:
-        return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}" # pylint: disable=line-too-long
+        return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}"  # pylint: disable=line-too-long
 
 
-class RepositoryProperties(object):
+class RepositoryProperties:
     """Represents properties of a single repository.
 
     :ivar bool can_delete: Delete Permissions for a repository.
@@ -208,10 +214,11 @@ class RepositoryProperties(object):
     def __getattr__(self, name):
         if name == "last_udpated_on":
             warnings.warn(
-                "The property name with a typo called 'last_udpated_on' has been deprecated and will be retired in future versions", # pylint: disable=line-too-long
-                DeprecationWarning)
+                "The property name with a typo called 'last_udpated_on' has been deprecated and will be retired in future versions",  # pylint: disable=line-too-long
+                DeprecationWarning,
+            )
             return self.last_updated_on
-        return super().__getattr__(self, name) # pylint: disable=no-member
+        return super().__getattr__(self, name)  # pylint: disable=no-member
 
     @property
     def created_on(self) -> datetime:
@@ -234,7 +241,7 @@ class RepositoryProperties(object):
         return self._tag_count
 
 
-class ArtifactTagProperties(object):
+class ArtifactTagProperties:
     """Represents properties of a single tag
 
     :ivar bool can_delete: Delete Permissions for a tag.
@@ -304,7 +311,7 @@ class ArtifactTagProperties(object):
         return self._repository_name
 
 
-class GetManifestResult(object):
+class GetManifestResult:
     """The get manifest result.
 
     :ivar manifest: The manifest JSON.
@@ -321,6 +328,7 @@ class GetManifestResult(object):
 
 class DigestValidationError(ValueError):
     """Thrown when a manifest digest validation fails.
+
     :param str message: Message for caller describing the reason for the failure.
     """
 

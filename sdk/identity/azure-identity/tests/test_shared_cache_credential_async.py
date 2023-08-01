@@ -140,7 +140,7 @@ async def test_tenant_id():
     credential = SharedTokenCacheCredential(
         _cache=populated_cache(get_account_event("test@user", "uid", "utid")),
         transport=transport,
-        additionally_allowed_tenants=['*']
+        additionally_allowed_tenants=["*"],
     )
 
     await credential.get_token("scope", tenant_id="tenant_id")
@@ -607,7 +607,7 @@ async def test_authority_environment_variable():
 
 @pytest.mark.asyncio
 async def test_initialization():
-    """the credential should attempt to load the cache only once, when it's first needed"""
+    """the credential should attempt to load the cache when it's needed and no cache has been established."""
 
     with patch("azure.identity._persistent_cache._get_persistence") as mock_cache_loader:
         mock_cache_loader.side_effect = Exception("it didn't work")
@@ -615,10 +615,13 @@ async def test_initialization():
         credential = SharedTokenCacheCredential()
         assert mock_cache_loader.call_count == 0
 
-        for _ in range(2):
-            with pytest.raises(CredentialUnavailableError, match="Shared token cache unavailable"):
-                await credential.get_token("scope")
-            assert mock_cache_loader.call_count == 1
+        with pytest.raises(CredentialUnavailableError, match="Shared token cache unavailable"):
+            await credential.get_token("scope")
+        assert mock_cache_loader.call_count == 1
+
+        with pytest.raises(CredentialUnavailableError, match="Shared token cache unavailable"):
+            await credential.get_token("scope")
+        assert mock_cache_loader.call_count == 2
 
 
 @pytest.mark.asyncio
@@ -631,7 +634,7 @@ async def test_initialization_with_cache_options():
 
         with pytest.raises(CredentialUnavailableError):
             await credential.get_token("scope")
-        mock_cache_loader.assert_called_once_with(options)
+        assert mock_cache_loader.call_count == 1
 
 
 @pytest.mark.asyncio
@@ -657,7 +660,7 @@ async def test_multitenant_authentication():
     cache = populated_cache(expected_account)
 
     credential = SharedTokenCacheCredential(
-        authority=authority, transport=Mock(send=send), _cache=cache, additionally_allowed_tenants=['*']
+        authority=authority, transport=Mock(send=send), _cache=cache, additionally_allowed_tenants=["*"]
     )
     token = await credential.get_token("scope")
     assert token.token == first_token
@@ -671,6 +674,7 @@ async def test_multitenant_authentication():
     # should still default to the first tenant
     token = await credential.get_token("scope")
     assert token.token == first_token
+
 
 @pytest.mark.asyncio
 async def test_multitenant_authentication_not_allowed():

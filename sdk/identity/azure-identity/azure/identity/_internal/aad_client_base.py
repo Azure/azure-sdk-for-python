@@ -5,7 +5,6 @@
 import abc
 import base64
 import json
-import os
 import time
 from uuid import uuid4
 from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict
@@ -17,9 +16,9 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
-from .._constants import EnvironmentVariables
 from .utils import get_default_authority, normalize_authority, resolve_tenant
 from .aadclient_certificate import AadClientCertificate
+from .._persistent_cache import _load_persistent_cache
 
 
 if TYPE_CHECKING:
@@ -38,32 +37,53 @@ class AadClientBase(abc.ABC):
     _POST = ["POST"]
 
     def __init__(
-            self,
-            tenant_id: str,
-            client_id: str,
-            authority: Optional[str] = None,
-            cache: Optional[TokenCache] = None,
-            *,
-            additionally_allowed_tenants: Optional[List[str]] = None,
-            **kwargs: Any
+        self,
+        tenant_id: str,
+        client_id: str,
+        authority: Optional[str] = None,
+        cache: Optional[TokenCache] = None,
+        cae_cache: Optional[TokenCache] = None,
+        *,
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        **kwargs: Any
     ) -> None:
         self._authority = normalize_authority(authority) if authority else get_default_authority()
 
         self._tenant_id = tenant_id
-
-        self._cache = cache or TokenCache()
         self._client_id = client_id
-        self._capabilities = None if EnvironmentVariables.AZURE_IDENTITY_DISABLE_CP1 in os.environ else ["CP1"]
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._pipeline = self._build_pipeline(**kwargs)
 
+        self._cache = cache
+        self._cae_cache = cae_cache
+        self._cache_options = kwargs.pop("cache_persistence_options", None)
+
+    def _get_cache(self, **kwargs: Any) -> TokenCache:
+        cache = self._cae_cache if kwargs.get("enable_cae") else self._cache
+        if not cache:
+            cache = self._initialize_cache(is_cae=bool(kwargs.get("enable_cae")))
+        return cache
+
+    def _initialize_cache(self, is_cae: bool = False) -> TokenCache:
+        if self._cache_options:
+            if is_cae:
+                self._cae_cache = _load_persistent_cache(self._cache_options, is_cae)
+            else:
+                self._cache = _load_persistent_cache(self._cache_options, is_cae)
+        else:
+            if is_cae:
+                self._cae_cache = TokenCache()
+            else:
+                self._cache = TokenCache()
+        return self._cae_cache if is_cae else self._cache
+
     def get_cached_access_token(self, scopes: Iterable[str], **kwargs: Any) -> Optional[AccessToken]:
         tenant = resolve_tenant(
-            self._tenant_id,
-            additionally_allowed_tenants=self._additionally_allowed_tenants,
-            **kwargs
+            self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
-        tokens = self._cache.find(
+
+        cache = self._get_cache(**kwargs)
+        tokens = cache.find(
             TokenCache.CredentialType.ACCESS_TOKEN,
             target=list(scopes),
             query={"client_id": self._client_id, "realm": tenant},
@@ -74,9 +94,10 @@ class AadClientBase(abc.ABC):
                 return AccessToken(token["secret"], expires_on)
         return None
 
-    def get_cached_refresh_tokens(self, scopes: Iterable[str]) -> List[Dict]:
-        """Assumes all cached refresh tokens belong to the same user"""
-        return self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
+    def get_cached_refresh_tokens(self, scopes: Iterable[str], **kwargs) -> List[Dict]:
+        # Assumes all cached refresh tokens belong to the same user
+        cache = self._get_cache(**kwargs)
+        return cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
 
     @abc.abstractmethod
     def obtain_token_by_authorization_code(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
@@ -106,30 +127,31 @@ class AadClientBase(abc.ABC):
     def _build_pipeline(self, **kwargs):
         pass
 
-    def _process_response(self, response: PipelineResponse, request_time: int) -> AccessToken:
+    def _process_response(self, response: PipelineResponse, request_time: int, **kwargs) -> AccessToken:
         content = response.context.get(
             ContentDecodePolicy.CONTEXT_NAME
         ) or ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 
+        cache = self._get_cache(**kwargs)
         if response.http_request.body.get("grant_type") == "refresh_token":
             if content.get("error") == "invalid_grant":
                 # the request's refresh token is invalid -> evict it from the cache
-                cache_entries = self._cache.find(
+                cache_entries = cache.find(
                     TokenCache.CredentialType.REFRESH_TOKEN,
                     query={"secret": response.http_request.body["refresh_token"]},
                 )
                 for invalid_token in cache_entries:
-                    self._cache.remove_rt(invalid_token)
+                    cache.remove_rt(invalid_token)
             if "refresh_token" in content:
                 # AAD returned a new refresh token -> update the cache entry
-                cache_entries = self._cache.find(
+                cache_entries = cache.find(
                     TokenCache.CredentialType.REFRESH_TOKEN,
                     query={"secret": response.http_request.body["refresh_token"]},
                 )
                 # If the old token is in multiple cache entries, the cache is in a state we don't
                 # expect or know how to reason about, so we update nothing.
                 if len(cache_entries) == 1:
-                    self._cache.update_rt(cache_entries[0], content["refresh_token"])
+                    cache.update_rt(cache_entries[0], content["refresh_token"])
                     del content["refresh_token"]  # prevent caching a redundant entry
 
         _raise_for_error(response, content)
@@ -147,7 +169,7 @@ class AadClientBase(abc.ABC):
         token = AccessToken(content["access_token"], expires_on)
 
         # caching is the final step because 'add' mutates 'content'
-        self._cache.add(
+        cache.add(
             event={
                 "client_id": self._client_id,
                 "response": content,
@@ -160,12 +182,7 @@ class AadClientBase(abc.ABC):
         return token
 
     def _get_auth_code_request(
-            self,
-            scopes: Iterable[str],
-            code: str,
-            redirect_uri: str,
-            client_secret: Optional[str] = None,
-            **kwargs: Any
+        self, scopes: Iterable[str], code: str, redirect_uri: str, client_secret: Optional[str] = None, **kwargs: Any
     ) -> HttpRequest:
         data = {
             "client_id": self._client_id,
@@ -175,7 +192,9 @@ class AadClientBase(abc.ABC):
             "scope": " ".join(scopes),
         }
 
-        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        claims = _merge_claims_challenge_and_capabilities(
+            ["CP1"] if kwargs.get("enable_cae") else [], kwargs.get("claims")
+        )
         if claims:
             data["claims"] = claims
         if client_secret:
@@ -184,12 +203,7 @@ class AadClientBase(abc.ABC):
         request = self._post(data, **kwargs)
         return request
 
-    def _get_jwt_assertion_request(
-            self,
-            scopes: Iterable[str],
-            assertion: str,
-            **kwargs: Any
-    ) -> HttpRequest:
+    def _get_jwt_assertion_request(self, scopes: Iterable[str], assertion: str, **kwargs: Any) -> HttpRequest:
         data = {
             "client_assertion": assertion,
             "client_assertion_type": JWT_BEARER_ASSERTION,
@@ -198,7 +212,9 @@ class AadClientBase(abc.ABC):
             "scope": " ".join(scopes),
         }
 
-        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        claims = _merge_claims_challenge_and_capabilities(
+            ["CP1"] if kwargs.get("enable_cae") else [], kwargs.get("claims")
+        )
         if claims:
             data["claims"] = claims
 
@@ -208,24 +224,23 @@ class AadClientBase(abc.ABC):
     def _get_client_certificate_assertion(self, certificate: AadClientCertificate, **kwargs: Any) -> str:
         now = int(time.time())
         header = json.dumps({"typ": "JWT", "alg": "RS256", "x5t": certificate.thumbprint}).encode("utf-8")
-        payload = json.dumps({
-            "jti": str(uuid4()),
-            "aud": self._get_token_url(**kwargs),
-            "iss": self._client_id,
-            "sub": self._client_id,
-            "nbf": now,
-            "exp": now + (60 * 30),
-        }).encode("utf-8")
+        payload = json.dumps(
+            {
+                "jti": str(uuid4()),
+                "aud": self._get_token_url(**kwargs),
+                "iss": self._client_id,
+                "sub": self._client_id,
+                "nbf": now,
+                "exp": now + (60 * 30),
+            }
+        ).encode("utf-8")
         jws = base64.urlsafe_b64encode(header) + b"." + base64.urlsafe_b64encode(payload)
         signature = certificate.sign(jws)
         jwt_bytes = jws + b"." + base64.urlsafe_b64encode(signature)
         return jwt_bytes.decode("utf-8")
 
     def _get_client_certificate_request(
-            self,
-            scopes: Iterable[str],
-            certificate: AadClientCertificate,
-            **kwargs: Any
+        self, scopes: Iterable[str], certificate: AadClientCertificate, **kwargs: Any
     ) -> HttpRequest:
         assertion = self._get_client_certificate_assertion(certificate, **kwargs)
         return self._get_jwt_assertion_request(scopes, assertion, **kwargs)
@@ -238,7 +253,9 @@ class AadClientBase(abc.ABC):
             "scope": " ".join(scopes),
         }
 
-        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        claims = _merge_claims_challenge_and_capabilities(
+            ["CP1"] if kwargs.get("enable_cae") else [], kwargs.get("claims")
+        )
         if claims:
             data["claims"] = claims
 
@@ -246,11 +263,11 @@ class AadClientBase(abc.ABC):
         return request
 
     def _get_on_behalf_of_request(
-            self,
-            scopes: Iterable[str],
-            client_credential: Union[str, AadClientCertificate],
-            user_assertion: str,
-            **kwargs: Any
+        self,
+        scopes: Iterable[str],
+        client_credential: Union[str, AadClientCertificate],
+        user_assertion: str,
+        **kwargs: Any
     ) -> HttpRequest:
         data = {
             "assertion": user_assertion,
@@ -260,7 +277,9 @@ class AadClientBase(abc.ABC):
             "scope": " ".join(scopes),
         }
 
-        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        claims = _merge_claims_challenge_and_capabilities(
+            ["CP1"] if kwargs.get("enable_cae") else [], kwargs.get("claims")
+        )
         if claims:
             data["claims"] = claims
 
@@ -273,12 +292,7 @@ class AadClientBase(abc.ABC):
         request = self._post(data, **kwargs)
         return request
 
-    def _get_refresh_token_request(
-            self,
-            scopes: Iterable[str],
-            refresh_token: str,
-            **kwargs: Any
-    ) -> HttpRequest:
+    def _get_refresh_token_request(self, scopes: Iterable[str], refresh_token: str, **kwargs: Any) -> HttpRequest:
         data = {
             "grant_type": "refresh_token",
             "refresh_token": refresh_token,
@@ -287,7 +301,9 @@ class AadClientBase(abc.ABC):
             "client_info": 1,  # request AAD include home_account_id in its response
         }
 
-        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        claims = _merge_claims_challenge_and_capabilities(
+            ["CP1"] if kwargs.get("enable_cae") else [], kwargs.get("claims")
+        )
         if claims:
             data["claims"] = claims
 
@@ -295,11 +311,11 @@ class AadClientBase(abc.ABC):
         return request
 
     def _get_refresh_token_on_behalf_of_request(
-            self,
-            scopes: Iterable[str],
-            client_credential: Union[str, AadClientCertificate],
-            refresh_token: str,
-            **kwargs: Any
+        self,
+        scopes: Iterable[str],
+        client_credential: Union[str, AadClientCertificate],
+        refresh_token: str,
+        **kwargs: Any
     ) -> HttpRequest:
         data = {
             "grant_type": "refresh_token",
@@ -308,7 +324,9 @@ class AadClientBase(abc.ABC):
             "client_id": self._client_id,
             "client_info": 1,  # request AAD include home_account_id in its response
         }
-        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        claims = _merge_claims_challenge_and_capabilities(
+            ["CP1"] if kwargs.get("enable_cae") else [], kwargs.get("claims")
+        )
         if claims:
             data["claims"] = claims
 
@@ -322,9 +340,7 @@ class AadClientBase(abc.ABC):
 
     def _get_token_url(self, **kwargs: Any) -> str:
         tenant = resolve_tenant(
-            self._tenant_id,
-            additionally_allowed_tenants=self._additionally_allowed_tenants,
-            **kwargs
+            self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
         return "/".join((self._authority, tenant, "oauth2/v2.0/token"))
 
