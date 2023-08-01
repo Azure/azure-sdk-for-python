@@ -8,6 +8,8 @@
 ### Bugs Fixed
 - Local job runs will no longer fail if Docker registry has no username/password
 
+- Fixed an issue that code asset doesn't work with relative symbol links.
+
 ### Breaking Changes
 
 ### Other Changes
