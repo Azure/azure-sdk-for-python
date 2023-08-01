@@ -1,25 +1,23 @@
-# TODO: what is the relationship between id and name?
-id: stewieleo
 inputs:
   config:
-    conversations:
-      exp_configs:
-      - exp_name: fake_tenant
-        runType: scheduled
-        sydney:
-          bingTokenPath: ./bingToken.txt"
-          option_sets: enterprise_chomsky_ppo_with_errors
-          substrateSearchTokenPath: ./3stoken.txt
-          url: https://turingbot.sdf-master.substrate-turing-turingbot.eastus-sdf.cosmic-ppe.office.net/TuringBot
-        user: Andy
-      input_file: data/2023-04-13-e2e-queryset.tsv
-      output_folder: ./GroundLeoTmp
-      thread_size": 1
-    default: null
-    dv3_token_file_path: ./authtoken.txt
-    ratings:
-      baseline_name: demo
-    sydney_client_secret": null
+    default:
+      conversations:
+        exp_configs:
+        - exp_name: fake_tenant
+          runType: scheduled
+          sydney:
+            bingTokenPath: ./bingToken.txt"
+            option_sets: enterprise_chomsky_ppo_with_errors
+            substrateSearchTokenPath: ./3stoken.txt
+            url: https://turingbot.sdf-master.substrate-turing-turingbot.eastus-sdf.cosmic-ppe.office.net/TuringBot
+          user: Andy
+        input_file: data/2023-04-13-e2e-queryset.tsv
+        output_folder: ./GroundLeoTmp
+        thread_size": 1
+      dv3_token_file_path: ./authtoken.txt
+      ratings:
+        baseline_name: demo
+      sydney_client_secret": null
     type: object
   conversation_id:
     default: 5e8ace43-318c-452b-8d12-912e4478233d

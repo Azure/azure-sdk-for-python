@@ -6,9 +6,6 @@ tags:
 
 path: ./flow.dag.yaml
 
-# It will be weird if we put additional includes here given it's shared by all runs
-additional_includes:
-  - ../additional/util.py
 
 runtime: promptflow-runtime
 environment_variables:
