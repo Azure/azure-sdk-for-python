@@ -132,7 +132,8 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     :keyword enabled: The value indicating whether the feature flag is enabled. A feature is OFF if enabled is false.
         If enabled is true, then the feature is ON if there are no conditions or if all conditions are satisfied.
     :paramtype enabled: bool
-    :keyword filters: Filters that must run on the client and be evaluated as true for the feature to be considered enabled.
+    :keyword filters: Filters that must run on the client and be evaluated as true for the feature
+        to be considered enabled.
     :paramtype filters: list[dict[str, Any]]
     :ivar label: The label used to group this configuration setting with others.
     :vartype label: str
