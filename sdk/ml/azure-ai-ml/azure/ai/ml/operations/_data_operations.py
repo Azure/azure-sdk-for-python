@@ -633,8 +633,8 @@ class DataOperations(_ScopeDependentOperations):
     def mount(
         self,
         path: str,
-        mount_point: str = '/home/azureuser/mount/data',
-        mode: str = 'ro_mount',
+        mount_point: str = "/home/azureuser/mount/data",
+        mode: str = "ro_mount",
         debug: bool = False,
         **kwargs,
     ) -> None:
@@ -648,13 +648,16 @@ class DataOperations(_ScopeDependentOperations):
         :return: None
         """
 
-        assert mode in ['ro_mount', 'rw_mount'], 'mode should be either `ro_mount` or `rw_mount`'
-        read_only = mode == 'ro_mount'
-        assert read_only, 'read-write mount for data asset is not supported yet'
+        assert mode in ["ro_mount", "rw_mount"], "mode should be either `ro_mount` or `rw_mount`"
+        read_only = mode == "ro_mount"
+        assert read_only, "read-write mount for data asset is not supported yet"
 
         # cspell:ignore rslex
         from azureml.dataprep import rslex_fuse_subprocess_wrapper
-        uri = rslex_fuse_subprocess_wrapper.build_data_asset_uri(self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path)
+
+        uri = rslex_fuse_subprocess_wrapper.build_data_asset_uri(
+            self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path
+        )
         rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(uri, mount_point, read_only, debug)
 
     @contextmanager

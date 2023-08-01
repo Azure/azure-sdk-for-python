@@ -39,7 +39,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         serviceclient_2022_10_01: ServiceClient2022_10_01,
-        **kwargs: Dict
+        **kwargs: Dict,
     ):
         super(DatastoreOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
@@ -66,7 +66,7 @@ class DatastoreOperations(_ScopeDependentOperations):
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
             cls=lambda objs: [_list_helper(obj, include_secrets) for obj in objs],
-            **self._init_kwargs
+            **self._init_kwargs,
         )
 
     @monitor_with_activity(logger, "Datastore.ListSecrets", ActivityType.PUBLICAPI)
@@ -75,7 +75,7 @@ class DatastoreOperations(_ScopeDependentOperations):
             name=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
-            **self._init_kwargs
+            **self._init_kwargs,
         )
 
     @monitor_with_activity(logger, "Datastore.Delete", ActivityType.PUBLICAPI)
@@ -91,7 +91,7 @@ class DatastoreOperations(_ScopeDependentOperations):
             name=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
-            **self._init_kwargs
+            **self._init_kwargs,
         )
 
     @monitor_with_activity(logger, "Datastore.Get", ActivityType.PUBLICAPI)
@@ -110,7 +110,7 @@ class DatastoreOperations(_ScopeDependentOperations):
                 name=name,
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
-                **self._init_kwargs
+                **self._init_kwargs,
             )
             if include_secrets:
                 self._fetch_and_populate_secret(datastore_resource)
@@ -139,7 +139,7 @@ class DatastoreOperations(_ScopeDependentOperations):
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
                 is_default=True,
-                **self._init_kwargs
+                **self._init_kwargs,
             ).next()
             if include_secrets:
                 self._fetch_and_populate_secret(datastore_resource)
@@ -171,14 +171,14 @@ class DatastoreOperations(_ScopeDependentOperations):
                 log_and_raise_error(ex)
             else:
                 raise ex
-            
+
     @monitor_with_activity(logger, "Datastore.Mount", ActivityType.PUBLICAPI)
     @experimental
     def mount(
         self,
         path: str,
-        mount_point: str = '/home/azureuser/mount/data',
-        mode: str = 'ro_mount',
+        mount_point: str = "/home/azureuser/mount/data",
+        mode: str = "ro_mount",
         debug: bool = False,
         **kwargs,
     ) -> None:
@@ -192,10 +192,13 @@ class DatastoreOperations(_ScopeDependentOperations):
         :return: None
         """
 
-        assert mode in ['ro_mount', 'rw_mount'], 'mode should be either `ro_mount` or `rw_mount`'
-        read_only = mode == 'ro_mount'
+        assert mode in ["ro_mount", "rw_mount"], "mode should be either `ro_mount` or `rw_mount`"
+        read_only = mode == "ro_mount"
 
         # cspell:ignore rslex
         from azureml.dataprep import rslex_fuse_subprocess_wrapper
-        uri = rslex_fuse_subprocess_wrapper.build_datastore_uri(self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path)
+
+        uri = rslex_fuse_subprocess_wrapper.build_datastore_uri(
+            self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path
+        )
         rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(uri, mount_point, read_only, debug)
