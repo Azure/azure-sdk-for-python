@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=no-self-use
 from typing import (  # pylint: disable=unused-import
     Any, Dict, Optional, Tuple, Union,
     TYPE_CHECKING)
@@ -53,7 +52,8 @@ _SUPPORTED_API_VERSIONS = [
     '2021-06-08',
     '2021-08-06',
     '2021-12-02',
-    '2022-11-02'
+    '2022-11-02',
+    '2023-01-03'
 ]
 
 
@@ -65,20 +65,20 @@ def _get_match_headers(kwargs, match_param, etag_param):
     if match_condition == MatchConditions.IfNotModified:
         if_match = kwargs.pop(etag_param, None)
         if not if_match:
-            raise ValueError("'{}' specified without '{}'.".format(match_param, etag_param))
+            raise ValueError(f"'{match_param}' specified without '{etag_param}'.")
     elif match_condition == MatchConditions.IfPresent:
         if_match = '*'
     elif match_condition == MatchConditions.IfModified:
         if_none_match = kwargs.pop(etag_param, None)
         if not if_none_match:
-            raise ValueError("'{}' specified without '{}'.".format(match_param, etag_param))
+            raise ValueError(f"'{match_param}' specified without '{etag_param}'.")
     elif match_condition == MatchConditions.IfMissing:
         if_none_match = '*'
     elif match_condition is None:
         if kwargs.get(etag_param):
-            raise ValueError("'{}' specified without '{}'.".format(etag_param, match_param))
+            raise ValueError(f"'{etag_param}' specified without '{match_param}'.")
     else:
-        raise TypeError("Invalid match condition: {}".format(match_condition))
+        raise TypeError(f"Invalid match condition: {match_condition}")
     return if_match, if_none_match
 
 
@@ -145,7 +145,7 @@ def get_api_version(kwargs):
     api_version = kwargs.get('api_version', None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
-        raise ValueError("Unsupported API version '{}'. Please select from:\n{}".format(api_version, versions))
+        raise ValueError(f"Unsupported API version '{api_version}'. Please select from:\n{versions}")
     return api_version or _SUPPORTED_API_VERSIONS[-1]
 
 
@@ -154,7 +154,7 @@ def serialize_blob_tags_header(tags=None):
     if tags is None:
         return None
 
-    components = list()
+    components = []
     if tags:
         for key, value in tags.items():
             components.append(quote(key, safe='.-'))
@@ -170,7 +170,7 @@ def serialize_blob_tags_header(tags=None):
 
 def serialize_blob_tags(tags=None):
     # type: (Optional[Dict[str, str]]) -> Union[BlobTags, None]
-    tag_list = list()
+    tag_list = []
     if tags:
         tag_list = [BlobTag(key=k, value=v) for k, v in tags.items()]
     return BlobTags(blob_tag_set=tag_list)

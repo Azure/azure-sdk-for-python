@@ -18,7 +18,7 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
             path="azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/",
         )
     }
-    source = {"type": "database", "connection": connection_target_azuresql, "query": query_source_snowflake}
+    source = {"connection": connection_target_azuresql, "query": query_source_snowflake}
 
     @dsl.pipeline(description="submit a pipeline with data transfer import database job")
     def data_transfer_import_database_pipeline_from_builder(query_source_snowflake, connection_target_azuresql):
@@ -44,7 +44,7 @@ def generate_dsl_pipeline_from_builder_sql() -> PipelineJob:
     query_source_snowflake = "select top(10) Name from SalesLT.ProductCategory"
     connection_target_azuresql = "azureml:my_azuresqldb_connection"
     outputs = {"sink": Output(type=AssetTypes.MLTABLE)}
-    source = {"type": "database", "connection": connection_target_azuresql, "query": query_source_snowflake}
+    source = {"connection": connection_target_azuresql, "query": query_source_snowflake}
 
     @dsl.pipeline(description="submit a pipeline with data transfer import database job")
     def data_transfer_import_database_pipeline_from_builder(query_source_snowflake, connection_target_azuresql):

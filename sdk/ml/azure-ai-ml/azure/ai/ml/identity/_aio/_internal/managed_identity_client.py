@@ -33,7 +33,7 @@ class AsyncManagedIdentityClient(AsyncContextManager, ManagedIdentityClientBase)
         request = self._request_factory(resource, self._identity_config)  # pylint: disable=no-member
         request_time = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=[request.method], **kwargs)
-        token = self._process_response(response, request_time)
+        token = self._process_response(response=response, request_time=request_time, resource=resource)
         return token
 
     def _build_pipeline(self, **kwargs: "Any") -> "AsyncPipeline":

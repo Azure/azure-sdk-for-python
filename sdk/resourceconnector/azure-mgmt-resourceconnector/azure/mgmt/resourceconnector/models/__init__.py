@@ -33,14 +33,14 @@ from ._models_py3 import TrackedResource
 from ._models_py3 import UpgradeGraph
 from ._models_py3 import UpgradeGraphProperties
 
-from ._appliances_enums import AccessProfileType
-from ._appliances_enums import ArtifactType
-from ._appliances_enums import CreatedByType
-from ._appliances_enums import Distro
-from ._appliances_enums import Provider
-from ._appliances_enums import ResourceIdentityType
-from ._appliances_enums import SSHKeyType
-from ._appliances_enums import Status
+from ._resource_connector_mgmt_client_enums import AccessProfileType
+from ._resource_connector_mgmt_client_enums import ArtifactType
+from ._resource_connector_mgmt_client_enums import CreatedByType
+from ._resource_connector_mgmt_client_enums import Distro
+from ._resource_connector_mgmt_client_enums import Provider
+from ._resource_connector_mgmt_client_enums import ResourceIdentityType
+from ._resource_connector_mgmt_client_enums import SSHKeyType
+from ._resource_connector_mgmt_client_enums import Status
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk

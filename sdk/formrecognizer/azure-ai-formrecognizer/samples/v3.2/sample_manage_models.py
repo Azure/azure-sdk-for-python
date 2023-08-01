@@ -28,19 +28,30 @@ import os
 def sample_manage_models():
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import ResourceNotFoundError
-    from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
+    from azure.ai.formrecognizer import (
+        DocumentModelAdministrationClient,
+        ModelBuildMode,
+    )
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
     # [START get_resource_details]
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key)
+    )
 
     account_details = document_model_admin_client.get_resource_details()
-    print("Our resource has {} custom models, and we can have at most {} custom models\n".format(
-        account_details.custom_document_models.count, account_details.custom_document_models.limit
-    ))
+    print(
+        f"Our resource has {account_details.custom_document_models.count} custom models, "
+        f"and we can have at most {account_details.custom_document_models.limit} custom models"
+    )
+    neural_models = account_details.custom_neural_document_model_builds
+    print(
+        f"The quota limit for custom neural document models is {neural_models.quota} and the resource has"
+        f"used {neural_models.used}. The resource quota will reset on {neural_models.quota_resets_on}"
+    )
     # [END get_resource_details]
 
     # Next, we get a paged list of all of our custom models
@@ -49,18 +60,23 @@ def sample_manage_models():
 
     print("We have the following 'ready' models with IDs and descriptions:")
     for model in models:
-        print("{} | {}".format(model.model_id, model.description))
+        print(f"{model.model_id} | {model.description}")
     # [END list_document_models]
 
     # let's build a model to use for this sample
-    poller = document_model_admin_client.begin_build_document_model(ModelBuildMode.TEMPLATE, blob_container_url=container_sas_url, description="model for sample")
+    poller = document_model_admin_client.begin_build_document_model(
+        ModelBuildMode.TEMPLATE,
+        blob_container_url=container_sas_url,
+        description="model for sample",
+    )
     model = poller.result()
 
     # [START get_document_model]
     my_model = document_model_admin_client.get_document_model(model_id=model.model_id)
-    print("\nModel ID: {}".format(my_model.model_id))
-    print("Description: {}".format(my_model.description))
-    print("Model created on: {}".format(my_model.created_on))
+    print(f"\nModel ID: {my_model.model_id}")
+    print(f"Description: {my_model.description}")
+    print(f"Model created on: {my_model.created_on}")
+    print(f"Model expires on: {my_model.expires_on}")
     # [END get_document_model]
 
     # Finally, we will delete this model by ID
@@ -70,18 +86,21 @@ def sample_manage_models():
     try:
         document_model_admin_client.get_document_model(model_id=my_model.model_id)
     except ResourceNotFoundError:
-        print("Successfully deleted model with ID {}".format(my_model.model_id))
+        print(f"Successfully deleted model with ID {my_model.model_id}")
     # [END delete_document_model]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         sample_manage_models()
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

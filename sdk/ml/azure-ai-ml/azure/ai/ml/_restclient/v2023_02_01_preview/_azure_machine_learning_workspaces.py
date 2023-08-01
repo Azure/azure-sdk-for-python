@@ -15,7 +15,51 @@ from azure.mgmt.core import ARMPipelineClient
 
 from . import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
-from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, FeaturesetContainersOperations, FeaturesetVersionsOperations, FeaturestoreEntityContainersOperations, FeaturestoreEntityVersionsOperations, JobsOperations, LabelingJobsOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryDataContainersOperations, RegistryDataVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
+from .operations import (
+    BatchDeploymentsOperations,
+    BatchEndpointsOperations,
+    CodeContainersOperations,
+    CodeVersionsOperations,
+    ComponentContainersOperations,
+    ComponentVersionsOperations,
+    ComputeOperations,
+    DataContainersOperations,
+    DataVersionsOperations,
+    DatastoresOperations,
+    EnvironmentContainersOperations,
+    EnvironmentVersionsOperations,
+    FeaturesetContainersOperations,
+    FeaturesetVersionsOperations,
+    FeaturestoreEntityContainersOperations,
+    FeaturestoreEntityVersionsOperations,
+    JobsOperations,
+    LabelingJobsOperations,
+    ModelContainersOperations,
+    ModelVersionsOperations,
+    OnlineDeploymentsOperations,
+    OnlineEndpointsOperations,
+    Operations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
+    QuotasOperations,
+    RegistriesOperations,
+    RegistryCodeContainersOperations,
+    RegistryCodeVersionsOperations,
+    RegistryComponentContainersOperations,
+    RegistryComponentVersionsOperations,
+    RegistryDataContainersOperations,
+    RegistryDataVersionsOperations,
+    RegistryEnvironmentContainersOperations,
+    RegistryEnvironmentVersionsOperations,
+    RegistryModelContainersOperations,
+    RegistryModelVersionsOperations,
+    SchedulesOperations,
+    UsagesOperations,
+    VirtualMachineSizesOperations,
+    WorkspaceConnectionsOperations,
+    WorkspaceFeaturesOperations,
+    WorkspacesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -24,7 +68,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
-class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-instance-attributes
+
+class AzureMachineLearningWorkspaces(object):  # pylint: disable=too-many-instance-attributes
     """These APIs allow end users to operate on Azure Machine Learning Workspace resources.
 
     :ivar operations: Operations operations
@@ -164,7 +209,9 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        self._config = AzureMachineLearningWorkspacesConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = AzureMachineLearningWorkspacesConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -174,47 +221,100 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.workspaces = WorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machine_sizes = VirtualMachineSizesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.virtual_machine_sizes = VirtualMachineSizesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.quotas = QuotasOperations(self._client, self._config, self._serialize, self._deserialize)
         self.compute = ComputeOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workspace_connections = WorkspaceConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workspace_connections = WorkspaceConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.registries = RegistriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workspace_features = WorkspaceFeaturesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.registry_code_containers = RegistryCodeContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.registry_code_versions = RegistryCodeVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.registry_component_containers = RegistryComponentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.registry_component_versions = RegistryComponentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.registry_data_containers = RegistryDataContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.registry_data_versions = RegistryDataVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.registry_environment_containers = RegistryEnvironmentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.registry_environment_versions = RegistryEnvironmentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.registry_model_containers = RegistryModelContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.registry_model_versions = RegistryModelVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.workspace_features = WorkspaceFeaturesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.registry_code_containers = RegistryCodeContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.registry_code_versions = RegistryCodeVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.registry_component_containers = RegistryComponentContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.registry_component_versions = RegistryComponentVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.registry_data_containers = RegistryDataContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.registry_data_versions = RegistryDataVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.registry_environment_containers = RegistryEnvironmentContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.registry_environment_versions = RegistryEnvironmentVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.registry_model_containers = RegistryModelContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.registry_model_versions = RegistryModelVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.batch_endpoints = BatchEndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.batch_deployments = BatchDeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.batch_deployments = BatchDeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.code_containers = CodeContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.code_versions = CodeVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.component_containers = ComponentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.component_versions = ComponentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.component_containers = ComponentContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.component_versions = ComponentVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.data_containers = DataContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.data_versions = DataVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datastores = DatastoresOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.environment_containers = EnvironmentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.environment_versions = EnvironmentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.featureset_containers = FeaturesetContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.featureset_versions = FeaturesetVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.featurestore_entity_containers = FeaturestoreEntityContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.featurestore_entity_versions = FeaturestoreEntityVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.environment_containers = EnvironmentContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.environment_versions = EnvironmentVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.featureset_containers = FeaturesetContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.featureset_versions = FeaturesetVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.featurestore_entity_containers = FeaturestoreEntityContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.featurestore_entity_versions = FeaturestoreEntityVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.labeling_jobs = LabelingJobsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.model_containers = ModelContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.model_containers = ModelContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.model_versions = ModelVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.online_endpoints = OnlineEndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.online_deployments = OnlineDeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.online_endpoints = OnlineEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.online_deployments = OnlineDeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.schedules = SchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
-
 
     def _send_request(
         self,

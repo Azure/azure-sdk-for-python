@@ -4000,7 +4000,7 @@ class DistributedAvailabilityGroup(ProxyResource):  # pylint: disable=too-many-i
     :ivar secondary_availability_group_name: The secondary availability group name.
     :vartype secondary_availability_group_name: str
     :ivar replication_mode: The replication mode of a distributed availability group. Parameter
-     will be ignored during link creation. Known values are: "Async" and "Sync".
+     will be ignored during link creation. Known values are: "Async", "Sync", and "Async".
     :vartype replication_mode: str or ~azure.mgmt.sql.models.ReplicationMode
     :ivar distributed_availability_group_id: The distributed availability group id.
     :vartype distributed_availability_group_id: str
@@ -4061,7 +4061,7 @@ class DistributedAvailabilityGroup(ProxyResource):  # pylint: disable=too-many-i
         :keyword secondary_availability_group_name: The secondary availability group name.
         :paramtype secondary_availability_group_name: str
         :keyword replication_mode: The replication mode of a distributed availability group. Parameter
-         will be ignored during link creation. Known values are: "Async" and "Sync".
+         will be ignored during link creation. Known values are: "Async", "Sync", and "Async".
         :paramtype replication_mode: str or ~azure.mgmt.sql.models.ReplicationMode
         """
         super().__init__(**kwargs)
@@ -4204,6 +4204,8 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
     :vartype creation_date: ~datetime.datetime
     :ivar max_size_bytes: The storage limit for the database elastic pool in bytes.
     :vartype max_size_bytes: int
+    :ivar min_capacity: Minimal capacity that serverless pool will not shrink below, if not paused.
+    :vartype min_capacity: float
     :ivar per_database_settings: The per database settings for the elastic pool.
     :vartype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
     :ivar zone_redundant: Whether or not this elastic pool is zone redundant, which means the
@@ -4216,8 +4218,15 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
      This configuration defines the period when the maintenance updates will will occur.
     :vartype maintenance_configuration_id: str
     :ivar high_availability_replica_count: The number of secondary replicas associated with the
-     elastic pool that are used to provide high availability.
+     elastic pool that are used to provide high availability. Applicable only to Hyperscale elastic
+     pools.
     :vartype high_availability_replica_count: int
+    :ivar preferred_enclave_type: Type of enclave requested on the elastic pool. Known values are:
+     "Default" and "VBS".
+    :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+    :ivar availability_zone: Specifies the availability zone the pool's primary replica is pinned
+     to. Known values are: "NoPreference", "1", "2", and "3".
+    :vartype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
     """
 
     _validation = {
@@ -4241,11 +4250,14 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         "state": {"key": "properties.state", "type": "str"},
         "creation_date": {"key": "properties.creationDate", "type": "iso-8601"},
         "max_size_bytes": {"key": "properties.maxSizeBytes", "type": "int"},
+        "min_capacity": {"key": "properties.minCapacity", "type": "float"},
         "per_database_settings": {"key": "properties.perDatabaseSettings", "type": "ElasticPoolPerDatabaseSettings"},
         "zone_redundant": {"key": "properties.zoneRedundant", "type": "bool"},
         "license_type": {"key": "properties.licenseType", "type": "str"},
         "maintenance_configuration_id": {"key": "properties.maintenanceConfigurationId", "type": "str"},
         "high_availability_replica_count": {"key": "properties.highAvailabilityReplicaCount", "type": "int"},
+        "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
+        "availability_zone": {"key": "properties.availabilityZone", "type": "str"},
     }
 
     def __init__(
@@ -4255,11 +4267,14 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["_models.Sku"] = None,
         max_size_bytes: Optional[int] = None,
+        min_capacity: Optional[float] = None,
         per_database_settings: Optional["_models.ElasticPoolPerDatabaseSettings"] = None,
         zone_redundant: Optional[bool] = None,
         license_type: Optional[Union[str, "_models.ElasticPoolLicenseType"]] = None,
         maintenance_configuration_id: Optional[str] = None,
         high_availability_replica_count: Optional[int] = None,
+        preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
+        availability_zone: Optional[Union[str, "_models.AvailabilityZoneType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4280,6 +4295,9 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         :paramtype sku: ~azure.mgmt.sql.models.Sku
         :keyword max_size_bytes: The storage limit for the database elastic pool in bytes.
         :paramtype max_size_bytes: int
+        :keyword min_capacity: Minimal capacity that serverless pool will not shrink below, if not
+         paused.
+        :paramtype min_capacity: float
         :keyword per_database_settings: The per database settings for the elastic pool.
         :paramtype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
         :keyword zone_redundant: Whether or not this elastic pool is zone redundant, which means the
@@ -4292,8 +4310,15 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
          pool. This configuration defines the period when the maintenance updates will will occur.
         :paramtype maintenance_configuration_id: str
         :keyword high_availability_replica_count: The number of secondary replicas associated with the
-         elastic pool that are used to provide high availability.
+         elastic pool that are used to provide high availability. Applicable only to Hyperscale elastic
+         pools.
         :paramtype high_availability_replica_count: int
+        :keyword preferred_enclave_type: Type of enclave requested on the elastic pool. Known values
+         are: "Default" and "VBS".
+        :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+        :keyword availability_zone: Specifies the availability zone the pool's primary replica is
+         pinned to. Known values are: "NoPreference", "1", "2", and "3".
+        :paramtype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
@@ -4301,11 +4326,14 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         self.state = None
         self.creation_date = None
         self.max_size_bytes = max_size_bytes
+        self.min_capacity = min_capacity
         self.per_database_settings = per_database_settings
         self.zone_redundant = zone_redundant
         self.license_type = license_type
         self.maintenance_configuration_id = maintenance_configuration_id
         self.high_availability_replica_count = high_availability_replica_count
+        self.preferred_enclave_type = preferred_enclave_type
+        self.availability_zone = availability_zone
 
 
 class ElasticPoolActivity(ProxyResource):  # pylint: disable=too-many-instance-attributes
@@ -5029,7 +5057,7 @@ class ElasticPoolPerformanceLevelCapability(_serialization.Model):  # pylint: di
         self.reason = reason
 
 
-class ElasticPoolUpdate(_serialization.Model):
+class ElasticPoolUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """An elastic pool update.
 
     :ivar sku: An ARM Resource SKU.
@@ -5038,6 +5066,8 @@ class ElasticPoolUpdate(_serialization.Model):
     :vartype tags: dict[str, str]
     :ivar max_size_bytes: The storage limit for the database elastic pool in bytes.
     :vartype max_size_bytes: int
+    :ivar min_capacity: Minimal capacity that serverless pool will not shrink below, if not paused.
+    :vartype min_capacity: float
     :ivar per_database_settings: The per database settings for the elastic pool.
     :vartype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
     :ivar zone_redundant: Whether or not this elastic pool is zone redundant, which means the
@@ -5053,17 +5083,26 @@ class ElasticPoolUpdate(_serialization.Model):
      elastic pool that are used to provide high availability. Applicable only to Hyperscale elastic
      pools.
     :vartype high_availability_replica_count: int
+    :ivar preferred_enclave_type: Type of enclave requested on the elastic pool. Known values are:
+     "Default" and "VBS".
+    :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+    :ivar availability_zone: Specifies the availability zone the pool's primary replica is pinned
+     to. Known values are: "NoPreference", "1", "2", and "3".
+    :vartype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
     """
 
     _attribute_map = {
         "sku": {"key": "sku", "type": "Sku"},
         "tags": {"key": "tags", "type": "{str}"},
         "max_size_bytes": {"key": "properties.maxSizeBytes", "type": "int"},
+        "min_capacity": {"key": "properties.minCapacity", "type": "float"},
         "per_database_settings": {"key": "properties.perDatabaseSettings", "type": "ElasticPoolPerDatabaseSettings"},
         "zone_redundant": {"key": "properties.zoneRedundant", "type": "bool"},
         "license_type": {"key": "properties.licenseType", "type": "str"},
         "maintenance_configuration_id": {"key": "properties.maintenanceConfigurationId", "type": "str"},
         "high_availability_replica_count": {"key": "properties.highAvailabilityReplicaCount", "type": "int"},
+        "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
+        "availability_zone": {"key": "properties.availabilityZone", "type": "str"},
     }
 
     def __init__(
@@ -5072,11 +5111,14 @@ class ElasticPoolUpdate(_serialization.Model):
         sku: Optional["_models.Sku"] = None,
         tags: Optional[Dict[str, str]] = None,
         max_size_bytes: Optional[int] = None,
+        min_capacity: Optional[float] = None,
         per_database_settings: Optional["_models.ElasticPoolPerDatabaseSettings"] = None,
         zone_redundant: Optional[bool] = None,
         license_type: Optional[Union[str, "_models.ElasticPoolLicenseType"]] = None,
         maintenance_configuration_id: Optional[str] = None,
         high_availability_replica_count: Optional[int] = None,
+        preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
+        availability_zone: Optional[Union[str, "_models.AvailabilityZoneType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5086,6 +5128,9 @@ class ElasticPoolUpdate(_serialization.Model):
         :paramtype tags: dict[str, str]
         :keyword max_size_bytes: The storage limit for the database elastic pool in bytes.
         :paramtype max_size_bytes: int
+        :keyword min_capacity: Minimal capacity that serverless pool will not shrink below, if not
+         paused.
+        :paramtype min_capacity: float
         :keyword per_database_settings: The per database settings for the elastic pool.
         :paramtype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
         :keyword zone_redundant: Whether or not this elastic pool is zone redundant, which means the
@@ -5101,16 +5146,25 @@ class ElasticPoolUpdate(_serialization.Model):
          elastic pool that are used to provide high availability. Applicable only to Hyperscale elastic
          pools.
         :paramtype high_availability_replica_count: int
+        :keyword preferred_enclave_type: Type of enclave requested on the elastic pool. Known values
+         are: "Default" and "VBS".
+        :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+        :keyword availability_zone: Specifies the availability zone the pool's primary replica is
+         pinned to. Known values are: "NoPreference", "1", "2", and "3".
+        :paramtype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
         """
         super().__init__(**kwargs)
         self.sku = sku
         self.tags = tags
         self.max_size_bytes = max_size_bytes
+        self.min_capacity = min_capacity
         self.per_database_settings = per_database_settings
         self.zone_redundant = zone_redundant
         self.license_type = license_type
         self.maintenance_configuration_id = maintenance_configuration_id
         self.high_availability_replica_count = high_availability_replica_count
+        self.preferred_enclave_type = preferred_enclave_type
+        self.availability_zone = availability_zone
 
 
 class EncryptionProtector(ProxyResource):  # pylint: disable=too-many-instance-attributes
@@ -7472,7 +7526,7 @@ class IPv6FirewallRule(ProxyResourceWithWritableName):
     :ivar start_i_pv6_address: The start IP address of the firewall rule. Must be IPv6 format.
     :vartype start_i_pv6_address: str
     :ivar end_i_pv6_address: The end IP address of the firewall rule. Must be IPv6 format. Must be
-     greater than or equal to startIpAddress.
+     greater than or equal to startIpv6Address.
     :vartype end_i_pv6_address: str
     """
 
@@ -7503,7 +7557,7 @@ class IPv6FirewallRule(ProxyResourceWithWritableName):
         :keyword start_i_pv6_address: The start IP address of the firewall rule. Must be IPv6 format.
         :paramtype start_i_pv6_address: str
         :keyword end_i_pv6_address: The end IP address of the firewall rule. Must be IPv6 format. Must
-         be greater than or equal to startIpAddress.
+         be greater than or equal to startIpv6Address.
         :paramtype end_i_pv6_address: str
         """
         super().__init__(name=name, **kwargs)
@@ -9479,6 +9533,10 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
     :ivar cross_subscription_target_managed_instance_id: Target managed instance id used in
      cross-subscription restore.
     :vartype cross_subscription_target_managed_instance_id: str
+    :ivar is_ledger_on: Whether or not this database is a ledger database, which means all tables
+     in the database are ledger tables. Note: the value of this property cannot be changed after the
+     database has been created.
+    :vartype is_ledger_on: bool
     """
 
     _validation = {
@@ -9529,6 +9587,7 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
             "key": "properties.crossSubscriptionTargetManagedInstanceId",
             "type": "str",
         },
+        "is_ledger_on": {"key": "properties.isLedgerOn", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -9552,6 +9611,7 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         auto_complete_restore: Optional[bool] = None,
         last_backup_name: Optional[str] = None,
         cross_subscription_target_managed_instance_id: Optional[str] = None,
+        is_ledger_on: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9617,6 +9677,10 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         :keyword cross_subscription_target_managed_instance_id: Target managed instance id used in
          cross-subscription restore.
         :paramtype cross_subscription_target_managed_instance_id: str
+        :keyword is_ledger_on: Whether or not this database is a ledger database, which means all
+         tables in the database are ledger tables. Note: the value of this property cannot be changed
+         after the database has been created.
+        :paramtype is_ledger_on: bool
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.collation = collation
@@ -9640,6 +9704,7 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         self.auto_complete_restore = auto_complete_restore
         self.last_backup_name = last_backup_name
         self.cross_subscription_target_managed_instance_id = cross_subscription_target_managed_instance_id
+        self.is_ledger_on = is_ledger_on
 
 
 class ManagedDatabaseAdvancedThreatProtection(ProxyResource):
@@ -10390,6 +10455,10 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
     :ivar cross_subscription_target_managed_instance_id: Target managed instance id used in
      cross-subscription restore.
     :vartype cross_subscription_target_managed_instance_id: str
+    :ivar is_ledger_on: Whether or not this database is a ledger database, which means all tables
+     in the database are ledger tables. Note: the value of this property cannot be changed after the
+     database has been created.
+    :vartype is_ledger_on: bool
     """
 
     _validation = {
@@ -10432,6 +10501,7 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
             "key": "properties.crossSubscriptionTargetManagedInstanceId",
             "type": "str",
         },
+        "is_ledger_on": {"key": "properties.isLedgerOn", "type": "bool"},
     }
 
     def __init__(
@@ -10454,6 +10524,7 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         auto_complete_restore: Optional[bool] = None,
         last_backup_name: Optional[str] = None,
         cross_subscription_target_managed_instance_id: Optional[str] = None,
+        is_ledger_on: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10517,6 +10588,10 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         :keyword cross_subscription_target_managed_instance_id: Target managed instance id used in
          cross-subscription restore.
         :paramtype cross_subscription_target_managed_instance_id: str
+        :keyword is_ledger_on: Whether or not this database is a ledger database, which means all
+         tables in the database are ledger tables. Note: the value of this property cannot be changed
+         after the database has been created.
+        :paramtype is_ledger_on: bool
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -10541,6 +10616,7 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         self.auto_complete_restore = auto_complete_restore
         self.last_backup_name = last_backup_name
         self.cross_subscription_target_managed_instance_id = cross_subscription_target_managed_instance_id
+        self.is_ledger_on = is_ledger_on
 
 
 class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-attributes
@@ -14285,6 +14361,8 @@ class PrivateEndpointConnection(ProxyResource):
     :vartype type: str
     :ivar private_endpoint: Private endpoint which the connection belongs to.
     :vartype private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+    :ivar group_ids: Group IDs.
+    :vartype group_ids: list[str]
     :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
     :vartype private_link_service_connection_state:
@@ -14298,6 +14376,7 @@ class PrivateEndpointConnection(ProxyResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "group_ids": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -14306,6 +14385,7 @@ class PrivateEndpointConnection(ProxyResource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpointProperty"},
+        "group_ids": {"key": "properties.groupIds", "type": "[str]"},
         "private_link_service_connection_state": {
             "key": "properties.privateLinkServiceConnectionState",
             "type": "PrivateLinkServiceConnectionStateProperty",
@@ -14330,6 +14410,7 @@ class PrivateEndpointConnection(ProxyResource):
         """
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
+        self.group_ids = None
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
 
@@ -16615,7 +16696,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar private_endpoint_connections: List of private endpoint connections on a server.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
-    :ivar minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+    :ivar minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
     :vartype minimal_tls_version: str
     :ivar public_network_access: Whether or not public endpoint access is allowed for this server.
      Value is optional but if passed in, must be 'Enabled' or 'Disabled' or 'SecuredByPerimeter'.
@@ -16719,7 +16800,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype administrator_login_password: str
         :keyword version: The version of the server.
         :paramtype version: str
-        :keyword minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+        :keyword minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
         :paramtype minimal_tls_version: str
         :keyword public_network_access: Whether or not public endpoint access is allowed for this
          server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled' or
@@ -18505,7 +18586,7 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
     :ivar private_endpoint_connections: List of private endpoint connections on a server.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
-    :ivar minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+    :ivar minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
     :vartype minimal_tls_version: str
     :ivar public_network_access: Whether or not public endpoint access is allowed for this server.
      Value is optional but if passed in, must be 'Enabled' or 'Disabled' or 'SecuredByPerimeter'.
@@ -18596,7 +18677,7 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         :paramtype administrator_login_password: str
         :keyword version: The version of the server.
         :paramtype version: str
-        :keyword minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+        :keyword minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
         :paramtype minimal_tls_version: str
         :keyword public_network_access: Whether or not public endpoint access is allowed for this
          server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled' or
@@ -19412,6 +19493,8 @@ class SqlVulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=to
     :vartype total_rules_count: int
     :ivar is_baseline_applied: Baseline created for this database, and has one or more rules.
     :vartype is_baseline_applied: bool
+    :ivar last_scan_time: The last scan time.
+    :vartype last_scan_time: ~datetime.datetime
     """
 
     _validation = {
@@ -19435,6 +19518,7 @@ class SqlVulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=to
         "total_failed_rules_count": {"readonly": True},
         "total_rules_count": {"readonly": True},
         "is_baseline_applied": {"readonly": True},
+        "last_scan_time": {"readonly": True},
     }
 
     _attribute_map = {
@@ -19458,6 +19542,7 @@ class SqlVulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=to
         "total_failed_rules_count": {"key": "properties.totalFailedRulesCount", "type": "int"},
         "total_rules_count": {"key": "properties.totalRulesCount", "type": "int"},
         "is_baseline_applied": {"key": "properties.isBaselineApplied", "type": "bool"},
+        "last_scan_time": {"key": "properties.lastScanTime", "type": "iso-8601"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -19480,6 +19565,7 @@ class SqlVulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=to
         self.total_failed_rules_count = None
         self.total_rules_count = None
         self.is_baseline_applied = None
+        self.last_scan_time = None
 
 
 class SqlVulnerabilityAssessmentScanRecordListResult(_serialization.Model):

@@ -4,47 +4,54 @@
 
 from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
-    MaterializationSettings as RestMaterializationSettings,
-    MaterializationStoreType,
-)
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._schedule.trigger import RecurrenceTrigger
-from azure.ai.ml.entities._notification.notification import _Notification
-from azure.ai.ml.entities._feature_set.materialization_compute_resource import _MaterializationComputeResource
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MaterializationSettings as RestMaterializationSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MaterializationStoreType
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.entities._notification.notification import Notification
+from azure.ai.ml.entities._schedule.trigger import RecurrenceTrigger
 
 
 @experimental
-class _MaterializationSettings(RestTranslatableMixin):
+class MaterializationSettings(RestTranslatableMixin):
+    """Defines materialization settings.
+
+    :param schedule: The schedule details.
+    :type schedule: ~azure.ai.ml.entities.RecurrenceTrigger
+    :param offline_enabled: Specifies if offline store is enabled.
+    :type offline_enabled: bool
+    :param online_enabled: Specifies if online store is enabled.
+    :type online_enabled: bool
+    :param notification: The notification details.
+    :type notification: ~azure.ai.ml.entities.Notification
+    :param resource: The compute resource settings.
+    :type resource: ~azure.ai.ml.entities.MaterializationComputeResource
+    :param spark_configuration: The spark compute settings.
+    :type spark_configuration: Dict[str, str]
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
+            :start-after: [START materialization_setting_configuration]
+            :end-before: [END materialization_setting_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring MaterializationSettings.
+    """
+
     def __init__(
         self,
         *,
-        schedule: RecurrenceTrigger,
+        schedule: Optional[RecurrenceTrigger] = None,
         offline_enabled: Optional[bool] = None,
         online_enabled: Optional[bool] = None,
-        notification: Optional[_Notification] = None,
-        resource: Optional[_MaterializationComputeResource] = None,
+        notification: Optional[Notification] = None,
+        resource: Optional[MaterializationComputeResource] = None,
         spark_configuration: Optional[Dict[str, str]] = None,
         **kwargs  # pylint: disable=unused-argument
-    ):
-
-        """_MaterializationSettings.
-
-        :param schedule: Specifies the schedule details.
-        :type schedule: ~azure.ai.ml.entities.RecurrenceTrigger
-        :param offline_enabled: Specifies if offline store is enabled.
-        :type offline_enabled: bool
-        :param online_enabled: Specifies if online store is enabled.
-        :type online_enabled: bool
-        :param notification: Specifies the notification details.
-        :type notification: ~azure.ai.ml.entities._Notification
-        :param resource: Specifies the compute resource settings.
-        :type resource: ~azure.ai.ml.entities._MaterializationComputeResource
-        :param spark_configuration: Specifies the spark compute settings.
-        :type spark_configuration: dict[str, str]
-        """
-
+    ) -> None:
         self.schedule = schedule
         self.offline_enabled = offline_enabled
         self.online_enabled = online_enabled
@@ -64,7 +71,7 @@ class _MaterializationSettings(RestTranslatableMixin):
             store_type = MaterializationStoreType.NONE
 
         return RestMaterializationSettings(
-            schedule=self.schedule._to_rest_object(),  # pylint: disable=protected-access
+            schedule=self.schedule._to_rest_object() if self.schedule else None,  # pylint: disable=protected-access
             notification=self.notification._to_rest_object()  # pylint: disable=protected-access
             if self.notification
             else None,
@@ -74,16 +81,18 @@ class _MaterializationSettings(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMaterializationSettings) -> "_MaterializationSettings":
+    def _from_rest_object(cls, obj: RestMaterializationSettings) -> "MaterializationSettings":
         if not obj:
             return None
-        return _MaterializationSettings(
-            schedule=RecurrenceTrigger._from_rest_object(obj.schedule),  # pylint: disable=protected-access
-            notification=_Notification._from_rest_object(obj.notification),  # pylint: disable=protected-access
-            resource=_MaterializationComputeResource._from_rest_object(  # pylint: disable=protected-access
-                obj.resource
-            ),
+        return MaterializationSettings(
+            schedule=RecurrenceTrigger._from_rest_object(obj.schedule)  # pylint: disable=protected-access
+            if obj.schedule
+            else None,
+            notification=Notification._from_rest_object(obj.notification),  # pylint: disable=protected-access
+            resource=MaterializationComputeResource._from_rest_object(obj.resource),  # pylint: disable=protected-access
             spark_configuration=obj.spark_configuration,
-            offline_enabled=obj.store_type == MaterializationStoreType.OFFLINE,
-            online_enabled=obj.store_type == MaterializationStoreType.ONLINE,
+            offline_enabled=obj.store_type
+            in {MaterializationStoreType.OFFLINE, MaterializationStoreType.ONLINE_AND_OFFLINE},
+            online_enabled=obj.store_type
+            in {MaterializationStoreType.ONLINE, MaterializationStoreType.ONLINE_AND_OFFLINE},
         )

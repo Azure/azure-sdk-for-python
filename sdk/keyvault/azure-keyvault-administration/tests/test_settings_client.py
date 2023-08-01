@@ -4,18 +4,19 @@
 # ------------------------------------
 import pytest
 
-from azure.keyvault.administration import ApiVersion, KeyVaultSetting, KeyVaultSettingsClient, KeyVaultSettingType
+from azure.keyvault.administration import KeyVaultSetting, KeyVaultSettingsClient, KeyVaultSettingType
+from azure.keyvault.administration._internal.client_base import DEFAULT_VERSION
 
 from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
 from _test_case import KeyVaultSettingsClientPreparer, get_decorator
 
-only_7_4 = get_decorator(api_versions=[ApiVersion.V7_4])
+only_latest = get_decorator(api_versions=[DEFAULT_VERSION])
 
 
 class TestSettings(KeyVaultTestCase):
-    @pytest.mark.parametrize("api_version", only_7_4)
+    @pytest.mark.parametrize("api_version", only_latest)
     @KeyVaultSettingsClientPreparer()
     @recorded_by_proxy
     def test_list_settings(self, client: KeyVaultSettingsClient, **kwargs):
@@ -24,7 +25,7 @@ class TestSettings(KeyVaultTestCase):
         for setting in default_settings:
             assert setting.name and setting.setting_type and setting.value is not None
 
-    @pytest.mark.parametrize("api_version", only_7_4)
+    @pytest.mark.parametrize("api_version", only_latest)
     @KeyVaultSettingsClientPreparer()
     @recorded_by_proxy
     def test_update_settings(self, client: KeyVaultSettingsClient, **kwargs):

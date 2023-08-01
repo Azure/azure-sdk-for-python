@@ -33,8 +33,6 @@ from ._models_py3 import VaultProperties
 from ._key_vault_management_client_enums import AccessPolicyUpdateKind
 from ._key_vault_management_client_enums import CertificatePermissions
 from ._key_vault_management_client_enums import CreateMode
-from ._key_vault_management_client_enums import Enum5
-from ._key_vault_management_client_enums import Enum6
 from ._key_vault_management_client_enums import KeyPermissions
 from ._key_vault_management_client_enums import Reason
 from ._key_vault_management_client_enums import SecretPermissions
@@ -72,8 +70,6 @@ __all__ = [
     "AccessPolicyUpdateKind",
     "CertificatePermissions",
     "CreateMode",
-    "Enum5",
-    "Enum6",
     "KeyPermissions",
     "Reason",
     "SecretPermissions",

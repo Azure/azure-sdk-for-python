@@ -44,6 +44,7 @@ def build_list_request(
     top = kwargs.pop('top', None)  # type: Optional[int]
     skip = kwargs.pop('skip', None)  # type: Optional[str]
     tags = kwargs.pop('tags', None)  # type: Optional[str]
+    stage = kwargs.pop('stage', None)  # type: Optional[str]
     list_view_type = kwargs.pop('list_view_type', None)  # type: Optional[Union[str, "_models.ListViewType"]]
 
     accept = "application/json"
@@ -69,6 +70,8 @@ def build_list_request(
         _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
     if tags is not None:
         _query_parameters['$tags'] = _SERIALIZER.query("tags", tags, 'str')
+    if stage is not None:
+        _query_parameters['stage'] = _SERIALIZER.query("stage", stage, 'str')
     if list_view_type is not None:
         _query_parameters['listViewType'] = _SERIALIZER.query("list_view_type", list_view_type, 'str')
 
@@ -243,6 +246,7 @@ class DataVersionsOperations(object):
         top=None,  # type: Optional[int]
         skip=None,  # type: Optional[str]
         tags=None,  # type: Optional[str]
+        stage=None,  # type: Optional[str]
         list_view_type=None,  # type: Optional[Union[str, "_models.ListViewType"]]
         **kwargs  # type: Any
     ):
@@ -268,6 +272,8 @@ class DataVersionsOperations(object):
         :param tags: Comma-separated list of tag names (and optionally values). Example:
          tag1,tag2=value2.
         :type tags: str
+        :param stage: data stage.
+        :type stage: str
         :param list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly,
          ListViewType.All]View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
@@ -298,6 +304,7 @@ class DataVersionsOperations(object):
                     top=top,
                     skip=skip,
                     tags=tags,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=self.list.metadata['url'],
                 )
@@ -316,6 +323,7 @@ class DataVersionsOperations(object):
                     top=top,
                     skip=skip,
                     tags=tags,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=next_link,
                 )

@@ -19,9 +19,8 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 from .config import PROXY_URL
-from .helpers import get_test_id, is_live, is_live_and_not_recording, set_recording_id
+from .helpers import get_http_client, get_test_id, is_live, is_live_and_not_recording, set_recording_id
 from .proxy_startup import discovered_roots
-from urllib3 import PoolManager, Retry
 from urllib3.exceptions import HTTPError
 import json
 
@@ -32,15 +31,6 @@ if TYPE_CHECKING:
 # To learn about how to migrate SDK tests to the test proxy, please refer to the migration guide at
 # https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
 
-if os.getenv("REQUESTS_CA_BUNDLE"):
-    http_client = PoolManager(
-        retries=Retry(total=3, raise_on_status=False),
-        cert_reqs="CERT_REQUIRED",
-        ca_certs=os.getenv("REQUESTS_CA_BUNDLE"),
-    )
-else:
-    http_client = PoolManager(retries=Retry(total=3, raise_on_status=False))
-
 # defaults
 RECORDING_START_URL = "{}/record/start".format(PROXY_URL)
 RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL)
@@ -49,9 +39,7 @@ PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
 
 
 def get_recording_assets(test_id: str) -> str:
-    """
-    Used to retrieve the assets.json given a PYTEST_CURRENT_TEST test id.
-    """
+    """Used to retrieve the assets.json given a PYTEST_CURRENT_TEST test id."""
     for root in discovered_roots:
         current_dir = os.path.dirname(test_id)
         while current_dir is not None and not (os.path.dirname(current_dir) == current_dir):
@@ -85,6 +73,7 @@ def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
         json_payload["x-recording-assets-file"] = assets_json
 
     encoded_payload = json.dumps(json_payload).encode("utf-8")
+    http_client = get_http_client()
 
     if is_live():
         result = http_client.request(
@@ -127,6 +116,7 @@ def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
 
 def stop_record_or_playback(test_id: str, recording_id: str, test_variables: "Dict[str, str]") -> None:
     try:
+        http_client = get_http_client()
         if is_live():
             http_client.request(
                 method="POST",
@@ -220,21 +210,32 @@ def recorded_by_proxy(test_func: "Callable") -> None:
         # call the modified function
         # we define test_variables before invoking the test so the variable is defined in case of an exception
         test_variables = None
+        # this tracks whether the test has been run yet; used when calling the test function with/without `variables`
+        # running without `variables` in the `except` block leads to unnecessary exceptions in test execution output
+        test_run = False
         try:
             try:
                 test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
-            except TypeError:
-                logger = logging.getLogger()
-                logger.info(
-                    "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
-                    "`variables` parameter to make use of recorded test variables."
-                )
+                test_run = True
+            except TypeError as error:
+                if "unexpected keyword argument" in str(error) and "variables" in str(error):
+                    logger = logging.getLogger()
+                    logger.info(
+                        "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
+                        "`variables` parameter to make use of recorded test variables."
+                    )
+                else:
+                    raise error
+            # if the test couldn't accept `variables`, run the test without passing them
+            if not test_run:
                 test_variables = test_func(*args, **trimmed_kwargs)
+
         except ResourceNotFoundError as error:
             error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
             message = error_body.get("message") or error_body.get("Message")
             error_with_message = ResourceNotFoundError(message=message, response=error.response)
             six.raise_from(error_with_message, error)
+
         finally:
             RequestsTransport.send = original_transport_func
             stop_record_or_playback(test_id, recording_id, test_variables)

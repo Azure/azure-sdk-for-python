@@ -23,7 +23,7 @@ from ..._credentials.azure_cli import (
     parse_token,
     sanitize_output,
 )
-from ..._internal import _scopes_to_resource, resolve_tenant
+from ..._internal import _scopes_to_resource, resolve_tenant, within_dac
 
 
 class AzureCliCredential(AsyncContextManager):
@@ -35,16 +35,29 @@ class AzureCliCredential(AsyncContextManager):
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+    :keyword int process_timeout: Seconds to wait for the Azure CLI process to respond. Defaults to 10 seconds.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_azure_cli_credential_async]
+            :end-before: [END create_azure_cli_credential_async]
+            :language: python
+            :dedent: 4
+            :caption: Create an AzureCliCredential.
     """
+
     def __init__(
         self,
         *,
         tenant_id: str = "",
-        additionally_allowed_tenants: Optional[List[str]] = None
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        process_timeout: int = 10,
     ) -> None:
 
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
+        self._process_timeout = process_timeout
 
     @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
@@ -57,7 +70,9 @@ class AzureCliCredential(AsyncContextManager):
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.
@@ -69,22 +84,24 @@ class AzureCliCredential(AsyncContextManager):
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
         tenant = resolve_tenant(
-            default_tenant=self.tenant_id,
-            additionally_allowed_tenants=self._additionally_allowed_tenants,
-            **kwargs
+            default_tenant=self.tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
 
         if tenant:
             command += " --tenant " + tenant
-        output = await _run_command(command)
+        output = await _run_command(command, self._process_timeout)
 
         token = parse_token(output)
         if not token:
             sanitized_output = sanitize_output(output)
-            raise ClientAuthenticationError(
-                message="Unexpected output from Azure CLI: '{}'. \n"
-                        "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-                        "https://aka.ms/azsdk/python/identity/azclicredential/troubleshoot.".format(sanitized_output))
+            message = (
+                f"Unexpected output from Azure CLI: '{sanitized_output}'. \n"
+                f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                f"https://aka.ms/azsdk/python/identity/azclicredential/troubleshoot."
+            )
+            if within_dac.get():
+                raise CredentialUnavailableError(message=message)
+            raise ClientAuthenticationError(message=message)
 
         return token
 
@@ -92,7 +109,7 @@ class AzureCliCredential(AsyncContextManager):
         """Calling this method is unnecessary"""
 
 
-async def _run_command(command: str) -> str:
+async def _run_command(command: str, timeout: int) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
     if shutil.which(EXECUTABLE_NAME) is None:
         raise CredentialUnavailableError(message=CLI_NOT_FOUND)
@@ -110,9 +127,9 @@ async def _run_command(command: str) -> str:
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
             cwd=working_directory,
-            env=dict(os.environ, AZURE_CORE_NO_COLOR="true")
+            env=dict(os.environ, AZURE_CORE_NO_COLOR="true"),
         )
-        stdout_b, stderr_b = await asyncio.wait_for(proc.communicate(), 10)
+        stdout_b, stderr_b = await asyncio.wait_for(proc.communicate(), timeout)
         output = stdout_b.decode()
         stderr = stderr_b.decode()
     except OSError as ex:
@@ -134,4 +151,6 @@ async def _run_command(command: str) -> str:
         raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
     message = sanitize_output(stderr) if stderr else "Failed to invoke Azure CLI"
+    if within_dac.get():
+        raise CredentialUnavailableError(message=message)
     raise ClientAuthenticationError(message=message)

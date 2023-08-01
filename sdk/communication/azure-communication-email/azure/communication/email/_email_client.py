@@ -10,7 +10,8 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
-from ._shared.utils import parse_connection_str, get_authentication_policy
+from ._shared.auth_policy_utils import get_authentication_policy
+from ._shared.utils import parse_connection_str
 from ._generated._client import AzureCommunicationEmailService
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
@@ -32,7 +33,7 @@ class EmailClient(object):
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Email API version.
-        Default value is "2021-10-01-preview".
+        Default value is "2023-03-31".
         Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -46,7 +47,7 @@ class EmailClient(object):
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Account URL must be a string.")
+            raise ValueError("Account URL must be a string.") # pylint: disable=raise-missing-from
 
         if endpoint.endswith("/"):
             endpoint = endpoint[:-1]

@@ -151,7 +151,7 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-copy-source": "https://storagename.file.core.windows.net/utshare3f722ca0/testfile1?se=end\u0026sp=r\u0026sv=2022-11-02\u0026sr=f\u0026sig=fake_token_value",
+        "x-ms-copy-source": "https://storagename.file.core.windows.net/utshare3f722ca0/testfile1?se=end\u0026sp=r\u0026sv=2023-01-03\u0026sr=f\u0026sig=fake_token_value",
         "x-ms-date": "Wed, 05 Oct 2022 22:14:03 GMT",
         "x-ms-range": "bytes=0-1048575",
         "x-ms-source-range": "bytes=0-1048575",

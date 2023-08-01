@@ -39,37 +39,49 @@ async def sample_build_model_async():
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
     container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint, AzureKeyCredential(key)
+    )
     async with document_model_admin_client:
         poller = await document_model_admin_client.begin_build_document_model(
-            ModelBuildMode.TEMPLATE, blob_container_url=container_sas_url, description="my model description"
+            ModelBuildMode.TEMPLATE,
+            blob_container_url=container_sas_url,
+            description="my model description",
         )
         model = await poller.result()
 
-    print("Model ID: {}".format(model.model_id))
-    print("Description: {}".format(model.description))
-    print("Model created on: {}\n".format(model.created_on))
+    print(f"Model ID: {model.model_id}")
+    print(f"Description: {model.description}")
+    print(f"Model created on: {model.created_on}")
+    print(f"Model expires on: {model.expires_on}")
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
-        print("\nDoc Type: '{}' built with '{}' mode which has the following fields:".format(name, doc_type.build_mode))
+        print(
+            f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:"
+        )
         for field_name, field in doc_type.field_schema.items():
-            print("Field: '{}' has type '{}' and confidence score {}".format(
-                field_name, field["type"], doc_type.field_confidence[field_name]
-            ))
+            print(
+                f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                f"{doc_type.field_confidence[field_name]}"
+            )
     # [END build_model_async]
 
 
 async def main():
     await sample_build_model_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         asyncio.run(main())
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

@@ -1,6 +1,27 @@
 # Release History
 
-## 12.16.0b1 (Unreleased)
+## 12.18.0b1 (Unreleased)
+
+### Features Added
+
+
+## 12.17.0 (2023-07-11)
+
+### Features Added
+- Stable release of features from 12.17.0b1
+
+## 12.17.0b1 (2023-05-30)
+
+### Features Added
+- Added support for service version 2023-01-03.
+- Content length limit increased from 4 MiB to 100 MiB for `append_block` and `append_block_from_url` APIs and their async equivalents.
+
+## 12.16.0 (2023-04-12)
+
+### Features Added
+- Stable release of features from 12.16.0b1
+
+## 12.16.0b1 (2023-03-28)
 
 ### Features Added
 - Added support for service version 2022-11-02.

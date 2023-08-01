@@ -5,7 +5,7 @@
 from marshmallow import fields
 from marshmallow.decorators import post_load
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.constants._compute import ComputeType, ComputeSizeTier
 
@@ -46,9 +46,9 @@ class OsImageMetadataSchema(PathAwareSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import OsImageMetadata
+        from azure.ai.ml.entities import ImageMetadata
 
-        return OsImageMetadata(**data)
+        return ImageMetadata(**data)
 
 
 class ComputeInstanceSchema(ComputeSchema):
@@ -63,10 +63,10 @@ class ComputeInstanceSchema(ComputeSchema):
     services = fields.List(fields.Dict(keys=fields.Str(), values=fields.Str()), dump_only=True)
     schedules = NestedField(ComputeSchedulesSchema)
     identity = ExperimentalField(NestedField(IdentitySchema))
-    idle_time_before_shutdown = ExperimentalField(fields.Str())
-    idle_time_before_shutdown_minutes = ExperimentalField(fields.Int())
-    custom_applications = ExperimentalField(fields.List(NestedField(CustomApplicationsSchema)))
-    setup_scripts = ExperimentalField(NestedField(SetupScriptsSchema))
+    idle_time_before_shutdown = fields.Str()
+    idle_time_before_shutdown_minutes = fields.Int()
+    custom_applications = fields.List(NestedField(CustomApplicationsSchema))
+    setup_scripts = NestedField(SetupScriptsSchema)
     os_image_metadata = NestedField(OsImageMetadataSchema, dump_only=True)
     enable_node_public_ip = fields.Bool(
         metadata={"description": "Enable or disable node public IP address provisioning."}

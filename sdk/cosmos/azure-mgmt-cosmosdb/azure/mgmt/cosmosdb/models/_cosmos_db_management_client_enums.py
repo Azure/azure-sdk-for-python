@@ -36,6 +36,7 @@ class AuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     CASSANDRA = "Cassandra"
+    LDAP = "Ldap"
 
 
 class BackupPolicyMigrationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -60,6 +61,13 @@ class BackupStorageRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GEO = "Geo"
     LOCAL = "Local"
     ZONE = "Zone"
+
+
+class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason why the given name is not available."""
+
+    INVALID = "Invalid"
+    ALREADY_EXISTS = "AlreadyExists"
 
 
 class CompositePathSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -93,6 +101,13 @@ class ConnectorOffer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SMALL = "Small"
 
 
+class ContinuousTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to indicate type of Continuous backup tier."""
+
+    CONTINUOUS7_DAYS = "Continuous7Days"
+    CONTINUOUS30_DAYS = "Continuous30Days"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -107,6 +122,7 @@ class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DEFAULT = "Default"
     RESTORE = "Restore"
+    POINT_IN_TIME_RESTORE = "PointInTimeRestore"
 
 
 class DatabaseAccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -115,6 +131,15 @@ class DatabaseAccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GLOBAL_DOCUMENT_DB = "GlobalDocumentDB"
     MONGO_DB = "MongoDB"
     PARSE = "Parse"
+
+
+class DataTransferComponent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DataTransferComponent."""
+
+    COSMOS_DB_CASSANDRA = "CosmosDBCassandra"
+    COSMOS_DB_MONGO = "CosmosDBMongo"
+    COSMOS_DB_SQL = "CosmosDBSql"
+    AZURE_BLOB_STORAGE = "AzureBlobStorage"
 
 
 class DataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -136,6 +161,14 @@ class DefaultConsistencyLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BOUNDED_STALENESS = "BoundedStaleness"
     STRONG = "Strong"
     CONSISTENT_PREFIX = "ConsistentPrefix"
+
+
+class EnableFullTextQuery(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describe the level of detail with which queries are to be logged."""
+
+    NONE = "None"
+    TRUE = "True"
+    FALSE = "False"
 
 
 class IndexingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -161,6 +194,15 @@ class KeyKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SECONDARY = "secondary"
     PRIMARY_READONLY = "primaryReadonly"
     SECONDARY_READONLY = "secondaryReadonly"
+
+
+class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of the connection string key."""
+
+    PRIMARY = "Primary"
+    SECONDARY = "Secondary"
+    PRIMARY_READONLY = "PrimaryReadonly"
+    SECONDARY_READONLY = "SecondaryReadonly"
 
 
 class ManagedCassandraProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -191,6 +233,18 @@ class MinimalTlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TLS12 = "Tls12"
 
 
+class MongoClusterStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the resource at the time the operation was called."""
+
+    READY = "Ready"
+    PROVISIONING = "Provisioning"
+    UPDATING = "Updating"
+    STARTING = "Starting"
+    STOPPING = "Stopping"
+    STOPPED = "Stopped"
+    DROPPING = "Dropping"
+
+
 class MongoRoleDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether the Role Definition was built-in or user created."""
 
@@ -203,6 +257,12 @@ class NetworkAclBypass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     AZURE_SERVICES = "AzureServices"
+
+
+class NodeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of a node in the mongo cluster."""
+
+    SHARD = "Shard"
 
 
 class NodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -234,6 +294,7 @@ class OperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATE = "Create"
     REPLACE = "Replace"
     DELETE = "Delete"
+    RECREATE = "Recreate"
     SYSTEM_OPERATION = "SystemOperation"
 
 
@@ -256,6 +317,17 @@ class PrimaryAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MINIMUM = "Minimum"
     MAXIMUM = "Maximum"
     LAST = "Last"
+
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the resource."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    IN_PROGRESS = "InProgress"
+    UPDATING = "Updating"
+    DROPPING = "Dropping"
 
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -336,6 +408,24 @@ class SpatialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MULTI_POLYGON = "MultiPolygon"
 
 
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to indicate current buildout status of the region."""
+
+    UNINITIALIZED = "Uninitialized"
+    INITIALIZING = "Initializing"
+    INTERNALLY_READY = "InternallyReady"
+    ONLINE = "Online"
+    DELETING = "Deleting"
+
+
+class ThroughputPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ThroughputPolicy to apply for throughput redistribution."""
+
+    NONE = "none"
+    EQUAL = "equal"
+    CUSTOM = "custom"
+
+
 class TriggerOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation the trigger is associated with."""
 
@@ -351,6 +441,20 @@ class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     PRE = "Pre"
     POST = "Post"
+
+
+class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the connection string."""
+
+    SQL = "Sql"
+    TABLE = "Table"
+    MONGO_DB = "MongoDB"
+    CASSANDRA = "Cassandra"
+    CASSANDRA_CONNECTOR_METADATA = "CassandraConnectorMetadata"
+    GREMLIN = "Gremlin"
+    SQL_DEDICATED_GATEWAY = "SqlDedicatedGateway"
+    GREMLIN_V2 = "GremlinV2"
+    UNDEFINED = "Undefined"
 
 
 class UnitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

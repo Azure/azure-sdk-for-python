@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import sleep_if_live, wait_until_done
 
 from azure.ai.ml import MLClient, load_job
@@ -26,6 +26,10 @@ from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryC
 )
 @pytest.mark.training_experiences_test
 class TestSweepJob(AzureRecordedTestCase):
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
+    )
     @pytest.mark.e2etest
     def test_sweep_job_submit(self, randstr: Callable[[], str], client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and reousrce group
@@ -45,6 +49,10 @@ class TestSweepJob(AzureRecordedTestCase):
         sweep_job_resource_2 = client.jobs.get(job_name)
         assert sweep_job_resource.name == sweep_job_resource_2.name
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
+    )
     @pytest.mark.e2etest
     def test_sweep_job_submit_with_inputs(self, randstr: Callable[[str], str], client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and reousrce group
@@ -67,6 +75,10 @@ class TestSweepJob(AzureRecordedTestCase):
         assert "iris_csv" in sweep_job_resource_2.inputs
         assert "some_number" in sweep_job_resource_2.inputs
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
+    )
     @pytest.mark.e2etest
     def test_sweep_job_submit_minimal(self, randstr: Callable[[str], str], client: MLClient) -> None:
         """Ensure the Minimal required properties does not fail on submisison"""
@@ -84,6 +96,10 @@ class TestSweepJob(AzureRecordedTestCase):
         sweep_job_resource_2 = client.jobs.get(job_name)
         assert sweep_job_resource.name == sweep_job_resource_2.name
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
+    )
     @pytest.mark.e2etest
     def test_sweep_job_await_completion(self, randstr: Callable[[str], str], client: MLClient) -> None:
         """Ensure sweep job runs to completion"""
@@ -131,7 +147,6 @@ class TestSweepJob(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_sweep_job_builder(self, randstr: Callable[[str], str], client: MLClient) -> None:
-
         inputs = {
             "uri": Input(
                 type=AssetTypes.URI_FILE, path="azureml://datastores/workspaceblobstore/paths/python/data.csv"

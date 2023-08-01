@@ -4,8 +4,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Optional
 
+from azure.core.credentials import TokenCredential
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from ._generated import ContainerRegistry
@@ -13,20 +15,14 @@ from ._generated.models import PostContentSchemaGrantType
 from ._helpers import _parse_challenge, _parse_exp_time
 from ._user_agent import USER_AGENT
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
-
 
 class ExchangeClientAuthenticationPolicy(SansIOHTTPPolicy):
     """Authentication policy for exchange client that does not modify the request"""
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         pass
 
-    def on_response(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> None
+    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:
         pass
 
 
@@ -37,13 +33,13 @@ class ACRExchangeClient(object):
     :type endpoint: str
     :param credential: Credential which provides tokens to authenticate requests
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
-     may result in unsupported behavior.
+    :keyword api_version: API Version. The default value is "2021-07-01".
     :paramtype api_version: str
+    :keyword credential_scopes: The scopes that access token can request.
+    :paramtype credential_scopes: list[str]
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, TokenCredential, Any) -> None
+    def __init__(self, endpoint: str, credential: TokenCredential, **kwargs) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
@@ -56,27 +52,30 @@ class ACRExchangeClient(object):
             **kwargs
         )
         self._credential = credential
-        self._refresh_token = None # type: Optional[str]
-        self._expiration_time = 0 # type: float
+        self._refresh_token = None  # type: Optional[str]
+        self._expiration_time = 0  # type: float
 
-    def get_acr_access_token(self, challenge, **kwargs):
-        # type: (str, Any) -> Optional[str]
+    def get_acr_access_token(  # pylint:disable=client-method-missing-tracing-decorator
+        self, challenge: str, **kwargs
+    ) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
         refresh_token = self.get_refresh_token(parsed_challenge["service"], **kwargs)
         return self.exchange_refresh_token_for_access_token(
             refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"], **kwargs
         )
 
-    def get_refresh_token(self, service, **kwargs):
-        # type: (str, Any) -> str
+    def get_refresh_token(  # pylint:disable=client-method-missing-tracing-decorator
+        self, service: str, **kwargs
+    ) -> str:
         if not self._refresh_token or self._expiration_time - time.time() > 300:
             self._refresh_token = self.exchange_aad_token_for_refresh_token(service, **kwargs)
             self._expiration_time = _parse_exp_time(self._refresh_token)
         return self._refresh_token
 
-    def exchange_aad_token_for_refresh_token(self, service, **kwargs):
-        # type: (str, Any) -> str
-        refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
+    def exchange_aad_token_for_refresh_token(  # pylint:disable=client-method-missing-tracing-decorator
+        self, service: str, **kwargs
+    ) -> str:
+        refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(  # type: ignore[attr-defined] # pylint: disable=line-too-long
             grant_type=PostContentSchemaGrantType.ACCESS_TOKEN,
             service=service,
             access_token=self._credential.get_token(*self.credential_scopes).token,
@@ -84,9 +83,10 @@ class ACRExchangeClient(object):
         )
         return refresh_token.refresh_token if refresh_token.refresh_token is not None else ""
 
-    def exchange_refresh_token_for_access_token(self, refresh_token, service, scope, **kwargs):
-        # type: (str, str, str, Any) -> Optional[str]
-        access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
+    def exchange_refresh_token_for_access_token(  # pylint:disable=client-method-missing-tracing-decorator
+        self, refresh_token: str, service: str, scope: str, **kwargs
+    ) -> Optional[str]:
+        access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(  # type: ignore[attr-defined] # pylint: disable=line-too-long
             service=service, scope=scope, refresh_token=refresh_token, **kwargs
         )
         return access_token.access_token
@@ -98,8 +98,7 @@ class ACRExchangeClient(object):
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close sockets opened by the client.
         Calling this method is unnecessary when using the client as a context manager.
         """

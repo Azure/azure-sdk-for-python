@@ -51,6 +51,12 @@ class TestToDict(FormRecognizerTest):
             postal_code="98052",
             country_region="USA",
             street_address="123 Contoso Ave",
+            unit="unit",
+            city_district="city_district",
+            state_district="state_district",
+            suburb="suburb",
+            house="house",
+            level="level"
         )
 
         d = model.to_dict()
@@ -63,6 +69,12 @@ class TestToDict(FormRecognizerTest):
             "postal_code": "98052",
             "country_region": "USA",
             "street_address": "123 Contoso Ave",
+            "unit": "unit",
+            "city_district": "city_district",
+            "state_district": "state_district",
+            "suburb": "suburb",
+            "house": "house",
+            "level": "level"
         }
         assert d == final
 
@@ -70,12 +82,14 @@ class TestToDict(FormRecognizerTest):
         model = _models.CurrencyValue(
             amount=5.01,
             symbol="$",
+            code="USD"
         )
 
         d = model.to_dict()
         final = {
             "amount": 5.01,
             "symbol": "$",
+            "code": "USD"
         }
         assert d == final
 
@@ -531,7 +545,7 @@ class TestToDict(FormRecognizerTest):
                     ),
                 ],
             ),
-            confidence=0.89,
+            confidence=0.89
         )
 
         d = model.to_dict()
@@ -579,7 +593,7 @@ class TestToDict(FormRecognizerTest):
                     },
                 ],
             },
-            "confidence": 0.89,
+            "confidence": 0.89
         }
 
         assert d == final
@@ -681,6 +695,34 @@ class TestToDict(FormRecognizerTest):
                     ],
                 ),
             ],
+            barcodes=[
+                _models.DocumentBarcode(
+                    kind="QRCode",
+                    value="15",
+                    polygon=[
+                        _models.Point(1427.0, 1669.0),
+                        _models.Point(1527.0, 1669.0),
+                        _models.Point(1527.0, 1698.0),
+                        _models.Point(1427.0, 1698.0),
+                    ],
+                    span=_models.DocumentSpan(offset=5, length=2),
+                    confidence=0.8
+                )
+            ],
+            formulas=[
+                _models.DocumentFormula(
+                    kind="inline",
+                    value="2+2=4",
+                    polygon=[
+                        _models.Point(1427.0, 1669.0),
+                        _models.Point(1527.0, 1669.0),
+                        _models.Point(1527.0, 1698.0),
+                        _models.Point(1427.0, 1698.0),
+                    ],
+                    span=_models.DocumentSpan(offset=5, length=2),
+                    confidence=0.8
+                )
+            ]
         )
 
         d = model.to_dict()
@@ -746,6 +788,40 @@ class TestToDict(FormRecognizerTest):
                     ],
                 },
             ],
+            "barcodes": [
+                {
+                    "kind": "QRCode",
+                    "polygon": [
+                        {"x": 1427.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1698.0},
+                        {"x": 1427.0, "y": 1698.0}
+                    ],
+                    "confidence": 0.8,
+                    "span": {
+                        "offset": 5,
+                        "length": 2
+                    },
+                    "value": "15"
+                }
+            ],
+            "formulas": [
+                {
+                    "kind": "inline",
+                    "polygon": [
+                        {"x": 1427.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1698.0},
+                        {"x": 1427.0, "y": 1698.0}
+                    ],
+                    "confidence": 0.8,
+                    "span": {
+                        "offset": 5,
+                        "length": 2
+                    },
+                    "value": "2+2=4"
+                }
+            ]
         }
 
         assert d == final
@@ -795,6 +871,11 @@ class TestToDict(FormRecognizerTest):
                 ),
             ],
             confidence=1.0,
+            similar_font_family="Arial",
+            font_style="italic",
+            font_weight="bold",
+            color="#FF0000",
+            background_color="#FFFFFF"
         )
 
         d = model.to_dict()
@@ -808,6 +889,11 @@ class TestToDict(FormRecognizerTest):
                 }
             ],
             "confidence": 1.0,
+            'similar_font_family': 'Arial',
+            'font_style': 'italic',
+            'font_weight': 'bold',
+            'color': '#FF0000',
+            'background_color': '#FFFFFF',
         }
 
         assert d == final
@@ -1155,6 +1241,34 @@ class TestToDict(FormRecognizerTest):
                             spans=[_models.DocumentSpan(offset=5, length=2)],
                         ),
                     ],
+                    barcodes=[
+                        _models.DocumentBarcode(
+                            kind="QRCode",
+                            value="15",
+                            polygon=[
+                                _models.Point(1427.0, 1669.0),
+                                _models.Point(1527.0, 1669.0),
+                                _models.Point(1527.0, 1698.0),
+                                _models.Point(1427.0, 1698.0),
+                            ],
+                            span=_models.DocumentSpan(offset=5, length=2),
+                            confidence=0.8
+                        )
+                    ],
+                    formulas=[
+                        _models.DocumentFormula(
+                            kind="inline",
+                            value="2+2=4",
+                            polygon=[
+                                _models.Point(1427.0, 1669.0),
+                                _models.Point(1527.0, 1669.0),
+                                _models.Point(1527.0, 1698.0),
+                                _models.Point(1427.0, 1698.0),
+                            ],
+                            span=_models.DocumentSpan(offset=5, length=2),
+                            confidence=0.8
+                        )
+                    ]
                 ),
             ],
             tables=[
@@ -1235,6 +1349,12 @@ class TestToDict(FormRecognizerTest):
                         ),
                     ],
                     confidence=1.0,
+                    similar_font_family="Arial",
+                    font_style="italic",
+                    font_weight="bold",
+                    color="#FF0000",
+                    background_color="#FFFFFF"
+
                 ),
             ],
             documents=[
@@ -1379,6 +1499,40 @@ class TestToDict(FormRecognizerTest):
                             ],
                         },
                     ],
+                    "barcodes": [
+                        {
+                            "kind": "QRCode",
+                            "polygon": [
+                                {"x": 1427.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1698.0},
+                                {"x": 1427.0, "y": 1698.0}
+                            ],
+                            "confidence": 0.8,
+                            "span": {
+                                "offset": 5,
+                                "length": 2
+                            },
+                            "value": "15"
+                        }
+                    ],
+                    "formulas": [
+                        {
+                            "kind": "inline",
+                            "polygon": [
+                                {"x": 1427.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1698.0},
+                                {"x": 1427.0, "y": 1698.0}
+                            ],
+                            "confidence": 0.8,
+                            "span": {
+                                "offset": 5,
+                                "length": 2
+                            },
+                            "value": "2+2=4"
+                        }
+                    ]
                 },
             ],
             "paragraphs": [
@@ -1501,7 +1655,7 @@ class TestToDict(FormRecognizerTest):
                             },
                         ],
                     },
-                    "confidence": 0.89,
+                    "confidence": 0.89
                 },
             ],
             "styles": [
@@ -1514,6 +1668,11 @@ class TestToDict(FormRecognizerTest):
                         }
                     ],
                     "confidence": 1.0,
+                    'similar_font_family': 'Arial',
+                    'font_style': 'italic',
+                    'font_weight': 'bold',
+                    'color': '#FF0000',
+                    'background_color': '#FFFFFF',
                 },
             ],
             "documents": [
@@ -1614,6 +1773,7 @@ class TestToDict(FormRecognizerTest):
                 tags={},
                 description="my description",
                 created_on="1994-11-05T13:15:30Z",
+                expires_on="2024-11-05T13:15:30Z",
                 model_id="prebuilt-invoice",
                 doc_types={
                     "prebuilt-invoice": _models.DocumentTypeDetails(
@@ -1706,6 +1866,7 @@ class TestToDict(FormRecognizerTest):
                 "tags": {},
                 "description": "my description",
                 "created_on": "1994-11-05T13:15:30Z",
+                "expires_on": "2024-11-05T13:15:30Z",
                 "model_id": "prebuilt-invoice",
                 "doc_types": {
                     "prebuilt-invoice": {
@@ -1901,6 +2062,7 @@ class TestToDict(FormRecognizerTest):
         model = _models.DocumentModelDetails(
             description="my description",
             created_on="1994-11-05T13:15:30Z",
+            expires_on="2024-11-05T13:15:30Z",
             model_id="prebuilt-invoice",
             api_version="2022-08-31",
             tags={"test": "value"},
@@ -1964,6 +2126,7 @@ class TestToDict(FormRecognizerTest):
         final = {
             "description": "my description",
             "created_on": "1994-11-05T13:15:30Z",
+            "expires_on": "2024-11-05T13:15:30Z",
             "model_id": "prebuilt-invoice",
             "api_version": "2022-08-31",
             "tags": {"test": "value"},
@@ -2028,6 +2191,7 @@ class TestToDict(FormRecognizerTest):
         model = _models.DocumentModelSummary(
             description="my description",
             created_on="1994-11-05T13:15:30Z",
+            expires_on="2024-11-05T13:15:30Z",
             model_id="prebuilt-invoice",
             api_version="2022-08-31",
             tags={"test": "value"},
@@ -2038,6 +2202,7 @@ class TestToDict(FormRecognizerTest):
         final = {
             "description": "my description",
             "created_on": "1994-11-05T13:15:30Z",
+            "expires_on": "2024-11-05T13:15:30Z",
             "model_id": "prebuilt-invoice",
             "api_version": "2022-08-31",
             "tags": {"test": "value"},
@@ -2046,11 +2211,18 @@ class TestToDict(FormRecognizerTest):
         assert d == final
 
     def test_resource_details_to_dict(self):
-        model = _models.ResourceDetails(custom_document_models=_models.CustomDocumentModelsDetails(limit=5000, count=10))
+        model = _models.ResourceDetails(
+            custom_document_models=_models.CustomDocumentModelsDetails(limit=5000, count=10),
+            custom_neural_document_model_builds=_models.QuotaDetails(
+                used=0,
+                quota=20,
+                quota_resets_on="1994-11-05T13:15:30Z"
+            )
+        )
 
         d = model.to_dict()
 
-        final = {"custom_document_models": {"limit": 5000, "count": 10}}
+        final = {'custom_document_models': {'count': 10, 'limit': 5000}, 'custom_neural_document_model_builds': {'used': 0, 'quota': 20, 'quota_resets_on': '1994-11-05T13:15:30Z'}}
         assert d == final
 
     def test_document_analysis_inner_error_to_dict(self):

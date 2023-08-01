@@ -33,12 +33,12 @@ from ._models_py3 import UsagesLimits
 from ._models_py3 import UsagesObject
 from ._models_py3 import UsagesProperties
 
-from ._azure_quota_extension_api_enums import LimitType
-from ._azure_quota_extension_api_enums import QuotaLimitTypes
-from ._azure_quota_extension_api_enums import QuotaRequestState
-from ._azure_quota_extension_api_enums import UsagesTypes
+from ._quota_mgmt_client_enums import LimitType
+from ._quota_mgmt_client_enums import QuotaLimitTypes
+from ._quota_mgmt_client_enums import QuotaRequestState
+from ._quota_mgmt_client_enums import UsagesTypes
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [

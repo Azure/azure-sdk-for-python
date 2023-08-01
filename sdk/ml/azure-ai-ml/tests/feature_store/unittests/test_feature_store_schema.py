@@ -6,8 +6,8 @@ import yaml
 import pytest
 
 
-from azure.ai.ml.entities._feature_store.feature_store import _FeatureStore
-from azure.ai.ml.entities._load_functions import _load_feature_store
+from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
+from azure.ai.ml.entities._load_functions import load_feature_store
 
 
 @pytest.mark.unittest
@@ -18,7 +18,7 @@ class TestFeatureStoreSchema:
         with open(test_path, "r") as f:
             target = yaml.safe_load(f)
         with open(test_path, "r") as f:
-            feature_store: _FeatureStore = _load_feature_store(source=test_path)
+            feature_store: FeatureStore = load_feature_store(source=test_path)
         assert feature_store.name == target["name"]
         assert feature_store.description == target["description"]
         assert feature_store.materialization_identity is not None

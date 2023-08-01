@@ -25,7 +25,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -57,16 +57,16 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{shareName}/{directory}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -110,16 +110,16 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{shareName}/{directory}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -151,16 +151,16 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{shareName}/{directory}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -197,16 +197,16 @@ def build_set_properties_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{shareName}/{directory}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -250,16 +250,16 @@ def build_set_metadata_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{shareName}/{directory}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -299,16 +299,16 @@ def build_list_files_and_directories_segment_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{shareName}/{directory}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -355,16 +355,16 @@ def build_list_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["listhandles"] = kwargs.pop("comp", _params.pop("comp", "listhandles"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{shareName}/{directory}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -406,16 +406,16 @@ def build_force_close_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["forceclosehandles"] = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{shareName}/{directory}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -466,16 +466,16 @@ def build_rename_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{shareName}/{directory}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -631,8 +631,9 @@ class DirectoryOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -672,7 +673,7 @@ class DirectoryOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {"url": "{url}/{shareName}/{directory}"}
+    create.metadata = {"url": "{url}"}
 
     @distributed_trace
     def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -727,8 +728,9 @@ class DirectoryOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -769,7 +771,7 @@ class DirectoryOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {"url": "{url}/{shareName}/{directory}"}
+    get_properties.metadata = {"url": "{url}"}
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -819,8 +821,9 @@ class DirectoryOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -838,7 +841,7 @@ class DirectoryOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {"url": "{url}/{shareName}/{directory}"}
+    delete.metadata = {"url": "{url}"}
 
     @distributed_trace
     def set_properties(  # pylint: disable=inconsistent-return-statements
@@ -929,8 +932,9 @@ class DirectoryOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -970,7 +974,7 @@ class DirectoryOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_properties.metadata = {"url": "{url}/{shareName}/{directory}"}
+    set_properties.metadata = {"url": "{url}"}
 
     @distributed_trace
     def set_metadata(  # pylint: disable=inconsistent-return-statements
@@ -1028,8 +1032,9 @@ class DirectoryOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1051,7 +1056,7 @@ class DirectoryOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_metadata.metadata = {"url": "{url}/{shareName}/{directory}"}
+    set_metadata.metadata = {"url": "{url}"}
 
     @distributed_trace
     def list_files_and_directories_segment(
@@ -1140,8 +1145,9 @@ class DirectoryOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1164,7 +1170,7 @@ class DirectoryOperations:
 
         return deserialized
 
-    list_files_and_directories_segment.metadata = {"url": "{url}/{shareName}/{directory}"}
+    list_files_and_directories_segment.metadata = {"url": "{url}"}
 
     @distributed_trace
     def list_handles(
@@ -1238,8 +1244,9 @@ class DirectoryOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1262,7 +1269,7 @@ class DirectoryOperations:
 
         return deserialized
 
-    list_handles.metadata = {"url": "{url}/{shareName}/{directory}"}
+    list_handles.metadata = {"url": "{url}"}
 
     @distributed_trace
     def force_close_handles(  # pylint: disable=inconsistent-return-statements
@@ -1335,8 +1342,9 @@ class DirectoryOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1361,7 +1369,7 @@ class DirectoryOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    force_close_handles.metadata = {"url": "{url}/{shareName}/{directory}"}
+    force_close_handles.metadata = {"url": "{url}"}
 
     @distributed_trace
     def rename(  # pylint: disable=inconsistent-return-statements
@@ -1491,8 +1499,9 @@ class DirectoryOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1532,4 +1541,4 @@ class DirectoryOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    rename.metadata = {"url": "{url}/{shareName}/{directory}"}
+    rename.metadata = {"url": "{url}"}

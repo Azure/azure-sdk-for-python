@@ -34,7 +34,7 @@ class MonitorManagementClientConfiguration(Configuration):  # pylint: disable=to
 
     def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(MonitorManagementClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2016-09-01")  # type: str
+        api_version: str = kwargs.pop("api_version", "2016-09-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

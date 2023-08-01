@@ -55,6 +55,7 @@ class DataVersionsOperations:
         top: Optional[int] = None,
         skip: Optional[str] = None,
         tags: Optional[str] = None,
+        stage: Optional[str] = None,
         list_view_type: Optional[Union[str, "_models.ListViewType"]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.DataVersionBaseResourceArmPaginatedResult"]:
@@ -79,6 +80,8 @@ class DataVersionsOperations:
         :param tags: Comma-separated list of tag names (and optionally values). Example:
          tag1,tag2=value2.
         :type tags: str
+        :param stage: data stage.
+        :type stage: str
         :param list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly,
          ListViewType.All]View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
@@ -109,6 +112,7 @@ class DataVersionsOperations:
                     top=top,
                     skip=skip,
                     tags=tags,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=self.list.metadata['url'],
                 )
@@ -127,6 +131,7 @@ class DataVersionsOperations:
                     top=top,
                     skip=skip,
                     tags=tags,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=next_link,
                 )

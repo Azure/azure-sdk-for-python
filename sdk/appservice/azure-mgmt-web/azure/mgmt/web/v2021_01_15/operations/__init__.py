@@ -27,28 +27,29 @@ from ._static_sites_operations import StaticSitesOperations
 from ._web_apps_operations import WebAppsOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AppServiceCertificateOrdersOperations',
-    'CertificateOrdersDiagnosticsOperations',
-    'CertificateRegistrationProviderOperations',
-    'DomainsOperations',
-    'TopLevelDomainsOperations',
-    'DomainRegistrationProviderOperations',
-    'AppServiceEnvironmentsOperations',
-    'AppServicePlansOperations',
-    'CertificatesOperations',
-    'DeletedWebAppsOperations',
-    'DiagnosticsOperations',
-    'GlobalOperations',
-    'KubeEnvironmentsOperations',
-    'ProviderOperations',
-    'RecommendationsOperations',
-    'ResourceHealthMetadataOperations',
-    'WebSiteManagementClientOperationsMixin',
-    'StaticSitesOperations',
-    'WebAppsOperations',
+    "AppServiceCertificateOrdersOperations",
+    "CertificateOrdersDiagnosticsOperations",
+    "CertificateRegistrationProviderOperations",
+    "DomainsOperations",
+    "TopLevelDomainsOperations",
+    "DomainRegistrationProviderOperations",
+    "AppServiceEnvironmentsOperations",
+    "AppServicePlansOperations",
+    "CertificatesOperations",
+    "DeletedWebAppsOperations",
+    "DiagnosticsOperations",
+    "GlobalOperations",
+    "KubeEnvironmentsOperations",
+    "ProviderOperations",
+    "RecommendationsOperations",
+    "ResourceHealthMetadataOperations",
+    "WebSiteManagementClientOperationsMixin",
+    "StaticSitesOperations",
+    "WebAppsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

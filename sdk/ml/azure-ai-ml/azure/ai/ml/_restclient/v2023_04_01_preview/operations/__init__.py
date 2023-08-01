@@ -15,6 +15,8 @@ from ._compute_operations import ComputeOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._workspace_connections_operations import WorkspaceConnectionsOperations
+from ._managed_network_settings_rule_operations import ManagedNetworkSettingsRuleOperations
+from ._managed_network_provisions_operations import ManagedNetworkProvisionsOperations
 from ._registries_operations import RegistriesOperations
 from ._workspace_features_operations import WorkspaceFeaturesOperations
 from ._registry_code_containers_operations import RegistryCodeContainersOperations
@@ -39,6 +41,7 @@ from ._datastores_operations import DatastoresOperations
 from ._environment_containers_operations import EnvironmentContainersOperations
 from ._environment_versions_operations import EnvironmentVersionsOperations
 from ._featureset_containers_operations import FeaturesetContainersOperations
+from ._features_operations import FeaturesOperations
 from ._featureset_versions_operations import FeaturesetVersionsOperations
 from ._featurestore_entity_containers_operations import FeaturestoreEntityContainersOperations
 from ._featurestore_entity_versions_operations import FeaturestoreEntityVersionsOperations
@@ -60,6 +63,8 @@ __all__ = [
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
     'WorkspaceConnectionsOperations',
+    'ManagedNetworkSettingsRuleOperations',
+    'ManagedNetworkProvisionsOperations',
     'RegistriesOperations',
     'WorkspaceFeaturesOperations',
     'RegistryCodeContainersOperations',
@@ -84,6 +89,7 @@ __all__ = [
     'EnvironmentContainersOperations',
     'EnvironmentVersionsOperations',
     'FeaturesetContainersOperations',
+    'FeaturesOperations',
     'FeaturesetVersionsOperations',
     'FeaturestoreEntityContainersOperations',
     'FeaturestoreEntityVersionsOperations',

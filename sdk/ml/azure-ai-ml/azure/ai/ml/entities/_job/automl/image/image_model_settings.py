@@ -5,13 +5,13 @@
 from typing import Optional
 
 # pylint: disable=R0902,too-many-locals
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ImageModelSettingsClassification as RestImageModelSettingsClassification,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ImageModelSettingsObjectDetection as RestImageModelSettingsObjectDetection,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     LearningRateScheduler,
     ModelSize,
     StochasticOptimizer,
@@ -723,6 +723,8 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
 
     def _to_rest_object(self) -> RestImageModelSettingsObjectDetection:
         return RestImageModelSettingsObjectDetection(
+            # Temporary fix for https://msdata.visualstudio.com/Vienna/_workitems/edit/2385143
+            log_training_metrics="Disable",
             advanced_settings=self.advanced_settings,
             ams_gradient=self.ams_gradient,
             beta1=self.beta1,

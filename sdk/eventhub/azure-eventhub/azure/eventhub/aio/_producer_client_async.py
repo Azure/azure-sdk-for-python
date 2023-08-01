@@ -16,6 +16,7 @@ from ._producer_async import EventHubProducer
 from ._buffered_producer import BufferedProducerDispatcher
 from .._utils import set_event_partition_key
 from .._constants import ALL_PARTITIONS, TransportType
+from .._tracing import TraceAttributes
 from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
@@ -114,6 +115,11 @@ class EventHubProducerClient(
     :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
      False and the Pure Python AMQP library will be used as the underlying transport.
     :paramtype uamqp_transport: bool
+    :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+     wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+     and 1 for TransportType.AmqpOverWebsocket. If EventHubsConnectionError errors are occurring due to write
+     timing out, a larger than default value may need to be passed in. This is for advanced usage scenarios
+     and ordinarily the default value should be sufficient.
 
     .. admonition:: Example:
 
@@ -729,14 +735,16 @@ class EventHubProducerClient(
                 )
             )
 
-        event_data_batch = EventDataBatch(
+        return EventDataBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
             partition_key=partition_key,
-            amqp_transport=self._amqp_transport
+            amqp_transport=self._amqp_transport,
+            tracing_attributes={
+                TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self._address.hostname if self._address else None,
+                TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE: self._address.path if self._address else None
+            }
         )
-
-        return event_data_batch
 
     async def get_eventhub_properties(self) -> Dict[str, Any]:
         """Get properties of the Event Hub.

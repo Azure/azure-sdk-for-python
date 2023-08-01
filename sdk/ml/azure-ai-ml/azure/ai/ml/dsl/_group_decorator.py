@@ -159,6 +159,7 @@ def group(_cls):
 
     def _create_init_fn(cls, fields):  # pylint: disable=unused-argument
         """Generate the __init__ function for user-defined class."""
+
         # Reference code link:
         # https://github.com/python/cpython/blob/17b16e13bb444001534ed6fccb459084596c8bcf/Lib/dataclasses.py#L523
         def _get_data_type_from_annotation(anno: Input):

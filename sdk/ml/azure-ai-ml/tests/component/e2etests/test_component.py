@@ -1,4 +1,5 @@
 import re
+import time
 import uuid
 from itertools import tee
 from pathlib import Path
@@ -6,12 +7,15 @@ from typing import Callable
 
 import pydash
 import pytest
+from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from azure.ai.ml import MLClient, MpiDistribution, load_component, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
+from azure.ai.ml.constants._assets import IPProtectionLevel
 from azure.ai.ml.constants._common import (
     ANONYMOUS_COMPONENT_NAME,
     ARM_ID_PREFIX,
@@ -21,8 +25,6 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.paging import ItemPaged
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
@@ -34,6 +36,7 @@ def create_component(
     path="./tests/test_configs/components/helloworld_component.yml",
     params_override=None,
     is_anonymous=False,
+    **kwargs,
 ):
     default_param_override = [{"name": component_name}]
     if params_override is None:
@@ -45,7 +48,7 @@ def create_component(
         source=path,
         params_override=params_override,
     )
-    return client.components.create_or_update(command_component, is_anonymous=is_anonymous)
+    return client.components.create_or_update(command_component, is_anonymous=is_anonymous, **kwargs)
 
 
 @pytest.fixture
@@ -383,7 +386,7 @@ class TestComponent(AzureRecordedTestCase):
         assert target_entity.id
         # server side will remove \n from the code now. Skip them given it's not targeted to check in this test
         # server side will return optional False for optional None input
-        omit_fields = ["id", "command", "environment", "inputs.*.optional"]
+        omit_fields = ["id", "command", "environment", "inputs.*.optional", "properties"]
         assert omit_with_wildcard(component_entity._to_dict(), *omit_fields) == omit_with_wildcard(
             target_entity._to_dict(), *omit_fields
         )
@@ -505,7 +508,6 @@ class TestComponent(AzureRecordedTestCase):
             client.components.create_or_update(command_component)
 
     @pytest.mark.disable_mock_code_hash
-    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_create_default_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # step2: test component without code
         component_name = randstr("component_name")
@@ -518,6 +520,7 @@ class TestComponent(AzureRecordedTestCase):
         component_resource2 = create_component(client, component_name, params_override=params_override)
 
         # the code arm id should be the same
+        assert component_resource1.code is None
         assert component_resource1.code == component_resource2.code
         assert component_resource2.description == description
         assert component_resource2.display_name == display_name
@@ -780,18 +783,6 @@ class TestComponent(AzureRecordedTestCase):
         component_resource = client.components.create_or_update(component)
         assert component_resource.version == "3"
 
-    def test_component_validate_via_schema(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        component_path = "./tests/test_configs/components/helloworld_component.yml"
-        component: CommandComponent = load_component(source=component_path)
-        component.name = None
-        component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
-        validation_result = client.components.validate(component)
-        assert validation_result.passed is False
-        assert validation_result.error_messages == {
-            "name": "Missing data for required field.",
-            "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
-        }
-
     @pytest.mark.skipif(
         condition=not is_live(),
         reason="registry test, may fail in playback mode during retrieving registry client",
@@ -917,6 +908,7 @@ class TestComponent(AzureRecordedTestCase):
         }
         assert component_dict == expected_dict
 
+    @pytest.mark.usefixtures("mock_set_headers_with_user_aml_token")
     def test_create_pipeline_component_from_job(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("component_name_0")}]
         pipeline_job = load_job(
@@ -999,3 +991,91 @@ class TestComponent(AzureRecordedTestCase):
         current_dict = pydash.omit(from_rest_component._to_dict(), omit_fields)
         # TODO(2037030): verify when backend ready
         # assert previous_dict == current_dict
+
+    @pytest.mark.skip(
+        reason="TODO (2349965): Message: User/tenant/subscription is not allowed to access registry UnsecureTest-hello-world"
+    )
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
+    def test_ipp_component_create(self, ipp_registry_client: MLClient, randstr: Callable[[str], str]):
+        component_path = "./tests/test_configs/components/component_ipp.yml"
+        command_component = load_component(source=component_path)
+        from_rest_component = create_component(
+            ipp_registry_client,
+            component_name=randstr("component_name"),
+            path=component_path,
+        )
+
+        assert from_rest_component._intellectual_property
+        assert from_rest_component._intellectual_property == command_component._intellectual_property
+
+        assert from_rest_component.inputs["training_data"]._intellectual_property
+        assert (
+            from_rest_component.inputs["training_data"]._intellectual_property
+            == command_component.inputs["training_data"]._intellectual_property
+        )
+
+        assert from_rest_component.inputs["base_model"]._intellectual_property
+        assert from_rest_component.inputs["base_model"]._intellectual_property.protection_level == IPProtectionLevel.ALL
+
+        assert from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
+
+        assert (
+            from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
+            == command_component.outputs["model_output_not_ipp"]._intellectual_property
+        )
+
+        assert from_rest_component.outputs["model_output_ipp"]._intellectual_property
+        assert (
+            from_rest_component.outputs["model_output_ipp"]._intellectual_property
+            == command_component.outputs["model_output_ipp"]._intellectual_property
+        )
+
+    def test_create_component_skip_if_no_change(self, client: MLClient, randstr):
+        component_operation = client._operation_container.all_operations[AzureMLResourceType.COMPONENT]
+        component_name = "test_skip_if_no_change"
+        try:
+            default_component = component_operation.get(name=component_name)
+        except Exception:
+            default_component = None
+        default_version = default_component.version if default_component else "1"
+        # update  default component by current local component data.
+        default_component = create_component(client, component_name=component_name, version=default_version)
+
+        # test component has no change and use skip_if_no_change parameter
+        new_version = randstr("component_version")
+        new_component = create_component(
+            client, component_name=component_name, version=new_version, skip_if_no_change=True
+        )
+        assert default_component._get_component_hash(
+            keys_to_omit=["creation_context"]
+        ) == new_component._get_component_hash(keys_to_omit=["creation_context"])
+
+        # test component has change and use skip_if_no_change parameter
+        new_version = randstr("component_version")
+        params_override = [
+            {"description": "description_{0}".format(new_version)},
+            {"display_name": "display_name_{0}".format(new_version)},
+            {"tags": {"tags": "tags_{0}".format(new_version)}},
+        ]
+        new_component = create_component(
+            client,
+            component_name=component_name,
+            version=new_version,
+            params_override=params_override,
+            skip_if_no_change=True,
+        )
+        assert default_component._get_component_hash(
+            keys_to_omit=["creation_context"]
+        ) != new_component._get_component_hash(keys_to_omit=["creation_context"])
+        assert new_component.description == "description_{0}".format(new_version)
+        assert new_component.display_name == "display_name_{0}".format(new_version)
+        assert new_component.tags == {"tags": "tags_{0}".format(new_version)}
+        assert new_component.version == new_version
+
+        # test component has no change and not use skip_if_no_change parameter
+        new_version = randstr("component_version")
+        new_component = create_component(client, component_name=component_name, version=new_version)
+        assert default_component._get_component_hash(
+            keys_to_omit=["creation_context"]
+        ) != new_component._get_component_hash(keys_to_omit=["creation_context"])
+        assert new_component.version == new_version

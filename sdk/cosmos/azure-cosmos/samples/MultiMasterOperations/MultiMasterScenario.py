@@ -3,7 +3,7 @@ from ConflictWorker import ConflictWorker
 from Worker import Worker
 from multiprocessing.pool import ThreadPool
 import azure.cosmos.documents as documents
-import azure.cosmos._cosmos_client_connection as cosmos_client_connection
+from azure.cosmos import CosmosClient
 
 class MultiMasterScenario(object):
     def __init__(self):
@@ -27,12 +27,11 @@ class MultiMasterScenario(object):
             connection_policy.UseMultipleWriteLocations = True
             connection_policy.PreferredLocations = [region]
 
-            client = cosmos_client_connection.CosmosClientConnection(
-                self.account_endpoint,
-                {'masterKey': self.account_key},
-                connection_policy,
-                documents.ConsistencyLevel.Session
-            )
+            client = CosmosClient(
+                url=self.account_endpoint,
+                credential=self.account_key,
+                consistency_level=documents.ConsistencyLevel.Session,
+                connection_policy=connection_policy)
 
             self.workers.append(Worker(client, self.database_name, self.basic_collection_name))
 

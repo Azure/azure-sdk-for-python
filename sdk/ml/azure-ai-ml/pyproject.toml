@@ -3,3 +3,25 @@ mypy = false
 pyright = false
 type_check_samples = false
 verifytypes = false
+pylint = false
+
+[tool.interrogate]
+fail-under = 35
+verbose = 2
+ignore-module = true
+exclude = ["setup.py", "tests", "azure/ai/ml/_restclient", "scripts"]
+
+[tool.isort]
+profile = "black"
+line_length = 120
+
+[tool.mypy] 
+exclude = ["azure/ai/ml/_vendor", "azure/ai/ml/_restclient"] 
+disallow_any_explicit = true 
+disallow_untyped_defs = true 
+warn_unused_ignores = true 
+warn_return_any = true 
+warn_unreachable = true 
+ignore_missing_imports = true 
+follow_imports = "skip" 
+follow_imports_for_stubs = "skip"

@@ -28,7 +28,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem9f562fef/olddir?resource=directory\u0026se=end\u0026sp=rwd\u0026sv=2022-11-02\u0026sr=c\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem9f562fef/olddir?resource=directory\u0026se=end\u0026sp=rwd\u0026sv=2023-01-03\u0026sr=c\u0026sig=fake_token_value",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -56,7 +56,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem9f562fef/newdir?mode=legacy\u0026se=end\u0026sp=rwd\u0026sv=2022-11-02\u0026sr=c\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem9f562fef/newdir?mode=legacy\u0026se=end\u0026sp=rwd\u0026sv=2023-01-03\u0026sr=c\u0026sig=fake_token_value",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -65,7 +65,7 @@
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.11.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
         "x-ms-date": "Mon, 06 Feb 2023 22:27:09 GMT",
-        "x-ms-rename-source": "/filesystem9f562fef/olddir?se=end\u0026sp=rwd\u0026sv=2022-11-02\u0026sr=c\u0026sig=fake_token_value",
+        "x-ms-rename-source": "/filesystem9f562fef/olddir?se=end\u0026sp=rwd\u0026sv=2023-01-03\u0026sr=c\u0026sig=fake_token_value",
         "x-ms-source-lease-id": "",
         "x-ms-version": "2022-11-02"
       },
@@ -85,7 +85,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/filesystem9f562fef/newdir?se=end\u0026sp=rwd\u0026sv=2022-11-02\u0026sr=c\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.blob.core.windows.net/filesystem9f562fef/newdir?se=end\u0026sp=rwd\u0026sv=2023-01-03\u0026sr=c\u0026sig=fake_token_value",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",

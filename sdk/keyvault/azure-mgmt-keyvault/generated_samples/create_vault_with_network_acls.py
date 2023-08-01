@@ -56,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2022-07-01/examples/createVaultWithNetworkAcls.json
+# x-ms-original-file: specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2023-02-01/examples/createVaultWithNetworkAcls.json
 if __name__ == "__main__":
     main()

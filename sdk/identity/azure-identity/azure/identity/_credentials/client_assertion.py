@@ -12,7 +12,7 @@ from .._internal.get_token_mixin import GetTokenMixin
 class ClientAssertionCredential(GetTokenMixin):
     """Authenticates a service principal with a JWT assertion.
 
-    This credential is for advanced scenarios. :class:`~azure.identity.ClientCertificateCredential` has a more
+    This credential is for advanced scenarios. :class:`~azure.identity.CertificateCredential` has a more
     convenient API for the most common assertion scenario, authenticating a service principal with a certificate.
 
     :param str tenant_id: ID of the principal's tenant. Also called its "directory" ID.
@@ -27,15 +27,18 @@ class ClientAssertionCredential(GetTokenMixin):
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_client_assertion_credential]
+            :end-before: [END create_client_assertion_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create a ClientAssertionCredential.
     """
 
-    def __init__(
-            self,
-            tenant_id: str,
-            client_id: str,
-            func: Callable[[], str],
-            **kwargs: Any
-    ) -> None:
+    def __init__(self, tenant_id: str, client_id: str, func: Callable[[], str], **kwargs: Any) -> None:
         self._func = func
         self._client = AadClient(tenant_id, client_id, **kwargs)
         super(ClientAssertionCredential, self).__init__(**kwargs)

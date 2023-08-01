@@ -26,7 +26,7 @@ from azure.mgmt.communication import CommunicationServiceManagementClient
 def main():
     client = CommunicationServiceManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="12345",
+        subscription_id="11112222-3333-4444-5555-666677778888",
     )
 
     response = client.communication_services.get(
@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/communication/resource-manager/Microsoft.Communication/preview/2022-07-01-preview/examples/communicationServices/get.json
+# x-ms-original-file: specification/communication/resource-manager/Microsoft.Communication/stable/2023-03-31/examples/communicationServices/get.json
 if __name__ == "__main__":
     main()

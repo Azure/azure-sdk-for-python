@@ -9,11 +9,11 @@ import pytest
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
-from azure.ai.ml import Input, Output, MLClient, dsl, load_component, load_job
+from azure.ai.ml import Input, MLClient, Output, dsl, load_component, load_job
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.entities import Choice, CommandComponent, PipelineJob
 from azure.ai.ml.entities._validate_funcs import validate_job
-from azure.ai.ml.exceptions import ValidationException, UserErrorException
+from azure.ai.ml.exceptions import UserErrorException, ValidationException
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, SERVERLESS_COMPUTE_TEST_PARAMETERS
 
@@ -342,6 +342,7 @@ class TestDSLPipelineJobValidate:
             "jobs.microsoftsamples_command_component_basic.compute": "Compute not set",
             "inputs.component_in_path": "Required input 'component_in_path' for pipeline 'pipeline' not provided.",
         }
+        validate_result.resolve_location_for_diagnostics(source_path=pipeline2.component._source_path)
 
     def test_pipeline_with_none_parameter_no_default_optional_false(self) -> None:
         default_optional_func = load_component(str(components_dir / "default_optional_component.yml"))
@@ -595,7 +596,7 @@ class TestDSLPipelineJobValidate:
 
         dsl_pipeline: PipelineJob = pipeline(10, job_input)
 
-        with patch("azure.ai.ml.entities._validation.module_logger.info") as mock_logging:
+        with patch("azure.ai.ml.entities._validation.module_logger.warning") as mock_logging:
             dsl_pipeline._validate(raise_error=True)
             mock_logging.assert_called_with("Warnings: [jobs.node1.jeff_special_option: Unknown field.]")
 

@@ -96,8 +96,10 @@
         "tenants": "TenantsOperations"
     },
     "operation_mixins": {
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"regular\": {\"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"]}, \"local\": {\".\": [[\"models\", \"_models\"]]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"regular\": {\"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"]}, \"local\": {\"..\": [[\"models\", \"_models\"]]}}}",
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"regular\": {\"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"], \"io\": [\"IOBase\"]}, \"local\": {\".\": [[\"models\", \"_models\"]]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"regular\": {\"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"], \"io\": [\"IOBase\"]}, \"local\": {\"..\": [[\"models\", \"_models\"]]}}}",
+        "sync_mixin_typing_definitions": "",
+        "async_mixin_typing_definitions": "",
         "operations": {
             "check_resource_name" : {
                 "sync": {

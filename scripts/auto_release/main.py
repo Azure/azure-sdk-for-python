@@ -11,7 +11,7 @@ from typing import List, Any, Dict
 from packaging.version import Version
 from ghapi.all import GhApi
 from azure.storage.blob import BlobServiceClient, ContainerClient
-from util import add_certificate
+from datetime import datetime, timedelta
 
 _LOG = logging.getLogger()
 
@@ -113,23 +113,20 @@ def set_test_env_var():
         file_out.writelines(list_in)
 
 
-def start_test_proxy():
-    print_check('pwsh eng/common/testproxy/docker-start-proxy.ps1 \"start\"')
-
-
 class CodegenTestPR:
     """
     This class can generate SDK code, run live test and create RP
     """
 
     def __init__(self):
-        self.issue_link = os.getenv('ISSUE_LINK')
-        self.pipeline_link = os.getenv('PIPELINE_LINK')
+        self.issue_link = os.getenv('ISSUE_LINK', '')
+        self.pipeline_link = os.getenv('PIPELINE_LINK', '')
         self.bot_token = os.getenv('AZURESDK_BOT_TOKEN')
         self.spec_readme = os.getenv('SPEC_README', '')
         self.spec_repo = os.getenv('SPEC_REPO', '')
         self.conn_str = os.getenv('STORAGE_CONN_STR')
         self.storage_endpoint = os.getenv('STORAGE_ENDPOINT').strip('/')
+        self.target_date = os.getenv('TARGET_DATE', '')
 
         self.package_name = ''
         self.new_branch = ''
@@ -141,6 +138,15 @@ class CodegenTestPR:
         self.container_name = ''
         self.private_package_link = []  # List[str]
         self.tag_is_stable = False
+
+    @property
+    def target_release_date(self) -> str:
+        try:
+            if self.target_date:
+                return (datetime.fromisoformat(self.target_date) + timedelta(days=-7)).strftime("%Y-%m-%d")
+        except:
+            log(f'Invalid target date: {self.target_date}')
+        return current_time()
 
     @return_origin_path
     def get_latest_commit_in_swagger_repo(self) -> str:
@@ -273,23 +279,26 @@ class CodegenTestPR:
         else:
             log("{python_md} does not exist")
         os.chdir(Path(f'sdk/{self.sdk_folder}'))
-        # add `title` in sdk_packaging.toml
-        if title:
-            toml = Path(f"azure-mgmt-{self.package_name}") / "sdk_packaging.toml"
-            if toml.exists():
-                def edit_toml(content: List[str]):
-                    has_title = False
-                    for line in content:
-                        if "title" in line:
-                            has_title = True
-                            break
-                    if not has_title:
-                        content.append(f"title = \"{title}\"\n")
-                modify_file(str(toml), edit_toml)
-            else:
-                log(f"{os.getcwd()}/{toml} does not exist")
+        # add `title` and update `is_stable` in sdk_packaging.toml
+        toml = Path(f"azure-mgmt-{self.package_name}") / "sdk_packaging.toml"
+        stable_config = "is_stable = " + ("true" if self.tag_is_stable else "false") + "\n"
+        if toml.exists():
+            def edit_toml(content: List[str]):
+                has_title = False
+                has_isstable = False
+                for idx in range(len(content)):
+                    if "title" in content[idx]:
+                        has_title = True
+                    if "is_stable" in content[idx]:
+                        has_isstable = True
+                        content[idx] = stable_config
+                if not has_title:
+                    content.append(f"title = \"{title}\"\n")
+                if not has_isstable:
+                    content.append(stable_config)
+            modify_file(str(toml), edit_toml)
         else:
-            log(f"do not find title in {python_md}")
+            log(f"{os.getcwd()}/{toml} does not exist")
 
         print_check(f'python -m packaging_tools --build-conf azure-mgmt-{self.package_name}')
         log('packaging_tools --build-conf successfully ')
@@ -370,7 +379,7 @@ class CodegenTestPR:
                     break
 
         for file in files:
-            if '_version.py' in file:
+            if Path(file).name == '_version.py':
                 modify_file(file, edit_version_file)
 
     def check_version(self):
@@ -381,14 +390,14 @@ class CodegenTestPR:
         def edit_changelog_for_new_service_proc(content: List[str]):
             for i in range(0, len(content)):
                 if '##' in content[i]:
-                    content[i] = f'## {self.next_version} ({current_time()})\n'
+                    content[i] = f'## {self.next_version} ({self.target_release_date})\n'
                     break
 
         modify_file(str(Path(self.sdk_code_path()) / 'CHANGELOG.md'), edit_changelog_for_new_service_proc)
 
     def edit_changelog(self):
         def edit_changelog_proc(content: List[str]):
-            content[1:1] = ['\n', f'## {self.next_version} ({current_time()})\n\n', self.get_changelog(), '\n']
+            content[1:1] = ['\n', f'## {self.next_version} ({self.target_release_date})\n\n', self.get_changelog(), '\n']
 
         modify_file(str(Path(self.sdk_code_path()) / 'CHANGELOG.md'), edit_changelog_proc)
 
@@ -435,8 +444,6 @@ class CodegenTestPR:
     def prepare_test_env(self):
         self.install_package_locally()
         set_test_env_var()
-        add_certificate()
-        start_test_proxy()
 
     @return_origin_path
     def run_test_proc(self):
@@ -491,8 +498,9 @@ class CodegenTestPR:
     def zero_version_policy(self):
         if re.match(re.compile('0\.0\.0'), self.next_version):
             api_request = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
-            issue_number = int(self.issue_link.split('/')[-1])
-            api_request.issues.add_labels(issue_number=issue_number, labels=['base-branch-attention'])
+            if self.issue_link:
+                issue_number = int(self.issue_link.split('/')[-1])
+                api_request.issues.add_labels(issue_number=issue_number, labels=['base-branch-attention'])
 
     def get_container_name(self) -> str:
         container_name = current_time_month()
@@ -539,27 +547,28 @@ class CodegenTestPR:
         if changelog == '':
             changelog = 'no new content found by changelog tools!'
 
-        # comment to ask for check from users
-        issue_number = int(self.issue_link.split('/')[-1])
-        api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
-        author = api.issues.get(issue_number=issue_number).user.login
-        body = f'Hi @{author}, Please check whether the package works well and the CHANGELOG info is as below:\n' \
-               f'{self.get_private_package_link()}' \
-               f'```\n' \
-               f'CHANGELOG:\n' \
-               f'{changelog}\n' \
-               f'```\n' \
-               f'* (If you are not a Python User, you can mainly check whether the changelog meets your requirements)\n\n' \
-               f'* (The version of the package is only a temporary version for testing)\n\n' \
-               f'https://github.com/Azure/azure-sdk-for-python/pull/{self.pr_number}'
-        api.issues.create_comment(issue_number=issue_number, body=body)
+        if self.issue_link:
+            # comment to ask for check from users
+            issue_number = int(self.issue_link.split('/')[-1])
+            api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
+            author = api.issues.get(issue_number=issue_number).user.login
+            body = f'Hi @{author}, Please check whether the package works well and the CHANGELOG info is as below:\n' \
+                f'{self.get_private_package_link()}' \
+                f'```\n' \
+                f'CHANGELOG:\n' \
+                f'{changelog}\n' \
+                f'```\n' \
+                f'* (If you are not a Python User, you can mainly check whether the changelog meets your requirements)\n\n' \
+                f'* (The version of the package is only a temporary version for testing)\n\n' \
+                f'https://github.com/Azure/azure-sdk-for-python/pull/{self.pr_number}'
+            api.issues.create_comment(issue_number=issue_number, body=body)
 
-        # comment for hint
-        body = 'Tips: If you have special needs for release date or other things, please let us know. ' \
-               'Otherwise we will follow ' \
-               '[Management-SDK-Release-Cycle](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/761/Management-SDK-Release-Cycle) ' \
-               'to release it before target date'
-        api.issues.create_comment(issue_number=issue_number, body=body)
+            # comment for hint
+            body = 'Tips: If you have special needs for release date or other things, please let us know. ' \
+                'Otherwise we will follow ' \
+                '[Management-SDK-Release-Cycle](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/761/Management-SDK-Release-Cycle) ' \
+                'to release it before target date'
+            api.issues.create_comment(issue_number=issue_number, body=body)
 
     def issue_comment(self):
         self.zero_version_policy()

@@ -29,6 +29,7 @@ These samples provide example code for additional scenarios commonly encountered
 
    ```bash
     pip install azure-ai-ml
+    pip install azure-identity
     ```
 
 2. Clone or download this sample repository

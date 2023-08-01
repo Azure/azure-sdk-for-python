@@ -37,9 +37,16 @@ from azure.core.polling import async_poller
 from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import PipelineResponse, AsyncPipeline
-from azure.core.pipeline.transport import AsyncioRequestsTransportResponse, AsyncHttpTransport
+from azure.core.pipeline.transport import (
+    AsyncioRequestsTransportResponse,
+    AsyncHttpTransport,
+)
 
-from azure.core.polling.base_polling import LongRunningOperation, BadStatus, LocationPolling
+from azure.core.polling.base_polling import (
+    LongRunningOperation,
+    BadStatus,
+    LocationPolling,
+)
 from azure.mgmt.core.polling.async_arm_polling import (
     AsyncARMPolling,
 )
@@ -152,7 +159,10 @@ async def test_post(async_pipeline_client_builder, deserialization_cb):
 
     # Test 1, LRO options with Location final state
     poll = async_poller(
-        client, initial_response, deserialization_cb, AsyncARMPolling(0, lro_options={"final-state-via": "location"})
+        client,
+        initial_response,
+        deserialization_cb,
+        AsyncARMPolling(0, lro_options={"final-state-via": "location"}),
     )
     result = await poll
     assert result["location_result"] == True
@@ -187,7 +197,10 @@ async def test_post(async_pipeline_client_builder, deserialization_cb):
     client = async_pipeline_client_builder(send)
 
     poll = async_poller(
-        client, initial_response, deserialization_cb, AsyncARMPolling(0, lro_options={"final-state-via": "location"})
+        client,
+        initial_response,
+        deserialization_cb,
+        AsyncARMPolling(0, lro_options={"final-state-via": "location"}),
     )
     result = await poll
     assert result is None
@@ -322,7 +335,10 @@ async def test_long_running_put():
         await async_poller(CLIENT, response, TestArmPolling.mock_outputs, AsyncARMPolling(0))
 
     # Test with no polling necessary
-    response_body = {"properties": {"provisioningState": "Succeeded"}, "name": TEST_NAME}
+    response_body = {
+        "properties": {"provisioningState": "Succeeded"},
+        "name": TEST_NAME,
+    }
     response = TestArmPolling.mock_send("PUT", 201, {}, response_body)
 
     def no_update_allowed(url, headers=None):
@@ -371,7 +387,10 @@ async def test_long_running_patch():
 
     # Test polling from location header
     response = TestArmPolling.mock_send(
-        "PATCH", 202, {"location": LOCATION_URL}, body={"properties": {"provisioningState": "Succeeded"}}
+        "PATCH",
+        202,
+        {"location": LOCATION_URL},
+        body={"properties": {"provisioningState": "Succeeded"}},
     )
     polling_method = AsyncARMPolling(0)
     poll = await async_poller(CLIENT, response, TestArmPolling.mock_outputs, polling_method)
@@ -380,7 +399,10 @@ async def test_long_running_patch():
 
     # Test polling from azure-asyncoperation header
     response = TestArmPolling.mock_send(
-        "PATCH", 202, {"azure-asyncoperation": ASYNC_URL}, body={"properties": {"provisioningState": "Succeeded"}}
+        "PATCH",
+        202,
+        {"azure-asyncoperation": ASYNC_URL},
+        body={"properties": {"provisioningState": "Succeeded"}},
     )
     polling_method = AsyncARMPolling(0)
     poll = await async_poller(CLIENT, response, TestArmPolling.mock_outputs, polling_method)
@@ -389,7 +411,10 @@ async def test_long_running_patch():
 
     # Test polling from location header
     response = TestArmPolling.mock_send(
-        "PATCH", 200, {"location": LOCATION_URL}, body={"properties": {"provisioningState": "Succeeded"}}
+        "PATCH",
+        200,
+        {"location": LOCATION_URL},
+        body={"properties": {"provisioningState": "Succeeded"}},
     )
     polling_method = AsyncARMPolling(0)
     poll = await async_poller(CLIENT, response, TestArmPolling.mock_outputs, polling_method)
@@ -398,7 +423,10 @@ async def test_long_running_patch():
 
     # Test polling from azure-asyncoperation header
     response = TestArmPolling.mock_send(
-        "PATCH", 200, {"azure-asyncoperation": ASYNC_URL}, body={"properties": {"provisioningState": "Succeeded"}}
+        "PATCH",
+        200,
+        {"azure-asyncoperation": ASYNC_URL},
+        body={"properties": {"provisioningState": "Succeeded"}},
     )
     polling_method = AsyncARMPolling(0)
     poll = await async_poller(CLIENT, response, TestArmPolling.mock_outputs, polling_method)
@@ -431,7 +459,10 @@ async def test_long_running_post():
 
     # Test polling from azure-asyncoperation header
     response = TestArmPolling.mock_send(
-        "POST", 201, {"azure-asyncoperation": ASYNC_URL}, body={"properties": {"provisioningState": "Succeeded"}}
+        "POST",
+        201,
+        {"azure-asyncoperation": ASYNC_URL},
+        body={"properties": {"provisioningState": "Succeeded"}},
     )
     polling_method = AsyncARMPolling(0)
     poll = await async_poller(CLIENT, response, TestArmPolling.mock_deserialization_no_body, polling_method)
@@ -439,7 +470,10 @@ async def test_long_running_post():
 
     # Test polling from azure-asyncoperation header
     response = TestArmPolling.mock_send(
-        "POST", 202, {"azure-asyncoperation": ASYNC_URL}, body={"properties": {"provisioningState": "Succeeded"}}
+        "POST",
+        202,
+        {"azure-asyncoperation": ASYNC_URL},
+        body={"properties": {"provisioningState": "Succeeded"}},
     )
     polling_method = AsyncARMPolling(0)
     poll = await async_poller(CLIENT, response, TestArmPolling.mock_deserialization_no_body, polling_method)
@@ -447,7 +481,10 @@ async def test_long_running_post():
 
     # Test polling from location header
     response = TestArmPolling.mock_send(
-        "POST", 202, {"location": LOCATION_URL}, body={"properties": {"provisioningState": "Succeeded"}}
+        "POST",
+        202,
+        {"location": LOCATION_URL},
+        body={"properties": {"provisioningState": "Succeeded"}},
     )
     polling_method = AsyncARMPolling(0)
     poll = await async_poller(CLIENT, response, TestArmPolling.mock_outputs, polling_method)

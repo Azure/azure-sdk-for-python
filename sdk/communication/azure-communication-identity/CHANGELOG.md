@@ -1,6 +1,6 @@
 # Release History
 
-## 1.3.2 (Unreleased)
+## 1.4.0b2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,11 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.4.0b1 (2023-04-05)
+
+### Features Added
+- Added support for a new communication identifier `MicrosoftBotIdentifier`.
 
 ## 1.3.1 (2022-10-28)
 

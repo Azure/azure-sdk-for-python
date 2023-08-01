@@ -22,6 +22,13 @@ class AdministratorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACTIVE_DIRECTORY = "ActiveDirectory"
 
 
+class BackupFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Backup Format for the current backup. (CollatedFormat is INTERNAL – DO NOT USE)."""
+
+    NONE = "None"
+    COLLATED_FORMAT = "CollatedFormat"
+
+
 class ConfigurationSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Source of the configuration."""
 
@@ -98,6 +105,29 @@ class IsReadOnly(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TRUE = "True"
     FALSE = "False"
+
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity."""
+
+    USER_ASSIGNED = "UserAssigned"
+
+
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operation status."""
+
+    PENDING = "Pending"
+    """The operation has been accepted but hasn't started."""
+    IN_PROGRESS = "InProgress"
+    """The operation is running"""
+    SUCCEEDED = "Succeeded"
+    """The operation Succeeded"""
+    FAILED = "Failed"
+    """The operation Failed"""
+    CANCEL_IN_PROGRESS = "CancelInProgress"
+    """The cancellation in progress"""
+    CANCELED = "Canceled"
+    """The operation has been Canceled"""
 
 
 class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -23,11 +23,11 @@ from typing import (
 from typing_extensions import TypedDict
 
 from ._utils import (
-    trace_message,
     utc_from_timestamp,
     transform_outbound_single_message,
     decode_with_recurse,
 )
+from ._tracing import trace_message
 from ._constants import (
     PROP_SEQ_NUMBER,
     PROP_OFFSET,
@@ -543,6 +543,7 @@ class EventDataBatch(object):
         **kwargs,
     ) -> None:
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
+        self._tracing_attributes: Dict[str, Union[str, int]] = kwargs.pop("tracing_attributes", {})
 
         if partition_key and not isinstance(partition_key, (str, bytes)):
             _LOGGER.info(
@@ -691,7 +692,8 @@ class EventDataBatch(object):
 
         outgoing_event_data._message = trace_message(   # pylint: disable=protected-access
             outgoing_event_data._message,   # pylint: disable=protected-access
-            amqp_transport=self._amqp_transport
+            amqp_transport=self._amqp_transport,
+            additional_attributes=self._tracing_attributes
         )
         event_data_size = self._amqp_transport.get_message_encoded_size(
             outgoing_event_data._message  # pylint: disable=protected-access

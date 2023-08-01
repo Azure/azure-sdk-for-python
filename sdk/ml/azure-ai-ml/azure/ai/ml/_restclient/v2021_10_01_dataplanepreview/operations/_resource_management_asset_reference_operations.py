@@ -9,7 +9,13 @@ import functools
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
@@ -25,7 +31,8 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-    T = TypeVar('T')
+
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -39,9 +46,9 @@ def build_import_method_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-10-01-dataplanepreview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/import')
@@ -101,24 +108,24 @@ class ResourceManagementAssetReferenceOperations(object):
         body,  # type: "_models.ResourceManagementAssetReferenceData"
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        # type: (...) -> Optional[Any]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[Any]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01-dataplanepreview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'ResourceManagementAssetReferenceData')
+        _json = self._serialize.body(body, "ResourceManagementAssetReferenceData")
 
         request = build_import_method_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._import_method_initial.metadata['url'],
+            template_url=self._import_method_initial.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -130,17 +137,21 @@ class ResourceManagementAssetReferenceOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = None
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("object", pipeline_response)
+
         if response.status_code == 202:
-            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-            
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
-    _import_method_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/import'}  # type: ignore
+        return deserialized
 
+    _import_method_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/import"}  # type: ignore
 
     @distributed_trace
     def begin_import_method(
@@ -150,7 +161,7 @@ class ResourceManagementAssetReferenceOperations(object):
         body,  # type: "_models.ResourceManagementAssetReferenceData"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[None]
+        # type: (...) -> LROPoller[Any]
         """Import the source asset provided in the request into registry.
         The import performs a deep copy of the source asset given in the request into the registry.
         The destination name/version value in ImportSourceAssetReference allows the client to update
@@ -170,6 +181,9 @@ class ResourceManagementAssetReferenceOperations(object):
         :param body: Import request contains the source asset reference value and destination version
          value.
         :type body: ~azure.mgmt.machinelearningservices.models.ResourceManagementAssetReferenceData
+        :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
+         that overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -178,45 +192,49 @@ class ResourceManagementAssetReferenceOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either any or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2021-10-01-dataplanepreview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, azure.core.polling.PollingMethod]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._import_method_initial(
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
                 body=body,
+                api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize("object", pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
-
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_import_method.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/import'}  # type: ignore
+    begin_import_method.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/import"}  # type: ignore

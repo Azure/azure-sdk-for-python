@@ -62,6 +62,7 @@ class ModelVersionsOperations:
         tags: Optional[str] = None,
         properties: Optional[str] = None,
         feed: Optional[str] = None,
+        stage: Optional[str] = None,
         list_view_type: Optional[Union[str, "_models.ListViewType"]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.ModelVersionResourceArmPaginatedResult"]:
@@ -95,6 +96,8 @@ class ModelVersionsOperations:
         :type properties: str
         :param feed: Name of the feed.
         :type feed: str
+        :param stage: Model stage.
+        :type stage: str
         :param list_view_type: View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -129,6 +132,7 @@ class ModelVersionsOperations:
                     tags=tags,
                     properties=properties,
                     feed=feed,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=self.list.metadata['url'],
                 )
@@ -152,6 +156,7 @@ class ModelVersionsOperations:
                     tags=tags,
                     properties=properties,
                     feed=feed,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=next_link,
                 )

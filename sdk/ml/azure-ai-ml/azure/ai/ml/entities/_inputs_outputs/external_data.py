@@ -1,25 +1,23 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Optional, List, Dict, Union
-
 from inspect import Parameter
+from typing import Dict, List, Optional, Union
 
-from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
-from azure.ai.ml.entities._inputs_outputs.utils import _remove_empty_values
 from azure.ai.ml.constants._component import ExternalDataType
+from azure.ai.ml.entities._inputs_outputs.utils import _remove_empty_values
+from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 
 
 class StoredProcedureParameter(DictMixin, RestTranslatableMixin):
     """Define a stored procedure parameter class for DataTransfer import database task.
 
-
-    :param type: The type of the database stored procedure
-    :type type: str
-    :param name: The name of the database stored procedure
-    :type name: str
-    :param value: The value of the database stored procedure
-    :type value: str
+    :param name: The name of the database stored procedure.
+    :type name: str, optional
+    :param value: The value of the database stored procedure.
+    :type value: str, optional
+    :param type: The type of the database stored procedure.
+    :type type: str, optional
     """
 
     def __init__(
@@ -28,7 +26,7 @@ class StoredProcedureParameter(DictMixin, RestTranslatableMixin):
         name: Optional[str] = None,
         value: Optional[str] = None,
         type: Optional[str] = None,  # pylint: disable=redefined-builtin
-    ):
+    ) -> None:
         self.type = type
         self.name = name
         self.value = value
@@ -37,30 +35,28 @@ class StoredProcedureParameter(DictMixin, RestTranslatableMixin):
 class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-instance-attributes
     """Define a database class for a DataTransfer Component or Job.
 
-    e.g.
-    source_snowflake = Database(query='SELECT * FROM my_table', connection='azureml:my_azuresql_connection')
-    or
-    stored_procedure_params = [{'name': 'job', 'value': 'Engineer', 'type': 'String'},
-    {'name': 'department', 'value': 'Engineering', 'type': 'String'}]
-    source_snowflake = Database(stored_procedure='SelectEmployeeByJobAndDepartment',
-                                stored_procedure_params=stored_procedure_params,
-                                connection='azureml:my_azuresql_connection')
-
-    :param type: The type of the data input. Possible values include: 'file_system', 'database'.
-    :type type: str
-    :param query: The sql query to get data from database
-    :type query: str
-    :param table_name: The database table name
-    :type table_name: str
-    :param stored_procedure: stored_procedure
-    :type stored_procedure: str
-    :param stored_procedure_params: stored_procedure_params
-    :type stored_procedure_params: List[dict, StoredProcedureParameter]
-    :param connection: Connection is workspace, we didn't support storage connection here, need leverage workspace
-    connection to store these credential info.
-    :type connection: str
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Source cannot be successfully validated.
+    :param query: The SQL query to retrieve data from the database.
+    :type query: str, optional
+    :param table_name: The name of the database table.
+    :type table_name: str, optional
+    :param stored_procedure: The name of the stored procedure.
+    :type stored_procedure: str, optional
+    :param stored_procedure_params: The parameters for the stored procedure.
+    :type stored_procedure_params: List[dict, StoredProcedureParameter], optional
+    :param connection: The connection string for the database.
+        The credential information should be stored in the workspace connection.
+    :type connection: str, optional
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the Database object cannot be successfully validated.
         Details will be provided in the error message.
+
+    .. admonition:: Example:
+        :class: tip
+        .. literalinclude:: ../../../../../samples/ml_samples_input_output_configurations.py
+            :start-after: [START configure_database]
+            :end-before: [END configure_database]
+            :language: python
+            :dedent: 8
+            :caption: Create a database and querying a database table.
     """
 
     _EMPTY = Parameter.empty
@@ -68,17 +64,16 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
     def __init__(
         self,
         *,
-        type: Optional[str] = ExternalDataType.DATABASE,  # pylint: disable=redefined-builtin
         query: Optional[str] = None,
         table_name: Optional[str] = None,
         stored_procedure: Optional[str] = None,
         stored_procedure_params: Optional[List[dict]] = None,
         connection: Optional[str] = None,
-    ):
+    ) -> None:
         # As an annotation, it is not allowed to initialize the name.
         # The name will be updated by the annotated variable name.
-        self.type = type
         self.name = None
+        self.type = ExternalDataType.DATABASE
         self.connection = connection
         self.query = query
         self.table_name = table_name
@@ -87,7 +82,15 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
 
     def _to_dict(self, remove_name=True):
         """Convert the Source object to a dict."""
-        keys = ["name", "type", "query", "stored_procedure", "stored_procedure_params", "connection", "table_name"]
+        keys = [
+            "name",
+            "type",
+            "query",
+            "stored_procedure",
+            "stored_procedure_params",
+            "connection",
+            "table_name",
+        ]
         if remove_name:
             keys.remove("name")
         result = {key: getattr(self, key) for key in keys}
@@ -108,12 +111,21 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
 
     @property
     def stored_procedure_params(self) -> Optional[StoredProcedureParameter]:
-        """Compute Resource configuration for the job."""
+        """Get or set the parameters for the stored procedure.
+
+        :return: The parameters for the stored procedure.
+        :rtype: List[StoredProcedureParameter], optional
+        """
 
         return self._stored_procedure_params
 
     @stored_procedure_params.setter
     def stored_procedure_params(self, value: Union[Dict[str, str], StoredProcedureParameter, None]):
+        """Set the parameters for the stored procedure.
+
+        :param value: The parameters for the stored procedure.
+        :type value: Union[Dict[str, str], StoredProcedureParameter, None]
+        """
         if value is None:
             self._stored_procedure_params = value
         else:
@@ -130,14 +142,11 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
 
     e.g. source_s3 = FileSystem(path='s3://my_bucket/my_folder', connection='azureml:my_s3_connection')
 
-    The init function of Group will be 'def __init__(self, *, int_param0, int_param3, int_param1=1)'.
-    :param type: The type of the data input. Possible values include: 'file_system', 'database'.
-    :type type: str
-    :param path: The path to which the input is pointing. Could be pointing to the path of file system.
-    :type path: str
+    :param path: The path to which the input is pointing. Could be pointing to the path of file system. Default is None.
+    :type path: str, optional
     :param connection: Connection is workspace, we didn't support storage connection here, need leverage workspace
-    connection to store these credential info.
-    :type connection: str
+    connection to store these credential info. Default is None.
+    :type connection: str, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Source cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -147,11 +156,10 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
     def __init__(
         self,
         *,
-        type: Optional[str] = ExternalDataType.FILE_SYSTEM,  # pylint: disable=redefined-builtin
         path: Optional[str] = None,
         connection: Optional[str] = None,
-    ):
-        self.type = type
+    ) -> None:
+        self.type = ExternalDataType.FILE_SYSTEM
         self.name = None
         self.connection = connection
 

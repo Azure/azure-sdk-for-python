@@ -61,7 +61,7 @@ class RegistryCodeContainersOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param skip: Continuation token for pagination.
         :type skip: str
@@ -197,13 +197,13 @@ class RegistryCodeContainersOperations:
         code_name: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Delete container.
+        """Delete Code container.
 
-        Delete container.
+        Delete Code container.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param code_name: Container name.
         :type code_name: str
@@ -265,13 +265,13 @@ class RegistryCodeContainersOperations:
         code_name: str,
         **kwargs: Any
     ) -> "_models.CodeContainer":
-        """Get container.
+        """Get Code container.
 
-        Get container.
+        Get Code container.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param code_name: Container name.
         :type code_name: str
@@ -392,13 +392,13 @@ class RegistryCodeContainersOperations:
         body: "_models.CodeContainer",
         **kwargs: Any
     ) -> AsyncLROPoller["_models.CodeContainer"]:
-        """Create or update container.
+        """Create or update Code container.
 
-        Create or update container.
+        Create or update Code container.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param code_name: Container name.
         :type code_name: str
@@ -448,7 +448,7 @@ class RegistryCodeContainersOperations:
             return deserialized
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

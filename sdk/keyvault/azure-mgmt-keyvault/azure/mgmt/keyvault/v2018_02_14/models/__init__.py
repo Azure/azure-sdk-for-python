@@ -43,8 +43,6 @@ from ._models_py3 import VirtualNetworkRule
 from ._key_vault_management_client_enums import AccessPolicyUpdateKind
 from ._key_vault_management_client_enums import CertificatePermissions
 from ._key_vault_management_client_enums import CreateMode
-from ._key_vault_management_client_enums import Enum10
-from ._key_vault_management_client_enums import Enum9
 from ._key_vault_management_client_enums import KeyPermissions
 from ._key_vault_management_client_enums import NetworkRuleAction
 from ._key_vault_management_client_enums import NetworkRuleBypassOptions
@@ -96,8 +94,6 @@ __all__ = [
     "AccessPolicyUpdateKind",
     "CertificatePermissions",
     "CreateMode",
-    "Enum10",
-    "Enum9",
     "KeyPermissions",
     "NetworkRuleAction",
     "NetworkRuleBypassOptions",

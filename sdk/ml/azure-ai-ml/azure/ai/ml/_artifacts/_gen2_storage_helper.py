@@ -161,7 +161,7 @@ class Gen2StorageClient:
                     no_personal_data_message=msg,
                     target=ErrorTarget.ARTIFACT,
                     error_category=ErrorCategory.USER_ERROR,
-                )
+                ) from e
             raise e
 
     def _set_confirmation_metadata(self, name: str, version: str) -> None:
@@ -175,12 +175,12 @@ class Gen2StorageClient:
             download_size_in_mb = 0
             for item in mylist:
                 file_name = item.name[len(starts_with) :].lstrip("/") or Path(starts_with).name
+                target_path = Path(destination, file_name)
 
                 if item.is_directory:
-                    os.makedirs(file_name)
+                    target_path.mkdir(parents=True, exist_ok=True)
                     continue
 
-                target_path = Path(destination, file_name)
                 file_client = self.file_system_client.get_file_client(item.name)
 
                 # check if total size of download has exceeded 100 MB
@@ -208,7 +208,7 @@ class Gen2StorageClient:
                 target=ErrorTarget.ARTIFACT,
                 error_category=ErrorCategory.USER_ERROR,
                 error=e,
-            )
+            ) from e
 
     def list(self, starts_with: str) -> List[str]:
         """Lists all file names in the specified filesystem with the prefix

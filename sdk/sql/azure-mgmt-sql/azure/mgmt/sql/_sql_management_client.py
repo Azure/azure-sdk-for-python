@@ -235,8 +235,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype elastic_pool_operations: azure.mgmt.sql.operations.ElasticPoolOperationsOperations
     :ivar encryption_protectors: EncryptionProtectorsOperations operations
     :vartype encryption_protectors: azure.mgmt.sql.operations.EncryptionProtectorsOperations
-    :ivar failover_groups: FailoverGroupsOperations operations
-    :vartype failover_groups: azure.mgmt.sql.operations.FailoverGroupsOperations
     :ivar firewall_rules: FirewallRulesOperations operations
     :vartype firewall_rules: azure.mgmt.sql.operations.FirewallRulesOperations
     :ivar instance_pools: InstancePoolsOperations operations
@@ -442,8 +440,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
      azure.mgmt.sql.operations.DistributedAvailabilityGroupsOperations
     :ivar server_trust_certificates: ServerTrustCertificatesOperations operations
     :vartype server_trust_certificates: azure.mgmt.sql.operations.ServerTrustCertificatesOperations
-    :ivar ipv6_firewall_rules: IPv6FirewallRulesOperations operations
-    :vartype ipv6_firewall_rules: azure.mgmt.sql.operations.IPv6FirewallRulesOperations
     :ivar endpoint_certificates: EndpointCertificatesOperations operations
     :vartype endpoint_certificates: azure.mgmt.sql.operations.EndpointCertificatesOperations
     :ivar managed_database_sensitivity_labels: ManagedDatabaseSensitivityLabelsOperations
@@ -484,30 +480,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar managed_server_dns_aliases: ManagedServerDnsAliasesOperations operations
     :vartype managed_server_dns_aliases:
      azure.mgmt.sql.operations.ManagedServerDnsAliasesOperations
-    :ivar database_sql_vulnerability_assessment_baselines:
-     DatabaseSqlVulnerabilityAssessmentBaselinesOperations operations
-    :vartype database_sql_vulnerability_assessment_baselines:
-     azure.mgmt.sql.operations.DatabaseSqlVulnerabilityAssessmentBaselinesOperations
-    :ivar database_sql_vulnerability_assessment_execute_scan:
-     DatabaseSqlVulnerabilityAssessmentExecuteScanOperations operations
-    :vartype database_sql_vulnerability_assessment_execute_scan:
-     azure.mgmt.sql.operations.DatabaseSqlVulnerabilityAssessmentExecuteScanOperations
-    :ivar database_sql_vulnerability_assessment_rule_baselines:
-     DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations operations
-    :vartype database_sql_vulnerability_assessment_rule_baselines:
-     azure.mgmt.sql.operations.DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations
-    :ivar database_sql_vulnerability_assessment_scan_result:
-     DatabaseSqlVulnerabilityAssessmentScanResultOperations operations
-    :vartype database_sql_vulnerability_assessment_scan_result:
-     azure.mgmt.sql.operations.DatabaseSqlVulnerabilityAssessmentScanResultOperations
-    :ivar database_sql_vulnerability_assessment_scans:
-     DatabaseSqlVulnerabilityAssessmentScansOperations operations
-    :vartype database_sql_vulnerability_assessment_scans:
-     azure.mgmt.sql.operations.DatabaseSqlVulnerabilityAssessmentScansOperations
-    :ivar database_sql_vulnerability_assessments_settings:
-     DatabaseSqlVulnerabilityAssessmentsSettingsOperations operations
-    :vartype database_sql_vulnerability_assessments_settings:
-     azure.mgmt.sql.operations.DatabaseSqlVulnerabilityAssessmentsSettingsOperations
     :ivar managed_database_advanced_threat_protection_settings:
      ManagedDatabaseAdvancedThreatProtectionSettingsOperations operations
     :vartype managed_database_advanced_threat_protection_settings:
@@ -518,6 +490,51 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
      azure.mgmt.sql.operations.ManagedInstanceAdvancedThreatProtectionSettingsOperations
     :ivar replication_links: ReplicationLinksOperations operations
     :vartype replication_links: azure.mgmt.sql.operations.ReplicationLinksOperations
+    :ivar managed_database_move_operations: ManagedDatabaseMoveOperationsOperations operations
+    :vartype managed_database_move_operations:
+     azure.mgmt.sql.operations.ManagedDatabaseMoveOperationsOperations
+    :ivar managed_instance_dtcs: ManagedInstanceDtcsOperations operations
+    :vartype managed_instance_dtcs: azure.mgmt.sql.operations.ManagedInstanceDtcsOperations
+    :ivar synapse_link_workspaces: SynapseLinkWorkspacesOperations operations
+    :vartype synapse_link_workspaces: azure.mgmt.sql.operations.SynapseLinkWorkspacesOperations
+    :ivar virtual_clusters: VirtualClustersOperations operations
+    :vartype virtual_clusters: azure.mgmt.sql.operations.VirtualClustersOperations
+    :ivar instance_failover_groups: InstanceFailoverGroupsOperations operations
+    :vartype instance_failover_groups: azure.mgmt.sql.operations.InstanceFailoverGroupsOperations
+    :ivar managed_database_restore_details: ManagedDatabaseRestoreDetailsOperations operations
+    :vartype managed_database_restore_details:
+     azure.mgmt.sql.operations.ManagedDatabaseRestoreDetailsOperations
+    :ivar database_encryption_protectors: DatabaseEncryptionProtectorsOperations operations
+    :vartype database_encryption_protectors:
+     azure.mgmt.sql.operations.DatabaseEncryptionProtectorsOperations
+    :ivar managed_databases: ManagedDatabasesOperations operations
+    :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
+    :ivar managed_instances: ManagedInstancesOperations operations
+    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
+    :ivar managed_ledger_digest_uploads: ManagedLedgerDigestUploadsOperations operations
+    :vartype managed_ledger_digest_uploads:
+     azure.mgmt.sql.operations.ManagedLedgerDigestUploadsOperations
+    :ivar recoverable_databases: RecoverableDatabasesOperations operations
+    :vartype recoverable_databases: azure.mgmt.sql.operations.RecoverableDatabasesOperations
+    :ivar restorable_dropped_databases: RestorableDroppedDatabasesOperations operations
+    :vartype restorable_dropped_databases:
+     azure.mgmt.sql.operations.RestorableDroppedDatabasesOperations
+    :ivar server_configuration_options: ServerConfigurationOptionsOperations operations
+    :vartype server_configuration_options:
+     azure.mgmt.sql.operations.ServerConfigurationOptionsOperations
+    :ivar servers: ServersOperations operations
+    :vartype servers: azure.mgmt.sql.operations.ServersOperations
+    :ivar start_stop_managed_instance_schedules: StartStopManagedInstanceSchedulesOperations
+     operations
+    :vartype start_stop_managed_instance_schedules:
+     azure.mgmt.sql.operations.StartStopManagedInstanceSchedulesOperations
+    :ivar transparent_data_encryptions: TransparentDataEncryptionsOperations operations
+    :vartype transparent_data_encryptions:
+     azure.mgmt.sql.operations.TransparentDataEncryptionsOperations
+    :ivar failover_groups: FailoverGroupsOperations operations
+    :vartype failover_groups: azure.mgmt.sql.operations.FailoverGroupsOperations
+    :ivar ipv6_firewall_rules: IPv6FirewallRulesOperations operations
+    :vartype ipv6_firewall_rules: azure.mgmt.sql.operations.IPv6FirewallRulesOperations
     :ivar sql_vulnerability_assessment_baseline: SqlVulnerabilityAssessmentBaselineOperations
      operations
     :vartype sql_vulnerability_assessment_baseline:
@@ -552,47 +569,30 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar sql_vulnerability_assessments: SqlVulnerabilityAssessmentsOperations operations
     :vartype sql_vulnerability_assessments:
      azure.mgmt.sql.operations.SqlVulnerabilityAssessmentsOperations
-    :ivar managed_database_move_operations: ManagedDatabaseMoveOperationsOperations operations
-    :vartype managed_database_move_operations:
-     azure.mgmt.sql.operations.ManagedDatabaseMoveOperationsOperations
-    :ivar managed_instance_dtcs: ManagedInstanceDtcsOperations operations
-    :vartype managed_instance_dtcs: azure.mgmt.sql.operations.ManagedInstanceDtcsOperations
-    :ivar synapse_link_workspaces: SynapseLinkWorkspacesOperations operations
-    :vartype synapse_link_workspaces: azure.mgmt.sql.operations.SynapseLinkWorkspacesOperations
-    :ivar virtual_clusters: VirtualClustersOperations operations
-    :vartype virtual_clusters: azure.mgmt.sql.operations.VirtualClustersOperations
-    :ivar instance_failover_groups: InstanceFailoverGroupsOperations operations
-    :vartype instance_failover_groups: azure.mgmt.sql.operations.InstanceFailoverGroupsOperations
-    :ivar managed_database_restore_details: ManagedDatabaseRestoreDetailsOperations operations
-    :vartype managed_database_restore_details:
-     azure.mgmt.sql.operations.ManagedDatabaseRestoreDetailsOperations
-    :ivar managed_databases: ManagedDatabasesOperations operations
-    :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
-    :ivar database_encryption_protectors: DatabaseEncryptionProtectorsOperations operations
-    :vartype database_encryption_protectors:
-     azure.mgmt.sql.operations.DatabaseEncryptionProtectorsOperations
-    :ivar managed_instances: ManagedInstancesOperations operations
-    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
-    :ivar managed_ledger_digest_uploads: ManagedLedgerDigestUploadsOperations operations
-    :vartype managed_ledger_digest_uploads:
-     azure.mgmt.sql.operations.ManagedLedgerDigestUploadsOperations
-    :ivar recoverable_databases: RecoverableDatabasesOperations operations
-    :vartype recoverable_databases: azure.mgmt.sql.operations.RecoverableDatabasesOperations
-    :ivar restorable_dropped_databases: RestorableDroppedDatabasesOperations operations
-    :vartype restorable_dropped_databases:
-     azure.mgmt.sql.operations.RestorableDroppedDatabasesOperations
-    :ivar server_configuration_options: ServerConfigurationOptionsOperations operations
-    :vartype server_configuration_options:
-     azure.mgmt.sql.operations.ServerConfigurationOptionsOperations
-    :ivar servers: ServersOperations operations
-    :vartype servers: azure.mgmt.sql.operations.ServersOperations
-    :ivar start_stop_managed_instance_schedules: StartStopManagedInstanceSchedulesOperations
-     operations
-    :vartype start_stop_managed_instance_schedules:
-     azure.mgmt.sql.operations.StartStopManagedInstanceSchedulesOperations
-    :ivar transparent_data_encryptions: TransparentDataEncryptionsOperations operations
-    :vartype transparent_data_encryptions:
-     azure.mgmt.sql.operations.TransparentDataEncryptionsOperations
+    :ivar database_sql_vulnerability_assessment_baselines:
+     DatabaseSqlVulnerabilityAssessmentBaselinesOperations operations
+    :vartype database_sql_vulnerability_assessment_baselines:
+     azure.mgmt.sql.operations.DatabaseSqlVulnerabilityAssessmentBaselinesOperations
+    :ivar database_sql_vulnerability_assessment_execute_scan:
+     DatabaseSqlVulnerabilityAssessmentExecuteScanOperations operations
+    :vartype database_sql_vulnerability_assessment_execute_scan:
+     azure.mgmt.sql.operations.DatabaseSqlVulnerabilityAssessmentExecuteScanOperations
+    :ivar database_sql_vulnerability_assessment_rule_baselines:
+     DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations operations
+    :vartype database_sql_vulnerability_assessment_rule_baselines:
+     azure.mgmt.sql.operations.DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations
+    :ivar database_sql_vulnerability_assessment_scan_result:
+     DatabaseSqlVulnerabilityAssessmentScanResultOperations operations
+    :vartype database_sql_vulnerability_assessment_scan_result:
+     azure.mgmt.sql.operations.DatabaseSqlVulnerabilityAssessmentScanResultOperations
+    :ivar database_sql_vulnerability_assessment_scans:
+     DatabaseSqlVulnerabilityAssessmentScansOperations operations
+    :vartype database_sql_vulnerability_assessment_scans:
+     azure.mgmt.sql.operations.DatabaseSqlVulnerabilityAssessmentScansOperations
+    :ivar database_sql_vulnerability_assessments_settings:
+     DatabaseSqlVulnerabilityAssessmentsSettingsOperations operations
+    :vartype database_sql_vulnerability_assessments_settings:
+     azure.mgmt.sql.operations.DatabaseSqlVulnerabilityAssessmentsSettingsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription ID that identifies an Azure subscription. Required.
@@ -613,7 +613,7 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self._config = SqlManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -681,7 +681,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.encryption_protectors = EncryptionProtectorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.failover_groups = FailoverGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.instance_pools = InstancePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_agents = JobAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -875,9 +874,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.server_trust_certificates = ServerTrustCertificatesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.ipv6_firewall_rules = IPv6FirewallRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.endpoint_certificates = EndpointCertificatesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -914,28 +910,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.managed_server_dns_aliases = ManagedServerDnsAliasesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.database_sql_vulnerability_assessment_baselines = DatabaseSqlVulnerabilityAssessmentBaselinesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.database_sql_vulnerability_assessment_execute_scan = (
-            DatabaseSqlVulnerabilityAssessmentExecuteScanOperations(
-                self._client, self._config, self._serialize, self._deserialize
-            )
-        )
-        self.database_sql_vulnerability_assessment_rule_baselines = (
-            DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations(
-                self._client, self._config, self._serialize, self._deserialize
-            )
-        )
-        self.database_sql_vulnerability_assessment_scan_result = DatabaseSqlVulnerabilityAssessmentScanResultOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.database_sql_vulnerability_assessment_scans = DatabaseSqlVulnerabilityAssessmentScansOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.database_sql_vulnerability_assessments_settings = DatabaseSqlVulnerabilityAssessmentsSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.managed_database_advanced_threat_protection_settings = (
             ManagedDatabaseAdvancedThreatProtectionSettingsOperations(
                 self._client, self._config, self._serialize, self._deserialize
@@ -947,6 +921,56 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
             )
         )
         self.replication_links = ReplicationLinksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_database_move_operations = ManagedDatabaseMoveOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_instance_dtcs = ManagedInstanceDtcsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.synapse_link_workspaces = SynapseLinkWorkspacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_clusters = VirtualClustersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.instance_failover_groups = InstanceFailoverGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_database_restore_details = ManagedDatabaseRestoreDetailsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.database_encryption_protectors = DatabaseEncryptionProtectorsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_databases = ManagedDatabasesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_instances = ManagedInstancesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_ledger_digest_uploads = ManagedLedgerDigestUploadsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.recoverable_databases = RecoverableDatabasesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restorable_dropped_databases = RestorableDroppedDatabasesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.server_configuration_options = ServerConfigurationOptionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.start_stop_managed_instance_schedules = StartStopManagedInstanceSchedulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.transparent_data_encryptions = TransparentDataEncryptionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.failover_groups = FailoverGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.ipv6_firewall_rules = IPv6FirewallRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.sql_vulnerability_assessment_baseline = SqlVulnerabilityAssessmentBaselineOperations(
@@ -976,50 +1000,26 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.sql_vulnerability_assessments = SqlVulnerabilityAssessmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.managed_database_move_operations = ManagedDatabaseMoveOperationsOperations(
+        self.database_sql_vulnerability_assessment_baselines = DatabaseSqlVulnerabilityAssessmentBaselinesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.managed_instance_dtcs = ManagedInstanceDtcsOperations(
+        self.database_sql_vulnerability_assessment_execute_scan = (
+            DatabaseSqlVulnerabilityAssessmentExecuteScanOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
+        )
+        self.database_sql_vulnerability_assessment_rule_baselines = (
+            DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
+        )
+        self.database_sql_vulnerability_assessment_scan_result = DatabaseSqlVulnerabilityAssessmentScanResultOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.synapse_link_workspaces = SynapseLinkWorkspacesOperations(
+        self.database_sql_vulnerability_assessment_scans = DatabaseSqlVulnerabilityAssessmentScansOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.virtual_clusters = VirtualClustersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.instance_failover_groups = InstanceFailoverGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.managed_database_restore_details = ManagedDatabaseRestoreDetailsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.managed_databases = ManagedDatabasesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.database_encryption_protectors = DatabaseEncryptionProtectorsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.managed_instances = ManagedInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.managed_ledger_digest_uploads = ManagedLedgerDigestUploadsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.recoverable_databases = RecoverableDatabasesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.restorable_dropped_databases = RestorableDroppedDatabasesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.server_configuration_options = ServerConfigurationOptionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.start_stop_managed_instance_schedules = StartStopManagedInstanceSchedulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.transparent_data_encryptions = TransparentDataEncryptionsOperations(
+        self.database_sql_vulnerability_assessments_settings = DatabaseSqlVulnerabilityAssessmentsSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

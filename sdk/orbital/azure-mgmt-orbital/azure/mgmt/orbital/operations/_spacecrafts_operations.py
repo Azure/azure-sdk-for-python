@@ -50,7 +50,7 @@ def build_list_by_subscription_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+    api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -78,7 +78,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+    api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -112,7 +112,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+    api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -145,7 +145,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+    api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -181,7 +181,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+    api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -214,7 +214,7 @@ def build_update_tags_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+    api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -250,7 +250,7 @@ def build_list_available_contacts_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+    api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -317,7 +317,7 @@ class SpacecraftsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.SpacecraftListResult] = kwargs.pop("cls", None)
@@ -379,7 +379,8 @@ class SpacecraftsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -410,7 +411,7 @@ class SpacecraftsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.SpacecraftListResult] = kwargs.pop("cls", None)
@@ -473,7 +474,8 @@ class SpacecraftsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -508,7 +510,7 @@ class SpacecraftsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.Spacecraft] = kwargs.pop("cls", None)
@@ -533,7 +535,8 @@ class SpacecraftsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Spacecraft", pipeline_response)
 
@@ -551,13 +554,13 @@ class SpacecraftsOperations:
         resource_group_name: str,
         spacecraft_name: str,
         location: str,
+        title_line: str,
+        tle_line1: str,
+        tle_line2: str,
+        links: List[_models.SpacecraftLink],
         tags: Optional[Dict[str, str]] = None,
         provisioning_state: Optional[Union[str, _models.SpacecraftsPropertiesProvisioningState]] = None,
         norad_id: Optional[str] = None,
-        title_line: Optional[str] = None,
-        tle_line1: Optional[str] = None,
-        tle_line2: Optional[str] = None,
-        links: Optional[List[_models.SpacecraftLink]] = None,
         **kwargs: Any
     ) -> _models.Spacecraft:
         error_map = {
@@ -571,7 +574,7 @@ class SpacecraftsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
@@ -611,7 +614,8 @@ class SpacecraftsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 200:
@@ -639,13 +643,13 @@ class SpacecraftsOperations:
         resource_group_name: str,
         spacecraft_name: str,
         location: str,
+        title_line: str,
+        tle_line1: str,
+        tle_line2: str,
+        links: List[_models.SpacecraftLink],
         tags: Optional[Dict[str, str]] = None,
         provisioning_state: Optional[Union[str, _models.SpacecraftsPropertiesProvisioningState]] = None,
         norad_id: Optional[str] = None,
-        title_line: Optional[str] = None,
-        tle_line1: Optional[str] = None,
-        tle_line2: Optional[str] = None,
-        links: Optional[List[_models.SpacecraftLink]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.Spacecraft]:
         """Creates or updates a spacecraft resource.
@@ -657,23 +661,23 @@ class SpacecraftsOperations:
         :type spacecraft_name: str
         :param location: The geo-location where the resource lives. Required.
         :type location: str
+        :param title_line: Title line of the two-line element set (TLE). Required.
+        :type title_line: str
+        :param tle_line1: Line 1 of the two-line element set (TLE). Required.
+        :type tle_line1: str
+        :param tle_line2: Line 2 of the two-line element set (TLE). Required.
+        :type tle_line2: str
+        :param links: Immutable list of Spacecraft links. Required.
+        :type links: list[~azure.mgmt.orbital.models.SpacecraftLink]
         :param tags: Resource tags. Default value is None.
         :type tags: dict[str, str]
         :param provisioning_state: The current state of the resource's creation, deletion, or
-         modification. Known values are: "Creating", "Succeeded", "Failed", "Canceled", "Updating", and
-         "Deleting". Default value is None.
+         modification. Known values are: "creating", "succeeded", "failed", "canceled", "updating", and
+         "deleting". Default value is None.
         :type provisioning_state: str or
          ~azure.mgmt.orbital.models.SpacecraftsPropertiesProvisioningState
         :param norad_id: NORAD ID of the spacecraft. Default value is None.
         :type norad_id: str
-        :param title_line: Title line of the two-line element set (TLE). Default value is None.
-        :type title_line: str
-        :param tle_line1: Line 1 of the two-line element set (TLE). Default value is None.
-        :type tle_line1: str
-        :param tle_line2: Line 2 of the two-line element set (TLE). Default value is None.
-        :type tle_line2: str
-        :param links: Immutable list of Spacecraft links. Default value is None.
-        :type links: list[~azure.mgmt.orbital.models.SpacecraftLink]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -689,7 +693,7 @@ class SpacecraftsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
@@ -702,13 +706,13 @@ class SpacecraftsOperations:
                 resource_group_name=resource_group_name,
                 spacecraft_name=spacecraft_name,
                 location=location,
-                tags=tags,
-                provisioning_state=provisioning_state,
-                norad_id=norad_id,
                 title_line=title_line,
                 tle_line1=tle_line1,
                 tle_line2=tle_line2,
                 links=links,
+                tags=tags,
+                provisioning_state=provisioning_state,
+                norad_id=norad_id,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -759,7 +763,7 @@ class SpacecraftsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -784,7 +788,8 @@ class SpacecraftsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
@@ -821,7 +826,7 @@ class SpacecraftsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -879,7 +884,7 @@ class SpacecraftsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -916,7 +921,8 @@ class SpacecraftsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         response_headers = {}
@@ -1016,8 +1022,8 @@ class SpacecraftsOperations:
         :type resource_group_name: str
         :param spacecraft_name: Spacecraft ID. Required.
         :type spacecraft_name: str
-        :param parameters: Parameters supplied to update spacecraft tags. Is either a model type or a
-         IO type. Required.
+        :param parameters: Parameters supplied to update spacecraft tags. Is either a TagsObject type
+         or a IO type. Required.
         :type parameters: ~azure.mgmt.orbital.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1037,7 +1043,7 @@ class SpacecraftsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1107,7 +1113,7 @@ class SpacecraftsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
@@ -1143,7 +1149,8 @@ class SpacecraftsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         response_headers = {}
@@ -1208,7 +1215,7 @@ class SpacecraftsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
@@ -1281,7 +1288,8 @@ class SpacecraftsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 

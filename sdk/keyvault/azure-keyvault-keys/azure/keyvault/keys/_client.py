@@ -7,7 +7,6 @@ from azure.core.tracing.decorator import distributed_trace
 
 from .crypto import CryptographyClient
 from ._shared import KeyVaultClientBase
-from ._shared.exceptions import error_map as _error_map
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
 from ._models import DeletedKey, KeyVaultKey, KeyProperties, KeyRotationPolicy, ReleaseKeyResult
 
@@ -65,7 +64,20 @@ class KeyClient(KeyVaultClientBase):
         expires_on: "Optional[datetime]",
         exportable: "Optional[bool]" = None,
     ) -> "Optional[KeyAttributes]":
-        """Return a KeyAttributes object if none-None attributes are provided, or None otherwise"""
+        """Return a KeyAttributes object if non-None attributes are provided, or None otherwise.
+
+        :param enabled: Whether the key is enabled.
+        :type enabled: bool or None
+        :param not_before: Not before date of the key in UTC.
+        :type not_before: ~datetime.datetime or None
+        :param expires_on: Expiry date of the key in UTC.
+        :type expires_on: ~datetime.datetime or None
+        :param exportable: Whether the private key can be exported.
+        :type exportable: bool or None
+
+        :returns: An autorest-generated model of the key's attributes.
+        :rtype: KeyAttributes
+        """
         if enabled is not None or not_before is not None or expires_on is not None or exportable is not None:
             return self._models.KeyAttributes(
                 enabled=enabled, not_before=not_before, expires=expires_on, exportable=exportable
@@ -161,7 +173,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
         bundle = self._client.create_key(
-            vault_base_url=self.vault_url, key_name=name, parameters=parameters, error_map=_error_map, **kwargs
+            vault_base_url=self.vault_url, key_name=name, parameters=parameters, **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -299,7 +311,7 @@ class KeyClient(KeyVaultClientBase):
         return self.create_key(name, key_type="oct-HSM" if hsm else "oct", **kwargs)
 
     @distributed_trace
-    def begin_delete_key(self, name: str, **kwargs) -> "LROPoller[DeletedKey]":
+    def begin_delete_key(self, name: str, **kwargs) -> "LROPoller[DeletedKey]":  # pylint:disable=bad-option-value,delete-operation-wrong-return-type
         """Delete all versions of a key and its cryptographic material.
 
         Requires keys/delete permission. When this method returns Key Vault has begun deleting the key. Deletion may
@@ -331,7 +343,7 @@ class KeyClient(KeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         deleted_key = DeletedKey._from_deleted_key_bundle(
-            self._client.delete_key(self.vault_url, name, error_map=_error_map, **kwargs)
+            self._client.delete_key(self.vault_url, name, **kwargs)
         )
 
         command = partial(self.get_deleted_key, name=name, **kwargs)
@@ -355,6 +367,7 @@ class KeyClient(KeyVaultClientBase):
             of the key.
         :type version: str or None
 
+        :returns: The fetched key.
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
         :raises:
@@ -369,7 +382,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key
                 :dedent: 8
         """
-        bundle = self._client.get_key(self.vault_url, name, key_version=version or "", error_map=_error_map, **kwargs)
+        bundle = self._client.get_key(self.vault_url, name, key_version=version or "", **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
@@ -395,7 +408,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a deleted key
                 :dedent: 8
         """
-        bundle = self._client.get_deleted_key(self.vault_url, name, error_map=_error_map, **kwargs)
+        bundle = self._client.get_deleted_key(self.vault_url, name, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -419,7 +432,6 @@ class KeyClient(KeyVaultClientBase):
             self._vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
-            error_map=_error_map,
             **kwargs
         )
 
@@ -444,7 +456,6 @@ class KeyClient(KeyVaultClientBase):
             self._vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
-            error_map=_error_map,
             **kwargs
         )
 
@@ -472,7 +483,6 @@ class KeyClient(KeyVaultClientBase):
             name,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
-            error_map=_error_map,
             **kwargs
         )
 
@@ -501,7 +511,7 @@ class KeyClient(KeyVaultClientBase):
                 key_client.purge_deleted_key("key-name")
 
         """
-        self._client.purge_deleted_key(vault_base_url=self.vault_url, key_name=name, error_map=_error_map, **kwargs)
+        self._client.purge_deleted_key(vault_base_url=self.vault_url, key_name=name, **kwargs)
 
     @distributed_trace
     def begin_recover_deleted_key(self, name: str, **kwargs) -> "LROPoller[KeyVaultKey]":
@@ -536,7 +546,7 @@ class KeyClient(KeyVaultClientBase):
             polling_interval = 2
         recovered_key = KeyVaultKey._from_key_bundle(
             self._client.recover_deleted_key(
-                vault_base_url=self.vault_url, key_name=name, error_map=_error_map, **kwargs
+                vault_base_url=self.vault_url, key_name=name, **kwargs
             )
         )
         command = partial(self.get_key, name=name, **kwargs)
@@ -605,7 +615,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
         bundle = self._client.update_key(
-            self.vault_url, name, key_version=version or "", parameters=parameters, error_map=_error_map, **kwargs
+            self.vault_url, name, key_version=version or "", parameters=parameters, **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -621,6 +631,7 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name of the key to back up
 
+        :returns: The key backup result, in a protected bytes format that can only be used by Azure Key Vault.
         :rtype: bytes
 
         :raises:
@@ -635,7 +646,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key backup
                 :dedent: 8
         """
-        backup_result = self._client.backup_key(self.vault_url, name, error_map=_error_map, **kwargs)
+        backup_result = self._client.backup_key(self.vault_url, name, **kwargs)
         return backup_result.value
 
     @distributed_trace
@@ -668,7 +679,6 @@ class KeyClient(KeyVaultClientBase):
         bundle = self._client.restore_key(
             self.vault_url,
             parameters=self._models.KeyRestoreParameters(key_bundle_backup=backup),
-            error_map=_error_map,
             **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
@@ -724,7 +734,7 @@ class KeyClient(KeyVaultClientBase):
             release_policy=policy,
         )
 
-        bundle = self._client.import_key(self.vault_url, name, parameters=parameters, error_map=_error_map, **kwargs)
+        bundle = self._client.import_key(self.vault_url, name, parameters=parameters, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace

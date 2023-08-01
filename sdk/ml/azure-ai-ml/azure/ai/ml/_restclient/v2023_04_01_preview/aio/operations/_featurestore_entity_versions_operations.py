@@ -56,6 +56,12 @@ class FeaturestoreEntityVersionsOperations:
         skip: Optional[str] = None,
         tags: Optional[str] = None,
         list_view_type: Optional[Union[str, "_models.ListViewType"]] = None,
+        page_size: Optional[int] = 20,
+        version_name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        created_by: Optional[str] = None,
+        stage: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.FeaturestoreEntityVersionResourceArmPaginatedResult"]:
         """List versions.
@@ -76,6 +82,18 @@ class FeaturestoreEntityVersionsOperations:
         :param list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly,
          ListViewType.All]View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :param page_size: page size.
+        :type page_size: int
+        :param version_name: name for the featurestore entity version.
+        :type version_name: str
+        :param version: featurestore entity version.
+        :type version: str
+        :param description: description for the feature entity version.
+        :type description: str
+        :param created_by: createdBy user name.
+        :type created_by: str
+        :param stage: Specifies the featurestore stage.
+        :type stage: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either
          FeaturestoreEntityVersionResourceArmPaginatedResult or the result of cls(response)
@@ -102,6 +120,12 @@ class FeaturestoreEntityVersionsOperations:
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    version_name=version_name,
+                    version=version,
+                    description=description,
+                    created_by=created_by,
+                    stage=stage,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -118,6 +142,12 @@ class FeaturestoreEntityVersionsOperations:
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    version_name=version_name,
+                    version=version,
+                    description=description,
+                    created_by=created_by,
+                    stage=stage,
                     template_url=next_link,
                 )
                 request = _convert_request(request)

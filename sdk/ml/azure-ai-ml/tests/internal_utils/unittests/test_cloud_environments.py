@@ -128,7 +128,6 @@ class TestCloudEnvironments:
     @mock.patch.dict(os.environ, {}, clear=True)
     @mock.patch("azure.mgmt.core.ARMPipelineClient.send_request", side_effect=mocked_send_request_get)
     def test_get_cloud_from_arm(self, mock_arm_pipeline_client_send_request):
-
         _set_cloud("TEST_ENV")
         cloud_details = _get_cloud_information_from_metadata("TEST_ENV")
         assert cloud_details.get("cloud") == "TEST_ENV"

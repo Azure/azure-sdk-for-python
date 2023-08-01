@@ -49,6 +49,9 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UPLOAD_PREPARED_SECURE = "UploadPreparedSecure"
     """Similar to Upload create option. Create a new Trusted Launch VM or Confidential VM supported
     #: disk and upload using write token in both disk and VM guest state"""
+    IMPORT_ENUM = "Import"
+    """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
+    #: by storageAccountId."""
 
 
 class DiskEncryptionSetIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -483,8 +483,8 @@ class GlobalParametersOperations:
         :type factory_name: str
         :param global_parameter_name: The global parameter name. Required.
         :type global_parameter_name: str
-        :param default: Global parameter resource definition. Is either a model type or a IO type.
-         Required.
+        :param default: Global parameter resource definition. Is either a GlobalParameterResource type
+         or a IO type. Required.
         :type default: ~azure.mgmt.datafactory.models.GlobalParameterResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

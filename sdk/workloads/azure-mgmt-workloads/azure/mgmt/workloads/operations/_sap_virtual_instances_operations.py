@@ -30,7 +30,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import WorkloadsClientMixinABC, _convert_request, _format_url_section
+from .._vendor import WorkloadsMgmtClientMixinABC, _convert_request, _format_url_section
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -49,9 +49,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -87,9 +85,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -122,9 +118,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -160,9 +154,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -193,9 +185,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -225,9 +215,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -255,9 +243,7 @@ def build_start_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -290,9 +276,7 @@ def build_stop_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -328,7 +312,7 @@ class SAPVirtualInstancesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.workloads.WorkloadsClient`'s
+        :class:`~azure.mgmt.workloads.WorkloadsMgmtClient`'s
         :attr:`sap_virtual_instances` attribute.
     """
 
@@ -359,7 +343,7 @@ class SAPVirtualInstancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -507,8 +491,8 @@ class SAPVirtualInstancesOperations:
         :param sap_virtual_instance_name: The name of the Virtual Instances for SAP solutions resource.
          Required.
         :type sap_virtual_instance_name: str
-        :param body: Virtual Instance for SAP solutions resource request body. Is either a model type
-         or a IO type. Default value is None.
+        :param body: Virtual Instance for SAP solutions resource request body. Is either a
+         SAPVirtualInstance type or a IO type. Default value is None.
         :type body: ~azure.mgmt.workloads.models.SAPVirtualInstance or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -529,7 +513,7 @@ class SAPVirtualInstancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -606,7 +590,7 @@ class SAPVirtualInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.SAPVirtualInstance] = kwargs.pop("cls", None)
@@ -722,7 +706,7 @@ class SAPVirtualInstancesOperations:
          Required.
         :type sap_virtual_instance_name: str
         :param body: Request body to update a Virtual Instance for SAP solutions resource. Is either a
-         model type or a IO type. Default value is None.
+         UpdateSAPVirtualInstanceRequest type or a IO type. Default value is None.
         :type body: ~azure.mgmt.workloads.models.UpdateSAPVirtualInstanceRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -743,7 +727,7 @@ class SAPVirtualInstancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -811,7 +795,7 @@ class SAPVirtualInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[Optional[_models.OperationStatusResult]] = kwargs.pop("cls", None)
@@ -881,7 +865,7 @@ class SAPVirtualInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
@@ -942,7 +926,7 @@ class SAPVirtualInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.SAPVirtualInstanceList] = kwargs.pop("cls", None)
@@ -1027,7 +1011,7 @@ class SAPVirtualInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.SAPVirtualInstanceList] = kwargs.pop("cls", None)
@@ -1113,7 +1097,7 @@ class SAPVirtualInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[Optional[_models.OperationStatusResult]] = kwargs.pop("cls", None)
@@ -1183,7 +1167,7 @@ class SAPVirtualInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
@@ -1247,7 +1231,7 @@ class SAPVirtualInstancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1399,7 +1383,7 @@ class SAPVirtualInstancesOperations:
          Required.
         :type sap_virtual_instance_name: str
         :param body: The Virtual Instance for SAP solutions resource stop request body. Is either a
-         model type or a IO type. Default value is None.
+         StopRequest type or a IO type. Default value is None.
         :type body: ~azure.mgmt.workloads.models.StopRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1420,7 +1404,7 @@ class SAPVirtualInstancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-04-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))

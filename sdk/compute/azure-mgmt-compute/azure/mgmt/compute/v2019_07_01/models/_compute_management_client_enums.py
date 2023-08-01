@@ -86,6 +86,9 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UPLOAD = "Upload"
     """Create a new disk by obtaining a write token and using it to directly upload the contents of
     #: the disk."""
+    IMPORT_ENUM = "Import"
+    """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
+    #: by storageAccountId."""
 
 
 class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -16,6 +16,5 @@ class Go(Common):
         self.file_out_name = 'release_go_status.md'
 
 
-def go_process(issues: List[Any]):
-    instance = Go(issues, _GO_OWNER, _GO_ASSIGNEE)
-    instance.run()
+def go_process(issues: List[Any]) -> Go:
+    return Go(issues, _GO_OWNER, _GO_ASSIGNEE)

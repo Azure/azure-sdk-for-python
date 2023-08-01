@@ -1,5 +1,16 @@
 # Release History
 
+## 11.0.0 (2023-04-14)
+
+### Features Added
+
+  - Model Eventhub has a new parameter retention_description
+
+### Breaking Changes
+
+  - Model NetworkSecurityPerimeterConfiguration no longer has parameter location
+  - Model NetworkSecurityPerimeterConfiguration no longer has parameter tags
+
 ## 11.0.0b1 (2023-02-14)
 
 ### Features Added

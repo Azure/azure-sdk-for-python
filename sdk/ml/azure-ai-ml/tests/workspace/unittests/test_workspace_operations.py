@@ -22,13 +22,13 @@ def mock_credential() -> Mock:
 @pytest.fixture
 def mock_workspace_operation(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2022_12_01_preview: Mock,
+    mock_aml_services_2023_06_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
 ) -> WorkspaceOperations:
     yield WorkspaceOperations(
         operation_scope=mock_workspace_scope,
-        service_client=mock_aml_services_2022_12_01_preview,
+        service_client=mock_aml_services_2023_06_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
     )
@@ -95,6 +95,11 @@ class TestWorkspaceOperation:
         mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True)
         mock_workspace_operation._operation.begin_delete.assert_called_once()
 
+    def test_purge(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
+        mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
+        mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True, permanently_delete=True)
+        mock_workspace_operation._operation.begin_delete.assert_called_once()
+
     def test_begin_diagnose_no_wait(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
         mock_workspace_operation.begin_diagnose(name="random_name")
         mock_workspace_operation._operation.begin_diagnose.assert_called_once()
@@ -111,3 +116,8 @@ class TestWorkspaceOperation:
         assert isinstance(wps.identity, IdentityConfiguration)
         assert isinstance(wps.identity.user_assigned_identities, list)
         assert isinstance(wps.identity.user_assigned_identities[0], ManagedIdentityConfiguration)
+
+    def test_load_workspace_with_workspacehub_yaml(self, mock_workspace_operation: WorkspaceOperations):
+        params_override = []
+        wps = load_workspace("./tests/test_configs/workspace/workspace_with_hub.yaml", params_override=params_override)
+        assert isinstance(wps.workspace_hub, str)

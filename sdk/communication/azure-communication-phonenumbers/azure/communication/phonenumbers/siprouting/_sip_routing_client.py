@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING  # pylint: disable=unused-import
 from urllib.parse import urlparse
 
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.paging import ItemPaged
 
 from._models import SipTrunk, SipTrunkRoute
 from ._generated.models import (
@@ -16,10 +17,8 @@ from ._generated.models import (
     SipTrunkRouteInternal
 )
 from ._generated._client import SIPRoutingService
-from .._shared.utils import (
-    parse_connection_str,
-    get_authentication_policy
-)
+from .._shared.auth_policy_utils import get_authentication_policy
+from .._shared.utils import parse_connection_str
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
@@ -53,7 +52,7 @@ class SipRoutingClient(object):
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Host URL must be a string")
+            raise ValueError("Host URL must be a string") # pylint:disable=raise-missing-from
 
         parsed_url = urlparse(endpoint.rstrip("/"))
         if not parsed_url.netloc:
@@ -152,35 +151,54 @@ class SipRoutingClient(object):
     def list_trunks(
         self,
         **kwargs  # type: Any
-    ):  # type: (...) -> Iterable[SipTrunk]
-        """Retrieves an iterable of currently configured SIP trunks.
+    ):  # type: (...) -> ItemPaged[SipTrunk]
+        """Retrieves the currently configured SIP trunks.
 
         :returns: Current SIP trunks configuration.
-        :rtype: Iterable[~azure.communication.siprouting.models.SipTrunk]
+        :rtype: ItemPaged[~azure.communication.siprouting.models.SipTrunk]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._list_trunks_(**kwargs)
+        def extract_data(config):
+            list_of_elem = [SipTrunk(
+                fqdn=k,
+                sip_signaling_port=v.sip_signaling_port) for k,v in config.trunks.items()]
+            return None, list_of_elem
+
+        # pylint: disable=unused-argument
+        def get_next(nextLink=None):
+            return self._rest_service.sip_routing.get(
+                **kwargs
+                )
+
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_routes(
         self,
         **kwargs  # type: Any
-    ):  # type: (...) -> Iterable[SipTrunkRoute]
-        """Retrieves an iterable of currently configured SIP routes.
+    ):  # type: (...) -> ItemPaged[SipTrunkRoute]
+        """Retrieves the currently configured SIP routes.
 
         :returns: Current SIP routes configuration.
-        :rtype: Iterable[~azure.communication.siprouting.models.SipTrunkRoute]
+        :rtype: ItemPaged[~azure.communication.siprouting.models.SipTrunkRoute]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        config = self._rest_service.sip_routing.get(
-            **kwargs
-        )
-        return [SipTrunkRoute(
-            description=x.description,
-            name=x.name,
-            number_pattern=x.number_pattern,
-            trunks=x.trunks
-            ) for x in config.routes]
+
+        def extract_data(config):
+            list_of_elem =  [SipTrunkRoute(
+                description=x.description,
+                name=x.name,
+                number_pattern=x.number_pattern,
+                trunks=x.trunks) for x in config.routes]
+            return None, list_of_elem
+
+        # pylint: disable=unused-argument
+        def get_next(nextLink=None):
+            return  self._rest_service.sip_routing.get(
+                **kwargs
+            )
+
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def set_trunks(

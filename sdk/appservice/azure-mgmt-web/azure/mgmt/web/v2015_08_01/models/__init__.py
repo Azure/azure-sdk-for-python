@@ -32,52 +32,48 @@ from ._models_py3 import ServiceSpecification
 from ._models_py3 import SiteSeal
 from ._models_py3 import SiteSealRequest
 
-
-from ._web_site_management_client_enums import (
-    AppServiceCertificateOrderPatchResourcePropertiesAppServiceCertificateNotRenewableReasonsItem,
-    AppServiceCertificateOrderPropertiesAppServiceCertificateNotRenewableReasonsItem,
-    CertificateOrderActionType,
-    CertificateOrderStatus,
-    CertificateProductType,
-    KeyVaultSecretStatus,
-    ProvisioningState,
-)
+from ._web_site_management_client_enums import CertificateOrderActionType
+from ._web_site_management_client_enums import CertificateOrderStatus
+from ._web_site_management_client_enums import CertificateProductType
+from ._web_site_management_client_enums import KeyVaultSecretStatus
+from ._web_site_management_client_enums import ProvisioningState
+from ._web_site_management_client_enums import ResourceNotRenewableReason
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AppServiceCertificate',
-    'AppServiceCertificateCollection',
-    'AppServiceCertificateOrder',
-    'AppServiceCertificateOrderCollection',
-    'AppServiceCertificateOrderPatchResource',
-    'AppServiceCertificatePatchResource',
-    'AppServiceCertificateResource',
-    'CertificateDetails',
-    'CertificateEmail',
-    'CertificateOrderAction',
-    'CsmOperationCollection',
-    'CsmOperationDescription',
-    'CsmOperationDescriptionProperties',
-    'CsmOperationDisplay',
-    'Dimension',
-    'MetricAvailability',
-    'MetricSpecification',
-    'NameIdentifier',
-    'ProxyOnlyResource',
-    'ReissueCertificateOrderRequest',
-    'RenewCertificateOrderRequest',
-    'Resource',
-    'ServiceSpecification',
-    'SiteSeal',
-    'SiteSealRequest',
-    'AppServiceCertificateOrderPatchResourcePropertiesAppServiceCertificateNotRenewableReasonsItem',
-    'AppServiceCertificateOrderPropertiesAppServiceCertificateNotRenewableReasonsItem',
-    'CertificateOrderActionType',
-    'CertificateOrderStatus',
-    'CertificateProductType',
-    'KeyVaultSecretStatus',
-    'ProvisioningState',
+    "AppServiceCertificate",
+    "AppServiceCertificateCollection",
+    "AppServiceCertificateOrder",
+    "AppServiceCertificateOrderCollection",
+    "AppServiceCertificateOrderPatchResource",
+    "AppServiceCertificatePatchResource",
+    "AppServiceCertificateResource",
+    "CertificateDetails",
+    "CertificateEmail",
+    "CertificateOrderAction",
+    "CsmOperationCollection",
+    "CsmOperationDescription",
+    "CsmOperationDescriptionProperties",
+    "CsmOperationDisplay",
+    "Dimension",
+    "MetricAvailability",
+    "MetricSpecification",
+    "NameIdentifier",
+    "ProxyOnlyResource",
+    "ReissueCertificateOrderRequest",
+    "RenewCertificateOrderRequest",
+    "Resource",
+    "ServiceSpecification",
+    "SiteSeal",
+    "SiteSealRequest",
+    "CertificateOrderActionType",
+    "CertificateOrderStatus",
+    "CertificateProductType",
+    "KeyVaultSecretStatus",
+    "ProvisioningState",
+    "ResourceNotRenewableReason",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

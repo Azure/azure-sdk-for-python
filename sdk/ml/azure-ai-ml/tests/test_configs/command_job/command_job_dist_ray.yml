@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=https://azuremlsdk2.blob.core.windows.net/latest/commandJob.schema.json
+name: ray_dist
+experiment_name: ray-test
+command: ray status;
+compute: azureml:testCompute
+environment:
+  image: rayproject/ray:latest
+distribution:
+  type: "ray"
+resources:
+  instance_count: 2

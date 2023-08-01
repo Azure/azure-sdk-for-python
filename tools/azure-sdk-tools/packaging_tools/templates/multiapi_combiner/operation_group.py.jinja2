@@ -6,7 +6,7 @@
 class {{ operation_group.name }}{{ "(" + operation_group.name.replace("Operations", "") + "ABC)" if operation_group.is_mixin else "" }}:
 {% if not operation_group.is_mixin %}
     """
-    {{ operation_group.generated_class(async_mode).__doc__ }}
+    {{ operation_group.doc(async_mode) }}
     """
     models = _models
 
@@ -17,6 +17,9 @@ class {{ operation_group.name }}{{ "(" + operation_group.name.replace("Operation
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
+{% else %}
+    def _api_version(self, op_name: str) -> str:
+       return self._get_api_version(op_name)
 
 {% endif %}
     {% for operation in operation_group.operations %}

@@ -6,9 +6,9 @@
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import Classification as RestClassification
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ClassificationPrimaryMetrics, JobBase, TaskType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Classification as RestClassification
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ClassificationPrimaryMetrics, JobBase, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants
@@ -31,8 +31,6 @@ class ClassificationJob(AutoMLTabular):
     :paramtype primary_metric: typing.Optional[str]
     :keyword positive_label: Positive label for binary metrics calculation, defaults to None
     :paramtype positive_label: typing.Optional[str]
-    :keyword kwargs: Additional keyword arguments
-    :paramtype kwargs: typing.Any
     :keyword featurization: Featurization settings. Defaults to None.
     :paramtype featurization: typing.Optional[TabularFeaturizationSettings]
     :keyword limits: Limits settings. Defaults to None.
@@ -63,16 +61,12 @@ class ClassificationJob(AutoMLTabular):
         :paramtype primary_metric: typing.Optional[str]
         :keyword positive_label: Positive label for binary metrics calculation, defaults to None
         :paramtype positive_label: typing.Optional[str]
-        :keyword kwargs: Additional keyword arguments
-        :paramtype kwargs: typing.Any
         :keyword featurization: featurization settings. Defaults to None.
         :paramtype featurization: typing.Optional[TabularFeaturizationSettings]
         :keyword limits: limits settings. Defaults to None.
         :paramtype limits: typing.Optional[TabularLimitSettings]
         :keyword training: training settings. Defaults to None.
         :paramtype training: typing.Optional[TrainingSettings]
-        :return: An instance of ClassificationJob object.
-        :rtype: ~azure.ai.ml.entities.automl.ClassificationJob
         :raises ValueError: If primary_metric is not a valid primary metric
         :raises ValueError: If positive_label is not a valid positive label
         :raises ValueError: If featurization is not a valid featurization settings
@@ -324,8 +318,8 @@ class ClassificationJob(AutoMLTabular):
         This method check instances equality and returns True if both of
             the instances have the same attributes with the same values.
 
-        :param other: An instance of ClassificationJob
-        :type other: ClassificationJob
+        :param other: Any object
+        :type other: object
         :return: True or False
         :rtype: bool
         """
@@ -340,8 +334,8 @@ class ClassificationJob(AutoMLTabular):
     def __ne__(self, other):
         """Check inequality between two ImageLimitSettings objects.
 
-        :param other: An instance of ClassificationJob
-        :type other: ClassificationJob
+        :param other: Any object
+        :type other: object
         :return: True or False
         :rtype: bool
         """

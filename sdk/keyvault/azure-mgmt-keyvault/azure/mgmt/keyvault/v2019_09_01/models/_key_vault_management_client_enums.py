@@ -38,6 +38,7 @@ class CertificatePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PURGE = "purge"
     BACKUP = "backup"
     RESTORE = "restore"
+    IMPORT_ENUM = "import"
 
 
 class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -57,18 +58,6 @@ class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RECOVERABLE_PURGEABLE = "Recoverable+Purgeable"
     RECOVERABLE = "Recoverable"
     RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"
-
-
-class Enum10(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum10."""
-
-    RESOURCE_TYPE_EQ_MICROSOFT_KEY_VAULT_VAULTS_ = "resourceType eq 'Microsoft.KeyVault/vaults'"
-
-
-class Enum11(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum11."""
-
-    TWO_THOUSAND_FIFTEEN11_01 = "2015-11-01"
 
 
 class JsonWebKeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -92,6 +81,7 @@ class JsonWebKeyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WRAP_KEY = "wrapKey"
     UNWRAP_KEY = "unwrapKey"
     IMPORT = "import"
+    IMPORT_ENUM = "import"
 
 
 class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -123,6 +113,7 @@ class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESTORE = "restore"
     RECOVER = "recover"
     PURGE = "purge"
+    IMPORT_ENUM = "import"
 
 
 class NetworkRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):

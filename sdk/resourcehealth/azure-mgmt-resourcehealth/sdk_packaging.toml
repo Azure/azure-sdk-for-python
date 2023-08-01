@@ -6,4 +6,4 @@ package_doc_id = ""
 is_stable = false
 is_arm = true
 sample_link = ""
-title = "MicrosoftResourceHealth"
+title = "ResourceHealthMgmtClient"

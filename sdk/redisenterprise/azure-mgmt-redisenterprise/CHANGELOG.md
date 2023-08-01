@@ -1,5 +1,23 @@
 # Release History
 
+## 2.1.0b2 (2023-04-20)
+
+### Features Added
+
+  - Added operation DatabasesOperations.begin_flush
+  - Added operation group SkusOperations
+  - Model Cluster has a new parameter encryption
+  - Model Cluster has a new parameter identity
+  - Model Cluster has a new parameter system_data
+  - Model ClusterUpdate has a new parameter encryption
+  - Model ClusterUpdate has a new parameter identity
+  - Model Database has a new parameter system_data
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model PrivateLinkResource has a new parameter system_data
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+
 ## 2.1.0b1 (2022-11-22)
 
 ### Other Changes

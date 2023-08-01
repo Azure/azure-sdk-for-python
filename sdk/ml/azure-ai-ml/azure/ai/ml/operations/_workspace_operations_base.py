@@ -9,8 +9,8 @@ from typing import Callable, Dict, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
@@ -28,13 +28,7 @@ from azure.ai.ml._utils._workspace_utils import (
     get_resource_and_group_name,
     get_resource_group_location,
 )
-from azure.ai.ml._utils._appinsights_utils import (
-    default_resource_group_for_app_insights_exists,
-    default_log_analytics_workspace_exists,
-    get_default_resource_group_deployment,
-    get_default_log_analytics_deployment,
-    get_default_log_analytics_arm_id,
-)
+from azure.ai.ml._utils._appinsights_utils import get_log_analytics_arm_id
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
@@ -43,6 +37,7 @@ from azure.ai.ml.entities import (
     Workspace,
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND, WORKSPACE_HUB_KIND
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller, PollingMethod
@@ -57,7 +52,7 @@ class WorkspaceOperationsBase:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient122022Preview,
+        service_client: ServiceClient062023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -120,6 +115,26 @@ class WorkspaceOperationsBase:
 
         workspace.resource_group = resource_group
         template, param, resources_being_deployed = self._populate_arm_paramaters(workspace, **kwargs)
+        # check if create with workspace hub request is valid
+        if workspace._kind == PROJECT_WORKSPACE_KIND:
+            if not all(
+                x is None
+                for x in [
+                    workspace.storage_account,
+                    workspace.container_registry,
+                    workspace.key_vault,
+                    workspace.public_network_access,
+                    workspace.managed_network,
+                    workspace.customer_managed_key,
+                ]
+            ):
+                msg = "To create a project workspace with a workspace hub, please only specify name, description, display_name, location, application insight and identity"
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.WORKSPACE,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
 
         arm_submit = ArmDeploymentExecutor(
             credentials=self._credentials,
@@ -260,10 +275,21 @@ class WorkspaceOperationsBase:
         poller = self._operation.begin_update(resource_group, workspace_name, update_param, polling=True, cls=callback)
         return poller
 
-    def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
+    def begin_delete(
+        self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
+    ) -> LROPoller[None]:
         workspace = self.get(name, **kwargs)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
-        if delete_dependent_resources:
+
+        # prevent dependent resource delete for lean workspace, only delete appinsight
+        if workspace._kind == PROJECT_WORKSPACE_KIND and delete_dependent_resources:
+            delete_resource_by_arm_id(
+                self._credentials,
+                self._subscription_id,
+                workspace.application_insights,
+                ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
+            )
+        elif delete_dependent_resources:
             delete_resource_by_arm_id(
                 self._credentials,
                 self._subscription_id,
@@ -288,9 +314,11 @@ class WorkspaceOperationsBase:
                 workspace.container_registry,
                 ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
             )
+
         poller = self._operation.begin_delete(
             resource_group_name=resource_group,
             workspace_name=name,
+            force_to_purge=permanently_delete,
             **self._init_kwargs,
         )
         module_logger.info("Delete request initiated for workspace: %s\n", name)
@@ -303,9 +331,10 @@ class WorkspaceOperationsBase:
             workspace.location = get_resource_group_location(
                 self._credentials, self._subscription_id, workspace.resource_group
             )
-
         template = get_template(resource_type=ArmConstants.WORKSPACE_BASE)
         param = get_template(resource_type=ArmConstants.WORKSPACE_PARAM)
+        if workspace._kind == PROJECT_WORKSPACE_KIND:
+            template = get_template(resource_type=ArmConstants.WORKSPACE_PROJECT)
         _set_val(param["workspaceName"], workspace.name)
         if not workspace.display_name:
             _set_val(param["friendlyName"], workspace.name)
@@ -360,62 +389,12 @@ class WorkspaceOperationsBase:
                 group_name,
             )
         else:
-            # if workspace is located in a region where app insights is not supported, we do this swap
-            if workspace.location in ["westcentralus", "eastus2euap", "centraluseuap"]:
-                app_insights_location = "southcentralus"
-            else:
-                app_insights_location = workspace.location
-            # check if default resource group already exists
-            rg_is_existing = default_resource_group_for_app_insights_exists(
-                self._credentials, self._subscription_id, app_insights_location
+            log_analytics = _generate_log_analytics(workspace.name, resources_being_deployed)
+            _set_val(param["logAnalyticsName"], log_analytics)
+            _set_val(
+                param["logAnalyticsArmId"],
+                get_log_analytics_arm_id(self._subscription_id, self._resource_group_name, log_analytics),
             )
-            # if default resource group does not exist yet, create rg and log analytics
-            if not rg_is_existing:
-                # add resource group and log analytics deployments to resources
-                deployment_string = get_deployment_name("")
-                app_insights_resource_group_deployment_name = f"DeployResourceGroup{deployment_string}"
-                app_insights_log_workspace_deployment_name = f"DeployLogWorkspace{deployment_string}"
-                template["resources"].append(
-                    get_default_resource_group_deployment(
-                        app_insights_resource_group_deployment_name, app_insights_location, self._subscription_id
-                    )
-                )
-                log_analytics_deployment = get_default_log_analytics_deployment(
-                    app_insights_log_workspace_deployment_name, app_insights_location, self._subscription_id
-                )
-                log_analytics_deployment["dependsOn"] = [app_insights_resource_group_deployment_name]
-                template["resources"].append(log_analytics_deployment)
-                for resource in template["resources"]:
-                    if resource["type"] == "Microsoft.Insights/components":
-                        resource["dependsOn"] = [app_insights_log_workspace_deployment_name]
-            # if default resource group exists, check default log analytics exists
-            else:
-                # check if default log analytics workspace already exists
-                la_is_existing = default_log_analytics_workspace_exists(
-                    self._credentials, self._subscription_id, app_insights_location
-                )
-                # if this does not exist yet, add the deployment needed to resources
-                if not la_is_existing:
-                    deployment_string = get_deployment_name("")
-                    app_insights_log_workspace_deployment_name = f"DeployLogWorkspace{deployment_string}"
-                    template["resources"].append(
-                        get_default_log_analytics_deployment(
-                            app_insights_log_workspace_deployment_name, app_insights_location, self._subscription_id
-                        )
-                    )
-                    for resource in template["resources"]:
-                        if resource["type"] == "Microsoft.Insights/components":
-                            resource["dependsOn"] = [app_insights_log_workspace_deployment_name]
-
-            # add WorkspaceResourceId property to app insights in template
-            for resource in template["resources"]:
-                if resource["type"] == "Microsoft.Insights/components":
-                    resource["properties"] = {
-                        "Application_Type": "web",
-                        "WorkspaceResourceId": get_default_log_analytics_arm_id(
-                            self._subscription_id, app_insights_location
-                        ),
-                    }
 
             app_insights = _generate_app_insights(workspace.name, resources_being_deployed)
             _set_val(param["applicationInsightsName"], app_insights)
@@ -486,18 +465,27 @@ class WorkspaceOperationsBase:
                 if workspace._feature_store_settings.offline_store_connection_name
                 else "",
             )
-            _set_val(param["online_store_connection_name"], "")
+            _set_val(
+                param["online_store_connection_name"],
+                workspace._feature_store_settings.online_store_connection_name
+                if workspace._feature_store_settings.online_store_connection_name
+                else "",
+            )
 
         setup_materialization_store = False
         if workspace._kind and workspace._kind.lower() == "featurestore":
             materialization_identity = kwargs.get("materialization_identity", None)
             offline_store_target = kwargs.get("offline_store_target", None)
+            online_store_target = kwargs.get("online_store_target", None)
 
-            setup_materialization_store = offline_store_target and materialization_identity
+            setup_materialization_store = (offline_store_target or online_store_target) and materialization_identity
 
         _set_val(param["setup_materialization_store"], "true" if setup_materialization_store else "false")
         if setup_materialization_store:
-            _set_val(param["offline_store_connection_target"], offline_store_target)
+            if offline_store_target is not None:
+                _set_val(param["offline_store_connection_target"], offline_store_target)
+            if online_store_target is not None:
+                _set_val(param["online_store_connection_target"], online_store_target)
             _set_val(param["materialization_identity_client_id"], materialization_identity.client_id)
             _set_val(param["materialization_identity_resource_id"], materialization_identity.resource_id)
 
@@ -507,6 +495,20 @@ class WorkspaceOperationsBase:
         else:
             managed_network = ManagedNetwork(IsolationMode.DISABLED)._to_rest_object()
         _set_val(param["managedNetwork"], managed_network)
+        if workspace.enable_data_isolation:
+            _set_val(param["enable_data_isolation"], "true")
+
+        # Hub related param
+        if workspace._kind and workspace._kind.lower() == WORKSPACE_HUB_KIND:
+            if workspace.workspace_hub_config:
+                _set_val(param["workspace_hub_config"], workspace.workspace_hub_config._to_rest_object())
+            if workspace.existing_workspaces:
+                _set_val(param["existing_workspaces"], workspace.existing_workspaces)
+
+        # Lean related param
+        if workspace._kind and workspace._kind.lower() == PROJECT_WORKSPACE_KIND:
+            if workspace.workspace_hub:
+                _set_val(param["workspace_hub"], workspace.workspace_hub)
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed
@@ -541,6 +543,15 @@ def _generate_storage(name: str, resources_being_deployed: dict) -> str:
     storage = get_name_for_dependent_resource(name, "storage")
     resources_being_deployed[storage] = (ArmConstants.STORAGE, None)
     return storage
+
+
+def _generate_log_analytics(name: str, resources_being_deployed: dict) -> str:
+    log_analytics = get_name_for_dependent_resource(name, "logalytics")  # cspell:disable-line
+    resources_being_deployed[log_analytics] = (
+        ArmConstants.LOG_ANALYTICS,
+        None,
+    )
+    return log_analytics
 
 
 def _generate_app_insights(name: str, resources_being_deployed: dict) -> str:

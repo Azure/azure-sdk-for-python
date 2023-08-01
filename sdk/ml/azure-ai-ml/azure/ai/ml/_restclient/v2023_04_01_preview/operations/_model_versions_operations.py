@@ -51,6 +51,7 @@ def build_list_request(
     tags = kwargs.pop('tags', None)  # type: Optional[str]
     properties = kwargs.pop('properties', None)  # type: Optional[str]
     feed = kwargs.pop('feed', None)  # type: Optional[str]
+    stage = kwargs.pop('stage', None)  # type: Optional[str]
     list_view_type = kwargs.pop('list_view_type', None)  # type: Optional[Union[str, "_models.ListViewType"]]
 
     accept = "application/json"
@@ -86,6 +87,8 @@ def build_list_request(
         _query_parameters['properties'] = _SERIALIZER.query("properties", properties, 'str')
     if feed is not None:
         _query_parameters['feed'] = _SERIALIZER.query("feed", feed, 'str')
+    if stage is not None:
+        _query_parameters['stage'] = _SERIALIZER.query("stage", stage, 'str')
     if list_view_type is not None:
         _query_parameters['listViewType'] = _SERIALIZER.query("list_view_type", list_view_type, 'str')
 
@@ -309,6 +312,7 @@ class ModelVersionsOperations(object):
         tags=None,  # type: Optional[str]
         properties=None,  # type: Optional[str]
         feed=None,  # type: Optional[str]
+        stage=None,  # type: Optional[str]
         list_view_type=None,  # type: Optional[Union[str, "_models.ListViewType"]]
         **kwargs  # type: Any
     ):
@@ -343,6 +347,8 @@ class ModelVersionsOperations(object):
         :type properties: str
         :param feed: Name of the feed.
         :type feed: str
+        :param stage: Model stage.
+        :type stage: str
         :param list_view_type: View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -377,6 +383,7 @@ class ModelVersionsOperations(object):
                     tags=tags,
                     properties=properties,
                     feed=feed,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=self.list.metadata['url'],
                 )
@@ -400,6 +407,7 @@ class ModelVersionsOperations(object):
                     tags=tags,
                     properties=properties,
                     feed=feed,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=next_link,
                 )

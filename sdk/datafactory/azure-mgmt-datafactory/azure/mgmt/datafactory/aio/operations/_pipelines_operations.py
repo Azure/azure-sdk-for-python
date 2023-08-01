@@ -247,7 +247,8 @@ class PipelinesOperations:
         :type factory_name: str
         :param pipeline_name: The pipeline name. Required.
         :type pipeline_name: str
-        :param pipeline: Pipeline resource definition. Is either a model type or a IO type. Required.
+        :param pipeline: Pipeline resource definition. Is either a PipelineResource type or a IO type.
+         Required.
         :type pipeline: ~azure.mgmt.datafactory.models.PipelineResource or IO
         :param if_match: ETag of the pipeline entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.
@@ -599,7 +600,7 @@ class PipelinesOperations:
          is None.
         :type start_from_failure: bool
         :param parameters: Parameters of the pipeline run. These parameters will be used only if the
-         runId is not specified. Is either a dict type or a IO type. Default value is None.
+         runId is not specified. Is either a {str: JSON} type or a IO type. Default value is None.
         :type parameters: dict[str, JSON] or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

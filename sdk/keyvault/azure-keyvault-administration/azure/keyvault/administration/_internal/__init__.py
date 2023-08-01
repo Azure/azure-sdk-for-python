@@ -26,8 +26,8 @@ _VaultId = namedtuple("_VaultId", ["vault_url", "collection", "name", "version"]
 def parse_vault_id(url: str) -> "_VaultId":
     try:
         parsed_uri = urlparse(url)
-    except Exception:  # pylint: disable=broad-except
-        raise ValueError(f"'{url}' is not a valid url")
+    except Exception as exc:  # pylint: disable=broad-except
+        raise ValueError(f"'{url}' is not a valid url") from exc
     if not (parsed_uri.scheme and parsed_uri.hostname):
         raise ValueError(f"'{url}' is not a valid url")
 
@@ -52,6 +52,11 @@ def parse_folder_url(folder_url: str) -> "BackupLocation":
 
     For example, https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313 parses to
     (container_url="https://<account>.blob.core.windows.net/backup", folder_name="mhsm-account-2020090117323313").
+
+    :param str folder_url: The URL to a backup's blob storage folder.
+
+    :returns: A named tuple with a `container_url` and `folder_name`, representing the location of the backup.
+    :rtype: BackupLocation
     """
 
     try:
@@ -59,7 +64,7 @@ def parse_folder_url(folder_url: str) -> "BackupLocation":
 
         # the first segment of the path is the container name
         stripped_path = parsed.path.strip("/")
-        container = stripped_path.split("/")[0]
+        container = stripped_path.split("/", maxsplit=1)[0]
 
         # the rest of the path is the folder name
         folder_name = stripped_path[len(container) + 1 :]
@@ -68,11 +73,11 @@ def parse_folder_url(folder_url: str) -> "BackupLocation":
         container_url = f"{parsed.scheme}://{parsed.netloc}/{container}"
 
         return BackupLocation(container_url, folder_name)
-    except:  # pylint:disable=broad-except
+    except Exception as exc:  # pylint:disable=broad-except
         raise ValueError(
             '"folder_url" should be the URL of a blob holding a Key Vault backup, for example '
             '"https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313"'
-        )
+        ) from exc
 
 
 try:

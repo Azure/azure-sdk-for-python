@@ -27,6 +27,7 @@ import pytest
 import os
 from devtools_testutils import add_general_regex_sanitizer, add_header_regex_sanitizer, add_body_key_sanitizer, set_default_session_settings, add_uri_regex_sanitizer
 from azure.communication.email._shared.utils import parse_connection_str
+from azure.communication.email._api_versions import DEFAULT_VERSION
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
@@ -46,6 +47,6 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=endpoint, value="someEndpoint")
 
     add_header_regex_sanitizer(key="x-ms-content-sha256", value="sanitized")
-    add_header_regex_sanitizer(key="Operation-Location", value="https://someEndpoint/emails/operations/someId?api-version=2023-01-15-preview")
+    add_header_regex_sanitizer(key="Operation-Location", value="https://someEndpoint/emails/operations/someId?api-version=" + DEFAULT_VERSION)
 
     add_uri_regex_sanitizer(regex="emails/operations/.*\?", value="emails/operations/someId?")

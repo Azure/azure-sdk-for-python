@@ -30,7 +30,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem88b137c0/file1?resource=file\u0026se=end\u0026sp=rwdc\u0026sv=2022-11-02\u0026ss=b\u0026srt=sco\u0026ses=hnstestscope1\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem88b137c0/file1?resource=file\u0026se=end\u0026sp=rwdc\u0026sv=2023-01-03\u0026ss=b\u0026srt=sco\u0026ses=hnstestscope1\u0026sig=fake_token_value",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -59,7 +59,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem88b137c0/dir1?resource=directory\u0026se=end\u0026sp=rwdc\u0026sv=2022-11-02\u0026ss=b\u0026srt=sco\u0026ses=hnstestscope1\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem88b137c0/dir1?resource=directory\u0026se=end\u0026sp=rwdc\u0026sv=2023-01-03\u0026ss=b\u0026srt=sco\u0026ses=hnstestscope1\u0026sig=fake_token_value",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -88,7 +88,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/filesystem88b137c0/dir1?se=end\u0026sp=rwdc\u0026sv=2022-11-02\u0026ss=b\u0026srt=sco\u0026ses=hnstestscope1\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.blob.core.windows.net/filesystem88b137c0/dir1?se=end\u0026sp=rwdc\u0026sv=2023-01-03\u0026ss=b\u0026srt=sco\u0026ses=hnstestscope1\u0026sig=fake_token_value",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -129,7 +129,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/filesystem88b137c0/file1?se=end\u0026sp=rwdc\u0026sv=2022-11-02\u0026ss=b\u0026srt=sco\u0026ses=hnstestscope1\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.blob.core.windows.net/filesystem88b137c0/file1?se=end\u0026sp=rwdc\u0026sv=2023-01-03\u0026ss=b\u0026srt=sco\u0026ses=hnstestscope1\u0026sig=fake_token_value",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",

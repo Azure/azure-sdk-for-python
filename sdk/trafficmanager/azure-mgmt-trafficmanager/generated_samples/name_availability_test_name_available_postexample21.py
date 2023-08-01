@@ -35,6 +35,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/trafficmanager/resource-manager/Microsoft.Network/preview/2022-04-01-preview/examples/NameAvailabilityTest_NameAvailable-POST-example-21.json
+# x-ms-original-file: specification/trafficmanager/resource-manager/Microsoft.Network/stable/2022-04-01/examples/NameAvailabilityTest_NameAvailable-POST-example-21.json
 if __name__ == "__main__":
     main()

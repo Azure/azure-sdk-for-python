@@ -9,7 +9,7 @@ import argparse
 import os
 import logging
 
-from tox_helper_tasks import find_whl
+from ci_tools.functions import find_whl
 from ci_tools.parsing import ParsedSetup
 
 logging.getLogger().setLevel(logging.INFO)

@@ -96,5 +96,4 @@ class Usage(RestTranslatableMixin):
         params_override: Optional[list] = None,
         **kwargs,
     ) -> "Usage":
-
         pass

@@ -36,10 +36,6 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -128,7 +124,7 @@ class MetricDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2018-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -167,8 +163,9 @@ class MetricDefinitionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -350,7 +347,7 @@ class MetricsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2018-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         request = build_metrics_list_request(
@@ -370,8 +367,9 @@ class MetricsOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -439,9 +437,7 @@ class MetricNamespacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2017-12-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2017-12-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-12-01-preview"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -480,8 +476,9 @@ class MetricNamespacesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 

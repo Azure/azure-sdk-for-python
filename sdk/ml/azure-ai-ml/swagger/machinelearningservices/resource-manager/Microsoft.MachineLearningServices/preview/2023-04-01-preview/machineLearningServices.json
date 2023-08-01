@@ -1935,6 +1935,283 @@
         }
       }
     },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundRules": {
+      "get": {
+        "tags": [
+          "ManagedNetwork"
+        ],
+        "description": "Lists the managed network outbound rules for a machine learning workspace.",
+        "operationId": "ManagedNetworkSettingsRule_List",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "$ref": "#/definitions/OutboundRuleListResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        },
+        "x-ms-examples": {
+          "List ManagedNetworkSettingsRule": {
+            "$ref": "./examples/ManagedNetwork/listRule.json"
+          }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundRules/{ruleName}": {
+      "delete": {
+        "tags": [
+          "ManagedNetwork"
+        ],
+        "description": "Deletes an outbound rule from the managed network of a machine learning workspace.",
+        "operationId": "ManagedNetworkSettingsRule_Delete",
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "#/parameters/RuleName"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              }
+            }
+          },
+          "204": {
+            "description": "The machine learning workspace does not exist in the subscription."
+          },
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly."
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Delete ManagedNetworkSettingsRule": {
+            "$ref": "./examples/ManagedNetwork/deleteRule.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
+      },
+      "get": {
+        "tags": [
+          "ManagedNetwork"
+        ],
+        "description": "Gets an outbound rule from the managed network of a machine learning workspace.",
+        "operationId": "ManagedNetworkSettingsRule_Get",
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "#/parameters/RuleName"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "$ref": "#/definitions/OutboundRuleBasicResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Get ManagedNetworkSettingsRule": {
+            "$ref": "./examples/ManagedNetwork/getRule.json"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ManagedNetwork"
+        ],
+        "description": "Creates or updates an outbound rule in the managed network of a machine learning workspace.",
+        "operationId": "ManagedNetworkSettingsRule_CreateOrUpdate",
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "#/parameters/RuleName"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "description": "Outbound Rule to be created or updated in the managed network of a machine learning workspace.",
+            "in": "body",
+            "name": "parameters",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OutboundRuleBasicResource"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              }
+            }
+          },
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "$ref": "#/definitions/OutboundRuleBasicResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "CreateOrUpdate ManagedNetworkSettingsRule": {
+            "$ref": "./examples/ManagedNetwork/createOrUpdateRule.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/provisionManagedNetwork": {
+      "post": {
+        "tags": [
+          "ManagedNetwork"
+        ],
+        "description": "Provisions the managed network of a machine learning workspace.",
+        "operationId": "ManagedNetworkProvisions_ProvisionManagedNetwork",
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        },
+        "x-ms-examples": {
+          "Provision ManagedNetwork": {
+            "$ref": "./examples/ManagedNetwork/provision.json"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "description": "Managed Network Provisioning Options for a machine learning workspace.",
+            "in": "body",
+            "name": "parameters",
+            "schema": {
+              "$ref": "#/definitions/ManagedNetworkProvisionOptions"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "schema": {
+              "$ref": "#/definitions/ManagedNetworkProvisionStatus"
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundNetworkDependenciesEndpoints": {
       "get": {
         "tags": [
@@ -2071,6 +2348,15 @@
       "required": true,
       "type": "string",
       "description": "Friendly name of the workspace connection",
+      "x-ms-parameter-location": "method"
+    },
+    "RuleName": {
+      "name": "ruleName",
+      "in": "path",
+      "required": true,
+      "type": "string",
+      "description": "Name of the workspace managed network outbound rule",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$",
       "x-ms-parameter-location": "method"
     },
     "TargetParameter": {
@@ -2371,6 +2657,54 @@
           "type": "integer",
           "format": "int32",
           "description": "Retention time in days after workspace get soft deleted."
+        },
+        "enableDataIsolation": {
+          "description": "A flag to determine if workspace has data isolation enabled. The flag can only be set at the creation phase, it can't be updated.",
+          "default": false,
+          "type": "boolean"
+        },
+        "storageAccounts": {
+          "description": ": A list of storage accounts used by Hub.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keyVaults": {
+          "description": "A list of key vaults used by Hub.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "containerRegistries": {
+          "description": "A list of container registries used by Hub.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "existingWorkspaces": {
+          "description": "A list of existing workspaces used by Hub to perform convert.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hubResourceId": {
+          "description": "Resource Id of Hub used for lean workspace.",
+          "type": "string"
+        },
+        "associatedWorkspaces": {
+          "description": "A list of lean workspaces associated with Hub.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "readOnly": true
+        },
+        "managedNetwork": {
+          "$ref": "#/definitions/ManagedNetworkSettings"
         }
       }
     },
@@ -2451,6 +2785,9 @@
         "featureStoreSettings": {
           "description": "Settings for feature store type workspace.",
           "$ref": "#/definitions/FeatureStoreSettings"
+        },
+        "managedNetwork": {
+          "$ref": "#/definitions/ManagedNetworkSettings"
         }
       }
     },
@@ -5373,6 +5710,7 @@
           "$ref": "#/definitions/ScheduleStatus"
         },
         "action": {
+          "description": "[Required] The compute power action.",
           "$ref": "#/definitions/ComputePowerAction"
         },
         "triggerType": {
@@ -5381,11 +5719,11 @@
         },
         "recurrence": {
           "description": "Required if triggerType is Recurrence.",
-          "$ref": "./mfe.json#/definitions/RecurrenceTrigger"
+          "$ref": "#/definitions/Recurrence"
         },
         "cron": {
           "description": "Required if triggerType is Cron.",
-          "$ref": "./mfe.json#/definitions/CronTrigger"
+          "$ref": "#/definitions/Cron"
         },
         "schedule": {
           "description": "[Deprecated] Not used any more.",
@@ -5466,6 +5804,55 @@
       "x-ms-enum": {
         "name": "ComputePowerAction",
         "modelAsString": true
+      }
+    },
+    "Recurrence": {
+      "type": "object",
+      "description": "The workflow trigger recurrence for ComputeStartStop schedule type.",
+      "properties": {
+        "frequency": {
+          "description": "[Required] The frequency to trigger schedule.",
+          "$ref": "./mfe.json#/definitions/RecurrenceFrequency"
+        },
+        "interval": {
+          "description": "[Required] Specifies schedule interval in conjunction with frequency",
+          "type": "integer",
+          "format": "int32"
+        },
+        "startTime": {
+          "description": "The start time in yyyy-MM-ddTHH:mm:ss format.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "timeZone": {
+          "description": "Specifies time zone in which the schedule runs.\r\nTimeZone should follow Windows time zone format. Refer: https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11",
+          "default": "UTC",
+          "type": "string"
+        },
+        "schedule": {
+          "description": "[Required] The recurrence schedule.",
+          "$ref": "./mfe.json#/definitions/RecurrenceSchedule"
+        }
+      }
+    },
+    "Cron": {
+      "type": "object",
+      "description": "The workflow trigger cron for ComputeStartStop schedule type.",
+      "properties": {
+        "startTime": {
+          "description": "The start time in yyyy-MM-ddTHH:mm:ss format.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "timeZone": {
+          "description": "Specifies time zone in which the schedule runs.\r\nTimeZone should follow Windows time zone format. Refer: https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11",
+          "type": "string",
+          "default": "UTC"
+        },
+        "expression": {
+          "description": "[Required] Specifies cron expression of schedule.\r\nThe expression should follow NCronTab format.",
+          "type": "string"
+        }
       }
     },
     "ComputeInstanceDataMount": {
@@ -5992,6 +6379,9 @@
         "authType": {
           "$ref": "#/definitions/ConnectionAuthType"
         },
+        "expiryTime": {
+          "type": "string"
+        },
         "category": {
           "$ref": "#/definitions/ConnectionCategory"
         },
@@ -6053,6 +6443,245 @@
       },
       "additionalProperties": false,
       "x-ms-discriminator-value": "ManagedIdentity"
+    },
+    "ManagedNetworkProvisionOptions": {
+      "description": "Managed Network Provisioning options for managed network of a machine learning workspace.",
+      "type": "object",
+      "properties": {
+        "includeSpark": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ManagedNetworkProvisionStatus": {
+      "description": "Status of the Provisioning for the managed network of a machine learning workspace.",
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/ManagedNetworkStatus"
+        },
+        "sparkReady": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ManagedNetworkSettings": {
+      "description": "Managed Network settings for a machine learning workspace.",
+      "type": "object",
+      "properties": {
+        "isolationMode": {
+          "$ref": "#/definitions/IsolationMode"
+        },
+        "networkId": {
+          "type": "string",
+          "readOnly": true
+        },
+        "outboundRules": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/OutboundRule"
+          },
+          "x-nullable": true
+        },
+        "status": {
+          "$ref": "#/definitions/ManagedNetworkProvisionStatus"
+        }
+      }
+    },
+    "ManagedNetworkStatus": {
+      "description": "Status for the managed network of a machine learning workspace.",
+      "enum": [
+        "Inactive",
+        "Active"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ManagedNetworkStatus",
+        "modelAsString": true
+      }
+    },
+    "IsolationMode": {
+      "description": "Isolation mode for the managed network of a machine learning workspace.",
+      "enum": [
+        "Disabled",
+        "AllowInternetOutbound",
+        "AllowOnlyApprovedOutbound"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "IsolationMode",
+        "modelAsString": true
+      }
+    },
+    "OutboundRuleBasicResource": {
+      "description": "Outbound Rule Basic Resource for the managed network of a machine learning workspace.",
+      "required": [
+        "properties"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Resource"
+        }
+      ],
+      "properties": {
+        "properties": {
+          "$ref": "#/definitions/OutboundRule"
+        }
+      },
+      "additionalProperties": false
+    },
+    "OutboundRuleListResult": {
+      "description": "List of outbound rules for the managed network of a machine learning workspace.",
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "The list of machine learning workspaces. Since this list may be incomplete, the nextLink field should be used to request the next list of machine learning workspaces.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OutboundRuleBasicResource"
+          }
+        },
+        "nextLink": {
+          "description": "The link to the next page constructed using the continuationToken.  If null, there are no additional pages.",
+          "type": "string"
+        }
+      }
+    },
+    "OutboundRule": {
+      "description": "Outbound Rule for the managed network of a machine learning workspace.",
+      "required": [
+        "type"
+      ],
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/RuleType"
+        },
+        "status": {
+          "$ref": "#/definitions/RuleStatus"
+        },
+        "category": {
+          "$ref": "#/definitions/RuleCategory"
+        }
+      },
+      "discriminator": "type"
+    },
+    "RuleCategory": {
+      "description": "Category of a managed network Outbound Rule of a machine learning workspace.",
+      "enum": [
+        "Required",
+        "Recommended",
+        "UserDefined"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "RuleCategory",
+        "modelAsString": true
+      }
+    },
+    "RuleStatus": {
+      "description": "Status of a managed network Outbound Rule of a machine learning workspace.",
+      "enum": [
+        "Inactive",
+        "Active"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "RuleStatus",
+        "modelAsString": true
+      }
+    },
+    "RuleType": {
+      "description": "Type of a managed network Outbound Rule of a machine learning workspace.",
+      "enum": [
+        "FQDN",
+        "PrivateEndpoint",
+        "ServiceTag"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "RuleType",
+        "modelAsString": true
+      }
+    },
+    "FqdnOutboundRule": {
+      "description": "FQDN Outbound Rule for the managed network of a machine learning workspace.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/OutboundRule"
+        }
+      ],
+      "properties": {
+        "destination": {
+          "type": "string"
+        }
+      },
+      "x-ms-discriminator-value": "FQDN"
+    },
+    "PrivateEndpointOutboundRule": {
+      "description": "Private Endpoint Outbound Rule for the managed network of a machine learning workspace.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/OutboundRule"
+        }
+      ],
+      "properties": {
+        "destination": {
+          "$ref": "#/definitions/PrivateEndpointDestination"
+        }
+      },
+      "x-ms-discriminator-value": "PrivateEndpoint"
+    },
+    "PrivateEndpointDestination": {
+      "description": "Private Endpoint destination for a Private Endpoint Outbound Rule for the managed network of a machine learning workspace.",
+      "type": "object",
+      "properties": {
+        "serviceResourceId": {
+          "type": "string"
+        },
+        "subresourceTarget": {
+          "type": "string"
+        },
+        "sparkEnabled": {
+          "type": "boolean"
+        },
+        "sparkStatus": {
+          "$ref": "#/definitions/RuleStatus"
+        }
+      }
+    },
+    "ServiceTagOutboundRule": {
+      "description": "Service Tag Outbound Rule for the managed network of a machine learning workspace.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/OutboundRule"
+        }
+      ],
+      "properties": {
+        "destination": {
+          "$ref": "#/definitions/ServiceTagDestination"
+        }
+      },
+      "x-ms-discriminator-value": "ServiceTag"
+    },
+    "ServiceTagDestination": {
+      "description": "Service Tag destination for a Service Tag Outbound Rule for the managed network of a machine learning workspace.",
+      "type": "object",
+      "properties": {
+        "serviceTag": {
+          "type": "string"
+        },
+        "protocol": {
+          "type": "string"
+        },
+        "portRanges": {
+          "type": "string"
+        }
+      }
     },
     "WorkspaceConnectionPropertiesV2BasicResource": {
       "required": [

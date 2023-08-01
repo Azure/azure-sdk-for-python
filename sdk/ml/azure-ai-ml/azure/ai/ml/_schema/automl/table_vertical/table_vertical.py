@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import NCrossValidationsMode
+from azure.ai.ml._restclient.v2023_04_01_preview.models import NCrossValidationsMode
 from azure.ai.ml._schema.automl.automl_vertical import AutoMLVerticalSchema
 from azure.ai.ml._schema.automl.featurization_settings import TableFeaturizationSettingsSchema
 from azure.ai.ml._schema.automl.table_vertical.table_vertical_limit_settings import AutoMLTableLimitsSchema

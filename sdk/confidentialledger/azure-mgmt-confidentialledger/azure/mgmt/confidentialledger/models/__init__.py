@@ -8,24 +8,34 @@
 
 from ._models_py3 import AADBasedSecurityPrincipal
 from ._models_py3 import CertBasedSecurityPrincipal
+from ._models_py3 import CertificateTags
+from ._models_py3 import CheckNameAvailabilityRequest
+from ._models_py3 import CheckNameAvailabilityResponse
 from ._models_py3 import ConfidentialLedger
 from ._models_py3 import ConfidentialLedgerList
+from ._models_py3 import DeploymentType
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import LedgerProperties
-from ._models_py3 import Location
+from ._models_py3 import ManagedCCF
+from ._models_py3 import ManagedCCFList
+from ._models_py3 import ManagedCCFProperties
+from ._models_py3 import MemberIdentityCertificate
 from ._models_py3 import Resource
 from ._models_py3 import ResourceProviderOperationDefinition
 from ._models_py3 import ResourceProviderOperationDisplay
 from ._models_py3 import ResourceProviderOperationList
 from ._models_py3 import SystemData
-from ._models_py3 import Tags
+from ._models_py3 import TrackedResource
 
+from ._confidential_ledger_enums import CheckNameAvailabilityReason
 from ._confidential_ledger_enums import CreatedByType
+from ._confidential_ledger_enums import LanguageRuntime
 from ._confidential_ledger_enums import LedgerRoleName
 from ._confidential_ledger_enums import LedgerType
 from ._confidential_ledger_enums import ProvisioningState
+from ._confidential_ledger_enums import RunningState
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -33,23 +43,33 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "AADBasedSecurityPrincipal",
     "CertBasedSecurityPrincipal",
+    "CertificateTags",
+    "CheckNameAvailabilityRequest",
+    "CheckNameAvailabilityResponse",
     "ConfidentialLedger",
     "ConfidentialLedgerList",
+    "DeploymentType",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
     "LedgerProperties",
-    "Location",
+    "ManagedCCF",
+    "ManagedCCFList",
+    "ManagedCCFProperties",
+    "MemberIdentityCertificate",
     "Resource",
     "ResourceProviderOperationDefinition",
     "ResourceProviderOperationDisplay",
     "ResourceProviderOperationList",
     "SystemData",
-    "Tags",
+    "TrackedResource",
+    "CheckNameAvailabilityReason",
     "CreatedByType",
+    "LanguageRuntime",
     "LedgerRoleName",
     "LedgerType",
     "ProvisioningState",
+    "RunningState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

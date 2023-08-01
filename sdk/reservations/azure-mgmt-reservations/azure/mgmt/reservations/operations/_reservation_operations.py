@@ -515,8 +515,8 @@ class ReservationOperations:
         :type reservation_order_id: str
         :param reservation_id: Id of the reservation item. Required.
         :type reservation_id: str
-        :param body: Scopes to be checked for eligibility. Is either a model type or a IO type.
-         Required.
+        :param body: Scopes to be checked for eligibility. Is either a AvailableScopeRequest type or a
+         IO type. Required.
         :type body: ~azure.mgmt.reservations.models.AvailableScopeRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -723,8 +723,8 @@ class ReservationOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param body: Information needed to Split a reservation item. Is either a model type or a IO
-         type. Required.
+        :param body: Information needed to Split a reservation item. Is either a SplitRequest type or a
+         IO type. Required.
         :type body: ~azure.mgmt.reservations.models.SplitRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -934,8 +934,8 @@ class ReservationOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param body: Information needed for commercial request for a reservation. Is either a model
-         type or a IO type. Required.
+        :param body: Information needed for commercial request for a reservation. Is either a
+         MergeRequest type or a IO type. Required.
         :type body: ~azure.mgmt.reservations.models.MergeRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1299,7 +1299,7 @@ class ReservationOperations:
         :type reservation_order_id: str
         :param reservation_id: Id of the reservation item. Required.
         :type reservation_id: str
-        :param parameters: Information needed to patch a reservation item. Is either a model type or a
+        :param parameters: Information needed to patch a reservation item. Is either a Patch type or a
          IO type. Required.
         :type parameters: ~azure.mgmt.reservations.models.Patch or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

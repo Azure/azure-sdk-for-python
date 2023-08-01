@@ -24,7 +24,7 @@ class MonitorMetricsClientConfiguration(Configuration):  # pylint: disable=too-m
     def __init__(self, **kwargs: Any) -> None:
         super(MonitorMetricsClientConfiguration, self).__init__(**kwargs)
 
-        kwargs.setdefault("sdk_moniker", "monitormetricsclient/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "monitor-query/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:

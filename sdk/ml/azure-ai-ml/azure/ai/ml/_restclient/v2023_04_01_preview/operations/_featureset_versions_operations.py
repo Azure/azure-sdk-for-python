@@ -45,6 +45,12 @@ def build_list_request(
     skip = kwargs.pop('skip', None)  # type: Optional[str]
     tags = kwargs.pop('tags', None)  # type: Optional[str]
     list_view_type = kwargs.pop('list_view_type', None)  # type: Optional[Union[str, "_models.ListViewType"]]
+    page_size = kwargs.pop('page_size', 20)  # type: Optional[int]
+    version_name = kwargs.pop('version_name', None)  # type: Optional[str]
+    version = kwargs.pop('version', None)  # type: Optional[str]
+    description = kwargs.pop('description', None)  # type: Optional[str]
+    created_by = kwargs.pop('created_by', None)  # type: Optional[str]
+    stage = kwargs.pop('stage', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -67,6 +73,18 @@ def build_list_request(
         _query_parameters['tags'] = _SERIALIZER.query("tags", tags, 'str')
     if list_view_type is not None:
         _query_parameters['listViewType'] = _SERIALIZER.query("list_view_type", list_view_type, 'str')
+    if page_size is not None:
+        _query_parameters['pageSize'] = _SERIALIZER.query("page_size", page_size, 'int')
+    if version_name is not None:
+        _query_parameters['versionName'] = _SERIALIZER.query("version_name", version_name, 'str')
+    if version is not None:
+        _query_parameters['version'] = _SERIALIZER.query("version", version, 'str')
+    if description is not None:
+        _query_parameters['description'] = _SERIALIZER.query("description", description, 'str')
+    if created_by is not None:
+        _query_parameters['createdBy'] = _SERIALIZER.query("created_by", created_by, 'str')
+    if stage is not None:
+        _query_parameters['stage'] = _SERIALIZER.query("stage", stage, 'str')
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -251,97 +269,6 @@ def build_backfill_request_initial(
     )
 
 
-def build_get_feature_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    workspace_name,  # type: str
-    name,  # type: str
-    version,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-
-    accept = "application/json"
-    # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions/{version}/getFeature")  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
-        "name": _SERIALIZER.url("name", name, 'str'),
-        "version": _SERIALIZER.url("version", version, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if content_type is not None:
-        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        **kwargs
-    )
-
-
-def build_list_features_request(
-    subscription_id,  # type: str
-    resource_group_name,  # type: str
-    workspace_name,  # type: str
-    name,  # type: str
-    version,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
-    skip = kwargs.pop('skip', None)  # type: Optional[str]
-    tags = kwargs.pop('tags', None)  # type: Optional[str]
-
-    accept = "application/json"
-    # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions/{version}/listFeatures")  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
-        "name": _SERIALIZER.url("name", name, 'str'),
-        "version": _SERIALIZER.url("version", version, 'str'),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-    if skip is not None:
-        _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
-    if tags is not None:
-        _query_parameters['$tags'] = _SERIALIZER.query("tags", tags, 'str')
-
-    # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_query_parameters,
-        headers=_header_parameters,
-        **kwargs
-    )
-
-
 def build_list_materialization_jobs_request(
     subscription_id,  # type: str
     resource_group_name,  # type: str
@@ -426,6 +353,12 @@ class FeaturesetVersionsOperations(object):
         skip=None,  # type: Optional[str]
         tags=None,  # type: Optional[str]
         list_view_type=None,  # type: Optional[Union[str, "_models.ListViewType"]]
+        page_size=20,  # type: Optional[int]
+        version_name=None,  # type: Optional[str]
+        version=None,  # type: Optional[str]
+        description=None,  # type: Optional[str]
+        created_by=None,  # type: Optional[str]
+        stage=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.FeaturesetVersionResourceArmPaginatedResult"]
@@ -447,6 +380,18 @@ class FeaturesetVersionsOperations(object):
         :param list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly,
          ListViewType.All]View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :param page_size: page size.
+        :type page_size: int
+        :param version_name: name for the featureset version.
+        :type version_name: str
+        :param version: featureset version.
+        :type version: str
+        :param description: description for the feature set version.
+        :type description: str
+        :param created_by: createdBy user name.
+        :type created_by: str
+        :param stage: Specifies the featurestore stage.
+        :type stage: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FeaturesetVersionResourceArmPaginatedResult or the
          result of cls(response)
@@ -473,6 +418,12 @@ class FeaturesetVersionsOperations(object):
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    version_name=version_name,
+                    version=version,
+                    description=description,
+                    created_by=created_by,
+                    stage=stage,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -489,6 +440,12 @@ class FeaturesetVersionsOperations(object):
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    version_name=version_name,
+                    version=version,
+                    description=description,
+                    created_by=created_by,
+                    stage=stage,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -880,8 +837,8 @@ class FeaturesetVersionsOperations(object):
         body,  # type: "_models.FeaturesetVersionBackfillRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.FeaturesetVersionBackfillResponse"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FeaturesetVersionBackfillResponse"]]
+        # type: (...) -> Optional["_models.FeaturesetJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FeaturesetJob"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -920,7 +877,7 @@ class FeaturesetVersionsOperations(object):
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('FeaturesetVersionBackfillResponse', pipeline_response)
+            deserialized = self._deserialize('FeaturesetJob', pipeline_response)
 
         if response.status_code == 202:
             response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
@@ -945,7 +902,7 @@ class FeaturesetVersionsOperations(object):
         body,  # type: "_models.FeaturesetVersionBackfillRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.FeaturesetVersionBackfillResponse"]
+        # type: (...) -> LROPoller["_models.FeaturesetJob"]
         """Backfill.
 
         Backfill.
@@ -968,16 +925,15 @@ class FeaturesetVersionsOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either FeaturesetVersionBackfillResponse or the
-         result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.FeaturesetVersionBackfillResponse]
+        :return: An instance of LROPoller that returns either FeaturesetJob or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.FeaturesetJob]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturesetVersionBackfillResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturesetJob"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -999,7 +955,7 @@ class FeaturesetVersionsOperations(object):
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('FeaturesetVersionBackfillResponse', pipeline_response)
+            deserialized = self._deserialize('FeaturesetJob', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -1018,191 +974,6 @@ class FeaturesetVersionsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_backfill.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions/{version}/backfill"}  # type: ignore
-
-    @distributed_trace
-    def get_feature(
-        self,
-        resource_group_name,  # type: str
-        workspace_name,  # type: str
-        name,  # type: str
-        version,  # type: str
-        body,  # type: "_models.GetFeatureRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.Feature"
-        """Get feature.
-
-        Get feature.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
-        :type workspace_name: str
-        :param name: Feature set name. This is case-sensitive.
-        :type name: str
-        :param version: Feature set version identifier. This is case-sensitive.
-        :type version: str
-        :param body: Feature Name request. This is case-sensitive.
-        :type body: ~azure.mgmt.machinelearningservices.models.GetFeatureRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Feature, or the result of cls(response)
-        :rtype: ~azure.mgmt.machinelearningservices.models.Feature
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Feature"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(body, 'GetFeatureRequest')
-
-        request = build_get_feature_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            name=name,
-            version=version,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self.get_feature.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('Feature', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_feature.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions/{version}/getFeature"}  # type: ignore
-
-
-    @distributed_trace
-    def list_features(
-        self,
-        resource_group_name,  # type: str
-        workspace_name,  # type: str
-        name,  # type: str
-        version,  # type: str
-        skip=None,  # type: Optional[str]
-        tags=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.FeatureArmPaginatedResult"]
-        """List Features.
-
-        List Features.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
-        :type workspace_name: str
-        :param name: Featureset name. This is case-sensitive.
-        :type name: str
-        :param version: Featureset Version identifier. This is case-sensitive.
-        :type version: str
-        :param skip: Continuation token for pagination.
-        :type skip: str
-        :param tags: Comma-separated list of tag names (and optionally values). Example:
-         tag1,tag2=value2.
-        :type tags: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either FeatureArmPaginatedResult or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.FeatureArmPaginatedResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
-
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeatureArmPaginatedResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_features_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    workspace_name=workspace_name,
-                    name=name,
-                    version=version,
-                    api_version=api_version,
-                    skip=skip,
-                    tags=tags,
-                    template_url=self.list_features.metadata['url'],
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                
-                request = build_list_features_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    workspace_name=workspace_name,
-                    name=name,
-                    version=version,
-                    api_version=api_version,
-                    skip=skip,
-                    tags=tags,
-                    template_url=next_link,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("FeatureArmPaginatedResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_features.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions/{version}/listFeatures"}  # type: ignore
 
     @distributed_trace
     def list_materialization_jobs(
@@ -1289,7 +1060,10 @@ class FeaturesetVersionsOperations(object):
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
-                request.method = "GET"
+                # ---------------------- PATCH ----------------------
+                # NOTE: List materialization jobs api does not support GET method, so we need to change it to POST
+                # It is temporary update, WIP: Update autorest client version and patch this method in patch.py file
+                request.method = "POST"
             return request
 
         def extract_data(pipeline_response):

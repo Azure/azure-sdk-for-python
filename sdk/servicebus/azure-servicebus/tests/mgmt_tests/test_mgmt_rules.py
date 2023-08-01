@@ -7,7 +7,6 @@ import logging
 import pytest
 from datetime import datetime, timedelta
 
-import msrest
 from azure.servicebus.management import ServiceBusAdministrationClient, RuleProperties, CorrelationRuleFilter, SqlRuleFilter, TrueRuleFilter, FalseRuleFilter, SqlRuleAction
 from azure.servicebus.management._constants import INT32_MAX_VALUE
 from utilities import get_logger
@@ -219,7 +218,7 @@ class TestServiceBusAdministrationClientRule(AzureMgmtRecordedTestCase):
 
             # change the name to a topic with an invalid name exist; should fail.
             rule_desc.name = ''
-            with pytest.raises(msrest.exceptions.ValidationError):
+            with pytest.raises(HttpResponseError):
                 mgmt_service.update_rule(topic_name, subscription_description.name, rule_desc)
             rule_desc.name = rule_name
 

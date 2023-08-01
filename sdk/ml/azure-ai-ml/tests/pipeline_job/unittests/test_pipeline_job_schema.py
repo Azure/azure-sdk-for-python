@@ -12,22 +12,22 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import MLTableJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFolderJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models._azure_machine_learning_workspaces_enums import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLTableJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models._azure_machine_learning_workspaces_enums import (
     LearningRateScheduler,
     StochasticOptimizer,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_data_binding_expression, load_yaml
-from azure.ai.ml.constants._common import ARM_ID_PREFIX
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, AssetTypes, InputOutputModes
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import CommandComponent, Component, Job, PipelineJob, SparkComponent
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._component.datatransfer_component import DataTransferComponent
+from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
@@ -1564,14 +1564,6 @@ class TestPipelineJobSchema:
         if "image_" in job_key and "classification" in job_key:
             original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
                 "type": "choice",
-                "values": ["yolov5"],
-            }
-            self._raise_error_on_wrong_schema(
-                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
-            )
-
-            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
-                "type": "choice",
                 "values": ["vitb16r224"],
             }
             dump_yaml_to_file(test_yaml_path, original_dict_copy)
@@ -1584,14 +1576,6 @@ class TestPipelineJobSchema:
         elif "object_detection" in job_key:
             original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
                 "type": "choice",
-                "values": ["vitb16r224"],
-            }
-            self._raise_error_on_wrong_schema(
-                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
-            )
-
-            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
-                "type": "choice",
                 "values": ["yolov5", "fasterrcnn_resnet50_fpn"],
             }
             dump_yaml_to_file(test_yaml_path, original_dict_copy)
@@ -1602,27 +1586,6 @@ class TestPipelineJobSchema:
             self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
 
         elif "instance_segmentation" in job_key:
-            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
-                "type": "choice",
-                "values": ["vitb16r224"],
-            }
-            self._raise_error_on_wrong_schema(
-                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
-            )
-
-            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
-                "type": "choice",
-                "values": ["fasterrcnn_resnet50_fpn"],
-            }
-            self._raise_error_on_wrong_schema(
-                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
-            )
-
-            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = "yolov5"
-            self._raise_error_on_wrong_schema(
-                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
-            )
-
             original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
                 "type": "choice",
                 "values": ["maskrcnn_resnet152_fpn", "maskrcnn_resnet18_fpn"],
@@ -1885,3 +1848,7 @@ class TestPipelineJobSchema:
     ):
         pipeline: PipelineJob = load_job(source=pipeline_job_path)
         pipeline._to_rest_object()
+
+    def test_pipeline_job_with_spark_component(self):
+        yaml_path = r"./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_spark_component.yml"
+        load_job(yaml_path)

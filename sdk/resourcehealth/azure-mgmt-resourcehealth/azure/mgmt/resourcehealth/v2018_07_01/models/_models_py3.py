@@ -130,6 +130,16 @@ class AvailabilityStatusProperties(_serialization.Model):  # pylint: disable=too
      health impacting event was originated. Examples are planned, unplanned, user initiated or an
      outage etc.
     :vartype reason_type: str
+    :ivar context: When an event is created, it can either be triggered by a customer or the
+     platform of the resource and this field will illustrate that. This field is connected to the
+     category field in this object.
+    :vartype context: str
+    :ivar category: When a context field is set to Platform, this field will reflect if the event
+     was planned or unplanned. If the context field does not have a value of Platform, then this
+     field will be ignored.
+    :vartype category: str
+    :ivar article_id: The Article Id.
+    :vartype article_id: str
     :ivar root_cause_attribution_time: When the resource's availabilityState is Unavailable, it
      provides the Timestamp for when the health impacting event was received.
     :vartype root_cause_attribution_time: ~datetime.datetime
@@ -175,6 +185,9 @@ class AvailabilityStatusProperties(_serialization.Model):  # pylint: disable=too
         "summary": {"key": "summary", "type": "str"},
         "detailed_status": {"key": "detailedStatus", "type": "str"},
         "reason_type": {"key": "reasonType", "type": "str"},
+        "context": {"key": "context", "type": "str"},
+        "category": {"key": "category", "type": "str"},
+        "article_id": {"key": "articleId", "type": "str"},
         "root_cause_attribution_time": {"key": "rootCauseAttributionTime", "type": "iso-8601"},
         "health_event_type": {"key": "healthEventType", "type": "str"},
         "health_event_cause": {"key": "healthEventCause", "type": "str"},
@@ -196,6 +209,9 @@ class AvailabilityStatusProperties(_serialization.Model):  # pylint: disable=too
         summary: Optional[str] = None,
         detailed_status: Optional[str] = None,
         reason_type: Optional[str] = None,
+        context: Optional[str] = None,
+        category: Optional[str] = None,
+        article_id: Optional[str] = None,
         root_cause_attribution_time: Optional[datetime.datetime] = None,
         health_event_type: Optional[str] = None,
         health_event_cause: Optional[str] = None,
@@ -224,6 +240,16 @@ class AvailabilityStatusProperties(_serialization.Model):  # pylint: disable=too
          the health impacting event was originated. Examples are planned, unplanned, user initiated or
          an outage etc.
         :paramtype reason_type: str
+        :keyword context: When an event is created, it can either be triggered by a customer or the
+         platform of the resource and this field will illustrate that. This field is connected to the
+         category field in this object.
+        :paramtype context: str
+        :keyword category: When a context field is set to Platform, this field will reflect if the
+         event was planned or unplanned. If the context field does not have a value of Platform, then
+         this field will be ignored.
+        :paramtype category: str
+        :keyword article_id: The Article Id.
+        :paramtype article_id: str
         :keyword root_cause_attribution_time: When the resource's availabilityState is Unavailable, it
          provides the Timestamp for when the health impacting event was received.
         :paramtype root_cause_attribution_time: ~datetime.datetime
@@ -268,6 +294,9 @@ class AvailabilityStatusProperties(_serialization.Model):  # pylint: disable=too
         self.summary = summary
         self.detailed_status = detailed_status
         self.reason_type = reason_type
+        self.context = context
+        self.category = category
+        self.article_id = article_id
         self.root_cause_attribution_time = root_cause_attribution_time
         self.health_event_type = health_event_type
         self.health_event_cause = health_event_cause
@@ -555,6 +584,8 @@ class Event(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar event_level: Level of event. Known values are: "Critical", "Error", "Warning", and
      "Informational".
     :vartype event_level: str or ~azure.mgmt.resourcehealth.v2018_07_01.models.EventLevelValues
+    :ivar reason: The reason for the Incident.
+    :vartype reason: str
     :ivar article: Article of event.
     :vartype article: ~azure.mgmt.resourcehealth.v2018_07_01.models.EventPropertiesArticle
     :ivar links: Useful links of event.
@@ -614,6 +645,7 @@ class Event(Resource):  # pylint: disable=too-many-instance-attributes
         "header": {"key": "properties.header", "type": "str"},
         "level": {"key": "properties.level", "type": "str"},
         "event_level": {"key": "properties.eventLevel", "type": "str"},
+        "reason": {"key": "properties.reason", "type": "str"},
         "article": {"key": "properties.article", "type": "EventPropertiesArticle"},
         "links": {"key": "properties.links", "type": "[Link]"},
         "impact_start_time": {"key": "properties.impactStartTime", "type": "iso-8601"},
@@ -642,6 +674,7 @@ class Event(Resource):  # pylint: disable=too-many-instance-attributes
         header: Optional[str] = None,
         level: Optional[Union[str, "_models.LevelValues"]] = None,
         event_level: Optional[Union[str, "_models.EventLevelValues"]] = None,
+        reason: Optional[str] = None,
         article: Optional["_models.EventPropertiesArticle"] = None,
         links: Optional[List["_models.Link"]] = None,
         impact_start_time: Optional[datetime.datetime] = None,
@@ -678,6 +711,8 @@ class Event(Resource):  # pylint: disable=too-many-instance-attributes
         :keyword event_level: Level of event. Known values are: "Critical", "Error", "Warning", and
          "Informational".
         :paramtype event_level: str or ~azure.mgmt.resourcehealth.v2018_07_01.models.EventLevelValues
+        :keyword reason: The reason for the Incident.
+        :paramtype reason: str
         :keyword article: Article of event.
         :paramtype article: ~azure.mgmt.resourcehealth.v2018_07_01.models.EventPropertiesArticle
         :keyword links: Useful links of event.
@@ -728,6 +763,7 @@ class Event(Resource):  # pylint: disable=too-many-instance-attributes
         self.header = header
         self.level = level
         self.event_level = event_level
+        self.reason = reason
         self.article = article
         self.links = links
         self.impact_start_time = impact_start_time
@@ -750,19 +786,38 @@ class EventPropertiesArticle(_serialization.Model):
 
     :ivar article_content: Article content of event.
     :vartype article_content: str
+    :ivar article_id: Article Id.
+    :vartype article_id: str
+    :ivar parameters: It provides a map of parameter name and value.
+    :vartype parameters: JSON
     """
 
     _attribute_map = {
         "article_content": {"key": "articleContent", "type": "str"},
+        "article_id": {"key": "articleId", "type": "str"},
+        "parameters": {"key": "parameters", "type": "object"},
     }
 
-    def __init__(self, *, article_content: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        article_content: Optional[str] = None,
+        article_id: Optional[str] = None,
+        parameters: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword article_content: Article content of event.
         :paramtype article_content: str
+        :keyword article_id: Article Id.
+        :paramtype article_id: str
+        :keyword parameters: It provides a map of parameter name and value.
+        :paramtype parameters: JSON
         """
         super().__init__(**kwargs)
         self.article_content = article_content
+        self.article_id = article_id
+        self.parameters = parameters
 
 
 class EventPropertiesRecommendedActions(_serialization.Model):
@@ -1348,6 +1403,8 @@ class RecommendedAction(_serialization.Model):
     :vartype action: str
     :ivar action_url: Link to the action.
     :vartype action_url: str
+    :ivar action_url_comment: the comment for the Action.
+    :vartype action_url_comment: str
     :ivar action_url_text: Substring of action, it describes which text should host the action url.
     :vartype action_url_text: str
     """
@@ -1355,6 +1412,7 @@ class RecommendedAction(_serialization.Model):
     _attribute_map = {
         "action": {"key": "action", "type": "str"},
         "action_url": {"key": "actionUrl", "type": "str"},
+        "action_url_comment": {"key": "_ActionUrl\\.Comment", "type": "str"},
         "action_url_text": {"key": "actionUrlText", "type": "str"},
     }
 
@@ -1363,6 +1421,7 @@ class RecommendedAction(_serialization.Model):
         *,
         action: Optional[str] = None,
         action_url: Optional[str] = None,
+        action_url_comment: Optional[str] = None,
         action_url_text: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1371,6 +1430,8 @@ class RecommendedAction(_serialization.Model):
         :paramtype action: str
         :keyword action_url: Link to the action.
         :paramtype action_url: str
+        :keyword action_url_comment: the comment for the Action.
+        :paramtype action_url_comment: str
         :keyword action_url_text: Substring of action, it describes which text should host the action
          url.
         :paramtype action_url_text: str
@@ -1378,6 +1439,7 @@ class RecommendedAction(_serialization.Model):
         super().__init__(**kwargs)
         self.action = action
         self.action_url = action_url
+        self.action_url_comment = action_url_comment
         self.action_url_text = action_url_text
 
 

@@ -13,13 +13,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -57,7 +58,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -98,13 +99,13 @@ class AlertRuleResource(Resource):  # pylint: disable=too-many-instance-attribut
     :ivar is_enabled: the flag that indicates whether the alert rule is enabled. Required.
     :vartype is_enabled: bool
     :ivar condition: the condition that results in the alert rule being activated. Required.
-    :vartype condition: ~$(python-base-namespace).v2015_07_01.models.RuleCondition
+    :vartype condition: ~azure.mgmt.monitor.v2015_07_01.models.RuleCondition
     :ivar action: action that is performed when the alert rule becomes active, and when an alert
      condition is resolved.
-    :vartype action: ~$(python-base-namespace).v2015_07_01.models.RuleAction
+    :vartype action: ~azure.mgmt.monitor.v2015_07_01.models.RuleAction
     :ivar actions: the array of actions that are performed when the alert rule becomes active, and
      when an alert condition is resolved.
-    :vartype actions: list[~$(python-base-namespace).v2015_07_01.models.RuleAction]
+    :vartype actions: list[~azure.mgmt.monitor.v2015_07_01.models.RuleAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: ~datetime.datetime
     """
@@ -148,8 +149,8 @@ class AlertRuleResource(Resource):  # pylint: disable=too-many-instance-attribut
         provisioning_state: Optional[str] = None,
         action: Optional["_models.RuleAction"] = None,
         actions: Optional[List["_models.RuleAction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -165,13 +166,13 @@ class AlertRuleResource(Resource):  # pylint: disable=too-many-instance-attribut
         :keyword is_enabled: the flag that indicates whether the alert rule is enabled. Required.
         :paramtype is_enabled: bool
         :keyword condition: the condition that results in the alert rule being activated. Required.
-        :paramtype condition: ~$(python-base-namespace).v2015_07_01.models.RuleCondition
+        :paramtype condition: ~azure.mgmt.monitor.v2015_07_01.models.RuleCondition
         :keyword action: action that is performed when the alert rule becomes active, and when an alert
          condition is resolved.
-        :paramtype action: ~$(python-base-namespace).v2015_07_01.models.RuleAction
+        :paramtype action: ~azure.mgmt.monitor.v2015_07_01.models.RuleAction
         :keyword actions: the array of actions that are performed when the alert rule becomes active,
          and when an alert condition is resolved.
-        :paramtype actions: list[~$(python-base-namespace).v2015_07_01.models.RuleAction]
+        :paramtype actions: list[~azure.mgmt.monitor.v2015_07_01.models.RuleAction]
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.name_properties_name = name_properties_name
@@ -188,17 +189,17 @@ class AlertRuleResourceCollection(_serialization.Model):
     """Represents a collection of alert rule resources.
 
     :ivar value: the values for the alert rule resources.
-    :vartype value: list[~$(python-base-namespace).v2015_07_01.models.AlertRuleResource]
+    :vartype value: list[~azure.mgmt.monitor.v2015_07_01.models.AlertRuleResource]
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[AlertRuleResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.AlertRuleResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.AlertRuleResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: the values for the alert rule resources.
-        :paramtype value: list[~$(python-base-namespace).v2015_07_01.models.AlertRuleResource]
+        :paramtype value: list[~azure.mgmt.monitor.v2015_07_01.models.AlertRuleResource]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -220,13 +221,13 @@ class AlertRuleResourcePatch(_serialization.Model):
     :ivar is_enabled: the flag that indicates whether the alert rule is enabled.
     :vartype is_enabled: bool
     :ivar condition: the condition that results in the alert rule being activated.
-    :vartype condition: ~$(python-base-namespace).v2015_07_01.models.RuleCondition
+    :vartype condition: ~azure.mgmt.monitor.v2015_07_01.models.RuleCondition
     :ivar action: action that is performed when the alert rule becomes active, and when an alert
      condition is resolved.
-    :vartype action: ~$(python-base-namespace).v2015_07_01.models.RuleAction
+    :vartype action: ~azure.mgmt.monitor.v2015_07_01.models.RuleAction
     :ivar actions: the array of actions that are performed when the alert rule becomes active, and
      when an alert condition is resolved.
-    :vartype actions: list[~$(python-base-namespace).v2015_07_01.models.RuleAction]
+    :vartype actions: list[~azure.mgmt.monitor.v2015_07_01.models.RuleAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: ~datetime.datetime
     """
@@ -258,8 +259,8 @@ class AlertRuleResourcePatch(_serialization.Model):
         condition: Optional["_models.RuleCondition"] = None,
         action: Optional["_models.RuleAction"] = None,
         actions: Optional[List["_models.RuleAction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -273,13 +274,13 @@ class AlertRuleResourcePatch(_serialization.Model):
         :keyword is_enabled: the flag that indicates whether the alert rule is enabled.
         :paramtype is_enabled: bool
         :keyword condition: the condition that results in the alert rule being activated.
-        :paramtype condition: ~$(python-base-namespace).v2015_07_01.models.RuleCondition
+        :paramtype condition: ~azure.mgmt.monitor.v2015_07_01.models.RuleCondition
         :keyword action: action that is performed when the alert rule becomes active, and when an alert
          condition is resolved.
-        :paramtype action: ~$(python-base-namespace).v2015_07_01.models.RuleAction
+        :paramtype action: ~azure.mgmt.monitor.v2015_07_01.models.RuleAction
         :keyword actions: the array of actions that are performed when the alert rule becomes active,
          and when an alert condition is resolved.
-        :paramtype actions: list[~$(python-base-namespace).v2015_07_01.models.RuleAction]
+        :paramtype actions: list[~azure.mgmt.monitor.v2015_07_01.models.RuleAction]
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -326,8 +327,8 @@ class DimensionProperties(_serialization.Model):
         to_be_exported_for_shoebox: Optional[bool] = None,
         is_hidden: Optional[bool] = None,
         default_dimension_values: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of dimension.
         :paramtype name: str
@@ -351,20 +352,21 @@ class DimensionProperties(_serialization.Model):
 
 
 class ErrorContract(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
-    :vartype error: ~$(python-base-namespace).v2015_07_01.models.ErrorResponse
+    :vartype error: ~azure.mgmt.monitor.v2015_07_01.models.ErrorResponse
     """
 
     _attribute_map = {
         "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
-        :paramtype error: ~$(python-base-namespace).v2015_07_01.models.ErrorResponse
+        :paramtype error: ~azure.mgmt.monitor.v2015_07_01.models.ErrorResponse
         """
         super().__init__(**kwargs)
         self.error = error
@@ -384,7 +386,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -416,7 +418,7 @@ class LocalizableString(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: str, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: str, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: the invariant value. Required.
         :paramtype value: str
@@ -443,7 +445,7 @@ class RuleCondition(_serialization.Model):
     :vartype odata_type: str
     :ivar data_source: the resource from which the rule collects its data. For this type dataSource
      will always be of type RuleMetricDataSource.
-    :vartype data_source: ~$(python-base-namespace).v2015_07_01.models.RuleDataSource
+    :vartype data_source: ~azure.mgmt.monitor.v2015_07_01.models.RuleDataSource
     """
 
     _validation = {
@@ -463,14 +465,14 @@ class RuleCondition(_serialization.Model):
         }
     }
 
-    def __init__(self, *, data_source: Optional["_models.RuleDataSource"] = None, **kwargs):
+    def __init__(self, *, data_source: Optional["_models.RuleDataSource"] = None, **kwargs: Any) -> None:
         """
         :keyword data_source: the resource from which the rule collects its data. For this type
          dataSource will always be of type RuleMetricDataSource.
-        :paramtype data_source: ~$(python-base-namespace).v2015_07_01.models.RuleDataSource
+        :paramtype data_source: ~azure.mgmt.monitor.v2015_07_01.models.RuleDataSource
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.data_source = data_source
 
 
@@ -486,7 +488,7 @@ class LocationThresholdRuleCondition(RuleCondition):
     :vartype odata_type: str
     :ivar data_source: the resource from which the rule collects its data. For this type dataSource
      will always be of type RuleMetricDataSource.
-    :vartype data_source: ~$(python-base-namespace).v2015_07_01.models.RuleDataSource
+    :vartype data_source: ~azure.mgmt.monitor.v2015_07_01.models.RuleDataSource
     :ivar window_size: the period of time (in ISO 8601 duration format) that is used to monitor
      alert activity based on the threshold. If specified then it must be between 5 minutes and 1
      day.
@@ -514,12 +516,12 @@ class LocationThresholdRuleCondition(RuleCondition):
         failed_location_count: int,
         data_source: Optional["_models.RuleDataSource"] = None,
         window_size: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_source: the resource from which the rule collects its data. For this type
          dataSource will always be of type RuleMetricDataSource.
-        :paramtype data_source: ~$(python-base-namespace).v2015_07_01.models.RuleDataSource
+        :paramtype data_source: ~azure.mgmt.monitor.v2015_07_01.models.RuleDataSource
         :keyword window_size: the period of time (in ISO 8601 duration format) that is used to monitor
          alert activity based on the threshold. If specified then it must be between 5 minutes and 1
          day.
@@ -529,7 +531,7 @@ class LocationThresholdRuleCondition(RuleCondition):
         :paramtype failed_location_count: int
         """
         super().__init__(data_source=data_source, **kwargs)
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition"
         self.window_size = window_size
         self.failed_location_count = failed_location_count
 
@@ -546,7 +548,7 @@ class LogSettings(_serialization.Model):
     :ivar enabled: a value indicating whether this log is enabled. Required.
     :vartype enabled: bool
     :ivar retention_policy: the retention policy for this log.
-    :vartype retention_policy: ~$(python-base-namespace).v2015_07_01.models.RetentionPolicy
+    :vartype retention_policy: ~azure.mgmt.monitor.v2015_07_01.models.RetentionPolicy
     """
 
     _validation = {
@@ -565,8 +567,8 @@ class LogSettings(_serialization.Model):
         enabled: bool,
         category: Optional[str] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword category: Name of a Diagnostic Log category for a resource type this setting is
          applied to. To obtain the list of Diagnostic Log categories for a resource, first perform a GET
@@ -575,7 +577,7 @@ class LogSettings(_serialization.Model):
         :keyword enabled: a value indicating whether this log is enabled. Required.
         :paramtype enabled: bool
         :keyword retention_policy: the retention policy for this log.
-        :paramtype retention_policy: ~$(python-base-namespace).v2015_07_01.models.RetentionPolicy
+        :paramtype retention_policy: ~azure.mgmt.monitor.v2015_07_01.models.RetentionPolicy
         """
         super().__init__(**kwargs)
         self.category = category
@@ -606,8 +608,8 @@ class LogSpecification(_serialization.Model):
         name: Optional[str] = None,
         display_name: Optional[str] = None,
         blob_duration: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of log specification.
         :paramtype name: str
@@ -627,7 +629,7 @@ class ManagementEventAggregationCondition(_serialization.Model):
 
     :ivar operator: the condition operator. Known values are: "GreaterThan", "GreaterThanOrEqual",
      "LessThan", and "LessThanOrEqual".
-    :vartype operator: str or ~$(python-base-namespace).v2015_07_01.models.ConditionOperator
+    :vartype operator: str or ~azure.mgmt.monitor.v2015_07_01.models.ConditionOperator
     :ivar threshold: The threshold value that activates the alert.
     :vartype threshold: float
     :ivar window_size: the period of time (in ISO 8601 duration format) that is used to monitor
@@ -648,12 +650,12 @@ class ManagementEventAggregationCondition(_serialization.Model):
         operator: Optional[Union[str, "_models.ConditionOperator"]] = None,
         threshold: Optional[float] = None,
         window_size: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword operator: the condition operator. Known values are: "GreaterThan",
          "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
-        :paramtype operator: str or ~$(python-base-namespace).v2015_07_01.models.ConditionOperator
+        :paramtype operator: str or ~azure.mgmt.monitor.v2015_07_01.models.ConditionOperator
         :keyword threshold: The threshold value that activates the alert.
         :paramtype threshold: float
         :keyword window_size: the period of time (in ISO 8601 duration format) that is used to monitor
@@ -679,12 +681,12 @@ class ManagementEventRuleCondition(RuleCondition):
     :vartype odata_type: str
     :ivar data_source: the resource from which the rule collects its data. For this type dataSource
      will always be of type RuleMetricDataSource.
-    :vartype data_source: ~$(python-base-namespace).v2015_07_01.models.RuleDataSource
+    :vartype data_source: ~azure.mgmt.monitor.v2015_07_01.models.RuleDataSource
     :ivar aggregation: How the data that is collected should be combined over time and when the
      alert is activated. Note that for management event alerts aggregation is optional – if it is
      not provided then any event will cause the alert to activate.
     :vartype aggregation:
-     ~$(python-base-namespace).v2015_07_01.models.ManagementEventAggregationCondition
+     ~azure.mgmt.monitor.v2015_07_01.models.ManagementEventAggregationCondition
     """
 
     _validation = {
@@ -702,25 +704,26 @@ class ManagementEventRuleCondition(RuleCondition):
         *,
         data_source: Optional["_models.RuleDataSource"] = None,
         aggregation: Optional["_models.ManagementEventAggregationCondition"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_source: the resource from which the rule collects its data. For this type
          dataSource will always be of type RuleMetricDataSource.
-        :paramtype data_source: ~$(python-base-namespace).v2015_07_01.models.RuleDataSource
+        :paramtype data_source: ~azure.mgmt.monitor.v2015_07_01.models.RuleDataSource
         :keyword aggregation: How the data that is collected should be combined over time and when the
          alert is activated. Note that for management event alerts aggregation is optional – if it is
          not provided then any event will cause the alert to activate.
         :paramtype aggregation:
-         ~$(python-base-namespace).v2015_07_01.models.ManagementEventAggregationCondition
+         ~azure.mgmt.monitor.v2015_07_01.models.ManagementEventAggregationCondition
         """
         super().__init__(data_source=data_source, **kwargs)
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition"
         self.aggregation = aggregation
 
 
 class MetricAvailability(_serialization.Model):
-    """Metric availability specifies the time grain (aggregation interval or frequency) and the retention period for that time grain.
+    """Metric availability specifies the time grain (aggregation interval or frequency) and the
+    retention period for that time grain.
 
     :ivar time_grain: the time grain specifies the aggregation interval for the metric. Expressed
      as a duration 'PT1M', 'P1D', etc.
@@ -729,7 +732,7 @@ class MetricAvailability(_serialization.Model):
      a duration 'PT1M', 'P1D', etc.
     :vartype retention: ~datetime.timedelta
     :ivar location: Info about where the metric data is stored.
-    :vartype location: ~$(python-base-namespace).v2015_07_01.models.MetricAvailabilityLocation
+    :vartype location: ~azure.mgmt.monitor.v2015_07_01.models.MetricAvailabilityLocation
     """
 
     _attribute_map = {
@@ -744,8 +747,8 @@ class MetricAvailability(_serialization.Model):
         time_grain: Optional[datetime.timedelta] = None,
         retention: Optional[datetime.timedelta] = None,
         location: Optional["_models.MetricAvailabilityLocation"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword time_grain: the time grain specifies the aggregation interval for the metric.
          Expressed as a duration 'PT1M', 'P1D', etc.
@@ -754,7 +757,7 @@ class MetricAvailability(_serialization.Model):
          as a duration 'PT1M', 'P1D', etc.
         :paramtype retention: ~datetime.timedelta
         :keyword location: Info about where the metric data is stored.
-        :paramtype location: ~$(python-base-namespace).v2015_07_01.models.MetricAvailabilityLocation
+        :paramtype location: ~azure.mgmt.monitor.v2015_07_01.models.MetricAvailabilityLocation
         """
         super().__init__(**kwargs)
         self.time_grain = time_grain
@@ -768,7 +771,7 @@ class MetricAvailabilityLocation(_serialization.Model):
     :ivar table_endpoint: The url for the storage account.
     :vartype table_endpoint: str
     :ivar table_info: Info about the storage tables storing this resources metrics.
-    :vartype table_info: list[~$(python-base-namespace).v2015_07_01.models.TableInfoEntry]
+    :vartype table_info: list[~azure.mgmt.monitor.v2015_07_01.models.TableInfoEntry]
     :ivar partition_key: partition key in the table where the metrics for this resource are stored.
     :vartype partition_key: str
     """
@@ -785,13 +788,13 @@ class MetricAvailabilityLocation(_serialization.Model):
         table_endpoint: Optional[str] = None,
         table_info: Optional[List["_models.TableInfoEntry"]] = None,
         partition_key: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword table_endpoint: The url for the storage account.
         :paramtype table_endpoint: str
         :keyword table_info: Info about the storage tables storing this resources metrics.
-        :paramtype table_info: list[~$(python-base-namespace).v2015_07_01.models.TableInfoEntry]
+        :paramtype table_info: list[~azure.mgmt.monitor.v2015_07_01.models.TableInfoEntry]
         :keyword partition_key: partition key in the table where the metrics for this resource are
          stored.
         :paramtype partition_key: str
@@ -810,12 +813,12 @@ class MetricDefinition(_serialization.Model):  # pylint: disable=too-many-instan
     :ivar resource_uri: The resource identifier of the resource that emitted the metric.
     :vartype resource_uri: str
     :ivar name: the name and the display name of the metric, i.e. it is a localizable string.
-    :vartype name: ~$(python-base-namespace).v2015_07_01.models.LocalizableString
+    :vartype name: ~azure.mgmt.monitor.v2015_07_01.models.LocalizableString
     :ivar category: The category of this metric.
     :vartype category: str
     :ivar unit: the unit of the metric. Known values are: "Count", "Bytes", "Seconds",
      "CountPerSecond", "BytesPerSecond", "Percent", and "MilliSeconds".
-    :vartype unit: str or ~$(python-base-namespace).v2015_07_01.models.Unit
+    :vartype unit: str or ~azure.mgmt.monitor.v2015_07_01.models.Unit
     :ivar start_time: Start time of the metadata request timespan.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: End time of the metadata request timespan.
@@ -824,15 +827,14 @@ class MetricDefinition(_serialization.Model):  # pylint: disable=too-many-instan
      values for display. Known values are: "None", "Average", "Count", "Minimum", "Maximum", and
      "Total".
     :vartype primary_aggregation_type: str or
-     ~$(python-base-namespace).v2015_07_01.models.AggregationType
+     ~azure.mgmt.monitor.v2015_07_01.models.AggregationType
     :ivar supported_aggregation_types: List of all aggregations that are applicable for this
      metric.
     :vartype supported_aggregation_types: list[str or
-     ~$(python-base-namespace).v2015_07_01.models.AggregationType]
+     ~azure.mgmt.monitor.v2015_07_01.models.AggregationType]
     :ivar metric_availabilities: the collection of what aggregation intervals are available to be
      queried.
-    :vartype metric_availabilities:
-     list[~$(python-base-namespace).v2015_07_01.models.MetricAvailability]
+    :vartype metric_availabilities: list[~azure.mgmt.monitor.v2015_07_01.models.MetricAvailability]
     :ivar id: the resource identifier of the metric definition.
     :vartype id: str
     """
@@ -865,20 +867,20 @@ class MetricDefinition(_serialization.Model):  # pylint: disable=too-many-instan
         supported_aggregation_types: Optional[List[Union[str, "_models.AggregationType"]]] = None,
         metric_availabilities: Optional[List["_models.MetricAvailability"]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: The resource identifier of the resource that emitted the metric.
         :paramtype resource_id: str
         :keyword resource_uri: The resource identifier of the resource that emitted the metric.
         :paramtype resource_uri: str
         :keyword name: the name and the display name of the metric, i.e. it is a localizable string.
-        :paramtype name: ~$(python-base-namespace).v2015_07_01.models.LocalizableString
+        :paramtype name: ~azure.mgmt.monitor.v2015_07_01.models.LocalizableString
         :keyword category: The category of this metric.
         :paramtype category: str
         :keyword unit: the unit of the metric. Known values are: "Count", "Bytes", "Seconds",
          "CountPerSecond", "BytesPerSecond", "Percent", and "MilliSeconds".
-        :paramtype unit: str or ~$(python-base-namespace).v2015_07_01.models.Unit
+        :paramtype unit: str or ~azure.mgmt.monitor.v2015_07_01.models.Unit
         :keyword start_time: Start time of the metadata request timespan.
         :paramtype start_time: ~datetime.datetime
         :keyword end_time: End time of the metadata request timespan.
@@ -887,15 +889,15 @@ class MetricDefinition(_serialization.Model):  # pylint: disable=too-many-instan
          values for display. Known values are: "None", "Average", "Count", "Minimum", "Maximum", and
          "Total".
         :paramtype primary_aggregation_type: str or
-         ~$(python-base-namespace).v2015_07_01.models.AggregationType
+         ~azure.mgmt.monitor.v2015_07_01.models.AggregationType
         :keyword supported_aggregation_types: List of all aggregations that are applicable for this
          metric.
         :paramtype supported_aggregation_types: list[str or
-         ~$(python-base-namespace).v2015_07_01.models.AggregationType]
+         ~azure.mgmt.monitor.v2015_07_01.models.AggregationType]
         :keyword metric_availabilities: the collection of what aggregation intervals are available to
          be queried.
         :paramtype metric_availabilities:
-         list[~$(python-base-namespace).v2015_07_01.models.MetricAvailability]
+         list[~azure.mgmt.monitor.v2015_07_01.models.MetricAvailability]
         :keyword id: the resource identifier of the metric definition.
         :paramtype id: str
         """
@@ -921,7 +923,7 @@ class MetricDefinitionCollection(_serialization.Model):
     :ivar id: Resource Id for these metric definitions.
     :vartype id: str
     :ivar value: the values for the metric definitions. Required.
-    :vartype value: list[~$(python-base-namespace).v2015_07_01.models.MetricDefinition]
+    :vartype value: list[~azure.mgmt.monitor.v2015_07_01.models.MetricDefinition]
     """
 
     _validation = {
@@ -938,13 +940,13 @@ class MetricDefinitionCollection(_serialization.Model):
         *,
         value: List["_models.MetricDefinition"],
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Id for these metric definitions.
         :paramtype id: str
         :keyword value: the values for the metric definitions. Required.
-        :paramtype value: list[~$(python-base-namespace).v2015_07_01.models.MetricDefinition]
+        :paramtype value: list[~azure.mgmt.monitor.v2015_07_01.models.MetricDefinition]
         """
         super().__init__(**kwargs)
         self.id = id
@@ -961,7 +963,7 @@ class MetricSettings(_serialization.Model):
     :ivar enabled: a value indicating whether this timegrain is enabled. Required.
     :vartype enabled: bool
     :ivar retention_policy: the retention policy for this timegrain.
-    :vartype retention_policy: ~$(python-base-namespace).v2015_07_01.models.RetentionPolicy
+    :vartype retention_policy: ~azure.mgmt.monitor.v2015_07_01.models.RetentionPolicy
     """
 
     _validation = {
@@ -981,15 +983,15 @@ class MetricSettings(_serialization.Model):
         time_grain: datetime.timedelta,
         enabled: bool,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword time_grain: the timegrain of the metric in ISO8601 format. Required.
         :paramtype time_grain: ~datetime.timedelta
         :keyword enabled: a value indicating whether this timegrain is enabled. Required.
         :paramtype enabled: bool
         :keyword retention_policy: the retention policy for this timegrain.
-        :paramtype retention_policy: ~$(python-base-namespace).v2015_07_01.models.RetentionPolicy
+        :paramtype retention_policy: ~azure.mgmt.monitor.v2015_07_01.models.RetentionPolicy
         """
         super().__init__(**kwargs)
         self.time_grain = time_grain
@@ -1023,7 +1025,7 @@ class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-ins
     :ivar category: Category or type of metric.
     :vartype category: str
     :ivar dimensions: The dimensions of metric.
-    :vartype dimensions: list[~$(python-base-namespace).v2015_07_01.models.DimensionProperties]
+    :vartype dimensions: list[~azure.mgmt.monitor.v2015_07_01.models.DimensionProperties]
     :ivar fill_gap_with_zero: Property to specify whether to fill empty gaps with zero.
     :vartype fill_gap_with_zero: bool
     :ivar internal_metric_name: The internal metric name.
@@ -1062,8 +1064,8 @@ class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-ins
         dimensions: Optional[List["_models.DimensionProperties"]] = None,
         fill_gap_with_zero: Optional[bool] = None,
         internal_metric_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the metric.
         :paramtype name: str
@@ -1088,7 +1090,7 @@ class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-ins
         :keyword category: Category or type of metric.
         :paramtype category: str
         :keyword dimensions: The dimensions of metric.
-        :paramtype dimensions: list[~$(python-base-namespace).v2015_07_01.models.DimensionProperties]
+        :paramtype dimensions: list[~azure.mgmt.monitor.v2015_07_01.models.DimensionProperties]
         :keyword fill_gap_with_zero: Property to specify whether to fill empty gaps with zero.
         :paramtype fill_gap_with_zero: bool
         :keyword internal_metric_name: The internal metric name.
@@ -1118,10 +1120,9 @@ class Operation(_serialization.Model):
     :ivar is_data_action: Property to specify whether the action is a data action.
     :vartype is_data_action: bool
     :ivar display: Display metadata associated with the operation.
-    :vartype display: ~$(python-base-namespace).v2015_07_01.models.OperationDisplay
+    :vartype display: ~azure.mgmt.monitor.v2015_07_01.models.OperationDisplay
     :ivar service_specification: One property of operation, include metric specifications.
-    :vartype service_specification:
-     ~$(python-base-namespace).v2015_07_01.models.ServiceSpecification
+    :vartype service_specification: ~azure.mgmt.monitor.v2015_07_01.models.ServiceSpecification
     """
 
     _attribute_map = {
@@ -1138,18 +1139,17 @@ class Operation(_serialization.Model):
         is_data_action: Optional[bool] = None,
         display: Optional["_models.OperationDisplay"] = None,
         service_specification: Optional["_models.ServiceSpecification"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
         :keyword is_data_action: Property to specify whether the action is a data action.
         :paramtype is_data_action: bool
         :keyword display: Display metadata associated with the operation.
-        :paramtype display: ~$(python-base-namespace).v2015_07_01.models.OperationDisplay
+        :paramtype display: ~azure.mgmt.monitor.v2015_07_01.models.OperationDisplay
         :keyword service_specification: One property of operation, include metric specifications.
-        :paramtype service_specification:
-         ~$(python-base-namespace).v2015_07_01.models.ServiceSpecification
+        :paramtype service_specification: ~azure.mgmt.monitor.v2015_07_01.models.ServiceSpecification
         """
         super().__init__(**kwargs)
         self.name = name
@@ -1189,8 +1189,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword publisher: The publisher of this operation.
         :paramtype publisher: str
@@ -1212,10 +1212,11 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list Microsoft.Insights operations. It contains a list of operations and a URL link to get the next set of results.
+    """Result of the request to list Microsoft.Insights operations. It contains a list of operations
+    and a URL link to get the next set of results.
 
     :ivar value: List of operations supported by the Microsoft.Insights provider.
-    :vartype value: list[~$(python-base-namespace).v2015_07_01.models.Operation]
+    :vartype value: list[~azure.mgmt.monitor.v2015_07_01.models.Operation]
     :ivar next_link: URL to get the next set of operation list results if there are any.
     :vartype next_link: str
     """
@@ -1225,10 +1226,12 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of operations supported by the Microsoft.Insights provider.
-        :paramtype value: list[~$(python-base-namespace).v2015_07_01.models.Operation]
+        :paramtype value: list[~azure.mgmt.monitor.v2015_07_01.models.Operation]
         :keyword next_link: URL to get the next set of operation list results if there are any.
         :paramtype next_link: str
         """
@@ -1259,7 +1262,7 @@ class RetentionPolicy(_serialization.Model):
         "days": {"key": "days", "type": "int"},
     }
 
-    def __init__(self, *, enabled: bool, days: int, **kwargs):
+    def __init__(self, *, enabled: bool, days: int, **kwargs: Any) -> None:
         """
         :keyword enabled: a value indicating whether the retention policy is enabled. Required.
         :paramtype enabled: bool
@@ -1273,7 +1276,8 @@ class RetentionPolicy(_serialization.Model):
 
 
 class RuleAction(_serialization.Model):
-    """The action that is performed when the alert rule becomes active, and when an alert condition is resolved.
+    """The action that is performed when the alert rule becomes active, and when an alert condition is
+    resolved.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RuleEmailAction, RuleWebhookAction
@@ -1300,10 +1304,10 @@ class RuleAction(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class RuleDataSource(_serialization.Model):
@@ -1355,8 +1359,8 @@ class RuleDataSource(_serialization.Model):
         legacy_resource_id: Optional[str] = None,
         resource_location: Optional[str] = None,
         metric_namespace: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_uri: the resource identifier of the resource the rule monitors. **NOTE**\ :
          this property cannot be updated for an existing rule.
@@ -1370,7 +1374,7 @@ class RuleDataSource(_serialization.Model):
         :paramtype metric_namespace: str
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.resource_uri = resource_uri
         self.legacy_resource_id = legacy_resource_id
         self.resource_location = resource_location
@@ -1378,7 +1382,8 @@ class RuleDataSource(_serialization.Model):
 
 
 class RuleEmailAction(RuleAction):
-    """Specifies the action to send email when the rule condition is evaluated. The discriminator is always RuleEmailAction in this case.
+    """Specifies the action to send email when the rule condition is evaluated. The discriminator is
+    always RuleEmailAction in this case.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1404,8 +1409,8 @@ class RuleEmailAction(RuleAction):
     }
 
     def __init__(
-        self, *, send_to_service_owners: Optional[bool] = None, custom_emails: Optional[List[str]] = None, **kwargs
-    ):
+        self, *, send_to_service_owners: Optional[bool] = None, custom_emails: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword send_to_service_owners: Whether the administrators (service and co-administrators) of
          the service should be notified when the alert is activated.
@@ -1415,7 +1420,7 @@ class RuleEmailAction(RuleAction):
         :paramtype custom_emails: list[str]
         """
         super().__init__(**kwargs)
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.RuleEmailAction"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.RuleEmailAction"
         self.send_to_service_owners = send_to_service_owners
         self.custom_emails = custom_emails
 
@@ -1431,7 +1436,7 @@ class RuleManagementEventClaimsDataSource(_serialization.Model):
         "email_address": {"key": "emailAddress", "type": "str"},
     }
 
-    def __init__(self, *, email_address: Optional[str] = None, **kwargs):
+    def __init__(self, *, email_address: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword email_address: the email address.
         :paramtype email_address: str
@@ -1441,7 +1446,8 @@ class RuleManagementEventClaimsDataSource(_serialization.Model):
 
 
 class RuleManagementEventDataSource(RuleDataSource):  # pylint: disable=too-many-instance-attributes
-    """A rule management event data source. The discriminator fields is always RuleManagementEventDataSource in this case.
+    """A rule management event data source. The discriminator fields is always
+    RuleManagementEventDataSource in this case.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1477,8 +1483,7 @@ class RuleManagementEventDataSource(RuleDataSource):  # pylint: disable=too-many
     :ivar sub_status: the substatus.
     :vartype sub_status: str
     :ivar claims: the claims.
-    :vartype claims:
-     ~$(python-base-namespace).v2015_07_01.models.RuleManagementEventClaimsDataSource
+    :vartype claims: ~azure.mgmt.monitor.v2015_07_01.models.RuleManagementEventClaimsDataSource
     """
 
     _validation = {
@@ -1518,8 +1523,8 @@ class RuleManagementEventDataSource(RuleDataSource):  # pylint: disable=too-many
         status: Optional[str] = None,
         sub_status: Optional[str] = None,
         claims: Optional["_models.RuleManagementEventClaimsDataSource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_uri: the resource identifier of the resource the rule monitors. **NOTE**\ :
          this property cannot be updated for an existing rule.
@@ -1550,8 +1555,7 @@ class RuleManagementEventDataSource(RuleDataSource):  # pylint: disable=too-many
         :keyword sub_status: the substatus.
         :paramtype sub_status: str
         :keyword claims: the claims.
-        :paramtype claims:
-         ~$(python-base-namespace).v2015_07_01.models.RuleManagementEventClaimsDataSource
+        :paramtype claims: ~azure.mgmt.monitor.v2015_07_01.models.RuleManagementEventClaimsDataSource
         """
         super().__init__(
             resource_uri=resource_uri,
@@ -1560,7 +1564,7 @@ class RuleManagementEventDataSource(RuleDataSource):  # pylint: disable=too-many
             metric_namespace=metric_namespace,
             **kwargs
         )
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource"
         self.event_name = event_name
         self.event_source = event_source
         self.level = level
@@ -1615,8 +1619,8 @@ class RuleMetricDataSource(RuleDataSource):
         resource_location: Optional[str] = None,
         metric_namespace: Optional[str] = None,
         metric_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_uri: the resource identifier of the resource the rule monitors. **NOTE**\ :
          this property cannot be updated for an existing rule.
@@ -1638,12 +1642,13 @@ class RuleMetricDataSource(RuleDataSource):
             metric_namespace=metric_namespace,
             **kwargs
         )
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource"
         self.metric_name = metric_name
 
 
 class RuleWebhookAction(RuleAction):
-    """Specifies the action to post to service when the rule condition is evaluated. The discriminator is always RuleWebhookAction in this case.
+    """Specifies the action to post to service when the rule condition is evaluated. The discriminator
+    is always RuleWebhookAction in this case.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1668,7 +1673,9 @@ class RuleWebhookAction(RuleAction):
         "properties": {"key": "properties", "type": "{str}"},
     }
 
-    def __init__(self, *, service_uri: Optional[str] = None, properties: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(
+        self, *, service_uri: Optional[str] = None, properties: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword service_uri: the service uri to Post the notification when the alert activates or
          resolves.
@@ -1678,7 +1685,7 @@ class RuleWebhookAction(RuleAction):
         :paramtype properties: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.RuleWebhookAction"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.RuleWebhookAction"
         self.service_uri = service_uri
         self.properties = properties
 
@@ -1708,9 +1715,9 @@ class ServiceDiagnosticSettingsResource(Resource):
      format: '{service bus resource ID}/authorizationrules/{key name}'.
     :vartype service_bus_rule_id: str
     :ivar metrics: the list of metric settings.
-    :vartype metrics: list[~$(python-base-namespace).v2015_07_01.models.MetricSettings]
+    :vartype metrics: list[~azure.mgmt.monitor.v2015_07_01.models.MetricSettings]
     :ivar logs: the list of logs settings.
-    :vartype logs: list[~$(python-base-namespace).v2015_07_01.models.LogSettings]
+    :vartype logs: list[~azure.mgmt.monitor.v2015_07_01.models.LogSettings]
     :ivar workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
      Analytics workspace to which you would like to send Diagnostic Logs. Example:
      /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -1747,8 +1754,8 @@ class ServiceDiagnosticSettingsResource(Resource):
         metrics: Optional[List["_models.MetricSettings"]] = None,
         logs: Optional[List["_models.LogSettings"]] = None,
         workspace_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1762,9 +1769,9 @@ class ServiceDiagnosticSettingsResource(Resource):
          format: '{service bus resource ID}/authorizationrules/{key name}'.
         :paramtype service_bus_rule_id: str
         :keyword metrics: the list of metric settings.
-        :paramtype metrics: list[~$(python-base-namespace).v2015_07_01.models.MetricSettings]
+        :paramtype metrics: list[~azure.mgmt.monitor.v2015_07_01.models.MetricSettings]
         :keyword logs: the list of logs settings.
-        :paramtype logs: list[~$(python-base-namespace).v2015_07_01.models.LogSettings]
+        :paramtype logs: list[~azure.mgmt.monitor.v2015_07_01.models.LogSettings]
         :keyword workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
          Analytics workspace to which you would like to send Diagnostic Logs. Example:
          /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
@@ -1782,11 +1789,10 @@ class ServiceSpecification(_serialization.Model):
     """One property of operation, include log specifications.
 
     :ivar log_specifications: Log specifications of operation.
-    :vartype log_specifications:
-     list[~$(python-base-namespace).v2015_07_01.models.LogSpecification]
+    :vartype log_specifications: list[~azure.mgmt.monitor.v2015_07_01.models.LogSpecification]
     :ivar metric_specifications: Metric specifications of operation.
     :vartype metric_specifications:
-     list[~$(python-base-namespace).v2015_07_01.models.MetricSpecification]
+     list[~azure.mgmt.monitor.v2015_07_01.models.MetricSpecification]
     :ivar legacy_metric_specifications: Legacy Metric specifications for operation. Deprecated, do
      not use.
     :vartype legacy_metric_specifications: JSON
@@ -1804,15 +1810,14 @@ class ServiceSpecification(_serialization.Model):
         log_specifications: Optional[List["_models.LogSpecification"]] = None,
         metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
         legacy_metric_specifications: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword log_specifications: Log specifications of operation.
-        :paramtype log_specifications:
-         list[~$(python-base-namespace).v2015_07_01.models.LogSpecification]
+        :paramtype log_specifications: list[~azure.mgmt.monitor.v2015_07_01.models.LogSpecification]
         :keyword metric_specifications: Metric specifications of operation.
         :paramtype metric_specifications:
-         list[~$(python-base-namespace).v2015_07_01.models.MetricSpecification]
+         list[~azure.mgmt.monitor.v2015_07_01.models.MetricSpecification]
         :keyword legacy_metric_specifications: Legacy Metric specifications for operation. Deprecated,
          do not use.
         :paramtype legacy_metric_specifications: JSON
@@ -1854,8 +1859,8 @@ class TableInfoEntry(_serialization.Model):
         end_time: Optional[datetime.datetime] = None,
         sas_token: Optional[str] = None,
         sas_token_expiration_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword table_name: Name of a table with metric data for this resource.
         :paramtype table_name: str
@@ -1888,10 +1893,10 @@ class ThresholdRuleCondition(RuleCondition):
     :vartype odata_type: str
     :ivar data_source: the resource from which the rule collects its data. For this type dataSource
      will always be of type RuleMetricDataSource.
-    :vartype data_source: ~$(python-base-namespace).v2015_07_01.models.RuleDataSource
+    :vartype data_source: ~azure.mgmt.monitor.v2015_07_01.models.RuleDataSource
     :ivar operator: the operator used to compare the data and the threshold. Required. Known values
      are: "GreaterThan", "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
-    :vartype operator: str or ~$(python-base-namespace).v2015_07_01.models.ConditionOperator
+    :vartype operator: str or ~azure.mgmt.monitor.v2015_07_01.models.ConditionOperator
     :ivar threshold: the threshold value that activates the alert. Required.
     :vartype threshold: float
     :ivar window_size: the period of time (in ISO 8601 duration format) that is used to monitor
@@ -1902,7 +1907,7 @@ class ThresholdRuleCondition(RuleCondition):
      be combined over time. The default value is the PrimaryAggregationType of the Metric. Known
      values are: "Average", "Minimum", "Maximum", "Total", and "Last".
     :vartype time_aggregation: str or
-     ~$(python-base-namespace).v2015_07_01.models.TimeAggregationOperator
+     ~azure.mgmt.monitor.v2015_07_01.models.TimeAggregationOperator
     """
 
     _validation = {
@@ -1928,15 +1933,15 @@ class ThresholdRuleCondition(RuleCondition):
         data_source: Optional["_models.RuleDataSource"] = None,
         window_size: Optional[datetime.timedelta] = None,
         time_aggregation: Optional[Union[str, "_models.TimeAggregationOperator"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_source: the resource from which the rule collects its data. For this type
          dataSource will always be of type RuleMetricDataSource.
-        :paramtype data_source: ~$(python-base-namespace).v2015_07_01.models.RuleDataSource
+        :paramtype data_source: ~azure.mgmt.monitor.v2015_07_01.models.RuleDataSource
         :keyword operator: the operator used to compare the data and the threshold. Required. Known
          values are: "GreaterThan", "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
-        :paramtype operator: str or ~$(python-base-namespace).v2015_07_01.models.ConditionOperator
+        :paramtype operator: str or ~azure.mgmt.monitor.v2015_07_01.models.ConditionOperator
         :keyword threshold: the threshold value that activates the alert. Required.
         :paramtype threshold: float
         :keyword window_size: the period of time (in ISO 8601 duration format) that is used to monitor
@@ -1947,10 +1952,10 @@ class ThresholdRuleCondition(RuleCondition):
          should be combined over time. The default value is the PrimaryAggregationType of the Metric.
          Known values are: "Average", "Minimum", "Maximum", "Total", and "Last".
         :paramtype time_aggregation: str or
-         ~$(python-base-namespace).v2015_07_01.models.TimeAggregationOperator
+         ~azure.mgmt.monitor.v2015_07_01.models.TimeAggregationOperator
         """
         super().__init__(data_source=data_source, **kwargs)
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition"
         self.operator = operator
         self.threshold = threshold
         self.window_size = window_size

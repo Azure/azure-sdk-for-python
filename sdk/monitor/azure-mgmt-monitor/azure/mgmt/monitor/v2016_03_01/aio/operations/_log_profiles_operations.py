@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -46,7 +46,7 @@ class LogProfilesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2016_03_01.aio.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2016_03_01.aio.MonitorManagementClient`'s
         :attr:`log_profiles` attribute.
     """
 
@@ -83,8 +83,8 @@ class LogProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             log_profile_name=log_profile_name,
@@ -95,10 +95,11 @@ class LogProfilesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -110,7 +111,9 @@ class LogProfilesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}"}  # type: ignore
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}"
+    }
 
     @distributed_trace_async
     async def get(self, log_profile_name: str, **kwargs: Any) -> _models.LogProfileResource:
@@ -120,7 +123,7 @@ class LogProfilesOperations:
         :type log_profile_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LogProfileResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2016_03_01.models.LogProfileResource
+        :rtype: ~azure.mgmt.monitor.v2016_03_01.models.LogProfileResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -134,8 +137,8 @@ class LogProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.LogProfileResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))
+        cls: ClsType[_models.LogProfileResource] = kwargs.pop("cls", None)
 
         request = build_get_request(
             log_profile_name=log_profile_name,
@@ -146,10 +149,11 @@ class LogProfilesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -166,7 +170,7 @@ class LogProfilesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}"}  # type: ignore
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}"}
 
     @overload
     async def create_or_update(
@@ -182,13 +186,13 @@ class LogProfilesOperations:
         :param log_profile_name: The name of the log profile. Required.
         :type log_profile_name: str
         :param parameters: Parameters supplied to the operation. Required.
-        :type parameters: ~$(python-base-namespace).v2016_03_01.models.LogProfileResource
+        :type parameters: ~azure.mgmt.monitor.v2016_03_01.models.LogProfileResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LogProfileResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2016_03_01.models.LogProfileResource
+        :rtype: ~azure.mgmt.monitor.v2016_03_01.models.LogProfileResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -207,7 +211,7 @@ class LogProfilesOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LogProfileResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2016_03_01.models.LogProfileResource
+        :rtype: ~azure.mgmt.monitor.v2016_03_01.models.LogProfileResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -219,15 +223,15 @@ class LogProfilesOperations:
 
         :param log_profile_name: The name of the log profile. Required.
         :type log_profile_name: str
-        :param parameters: Parameters supplied to the operation. Is either a model type or a IO type.
-         Required.
-        :type parameters: ~$(python-base-namespace).v2016_03_01.models.LogProfileResource or IO
+        :param parameters: Parameters supplied to the operation. Is either a LogProfileResource type or
+         a IO type. Required.
+        :type parameters: ~azure.mgmt.monitor.v2016_03_01.models.LogProfileResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LogProfileResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2016_03_01.models.LogProfileResource
+        :rtype: ~azure.mgmt.monitor.v2016_03_01.models.LogProfileResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -241,9 +245,9 @@ class LogProfilesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.LogProfileResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.LogProfileResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -265,10 +269,11 @@ class LogProfilesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -284,7 +289,9 @@ class LogProfilesOperations:
 
         return deserialized
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}"
+    }
 
     @overload
     async def update(
@@ -300,14 +307,13 @@ class LogProfilesOperations:
         :param log_profile_name: The name of the log profile. Required.
         :type log_profile_name: str
         :param log_profiles_resource: Parameters supplied to the operation. Required.
-        :type log_profiles_resource:
-         ~$(python-base-namespace).v2016_03_01.models.LogProfileResourcePatch
+        :type log_profiles_resource: ~azure.mgmt.monitor.v2016_03_01.models.LogProfileResourcePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LogProfileResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2016_03_01.models.LogProfileResource
+        :rtype: ~azure.mgmt.monitor.v2016_03_01.models.LogProfileResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -326,7 +332,7 @@ class LogProfilesOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LogProfileResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2016_03_01.models.LogProfileResource
+        :rtype: ~azure.mgmt.monitor.v2016_03_01.models.LogProfileResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -338,16 +344,16 @@ class LogProfilesOperations:
 
         :param log_profile_name: The name of the log profile. Required.
         :type log_profile_name: str
-        :param log_profiles_resource: Parameters supplied to the operation. Is either a model type or a
-         IO type. Required.
-        :type log_profiles_resource:
-         ~$(python-base-namespace).v2016_03_01.models.LogProfileResourcePatch or IO
+        :param log_profiles_resource: Parameters supplied to the operation. Is either a
+         LogProfileResourcePatch type or a IO type. Required.
+        :type log_profiles_resource: ~azure.mgmt.monitor.v2016_03_01.models.LogProfileResourcePatch or
+         IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LogProfileResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2016_03_01.models.LogProfileResource
+        :rtype: ~azure.mgmt.monitor.v2016_03_01.models.LogProfileResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -361,9 +367,9 @@ class LogProfilesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.LogProfileResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.LogProfileResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -385,10 +391,11 @@ class LogProfilesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -405,7 +412,9 @@ class LogProfilesOperations:
 
         return deserialized
 
-    update.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}"}  # type: ignore
+    update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}"
+    }
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncIterable["_models.LogProfileResource"]:
@@ -414,14 +423,14 @@ class LogProfilesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LogProfileResource or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2016_03_01.models.LogProfileResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitor.v2016_03_01.models.LogProfileResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.LogProfileCollection]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))
+        cls: ClsType[_models.LogProfileCollection] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -442,16 +451,23 @@ class LogProfilesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -459,14 +475,15 @@ class LogProfilesOperations:
             deserialized = self._deserialize("LogProfileCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -478,4 +495,4 @@ class LogProfilesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles"}

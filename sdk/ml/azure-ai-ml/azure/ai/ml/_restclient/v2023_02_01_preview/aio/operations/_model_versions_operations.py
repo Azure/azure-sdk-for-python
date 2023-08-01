@@ -9,7 +9,13 @@
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar, Union
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
@@ -21,9 +27,17 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._model_versions_operations import build_create_or_update_request, build_delete_request, build_get_request, build_list_request, build_package_request_initial
-T = TypeVar('T')
+from ...operations._model_versions_operations import (
+    build_create_or_update_request,
+    build_delete_request,
+    build_get_request,
+    build_list_request,
+    build_package_request_initial,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ModelVersionsOperations:
     """ModelVersionsOperations async operations.
@@ -104,16 +118,15 @@ class ModelVersionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.ModelVersionResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelVersionResourceArmPaginatedResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ModelVersionResourceArmPaginatedResult"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
@@ -130,13 +143,13 @@ class ModelVersionsOperations:
                     properties=properties,
                     feed=feed,
                     list_view_type=list_view_type,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
@@ -171,9 +184,7 @@ class ModelVersionsOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -184,20 +195,13 @@ class ModelVersionsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{name}/versions"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{name}/versions"}  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        name: str,
-        version: str,
-        **kwargs: Any
+        self, resource_group_name: str, workspace_name: str, name: str, version: str, **kwargs: Any
     ) -> None:
         """Delete version.
 
@@ -216,15 +220,12 @@ class ModelVersionsOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
 
-        
         request = build_delete_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
@@ -232,15 +233,13 @@ class ModelVersionsOperations:
             name=name,
             version=version,
             api_version=api_version,
-            template_url=self.delete.metadata['url'],
+            template_url=self.delete.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -252,17 +251,11 @@ class ModelVersionsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{name}/versions/{version}"}  # type: ignore
-
+    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{name}/versions/{version}"}  # type: ignore
 
     @distributed_trace_async
     async def get(
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        name: str,
-        version: str,
-        **kwargs: Any
+        self, resource_group_name: str, workspace_name: str, name: str, version: str, **kwargs: Any
     ) -> "_models.ModelVersion":
         """Get version.
 
@@ -281,15 +274,12 @@ class ModelVersionsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.ModelVersion
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelVersion"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ModelVersion"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
 
-        
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
@@ -297,15 +287,13 @@ class ModelVersionsOperations:
             name=name,
             version=version,
             api_version=api_version,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -314,15 +302,14 @@ class ModelVersionsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ModelVersion', pipeline_response)
+        deserialized = self._deserialize("ModelVersion", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{name}/versions/{version}"}  # type: ignore
-
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{name}/versions/{version}"}  # type: ignore
 
     @distributed_trace_async
     async def create_or_update(
@@ -353,16 +340,14 @@ class ModelVersionsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.ModelVersion
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelVersion"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ModelVersion"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'ModelVersion')
+        _json = self._serialize.body(body, "ModelVersion")
 
         request = build_create_or_update_request(
             subscription_id=self._config.subscription_id,
@@ -373,15 +358,13 @@ class ModelVersionsOperations:
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.create_or_update.metadata['url'],
+            template_url=self.create_or_update.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -391,38 +374,29 @@ class ModelVersionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ModelVersion', pipeline_response)
+            deserialized = self._deserialize("ModelVersion", pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('ModelVersion', pipeline_response)
+            deserialized = self._deserialize("ModelVersion", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{name}/versions/{version}"}  # type: ignore
-
+    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{name}/versions/{version}"}  # type: ignore
 
     async def _package_initial(
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        name: str,
-        version: str,
-        body: Any,
-        **kwargs: Any
+        self, resource_group_name: str, workspace_name: str, name: str, version: str, body: Any, **kwargs: Any
     ) -> Optional["_models.PackageResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PackageResponse"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["_models.PackageResponse"]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'object')
+        _json = self._serialize.body(body, "object")
 
         request = build_package_request_initial(
             subscription_id=self._config.subscription_id,
@@ -433,15 +407,13 @@ class ModelVersionsOperations:
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._package_initial.metadata['url'],
+            template_url=self._package_initial.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -452,30 +424,22 @@ class ModelVersionsOperations:
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('PackageResponse', pipeline_response)
+            deserialized = self._deserialize("PackageResponse", pipeline_response)
 
         if response.status_code == 202:
-            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-            
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    _package_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{name}/versions/{version}/package"}  # type: ignore
-
+    _package_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{name}/versions/{version}/package"}  # type: ignore
 
     @distributed_trace_async
     async def begin_package(
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        name: str,
-        version: str,
-        body: Any,
-        **kwargs: Any
+        self, resource_group_name: str, workspace_name: str, name: str, version: str, body: Any, **kwargs: Any
     ) -> AsyncLROPoller["_models.PackageResponse"]:
         """Model Version Package operation.
 
@@ -505,15 +469,12 @@ class ModelVersionsOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.PackageResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PackageResponse"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.PackageResponse"]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._package_initial(
                 resource_group_name=resource_group_name,
@@ -523,29 +484,31 @@ class ModelVersionsOperations:
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('PackageResponse', pipeline_response)
+            deserialized = self._deserialize("PackageResponse", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+        elif polling is False:
+            polling_method = AsyncNoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_package.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{name}/versions/{version}/package"}  # type: ignore
+    begin_package.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{name}/versions/{version}/package"}  # type: ignore

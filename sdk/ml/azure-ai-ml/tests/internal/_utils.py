@@ -4,6 +4,8 @@
 import copy
 from pathlib import Path
 
+import pytest
+
 from azure.ai.ml import Input
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
@@ -14,9 +16,11 @@ DATA_VERSION = "2"
 
 PARAMETERS_TO_TEST = [
     # which of them are available for other components?
-    (
-        "tests/test_configs/internal/command-component-ls/ls_command_component.yaml",
-        {},
+    pytest.param(
+        "tests/test_configs/internal/command-component/command-linux/one-line-tsv/component.yaml",
+        {
+            "content": "1\t2\t3\n4\t5\t6\n7\t8\t9",
+        },
         {
             "compute": "cpu-cluster",  # runsettings.target
             "environment_variables": {"verbose": "DEBUG"},  # runsettings.environment_variables
@@ -34,9 +38,10 @@ PARAMETERS_TO_TEST = [
             "default_compute": "cpu-cluster",
             "default_datastore": None,
         },
-    ),  # Command
-    (
-        "tests/test_configs/internal/distribution-component/component_spec.yaml",  # Distributed
+        id="CommandComponent",
+    ),
+    pytest.param(
+        "tests/test_configs/internal/distribution-component/component_spec.yaml",
         {
             "input_path": Input(type=AssetTypes.MLTABLE, path="mltable_imdb_reviews_train@latest"),
         },
@@ -55,9 +60,10 @@ PARAMETERS_TO_TEST = [
             "default_compute": "cpu-cluster",
             "default_datastore": None,
         },
+        id="DistributedComponent",
     ),
-    (
-        "tests/test_configs/internal/batch_inference/batch_score.yaml",  # Parallel
+    pytest.param(
+        "tests/test_configs/internal/batch_inference/batch_score.yaml",
         {
             "model_path": Input(type=AssetTypes.MLTABLE, path="mltable_mnist_model@latest"),
             "images_to_score": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
@@ -76,8 +82,9 @@ PARAMETERS_TO_TEST = [
             "default_compute": "cpu-cluster",
             "default_datastore": None,
         },
+        id="ParallelComponent",
     ),
-    (
+    pytest.param(
         "tests/test_configs/internal/scope-component/component_spec.yaml",
         {
             "TextData": Input(
@@ -91,6 +98,9 @@ PARAMETERS_TO_TEST = [
             "scope_param": "-tokens 50",  # runsettings.scope.scope_param
             "custom_job_name_suffix": "component_sdk_test",  # runsettings.scope.custom_job_name_suffix
             "priority": 800,  # runsettings.scope.priority
+            "auto_token": 150,  # runsettings.scope.auto_token
+            "tokens": 2,  # runsettings.scope.token
+            "vcp": 0.2,  # runsettings.scope.vcp
         },
         {
             "default_compute": "cpu-cluster",
@@ -105,8 +115,9 @@ PARAMETERS_TO_TEST = [
             # "on_finalize": "node",
             # "identity": "",
         },
-    ),  # Scope
-    (
+        id="ScopeComponent",
+    ),
+    pytest.param(
         "tests/test_configs/internal/hdi-component/component_spec.yaml",
         {
             "input_path": Input(type=AssetTypes.MLTABLE, path="mltable_imdb_reviews_train@latest"),
@@ -130,8 +141,9 @@ PARAMETERS_TO_TEST = [
             "default_compute": "cpu-cluster",
             "default_datastore": None,
         },
-    ),  # HDInsight
-    (
+        id="HDInsightComponent",
+    ),
+    pytest.param(
         "tests/test_configs/internal/hemera-component/component.yaml",
         {},
         {},  # no specific run settings
@@ -139,8 +151,9 @@ PARAMETERS_TO_TEST = [
             "default_compute": "cpu-cluster",
             "default_datastore": ADLS_DATA_STORE_NAME,
         },
-    ),  # Hemera
-    (
+        id="HemeraComponent",
+    ),
+    pytest.param(
         "tests/test_configs/internal/data-transfer-component/component_spec.yaml",
         {
             "source_data": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
@@ -151,8 +164,9 @@ PARAMETERS_TO_TEST = [
         {
             "default_datastore": ADLS_DATA_STORE_NAME,
         },
+        id="DataTransferComponent",
     ),  # Data Transfer
-    (
+    pytest.param(
         "tests/test_configs/internal/starlite-component/component_spec.yaml",
         {
             "FileList": Input(type=AssetTypes.MLTABLE, path="mltable_starlite_sample_output@latest"),
@@ -164,8 +178,9 @@ PARAMETERS_TO_TEST = [
         {
             "default_datastore": ADLS_DATA_STORE_NAME,
         },
-    ),  # Starlite
-    (
+        id="StarliteComponent",
+    ),
+    pytest.param(
         "tests/test_configs/internal/ae365exepool-component/component_spec.yaml",
         {
             "HeronId": "c6c849c5-4d52-412a-b4de-6cc5755bca73",
@@ -179,12 +194,13 @@ PARAMETERS_TO_TEST = [
             "default_compute": "cpu-cluster",
             "default_datastore": ADLS_DATA_STORE_NAME,
         },
-    ),  # Ae365exepool
-    (
+        id="Ae365exepoolComponent",
+    ),
+    pytest.param(
         "tests/test_configs/internal/spark-component/spec.yaml",
         {
-            "file_input1": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
-            "file_input2": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
+            "file_input1": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
+            "file_input2": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
         },
         {
             "driver_cores": 1,
@@ -198,20 +214,11 @@ PARAMETERS_TO_TEST = [
             "default_compute": "cpu-cluster",
             "default_datastore": ADLS_DATA_STORE_NAME,
         },
-    ),  # SparkComponent
+        id="SparkComponent",
+    ),
     # Pipeline  we can't test this because we can't create a v1.5 pipeline component in v2, instead we test v2 pipeline
     # component containing v1.5 nodes
 ]
-
-# this is to shorten the test name
-TEST_CASE_NAME_ENUMERATE = list(
-    enumerate(
-        map(
-            lambda params: Path(params[0]).name,
-            PARAMETERS_TO_TEST,
-        )
-    )
-)
 
 
 def get_expected_runsettings_items(runsettings_dict, client=None):

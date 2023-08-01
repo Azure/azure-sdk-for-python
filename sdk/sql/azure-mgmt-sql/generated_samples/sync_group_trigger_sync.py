@@ -29,13 +29,12 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.sync_groups.trigger_sync(
+    client.sync_groups.trigger_sync(
         resource_group_name="syncgroupcrud-65440",
         server_name="syncgroupcrud-8475",
         database_name="syncgroupcrud-4328",
         sync_group_name="syncgroupcrud-3187",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/SyncGroupTriggerSync.json

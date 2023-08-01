@@ -8,7 +8,7 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     JobBase,
     MLTableJobInput,
     QueueSettings,
@@ -86,8 +86,6 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         :paramtype queue_settings: typing.Optional[QueueSettings]
         :raises ValidationException: task type validation error
         :raises NotImplementedError: Raises NotImplementedError
-        :return: An AutoML Job
-        :rtype: AutoMLJob
         """
         kwargs[TYPE] = JobType.AUTOML
         self.environment_id = kwargs.pop("environment_id", None)
@@ -248,7 +246,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
             camel_to_snake(TaskType.TEXT_CLASSIFICATION_MULTILABEL): TextClassificationMultilabelJob,
         }
 
-    def _resolve_data_inputs(self, rest_job):  # pylint: disable=no-self-use
+    def _resolve_data_inputs(self, rest_job):
         """Resolve JobInputs to MLTableJobInputs within data_settings.
 
         :param rest_job: The rest job object.

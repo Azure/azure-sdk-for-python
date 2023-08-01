@@ -20,7 +20,7 @@ DEPENDENCIES = [
     "pyopenssl",
     "python-dotenv",
     "PyYAML",
-    "urllib3",
+    "urllib3<2",
     "tomli"
 ]
 
@@ -51,6 +51,6 @@ setup(
     },
     extras_require={
         ":python_version>='3.5'": ["pytest-asyncio>=0.9.0"],
-        "build": ["six", "setuptools", "pyparsing", "requests"],
+        "build": ["six", "setuptools", "pyparsing", "certifi"],
     },
 )

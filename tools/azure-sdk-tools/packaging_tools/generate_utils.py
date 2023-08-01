@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import re
+from functools import wraps
 
 from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
@@ -13,6 +14,7 @@ import yaml
 
 from .swaggertosdk.autorest_tools import build_autorest_options, generate_code
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE_DPG, read_config
+from .conf import CONF_NAME
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -23,8 +25,33 @@ DEFAULT_DEST_FOLDER = "./dist"
 _DPG_README = "README.md"
 
 
+def check_api_version_in_subfolder(sdk_code_path: str):
+    folders = glob(f"{sdk_code_path}/**/_configuration.py", recursive=True)
+    configs = [str(Path(f)) for f in folders if re.compile("v\d{4}_\d{2}_\d{2}").search(f)]
+    if configs:
+        result = []
+        for config in configs:
+            with open(config, "r") as file_in:
+                content = file_in.readlines()
+                if "self.api_version = api_version" not in "".join(content):
+                    result.append(config)
+        if result:
+            raise Exception("Found files that do not set api_version: \n" + "\n".join(result))
+
+
 def dpg_relative_folder(spec_folder: str) -> str:
     return ("../" * 4) + spec_folder + "/"
+
+
+def return_origin_path(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        current_path = os.getcwd()
+        result = func(*args, **kwargs)
+        os.chdir(current_path)
+        return result
+
+    return wrapper
 
 
 def get_package_names(sdk_folder):
@@ -34,42 +61,46 @@ def get_package_names(sdk_folder):
     return package_names
 
 
-def init_new_service(package_name, folder_name, is_cadl = False):
-    if not is_cadl:
+def call_build_config(package_name: str, folder_name: str):
+    check_call(
+        f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
+        shell=True,
+    )
+
+def init_new_service(package_name, folder_name, is_typespec = False):
+    if not is_typespec:
         setup = Path(folder_name, package_name, "setup.py")
         if not setup.exists():
-            check_call(
-                f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
-                shell=True,
-            )
-            ci = Path(folder_name, "ci.yml")
-            if not ci.exists():
-                with open("ci_template.yml", "r") as file_in:
-                    content = file_in.readlines()
-                name = package_name.replace("azure-", "").replace("mgmt-", "")
-                content = [line.replace("MyService", name) for line in content]
-                with open(str(ci), "w") as file_out:
-                    file_out.writelines(content)
+            call_build_config(package_name, folder_name)
     else:
         output_path = Path(folder_name) / package_name
-        if not (output_path / "sdk_packaging.toml").exists():
-            with open(output_path / "sdk_packaging.toml", "w") as file_out:
+        if not (output_path / CONF_NAME).exists():
+            with open(output_path / CONF_NAME, "w") as file_out:
                 file_out.write("[packaging]\nauto_update = false")
 
-        # add ci.yaml
-        generate_ci(
-            template_path=Path("scripts/quickstart_tooling_dpg/template_ci"),
-            folder_path=Path(folder_name),
-            package_name=package_name
-        )
+    # add ci.yaml
+    generate_ci(
+        template_path=Path("scripts/quickstart_tooling_dpg/template_ci"),
+        folder_path=Path(folder_name),
+        package_name=package_name
+    )
 
 
 def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, spec_folder, input_readme):
+    package_folder = Path(sdk_folder, folder_name, package_name)
+    if not package_folder.exists():
+        _LOGGER.info(f"Fail to save metadata since package folder doesn't exist: {package_folder}")
+        return
+    if not (package_folder / "_meta.json").exists():
+        metadata = {}
+    else:
+        with open(str(package_folder / "_meta.json"), "r") as file_in:
+            metadata = json.load(file_in)
 
-    metadata = {
+    metadata.update({
         "commit": data["headSha"],
         "repository_url": data["repoHttpsUrl"],
-    }
+    })
     if "meta" in config:
         readme_file = str(Path(spec_folder, input_readme))
         global_conf = config["meta"]
@@ -90,16 +121,10 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
             "readme": input_readme,
         })
     else:
-        metadata["cadl_src"] = input_readme
+        metadata["typespec_src"] = input_readme
         metadata.update(config)
 
     _LOGGER.info("Metadata json:\n {}".format(json.dumps(metadata, indent=2)))
-
-    package_folder = Path(sdk_folder, folder_name, package_name).expanduser()
-    if not os.path.exists(package_folder):
-        _LOGGER.info(f"Package folder doesn't exist: {package_folder}")
-        _LOGGER.info("Failed to save metadata.")
-        return
 
     metadata_file_path = os.path.join(package_folder, "_meta.json")
     with open(metadata_file_path, "w") as writer:
@@ -125,30 +150,6 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
         if write_flag:
             with open(manifest_file, "w") as f:
                 f.write("".join(includes))
-
-
-def update_cadl_location(sdk_folder, data, config, folder_name, package_name, input_readme):
-    if "meta" in config:
-        return
-
-    metadata = {
-        "directory": input_readme,
-        "commit": data["headSha"],
-        "repo": data["repoHttpsUrl"].split("github.com/")[-1],
-        "cleanup": False,
-    }
-
-    _LOGGER.info("cadl-location:\n {}".format(json.dumps(metadata, indent=2)))
-
-    package_folder = Path(sdk_folder) / folder_name / package_name
-    if not package_folder.exists():
-        _LOGGER.info(f"Package folder doesn't exist: {package_folder}")
-        return
-
-    metadata_file_path = package_folder / "cadl-location.yaml"
-    with open(metadata_file_path, "w") as writer:
-        yaml.safe_dump(metadata, writer)
-    _LOGGER.info(f"Saved metadata to {metadata_file_path}")
 
 
 def judge_tag_preview(path: str) -> bool:
@@ -353,17 +354,6 @@ def format_samples(sdk_code_path) -> None:
 
     _LOGGER.info(f"format generated_samples successfully")
 
-def get_npm_package_version(package: str) -> Dict[any, any]:
-    temp_file = "python_temp.json"
-    check_call(f"npm list {package} -json > {temp_file}", shell=True)
-    with open(temp_file, "r") as file_in:
-        data = json.load(file_in)
-    if "dependencies" not in data:
-        _LOGGER.info(f"can not find {package}: {data}")
-        return {}
-    
-    return data["dependencies"]
-
 def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> None:
     ci = Path(folder_path, "ci.yml")
     service_name = folder_path.name
@@ -383,27 +373,15 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
     with open(ci, "w") as file_out:
         file_out.writelines(content)
 
-def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
-    cadl_python = "@azure-tools/cadl-python"
-    autorest_python = "@autorest/python"
+def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, rest_repo_url: str) -> Dict[str, Any]:
+    typespec_python = "@azure-tools/typespec-python"
 
-    # npm install tool
-    origin_path = os.getcwd()
-    with open(Path("eng/emitter-package.json"), "r") as file_in:
-        cadl_python_dep = json.load(file_in)
-    os.chdir(Path(spec_folder) / cadl_relative_path)
-    with open("package.json", "w") as file_out:
-        json.dump(cadl_python_dep, file_out)
-    check_call("npm install", shell=True)
-
-    # generate code
-    cadl_file = "client.cadl" if Path("client.cadl").exists() else "."
-    check_call(f"npx cadl compile {cadl_file} --emit {cadl_python} --arg \"python-sdk-folder={origin_path}\" ", shell=True)
+    # call scirpt to generate sdk
+    check_call(f'pwsh {Path("eng/common/scripts/TypeSpec-Project-Process.ps1")} {(Path(spec_folder) / typespec_relative_path).resolve()} {head_sha} {rest_repo_url}', shell=True)
 
     # get version of codegen used in generation
-    npm_package_verstion = get_npm_package_version(autorest_python)
-
-    # return to original folder
-    os.chdir(origin_path)
+    with open(Path("eng/emitter-package.json"), "r") as file_in:
+        data = json.load(file_in)
+        npm_package_verstion = {typespec_python: data["dependencies"][typespec_python]}
 
     return npm_package_verstion

@@ -50,7 +50,7 @@ def build_list_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -92,7 +92,7 @@ def build_delete_request_initial(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
         "name": _SERIALIZER.url("name", name, 'str'),
     }
 
@@ -131,7 +131,7 @@ def build_get_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
         "name": _SERIALIZER.url("name", name, 'str'),
     }
 
@@ -171,7 +171,7 @@ def build_create_or_update_request_initial(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
         "name": _SERIALIZER.url("name", name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
     }
 
@@ -228,13 +228,13 @@ class RegistryDataContainersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.DataContainerResourceArmPaginatedResult"]
-        """List containers.
+        """List Data containers.
 
-        List containers.
+        List Data containers.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param skip: Continuation token for pagination.
         :type skip: str
@@ -382,7 +382,7 @@ class RegistryDataContainersOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param name: Container name.
         :type name: str
@@ -451,7 +451,7 @@ class RegistryDataContainersOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param name: Container name.
         :type name: str
@@ -580,7 +580,7 @@ class RegistryDataContainersOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param name: Container name.
         :type name: str

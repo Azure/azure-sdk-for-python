@@ -18,7 +18,6 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
     ]
     outputs = {"sink": Output(type=AssetTypes.MLTABLE)}
     source = {
-        "type": "database",
         "connection": "azureml:my_sql_connection",
         "stored_procedure": stored_procedure,
         "stored_procedure_params": stored_procedure_params,

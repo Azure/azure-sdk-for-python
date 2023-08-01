@@ -34,50 +34,63 @@ def sample_get_operations():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key)
+    )
 
     operations = list(document_model_admin_client.list_operations())
 
     print("The following document model operations exist under my resource:")
     for operation in operations:
-        print("\nOperation ID: {}".format(operation.operation_id))
-        print("Operation kind: {}".format(operation.kind))
-        print("Operation status: {}".format(operation.status))
-        print("Operation percent completed: {}".format(operation.percent_completed))
-        print("Operation created on: {}".format(operation.created_on))
-        print("Operation last updated on: {}".format(operation.last_updated_on))
-        print("Resource location of successful operation: {}".format(operation.resource_location))
+        print(f"\nOperation ID: {operation.operation_id}")
+        print(f"Operation kind: {operation.kind}")
+        print(f"Operation status: {operation.status}")
+        print(f"Operation percent completed: {operation.percent_completed}")
+        print(f"Operation created on: {operation.created_on}")
+        print(f"Operation last updated on: {operation.last_updated_on}")
+        print(
+            f"Resource location of successful operation: {operation.resource_location}"
+        )
     # [END list_operations]
 
     # [START get_operation]
     # Get an operation by ID
     if operations:
-        print("\nGetting operation info by ID: {}".format(operations[0].operation_id))
-        operation_info = document_model_admin_client.get_operation(operations[0].operation_id)
+        print(f"\nGetting operation info by ID: {operations[0].operation_id}")
+        operation_info = document_model_admin_client.get_operation(
+            operations[0].operation_id
+        )
         if operation_info.status == "succeeded":
-            print("My {} operation is completed.".format(operation_info.kind))
+            print(f"My {operation_info.kind} operation is completed.")
             result = operation_info.result
             if result is not None:
-                print("Model ID: {}".format(result.model_id))
+                if operation_info.kind == "documentClassifierBuild":
+                    print(f"Classifier ID: {result.classifier_id}")
+                else:
+                    print(f"Model ID: {result.model_id}")
         elif operation_info.status == "failed":
-            print("My {} operation failed.".format(operation_info.kind))
+            print(f"My {operation_info.kind} operation failed.")
             error = operation_info.error
             if error is not None:
-                print("{}: {}".format(error.code, error.message))
+                print(f"{error.code}: {error.message}")
         else:
-            print("My operation status is {}".format(operation_info.status))
+            print(f"My operation status is {operation_info.status}")
     else:
         print("No operations found.")
     # [END get_operation]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         sample_get_operations()
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

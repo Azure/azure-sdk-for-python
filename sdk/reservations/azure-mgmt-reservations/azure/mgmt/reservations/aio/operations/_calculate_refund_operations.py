@@ -113,8 +113,8 @@ class CalculateRefundOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param body: Information needed for calculating refund of a reservation. Is either a model type
-         or a IO type. Required.
+        :param body: Information needed for calculating refund of a reservation. Is either a
+         CalculateRefundRequest type or a IO type. Required.
         :type body: ~azure.mgmt.reservations.models.CalculateRefundRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

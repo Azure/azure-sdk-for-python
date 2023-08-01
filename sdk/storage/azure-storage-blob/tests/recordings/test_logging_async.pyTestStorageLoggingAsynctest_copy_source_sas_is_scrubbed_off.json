@@ -69,7 +69,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-copy-source": "https://storagename.blob.core.windows.net/utcontainera4fb31f3/srcbloba4fb31f3?se=end\u0026sp=r\u0026sv=2022-11-02\u0026sr=b\u0026sig=fake_token_value",
+        "x-ms-copy-source": "https://storagename.blob.core.windows.net/utcontainera4fb31f3/srcbloba4fb31f3?se=end\u0026sp=r\u0026sv=2023-01-03\u0026sr=b\u0026sig=fake_token_value",
         "x-ms-date": "Wed, 31 Aug 2022 21:53:29 GMT",
         "x-ms-requires-sync": "True",
         "x-ms-version": "2021-08-06"

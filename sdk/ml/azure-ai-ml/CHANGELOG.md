@@ -1,17 +1,96 @@
 # Release History
 
-## 1.6.0 (Unreleased)
+
+## 1.10.0 (Unreleased)
 
 ### Features Added
-- 
+
+### Bugs Fixed
+- Local job runs will no longer fail if Docker registry has no username/password
+
+- Fixed an issue that code asset doesn't work with relative symbol links.
+
+### Breaking Changes
+
+### Other Changes
+
+- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
+  (instead of the default behavior for python < 3.15, which uses locale specific encodings)
+
+## 1.9.0 (Unreleased)
+
+### Features Added
+- Added support to enable gpu access (local_enable_gpu) for local deployment.
+- Added support for workspaceHub and Project workspace
+
+### Other Changes
+
+- Improved the output when printing a workspace object to be more clean and readable.
+- Log level of unknown field notifications for pipeline nodes raised from INFO to WARNING.
+
+## 1.8.0 (2023-06-12)
+
+### Features Added
+- Added support to enable set workspace connection secret expiry time.
+- Added support for `stage` on model version
+
+### Bugs Fixed
+
+- Fixed an issue affecting authentication to registry-related services in sovereign regions.
+- Made job_tier and priority values case insensitive
+
+## 1.7.2 (2023-05-18)
+
+### Features Added
+- Public preview support for new schedule type `MonitorSchedule`
+
+
+## 1.7.1 (2023-05-17)
+
+### Bugs Fixed
+- Fixed an issue where `OnlineDeployment.provisioning_state` was incorrectly deserialized and set as `None`
+
+
+## 1.7.0 (2023-05-15)
+
+### Features Added
+- Added data import schedule. The class added is `ImportDataSchedule`.
+- Added support to enable data isolation feature at workspace creation stage.
+- Added auto_delete_setting support for asset version in data import job.
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
+
+## 1.6.0 (2023-05-01)
+
+### Features Added
+- Added experimental scatter gather node to DSL package. This node has a unique mldesigner dependency.
+- Added support to make JobService and ServiceInstance objects serializable when printed
+- Support Singularity compute in pipeline job
+- Added purge operation support for workspace resource
+- Added Feature Store, its dedicated classes and updated the docstrings, now available in public interface. The classes added are `FeatureStoreOperations, FeatureSetOperations, FeatureStoreEntityOperations` with properties classes specific to the new features.
+- Support additional_includes in command component
+- Added experimental `distribution: ray` support in command job.
 
 ### Bugs Fixed
 
 - Fixed issue where show_progress=False was not being respected for uploads when set via MLClient
+- Fixed issue of spark input/output mode validation doesn't take effect because of wrong type assertion
+- Fixed the bug when setting `node.limits.timeout` to a pipeline input.
+- Removed Experimental Tag from Idle Shutdown, Custom Applications, Setup Scripts, and Image Metadata on Compute Instances.
+- Removed Experimental Tag from JobService classes
+
+### Breaking Changes
+
+- Renamed `JobServiceBase.job_service_type` to `type`
 
 ### Other Changes
 
-- 
+- Remove the default placeholder for CommandComponent.code
 
 ## 1.5.0 (2023-03-20)
 
@@ -19,10 +98,9 @@
 - Added support for `tags` on Compute Resources.
 - Added support for promoting data asset from a workspace to a registry
 - Added support for registering named asset from job output or node output by specifying name and version settings.
-- Removed Experimental Tag from Image Metadata on Compute Instances.
 - Added support for data binding on outputs inside dynamic arguments for dsl pipeline
 - Added support for serverless compute in pipeline, command, automl and sweep job
-- Added support for `job_tier` and `priority` in job
+- Added support for `job_tier` and `priority` in standalone job
 - Added support for passing `locations` via command function and set it to `JobResourceConfiguration.locations`
 - Added support for modifying SSH key values after creation on Compute Resources.
 - Added WorkspaceConnection types `s3`, `snowflake`, `azure_sql_db`, `azure_synapse_analytics`, `azure_my_sql_db`, `azure_postgres_db`

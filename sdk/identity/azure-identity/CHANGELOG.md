@@ -1,14 +1,53 @@
 # Release History
 
-## 1.13.0b4 (Unreleased)
+## 1.14.0b3 (Unreleased)
 
 ### Features Added
 
+- Continuous Access Evaluation (CAE) is now configurable per-request by setting the `enable_cae` keyword argument to `True` in `get_token`. This applies to user credentials and service principal credentials.  ([#30777](https://github.com/Azure/azure-sdk-for-python/pull/30777))
+
 ### Breaking Changes
+
+- CP1 client capabilities for CAE is no longer always-on by default for user credentials. This capability will now be configured as-needed in each `get_token` request by each SDK.  ([#30777](https://github.com/Azure/azure-sdk-for-python/pull/30777))
+  - Suffixes are now appended to persistent cache names to indicate whether CAE or non-CAE tokens are stored in the cache. This is to prevent CAE and non-CAE tokens from being mixed/overwritten in the same cache. This could potentially cause issues if you are trying to share the same cache between applications that are using different versions of the Azure Identity library as each application would be reading from a different cache file.
+  - Since CAE is no longer always enabled for user-credentials, the `AZURE_IDENTITY_DISABLE_CP1` environment variable is no longer supported.
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.14.0b2 (2023-07-11)
+
+### Features Added
+
+- Added `workload_identity_tenant_id` support in `DefaultAzureCredential`.
+
+## 1.14.0b1 (2023-06-06)
+
+### Features Added
+
+- Continue attempt next credential when finding an expired token from cached token credential in DefaultAzureCredential. ([#30441](https://github.com/Azure/azure-sdk-for-python/pull/30441))
+
+### Other Changes
+
+- VisualStudioCodeCredential prints an informative error message when used (as it is currently broken) ([#30385](https://github.com/Azure/azure-sdk-for-python/pull/30385))
+- Removed dependency on `six`. ([#30613](https://github.com/Azure/azure-sdk-for-python/pull/30613))
+
+## 1.13.0 (2023-05-11)
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 1.12.0.
+> Only code written against a beta version such as 1.13.0b4 may be affected.
+- Windows Web Account Manager (WAM) Brokered Authentication is still in preview and not available in this release. It will be available in the next beta release.
+- Additional Continuous Access Evaluation (CAE) support for service principal credentials is still in preview and not available in this release. It will be available in the next beta release.
+- Renamed keyword argument `developer_credential_timeout` to `process_timeout` in `DefaultAzureCredential` to remain consistent with the other credentials that launch a subprocess to acquire tokens.
+
+## 1.13.0b4 (2023-04-11)
+
+### Features Added
+
+- Credentials that are implemented via launching a subprocess to acquire tokens now have configurable timeouts using the `process_timeout` keyword argument. This addresses scenarios where these proceses can take longer than the current default timeout values. The affected credentials are `AzureCliCredential`, `AzureDeveloperCliCredential`, and `AzurePowerShellCredential`. (Note: For `DefaultAzureCredential`, the `developer_credential_timeout` keyword argument allows users to propagate this option to `AzureCliCredential`, `AzureDeveloperCliCredential`, and `AzurePowerShellCredential` in the authentication chain.) ([#28290](https://github.com/Azure/azure-sdk-for-python/pull/28290))
 
 ## 1.13.0b3 (2023-03-07)
 

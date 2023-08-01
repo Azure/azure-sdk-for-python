@@ -178,7 +178,7 @@
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
         "x-ms-date": "Tue, 26 Jul 2022 22:48:13 GMT",
-        "x-ms-previous-snapshot-url": "https://storagename.blob.core.windows.net/utcontainer29023489/blob29023489?snapshot=2022-07-26T22:48:12.5608123Z\u0026se=end\u0026sp=r\u0026sv=2022-11-02\u0026sr=bs\u0026sig=fake_token_value",
+        "x-ms-previous-snapshot-url": "https://storagename.blob.core.windows.net/utcontainer29023489/blob29023489?snapshot=2022-07-26T22:48:12.5608123Z\u0026se=end\u0026sp=r\u0026sv=2023-01-03\u0026sr=bs\u0026sig=fake_token_value",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
@@ -205,7 +205,7 @@
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
         "x-ms-date": "Tue, 26 Jul 2022 22:48:13 GMT",
-        "x-ms-previous-snapshot-url": "https://storagename.blob.core.windows.net/utcontainer29023489/blob29023489?snapshot=2022-07-26T22:48:12.8708076Z\u0026se=end\u0026sp=r\u0026sv=2022-11-02\u0026sr=bs\u0026sig=fake_token_value",
+        "x-ms-previous-snapshot-url": "https://storagename.blob.core.windows.net/utcontainer29023489/blob29023489?snapshot=2022-07-26T22:48:12.8708076Z\u0026se=end\u0026sp=r\u0026sv=2023-01-03\u0026sr=bs\u0026sig=fake_token_value",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,

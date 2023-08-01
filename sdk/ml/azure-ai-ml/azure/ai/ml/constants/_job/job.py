@@ -7,6 +7,7 @@ class DistributionType:
     MPI = "mpi"
     TENSORFLOW = "tensorflow"
     PYTORCH = "pytorch"
+    RAY = "ray"
 
 
 class JobType(object):
@@ -84,6 +85,7 @@ class JobServiceTypeNames:
         SSH = "ssh"
         TENSOR_BOARD = "tensor_board"
         VS_CODE = "vs_code"
+        RAY_DASHBOARD = "RayDashboard"
 
     class RestNames:
         CUSTOM = "Custom"
@@ -93,6 +95,7 @@ class JobServiceTypeNames:
         SSH = "SSH"
         TENSOR_BOARD = "TensorBoard"
         VS_CODE = "VSCode"
+        RAY_DASHBOARD = "RayDashboard"
 
     ENTITY_TO_REST = {
         EntityNames.CUSTOM: RestNames.CUSTOM,
@@ -102,6 +105,7 @@ class JobServiceTypeNames:
         EntityNames.SSH: RestNames.SSH,
         EntityNames.TENSOR_BOARD: RestNames.TENSOR_BOARD,
         EntityNames.VS_CODE: RestNames.VS_CODE,
+        EntityNames.RAY_DASHBOARD: RestNames.RAY_DASHBOARD,
     }
 
     REST_TO_ENTITY = {v: k for k, v in ENTITY_TO_REST.items()}

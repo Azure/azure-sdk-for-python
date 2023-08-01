@@ -29,11 +29,13 @@ def main():
         subscription_id="c1be1141-a7c9-4aac-9608-3c2e2f1152c3",
     )
 
-    response = client.available_ground_stations.list_by_capability()
+    response = client.available_ground_stations.list_by_capability(
+        capability="EarthObservation",
+    )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/orbital/resource-manager/Microsoft.Orbital/stable/2022-03-01/examples/AvailableGroundStationsByCapabilityList.json
+# x-ms-original-file: specification/orbital/resource-manager/Microsoft.Orbital/stable/2022-11-01/examples/AvailableGroundStationsByCapabilityList.json
 if __name__ == "__main__":
     main()

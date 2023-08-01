@@ -163,6 +163,7 @@ from ._models_py3 import CouchbaseTableDataset
 from ._models_py3 import CreateDataFlowDebugSessionRequest
 from ._models_py3 import CreateDataFlowDebugSessionResponse
 from ._models_py3 import CreateRunResponse
+from ._models_py3 import CredentialReference
 from ._models_py3 import CustomActivity
 from ._models_py3 import CustomActivityReferenceObject
 from ._models_py3 import CustomDataSourceLinkedService
@@ -469,6 +470,7 @@ from ._models_py3 import OrcFormat
 from ._models_py3 import OrcSink
 from ._models_py3 import OrcSource
 from ._models_py3 import OrcWriteSettings
+from ._models_py3 import OutputColumn
 from ._models_py3 import ParameterSpecification
 from ._models_py3 import ParquetDataset
 from ._models_py3 import ParquetFormat
@@ -527,6 +529,15 @@ from ._models_py3 import RestSink
 from ._models_py3 import RestSource
 from ._models_py3 import RetryPolicy
 from ._models_py3 import RunFilterParameters
+from ._models_py3 import RunNotebookError
+from ._models_py3 import RunNotebookParameter
+from ._models_py3 import RunNotebookRequest
+from ._models_py3 import RunNotebookResponse
+from ._models_py3 import RunNotebookResult
+from ._models_py3 import RunNotebookSnapshot
+from ._models_py3 import RunNotebookSnapshotResponse
+from ._models_py3 import RunNotebookSnapshotResult
+from ._models_py3 import RunNotebookSparkSessionOptions
 from ._models_py3 import RunQueryFilter
 from ._models_py3 import RunQueryOrderBy
 from ._models_py3 import SSISAccessCredential
@@ -579,6 +590,7 @@ from ._models_py3 import ScriptActivityParameter
 from ._models_py3 import ScriptActivityScriptBlock
 from ._models_py3 import ScriptActivityTypePropertiesLogSettings
 from ._models_py3 import SecretBase
+from ._models_py3 import SecureInputOutputPolicy
 from ._models_py3 import SecureString
 from ._models_py3 import SelfDependencyTumblingWindowTriggerReference
 from ._models_py3 import SelfHostedIntegrationRuntime
@@ -624,6 +636,7 @@ from ._models_py3 import SparkScheduler
 from ._models_py3 import SparkServiceError
 from ._models_py3 import SparkServicePlugin
 from ._models_py3 import SparkSource
+from ._models_py3 import SqlAlwaysEncryptedProperties
 from ._models_py3 import SqlConnection
 from ._models_py3 import SqlDWSink
 from ._models_py3 import SqlDWSource
@@ -731,10 +744,14 @@ from ._models_py3 import ZohoLinkedService
 from ._models_py3 import ZohoObjectDataset
 from ._models_py3 import ZohoSource
 
+from ._artifacts_client_enums import ActionOnExistingTargetTable
+from ._artifacts_client_enums import ActivityOnInactiveMarkAs
+from ._artifacts_client_enums import ActivityState
 from ._artifacts_client_enums import AmazonRdsForOraclePartitionOption
 from ._artifacts_client_enums import AvroCompressionCodec
 from ._artifacts_client_enums import AzureFunctionActivityMethod
 from ._artifacts_client_enums import AzureSearchIndexWriteBehaviorType
+from ._artifacts_client_enums import AzureStorageAuthenticationType
 from ._artifacts_client_enums import BigDataPoolReferenceType
 from ._artifacts_client_enums import BlobEventType
 from ._artifacts_client_enums import CassandraSourceReadConsistencyLevels
@@ -743,6 +760,7 @@ from ._artifacts_client_enums import CompressionCodec
 from ._artifacts_client_enums import ConfigurationType
 from ._artifacts_client_enums import CopyBehaviorType
 from ._artifacts_client_enums import CreateMode
+from ._artifacts_client_enums import CredentialReferenceType
 from ._artifacts_client_enums import DataFlowComputeType
 from ._artifacts_client_enums import DataFlowDebugCommandType
 from ._artifacts_client_enums import DataFlowReferenceType
@@ -755,7 +773,7 @@ from ._artifacts_client_enums import DynamicsAuthenticationType
 from ._artifacts_client_enums import DynamicsDeploymentType
 from ._artifacts_client_enums import DynamicsServicePrincipalCredentialType
 from ._artifacts_client_enums import DynamicsSinkWriteBehavior
-from ._artifacts_client_enums import Enum9
+from ._artifacts_client_enums import Enum13
 from ._artifacts_client_enums import EventSubscriptionStatus
 from ._artifacts_client_enums import ExpressionType
 from ._artifacts_client_enums import FtpAuthenticationType
@@ -827,6 +845,7 @@ from ._artifacts_client_enums import SparkJobReferenceType
 from ._artifacts_client_enums import SparkJobType
 from ._artifacts_client_enums import SparkServerType
 from ._artifacts_client_enums import SparkThriftTransportProtocol
+from ._artifacts_client_enums import SqlAlwaysEncryptedAkvAuthType
 from ._artifacts_client_enums import SqlConnectionType
 from ._artifacts_client_enums import SqlPartitionOption
 from ._artifacts_client_enums import SqlPoolReferenceType
@@ -1010,6 +1029,7 @@ __all__ = [
     "CreateDataFlowDebugSessionRequest",
     "CreateDataFlowDebugSessionResponse",
     "CreateRunResponse",
+    "CredentialReference",
     "CustomActivity",
     "CustomActivityReferenceObject",
     "CustomDataSourceLinkedService",
@@ -1316,6 +1336,7 @@ __all__ = [
     "OrcSink",
     "OrcSource",
     "OrcWriteSettings",
+    "OutputColumn",
     "ParameterSpecification",
     "ParquetDataset",
     "ParquetFormat",
@@ -1374,6 +1395,15 @@ __all__ = [
     "RestSource",
     "RetryPolicy",
     "RunFilterParameters",
+    "RunNotebookError",
+    "RunNotebookParameter",
+    "RunNotebookRequest",
+    "RunNotebookResponse",
+    "RunNotebookResult",
+    "RunNotebookSnapshot",
+    "RunNotebookSnapshotResponse",
+    "RunNotebookSnapshotResult",
+    "RunNotebookSparkSessionOptions",
     "RunQueryFilter",
     "RunQueryOrderBy",
     "SSISAccessCredential",
@@ -1426,6 +1456,7 @@ __all__ = [
     "ScriptActivityScriptBlock",
     "ScriptActivityTypePropertiesLogSettings",
     "SecretBase",
+    "SecureInputOutputPolicy",
     "SecureString",
     "SelfDependencyTumblingWindowTriggerReference",
     "SelfHostedIntegrationRuntime",
@@ -1471,6 +1502,7 @@ __all__ = [
     "SparkServiceError",
     "SparkServicePlugin",
     "SparkSource",
+    "SqlAlwaysEncryptedProperties",
     "SqlConnection",
     "SqlDWSink",
     "SqlDWSource",
@@ -1577,10 +1609,14 @@ __all__ = [
     "ZohoLinkedService",
     "ZohoObjectDataset",
     "ZohoSource",
+    "ActionOnExistingTargetTable",
+    "ActivityOnInactiveMarkAs",
+    "ActivityState",
     "AmazonRdsForOraclePartitionOption",
     "AvroCompressionCodec",
     "AzureFunctionActivityMethod",
     "AzureSearchIndexWriteBehaviorType",
+    "AzureStorageAuthenticationType",
     "BigDataPoolReferenceType",
     "BlobEventType",
     "CassandraSourceReadConsistencyLevels",
@@ -1589,6 +1625,7 @@ __all__ = [
     "ConfigurationType",
     "CopyBehaviorType",
     "CreateMode",
+    "CredentialReferenceType",
     "DataFlowComputeType",
     "DataFlowDebugCommandType",
     "DataFlowReferenceType",
@@ -1601,7 +1638,7 @@ __all__ = [
     "DynamicsDeploymentType",
     "DynamicsServicePrincipalCredentialType",
     "DynamicsSinkWriteBehavior",
-    "Enum9",
+    "Enum13",
     "EventSubscriptionStatus",
     "ExpressionType",
     "FtpAuthenticationType",
@@ -1673,6 +1710,7 @@ __all__ = [
     "SparkJobType",
     "SparkServerType",
     "SparkThriftTransportProtocol",
+    "SqlAlwaysEncryptedAkvAuthType",
     "SqlConnectionType",
     "SqlPartitionOption",
     "SqlPoolReferenceType",

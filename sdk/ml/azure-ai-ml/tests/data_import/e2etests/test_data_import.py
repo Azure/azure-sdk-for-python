@@ -8,7 +8,7 @@ from azure.ai.ml.entities._inputs_outputs.external_data import Database
 
 @pytest.mark.timeout(600)
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test", "mock_code_hash")
+@pytest.mark.usefixtures("recorded_test", "mock_code_hash", "mock_set_headers_with_user_aml_token")
 @pytest.mark.data_import_test
 class TestDataImport(AzureRecordedTestCase):
     # Please set ML_TENANT_ID in your environment variables when recording this test.
@@ -26,6 +26,7 @@ class TestDataImport(AzureRecordedTestCase):
         assert isinstance(data_import, DataImport)
         assert data_import.name == job.outputs["sink"].name
         assert data_import.path == job.outputs["sink"].path
+        assert data_import.path == "azureml://datastores/workspaceblobstore/paths/${{name}}"
 
         assert isinstance(data_import.source, Database)
         assert isinstance(job.source, Database)

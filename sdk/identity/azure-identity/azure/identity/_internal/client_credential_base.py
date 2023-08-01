@@ -21,7 +21,8 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
         app = self._get_app(**kwargs)
         request_time = int(time.time())
         result = app.acquire_token_silent_with_error(
-            list(scopes), account=None, claims_challenge=kwargs.pop("claims", None), **kwargs)
+            list(scopes), account=None, claims_challenge=kwargs.pop("claims", None), **kwargs
+        )
         if result and "access_token" in result and "expires_in" in result:
             return AccessToken(result["access_token"], request_time + int(result["expires_in"]))
         return None

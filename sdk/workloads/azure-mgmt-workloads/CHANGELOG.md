@@ -1,5 +1,13 @@
 # Release History
 
+## 1.0.0 (2023-04-19)
+
+### Breaking Changes
+
+  - Client name is changed from `WorkloadsClient` to `WorkloadsMgmtClient`
+  - Model ImageReference no longer has parameter exact_version
+  - Model ImageReference no longer has parameter shared_gallery_image_id
+
 ## 1.0.0b3 (2023-02-15)
 
 ### Features Added

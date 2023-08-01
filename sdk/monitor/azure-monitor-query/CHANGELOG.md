@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.2 (Unreleased)
+## 1.2.1 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,21 @@
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 1.2.0 (2023-05-09)
+
+### Features Added
+
+- Add the `query_resource` method to `LogsQueryClient` to allow users to query Azure resources directly without the context of a workspace. ([#29365](https://github.com/Azure/azure-sdk-for-python/pull/29365))
+
+### Bugs Fixed
+
 - Fixed an inconsistent keyword argument name in the `LogsTable` constructor, changing `column_types` to `columns_types`. Note that this is a class that is typically only instantiated internally, and not by users. ([#29076](https://github.com/Azure/azure-sdk-for-python/pull/29076))
 
 ### Other Changes
+
+- Improved client configuration logic for non-public Azure clouds where credential scope will be determined based on the configured endpoint. ([#29602](https://github.com/Azure/azure-sdk-for-python/pull/29602))
 
 ## 1.1.1 (2023-02-13)
 

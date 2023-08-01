@@ -22,7 +22,6 @@
 import unittest
 import uuid
 import pytest
-from six.moves import xrange
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos._execution_context import base_execution_context as base_execution_context
 import azure.cosmos._base as base
@@ -69,7 +68,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         cls.document_definitions = []
 
         # create a document using the document definition
-        for i in xrange(20):
+        for i in range(20):
             d = {'id': str(i),
                  'name': 'sample document',
                  'spam': 'eggs' + str(i),
@@ -165,7 +164,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
                     
         results = {}            
         # validate that invocations of next() produces the same results as expected
-        for _ in xrange(expected_number_of_results):
+        for _ in range(expected_number_of_results):
             item = invokeNext()
             results[item['id']] = item
        

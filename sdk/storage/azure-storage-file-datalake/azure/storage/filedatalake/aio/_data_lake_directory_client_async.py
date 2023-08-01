@@ -13,6 +13,7 @@ try:
 except ImportError:
     from urllib2 import quote, unquote # type: ignore
 from azure.core.pipeline import AsyncPipeline
+from azure.core.tracing.decorator_async import distributed_trace_async
 from ._data_lake_file_client_async import DataLakeFileClient
 from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDirectoryClientBase
 from .._models import DirectoryProperties, FileProperties
@@ -21,7 +22,8 @@ from ._path_client_async import PathClient
 from .._shared.base_client_async import AsyncTransportWrapper
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
 
 
@@ -72,12 +74,13 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         self, account_url: str,
         file_system_name: str,
         directory_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, directory_name, # pylint: disable=specify-parameter-names-in-call
                                                       credential=credential, **kwargs)
 
+    @distributed_trace_async
     async def create_directory(self, metadata=None,  # type: Optional[Dict[str, str]]
                                **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -165,6 +168,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         """
         return await self._create('directory', metadata=metadata, **kwargs)
 
+    @distributed_trace_async
     async def exists(self, **kwargs):
         # type: (**Any) -> bool
         """
@@ -176,10 +180,12 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: boolean
+        :returns: True if a directory exists, False otherwise.
+        :rtype: bool
         """
         return await self._exists(**kwargs)
 
+    @distributed_trace_async
     async def delete_directory(self, **kwargs):
         # type: (...) -> None
         """
@@ -225,6 +231,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         """
         return await self._delete(recursive=True, **kwargs)
 
+    @distributed_trace_async
     async def get_directory_properties(self, **kwargs):
         # type: (**Any) -> DirectoryProperties
         """Returns all user-defined metadata, standard HTTP properties, and
@@ -274,6 +281,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         """
         return await self._get_path_properties(cls=deserialize_dir_properties, **kwargs)  # pylint: disable=protected-access
 
+    @distributed_trace_async
     async def rename_directory(self, new_name,  # type: str
                                **kwargs):
         # type: (...) -> DataLakeDirectoryClient
@@ -346,16 +354,14 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         new_file_system, new_path, new_dir_sas = self._parse_rename_path(new_name)
 
         new_directory_client = DataLakeDirectoryClient(
-            "{}://{}".format(self.scheme, self.primary_hostname), new_file_system, directory_name=new_path,
+            f"{self.scheme}://{self.primary_hostname}", new_file_system, directory_name=new_path,
             credential=self._raw_credential or new_dir_sas,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)
         await new_directory_client._rename_path(  # pylint: disable=protected-access
-            '/{}/{}{}'.format(quote(unquote(self.file_system_name)),
-                              quote(unquote(self.path_name)),
-                              self._query_str),
-            **kwargs)
+            f'/{quote(unquote(self.file_system_name))}/{quote(unquote(self.path_name))}{self._query_str}', **kwargs)
         return new_directory_client
 
+    @distributed_trace_async
     async def create_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]
                                    metadata=None,  # type: Optional[Dict[str, str]]
                                    **kwargs):
@@ -440,6 +446,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         await subdir.create_directory(metadata=metadata, **kwargs)
         return subdir
 
+    @distributed_trace_async
     async def delete_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]
                                    **kwargs):
         # type: (...) -> DataLakeDirectoryClient
@@ -483,6 +490,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         await subdir.delete_directory(**kwargs)
         return subdir
 
+    @distributed_trace_async
     async def create_file(self, file,  # type: Union[FileProperties, str]
                           **kwargs):
         # type: (...) -> DataLakeFileClient
@@ -609,7 +617,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
 
     def get_sub_directory_client(self, sub_directory  # type: Union[DirectoryProperties, str]
                                  ):
@@ -646,4 +654,4 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline)
+            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)

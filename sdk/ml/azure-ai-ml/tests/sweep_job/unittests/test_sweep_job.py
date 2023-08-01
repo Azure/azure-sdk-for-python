@@ -153,7 +153,7 @@ class TestSweepJob:
 
     @pytest.mark.parametrize(
         "properties_dict",
-        [{}, {"seed": 999}, {"rule": "sobol"}, {"seed": 999, "rule": "sobol"}],
+        [{}, {"seed": 999}, {"rule": "sobol"}, {"logbase": "e"}, {"seed": 999, "rule": "sobol", "logbase": "e"}],
     )
     def test_random_sampling_object_with_props(self, properties_dict):
         command_job = CommandJob(
@@ -168,6 +168,7 @@ class TestSweepJob:
 
         expected_seed = properties_dict.get("seed", None)
         expected_rule = properties_dict.get("rule", None)
+        expected_logbase = properties_dict.get("logbase", None)
 
         random_sampling_algorithm = RandomSamplingAlgorithm(**properties_dict)
         sweep = SweepJob(
@@ -183,14 +184,15 @@ class TestSweepJob:
         assert rest.properties.sampling_algorithm.sampling_algorithm_type == "Random"
         assert rest.properties.sampling_algorithm.seed == expected_seed
         assert rest.properties.sampling_algorithm.rule == expected_rule
+        assert rest.properties.sampling_algorithm.logbase == expected_logbase
 
         sweep: SweepJob = Job._from_rest_object(rest)
         assert sweep.sampling_algorithm.type == "random"
         assert sweep.sampling_algorithm.seed == expected_seed
         assert sweep.sampling_algorithm.rule == expected_rule
+        assert sweep.sampling_algorithm.logbase == expected_logbase
 
     def test_sweep_job_builder_serialization(self) -> None:
-
         inputs = {
             "uri": Input(
                 type=AssetTypes.URI_FILE, path="azureml://datastores/workspaceblobstore/paths/python/data.csv"

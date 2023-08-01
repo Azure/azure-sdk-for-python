@@ -78,7 +78,7 @@ class Condition(_serialization.Model):
      see examples.
     :vartype value: str
     :ivar operator: The governance rule Condition's Operator, for example Equals for severity or In
-     for list of assessments, see examples. Known values are: "Equals" and "In".
+     for list of assessments, see examples. Known values are: "Equals", "In", and "In".
     :vartype operator: str or
      ~azure.mgmt.security.v2022_01_01_preview.models.GovernanceRuleConditionOperator
     """
@@ -105,7 +105,7 @@ class Condition(_serialization.Model):
          keys, see examples.
         :paramtype value: str
         :keyword operator: The governance rule Condition's Operator, for example Equals for severity or
-         In for list of assessments, see examples. Known values are: "Equals" and "In".
+         In for list of assessments, see examples. Known values are: "Equals", "In", and "In".
         :paramtype operator: str or
          ~azure.mgmt.security.v2022_01_01_preview.models.GovernanceRuleConditionOperator
         """

@@ -1,6 +1,6 @@
 # Release History
 
-## 5.3.0b3 (Unreleased)
+## 5.3.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,37 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 5.3.0 (2023-06-15)
+
+This version of the client library defaults to the service API version `2023-04-01`.
+
+### Breaking Changes
+
+> Note: The following changes are only breaking from the previous beta. They are not breaking against previous stable versions.
+
+- Renamed model `ExtractSummaryAction` to `ExtractiveSummaryAction`.
+- Renamed model `ExtractSummaryResult` to `ExtractiveSummaryResult`.
+- Renamed client method `begin_abstractive_summary` to `begin_abstract_summary`.
+- Removed `dynamic_classification` client method and related types: `DynamicClassificationResult` and `ClassificationType`.
+- Removed keyword arguments `fhir_version` and `document_type` from `begin_analyze_healthcare_entities` and `AnalyzeHealthcareEntitiesAction`.
+- Removed property `fhir_bundle` from `AnalyzeHealthcareEntitiesResult`. 
+- Removed enum `HealthcareDocumentType`.
+- Removed property `resolutions` from `CategorizedEntity`.
+- Removed models and enums related to resolutions: `ResolutionKind`, `AgeResolution`, `AreaResolution`,
+  `CurrencyResolution`, `DateTimeResolution`, `InformationResolution`, `LengthResolution`,
+  `NumberResolution`, `NumericRangeResolution`, `OrdinalResolution`, `SpeedResolution`, `TemperatureResolution`,
+  `TemporalSpanResolution`, `VolumeResolution`, `WeightResolution`, `AgeUnit`, `AreaUnit`, `TemporalModifier`,
+  `InformationUnit`, `LengthUnit`, `NumberKind`, `RangeKind`, `RelativeTo`, `SpeedUnit`, `TemperatureUnit`,
+  `VolumeUnit`, `DateTimeSubKind`, and `WeightUnit`.
+- Removed property `detected_language` from `RecognizeEntitiesResult`, `RecognizePiiEntitiesResult`, `AnalyzeHealthcareEntitiesResult`,
+  `ExtractKeyPhrasesResult`, `RecognizeLinkedEntitiesResult`, `AnalyzeSentimentResult`, `RecognizeCustomEntitiesResult`,
+  `ClassifyDocumentResult`, `ExtractSummaryResult`, and `AbstractSummaryResult`.
+- Removed property `script` from `DetectedLanguage`.
+
+### Features Added
+
+- New enum values added for `HealthcareEntityCategory` and `HealthcareEntityRelation`.
 
 ## 5.3.0b2 (2023-03-07)
 

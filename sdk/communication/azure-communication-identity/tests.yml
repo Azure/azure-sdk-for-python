@@ -26,3 +26,5 @@ stages:
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
+      TestResourceDirectories:
+        - communication/test-resources/

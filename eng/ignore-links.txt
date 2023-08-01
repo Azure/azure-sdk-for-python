@@ -1,11 +1,6 @@
 https://docs.microsoft.com/python/api/overview/azure/{{package_doc_id}}
 https://github.com/Azure/azure-digital-twins/blob/private-preview/Documentation/how-to-manage-routes.md
-https://pypi.org/project/azure-digitaltwins-core
 https://docs.microsoft.com/azure/digital-twins/how-to-query-graph#query-limitations
-https://docs.microsoft.com/samples/azure-samples/azure-samples-python-management/{{package_doc_id}}
-https://pypi.org/project/azure-messaging-webpubsubservice/
 https://github.com/Azure/azure-rest-api-specs-pr
-https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-rooms/samples
 http://localhost:8000/samples/pyodide_integration
-https://pypi.org/project/azure-defender-easm/
-https://github.com/Azure/azure-sdk-tools/blob/main/eng/common/testproxy/transition-scripts/generate-assets-json.ps1
+https://pypi.org/project/azure-mynewpackage/

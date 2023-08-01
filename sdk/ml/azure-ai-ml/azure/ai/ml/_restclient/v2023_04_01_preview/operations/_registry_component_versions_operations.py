@@ -45,6 +45,7 @@ def build_list_request(
     order_by = kwargs.pop('order_by', None)  # type: Optional[str]
     top = kwargs.pop('top', None)  # type: Optional[int]
     skip = kwargs.pop('skip', None)  # type: Optional[str]
+    stage = kwargs.pop('stage', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -52,8 +53,8 @@ def build_list_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
-        "componentName": _SERIALIZER.url("component_name", component_name, 'str'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
+        "componentName": _SERIALIZER.url("component_name", component_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -67,6 +68,8 @@ def build_list_request(
         _query_parameters['$top'] = _SERIALIZER.query("top", top, 'int')
     if skip is not None:
         _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
+    if stage is not None:
+        _query_parameters['stage'] = _SERIALIZER.query("stage", stage, 'str')
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -98,8 +101,8 @@ def build_delete_request_initial(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
-        "componentName": _SERIALIZER.url("component_name", component_name, 'str'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
+        "componentName": _SERIALIZER.url("component_name", component_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
         "version": _SERIALIZER.url("version", version, 'str'),
     }
 
@@ -139,8 +142,8 @@ def build_get_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
-        "componentName": _SERIALIZER.url("component_name", component_name, 'str'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
+        "componentName": _SERIALIZER.url("component_name", component_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
         "version": _SERIALIZER.url("version", version, 'str'),
     }
 
@@ -181,7 +184,7 @@ def build_create_or_update_request_initial(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{2,32}$'),
         "componentName": _SERIALIZER.url("component_name", component_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
         "version": _SERIALIZER.url("version", version, 'str'),
     }
@@ -238,6 +241,7 @@ class RegistryComponentVersionsOperations(object):
         order_by=None,  # type: Optional[str]
         top=None,  # type: Optional[int]
         skip=None,  # type: Optional[str]
+        stage=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.ComponentVersionResourceArmPaginatedResult"]
@@ -247,7 +251,7 @@ class RegistryComponentVersionsOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param component_name: Container name.
         :type component_name: str
@@ -257,6 +261,8 @@ class RegistryComponentVersionsOperations(object):
         :type top: int
         :param skip: Continuation token for pagination.
         :type skip: str
+        :param stage: Component stage.
+        :type stage: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ComponentVersionResourceArmPaginatedResult or the
          result of cls(response)
@@ -283,6 +289,7 @@ class RegistryComponentVersionsOperations(object):
                     order_by=order_by,
                     top=top,
                     skip=skip,
+                    stage=stage,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -299,6 +306,7 @@ class RegistryComponentVersionsOperations(object):
                     order_by=order_by,
                     top=top,
                     skip=skip,
+                    stage=stage,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -406,7 +414,7 @@ class RegistryComponentVersionsOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param component_name: Container name.
         :type component_name: str
@@ -479,7 +487,7 @@ class RegistryComponentVersionsOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param component_name: Container name.
         :type component_name: str
@@ -614,7 +622,7 @@ class RegistryComponentVersionsOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param component_name: Container name.
         :type component_name: str
@@ -667,7 +675,7 @@ class RegistryComponentVersionsOperations(object):
             return deserialized
 
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

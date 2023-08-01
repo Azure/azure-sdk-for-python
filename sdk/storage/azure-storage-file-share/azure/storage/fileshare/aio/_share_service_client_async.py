@@ -34,7 +34,8 @@ else:
     from typing_extensions import Literal  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from .._models import (
         ShareProperties,
         Metrics,
@@ -95,7 +96,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
     """
     def __init__(
             self, account_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
             *,
             token_intent: Optional[Literal['backup']] = None,
             **kwargs: Any
@@ -108,10 +109,8 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         super(ShareServiceClient, self).__init__(
             account_url,
             credential=credential,
+            token_intent=token_intent,
             **kwargs)
-        self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
-        self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
-        self.file_request_intent = token_intent
         self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
@@ -176,7 +175,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
         :type cors: list(:class:`~azure.storage.fileshare.CorsRule`)
-        :param protocol_settings:
+        :param protocol:
             Sets protocol settings
         :type protocol: ~azure.storage.fileshare.ShareProtocolSettings
         :keyword int timeout:
@@ -289,6 +288,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
+        :return: A ShareClient for the newly created Share.
         :rtype: ~azure.storage.fileshare.aio.ShareClient
 
         .. admonition:: Example:
@@ -368,6 +368,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
+        :return: A ShareClient for the undeleted Share.
         :rtype: ~azure.storage.fileshare.aio.ShareClient
         """
         share = self.get_share_client(deleted_share_name)

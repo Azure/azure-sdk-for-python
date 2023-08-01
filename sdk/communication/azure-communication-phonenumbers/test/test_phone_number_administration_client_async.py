@@ -30,6 +30,7 @@ SKIP_UPDATE_CAPABILITIES_TESTS = os.getenv(
     "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST", "false") == "true"
 SKIP_UPDATE_CAPABILITIES_TESTS_REASON = "Phone number capabilities are skipped."
 
+
 def _get_test_phone_number():
     if SKIP_UPDATE_CAPABILITIES_TESTS:
         return os.environ["AZURE_PHONE_NUMBER"]
@@ -37,11 +38,13 @@ def _get_test_phone_number():
     test_agent = os.environ["AZURE_TEST_AGENT"]
     return os.environ["AZURE_PHONE_NUMBER_" + test_agent]
 
+
 def is_client_error_status_code(
-        status_code # type: int
-        ):
+        status_code  # type: int
+):
     return status_code >= 400 and status_code < 500
-                                
+
+
 @pytest.mark.asyncio
 class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     def setup_method(self):
@@ -239,7 +242,8 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             async with self.phone_number_client:
                 await self.phone_number_client.get_purchased_phone_number(phone_number)
 
-        assert is_client_error_status_code(ex.value.status_code) is True, 'Status code {ex.value.status_code} does not indicate a client error'  # type: ignore
+        assert is_client_error_status_code(
+            ex.value.status_code) is True, 'Status code {ex.value.status_code} does not indicate a client error'  # type: ignore
         assert ex.value.message is not None  # type: ignore
 
     @recorded_by_proxy_async
@@ -274,8 +278,9 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                     PhoneNumberCapabilityType.INBOUND,
                     polling=True
                 )
-        
-        assert is_client_error_status_code(ex.value.status_code) is True, 'Status code {ex.value.status_code} does not indicate a client error'  # type: ignore
+
+        assert is_client_error_status_code(
+            ex.value.status_code) is True, 'Status code {ex.value.status_code} does not indicate a client error'  # type: ignore
         assert ex.value.message is not None  # type: ignore
 
     @recorded_by_proxy_async
@@ -294,7 +299,8 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                     polling=True
                 )
 
-        assert is_client_error_status_code(ex.value.status_code) is True, 'Status code {ex.value.status_code} does not indicate a client error'  # type: ignore
+        assert is_client_error_status_code(
+            ex.value.status_code) is True, 'Status code {ex.value.status_code} does not indicate a client error'  # type: ignore
         assert ex.value.message is not None  # type: ignore
 
     @recorded_by_proxy_async
@@ -318,7 +324,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         phone_number_client = self._get_managed_identity_phone_number_client()
         async with phone_number_client:
             area_codes = phone_number_client.list_available_area_codes(
-                "US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
+                "US", PhoneNumberType.TOLL_FREE, assignment_type=PhoneNumberAssignmentType.APPLICATION)
             items = []
             async for item in area_codes:
                 items.append(item)
@@ -328,7 +334,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     async def test_list_toll_free_area_codes(self):
         async with self.phone_number_client:
             area_codes = self.phone_number_client.list_available_area_codes(
-                "US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
+                "US", PhoneNumberType.TOLL_FREE, assignment_type=PhoneNumberAssignmentType.APPLICATION)
             items = []
             async for item in area_codes:
                 items.append(item)
@@ -341,7 +347,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             localities = phone_number_client.list_available_localities("US")
             async for first_locality in localities:
                 area_codes = self.phone_number_client.list_available_area_codes(
-                    "US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.localized_name, administrative_division=first_locality.administrative_division.abbreviated_name)
+                    "US", PhoneNumberType.GEOGRAPHIC, assignment_type=PhoneNumberAssignmentType.PERSON, locality=first_locality.localized_name, administrative_division=first_locality.administrative_division.abbreviated_name)
                 items = []
                 async for item in area_codes:
                     items.append(item)
@@ -355,7 +361,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                 "US")
             async for first_locality in localities:
                 area_codes = self.phone_number_client.list_available_area_codes(
-                    "US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.localized_name, administrative_division=first_locality.administrative_division.abbreviated_name)
+                    "US", PhoneNumberType.GEOGRAPHIC, assignment_type=PhoneNumberAssignmentType.PERSON, locality=first_locality.localized_name, administrative_division=first_locality.administrative_division.abbreviated_name)
                 items = []
                 async for item in area_codes:
                     items.append(item)

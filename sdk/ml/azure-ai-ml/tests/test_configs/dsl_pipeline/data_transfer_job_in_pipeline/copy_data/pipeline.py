@@ -52,7 +52,6 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
     merge_files_func = copy_data(
         inputs=inputs,
         outputs=outputs,
-        task=DataTransferTaskType.COPY_DATA,
         data_copy_mode=DataCopyMode.MERGE_WITH_OVERWRITE,
     )
 

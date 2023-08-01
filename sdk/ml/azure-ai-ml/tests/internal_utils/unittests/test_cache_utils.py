@@ -24,17 +24,14 @@ class TestCacheUtils:
     @staticmethod
     def _get_cache_path(component: Component, resolver: CachedNodeResolver) -> Path:
         in_memory_hash = resolver._get_in_memory_hash_for_component(component)
-        on_disk_hash = resolver._get_on_disk_hash_for_component(component=component, in_memory_hash=in_memory_hash)
+        on_disk_hash = resolver.calc_on_disk_hash_for_component(component=component, in_memory_hash=in_memory_hash)
         return resolver._get_on_disk_cache_path(on_disk_hash)
 
     @staticmethod
     def create_resolver(client: MLClient) -> CachedNodeResolver:
         return CachedNodeResolver(
             resolver=TestCacheUtils._mock_resolver,
-            subscription_id=client.subscription_id,
-            resource_group_name=client.resource_group_name,
-            workspace_name=client.workspace_name,
-            registry_name=client._operation_scope.registry_name,
+            client_key=client.components._get_client_key(),
         )
 
     @staticmethod

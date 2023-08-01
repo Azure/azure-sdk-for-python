@@ -1,0 +1,4470 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions?api-version=2021-01-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-resource/21.1.0b1 Python/3.10.6 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-glibc2.35)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "84140",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 29 Mar 2023 23:12:54 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "c9e4e89d-01e5-4b1c-98a2-4264cc3b3fe6",
+        "x-ms-ratelimit-remaining-tenant-reads": "11995",
+        "x-ms-routing-request-id": "CANADACENTRAL:20230329T231255Z:c9e4e89d-01e5-4b1c-98a2-4264cc3b3fe6"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/a1ffc958-d2c7-493e-9f1e-125a0477f536",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "createdby": "dashley"
+            },
+            "subscriptionId": "a1ffc958-d2c7-493e-9f1e-125a0477f536",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "MSFT-MVD-05-Shared-EUDB",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/b74d5345-100f-408a-a7ca-47abb52ba60d",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "b74d5345-100f-408a-a7ca-47abb52ba60d",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "DSE EDog",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/bfd9f30e-252d-4fc8-823c-f27d994fc8b7",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "bfd9f30e-252d-4fc8-823c-f27d994fc8b7",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "balapv-aml-sub",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "EnableAzSecPackIdentityPolicy": "true"
+            },
+            "subscriptionId": "00000000-0000-0000-0000-000000000",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Data Science VM Team",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/2f96ae42-240b-4228-bafa-26d8b7b03bf3",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "Prod"
+            },
+            "subscriptionId": "2f96ae42-240b-4228-bafa-26d8b7b03bf3",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "MSFT-CloudMS-CPT-PRD-01",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/2d385bf4-0756-4a76-aa95-28bf9ed3b625",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "2d385bf4-0756-4a76-aa95-28bf9ed3b625",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Experiences R\u0026D",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/05caf07a-2598-4995-933d-3187422820e4",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "05caf07a-2598-4995-933d-3187422820e4",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "azureml sdkv2 build test",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "2cd617ea-1866-46b1-90e3-fffb087ebf9b",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Azure SDK Test Resources",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/a1920ebd-59b7-4f19-af9f-5e80599e88e4",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "a1920ebd-59b7-4f19-af9f-5e80599e88e4",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Babel",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/4e84ed7c-8068-4e31-87be-d595344efd21",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "4e84ed7c-8068-4e31-87be-d595344efd21",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML EPR",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/09e8ad18-7bdb-43b8-80c4-43ee53460e0b",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "Environment": "Line of Business Application"
+            },
+            "subscriptionId": "09e8ad18-7bdb-43b8-80c4-43ee53460e0b",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Partner Portfolio DEV",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "ba709ca5-1a2c-479c-a1cb-6e0346b81bf1",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "sing-int-eastus-prod-pool-01",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/4ccf4cbf-6e15-460c-b689-5bf88fdae317",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "4ccf4cbf-6e15-460c-b689-5bf88fdae317",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Singularity-Customer-Playground",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/8c4b5b03-3b24-4ed0-91f5-a703cd91b412",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "8c4b5b03-3b24-4ed0-91f5-a703cd91b412",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_C\u0026E_Azure_AzureEngineeringSystems_100200",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/a18897a6-7e44-457d-9260-f2854c0aca42",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "a18897a6-7e44-457d-9260-f2854c0aca42",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Azure SDK Engineering System",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/bac420ed-c6fc-4a05-8ac1-8c0c52da1d6e",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "Prod"
+            },
+            "subscriptionId": "bac420ed-c6fc-4a05-8ac1-8c0c52da1d6e",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "IDEAs MS Reporting",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/dd4c2dac-db51-4cd0-b734-684c6cc360c1",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "dd4c2dac-db51-4cd0-b734-684c6cc360c1",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Geneva Analytics Intelligent Data Test (Corp)",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/f92fab0a-38b9-44ed-b800-2ed55fa1b9d9",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "NRMS10078350": "https://msazure.visualstudio.com/One/_workitems/edit/10078350",
+              "NRMS12483790": "20220530",
+              "NRMS14306136": "20221130"
+            },
+            "subscriptionId": "f92fab0a-38b9-44ed-b800-2ed55fa1b9d9",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Kensho",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/54b875cc-a81a-4914-8bfd-1a36bc7ddf4d",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "54b875cc-a81a-4914-8bfd-1a36bc7ddf4d",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "MSFT-WindowsVirtualDesktop-01",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/c3547baf-332f-4d8f-96bd-0659b39c7a59",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "c3547baf-332f-4d8f-96bd-0659b39c7a59",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "MSAI Search Research",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/407ff5d7-0113-4c5c-8534-f5cfb09298f5",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "407ff5d7-0113-4c5c-8534-f5cfb09298f5",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "msteams.nonprod.pub.msft.msts",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/588845a8-a4a7-4ab1-83a1-1388452e8c0c",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "588845a8-a4a7-4ab1-83a1-1388452e8c0c",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Saidi Dev and Test Subscription",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/3905431d-c062-4c17-8fd9-c51f89f334c4",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "3905431d-c062-4c17-8fd9-c51f89f334c4",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Pytorch Build",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/2cd190bb-b42a-477c-b1bb-2f20932d8dc5",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "Env": "NonProd",
+              "ringValue": "r1"
+            },
+            "subscriptionId": "2cd190bb-b42a-477c-b1bb-2f20932d8dc5",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Deep Learning Group",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/b43a6159-1bea-4fa2-9407-e875fdc0ff55",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "b43a6159-1bea-4fa2-9407-e875fdc0ff55",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "BAP IA EU Schrems (P)",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/0cdd6a6b-2203-4ccb-873f-8eb1652bef4e",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "NRMSBreakGlass": "316349763",
+              "NRMS16655279": "20230720"
+            },
+            "subscriptionId": "0cdd6a6b-2203-4ccb-873f-8eb1652bef4e",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML Int Environment",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/dad45786-32e5-4ef3-b90e-8e0838fbadb6",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "dad45786-32e5-4ef3-b90e-8e0838fbadb6",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AnE.ExP.Production",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/f30787b9-82a8-4e74-bb0f-f12d64ecc496",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "NonProd",
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "f30787b9-82a8-4e74-bb0f-f12d64ecc496",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Edge ExpInsights",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/482e1993-01d4-4b16-bff4-1866929176a1",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "Prod",
+              "Env": "Prod",
+              "IsHostedOnBehalfOf": "False",
+              "SkipASMAzSecPack": "true"
+            },
+            "subscriptionId": "482e1993-01d4-4b16-bff4-1866929176a1",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Epic-Edge-ES-MergeResolver",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/26596251-f2f3-4e31-8a1b-f0754e32ad73",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "Prod",
+              "WebXT-Environment": "Prod",
+              "SkipASMAzSecPack": "True"
+            },
+            "subscriptionId": "26596251-f2f3-4e31-8a1b-f0754e32ad73",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Epic-Edge-ES-SrcPub-Prod",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/e01de573-132a-42ac-9ee2-f9dea9dd2717",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "e01de573-132a-42ac-9ee2-f9dea9dd2717",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Cosmos_WDG_Core_BnB_100292",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/f9b96b36-1f5e-4021-8959-51527e26e6d3",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {},
+            "subscriptionId": "f9b96b36-1f5e-4021-8959-51527e26e6d3",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "CS-Platform-Dev-01",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/ee85ed72-2b26-48f6-a0e8-cb5bcf98fbd9",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              },
+              {
+                "tenantId": "f40b18ba-b66c-49e4-9fd8-4fc7d3d19f0f"
+              }
+            ],
+            "subscriptionId": "ee85ed72-2b26-48f6-a0e8-cb5bcf98fbd9",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Subscription-1",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/4115b323-4aac-47f4-bb13-22af265ed58b",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "4115b323-4aac-47f4-bb13-22af265ed58b",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "ES-ESP-AS-vPack-Nonprod",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/589c7ae9-223e-45e3-a191-98433e0821a9",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "589c7ae9-223e-45e3-a191-98433e0821a9",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna INT",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/9ec1d932-0f3f-486c-acc6-e7d78b358f9b",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "9ec1d932-0f3f-486c-acc6-e7d78b358f9b",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "TScience",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/8c2c7b23-848d-40fe-b817-690d79ad9dfd",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "NRMSBreakGlass443AzureOnly ": "295445790",
+              "NRMSBreakGlassNonHighRisk": "295445790"
+            },
+            "subscriptionId": "8c2c7b23-848d-40fe-b817-690d79ad9dfd",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Purview_Demo_PartnerSandbox",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/29de2cfc-f00a-43bb-bdc8-3108795bd282",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "Prod"
+            },
+            "subscriptionId": "29de2cfc-f00a-43bb-bdc8-3108795bd282",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "MSFT-Modern Device-Modern Mgmt-Imaging00",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/7afc2d66-d5b4-4e84-970b-a782e3e4cc46",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "NRMS13924403": "20220930"
+            },
+            "subscriptionId": "7afc2d66-d5b4-4e84-970b-a782e3e4cc46",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "CLOUDBUILD-ANYBUILD-POC-01",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/7d411d23-59e5-4e2e-8566-4f59de4544f2",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "7d411d23-59e5-4e2e-8566-4f59de4544f2",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Dev:ER: CE Security Service Operation Center",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/0368444d-756e-4ca6-9ecd-e964248c227a",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "0368444d-756e-4ca6-9ecd-e964248c227a",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AnyBuild-InternalProdClusters",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/cb9eb375-570a-4e75-b83a-77dd942bee9f",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "cb9eb375-570a-4e75-b83a-77dd942bee9f",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "ATS_Shared_Dev_AKS",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/009d0e9f-a42a-470e-b315-82496a88cf0f",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "Prod",
+              "Env": "Prod",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "009d0e9f-a42a-470e-b315-82496a88cf0f",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Weather and Finance Prod",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/e686ef8c-d35d-4e9b-92f8-caaaa7948c0a",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Point of Contact": "russsan;moshelu;gacald",
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "e686ef8c-d35d-4e9b-92f8-caaaa7948c0a",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Applied Sciences Group Dev",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/6f53185c-ea09-4fc3-9075-318dec805303",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "33e01921-4d64-4f8c-a055-5bdaffd5e33d"
+              }
+            ],
+            "tags": {},
+            "subscriptionId": "6f53185c-ea09-4fc3-9075-318dec805303",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "RPSAAS CSM Dogfood",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/dcbdac96-1896-478d-89fc-c95ed43f4596",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "dcbdac96-1896-478d-89fc-c95ed43f4596",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "pgattikoppul Projects",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/3b2fda06-3ef6-454a-9dd5-994a548243e9",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "Env": "NonProd",
+              "ringValue": "r0"
+            },
+            "subscriptionId": "3b2fda06-3ef6-454a-9dd5-994a548243e9",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Microsoft Employee \u0026 Executive Communications",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/227531a4-d775-435b-a878-963ed8d0d18f",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "cdc5aeea-15c5-4db6-b079-fcadd2505dc2"
+              },
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "227531a4-d775-435b-a878-963ed8d0d18f",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Skype-1ES-DEV",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/432a7068-99ae-4975-ad38-d96b71172cdf",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "432a7068-99ae-4975-ad38-d96b71172cdf",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Azure Profiler - Testing",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/1278a874-89fc-418c-b6b9-ac763b000415",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "1278a874-89fc-418c-b6b9-ac763b000415",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "(NBrady) Microsoft Azure Internal Consumption",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/2145a411-d149-4010-84d4-40fe8a55db44",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Team": "ARM",
+              "\u6D4B\u8BD5": "123"
+            },
+            "subscriptionId": "2145a411-d149-4010-84d4-40fe8a55db44",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "ARM Test Environment",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/0cd6095b-b140-41ec-ad1d-32f2f7493386",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Env": "NonProd"
+            },
+            "subscriptionId": "0cd6095b-b140-41ec-ad1d-32f2f7493386",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "1IS - One Integration Service - NonProduction",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/4628298e-882d-4f12-abf4-a9f9654960bb",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "azsecpack": "nonprod",
+              "AzSecPackAutoConfigReady": "true"
+            },
+            "subscriptionId": "4628298e-882d-4f12-abf4-a9f9654960bb",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "ES_DeveloperProductivity_Dev",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/c0620f27-ac38-468c-a26b-264009fe7c41",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "c0620f27-ac38-468c-a26b-264009fe7c41",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AzureQualityInfrastructureSubscription-Test00",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/b68b2f37-1d37-4c2f-80f6-c23de402792e",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "b68b2f37-1d37-4c2f-80f6-c23de402792e",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Semantic Machines R\u0026D Subscription 1",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/8cff5d56-95fb-4a74-ab9d-079edb45313e",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "cdc5aeea-15c5-4db6-b079-fcadd2505dc2"
+              }
+            ],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "8cff5d56-95fb-4a74-ab9d-079edb45313e",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Skype-NetEM-STAGING",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/eec2de82-6ab2-4a84-ae5f-57e9a10bf661",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "eec2de82-6ab2-4a84-ae5f-57e9a10bf661",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "ServicesPortfolio MCS",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/79f57c16-00fe-48da-87d4-5192e86cd047",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "79f57c16-00fe-48da-87d4-5192e86cd047",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "TScienceGPU",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/9372b318-ed3a-4504-95a6-941201300f78",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "NonProd"
+            },
+            "subscriptionId": "9372b318-ed3a-4504-95a6-941201300f78",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "OE-Service Management Platform - External - Prod",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/ad203158-bc5d-4e72-b764-2607833a71dc",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "NRMSBreakGlass": "316349763",
+              "EnableAzSecPackIdentityPolicy": "true",
+              "NRMS15336412": "20230425"
+            },
+            "subscriptionId": "ad203158-bc5d-4e72-b764-2607833a71dc",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna Build",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/13723929-6644-4060-a50a-cc38ebc5e8b1",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "SkipASMAzSecPack": "true"
+            },
+            "subscriptionId": "13723929-6644-4060-a50a-cc38ebc5e8b1",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "LinuxMdsd Test",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/55a24be0-d9c3-4ecd-86b6-566c7aac2512",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "env": "NonProd",
+              "ringValue": "r0"
+            },
+            "subscriptionId": "55a24be0-d9c3-4ecd-86b6-566c7aac2512",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "CELA Data Science Team",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/911e3904-5112-4232-a7ee-0d1811363c28",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "911e3904-5112-4232-a7ee-0d1811363c28",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "ES-LOB-CUSTOMERSUCCESSSTORY-DEV-AACPROJECTS",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/eef8b6d5-94da-4b36-9327-a662f2674efb",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "eef8b6d5-94da-4b36-9327-a662f2674efb",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AISC-EngSys-01",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/1163fbbe-27e7-4b0f-8466-195fe5417043",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              },
+              {
+                "tenantId": "d0ecd01b-d782-448e-bae0-c3cad0e0543a"
+              },
+              {
+                "tenantId": "94c4857e-1130-4ab8-8eac-069b40c9db20"
+              },
+              {
+                "tenantId": "f702a9dc-ae48-4dc7-8f0a-8155a6dfa4e5"
+              }
+            ],
+            "tags": {
+              "DDFunMDCTag": "Public"
+            },
+            "subscriptionId": "1163fbbe-27e7-4b0f-8466-195fe5417043",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Python_AI_Tools_PM_Team_Sub",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/9b4236fe-df75-4289-bf00-40628ed41fd9",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Customer Confidence": "Customer POC",
+              "Environment": "Line of Business Application"
+            },
+            "subscriptionId": "9b4236fe-df75-4289-bf00-40628ed41fd9",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Customer Confidence Proof of Concepts",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/10d0b7c6-9243-4713-91a9-2730375d3a1b",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "10d0b7c6-9243-4713-91a9-2730375d3a1b",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "ASutton Subscription",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/e4e06275-58d1-4081-8f1b-be12462eb701",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "Environment": "Customer PoC"
+            },
+            "subscriptionId": "e4e06275-58d1-4081-8f1b-be12462eb701",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "CSR-CUSPOC-MST-Hiramfleitas",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/d2c9544f-4329-4642-b73d-020e7fef844f",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "SkipGreenTeamLinuxSSHAuthForSub": "1208671158"
+            },
+            "subscriptionId": "d2c9544f-4329-4642-b73d-020e7fef844f",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "HPCScrub1",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/68f3658f-0090-4277-a500-f02227aaee97",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Environment": "Self-Learning"
+            },
+            "subscriptionId": "68f3658f-0090-4277-a500-f02227aaee97",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "zejunz",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/3cd95ff9-ac62-4b5c-8240-0cd046687ea0",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "3cd95ff9-ac62-4b5c-8240-0cd046687ea0",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Internal App Insights Resources for Perflens",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/e0fd569c-e34a-4249-8c24-e8d723c7f054",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "e0fd569c-e34a-4249-8c24-e8d723c7f054",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Responsible AI R\u0026D",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/e72e5254-f265-4e95-9bd2-9ee8e7329051",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "NRMS10078350": "https://msazure.visualstudio.com/One/_workitems/edit/10078350"
+            },
+            "subscriptionId": "e72e5254-f265-4e95-9bd2-9ee8e7329051",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Speech Services - DEV - SDK (rob)",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/bac044cf-49e1-4843-8dda-1ce9662606c8",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "bac044cf-49e1-4843-8dda-1ce9662606c8",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "UI Fabric",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/a5f9f0d3-a937-4de5-8cf3-387fce51e80c",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "a5f9f0d3-a937-4de5-8cf3-387fce51e80c",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "anguil",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/21d8f407-c4c4-452e-87a4-e609bfb86248",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "21d8f407-c4c4-452e-87a4-e609bfb86248",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "DataZen",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/09fa8e83-d677-474f-8f73-2a954a0b0ea4",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "09fa8e83-d677-474f-8f73-2a954a0b0ea4",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "MaaS - Runner Resource Creation - AzureCloud",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/ae71ef11-a03f-4b4f-a0e6-ef144727c711",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "WebXT-Environment": "NonProd",
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "ae71ef11-a03f-4b4f-a0e6-ef144727c711",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Bing MM Measurement",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/8ae1955e-f748-4273-a507-10159ba940f9",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "8ae1955e-f748-4273-a507-10159ba940f9",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "SPO-CyrusB",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/b2a328a7-ffff-4c09-b643-a4758cf170bc",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "b2a328a7-ffff-4c09-b643-a4758cf170bc",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AISC-DEV-02",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/ca38bc19-cf50-48e2-bbe6-8c35b40212d8",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "NonProd",
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "ca38bc19-cf50-48e2-bbe6-8c35b40212d8",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Maps Mining Azure",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/85b3dbca-5974-4067-9669-67a141095a76",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "027fe226-784c-4798-a157-5e0e7893424d"
+              }
+            ],
+            "tags": {
+              "NRMSV2OptIn ": "20220714",
+              "ok": "true"
+            },
+            "subscriptionId": "85b3dbca-5974-4067-9669-67a141095a76",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Terraform Testing on Azure with TTL = 2 Days",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/50ff7bc0-cd15-49d5-abb2-e975184c2f65",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "50ff7bc0-cd15-49d5-abb2-e975184c2f65",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "IDXXpertRandD Dev Data Catalog",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/4bbecc02-f2c3-402a-8e01-1dfb1ffef499",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "4bbecc02-f2c3-402a-8e01-1dfb1ffef499",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Azure Portal Telemetry Reporting",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/c6dcd830-359f-44d0-b4d4-c1ba95e86f48",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "c6dcd830-359f-44d0-b4d4-c1ba95e86f48",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "OSS_AzureSpringCloud_Testing_062020",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/4a0f8d7f-c197-476b-95e1-fafcd77f12e4",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "4a0f8d7f-c197-476b-95e1-fafcd77f12e4",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AzureML Client PROD",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/35f16a99-532a-4a47-9e93-00305f6c40f2",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "35f16a99-532a-4a47-9e93-00305f6c40f2",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Data Wrangling development",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "d511f82f-71ba-49a4-8233-d7be8a3650f4",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "bai-eastus-dogfood-pool-1",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/2ab32971-d92b-4038-a56c-4315e4a8deef",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "2ab32971-d92b-4038-a56c-4315e4a8deef",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - WestEurope",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/b287e980-0165-47df-b897-347940f8f528",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "b287e980-0165-47df-b897-347940f8f528",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - CanadaCentral",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/74eccef0-4b8d-4f83-b5f9-fa100d155b22",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "74eccef0-4b8d-4f83-b5f9-fa100d155b22",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML V1 Build 1",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/b837116e-b12e-4683-90d8-208a02262236",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "b837116e-b12e-4683-90d8-208a02262236",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "MFE - Runner Resource Creation - AzureCloud",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/f1d79e73-f8e3-4b10-bfdb-4207ca0723ed",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "f1d79e73-f8e3-4b10-bfdb-4207ca0723ed",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML Infra - Engineering System",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/d08f1142-742d-4251-9908-8a8d2dc7b865",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "d08f1142-742d-4251-9908-8a8d2dc7b865",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - CanadaCentral",
+            "state": "Disabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/dd21e9f4-d52f-406f-ab5e-d164e7d7dc65",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "EnableAzSecPackIdentityPolicy": "true"
+            },
+            "subscriptionId": "dd21e9f4-d52f-406f-ab5e-d164e7d7dc65",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AMLArc - Runner Resource Creation",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/3fc6fc00-c508-463b-9674-f0301284086e",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "3fc6fc00-c508-463b-9674-f0301284086e",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Global Job Dispatcher Internal Runner Test-3",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/01986d28-6a39-40f4-bb0f-c9b02f8f4131",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "01986d28-6a39-40f4-bb0f-c9b02f8f4131",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - EastUS2EUAP",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "96aede12-2f73-41cb-b983-6d11a904839b",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Pipelines R\u0026D",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/a4cb9ffb-8007-4e46-9a86-60c7a1cde38c",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "a4cb9ffb-8007-4e46-9a86-60c7a1cde38c",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna \u2013 Metrics Runner Public",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/ad07bff6-55a5-44d9-9417-f25939941d00",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "ad07bff6-55a5-44d9-9417-f25939941d00",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - NorthEurope",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/8eedaad9-b9a9-4c77-873f-ae9b9621a564",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "NRMSBreakGlass443AzureOnly ": "296044760",
+              "NRMSBreakGlass": "296044760",
+              "NRMS14306136": "20221130"
+            },
+            "subscriptionId": "8eedaad9-b9a9-4c77-873f-ae9b9621a564",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "mir-fd-main",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/4f455bd0-f95a-4b7d-8d08-078611508e0b",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "4f455bd0-f95a-4b7d-8d08-078611508e0b",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML V1 Build 2",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/f700e635-93e3-47f6-bcce-40c2041ee167",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "f700e635-93e3-47f6-bcce-40c2041ee167",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - AzureCloud",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/7ad5283f-8555-4f0b-9543-a78cc07bf0e5",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "7ad5283f-8555-4f0b-9543-a78cc07bf0e5",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - WestUS2",
+            "state": "Disabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/663724c3-071d-409b-bf3b-356add9b6b70",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "663724c3-071d-409b-bf3b-356add9b6b70",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Infrastructure R\u0026D",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/4e7b3094-d7f1-4973-8734-e82a24f1590e",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "4e7b3094-d7f1-4973-8734-e82a24f1590e",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML V1 INT 2",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/b0d50d34-4247-4cae-871a-6b1799907b8d",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "NRMSBreakGlassAzureOnly": "296219298"
+            },
+            "subscriptionId": "b0d50d34-4247-4cae-871a-6b1799907b8d",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna Ephemeral [Used for notebook testing]",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/cc5f64cd-70f0-430c-ba64-25ca5628dacf",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "cc5f64cd-70f0-430c-ba64-25ca5628dacf",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Experiences - Telemetry",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/ea4faa5b-5e44-4236-91f6-5483d5b17d14",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "f40b18ba-b66c-49e4-9fd8-4fc7d3d19f0f"
+              },
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "NRMS1430613": "20221130"
+            },
+            "subscriptionId": "ea4faa5b-5e44-4236-91f6-5483d5b17d14",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Inferencing R\u0026D Personal",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/22b80983-c31e-465e-a272-06f51fde6c98",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "22b80983-c31e-465e-a272-06f51fde6c98",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - WestUS3",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/a02ce7fd-1f09-4cd2-855d-49b67aef9c20",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "a02ce7fd-1f09-4cd2-855d-49b67aef9c20",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - WestUS",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/6ea83dee-1056-4dd2-b926-8118432808a3",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "6ea83dee-1056-4dd2-b926-8118432808a3",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - EastAsia",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/0e3f75c8-66e9-439d-b737-e05527eb1fd9",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "0e3f75c8-66e9-439d-b737-e05527eb1fd9",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - Jio India West",
+            "state": "Disabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/7421b5fd-cf60-4260-b2a2-dbb76e98458b",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "7421b5fd-cf60-4260-b2a2-dbb76e98458b",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna Test-Managed Cluster",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/e5388881-739a-49db-982b-6a4b412179ed",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "e5388881-739a-49db-982b-6a4b412179ed",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - CentralUS",
+            "state": "Disabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/15a00053-83f6-4fd3-ac85-fddefa2cfb6d",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "15a00053-83f6-4fd3-ac85-fddefa2cfb6d",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - Korea Central",
+            "state": "Disabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/b95ddc94-1dc3-4916-bdc8-ac13cd8e2eaf",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "b95ddc94-1dc3-4916-bdc8-ac13cd8e2eaf",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - AustraliaEast",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/04abf173-6a6e-46ba-9edc-4c3cd4c90a62",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "04abf173-6a6e-46ba-9edc-4c3cd4c90a62",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - SouthEastAsia",
+            "state": "Disabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/eb1a770b-444b-4e41-8655-9f27db63f22f",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "eb1a770b-444b-4e41-8655-9f27db63f22f",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - WestUS3",
+            "state": "Disabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/1544855c-d3b7-4517-b765-a61123dffb63",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "1544855c-d3b7-4517-b765-a61123dffb63",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - UKWest",
+            "state": "Disabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/72c03bf3-4e69-41af-9532-dfcdc3eefef4",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "72c03bf3-4e69-41af-9532-dfcdc3eefef4",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Training R\u0026D",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/d3504e6e-7936-459c-b215-00e69750b969",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "d3504e6e-7936-459c-b215-00e69750b969",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - SouthEastAsia",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/360e1686-f6e9-4886-b64e-e7ed463af573",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "360e1686-f6e9-4886-b64e-e7ed463af573",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - SouthAfricaNorth",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/e062a0e0-9809-416f-b638-431baf0807d6",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "e062a0e0-9809-416f-b638-431baf0807d6",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "mir-fd-dev-westus2",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/c0afea91-faba-4d71-bcb6-b08134f69982",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "c0afea91-faba-4d71-bcb6-b08134f69982",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Inferencing R\u0026D Autotest",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/f8ac18dc-d246-4e66-a49c-09779efe2437",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "f8ac18dc-d246-4e66-a49c-09779efe2437",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - JapanEast",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/a5a8fe77-9cf5-46ce-abb7-74521ae46ec4",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "a5a8fe77-9cf5-46ce-abb7-74521ae46ec4",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - Central India",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/10a1cf3f-9a29-4c5d-aef4-0f6a234190af",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "10a1cf3f-9a29-4c5d-aef4-0f6a234190af",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML V1 INT 1",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/74559077-e6bf-4919-a785-da349a31880b",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "74559077-e6bf-4919-a785-da349a31880b",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - BrazilSouth",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/2a79b87a-9981-49cd-b73d-16ecd966116a",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "2a79b87a-9981-49cd-b73d-16ecd966116a",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - AustraliaSoutheast",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/30fd7778-380c-4815-a1aa-dbd7dcd16662",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "EnableAzSecPackIdentityPolicy": "true"
+            },
+            "subscriptionId": "30fd7778-380c-4815-a1aa-dbd7dcd16662",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - KoreaCentral",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/f4d30ee4-1879-430a-b465-e30540018493",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "f4d30ee4-1879-430a-b465-e30540018493",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - SouthCentralUS",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/d579d006-2ffc-4e55-b05a-b24a40fe3c10",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "d579d006-2ffc-4e55-b05a-b24a40fe3c10",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - Brazil South",
+            "state": "Disabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/0ae0f834-a94a-481a-b304-dcc9a1e050cd",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "0ae0f834-a94a-481a-b304-dcc9a1e050cd",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - WestUS2",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/76394156-984f-49c8-9827-3d4434fa92a1",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "76394156-984f-49c8-9827-3d4434fa92a1",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - UKSouth",
+            "state": "Disabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/8019917e-8060-435b-b1f0-01724b861516",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "8019917e-8060-435b-b1f0-01724b861516",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Infrastructure Autotest",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/2d48d175-17b3-479d-91ca-775f9982190d",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "2d48d175-17b3-479d-91ca-775f9982190d",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Telemetry and Insights R\u0026D",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/5fa32cf6-c4f6-42ed-ab06-670cfc801695",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "5fa32cf6-c4f6-42ed-ab06-670cfc801695",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna Runners",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/964867c8-3b45-412b-bffc-052af778b09f",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "964867c8-3b45-412b-bffc-052af778b09f",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - EastUS2",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/381b38e9-9840-4719-a5a0-61d9585e1e91",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "381b38e9-9840-4719-a5a0-61d9585e1e91",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AutoML Demo",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/7fae5a31-397a-49ac-af64-75d97052cc06",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "7fae5a31-397a-49ac-af64-75d97052cc06",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - EastUS",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/91b33898-53f2-437e-9201-db49c73941dd",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "91b33898-53f2-437e-9201-db49c73941dd",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - Test",
+            "state": "Disabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/d5163817-70ea-4129-8f84-441ae0b495e8",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "d5163817-70ea-4129-8f84-441ae0b495e8",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - CentralIndia",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/bb20c1c1-ba96-4d3d-b44d-a66caf56f1c8",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "bb20c1c1-ba96-4d3d-b44d-a66caf56f1c8",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna \u2013 Compute Instance Runner Public",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/1c608e0a-94f9-430d-a8d7-16b87a5e87c8",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "1c608e0a-94f9-430d-a8d7-16b87a5e87c8",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - WestUS",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/608a9eb7-f19a-479d-beb8-e0bf87da0b17",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "608a9eb7-f19a-479d-beb8-e0bf87da0b17",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - WestCentralUS",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/4faaaf21-663f-4391-96fd-47197c630979",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "4faaaf21-663f-4391-96fd-47197c630979",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna Build Tests",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/227aeb4c-f574-4ca5-bda3-443bc17d960f",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "227aeb4c-f574-4ca5-bda3-443bc17d960f",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - FranceCentral",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/f12aca23-53d1-4587-9e3e-740318475a18",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "f12aca23-53d1-4587-9e3e-740318475a18",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna Telemetry",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/415578b2-69eb-467f-9275-44d2083bbc1a",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "415578b2-69eb-467f-9275-44d2083bbc1a",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - NorthCentralUS",
+            "state": "Disabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/0caf7ec9-615a-4491-bad8-64ce023324e1",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "d0ecd01b-d782-448e-bae0-c3cad0e0543a"
+              },
+              {
+                "tenantId": "94c4857e-1130-4ab8-8eac-069b40c9db20"
+              },
+              {
+                "tenantId": "f702a9dc-ae48-4dc7-8f0a-8155a6dfa4e5"
+              }
+            ],
+            "subscriptionId": "0caf7ec9-615a-4491-bad8-64ce023324e1",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Workspace R\u0026D",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/792f317d-884c-432d-90a1-56f73fd2cc3f",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "NRMSBreakGlass": "316349763"
+            },
+            "subscriptionId": "792f317d-884c-432d-90a1-56f73fd2cc3f",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AzureML Infra - Int Environment Testing (TEMPORARY ONLY)",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/9ebd50c1-b3b9-4361-86f1-8759b884eb5e",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "9ebd50c1-b3b9-4361-86f1-8759b884eb5e",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna \u2013 HyperDrive Runner Public",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/f8f8b81c-3ebd-427c-b3b7-ebb226c4eea2",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "f8f8b81c-3ebd-427c-b3b7-ebb226c4eea2",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML V1 Stress 1",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/a82509e3-6dae-41ad-8c7f-7114cb3b435a",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "a82509e3-6dae-41ad-8c7f-7114cb3b435a",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - France Central",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/ffc5a3ec-eee4-4d2b-936f-d1eb5ae388ae",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "EnableAzSecPackIdentityPolicy": "true"
+            },
+            "subscriptionId": "ffc5a3ec-eee4-4d2b-936f-d1eb5ae388ae",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - CentralUS",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/1b75927d-563b-49d2-bf8a-772f7d6a170e",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "1b75927d-563b-49d2-bf8a-772f7d6a170e",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Global Job Dispatcher Internal",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/4f26493f-21d2-4726-92ea-1ddd550b1d27",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "f40b18ba-b66c-49e4-9fd8-4fc7d3d19f0f"
+              }
+            ],
+            "subscriptionId": "4f26493f-21d2-4726-92ea-1ddd550b1d27",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Inferencing R\u0026D",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/02af6913-ee79-441b-a232-0d3d48956992",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "02af6913-ee79-441b-a232-0d3d48956992",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - NorthEurope",
+            "state": "Disabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/1acf6fa9-eabe-4d20-b07d-e7eb0d8e631a",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "EnableAzSecPackIdentityPolicy": "true"
+            },
+            "subscriptionId": "1acf6fa9-eabe-4d20-b07d-e7eb0d8e631a",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - SouthCentralUS",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/3259880c-4cb2-4ba9-ae23-bcc4b4370193",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "3259880c-4cb2-4ba9-ae23-bcc4b4370193",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - JapanWest",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/4f702c02-4b6d-4f1b-a1c4-11d7ae3f8aac",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "4f702c02-4b6d-4f1b-a1c4-11d7ae3f8aac",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - EastUS2",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/2e7459c4-092c-4905-a8d8-83048632b4ae",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "2e7459c4-092c-4905-a8d8-83048632b4ae",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - WestEurope",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/9314fc4d-518e-4fa0-80bd-47f71c0a832c",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "9314fc4d-518e-4fa0-80bd-47f71c0a832c",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML Singularity HOBO PPE",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/42737d42-7a24-4ceb-91d1-9d261083c0ad",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "42737d42-7a24-4ceb-91d1-9d261083c0ad",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna - Runner Resource Creation - Japan East",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "f40b18ba-b66c-49e4-9fd8-4fc7d3d19f0f"
+              }
+            ],
+            "subscriptionId": "79a1ba0c-35bb-436b-bff2-3074d5ff1f89",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Compute and Data R\u0026D",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/f702b78b-b384-4ddd-9ce1-0d1a1be5b80c",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "EnableAzSecPackIdentityPolicy": "true"
+            },
+            "subscriptionId": "f702b78b-b384-4ddd-9ce1-0d1a1be5b80c",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - NorthCentralUS",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/8b5789cd-8107-4765-ae2c-82a3a9289b3a",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "8b5789cd-8107-4765-ae2c-82a3a9289b3a",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Project Vienna \u2013 AutoML Runner Public",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/2fd34b77-86b4-48f8-98b1-5ff875a8455e",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "2fd34b77-86b4-48f8-98b1-5ff875a8455e",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "InferenceV2 - Runner Resource Creation - UKSouth",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/4a13d854-77ae-4ad8-af70-54ca124d4c84",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "4a13d854-77ae-4ad8-af70-54ca124d4c84",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Assets - Runner Resource Creation - SouthAfricaNorth",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/102a16c3-37d3-48a8-9237-4c9b1e8e80e0",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              },
+              {
+                "tenantId": "f40b18ba-b66c-49e4-9fd8-4fc7d3d19f0f"
+              }
+            ],
+            "subscriptionId": "102a16c3-37d3-48a8-9237-4c9b1e8e80e0",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AutoML",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/e9b2ec51-5c94-4fa8-809a-dc1e695e4896",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "e9b2ec51-5c94-4fa8-809a-dc1e695e4896",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML V1 Personal 2",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/3d6da6ed-6af5-4a74-87c6-da367514f8e0",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "EnableAzSecPackIdentityPolicy": "true"
+            },
+            "subscriptionId": "3d6da6ed-6af5-4a74-87c6-da367514f8e0",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML - Experiences - Build",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/15ce327c-3e0e-40df-9484-3774acdf04e7",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "15ce327c-3e0e-40df-9484-3774acdf04e7",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Assets - Runner Resource Creation - CanadaEast",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/d128f140-94e6-4175-87a7-954b9d27db16",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "d128f140-94e6-4175-87a7-954b9d27db16",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AML V1 Personal 1",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/177c4b0e-5902-4220-94bb-7ba41f024f2b",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "177c4b0e-5902-4220-94bb-7ba41f024f2b",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Assets - Runner Resource Creation - NorwayEast",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/84ca48fe-c942-42e5-b492-d56681d058fa",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "84ca48fe-c942-42e5-b492-d56681d058fa",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "AEP_CorePlatform_Playground_Dev",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/0ee78edb-a0ad-456c-a0a2-901bf542c102",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "NRMSBreakGlassAzureOnly": "292742303"
+            },
+            "subscriptionId": "0ee78edb-a0ad-456c-a0a2-901bf542c102",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "ADF Test sub - App Model V2",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/8168a4f2-74d6-4663-9951-8e3a454937b7",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "8168a4f2-74d6-4663-9951-8e3a454937b7",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "TEST - IbizaFx misc",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/cd0fa82d-b6b6-4361-b002-050c32f71353",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "WebXT-Environment": "NonProd",
+              "Env": "NonProd",
+              "IsHostedOnBehalfOf": "False"
+            },
+            "subscriptionId": "cd0fa82d-b6b6-4361-b002-050c32f71353",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Falcon Billing",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/f6869ac6-2a40-404f-acd3-d07461be771a",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "f6869ac6-2a40-404f-acd3-d07461be771a",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Synthetic Testing Lab",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/b5c0b80f-5932-4d47-ae25-cd617dac90ce",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "b5c0b80f-5932-4d47-ae25-cd617dac90ce",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "CRM-DEVTEST-Efun-IDC",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "tags": {
+              "EnableAzSecPackIdentityPolicy": "true"
+            },
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "ML Lifecycle PM",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/8d5565a3-dec1-4ee2-86d6-8aabb315eec4",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [
+              {
+                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
+              }
+            ],
+            "subscriptionId": "8d5565a3-dec1-4ee2-86d6-8aabb315eec4",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Albus Analytics Service - Stage",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/52a442a2-31e9-42f9-8e3e-4b27dbf82673",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "52a442a2-31e9-42f9-8e3e-4b27dbf82673",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "Core-ES-WorkManagement",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/6d17b59e-06c4-4203-89d2-de793ebf5452",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "tags": {
+              "IsHostedOnBehalfOf": "False",
+              "Env": "NonProd"
+            },
+            "subscriptionId": "6d17b59e-06c4-4203-89d2-de793ebf5452",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "OE-1JS Core - External - Dev",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          },
+          {
+            "id": "/subscriptions/365a62ee-6166-4d37-a936-03585106dd50",
+            "authorizationSource": "RoleBased",
+            "managedByTenants": [],
+            "subscriptionId": "365a62ee-6166-4d37-a936-03585106dd50",
+            "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "displayName": "NetVal Dev Sandbox",
+            "state": "Enabled",
+            "subscriptionPolicies": {
+              "locationPlacementId": "Internal_2014-09-01",
+              "quotaId": "Internal_2014-09-01",
+              "spendingLimit": "Off"
+            }
+          }
+        ],
+        "count": {
+          "type": "Total",
+          "value": 187
+        }
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "7776",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-mgmt-resourcegraph/8.0.0 Python/3.10.6 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-glibc2.35)"
+      },
+      "RequestBody": {
+        "subscriptions": [
+          "a1ffc958-d2c7-493e-9f1e-125a0477f536",
+          "b74d5345-100f-408a-a7ca-47abb52ba60d",
+          "bfd9f30e-252d-4fc8-823c-f27d994fc8b7",
+          "00000000-0000-0000-0000-000000000",
+          "2f96ae42-240b-4228-bafa-26d8b7b03bf3",
+          "2d385bf4-0756-4a76-aa95-28bf9ed3b625",
+          "05caf07a-2598-4995-933d-3187422820e4",
+          "2cd617ea-1866-46b1-90e3-fffb087ebf9b",
+          "a1920ebd-59b7-4f19-af9f-5e80599e88e4",
+          "4e84ed7c-8068-4e31-87be-d595344efd21",
+          "09e8ad18-7bdb-43b8-80c4-43ee53460e0b",
+          "ba709ca5-1a2c-479c-a1cb-6e0346b81bf1",
+          "4ccf4cbf-6e15-460c-b689-5bf88fdae317",
+          "8c4b5b03-3b24-4ed0-91f5-a703cd91b412",
+          "a18897a6-7e44-457d-9260-f2854c0aca42",
+          "bac420ed-c6fc-4a05-8ac1-8c0c52da1d6e",
+          "dd4c2dac-db51-4cd0-b734-684c6cc360c1",
+          "f92fab0a-38b9-44ed-b800-2ed55fa1b9d9",
+          "54b875cc-a81a-4914-8bfd-1a36bc7ddf4d",
+          "c3547baf-332f-4d8f-96bd-0659b39c7a59",
+          "407ff5d7-0113-4c5c-8534-f5cfb09298f5",
+          "588845a8-a4a7-4ab1-83a1-1388452e8c0c",
+          "3905431d-c062-4c17-8fd9-c51f89f334c4",
+          "2cd190bb-b42a-477c-b1bb-2f20932d8dc5",
+          "b43a6159-1bea-4fa2-9407-e875fdc0ff55",
+          "0cdd6a6b-2203-4ccb-873f-8eb1652bef4e",
+          "dad45786-32e5-4ef3-b90e-8e0838fbadb6",
+          "f30787b9-82a8-4e74-bb0f-f12d64ecc496",
+          "482e1993-01d4-4b16-bff4-1866929176a1",
+          "26596251-f2f3-4e31-8a1b-f0754e32ad73",
+          "e01de573-132a-42ac-9ee2-f9dea9dd2717",
+          "f9b96b36-1f5e-4021-8959-51527e26e6d3",
+          "ee85ed72-2b26-48f6-a0e8-cb5bcf98fbd9",
+          "4115b323-4aac-47f4-bb13-22af265ed58b",
+          "589c7ae9-223e-45e3-a191-98433e0821a9",
+          "9ec1d932-0f3f-486c-acc6-e7d78b358f9b",
+          "8c2c7b23-848d-40fe-b817-690d79ad9dfd",
+          "29de2cfc-f00a-43bb-bdc8-3108795bd282",
+          "7afc2d66-d5b4-4e84-970b-a782e3e4cc46",
+          "7d411d23-59e5-4e2e-8566-4f59de4544f2",
+          "0368444d-756e-4ca6-9ecd-e964248c227a",
+          "cb9eb375-570a-4e75-b83a-77dd942bee9f",
+          "009d0e9f-a42a-470e-b315-82496a88cf0f",
+          "e686ef8c-d35d-4e9b-92f8-caaaa7948c0a",
+          "6f53185c-ea09-4fc3-9075-318dec805303",
+          "dcbdac96-1896-478d-89fc-c95ed43f4596",
+          "3b2fda06-3ef6-454a-9dd5-994a548243e9",
+          "227531a4-d775-435b-a878-963ed8d0d18f",
+          "432a7068-99ae-4975-ad38-d96b71172cdf",
+          "1278a874-89fc-418c-b6b9-ac763b000415",
+          "2145a411-d149-4010-84d4-40fe8a55db44",
+          "0cd6095b-b140-41ec-ad1d-32f2f7493386",
+          "4628298e-882d-4f12-abf4-a9f9654960bb",
+          "c0620f27-ac38-468c-a26b-264009fe7c41",
+          "b68b2f37-1d37-4c2f-80f6-c23de402792e",
+          "8cff5d56-95fb-4a74-ab9d-079edb45313e",
+          "eec2de82-6ab2-4a84-ae5f-57e9a10bf661",
+          "79f57c16-00fe-48da-87d4-5192e86cd047",
+          "9372b318-ed3a-4504-95a6-941201300f78",
+          "ad203158-bc5d-4e72-b764-2607833a71dc",
+          "13723929-6644-4060-a50a-cc38ebc5e8b1",
+          "55a24be0-d9c3-4ecd-86b6-566c7aac2512",
+          "911e3904-5112-4232-a7ee-0d1811363c28",
+          "eef8b6d5-94da-4b36-9327-a662f2674efb",
+          "1163fbbe-27e7-4b0f-8466-195fe5417043",
+          "9b4236fe-df75-4289-bf00-40628ed41fd9",
+          "10d0b7c6-9243-4713-91a9-2730375d3a1b",
+          "e4e06275-58d1-4081-8f1b-be12462eb701",
+          "d2c9544f-4329-4642-b73d-020e7fef844f",
+          "68f3658f-0090-4277-a500-f02227aaee97",
+          "3cd95ff9-ac62-4b5c-8240-0cd046687ea0",
+          "e0fd569c-e34a-4249-8c24-e8d723c7f054",
+          "e72e5254-f265-4e95-9bd2-9ee8e7329051",
+          "bac044cf-49e1-4843-8dda-1ce9662606c8",
+          "a5f9f0d3-a937-4de5-8cf3-387fce51e80c",
+          "21d8f407-c4c4-452e-87a4-e609bfb86248",
+          "09fa8e83-d677-474f-8f73-2a954a0b0ea4",
+          "ae71ef11-a03f-4b4f-a0e6-ef144727c711",
+          "8ae1955e-f748-4273-a507-10159ba940f9",
+          "b2a328a7-ffff-4c09-b643-a4758cf170bc",
+          "ca38bc19-cf50-48e2-bbe6-8c35b40212d8",
+          "85b3dbca-5974-4067-9669-67a141095a76",
+          "50ff7bc0-cd15-49d5-abb2-e975184c2f65",
+          "4bbecc02-f2c3-402a-8e01-1dfb1ffef499",
+          "c6dcd830-359f-44d0-b4d4-c1ba95e86f48",
+          "4a0f8d7f-c197-476b-95e1-fafcd77f12e4",
+          "35f16a99-532a-4a47-9e93-00305f6c40f2",
+          "d511f82f-71ba-49a4-8233-d7be8a3650f4",
+          "2ab32971-d92b-4038-a56c-4315e4a8deef",
+          "b287e980-0165-47df-b897-347940f8f528",
+          "74eccef0-4b8d-4f83-b5f9-fa100d155b22",
+          "b837116e-b12e-4683-90d8-208a02262236",
+          "f1d79e73-f8e3-4b10-bfdb-4207ca0723ed",
+          "d08f1142-742d-4251-9908-8a8d2dc7b865",
+          "dd21e9f4-d52f-406f-ab5e-d164e7d7dc65",
+          "3fc6fc00-c508-463b-9674-f0301284086e",
+          "01986d28-6a39-40f4-bb0f-c9b02f8f4131",
+          "96aede12-2f73-41cb-b983-6d11a904839b",
+          "a4cb9ffb-8007-4e46-9a86-60c7a1cde38c",
+          "ad07bff6-55a5-44d9-9417-f25939941d00",
+          "8eedaad9-b9a9-4c77-873f-ae9b9621a564",
+          "4f455bd0-f95a-4b7d-8d08-078611508e0b",
+          "f700e635-93e3-47f6-bcce-40c2041ee167",
+          "7ad5283f-8555-4f0b-9543-a78cc07bf0e5",
+          "663724c3-071d-409b-bf3b-356add9b6b70",
+          "4e7b3094-d7f1-4973-8734-e82a24f1590e",
+          "b0d50d34-4247-4cae-871a-6b1799907b8d",
+          "cc5f64cd-70f0-430c-ba64-25ca5628dacf",
+          "ea4faa5b-5e44-4236-91f6-5483d5b17d14",
+          "22b80983-c31e-465e-a272-06f51fde6c98",
+          "a02ce7fd-1f09-4cd2-855d-49b67aef9c20",
+          "6ea83dee-1056-4dd2-b926-8118432808a3",
+          "0e3f75c8-66e9-439d-b737-e05527eb1fd9",
+          "7421b5fd-cf60-4260-b2a2-dbb76e98458b",
+          "e5388881-739a-49db-982b-6a4b412179ed",
+          "15a00053-83f6-4fd3-ac85-fddefa2cfb6d",
+          "b95ddc94-1dc3-4916-bdc8-ac13cd8e2eaf",
+          "04abf173-6a6e-46ba-9edc-4c3cd4c90a62",
+          "eb1a770b-444b-4e41-8655-9f27db63f22f",
+          "1544855c-d3b7-4517-b765-a61123dffb63",
+          "72c03bf3-4e69-41af-9532-dfcdc3eefef4",
+          "d3504e6e-7936-459c-b215-00e69750b969",
+          "360e1686-f6e9-4886-b64e-e7ed463af573",
+          "e062a0e0-9809-416f-b638-431baf0807d6",
+          "c0afea91-faba-4d71-bcb6-b08134f69982",
+          "f8ac18dc-d246-4e66-a49c-09779efe2437",
+          "a5a8fe77-9cf5-46ce-abb7-74521ae46ec4",
+          "10a1cf3f-9a29-4c5d-aef4-0f6a234190af",
+          "74559077-e6bf-4919-a785-da349a31880b",
+          "2a79b87a-9981-49cd-b73d-16ecd966116a",
+          "30fd7778-380c-4815-a1aa-dbd7dcd16662",
+          "f4d30ee4-1879-430a-b465-e30540018493",
+          "d579d006-2ffc-4e55-b05a-b24a40fe3c10",
+          "0ae0f834-a94a-481a-b304-dcc9a1e050cd",
+          "76394156-984f-49c8-9827-3d4434fa92a1",
+          "8019917e-8060-435b-b1f0-01724b861516",
+          "2d48d175-17b3-479d-91ca-775f9982190d",
+          "5fa32cf6-c4f6-42ed-ab06-670cfc801695",
+          "964867c8-3b45-412b-bffc-052af778b09f",
+          "381b38e9-9840-4719-a5a0-61d9585e1e91",
+          "7fae5a31-397a-49ac-af64-75d97052cc06",
+          "91b33898-53f2-437e-9201-db49c73941dd",
+          "d5163817-70ea-4129-8f84-441ae0b495e8",
+          "bb20c1c1-ba96-4d3d-b44d-a66caf56f1c8",
+          "1c608e0a-94f9-430d-a8d7-16b87a5e87c8",
+          "608a9eb7-f19a-479d-beb8-e0bf87da0b17",
+          "4faaaf21-663f-4391-96fd-47197c630979",
+          "227aeb4c-f574-4ca5-bda3-443bc17d960f",
+          "f12aca23-53d1-4587-9e3e-740318475a18",
+          "415578b2-69eb-467f-9275-44d2083bbc1a",
+          "0caf7ec9-615a-4491-bad8-64ce023324e1",
+          "792f317d-884c-432d-90a1-56f73fd2cc3f",
+          "9ebd50c1-b3b9-4361-86f1-8759b884eb5e",
+          "f8f8b81c-3ebd-427c-b3b7-ebb226c4eea2",
+          "a82509e3-6dae-41ad-8c7f-7114cb3b435a",
+          "ffc5a3ec-eee4-4d2b-936f-d1eb5ae388ae",
+          "1b75927d-563b-49d2-bf8a-772f7d6a170e",
+          "4f26493f-21d2-4726-92ea-1ddd550b1d27",
+          "02af6913-ee79-441b-a232-0d3d48956992",
+          "1acf6fa9-eabe-4d20-b07d-e7eb0d8e631a",
+          "3259880c-4cb2-4ba9-ae23-bcc4b4370193",
+          "4f702c02-4b6d-4f1b-a1c4-11d7ae3f8aac",
+          "2e7459c4-092c-4905-a8d8-83048632b4ae",
+          "9314fc4d-518e-4fa0-80bd-47f71c0a832c",
+          "42737d42-7a24-4ceb-91d1-9d261083c0ad",
+          "79a1ba0c-35bb-436b-bff2-3074d5ff1f89",
+          "f702b78b-b384-4ddd-9ce1-0d1a1be5b80c",
+          "8b5789cd-8107-4765-ae2c-82a3a9289b3a",
+          "2fd34b77-86b4-48f8-98b1-5ff875a8455e",
+          "4a13d854-77ae-4ad8-af70-54ca124d4c84",
+          "102a16c3-37d3-48a8-9237-4c9b1e8e80e0",
+          "e9b2ec51-5c94-4fa8-809a-dc1e695e4896",
+          "3d6da6ed-6af5-4a74-87c6-da367514f8e0",
+          "15ce327c-3e0e-40df-9484-3774acdf04e7",
+          "d128f140-94e6-4175-87a7-954b9d27db16",
+          "177c4b0e-5902-4220-94bb-7ba41f024f2b",
+          "84ca48fe-c942-42e5-b492-d56681d058fa",
+          "0ee78edb-a0ad-456c-a0a2-901bf542c102",
+          "8168a4f2-74d6-4663-9951-8e3a454937b7",
+          "cd0fa82d-b6b6-4361-b002-050c32f71353",
+          "f6869ac6-2a40-404f-acd3-d07461be771a",
+          "b5c0b80f-5932-4d47-ae25-cd617dac90ce",
+          "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+          "8d5565a3-dec1-4ee2-86d6-8aabb315eec4",
+          "52a442a2-31e9-42f9-8e3e-4b27dbf82673",
+          "6d17b59e-06c4-4203-89d2-de793ebf5452",
+          "365a62ee-6166-4d37-a936-03585106dd50"
+        ],
+        "query": "resources\n    | where type == \u0027microsoft.machinelearningservices/virtualclusters\u0027\n    | order by tolower(name) asc \n    | project id, subscriptionId, resourceGroup, name, location, tags, type",
+        "options": {
+          "resultFormat": "objectArray",
+          "allowPartialScopes": false
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 29 Mar 2023 23:12:58 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Kestrel",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "8a2469fb-033b-4f72-ba9c-7d5a9cc9f139",
+        "x-ms-ratelimit-remaining-tenant-reads": "11994",
+        "x-ms-ratelimit-remaining-tenant-resource-requests": "14",
+        "x-ms-resource-graph-request-duration": "0:00:00:00.1433067",
+        "x-ms-routing-request-id": "CANADACENTRAL:20230329T231258Z:8a2469fb-033b-4f72-ba9c-7d5a9cc9f139",
+        "x-ms-user-quota-remaining": "14",
+        "x-ms-user-quota-resets-after": "00:00:05"
+      },
+      "ResponseBody": {
+        "totalRecords": 21,
+        "count": 21,
+        "data": [
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/ametestrg/providers/Microsoft.MachineLearningServices/virtualclusters/ameaccountvc",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "ametestrg",
+            "name": "ameaccountvc",
+            "location": "eastus2euap",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/3cd2f0ab-3c61-4a49-8e40-1be1a5f9f05c/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/ameaccountvc",
+              "eastus2euap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/ametestrg/providers/Microsoft.MachineLearningServices/workspaces/canarydefaultws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/virtualclusters/amevc126",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "singularityrg",
+            "name": "amevc126",
+            "location": "westus2",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/e6af9cd7-b131-4849-9da2-a87448d37135/resourceGroups/SingularityRG/providers/Microsoft.Singularity/accounts/ametestaccount",
+              "westus2": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/workspaces/testworkspace"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/anprusak-rg/providers/Microsoft.MachineLearningServices/virtualclusters/anprusak-vc1",
+            "subscriptionId": "79a1ba0c-35bb-436b-bff2-3074d5ff1f89",
+            "resourceGroup": "anprusak-rg",
+            "name": "anprusak-vc1",
+            "location": "centraluseuap",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/anprusak-vc1",
+              "centraluseuap": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/anprusak-rg/providers/Microsoft.MachineLearningServices/workspaces/anprusak-ws2"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/virtualclusters/canaryvc",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "singularityrg",
+            "name": "canaryvc",
+            "location": "eastus2euap",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/canaryvc",
+              "westcentralus": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/workspaces/wcusws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/Runtime/providers/Microsoft.MachineLearningServices/virtualclusters/centeuapvc",
+            "subscriptionId": "79a1ba0c-35bb-436b-bff2-3074d5ff1f89",
+            "resourceGroup": "runtime",
+            "name": "centeuapvc",
+            "location": "centraluseuap",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/aa6d1d26",
+              "centraluseuap": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourcegroups/Runtime/providers/Microsoft.MachineLearningServices/workspaces/centeuapdefaultws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/cmarkleytest/providers/Microsoft.MachineLearningServices/virtualclusters/cmarkley-canary2",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "cmarkleytest",
+            "name": "cmarkley-canary2",
+            "location": "eastus2euap",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/cmarkley-canary2",
+              "eastus2euap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/cmarkleytest/providers/Microsoft.MachineLearningServices/workspaces/cmarkleydefaultws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/cmarkleytest/providers/Microsoft.MachineLearningServices/virtualclusters/cmarkley-master",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "cmarkleytest",
+            "name": "cmarkley-master",
+            "location": "centraluseuap",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/cmarkley-master",
+              "eastus2euap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/cmarkleytest/providers/Microsoft.MachineLearningServices/workspaces/cmarkleydefaultws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/cmarkleytest/providers/Microsoft.MachineLearningServices/virtualclusters/cmarkley-testquota",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "cmarkleytest",
+            "name": "cmarkley-testquota",
+            "location": "eastus",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/cmarkley-testquota",
+              "org": "Azure ML PM",
+              "eastus2euap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/cmarkleytest/providers/Microsoft.MachineLearningServices/workspaces/cmarkleydefaultws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/cmarkleytest/providers/Microsoft.MachineLearningServices/virtualclusters/cmarkleycanary",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "cmarkleytest",
+            "name": "cmarkleycanary",
+            "location": "eastus2euap",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/cmarkleycanary",
+              "eastus2euap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/cmarkleytest/providers/Microsoft.MachineLearningServices/workspaces/cmarkleydefaultws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/cmarkleytest/providers/Microsoft.MachineLearningServices/virtualclusters/cmarkleyeastus",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "cmarkleytest",
+            "name": "cmarkleyeastus",
+            "location": "eastus",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/cmarkleyeastus",
+              "eastus2euap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/cmarkleytest/providers/Microsoft.MachineLearningServices/workspaces/cmarkleydefaultws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/datdo-rg/providers/Microsoft.MachineLearningServices/virtualclusters/datdo-multi-groups-vc",
+            "subscriptionId": "79a1ba0c-35bb-436b-bff2-3074d5ff1f89",
+            "resourceGroup": "datdo-rg",
+            "name": "datdo-multi-groups-vc",
+            "location": "centraluseuap",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/datdo-multi-groups-vc",
+              "centraluseuap": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/datdo-rg/providers/Microsoft.MachineLearningServices/workspaces/datdo-ws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/datdo-rg/providers/Microsoft.MachineLearningServices/virtualclusters/datdo-vc",
+            "subscriptionId": "79a1ba0c-35bb-436b-bff2-3074d5ff1f89",
+            "resourceGroup": "datdo-rg",
+            "name": "datdo-vc",
+            "location": "centraluseuap",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/datdo-vc",
+              "centraluseuap": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/datdo-rg/providers/Microsoft.MachineLearningServices/workspaces/datdo-ws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/datdo-rg/providers/Microsoft.MachineLearningServices/virtualclusters/datdo-vc-activity-logs",
+            "subscriptionId": "79a1ba0c-35bb-436b-bff2-3074d5ff1f89",
+            "resourceGroup": "datdo-rg",
+            "name": "datdo-vc-activity-logs",
+            "location": "centraluseuap",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/datdo-vc-activity-logs",
+              "centraluseuap": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/datdo-rg/providers/Microsoft.MachineLearningServices/workspaces/datdo-ws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/virtualclusters/noortestvc",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "singularityrg",
+            "name": "noortestvc",
+            "location": "centraluseuap",
+            "tags": {
+              "org": "Azure ML PM",
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/noortestvc",
+              "centraluseuap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/workspaces/mainws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/4ccf4cbf-6e15-460c-b689-5bf88fdae317/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/virtualclusters/Singularity-msrx",
+            "subscriptionId": "4ccf4cbf-6e15-460c-b689-5bf88fdae317",
+            "resourceGroup": "singularityrg",
+            "name": "Singularity-msrx",
+            "location": "eastus",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/singularity-msrx",
+              "eastus": "/subscriptions/4ccf4cbf-6e15-460c-b689-5bf88fdae317/resourceGroups/SingularityRG/providers/Microsoft.MachineLearningServices/workspaces/SingularityTest-XWS"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/4ccf4cbf-6e15-460c-b689-5bf88fdae317/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/virtualClusters/SingularityTestVC",
+            "subscriptionId": "4ccf4cbf-6e15-460c-b689-5bf88fdae317",
+            "resourceGroup": "singularityrg",
+            "name": "SingularityTestVC",
+            "location": "westus2",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourceGroups/singularityhobo/providers/Microsoft.Singularity/accounts/singularitytestvc",
+              "westus2": "/subscriptions/4ccf4cbf-6e15-460c-b689-5bf88fdae317/resourceGroups/SingularityRG/providers/Microsoft.MachineLearningServices/workspaces/SingularityTestWS"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/virtualclusters/testdefaultlimits",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "singularityrg",
+            "name": "testdefaultlimits",
+            "location": "centraluseuap",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/testdefaultlimits",
+              "org": "Azure ML PM",
+              "centraluseuap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/workspaces/mainws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/virtualclusters/testlocationsvc",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "singularityrg",
+            "name": "testlocationsvc",
+            "location": "westus2",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/testlocationsvc"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/virtualclusters/transferv",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "singularityrg",
+            "name": "transferv",
+            "location": "centraluseuap",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/transferv",
+              "centraluseuap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/workspaces/mainws"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/bing-mm-prd/providers/Microsoft.MachineLearningServices/virtualclusters/vctest",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "bing-mm-prd",
+            "name": "vctest",
+            "location": "westus2",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/vctest",
+              "eastus": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/bing-mm-prd/providers/Microsoft.MachineLearningServices/workspaces/bing-mm-aml-prd"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          },
+          {
+            "id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/wzhang-rg/providers/Microsoft.MachineLearningServices/virtualclusters/wztest1",
+            "subscriptionId": "6560575d-fa06-4e7d-95fb-f962e74efd7a",
+            "resourceGroup": "wzhang-rg",
+            "name": "wztest1",
+            "location": "centraluseuap",
+            "tags": {
+              "singularity_account_arm_id": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourcegroups/singularityhobo/providers/Microsoft.Singularity/accounts/wztest1",
+              "centraluseuap": "/subscriptions/6560575d-fa06-4e7d-95fb-f962e74efd7a/resourceGroups/wzhang-rg/providers/Microsoft.MachineLearningServices/workspaces/wzvctest"
+            },
+            "type": "microsoft.machinelearningservices/virtualclusters"
+          }
+        ],
+        "facets": [],
+        "resultTruncated": "false"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/4ccf4cbf-6e15-460c-b689-5bf88fdae317/resourceGroups/singularityrg/providers/Microsoft.MachineLearningServices/virtualClusters/SingularityTestVC?api-version=2021-03-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-resource/21.1.0b1 Python/3.10.6 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-glibc2.35)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 29 Mar 2023 23:13:02 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-c2d88d49c0d5c14193c1ab7c3c6b476b-7e05b466fe7ba7b0-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-westus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "4a843bc8-48f7-4d64-889d-1bbf468b7a5f",
+        "x-ms-ratelimit-remaining-subscription-reads": "11998",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "CANADACENTRAL:20230329T231303Z:4a843bc8-48f7-4d64-889d-1bbf468b7a5f",
+        "x-request-time": "1.337"
+      },
+      "ResponseBody": {
+        "tags": {
+          "westus2": "/subscriptions/4ccf4cbf-6e15-460c-b689-5bf88fdae317/resourceGroups/SingularityRG/providers/Microsoft.MachineLearningServices/workspaces/SingularityTestWS",
+          "singularity_account_arm_id": "/subscriptions/ba709ca5-1a2c-479c-a1cb-6e0346b81bf1/resourceGroups/singularityhobo/providers/Microsoft.Singularity/accounts/singularitytestvc"
+        },
+        "location": "westus2",
+        "id": "/subscriptions/4ccf4cbf-6e15-460c-b689-5bf88fdae317/resourceGroups/SingularityRG/providers/Microsoft.MachineLearningServices/virtualClusters/SingularityTestVC",
+        "name": "SingularityTestVC",
+        "type": "Microsoft.MachineLearningServices/virtualClusters",
+        "properties": {
+          "amlK8s": null,
+          "amlCompute": null,
+          "amlComputeCluster": null,
+          "managed": {
+            "provider": "Managed_V1",
+            "locations": [
+              "centralus",
+              "australiacentral",
+              "australiaeast",
+              "australiasoutheast",
+              "canadacentral",
+              "canadaeast",
+              "centralindia",
+              "eastasia",
+              "eastus",
+              "eastus2",
+              "francecentral",
+              "germanywestcentral",
+              "japaneast",
+              "japanwest",
+              "northcentralus",
+              "northeurope",
+              "norwayeast",
+              "southafricanorth",
+              "southcentralus",
+              "southindia",
+              "southeastasia",
+              "switzerlandnorth",
+              "westcentralus",
+              "westeurope",
+              "westindia",
+              "westus",
+              "westus2",
+              "westus3",
+              "uaenorth",
+              "ukwest",
+              "uksouth",
+              "brazilsouth",
+              "koreasouth",
+              "koreacentral"
+            ],
+            "idleResourcesHandlingPolicy": null,
+            "quotas": {
+              "centralus": {
+                "limits": [
+                  {
+                    "id": "Dv3",
+                    "slaTier": "Basic",
+                    "name": "Singularity Dv3 Family vCPUs",
+                    "limit": 320,
+                    "used": 0
+                  },
+                  {
+                    "id": "Dv3",
+                    "slaTier": "Standard",
+                    "name": "Singularity Dv3 Family vCPUs",
+                    "limit": 320,
+                    "used": 0
+                  },
+                  {
+                    "id": "Dv3",
+                    "slaTier": "Premium",
+                    "name": "Singularity Dv3 Family vCPUs",
+                    "limit": 320,
+                    "used": 6
+                  },
+                  {
+                    "id": "Eadsv5",
+                    "slaTier": "Basic",
+                    "name": "Singularity Eadsv5 Family vCPUs",
+                    "limit": 256,
+                    "used": 0
+                  },
+                  {
+                    "id": "NCv3",
+                    "slaTier": "Basic",
+                    "name": "Singularity NCv3 Series NVIDIA V100 16GB GPUs",
+                    "limit": 128,
+                    "used": 0
+                  },
+                  {
+                    "id": "NCv3",
+                    "slaTier": "Standard",
+                    "name": "Singularity NCv3 Series NVIDIA V100 16GB GPUs",
+                    "limit": 128,
+                    "used": 8
+                  },
+                  {
+                    "id": "NCv3",
+                    "slaTier": "Premium",
+                    "name": "Singularity NCv3 Series NVIDIA V100 16GB GPUs",
+                    "limit": 128,
+                    "used": 2
+                  },
+                  {
+                    "id": "ND",
+                    "slaTier": "Basic",
+                    "name": "Singularity ND Series NVIDIA P40 GPUs",
+                    "limit": 200,
+                    "used": 0
+                  },
+                  {
+                    "id": "ND",
+                    "slaTier": "Standard",
+                    "name": "Singularity ND Series NVIDIA P40 GPUs",
+                    "limit": 200,
+                    "used": 0
+                  },
+                  {
+                    "id": "NDAMv4",
+                    "slaTier": "Basic",
+                    "name": "Singularity NDAMv4 Series NVIDIA A100 80GB GPUs",
+                    "limit": 64,
+                    "used": 0
+                  },
+                  {
+                    "id": "NDv2",
+                    "slaTier": "Basic",
+                    "name": "Singularity NDv2 Series NVIDIA V100 32GB GPUs",
+                    "limit": 128,
+                    "used": 0
+                  },
+                  {
+                    "id": "NDv2",
+                    "slaTier": "Standard",
+                    "name": "Singularity NDv2 Series NVIDIA V100 32GB GPUs",
+                    "limit": 64,
+                    "used": 0
+                  },
+                  {
+                    "id": "NDv2",
+                    "slaTier": "Premium",
+                    "name": "Singularity NDv2 Series NVIDIA V100 32GB GPUs",
+                    "limit": 64,
+                    "used": 1
+                  },
+                  {
+                    "id": "ND",
+                    "slaTier": "Premium",
+                    "name": "Singularity ND Series NVIDIA P40 GPUs",
+                    "limit": 200,
+                    "used": 0
+                  }
+                ]
+              }
+            },
+            "defaultGroupPolicyOverallQuotas": {
+              "limits": [
+                {
+                  "id": "Dv3",
+                  "name": "Singularity Dv3 Family vCPUs",
+                  "limit": 64,
+                  "used": 0
+                },
+                {
+                  "id": "NCv3",
+                  "name": "Singularity NCv3 Series NVIDIA V100 16GB GPUs",
+                  "limit": 64,
+                  "used": 0
+                },
+                {
+                  "id": "NDv2",
+                  "name": "Singularity NDv2 Series NVIDIA V100 32GB GPUs",
+                  "limit": 16,
+                  "used": 0
+                }
+              ]
+            },
+            "managedStorage": [
+              {
+                "name": "workspaceblobstore-cd4649ff-e46d-4c40-95d4-c1ac695ba69a",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-06e4ff26-016c-4512-bdfc-12fba5ffe63a",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "turingwhao-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-1bf22f60-cc38-486b-8e7a-0ede941cdd3e",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-319b80c9-7a66-4b40-ad7b-c6cc271eec78",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-8e8d5840-bff2-4544-a2e6-c0de983154e6",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "turingdata-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-0d5a3a51-3341-4715-beda-499749aefa47",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-972f31bf-e783-41de-b6da-1d932aef514a",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-6edf12f1-24c9-445e-b863-93ed94c5e62a",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-6a9aa77a-93e5-4a8b-ab90-a975dfffd6c9",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "amlt79b6cfe0d492d765ea621d4ac3129c4b-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "amltd905e30b38c6f13d1bfa87e5f957475f-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-96d022a9-9d1b-48c8-8d4b-216b8e6c4591",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-5d7bbe60-d6dc-432f-add9-6e927c66a421",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "imagenet_tsv-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "sunrgbd-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "videodata-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "ysldataset-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-dc6893fc-91ae-4938-9dbe-1a28c6df9175",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-f4cd85c8-e024-4152-9bbe-7d864b27ed5e",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-f6fb3ae7-2d8b-419a-ae91-555a2a803984",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-3fa99c64-86e1-4e8c-a687-da2158365244",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-d7d9a4cb-aefd-4a7b-be8c-2d4de66f66f2",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-45232dae-1e19-451b-985d-f4abae1a41f8",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "amlt02e612e74319435723d1dddd6cb7370b-d7d9a4cb-aefd-4a7b-be8c-2d4de66f66f2",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "amltb07f44be32eda8e0d4c57434175eea9f-d7d9a4cb-aefd-4a7b-be8c-2d4de66f66f2",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "amltfe3d4366077f125d26a609e36df13319-d7d9a4cb-aefd-4a7b-be8c-2d4de66f66f2",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "mnistdatastore-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "amltff0d46fb47eaa7fe74c3718bfa890625-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "amlt211793589c1fea65a8d48ad6cae13c95-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-587956d4-7110-4140-b5c3-565df8a0c9dd",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-15e888d3-0c31-4796-b274-5601e0ec0d6e",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-7584607c-bddf-4aaa-9d91-dbca86fc783a",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "amltcbbfebbb3ee1326e704679566f58802a-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-e72e5ed7-fb02-4af5-b6bc-5859a5db3fe9",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-7b90e8f4-d797-4ff2-83ff-1cefc57cd388",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-9ff28763-bb06-4f18-b581-8c8caf96b7c2",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-4f52c279-6835-4b6e-8478-fe850f26a008",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "newworkspaceblobstore-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-1afc228f-a203-4f03-94d0-2da57e708514",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-909feff4-6bc3-43af-abe6-733554db9d88",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-eea86b56-7153-419d-b56b-b37153550807",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "aistress1-eea86b56-7153-419d-b56b-b37153550807",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "aistress1-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "swsharmatest1-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-3fedb3fe-fc72-488e-9229-74d6a58740b1",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-97fa6a82-c81b-4459-b1e1-291f9b7174ab",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-4b4dcf67-7c08-47ee-bff4-061c099cd00b",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "blobsmallfilestestdata-97fa6a82-c81b-4459-b1e1-291f9b7174ab",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-513a3042-7adf-49ce-bc45-26672731393e",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "blobsmallfilestestdata-513a3042-7adf-49ce-bc45-26672731393e",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-45ebcc08-7909-475f-a991-7e6258a1d689",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-4a77b465-b860-4bb7-913f-38cab5e0be85",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-f23a7c60-35b9-40d7-8493-a69631f1357e",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-002593af-96b7-46cb-8ee5-a357aeac1398",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-859950a9-157e-46af-b4cf-b3400f110c24",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-5b308848-11ad-4cd3-a9a8-38869cf28b2a",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "dsmoedata-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-6a983763-8076-47ce-94a3-5d5dc8d30e85",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "mnettodatastore1mycode-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-eaf3de0d-525a-4548-b3a0-00641ede1d46",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "mnettostoragecode-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "mnettostoragedata-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "amltf0c60e53797343c904813330a647cc30-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "amlt641e9f8dc48d4e9c8c8aa688912ebecc-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "amltc772e17a0a4e53938af3820a385c5f33-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "amltaf774522559ca1ca6e38af88309057b5-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-54887b46-3cb0-485b-bb15-62e7b5578ee6",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-c6795302-1cb8-47e7-9039-ac4e9256dc01",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-add4b7ba-7ae3-4690-8afc-7545c4a8fd4f",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "amlt233e39586551ca1bb7956fa697162898-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-cf7ff2c5-2254-44c8-856e-6b073b665711",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "blobstorage_datastore-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-e9a6523b-2619-46b2-8527-409698057ec2",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-561a01c8-f13d-4b29-a05f-a5df5bb5eb7c",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-0ef107a5-2c36-4b97-a939-90333c46e402",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-39076702-cd6f-4d06-a0b1-362578c228a5",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "webdata-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-3f9f8a02-8ff9-4d8f-be8d-ee6b7b204e4f",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-c9c0a4c9-a691-4ee1-852c-d0384d5ad6b5",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-e6e4c8af-d611-4a48-97a2-aa8fabd8e228",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-03f8953e-2367-4b7e-a417-a2639d0a08cc",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-0aaf34be-24a6-4317-ba42-bd1d8a0bbbfd",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-707255d0-fe4d-4c1d-8e86-20a9703f4cff",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-f0c1cc93-6f0d-4e8c-8628-49b72de241af",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-e8a4464c-b8ea-453f-a730-4610107b0e37",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-490a398d-bafb-489a-b48b-b0dac148c5b3",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-195e4ffd-7e30-4de9-823b-c008c56f7be0",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-1aeea718-ec77-41f1-b270-4f2ef1e2d5dd",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-12699ee7-29c4-4fc1-80e4-877b35227434",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-b62f7eca-5529-4b01-8bc7-7acc9f57bee4",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-b2e54ab9-3cf8-4626-8156-5cd01ed79662",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-f5dbeaf1-8bd1-4e3e-bc94-1e96ee83aff2",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "singularitytestvc-nfs-westus2",
+                "description": null,
+                "tier": null,
+                "location": "westus2"
+              },
+              {
+                "name": "workspaceblobstore-5355cb07-3f7d-4c4e-b817-1a428355dd69",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "workspaceblobstore-7cf0613b-64a7-4eeb-a1a7-aa9bef8a0606",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "amlta34a15aca4cf27e035d537edf776975f-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              },
+              {
+                "name": "amlta62dfb08c96e0cfe946e85bc0117123b-4f741814-b66b-42c1-bf3a-9d0bdd2c586d",
+                "description": null,
+                "tier": null,
+                "location": null
+              }
+            ]
+          },
+          "policies": {
+            "maximumGpusPerInteractiveJobPolicy": {
+              "gpus": 1,
+              "status": "Disabled"
+            },
+            "minimumGpusPerJobPolicy": {
+              "gpus": 999,
+              "status": "Disabled"
+            },
+            "maximumJobExecutionTimePolicy": {
+              "time": 1000.0,
+              "status": "Enabled"
+            },
+            "maximumJobSuspendOnIdleTimePolicy": {
+              "time": 3.0,
+              "status": "Enabled"
+            }
+          }
+        },
+        "systemData": null
+      }
+    }
+  ],
+  "Variables": {}
+}

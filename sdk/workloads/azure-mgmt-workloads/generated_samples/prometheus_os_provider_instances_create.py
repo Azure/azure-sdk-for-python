@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.workloads import WorkloadsClient
+from azure.mgmt.workloads import WorkloadsMgmtClient
 
 """
 # PREREQUISITES
@@ -24,7 +24,7 @@ from azure.mgmt.workloads import WorkloadsClient
 
 
 def main():
-    client = WorkloadsClient(
+    client = WorkloadsMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2022-11-01-preview/examples/workloadmonitor/PrometheusOSProviderInstances_Create.json
+# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/stable/2023-04-01/examples/workloadmonitor/PrometheusOSProviderInstances_Create.json
 if __name__ == "__main__":
     main()

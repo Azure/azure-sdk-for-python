@@ -56,13 +56,13 @@ class RegistryDataContainersOperations:
         list_view_type: Optional[Union[str, "_models.ListViewType"]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.DataContainerResourceArmPaginatedResult"]:
-        """List containers.
+        """List Data containers.
 
-        List containers.
+        List Data containers.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param skip: Continuation token for pagination.
         :type skip: str
@@ -208,7 +208,7 @@ class RegistryDataContainersOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param name: Container name.
         :type name: str
@@ -276,7 +276,7 @@ class RegistryDataContainersOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param name: Container name.
         :type name: str
@@ -403,7 +403,7 @@ class RegistryDataContainersOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of Azure Machine Learning registry.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param name: Container name.
         :type name: str

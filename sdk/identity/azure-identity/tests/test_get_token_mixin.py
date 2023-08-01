@@ -3,11 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
 
 from azure.core.credentials import AccessToken
 import pytest
@@ -49,7 +45,7 @@ def test_no_cached_token():
     assert token.token == MockCredential.NEW_TOKEN.token
 
 
-def test_tenant_id():    
+def test_tenant_id():
     credential = MockCredential()
     token = credential.get_token(SCOPE, tenant_id="tenant_id")
 

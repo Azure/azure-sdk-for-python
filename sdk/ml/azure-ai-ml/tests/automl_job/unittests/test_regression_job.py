@@ -5,9 +5,10 @@
 import pytest
 
 from azure.ai.ml import UserIdentityConfiguration
-from azure.ai.ml._restclient.v2023_02_01_preview.models import MLTableJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLTableJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml.automl import RegressionModels, RegressionPrimaryMetrics, regression
+from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.tabular import RegressionJob
@@ -74,3 +75,109 @@ class TestAutoMLRegression:
             RegressionModels.RANDOM_FOREST,
             RegressionModels.LIGHT_GBM,
         ], "Allowed models not set correctly"
+        assert original_obj.training.training_mode == None, "Training mode not set correctly"
+        assert original_obj.limits.max_nodes == None, "Max nodes not set correctly"
+
+    def test_regression_task_distributed_mode(self):
+        # Create AutoML Regression Task
+        regression_job = regression(
+            training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
+            target_column_name="target",
+            primary_metric="spearman_correlation",
+            enable_model_explainability=True,
+            test_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/test.csv"),
+            validation_data_size=0.2,
+            # Job attributes
+            compute="cluster-regression",
+            name="regression_job",
+            experiment_name="foo_exp",
+            tags={"foo_tag": "bar"},
+        )  # type: RegressionJob
+        regression_job.set_limits(timeout_minutes=60, max_trials=100, max_concurrent_trials=4, max_nodes=4)
+        regression_job.set_training(
+            enable_onnx_compatible_models=True,
+            allowed_training_algorithms=[RegressionModels.LIGHT_GBM],
+            training_mode=TabularTrainingMode.DISTRIBUTED,
+        )
+        regression_job.set_featurization(enable_dnn_featurization=True)
+
+        # check the rest object
+        rest_obj = regression_job._to_rest_object()  # serialize to rest object
+        original_obj = RegressionJob._from_rest_object(rest_obj)  # deserialize from rest object
+
+        assert regression_job == original_obj, "Conversion to/from rest object failed"
+        assert original_obj.training.allowed_training_algorithms == [
+            RegressionModels.LIGHT_GBM,
+        ], "Allowed models not set correctly"
+        assert original_obj.training.training_mode == TabularTrainingMode.DISTRIBUTED, "Training mode not set correctly"
+        assert original_obj.limits.max_nodes == 4, "Max nodes not set correctly"
+
+    def test_regression_task_non_distributed_mode(self):
+        # Create AutoML Regression Task
+        regression_job = regression(
+            training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
+            target_column_name="target",
+            primary_metric="spearman_correlation",
+            enable_model_explainability=True,
+            test_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/test.csv"),
+            validation_data_size=0.2,
+            # Job attributes
+            compute="cluster-regression",
+            name="regression_job",
+            experiment_name="foo_exp",
+            tags={"foo_tag": "bar"},
+        )  # type: RegressionJob
+        regression_job.set_limits(timeout_minutes=60, max_trials=100, max_concurrent_trials=4)
+        regression_job.set_training(
+            enable_onnx_compatible_models=True,
+            allowed_training_algorithms=[RegressionModels.LIGHT_GBM],
+            training_mode=TabularTrainingMode.NON_DISTRIBUTED,
+        )
+        regression_job.set_featurization(enable_dnn_featurization=True)
+
+        # check the rest object
+        rest_obj = regression_job._to_rest_object()  # serialize to rest object
+        original_obj = RegressionJob._from_rest_object(rest_obj)  # deserialize from rest object
+
+        assert regression_job == original_obj, "Conversion to/from rest object failed"
+        assert original_obj.training.allowed_training_algorithms == [
+            RegressionModels.LIGHT_GBM,
+        ], "Allowed models not set correctly"
+        assert (
+            original_obj.training.training_mode == TabularTrainingMode.NON_DISTRIBUTED
+        ), "Training mode not set correctly"
+        assert original_obj.limits.max_nodes == None, "Max nodes not set correctly"
+
+    def test_regression_task_auto_mode(self):
+        # Create AutoML Regression Task
+        regression_job = regression(
+            training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
+            target_column_name="target",
+            primary_metric="spearman_correlation",
+            enable_model_explainability=True,
+            test_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/test.csv"),
+            validation_data_size=0.2,
+            # Job attributes
+            compute="cluster-regression",
+            name="regression_job",
+            experiment_name="foo_exp",
+            tags={"foo_tag": "bar"},
+        )  # type: RegressionJob
+        regression_job.set_limits(timeout_minutes=60, max_trials=100, max_concurrent_trials=4, max_nodes=4)
+        regression_job.set_training(
+            enable_onnx_compatible_models=True,
+            allowed_training_algorithms=[RegressionModels.LIGHT_GBM],
+            training_mode=TabularTrainingMode.AUTO,
+        )
+        regression_job.set_featurization(enable_dnn_featurization=True)
+
+        # check the rest object
+        rest_obj = regression_job._to_rest_object()  # serialize to rest object
+        original_obj = RegressionJob._from_rest_object(rest_obj)  # deserialize from rest object
+
+        assert regression_job == original_obj, "Conversion to/from rest object failed"
+        assert original_obj.training.allowed_training_algorithms == [
+            RegressionModels.LIGHT_GBM,
+        ], "Allowed models not set correctly"
+        assert original_obj.training.training_mode == TabularTrainingMode.AUTO, "Training mode not set correctly"
+        assert original_obj.limits.max_nodes == 4, "Max nodes not set correctly"

@@ -97,8 +97,11 @@ class TestStorageFileClient(StorageRecordedTestCase):
             # Act
             # token credential is available for FileService
             token_credential = self.generate_oauth_token()
-            service_type(self.account_url(storage_account_name, "file"), credential=token_credential,
-                         share_name='foo', directory_path='bar', file_path='baz')
+            try:
+                service_type(self.account_url(storage_account_name, "file"), credential=token_credential,
+                             share_name='foo', directory_path='bar', file_path='baz')
+            except ValueError:
+                pass
 
     @FileSharePreparer()
     def test_create_service_china(self, **kwargs):

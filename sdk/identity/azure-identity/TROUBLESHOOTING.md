@@ -22,8 +22,11 @@ This troubleshooting guide covers failure investigation techniques, common error
   - [Azure Kubernetes Service managed identity](#azure-kubernetes-service-managed-identity)
 - [Troubleshoot VisualStudioCodeCredential authentication issues](#troubleshoot-visualstudiocodecredential-authentication-issues)
 - [Troubleshoot AzureCliCredential authentication issues](#troubleshoot-azureclicredential-authentication-issues)
+- [Troubleshoot AzureDeveloperCliCredential authentication issues](#troubleshoot-azuredeveloperclicredential-authentication-issues)
 - [Troubleshoot AzurePowerShellCredential authentication issues](#troubleshoot-azurepowershellcredential-authentication-issues)
+- [Troubleshoot WorkloadIdentityCredential authentication issues](#troubleshoot-workloadidentitycredential-authentication-issues)
 - [Troubleshoot multi-tenant authentication issues](#troubleshoot-multi-tenant-authentication-issues)
+- [Get additional help](#get-additional-help)
 
 ## Handle Azure Identity errors
 
@@ -221,6 +224,30 @@ az account get-access-token --output json --resource https://management.core.win
 
 >Note that output of this command will contain a valid access token, and SHOULD NOT BE SHARED to avoid compromising account security.
 
+## Troubleshoot `AzureDeveloperCliCredential` authentication issues
+
+`CredentialUnavailableError`
+
+| Error Message |Description| Mitigation |
+|---|---|---|
+|Azure Developer CLI could not be found|The Azure Developer CLI isn't installed or couldn't be found.|<ul><li>Ensure the Azure Developer CLI is properly installed. Installation instructions can be found [here](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd).</li><li>Validate the installation location has been added to the `PATH` environment variable.</li></ul>|
+|Please run 'azd auth login' to set up account|No account is currently logged into the Azure Developer CLI, or the login has expired.|<ul><li>Log into the Azure Developer CLI using the `azd auth login` command.</li><li>Validate that the Azure Developer CLI can obtain tokens. See [below](#verify-the-azure-developer-cli-can-obtain-tokens) for instructions.</li></ul>|
+
+#### __Verify the Azure Developer CLI can obtain tokens__
+
+You can manually verify that the Azure Developer CLI is properly authenticated, and can obtain tokens. First use the `config` command to verify the account which is currently logged in to the Azure Developer CLI.
+
+```bash
+azd config list
+```
+
+Once you've verified the Azure Developer CLI is using correct account, you can validate that it's able to obtain tokens for this account.
+
+```bash
+azd auth token --output json --scope https://management.core.windows.net/.default
+```
+>Note that output of this command will contain a valid access token, and SHOULD NOT BE SHARED to avoid compromising account security.
+
 ## Troubleshoot `AzurePowerShellCredential` authentication issues
 
 `CredentialUnavailableError`
@@ -249,6 +276,14 @@ Get-AzAccessToken -ResourceUrl "https://management.core.windows.net"
 ```
 
 >Note that output of this command will contain a valid access token, and SHOULD NOT BE SHARED to avoid compromising account security.
+
+## Troubleshoot `WorkloadIdentityCredential` authentication issues
+
+`CredentialUnavailableError`
+
+| Error Message |Description| Mitigation |
+|---|---|---|
+|WorkloadIdentityCredential authentication unavailable. The workload options are not fully configured|The `WorkloadIdentityCredential` requires `client_id`, `tenant_id` and `token_file_path` to authenticate with Azure Active Directory.| <ul><li>If using `DefaultAzureCredential` then:</li><ul><li>Ensure client ID is specified via the `workload_identity_client_id` keyword argument or the `AZURE_CLIENT_ID` env variable.</li><li>Ensure tenant ID is specified via the `AZURE_TENANT_ID` env variable.</li><li>Ensure token file path is specified via `AZURE_FEDERATED_TOKEN_FILE` env variable.</li><li>Ensure authority host is specified via `AZURE_AUTHORITY_HOST` env variable.</ul><li>If using `WorkloadIdentityCredential` then:</li><ul><li>Ensure tenant ID is specified via the `tenant_id` keyword argument or the `AZURE_TENANT_ID` env variable.</li><li>Ensure client ID is specified via the `client_id` keyword argument or the `AZURE_CLIENT_ID` env variable.</li><li>Ensure token file path is specified via the `token_file_path` keyword argument or the `AZURE_FEDERATED_TOKEN_FILE` environment variable. </li></ul></li><li>Consult the [product troubleshooting guide](https://azure.github.io/azure-workload-identity/docs/troubleshooting.html) for other issues.</li></ul>
 
 ## Troubleshoot multi-tenant authentication issues
 

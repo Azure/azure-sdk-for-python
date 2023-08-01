@@ -9,7 +9,13 @@
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar, Union
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,9 +25,16 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._data_containers_operations import build_create_or_update_request, build_delete_request, build_get_request, build_list_request
-T = TypeVar('T')
+from ...operations._data_containers_operations import (
+    build_create_or_update_request,
+    build_delete_request,
+    build_get_request,
+    build_list_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class DataContainersOperations:
     """DataContainersOperations async operations.
@@ -73,16 +86,15 @@ class DataContainersOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.DataContainerResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataContainerResourceArmPaginatedResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataContainerResourceArmPaginatedResult"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
@@ -90,13 +102,13 @@ class DataContainersOperations:
                     api_version=api_version,
                     skip=skip,
                     list_view_type=list_view_type,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
@@ -122,9 +134,7 @@ class DataContainersOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -135,19 +145,13 @@ class DataContainersOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/data"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/data"}  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        name: str,
-        **kwargs: Any
+        self, resource_group_name: str, workspace_name: str, name: str, **kwargs: Any
     ) -> None:
         """Delete container.
 
@@ -164,30 +168,25 @@ class DataContainersOperations:
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
 
-        
         request = build_delete_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             name=name,
             api_version=api_version,
-            template_url=self.delete.metadata['url'],
+            template_url=self.delete.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -199,16 +198,11 @@ class DataContainersOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/data/{name}"}  # type: ignore
-
+    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/data/{name}"}  # type: ignore
 
     @distributed_trace_async
     async def get(
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        name: str,
-        **kwargs: Any
+        self, resource_group_name: str, workspace_name: str, name: str, **kwargs: Any
     ) -> "_models.DataContainer":
         """Get container.
 
@@ -225,30 +219,25 @@ class DataContainersOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.DataContainer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataContainer"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataContainer"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
 
-        
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             name=name,
             api_version=api_version,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -257,24 +246,18 @@ class DataContainersOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DataContainer', pipeline_response)
+        deserialized = self._deserialize("DataContainer", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/data/{name}"}  # type: ignore
-
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/data/{name}"}  # type: ignore
 
     @distributed_trace_async
     async def create_or_update(
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        name: str,
-        body: "_models.DataContainer",
-        **kwargs: Any
+        self, resource_group_name: str, workspace_name: str, name: str, body: "_models.DataContainer", **kwargs: Any
     ) -> "_models.DataContainer":
         """Create or update container.
 
@@ -293,16 +276,14 @@ class DataContainersOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.DataContainer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataContainer"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataContainer"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'DataContainer')
+        _json = self._serialize.body(body, "DataContainer")
 
         request = build_create_or_update_request(
             subscription_id=self._config.subscription_id,
@@ -312,15 +293,13 @@ class DataContainersOperations:
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.create_or_update.metadata['url'],
+            template_url=self.create_or_update.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -330,15 +309,14 @@ class DataContainersOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DataContainer', pipeline_response)
+            deserialized = self._deserialize("DataContainer", pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('DataContainer', pipeline_response)
+            deserialized = self._deserialize("DataContainer", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/data/{name}"}  # type: ignore
-
+    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/data/{name}"}  # type: ignore

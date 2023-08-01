@@ -40,9 +40,14 @@ from ._models import (
     AnalyzedDocument,
     BoundingRegion,
     AddressValue,
+    AnalysisFeature,
     CurrencyValue,
     CustomDocumentModelsDetails,
     ModelBuildMode,
+    ClassifierDocumentTypeDetails,
+    AzureBlobSource,
+    AzureBlobFileListSource,
+    DocumentClassifierDetails,
     DocumentField,
     DocumentKeyValuePair,
     DocumentKeyValueElement,
@@ -65,6 +70,9 @@ from ._models import (
     DocumentAnalysisError,
     DocumentAnalysisInnerError,
     TargetAuthorization,
+    QuotaDetails,
+    DocumentFormula,
+    DocumentBarcode,
 )
 from ._api_versions import FormRecognizerApiVersion, DocumentAnalysisApiVersion
 
@@ -105,9 +113,11 @@ __all__ = [
     "AnalyzedDocument",
     "BoundingRegion",
     "AddressValue",
+    "AnalysisFeature",
     "CurrencyValue",
     "CustomDocumentModelsDetails",
     "ModelBuildMode",
+    "DocumentClassifierDetails",
     "DocumentField",
     "DocumentKeyValueElement",
     "DocumentKeyValuePair",
@@ -132,6 +142,12 @@ __all__ = [
     "DocumentAnalysisError",
     "DocumentAnalysisInnerError",
     "TargetAuthorization",
+    "ClassifierDocumentTypeDetails",
+    "AzureBlobFileListSource",
+    "AzureBlobSource",
+    "QuotaDetails",
+    "DocumentFormula",
+    "DocumentBarcode",
 ]
 
 __VERSION__ = VERSION

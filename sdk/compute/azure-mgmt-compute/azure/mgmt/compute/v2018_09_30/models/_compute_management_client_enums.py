@@ -28,6 +28,7 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COPY = "Copy"
     RESTORE = "Restore"
     UPLOAD = "Upload"
+    IMPORT_ENUM = "Import"
 
 
 class DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

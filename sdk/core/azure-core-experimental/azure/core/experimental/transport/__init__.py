@@ -30,6 +30,8 @@ import sys
 if sys.version_info >= (3, 7):
     __all__ = [
         "PyodideTransport",
+        "HttpXTransport",
+        "AsyncHttpXTransport",
     ]
 
     def __dir__():
@@ -41,6 +43,21 @@ if sys.version_info >= (3, 7):
                 from ._pyodide import PyodideTransport
 
                 return PyodideTransport
-            except ImportError:
-                raise ImportError("pyodide package is not installed")
+            except ImportError as err:
+                raise ImportError("pyodide package is not installed") from err
+        if name == "HttpXTransport":
+            try:
+                from ._httpx import HttpXTransport
+
+                return HttpXTransport
+            except ImportError as err:
+                raise ImportError("httpx package is not installed") from err
+        if name == "AsyncHttpXTransport":
+            try:
+                from ._httpx_async import AsyncHttpXTransport
+
+                return AsyncHttpXTransport
+            except ImportError as err:
+                raise ImportError("httpx package is not installed") from err
+
         raise AttributeError(f"module 'azure.core.experimental.transport' has no attribute {name}")

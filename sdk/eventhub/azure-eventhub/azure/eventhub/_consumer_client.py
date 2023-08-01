@@ -103,11 +103,11 @@ class EventHubConsumerClient(
      in memory, and the `EventHubConsumerClient` instance will receive events without load-balancing.
     :paramtype checkpoint_store: Optional[~azure.eventhub.CheckpointStore]
     :keyword float load_balancing_interval: When load-balancing kicks in. This is the interval, in seconds,
-     between two load-balancing evaluations. Default is 10 seconds.
+     between two load-balancing evaluations. Default is 30 seconds.
     :keyword float partition_ownership_expiration_interval: A partition ownership will expire after this number
      of seconds. Every load-balancing evaluation will automatically extend the ownership expiration time.
-     Default is 6 * load_balancing_interval, i.e. 60 seconds when using the default load_balancing_interval
-     of 10 seconds.
+     Default is 6 * load_balancing_interval, i.e. 180 seconds when using the default load_balancing_interval
+     of 30 seconds.
     :keyword load_balancing_strategy: When load-balancing kicks in,
      it will use this strategy to claim and balance the partition ownership.
      Use "greedy" or `LoadBalancingStrategy.GREEDY` for the greedy strategy, which, for every
@@ -132,6 +132,11 @@ class EventHubConsumerClient(
     :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
      False and the Pure Python AMQP library will be used as the underlying transport.
     :paramtype uamqp_transport: bool
+    :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+     wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+     and 1 for TransportType.AmqpOverWebsocket. If EventHubsConnectionError errors are occurring due to write
+     timing out, a larger than default value may need to be passed in. This is for advanced usage scenarios
+     and ordinarily the default value should be sufficient.
 
     .. admonition:: Example:
 
@@ -156,7 +161,7 @@ class EventHubConsumerClient(
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)
         if self._load_balancing_interval is None:
-            self._load_balancing_interval = 10
+            self._load_balancing_interval = 30
         self._partition_ownership_expiration_interval = kwargs.pop(
             "partition_ownership_expiration_interval", None
         )
@@ -274,7 +279,7 @@ class EventHubConsumerClient(
         :keyword float partition_ownership_expiration_interval: A partition ownership will expire after this number
          of seconds. Every load-balancing evaluation will automatically extend the ownership expiration time.
          Default is 6 * load_balancing_interval, i.e. 60 seconds when using the default load_balancing_interval
-         of 10 seconds.
+         of 30 seconds.
         :keyword load_balancing_strategy: When load-balancing kicks in,
          it will use this strategy to claim and balance the partition ownership.
          Use "greedy" or `LoadBalancingStrategy.GREEDY` for the greedy strategy, which, for every

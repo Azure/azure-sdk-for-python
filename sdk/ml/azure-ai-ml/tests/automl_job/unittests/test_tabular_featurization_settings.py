@@ -1,7 +1,7 @@
 import pytest
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ColumnTransformer as RestColumnTransformer
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ColumnTransformer as RestColumnTransformer
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     TableVerticalFeaturizationSettings as RestTabularFeaturizationSettings,
 )
 from azure.ai.ml.entities._job.automl.tabular import ColumnTransformer, TabularFeaturizationSettings

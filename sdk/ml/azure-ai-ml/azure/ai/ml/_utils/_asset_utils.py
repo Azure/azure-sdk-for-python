@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,too-many-lines
 
 import hashlib
 import logging
@@ -12,30 +12,31 @@ import warnings
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import suppress
 from multiprocessing import cpu_count
+from os import PathLike
 from pathlib import Path
 from platform import system
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Union, cast
 
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from colorama import Fore
 from tqdm import TqdmWarning, tqdm
 
 from azure.ai.ml._artifacts._constants import (
     AML_IGNORE_FILE_NAME,
     ARTIFACT_ORIGIN,
+    AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA,
     BLOB_STORAGE_CLIENT_NAME,
     CHUNK_SIZE,
     DEFAULT_CONNECTION_TIMEOUT,
     EMPTY_DIRECTORY_ERROR,
     GEN2_STORAGE_CLIENT_NAME,
     GIT_IGNORE_FILE_NAME,
+    INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA,
     MAX_CONCURRENCY,
     PROCESSES_PER_CORE,
     UPLOAD_CONFIRMATION,
-)
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    DataVersionBaseData,
-    ModelVersionData,
-    ModelVersionResourceArmPaginatedResult,
+    WORKSPACE_MANAGED_DATASTORE,
+    WORKSPACE_MANAGED_DATASTORE_WITH_SLASH,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: disable = unused-import
     ComponentContainersOperations,
@@ -47,18 +48,24 @@ from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: 
     ModelContainersOperations,
     ModelVersionsOperations,
 )
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    DataVersionBaseData,
+    ModelVersionData,
+    ModelVersionResourceArmPaginatedResult,
+)
+from azure.ai.ml._restclient.v2023_04_01.models import PendingUploadRequestDto
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
-from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry
-from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, OrderString
+from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry, snake_to_camel
+from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, DefaultOpenEncoding, OrderString
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.exceptions import (
+    AssetPathException,
     EmptyDirectoryError,
     ErrorCategory,
     ErrorTarget,
     ValidationErrorType,
     ValidationException,
 )
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 if TYPE_CHECKING:
     from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
@@ -98,7 +105,7 @@ class IgnoreFile(object):
         if not self.exists():
             return []
         if self._file_exists():
-            with open(self._path, "r") as fh:
+            with open(self._path, "r", encoding=DefaultOpenEncoding.READ) as fh:
                 return [line.rstrip() for line in fh if line]
         return []
 
@@ -218,7 +225,7 @@ def _get_dir_hash(directory: Union[str, Path], _hash: hash_type, ignore_file: Ig
             continue
         _hash.update(path.name.encode())
         if os.path.islink(path):  # ensure we're hashing the contents of the linked file
-            path = Path(os.readlink(convert_windows_path_to_unix(path)))
+            path = _resolve_path(path)
         if path.is_file():
             _hash = _get_file_hash(path, _hash)
         elif path.is_dir():
@@ -254,7 +261,7 @@ def get_object_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile
         object_hash = _get_dir_hash(directory=path, _hash=_hash, ignore_file=ignore_file)
     else:
         if os.path.islink(path):  # ensure we're hashing the contents of the linked file
-            path = Path(os.readlink(convert_windows_path_to_unix(path)))
+            path = _resolve_path(Path(path))
         object_hash = _get_file_hash(filename=path, _hash=_hash)
     return str(object_hash.hexdigest())
 
@@ -286,19 +293,28 @@ def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFil
     # DO NOT change this function unless you change the verification logic together
     actual_path = path
     if os.path.islink(path):
-        link_path = os.readlink(path)
-        actual_path = link_path if os.path.isabs(link_path) else os.path.join(os.path.dirname(path), link_path)
+        actual_path = _resolve_path(Path(path)).as_posix()
     if os.path.isdir(actual_path):
-        return _get_file_list_content_hash(_get_upload_files_from_folder(actual_path, ignore_file=ignore_file))
+        return _get_file_list_content_hash(get_upload_files_from_folder(actual_path, ignore_file=ignore_file))
     if os.path.isfile(actual_path):
         return _get_file_list_content_hash([(actual_path, Path(actual_path).name)])
     return None
 
 
-def _get_upload_files_from_folder(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> List[str]:
+def get_upload_files_from_folder(
+    path: Union[str, Path], *, prefix: str = "", ignore_file: IgnoreFile = IgnoreFile()
+) -> List[str]:
+    path = Path(path)
     upload_paths = []
     for root, _, files in os.walk(path, followlinks=True):
-        upload_paths += list(traverse_directory(root, files, Path(path).resolve(), "", ignore_file=ignore_file))
+        upload_paths += list(
+            traverse_directory(
+                root,
+                files,
+                prefix=Path(prefix).joinpath(Path(root).relative_to(path)).as_posix(),
+                ignore_file=ignore_file,
+            )
+        )
     return upload_paths
 
 
@@ -327,7 +343,7 @@ def _get_file_list_content_hash(file_list) -> str:
 def traverse_directory(
     root: str,
     files: List[str],
-    source: str,
+    *,
     prefix: str,
     ignore_file: IgnoreFile = IgnoreFile(),
 ) -> Iterable[Tuple[str, Union[str, Any]]]:
@@ -344,8 +360,6 @@ def traverse_directory(
     :type root: str
     :param files: List of all file paths in the directory
     :type files: List[str]
-    :param source: Local path to project directory
-    :type source: str
     :param prefix: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
     :type prefix: str
     :param ignore_file: The .amlignore or .gitignore file in the project directory
@@ -353,61 +367,34 @@ def traverse_directory(
     :return: Zipped list of tuples representing the local path and remote destination path for each file
     :rtype: Iterable[Tuple[str, Union[str, Any]]]
     """
-    # Normalize Windows paths
-    root = convert_windows_path_to_unix(root)
-    source = convert_windows_path_to_unix(source)
-    working_dir = convert_windows_path_to_unix(os.getcwd())
-    project_dir = root[len(str(working_dir)) :] + "/"
-    file_paths = [
-        convert_windows_path_to_unix(os.path.join(root, name))
-        for name in files
-        if not ignore_file.is_file_excluded(os.path.join(root, name))
-    ]  # get all files not excluded by the ignore file
-    file_paths_including_links = {fp: None for fp in file_paths}
+    # Normalize Windows paths. Note that path should be resolved first as long part will be converted to a shortcut in
+    # Windows. For example, C:\Users\too-long-user-name\test will be converted to C:\Users\too-lo~1\test by default.
+    # Refer to https://en.wikipedia.org/wiki/8.3_filename for more details.
+    root = Path(root).resolve().absolute()
 
-    for path in file_paths:
-        target_prefix = ""
-        symlink_prefix = ""
+    # filter out files excluded by the ignore file
+    # TODO: inner ignore file won't take effect. A merged IgnoreFile need to be generated in code resolution.
+    origin_file_paths = [
+        root.joinpath(filename)
+        for filename in files
+        if not ignore_file.is_file_excluded(root.joinpath(filename).as_posix())
+    ]
 
-        # check for symlinks to get their true paths
-        if os.path.islink(path):
-            target_absolute_path = os.path.join(working_dir, os.readlink(path))
-            target_prefix = "/".join([root, str(os.readlink(path))]).replace(project_dir, "/")
+    result = []
+    for origin_file_path in origin_file_paths:
+        relative_path = origin_file_path.relative_to(root)
+        result.append((_resolve_path(origin_file_path).as_posix(), Path(prefix).joinpath(relative_path).as_posix()))
+    return result
 
-            # follow and add child links if the directory is a symlink
-            if os.path.isdir(target_absolute_path):
-                symlink_prefix = path.replace(root + "/", "")
 
-                for r, _, f in os.walk(target_absolute_path, followlinks=True):
-                    target_file_paths = {
-                        os.path.join(r, name): symlink_prefix + os.path.join(r, name).replace(target_prefix, "")
-                        for name in f
-                    }  # for each symlink, store its target_path as key and symlink path as value
-                    file_paths_including_links.update(target_file_paths)  # Add discovered symlinks to file paths list
-            else:
-                file_path_info = {
-                    target_absolute_path: path.replace(root + "/", "")
-                }  # for each symlink, store its target_path as key and symlink path as value
-                file_paths_including_links.update(file_path_info)  # Add discovered symlinks to file paths list
-            del file_paths_including_links[path]  # Remove original symlink entry now that detailed entry has been added
+def _resolve_path(path: Path) -> Path:
+    if not path.is_symlink():
+        return path
 
-    file_paths = sorted(
-        file_paths_including_links
-    )  # sort files to keep consistent order in case of repeat upload comparisons
-    dir_parts = [convert_windows_path_to_unix(os.path.relpath(root, source)) for _ in file_paths]
-    dir_parts = ["" if dir_part == "." else dir_part + "/" for dir_part in dir_parts]
-    blob_paths = []
-
-    for (dir_part, name) in zip(dir_parts, file_paths):
-        if file_paths_including_links.get(
-            name
-        ):  # for symlinks, use symlink name and structure in directory to create remote upload path
-            blob_path = prefix + dir_part + file_paths_including_links.get(name)
-        else:
-            blob_path = prefix + dir_part + name.replace(root + "/", "")
-        blob_paths.append(blob_path)
-
-    return zip(file_paths, blob_paths)
+    link_path = path.resolve()
+    if not link_path.is_absolute():
+        link_path = path.parent.joinpath(link_path).resolve()
+    return _resolve_path(link_path)
 
 
 def generate_asset_id(asset_hash: str, include_directory=True) -> str:
@@ -575,14 +562,17 @@ def upload_directory(
         )
 
     # Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage
-    upload_paths = []
+    upload_paths = get_upload_files_from_folder(
+        source_path,
+        prefix=prefix,
+        ignore_file=ignore_file,
+    )
     size_dict = {}
     total_size = 0
-    for root, _, files in os.walk(source_path, followlinks=True):
-        upload_paths += list(traverse_directory(root, files, source_path, prefix, ignore_file=ignore_file))
 
     # Get each file's size for progress bar tracking
     for path, _ in upload_paths:
+        # TODO: symbol links are already resolved
         if os.path.islink(path):
             path_size = os.path.getsize(
                 os.readlink(convert_windows_path_to_unix(path))
@@ -681,7 +671,7 @@ def _get_next_version_from_container(
     container_operation: Any,
     resource_group_name: str,
     workspace_name: str,
-    registry_name: str,
+    registry_name: str = None,
     **kwargs,
 ) -> str:
     try:
@@ -733,7 +723,7 @@ def _get_latest_version_from_container(
         )
         version = container.properties.latest_version
 
-    except ResourceNotFoundError:
+    except ResourceNotFoundError as e:
         message = (
             f"Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
@@ -750,7 +740,7 @@ def _get_latest_version_from_container(
             target=ErrorTarget.ASSET,
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
-        )
+        ) from e
     return version
 
 
@@ -940,6 +930,48 @@ def _resolve_label_to_asset(
     return resolver(name)
 
 
+def _check_or_modify_auto_delete_setting(
+    autoDeleteSetting: Union[Dict, "AutoDeleteSetting"],
+):
+    if autoDeleteSetting is not None:
+        if hasattr(autoDeleteSetting, "condition"):
+            condition = getattr(autoDeleteSetting, "condition")
+            condition = snake_to_camel(condition)
+            setattr(autoDeleteSetting, "condition", condition)
+        elif "condition" in autoDeleteSetting:
+            autoDeleteSetting["condition"] = snake_to_camel(autoDeleteSetting["condition"])
+
+
+def _validate_workspace_managed_datastore(path: Optional[Union[str, PathLike]]) -> Optional[Union[str, PathLike]]:
+    # block cumtomer specified path on managed datastore
+    if path.startswith(WORKSPACE_MANAGED_DATASTORE_WITH_SLASH) or path == WORKSPACE_MANAGED_DATASTORE:
+        path = path.rstrip("/")
+
+        if path != WORKSPACE_MANAGED_DATASTORE:
+            raise AssetPathException(
+                message=INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA,
+                tartget=ErrorTarget.DATA,
+                no_personal_data_message=INVALID_MANAGED_DATASTORE_PATH_ERROR_NO_PERSONAL_DATA,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
+        return path + "/paths"
+    return path
+
+
+def _validate_auto_delete_setting_in_data_output(
+    auto_delete_setting: Optional[Union[Dict, "AutoDeleteSetting"]]
+) -> None:
+    # avoid specifying auto_delete_setting in job output now
+    if auto_delete_setting:
+        raise ValidationException(
+            message=AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA,
+            tartget=ErrorTarget.DATA,
+            no_personal_data_message=AUTO_DELETE_SETTING_NOT_ALLOWED_ERROR_NO_PERSONAL_DATA,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+
+
 class FileUploadProgressBar(tqdm):
     def __init__(self, msg: Optional[str] = None):
         warnings.simplefilter("ignore", category=TqdmWarning)
@@ -966,3 +998,46 @@ class DirectoryUploadProgressBar(tqdm):
             self.completed = current
         if current:
             self.update(current - self.n)
+
+
+def get_storage_info_for_non_registry_asset(
+    service_client, workspace_name, name, version, resource_group
+) -> Dict[str, str]:
+    """Get SAS uri and blob uri for non-registry asset.
+    :param service_client: Service client
+    :type service_client: AzureMachineLearningWorkspaces
+    :param name: Asset name
+    :type name: str
+    :param version: Asset version
+    :type version: str
+    :param resource_group: Resource group
+    :rtype: Dict[str, str]
+    """
+    request_body = PendingUploadRequestDto(pending_upload_type="TemporaryBlobReference")
+    response = service_client.code_versions.create_or_get_start_pending_upload(
+        resource_group_name=resource_group,
+        workspace_name=workspace_name,
+        name=name,
+        version=version,
+        body=request_body,
+    )
+
+    sas_info = {
+        "sas_uri": response.blob_reference_for_consumption.credential.sas_uri,
+        "blob_uri": response.blob_reference_for_consumption.blob_uri,
+    }
+
+    return sas_info
+
+
+def _get_existing_asset_name_and_version(existing_asset):
+    import re
+
+    regex = r"/codes/([^/]+)/versions/([^/]+)"
+
+    arm_id = existing_asset.id
+    match = re.search(regex, arm_id)
+    name = match.group(1)
+    version = match.group(2)
+
+    return name, version

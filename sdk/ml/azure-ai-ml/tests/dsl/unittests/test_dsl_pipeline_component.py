@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import pytest
 
 from azure.ai.ml import Input, MLClient, dsl, load_component
@@ -32,7 +33,9 @@ class TestDSLPipeline:
         pipeline_job.jobs["pipeline_no_arg"]._source_path = __file__
 
         validation_result: ValidationResult = mock_machinelearning_client.components.validate(
-            pipeline_job.jobs["pipeline_no_arg"]
+            pipeline_job.jobs["pipeline_no_arg"],
+            # skip remote validation for unit test as it requires a valid workspace to fetch the location
+            skip_remote_validation=True,
         )
         assert not validation_result.passed
         assert validation_result.error_messages == {

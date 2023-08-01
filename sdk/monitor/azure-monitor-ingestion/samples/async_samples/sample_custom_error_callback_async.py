@@ -36,20 +36,12 @@ from azure.monitor.ingestion.aio import LogsIngestionClient
 
 
 async def send_logs():
-    endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
-    rule_id = os.environ['LOGS_DCR_RULE_ID']
+    endpoint = os.environ["DATA_COLLECTION_ENDPOINT"]
+    rule_id = os.environ["LOGS_DCR_RULE_ID"]
     body = [
-          {
-            "Time": "2021-12-08T23:51:14.1104269Z",
-            "Computer": "Computer1",
-            "AdditionalContext": "sabhyrav-2"
-          },
-          {
-            "Time": "2021-12-08T23:51:14.1104269Z",
-            "Computer": "Computer2",
-            "AdditionalContext": "sabhyrav"
-          }
-        ]
+        {"Time": "2021-12-08T23:51:14.1104269Z", "Computer": "Computer1", "AdditionalContext": "sabhyrav-2"},
+        {"Time": "2021-12-08T23:51:14.1104269Z", "Computer": "Computer2", "AdditionalContext": "sabhyrav"},
+    ]
     credential = DefaultAzureCredential()
 
     failed_logs = []
@@ -72,14 +64,21 @@ async def send_logs():
 
     client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
     async with client:
-      await client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body, on_error=on_error_save)
+        await client.upload(
+            rule_id=rule_id, stream_name=os.environ["LOGS_DCR_STREAM_NAME"], logs=body, on_error=on_error_save
+        )
 
-      # Retry once with any failed logs, and this time ignore any errors.
-      if failed_logs:
-        print("Retrying logs that failed to upload...")
-        await client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=failed_logs, on_error=on_error_pass)
+        # Retry once with any failed logs, and this time ignore any errors.
+        if failed_logs:
+            print("Retrying logs that failed to upload...")
+            await client.upload(
+                rule_id=rule_id,
+                stream_name=os.environ["LOGS_DCR_STREAM_NAME"],
+                logs=failed_logs,
+                on_error=on_error_pass,
+            )
     await credential.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(send_logs())

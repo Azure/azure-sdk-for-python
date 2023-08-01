@@ -68,15 +68,14 @@ class TableAccessPolicy(GenAccessPolicy):
         be UTC.
     :paramtype start: ~datetime.datetime or str
     """
+
     def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
-        self.start = kwargs.get('start')
-        self.expiry = kwargs.get('expiry')
-        self.permission = kwargs.get('permission')
+        self.start = kwargs.get("start")
+        self.expiry = kwargs.get("expiry")
+        self.permission = kwargs.get("permission")
 
     def __repr__(self) -> str:
-        return "TableAccessPolicy(start={}, expiry={}, permission={})".format(
-            self.start, self.expiry, self.permission
-        )[1024:]
+        return f"TableAccessPolicy(start={self.start}, expiry={self.expiry}, permission={self.permission})"[1024:]
 
 
 class TableAnalyticsLogging(GeneratedLogging):
@@ -93,7 +92,7 @@ class TableAnalyticsLogging(GeneratedLogging):
     """
 
     def __init__(self, **kwargs) -> None:  # pylint: disable=super-init-not-called
-        self.version = kwargs.get("version", u"1.0")
+        self.version = kwargs.get("version", "1.0")
         self.delete = kwargs.get("delete", False)
         self.read = kwargs.get("read", False)
         self.write = kwargs.get("write", False)
@@ -110,13 +109,14 @@ class TableAnalyticsLogging(GeneratedLogging):
             write=generated.write,
             retention_policy=TableRetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
-            )
+            ),
         )
 
     def __repr__(self) -> str:
-        return "TableAnalyticsLogging(version={}, delete={}, read={}, write={}, retention_policy={})".format(
-            self.version, self.delete, self.read, self.write, self.retention_policy
-        )[1024:]
+        return f"TableAnalyticsLogging(version={self.version}, delete={self.delete}, read={self.read}, \
+            write={self.write}, retention_policy={self.retention_policy})"[
+            1024:
+        ]
 
 
 class TableMetrics(GeneratedMetrics):
@@ -133,16 +133,19 @@ class TableMetrics(GeneratedMetrics):
     """
 
     def __init__(self, **kwargs) -> None:  # pylint: disable=super-init-not-called
-        self.version = kwargs.get("version", u"1.0")
+        self.version = kwargs.get("version", "1.0")
         self.enabled = kwargs.get("enabled", False)
         self.include_apis = kwargs.get("include_apis")
         self.retention_policy = kwargs.get("retention_policy") or TableRetentionPolicy()
 
     @classmethod
-    def _from_generated(cls, generated) -> 'TableMetrics':
+    def _from_generated(cls, generated) -> "TableMetrics":
         """A summary of request statistics grouped by API in hour or minute aggregates.
 
-        :param TableMetrics generated: generated Metrics
+        :param generated: Generated Metrics.
+        :type generated: ~azure.data.tables._generated.models.Metrics
+        :return: A TableMetrics object.
+        :rtype: ~azure.data.tables.TableMetrics
         """
         if not generated:
             return cls()
@@ -152,13 +155,14 @@ class TableMetrics(GeneratedMetrics):
             include_apis=generated.include_apis,
             retention_policy=TableRetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
-            )
+            ),
         )
 
     def __repr__(self) -> str:
-        return "TableMetrics(version={}, enabled={}, include_apis={}, retention_policy={})".format(
-            self.version, self.enabled, self.include_apis, self.retention_policy
-        )[1024:]
+        return f"TableMetrics(version={self.version}, enabled={self.enabled}, include_apis={self.include_apis}, \
+            retention_policy={self.retention_policy})"[
+            1024:
+        ]
 
 
 class TableRetentionPolicy(GeneratedRetentionPolicy):
@@ -174,19 +178,22 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
             soft-deleted data should be retained. All data older than this value will
             be deleted. Must be specified if policy is enabled.
         """
-        self.enabled = kwargs.get('enabled', False)
-        self.days = kwargs.get('days')
+        self.enabled = kwargs.get("enabled", False)
+        self.days = kwargs.get("days")
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedRetentionPolicy) -> 'TableRetentionPolicy':
+    def _from_generated(cls, generated: GeneratedRetentionPolicy) -> "TableRetentionPolicy":
         """The retention policy which determines how long the associated data should
         persist.
 
         All required parameters must be populated in order to send to Azure.
 
-        :param TableRetentionPolicy generated: Generated Retention Policy
+        :param generated: Generated Retention Policy.
+        :type generated: ~azure.data.tables._generated.models.RetentionPolicy
+        :return: A TableRetentionPolicy object.
+        :rtype: ~azure.data.tables.TableRetentionPolicy
         """
 
         if not generated:
@@ -195,11 +202,12 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
             enabled=generated.enabled,
             days=generated.days,
         )
+
     def __repr__(self) -> str:
-        return "TableRetentionPolicy(enabled={}, days={})".format(self.enabled, self.days)[1024:]
+        return f"TableRetentionPolicy(enabled={self.enabled}, days={self.days})"[1024:]
 
 
-class TableCorsRule(object):
+class TableCorsRule:
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -208,22 +216,22 @@ class TableCorsRule(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param List[str] allowed_origins:
+    :param list[str] allowed_origins:
         A list of origin domains that will be allowed via CORS, or "*" to allow
         all domains. The list of must contain at least one entry. Limited to 64
         origin domains. Each allowed origin can have up to 256 characters.
-    :param List[str] allowed_methods:
+    :param list[str] allowed_methods:
         A list of HTTP methods that are allowed to be executed by the origin.
         The list of must contain at least one entry. For Azure Storage,
         permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
     :keyword int max_age_in_seconds:
         The number of seconds that the client/browser should cache a
         pre-flight response.
-    :keyword List[str] exposed_headers:
+    :keyword list[str] exposed_headers:
         Defaults to an empty list. A list of response headers to expose to CORS
         clients. Limited to 64 defined headers and two prefixed headers. Each
         header can be up to 256 characters.
-    :keyword List[str] allowed_headers:
+    :keyword list[str] allowed_headers:
         Defaults to an empty list. A list of headers allowed to be part of
         the cross-origin request. Limited to 64 defined headers and 2 prefixed
         headers. Each header can be up to 256 characters.
@@ -242,25 +250,27 @@ class TableCorsRule(object):
             allowed_methods=",".join(self.allowed_methods),
             allowed_headers=",".join(self.allowed_headers),
             exposed_headers=",".join(self.exposed_headers),
-            max_age_in_seconds=self.max_age_in_seconds
+            max_age_in_seconds=self.max_age_in_seconds,
         )
 
     @classmethod
     def _from_generated(cls, generated):
-        exposedheaders = generated.exposed_headers.split(',') if generated.exposed_headers else []
-        allowedheaders = generated.allowed_headers.split(',') if generated.allowed_headers else []
+        exposedheaders = generated.exposed_headers.split(",") if generated.exposed_headers else []
+        allowedheaders = generated.allowed_headers.split(",") if generated.allowed_headers else []
         return cls(
-            generated.allowed_origins.split(','),
-            generated.allowed_methods.split(','),
+            generated.allowed_origins.split(","),
+            generated.allowed_methods.split(","),
             allowed_headers=allowedheaders,
             exposed_headers=exposedheaders,
             max_age_in_seconds=generated.max_age_in_seconds,
         )
 
     def __repr__(self) -> str:
-        return "TableCorsRules(allowed_origins={}, allowed_methods={}, allowed_headers={}, exposed_headers={}, max_age_in_seconds={})".format(  # pylint: disable=line-too-long
-            self.allowed_origins, self.allowed_methods, self.allowed_headers, self.exposed_headers, self.max_age_in_seconds  # pylint: disable=line-too-long
-        )[1024:]
+        return f"TableCorsRules(allowed_origins={self.allowed_origins}, allowed_methods={self.allowed_methods}, \
+            allowed_headers={self.allowed_headers}, exposed_headers={self.exposed_headers}, \
+            max_age_in_seconds={self.max_age_in_seconds})"[
+            1024:
+        ]
 
 
 class TablePropertiesPaged(PageIterator):
@@ -285,7 +295,7 @@ class TablePropertiesPaged(PageIterator):
         self.filter = kwargs.get("filter")
         self._location_mode = None
 
-    def _get_next_cb(self, continuation_token, **kwargs):
+    def _get_next_cb(self, continuation_token, **kwargs):  # pylint: disable=inconsistent-return-statements
         try:
             return self._command(
                 top=self.results_per_page,
@@ -300,7 +310,8 @@ class TablePropertiesPaged(PageIterator):
     def _extract_data_cb(self, get_next_return):
         self._location_mode, self._response, self._headers = get_next_return
         props_list = [
-            TableItem._from_generated(t, **self._headers) for t in self._response.value  # pylint: disable=protected-access
+            TableItem._from_generated(t, **self._headers)  # pylint: disable=protected-access
+            for t in self._response.value
         ]
         return self._headers[NEXT_TABLE_NAME] or None, props_list
 
@@ -331,10 +342,8 @@ class TableEntityPropertiesPaged(PageIterator):
         self.select = kwargs.get("select")
         self._location_mode = None
 
-    def _get_next_cb(self, continuation_token, **kwargs):
-        next_partition_key, next_row_key = _extract_continuation_token(
-            continuation_token
-        )
+    def _get_next_cb(self, continuation_token, **kwargs):  # pylint: disable=inconsistent-return-statements
+        next_partition_key, next_row_key = _extract_continuation_token(continuation_token)
         try:
             return self._command(
                 top=self.results_per_page,
@@ -361,7 +370,7 @@ class TableEntityPropertiesPaged(PageIterator):
         return next_entity or None, props_list
 
 
-class TableSasPermissions(object):
+class TableSasPermissions:
     def __init__(self, **kwargs) -> None:
         """
         :keyword bool read:
@@ -373,23 +382,27 @@ class TableSasPermissions(object):
         :keyword bool delete:
             Delete entities.
         """
-        self._str = kwargs.pop('_str', "") or ""
+        self._str = kwargs.pop("_str", "") or ""
         self.read = kwargs.pop("read", False) or ("r" in self._str)
         self.add = kwargs.pop("add", False) or ("a" in self._str)
         self.update = kwargs.pop("update", False) or ("u" in self._str)
         self.delete = kwargs.pop("delete", False) or ("d" in self._str)
 
-    def __or__(self, other: 'TableSasPermissions') -> 'TableSasPermissions':
+    def __or__(self, other: "TableSasPermissions") -> "TableSasPermissions":
         """
-        :param other:
-        :type other: :class:`~azure.data.tables.TableSasPermissions`
+        :param other: An TableSasPermissions object to add in logic "or".
+        :type other: ~azure.data.tables.TableSasPermissions
+        :return: An TableSasPermissions object
+        :rtype: ~azure.data.tables.TableSasPermissions
         """
         return TableSasPermissions(_str=str(self) + str(other))
 
-    def __add__(self, other: 'TableSasPermissions') -> 'TableSasPermissions':
+    def __add__(self, other: "TableSasPermissions") -> "TableSasPermissions":
         """
-        :param other:
-        :type other: :class:`~azure.data.tables.TableSasPermissions`
+        :param other: An TableSasPermissions object to add in logic "add".
+        :type other: ~azure.data.tables.TableSasPermissions
+        :return: An TableSasPermissions object
+        :rtype: ~azure.data.tables.TableSasPermissions
         """
         return TableSasPermissions(_str=str(self) + str(other))
 
@@ -402,12 +415,13 @@ class TableSasPermissions(object):
         )
 
     def __repr__(self) -> str:
-        return "TableSasPermissions(read={}, add={}, update={}, delete={})".format(
-            self.read, self.add, self.update, self.delete
-        )[1024:]
+        return f"TableSasPermissions(read={self.read}, add={self.add}, update={self.update}, \
+            delete={self.delete})"[
+            1024:
+        ]
 
     @classmethod
-    def from_string(cls, permission: str, **kwargs) -> 'TableSasPermissions':
+    def from_string(cls, permission: str, **kwargs) -> "TableSasPermissions":
         """Create TableSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
@@ -417,22 +431,26 @@ class TableSasPermissions(object):
         :param str permission: Specify permissions in
             the string with the first letter of the word.
         :return: An TableSasPermissions object
-        :rtype: :class:`~azure.data.tables.TableSasPermissions`
+        :rtype: ~azure.data.tables.TableSasPermissions
         """
         p_read = "r" in permission
         p_add = "a" in permission
         p_delete = "d" in permission
         p_update = "u" in permission
 
-        parsed = cls(
-            **dict(kwargs, read=p_read, add=p_add, delete=p_delete, update=p_update)
-        )
+        parsed = cls(**dict(kwargs, read=p_read, add=p_add, delete=p_delete, update=p_update))
         parsed._str = permission  # pylint: disable=protected-access,attribute-defined-outside-init
         return parsed
 
 
 def service_stats_deserialize(generated: GenTableServiceStats) -> Dict[str, Any]:
-    """Deserialize a ServiceStats objects into a dict."""
+    """Deserialize a ServiceStats objects into a dict.
+
+    :param generated: The generated TableServiceStats.
+    :type generated: ~azure.data.tables._generated.models.TableServiceStats
+    :return: The deserialized TableServiceStats.
+    :rtype: dict
+    """
     return {
         "geo_replication": {
             "status": generated.geo_replication.status,  # type: ignore
@@ -442,15 +460,19 @@ def service_stats_deserialize(generated: GenTableServiceStats) -> Dict[str, Any]
 
 
 def service_properties_deserialize(generated: GenTableServiceProperties) -> Dict[str, Any]:
-    """Deserialize a ServiceProperties objects into a dict."""
+    """Deserialize a ServiceProperties objects into a dict.
+
+    :param generated: The generated TableServiceProperties
+    :type generated: ~azure.data.tables._generated.models.TableServiceProperties
+    :return: The deserialized TableServiceProperties.
+    :rtype: dict
+    """
     return {
-        "analytics_logging": TableAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
-        "hour_metrics": TableMetrics._from_generated(  # pylint: disable=protected-access
-            generated.hour_metrics
+        "analytics_logging": TableAnalyticsLogging._from_generated(  # pylint: disable=protected-access
+            generated.logging
         ),
-        "minute_metrics": TableMetrics._from_generated(  # pylint: disable=protected-access
-            generated.minute_metrics
-        ),
+        "hour_metrics": TableMetrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
+        "minute_metrics": TableMetrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
         "cors": [
             TableCorsRule._from_generated(cors)  # pylint: disable=protected-access
             for cors in generated.cors  # type: ignore
@@ -458,12 +480,12 @@ def service_properties_deserialize(generated: GenTableServiceProperties) -> Dict
     }
 
 
-class TableItem(object):
+class TableItem:
     """
     Represents an Azure TableItem.
     Returned by TableServiceClient.list_tables and TableServiceClient.query_tables.
 
-    :ivar str name: The name of the table.
+    :param str name: The name of the table.
     """
 
     def __init__(self, name: str) -> None:
@@ -474,11 +496,11 @@ class TableItem(object):
 
     # TODO: TableQueryResponse is not the correct type
     @classmethod
-    def _from_generated(cls, generated: TableQueryResponse, **kwargs) -> 'TableItem':  # pylint: disable=unused-argument
+    def _from_generated(cls, generated: TableQueryResponse, **kwargs) -> "TableItem":  # pylint: disable=unused-argument
         return cls(generated.table_name)  # type: ignore
 
     def __repr__(self) -> str:
-        return "TableItem(name={})".format(self.name)[1024:]
+        return f"TableItem(name={self.name})"[1024:]
 
 
 class TablePayloadFormat(object):
@@ -522,9 +544,7 @@ class LocationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     PRIMARY = "primary"  #: Requests should be sent to the primary location.
-    SECONDARY = (
-        "secondary"  #: Requests should be sent to the secondary location, if possible.
-    )
+    SECONDARY = "secondary"  #: Requests should be sent to the secondary location, if possible.
 
 
 class ResourceTypes(object):
@@ -536,18 +556,21 @@ class ResourceTypes(object):
         Get Service Stats, List Tables)
     :keyword bool object:
         Access to object-level APIs for tables (e.g. Get/Create/Query Entity etc.)
+    :keyword bool container:
+        Access to container-level APIs for tables (e.g. Create Tables etc.)
     """
 
     def __init__(self, **kwargs) -> None:
-        self.service = kwargs.get('service', False)
-        self.object = kwargs.get('object', False)
-        self._str = ("s" if self.service else "") + ("o" if self.object else "")
+        self.service = kwargs.get("service", False)
+        self.object = kwargs.get("object", False)
+        self.container = kwargs.get("container", False)
+        self._str = ("s" if self.service else "") + ("o" if self.object else "") + ("c" if self.container else "")
 
     def __str__(self):
         return self._str
 
     @classmethod
-    def from_string(cls, string: str) -> 'ResourceTypes':
+    def from_string(cls, string: str) -> "ResourceTypes":
         """Create a ResourceTypes from a string.
 
         To specify service, container, or object you need only to
@@ -557,12 +580,13 @@ class ResourceTypes(object):
         :param str string: Specify service, container, or object in
             in the string with the first letter of the word.
         :return: A ResourceTypes object
-        :rtype: :class:`~azure.data.tables.ResourceTypes`
+        :rtype: ~azure.data.tables.ResourceTypes
         """
         res_service = "s" in string
         res_object = "o" in string
+        res_container = "c" in string
 
-        parsed = cls(service=res_service, object=res_object)
+        parsed = cls(service=res_service, object=res_object, container=res_container)
         parsed._str = string  # pylint: disable = protected-access
         return parsed
 
@@ -617,7 +641,7 @@ class AccountSasPermissions(object):
         return self._str
 
     @classmethod
-    def from_string(cls, permission: str, **kwargs) -> 'AccountSasPermissions':
+    def from_string(cls, permission: str, **kwargs) -> "AccountSasPermissions":
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
@@ -627,7 +651,7 @@ class AccountSasPermissions(object):
         :param permission: Specify permissions in the string with the first letter of the word.
         :type permission: str
         :return: An AccountSasPermissions object
-        :rtype: :class:`~azure.data.tables.AccountSasPermissions`
+        :rtype: ~azure.data.tables.AccountSasPermissions
         """
         p_read = "r" in permission
         p_write = "w" in permission

@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.managed_databases.begin_delete(
+    client.managed_databases.begin_delete(
         resource_group_name="Default-SQL-SouthEastAsia",
         managed_instance_name="managedInstance",
         database_name="testdb",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-05-01-preview/examples/ManagedDatabaseDelete.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/ManagedDatabaseDelete.json
 if __name__ == "__main__":
     main()

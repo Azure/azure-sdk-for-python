@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.0.3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,17 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.2 (2023-06-15)
+
+### Bugs Fixed
+
+- Fixed issue preventing custom authentication policies or credential scopes to be passed to the client. ([#30739](https://github.com/Azure/azure-sdk-for-python/pull/30739/))
+
+## 1.0.1 (2023-04-11)
+
+### Bugs Fixed
+  - Fixed an issue where log entry sizes were miscalculated when chunking. ([#29584](https://github.com/Azure/azure-sdk-for-python/pull/29584))
 
 ## 1.0.0 (2023-02-16)
 

@@ -66,7 +66,7 @@ def build_get_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "serviceName": _SERIALIZER.url("service_name", service_name, "str"),
+        "serviceName": _SERIALIZER.url("service_name", service_name, "str", pattern=r"^[a-z][a-z0-9-]*[a-z0-9]$"),
         "buildServiceName": _SERIALIZER.url("build_service_name", build_service_name, "str"),
         "builderName": _SERIALIZER.url("builder_name", builder_name, "str"),
         "buildpackBindingName": _SERIALIZER.url("buildpack_binding_name", buildpack_binding_name, "str"),
@@ -107,7 +107,7 @@ def build_create_or_update_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "serviceName": _SERIALIZER.url("service_name", service_name, "str"),
+        "serviceName": _SERIALIZER.url("service_name", service_name, "str", pattern=r"^[a-z][a-z0-9-]*[a-z0-9]$"),
         "buildServiceName": _SERIALIZER.url("build_service_name", build_service_name, "str"),
         "builderName": _SERIALIZER.url("builder_name", builder_name, "str"),
         "buildpackBindingName": _SERIALIZER.url("buildpack_binding_name", buildpack_binding_name, "str"),
@@ -149,7 +149,7 @@ def build_delete_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "serviceName": _SERIALIZER.url("service_name", service_name, "str"),
+        "serviceName": _SERIALIZER.url("service_name", service_name, "str", pattern=r"^[a-z][a-z0-9-]*[a-z0-9]$"),
         "buildServiceName": _SERIALIZER.url("build_service_name", build_service_name, "str"),
         "builderName": _SERIALIZER.url("builder_name", builder_name, "str"),
         "buildpackBindingName": _SERIALIZER.url("buildpack_binding_name", buildpack_binding_name, "str"),
@@ -188,7 +188,7 @@ def build_list_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "serviceName": _SERIALIZER.url("service_name", service_name, "str"),
+        "serviceName": _SERIALIZER.url("service_name", service_name, "str", pattern=r"^[a-z][a-z0-9-]*[a-z0-9]$"),
         "buildServiceName": _SERIALIZER.url("build_service_name", build_service_name, "str"),
         "builderName": _SERIALIZER.url("builder_name", builder_name, "str"),
     }
@@ -280,8 +280,9 @@ class BuildpackBindingOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -352,8 +353,9 @@ class BuildpackBindingOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -605,8 +607,9 @@ class BuildpackBindingOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -784,8 +787,9 @@ class BuildpackBindingOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 

@@ -979,7 +979,7 @@ class OnlineEndpointsOperations(object):
             return deserialized
 
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1199,9 +1199,9 @@ class OnlineEndpointsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.EndpointAuthToken"
-        """Retrieve a valid AAD token for an Endpoint using AMLToken-based authentication.
+        """Retrieve a valid AML token for an Endpoint using AMLToken-based authentication.
 
-        Retrieve a valid AAD token for an Endpoint using AMLToken-based authentication.
+        Retrieve a valid AML token for an Endpoint using AMLToken-based authentication.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str

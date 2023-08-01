@@ -1,5 +1,11 @@
 # Release History
 
+## 2.4.0 (2023-05-20)
+
+### Features Added
+
+  - Model VaultProperties has a new parameter restore_settings
+
 ## 2.3.0 (2023-02-15)
 
 ### Other Changes

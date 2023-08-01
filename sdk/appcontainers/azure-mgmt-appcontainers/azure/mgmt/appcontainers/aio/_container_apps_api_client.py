@@ -30,6 +30,9 @@ from .operations import (
     ContainerAppsRevisionsOperations,
     ContainerAppsSourceControlsOperations,
     DaprComponentsOperations,
+    JobsExecutionsOperations,
+    JobsOperations,
+    ManagedCertificatesOperations,
     ManagedEnvironmentDiagnosticsOperations,
     ManagedEnvironmentsDiagnosticsOperations,
     ManagedEnvironmentsOperations,
@@ -70,6 +73,10 @@ class ContainerAppsAPIClient:  # pylint: disable=client-accepts-api-version-keyw
      azure.mgmt.appcontainers.aio.operations.ConnectedEnvironmentsStoragesOperations
     :ivar container_apps: ContainerAppsOperations operations
     :vartype container_apps: azure.mgmt.appcontainers.aio.operations.ContainerAppsOperations
+    :ivar jobs: JobsOperations operations
+    :vartype jobs: azure.mgmt.appcontainers.aio.operations.JobsOperations
+    :ivar jobs_executions: JobsExecutionsOperations operations
+    :vartype jobs_executions: azure.mgmt.appcontainers.aio.operations.JobsExecutionsOperations
     :ivar container_apps_revisions: ContainerAppsRevisionsOperations operations
     :vartype container_apps_revisions:
      azure.mgmt.appcontainers.aio.operations.ContainerAppsRevisionsOperations
@@ -92,6 +99,9 @@ class ContainerAppsAPIClient:  # pylint: disable=client-accepts-api-version-keyw
      azure.mgmt.appcontainers.aio.operations.ManagedEnvironmentsOperations
     :ivar certificates: CertificatesOperations operations
     :vartype certificates: azure.mgmt.appcontainers.aio.operations.CertificatesOperations
+    :ivar managed_certificates: ManagedCertificatesOperations operations
+    :vartype managed_certificates:
+     azure.mgmt.appcontainers.aio.operations.ManagedCertificatesOperations
     :ivar namespaces: NamespacesOperations operations
     :vartype namespaces: azure.mgmt.appcontainers.aio.operations.NamespacesOperations
     :ivar dapr_components: DaprComponentsOperations operations
@@ -108,8 +118,8 @@ class ContainerAppsAPIClient:  # pylint: disable=client-accepts-api-version-keyw
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-10-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-11-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -125,7 +135,7 @@ class ContainerAppsAPIClient:  # pylint: disable=client-accepts-api-version-keyw
         self._config = ContainerAppsAPIClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -151,6 +161,8 @@ class ContainerAppsAPIClient:  # pylint: disable=client-accepts-api-version-keyw
             self._client, self._config, self._serialize, self._deserialize
         )
         self.container_apps = ContainerAppsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.jobs_executions = JobsExecutionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.container_apps_revisions = ContainerAppsRevisionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -171,6 +183,9 @@ class ContainerAppsAPIClient:  # pylint: disable=client-accepts-api-version-keyw
             self._client, self._config, self._serialize, self._deserialize
         )
         self.certificates = CertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_certificates = ManagedCertificatesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.namespaces = NamespacesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.dapr_components = DaprComponentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_environments_storages = ManagedEnvironmentsStoragesOperations(
@@ -209,5 +224,5 @@ class ContainerAppsAPIClient:  # pylint: disable=client-accepts-api-version-keyw
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

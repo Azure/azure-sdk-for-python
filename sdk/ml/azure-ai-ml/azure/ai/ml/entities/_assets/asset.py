@@ -39,9 +39,9 @@ class Asset(Resource):
         properties: Optional[Dict] = None,
         **kwargs,
     ):
-
         self._is_anonymous = kwargs.pop("is_anonymous", False)
         self._auto_increment_version = kwargs.pop("auto_increment_version", False)
+        self.auto_delete_setting = kwargs.pop("auto_delete_setting", None)
 
         if not name and version is None:
             name = _get_random_name()
@@ -120,6 +120,7 @@ class Asset(Resource):
             and self.base_path == other.base_path
             and self._is_anonymous == other._is_anonymous
             and self._auto_increment_version == other._auto_increment_version
+            and self.auto_delete_setting == other.auto_delete_setting
         )
 
     def __ne__(self, other) -> bool:

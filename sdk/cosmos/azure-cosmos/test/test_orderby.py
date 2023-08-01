@@ -23,12 +23,10 @@ import unittest
 import uuid
 import pytest
 from azure.core.paging import ItemPaged
-import azure.cosmos.documents as documents
 from azure.cosmos.partition_key import PartitionKey
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import _query_iterable as query_iterable
 import azure.cosmos._base as base
-from six.moves import xrange
 import test_config
 
 pytestmark = pytest.mark.cosmosEmulator
@@ -91,7 +89,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
 
         # create a document using the document definition
         cls.document_definitions = []
-        for i in xrange(20):
+        for i in range(20):
             d = {'id': str(i),
                  'name': 'sample document',
                  'spam': 'eggs' + str(i),
@@ -470,7 +468,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
             return next(it)
                     
         # validate that invocations of next() produces the same results as expected_ordered_ids
-        for i in xrange(len(expected_ordered_ids)):
+        for i in range(len(expected_ordered_ids)):
             item = invokeNext()
             self.assertEqual(item['id'], expected_ordered_ids[i])
 

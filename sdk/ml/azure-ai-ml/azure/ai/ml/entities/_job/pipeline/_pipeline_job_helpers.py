@@ -4,10 +4,10 @@
 import re
 from typing import Dict, List, Tuple, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import InputDeliveryMode
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import Mpi, PyTorch, TensorFlow
+from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Mpi, PyTorch, TensorFlow, Ray
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
@@ -46,7 +46,7 @@ def process_sdk_component_job_io(
             path = io_value.path
             name = io_value.name if hasattr(io_value, "name") else None
             version = io_value.version if hasattr(io_value, "version") else None
-            if any([re.match(item, path) for item in io_binding_regex_list]):
+            if any(re.match(item, path) for item in io_binding_regex_list):
                 # Yaml syntax requires using ${{}} to enclose inputs and outputs bindings
                 # io_bindings[io_name] = io_value
                 io_bindings.update({io_name: {"value": path}})
@@ -66,7 +66,7 @@ def process_sdk_component_job_io(
                     # when the output should be registered,
                     # we add io_value to dataset_literal_io for further to_rest_data_outputs
                     dataset_literal_io[io_name] = io_value
-            elif any([re.match(item, path) for item in legacy_io_binding_regex_list]):
+            elif any(re.match(item, path) for item in legacy_io_binding_regex_list):
                 new_format = path.replace("{{", "{{parent.")
                 msg = "{} has changed to {}, please change to use new format."
                 raise ValidationException(
@@ -112,7 +112,7 @@ def from_dict_to_rest_io(
             io_mode = val.get("mode", None)
             io_name = val.get("name", None)
             io_version = val.get("version", None)
-            if any([re.match(item, io_value) for item in io_binding_regex_list]):
+            if any(re.match(item, io_value) for item in io_binding_regex_list):
                 io_bindings.update({key: {"path": io_value}})
                 # add mode to literal value for binding input
                 if io_mode:
@@ -156,7 +156,9 @@ def from_dict_to_rest_io(
     return io_bindings, rest_io_objects
 
 
-def from_dict_to_rest_distribution(distribution_dict: Dict[str, Union[str, int]]) -> Union[PyTorch, Mpi, TensorFlow]:
+def from_dict_to_rest_distribution(
+    distribution_dict: Dict[str, Union[str, int]]
+) -> Union[PyTorch, Mpi, TensorFlow, Ray]:
     target_type = distribution_dict["distribution_type"].lower()
     if target_type == "pytorch":
         return PyTorch(**distribution_dict)
@@ -164,7 +166,9 @@ def from_dict_to_rest_distribution(distribution_dict: Dict[str, Union[str, int]]
         return Mpi(**distribution_dict)
     if target_type == "tensorflow":
         return TensorFlow(**distribution_dict)
-    msg = "Distribution type must be pytorch, mpi or tensorflow: {}".format(target_type)
+    if target_type == "ray":
+        return Ray(**distribution_dict)
+    msg = "Distribution type must be pytorch, mpi, tensorflow or ray: {}".format(target_type)
     raise ValidationException(
         message=msg,
         no_personal_data_message=msg,

@@ -22,7 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Optional, Union, cast, Awaitable
+from typing import Any, Dict, Optional, Union, cast, Awaitable, List
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator import distributed_trace
@@ -320,6 +320,9 @@ class ContainerProxy(object):
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
+        :keyword int response_continuation_token_limit_in_kb: **provisional keyword** The size limit in kb of the
+        response continuation token in the query response. Valid values are positive integers.
+        A value of 0 is the same as not passing a value (default no limit).
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
@@ -366,8 +369,12 @@ class ContainerProxy(object):
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         correlated_activity_id = GenerateGuidId()
         feed_options["correlatedActivityId"] = correlated_activity_id
+        response_continuation_token_limit_in_kb = kwargs.pop("response_continuation_token_limit_in_kb", None)
+        if response_continuation_token_limit_in_kb is not None:
+            feed_options["responseContinuationTokenLimitInKb"] = response_continuation_token_limit_in_kb
         if hasattr(response_hook, "clear"):
             response_hook.clear()
+
 
         parameters = kwargs.pop('parameters', None)
         items = self.client_connection.QueryItems(
@@ -390,7 +397,7 @@ class ContainerProxy(object):
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword bool is_start_from_beginning: Get whether change feed should start from
-            beginning (true) or from current (false). By default it's start from current (false).
+            beginning (true) or from current (false). By default, it's start from current (false).
         :keyword str partition_key_range_id: ChangeFeed requests can be executed against specific partition key
             ranges. This is used to process the change feed in parallel across multiple consumers.
         :keyword str continuation: e_tag value to be used as continuation for reading change feed.
@@ -518,6 +525,53 @@ class ContainerProxy(object):
         result = await self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
         )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)
+        return result
+
+    @distributed_trace_async
+    async def patch_item(
+        self,
+        item: Union[str, Dict[str, Any]],
+        partition_key: Union[str, int, float, bool],
+        patch_operations: List[Dict[str, Any]],
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """ **Provisional method** Patches the specified item with the provided operations if it
+         exists in the container.
+
+        If the item does not already exist in the container, an exception is raised.
+
+        :param item: The ID (name) or dict representing item to be patched.
+        :type item: Union[str, Dict[str, Any]]
+        :param partition_key: The partition key of the object to patch.
+        :type partition_key: Union[str, int, float, bool]
+        :param patch_operations: The list of patch operations to apply to the item.
+        :type patch_operations: List[Dict[str, Any]]
+        :keyword str filter_predicate: conditional filter to apply to Patch operations.
+        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
+        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A dict representing the item after the patch operations went through.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
+            given id does not exist.
+        :rtype: dict[str, Any]
+        """
+        request_options = _build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        request_options["disableAutomaticIdGeneration"] = True
+        request_options["partitionKey"] = partition_key
+        filter_predicate = kwargs.pop("filter_predicate", None)
+        if filter_predicate is not None:
+            request_options["filterPredicate"] = filter_predicate
+
+        item_link = self._get_document_link(item)
+        result = await self.client_connection.PatchItem(
+            document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
@@ -760,3 +814,36 @@ class ContainerProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
+
+    @distributed_trace_async
+    async def delete_all_items_by_partition_key(
+        self,
+        partition_key: Union[str, int, float, bool],
+        **kwargs: Any
+    ) -> None:
+        """The delete by partition key feature is an asynchronous, background operation that allows you to delete all
+        documents with the same logical partition key value, using the Cosmos SDK. The delete by partition key
+        operation is constrained to consume at most 10% of the total
+        available RU/s on the container each second. This helps in limiting the resources used by
+        this background task.
+
+        :param partition_key: Partition key for the items to be deleted.
+        :type partition_key: Any
+        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
+        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :rtype: None
+        """
+        request_options = _build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
+        request_options["partitionKey"] = self._set_partition_key(partition_key)
+
+        await self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
+                                                                  options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, None)

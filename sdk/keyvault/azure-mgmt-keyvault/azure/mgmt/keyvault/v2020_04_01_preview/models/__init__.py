@@ -68,8 +68,6 @@ from ._key_vault_management_client_enums import ActionsRequired
 from ._key_vault_management_client_enums import CertificatePermissions
 from ._key_vault_management_client_enums import CreateMode
 from ._key_vault_management_client_enums import DeletionRecoveryLevel
-from ._key_vault_management_client_enums import Enum16
-from ._key_vault_management_client_enums import Enum17
 from ._key_vault_management_client_enums import IdentityType
 from ._key_vault_management_client_enums import JsonWebKeyCurveName
 from ._key_vault_management_client_enums import JsonWebKeyOperation
@@ -154,8 +152,6 @@ __all__ = [
     "CertificatePermissions",
     "CreateMode",
     "DeletionRecoveryLevel",
-    "Enum16",
-    "Enum17",
     "IdentityType",
     "JsonWebKeyCurveName",
     "JsonWebKeyOperation",

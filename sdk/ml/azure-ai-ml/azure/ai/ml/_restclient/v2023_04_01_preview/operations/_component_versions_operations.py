@@ -43,6 +43,7 @@ def build_list_request(
     order_by = kwargs.pop('order_by', None)  # type: Optional[str]
     top = kwargs.pop('top', None)  # type: Optional[int]
     skip = kwargs.pop('skip', None)  # type: Optional[str]
+    stage = kwargs.pop('stage', None)  # type: Optional[str]
     list_view_type = kwargs.pop('list_view_type', None)  # type: Optional[Union[str, "_models.ListViewType"]]
 
     accept = "application/json"
@@ -66,6 +67,8 @@ def build_list_request(
         _query_parameters['$top'] = _SERIALIZER.query("top", top, 'int')
     if skip is not None:
         _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
+    if stage is not None:
+        _query_parameters['stage'] = _SERIALIZER.query("stage", stage, 'str')
     if list_view_type is not None:
         _query_parameters['listViewType'] = _SERIALIZER.query("list_view_type", list_view_type, 'str')
 
@@ -239,6 +242,7 @@ class ComponentVersionsOperations(object):
         order_by=None,  # type: Optional[str]
         top=None,  # type: Optional[int]
         skip=None,  # type: Optional[str]
+        stage=None,  # type: Optional[str]
         list_view_type=None,  # type: Optional[Union[str, "_models.ListViewType"]]
         **kwargs  # type: Any
     ):
@@ -259,6 +263,8 @@ class ComponentVersionsOperations(object):
         :type top: int
         :param skip: Continuation token for pagination.
         :type skip: str
+        :param stage: Component stage.
+        :type stage: str
         :param list_view_type: View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -287,6 +293,7 @@ class ComponentVersionsOperations(object):
                     order_by=order_by,
                     top=top,
                     skip=skip,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=self.list.metadata['url'],
                 )
@@ -304,6 +311,7 @@ class ComponentVersionsOperations(object):
                     order_by=order_by,
                     top=top,
                     skip=skip,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=next_link,
                 )

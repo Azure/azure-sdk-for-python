@@ -1,0 +1,14 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+name: additional_files
+version: 0.0.1
+type: command
+description: A sample to demonstrate component with additional files
+inputs: {}
+outputs: {}
+environment:
+  image: zzn2/azureml_sdk
+code: ../
+command: >-
+  echo Hello World

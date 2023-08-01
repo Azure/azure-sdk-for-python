@@ -25,7 +25,10 @@
 # --------------------------------------------------------------------------
 from collections.abc import Iterable
 from azure.core import AsyncPipelineClient
-from .policies import AsyncARMAutoResourceProviderRegistrationPolicy, ARMHttpLoggingPolicy
+from .policies import (
+    AsyncARMAutoResourceProviderRegistrationPolicy,
+    ARMHttpLoggingPolicy,
+)
 
 
 class AsyncARMPipelineClient(AsyncPipelineClient):
@@ -51,7 +54,10 @@ class AsyncARMPipelineClient(AsyncPipelineClient):
             if isinstance(per_call_policies, Iterable):
                 per_call_policies.append(AsyncARMAutoResourceProviderRegistrationPolicy())
             else:
-                per_call_policies = [per_call_policies, AsyncARMAutoResourceProviderRegistrationPolicy()]
+                per_call_policies = [
+                    per_call_policies,
+                    AsyncARMAutoResourceProviderRegistrationPolicy(),
+                ]
             kwargs["per_call_policies"] = per_call_policies
             config = kwargs.get("config")
             if not config.http_logging_policy:

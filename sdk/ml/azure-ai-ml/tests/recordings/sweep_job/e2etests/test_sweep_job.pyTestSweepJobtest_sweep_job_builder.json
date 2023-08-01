@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_509965066061?api-version=2022-12-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_744477240614?api-version=2023-04-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "1074",
         "Content-Type": "application/json",
-        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Linux-5.15.79.1-microsoft-standard-WSL2-x86_64-with-glibc2.35)"
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-debian-bookworm-sid)"
       },
       "RequestBody": {
         "properties": {
@@ -65,26 +65,26 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "8587",
+        "Content-Length": "9627",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 22 Feb 2023 19:37:06 GMT",
+        "Date": "Thu, 20 Apr 2023 18:29:25 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_509965066061?api-version=2022-12-01-preview",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_744477240614?api-version=2023-04-01-preview",
         "Pragma": "no-cache",
-        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-2bda9297ebc97437bec72e4a6d976944-95bc23be90d0da36-01\u0022",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-463f7290ea84fd190dab637487f98ee0-05482d8361a6110e-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-eastus-02",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d3c54005-f35d-4628-826e-51baa1a5f767",
-        "x-ms-ratelimit-remaining-subscription-writes": "1155",
+        "x-ms-correlation-request-id": "9f3e918c-ba60-45f0-ac16-907ead1494d7",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "CANADACENTRAL:20230222T193707Z:d3c54005-f35d-4628-826e-51baa1a5f767",
-        "x-request-time": "1.228"
+        "x-ms-routing-request-id": "WESTUS2:20230420T182926Z:9f3e918c-ba60-45f0-ac16-907ead1494d7",
+        "x-request-time": "1.885"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_509965066061",
-        "name": "test_509965066061",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_744477240614",
+        "name": "test_744477240614",
         "type": "Microsoft.MachineLearningServices/workspaces/jobs",
         "properties": {
           "description": "new-description",
@@ -95,7 +95,7 @@
             "_aml_system_policy_config": "{\u0022name\u0022:\u0022TruncationSelection\u0022,\u0022properties\u0022:{\u0022evaluation_interval\u0022:100,\u0022delay_evaluation\u0022:200,\u0022truncation_percentage\u0022:40,\u0022exclude_finished_jobs\u0022:false}}",
             "_aml_system_generator_config": "{\u0022name\u0022:\u0022RANDOM\u0022,\u0022parameter_space\u0022:{\u0022lr\u0022:[\u0022loguniform\u0022,[0.001,0.1]]},\u0022properties\u0022:{\u0022rule\u0022:\u0022Random\u0022,\u0022logbase\u0022:null,\u0022seed\u0022:null}}",
             "_aml_system_primary_metric_config": "{\u0022name\u0022:\u0022accuracy\u0022,\u0022goal\u0022:\u0022maximize\u0022}",
-            "_aml_system_platform_config": "{\u0022ServiceAddress\u0022:\u0022https://eastus.api.azureml.ms\u0022,\u0022SubscriptionId\u0022:\u002200000000-0000-0000-0000-000000000\u0022,\u0022ResourceGroupName\u0022:\u002200000\u0022,\u0022WorkspaceName\u0022:\u002200000\u0022,\u0022ExperimentName\u0022:\u0022mfe-test1-dataset\u0022,\u0022Definition\u0022:{\u0022Configuration\u0022:null,\u0022Attribution\u0022:null,\u0022TelemetryValues\u0022:null,\u0022Overrides\u0022:{\u0022Script\u0022:null,\u0022Command\u0022:\u0022echo ${{inputs.uri}} ${{search_space.learning_rate}}\u0022,\u0022UseAbsolutePath\u0022:true,\u0022Arguments\u0022:[],\u0022SourceDirectoryDataStore\u0022:null,\u0022Framework\u0022:0,\u0022Target\u0022:\u0022testCompute\u0022,\u0022DataReferences\u0022:{},\u0022Data\u0022:{\u0022uri\u0022:{\u0022DataLocation\u0022:{\u0022Dataset\u0022:null,\u0022DataPath\u0022:null,\u0022Uri\u0022:{\u0022Path\u0022:\u0022azureml://subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000/datastores/workspaceblobstore/paths/python/data.csv\u0022,\u0022IsFile\u0022:true},\u0022Type\u0022:\u0022UriFile\u0022},\u0022Mechanism\u0022:\u0022Mount\u0022,\u0022EnvironmentVariableName\u0022:\u0022AZURE_ML_INPUT_uri\u0022,\u0022PathOnCompute\u0022:null,\u0022Overwrite\u0022:false,\u0022Options\u0022:{\u0022IsEvalMode\u0022:\u0022False\u0022,\u0022ReadWrite\u0022:\u0022False\u0022,\u0022ForceFolder\u0022:\u0022False\u0022}}},\u0022InputAssets\u0022:{\u0022uri\u0022:{\u0022Asset\u0022:{\u0022AssetId\u0022:\u0022azureml://locations/eastus/workspaces/3bd2018e-4b43-401e-ad49-85df181c9e0a/data/azureml_test_128244346719_input_data_testdataset/versions/1\u0022,\u0022Type\u0022:\u0022UriFile\u0022},\u0022Mechanism\u0022:\u0022Mount\u0022,\u0022EnvironmentVariableName\u0022:\u0022AZURE_ML_INPUT_uri\u0022,\u0022PathOnCompute\u0022:null,\u0022Overwrite\u0022:false,\u0022Options\u0022:{\u0022IsEvalMode\u0022:\u0022False\u0022,\u0022ReadWrite\u0022:\u0022False\u0022,\u0022ForceFolder\u0022:\u0022False\u0022}}},\u0022OutputData\u0022:{},\u0022Datacaches\u0022:[],\u0022JobName\u0022:null,\u0022MaxRunDurationSeconds\u0022:null,\u0022NodeCount\u0022:1,\u0022InstanceTypes\u0022:[],\u0022Priority\u0022:null,\u0022CredentialPassthrough\u0022:false,\u0022Identity\u0022:null,\u0022Environment\u0022:{\u0022Name\u0022:\u0022AzureML-sklearn-1.0-ubuntu20.04-py38-cpu\u0022,\u0022Version\u0022:\u002233\u0022,\u0022AssetId\u0022:\u0022azureml://registries/azureml/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/33\u0022,\u0022AutoRebuild\u0022:true,\u0022Python\u0022:{\u0022InterpreterPath\u0022:\u0022python\u0022,\u0022UserManagedDependencies\u0022:true,\u0022CondaDependencies\u0022:null,\u0022BaseCondaEnvironment\u0022:null},\u0022EnvironmentVariables\u0022:{\u0022EXAMPLE_ENV_VAR\u0022:\u0022EXAMPLE_VALUE\u0022},\u0022Docker\u0022:{\u0022BaseImage\u0022:null,\u0022Platform\u0022:{\u0022Os\u0022:\u0022Linux\u0022,\u0022Architecture\u0022:\u0022amd64\u0022},\u0022BaseDockerfile\u0022:\u0022FROM mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:20230103.v1\\n\\nENV AZUREML_CONDA_ENVIRONMENT_PATH /azureml-envs/sklearn-1.0\\n# Create conda environment\\nRUN conda create -p $AZUREML_CONDA_ENVIRONMENT_PATH \\\\\\n    python=3.8 pip=21.3.1 -c anaconda -c conda-forge\\n\\n# Prepend path to AzureML conda environment\\nENV PATH $AZUREML_CONDA_ENVIRONMENT_PATH/bin:$PATH\\n\\n# Install pip dependencies\\nRUN pip install \u0027matplotlib~=3.5.0\u0027 \\\\\\n                \u0027psutil~=5.8.0\u0027 \\\\\\n                \u0027tqdm~=4.62.0\u0027 \\\\\\n                \u0027pandas~=1.3.0\u0027 \\\\\\n                \u0027scipy~=1.7.0\u0027 \\\\\\n                \u0027numpy~=1.21.0\u0027 \\\\\\n                \u0027ipykernel~=6.0\u0027 \\\\\\n                \u0027azureml-core==1.48.0\u0027 \\\\\\n                \u0027azureml-defaults==1.48.0\u0027 \\\\\\n                \u0027azureml-mlflow==1.48.0\u0027 \\\\\\n                \u0027azureml-telemetry==1.48.0\u0027 \\\\\\n                \u0027scikit-learn~=1.0.0\u0027 \\\\\\n                \u0027debugpy~=1.6.3\u0027\\n\\n# This is needed for mpi to locate libpython\\nENV LD_LIBRARY_PATH $AZUREML_CONDA_ENVIRONMENT_PATH/lib:$LD_LIBRARY_PATH\\n\u0022,\u0022BaseImageRegistry\u0022:{\u0022Address\u0022:null,\u0022Username\u0022:null,\u0022Password\u0022:null},\u0022Enabled\u0022:false,\u0022Arguments\u0022:[]},\u0022Spark\u0022:{\u0022Repositories\u0022:[],\u0022Packages\u0022:[],\u0022PrecachePackages\u0022:true},\u0022InferencingStackVersion\u0022:null},\u0022History\u0022:{\u0022OutputCollection\u0022:true,\u0022DirectoriesToWatch\u0022:[\u0022logs\u0022],\u0022EnableMLflowTracking\u0022:true},\u0022Spark\u0022:{\u0022Configuration\u0022:{}},\u0022ParallelTask\u0022:{\u0022MaxRetriesPerWorker\u0022:0,\u0022WorkerCountPerNode\u0022:1,\u0022TerminalExitCodes\u0022:null,\u0022Configuration\u0022:{}},\u0022BatchAi\u0022:{\u0022NodeCount\u0022:0},\u0022AmlCompute\u0022:{\u0022Name\u0022:null,\u0022VmSize\u0022:null,\u0022RetainCluster\u0022:false,\u0022ClusterMaxNodeCount\u0022:null},\u0022AISuperComputer\u0022:{\u0022InstanceType\u0022:\u0022D2\u0022,\u0022FrameworkImage\u0022:null,\u0022ImageVersion\u0022:\u0022pytorch-1.7.0\u0022,\u0022Location\u0022:null,\u0022AISuperComputerStorageData\u0022:null,\u0022Interactive\u0022:false,\u0022ScalePolicy\u0022:null,\u0022VirtualClusterArmId\u0022:null,\u0022TensorboardLogDirectory\u0022:null,\u0022SSHPublicKey\u0022:null,\u0022SSHPublicKeys\u0022:null,\u0022EnableAzmlInt\u0022:true,\u0022Priority\u0022:\u0022Medium\u0022,\u0022SLATier\u0022:\u0022Standard\u0022,\u0022UserAlias\u0022:null},\u0022KubernetesCompute\u0022:{\u0022InstanceType\u0022:null},\u0022Tensorflow\u0022:{\u0022WorkerCount\u0022:0,\u0022ParameterServerCount\u0022:0},\u0022Mpi\u0022:{\u0022ProcessCountPerNode\u0022:0},\u0022PyTorch\u0022:{\u0022CommunicationBackend\u0022:null,\u0022ProcessCount\u0022:null},\u0022Hdi\u0022:{\u0022YarnDeployMode\u0022:0},\u0022ContainerInstance\u0022:{\u0022Region\u0022:null,\u0022CpuCores\u0022:2.0,\u0022MemoryGb\u0022:3.5},\u0022ExposedPorts\u0022:null,\u0022Docker\u0022:{\u0022UseDocker\u0022:true,\u0022SharedVolumes\u0022:null,\u0022ShmSize\u0022:null,\u0022Arguments\u0022:null},\u0022Cmk8sCompute\u0022:{\u0022Configuration\u0022:{}},\u0022CommandReturnCodeConfig\u0022:{\u0022ReturnCode\u0022:0,\u0022SuccessfulReturnCodes\u0022:[]},\u0022EnvironmentVariables\u0022:{},\u0022ApplicationEndpoints\u0022:{},\u0022Parameters\u0022:[]},\u0022SnapshotId\u0022:null,\u0022Snapshots\u0022:[],\u0022SourceCodeDataReference\u0022:null,\u0022ParentRunId\u0022:null,\u0022DataContainerId\u0022:null,\u0022RunType\u0022:null,\u0022DisplayName\u0022:\u0022new_builder_command_job\u0022,\u0022EnvironmentAssetId\u0022:null,\u0022Properties\u0022:{},\u0022Tags\u0022:{},\u0022AggregatedArtifactPath\u0022:null},\u0022ParentRunId\u0022:\u0022test_509965066061\u0022}",
+            "_aml_system_platform_config": "{\u0022ServiceAddress\u0022:\u0022https://master.api.azureml-test.ms\u0022,\u0022SubscriptionId\u0022:\u002200000000-0000-0000-0000-000000000\u0022,\u0022ResourceGroupName\u0022:\u002200000\u0022,\u0022WorkspaceName\u0022:\u002200000\u0022,\u0022ExperimentName\u0022:\u0022mfe-test1-dataset\u0022,\u0022Definition\u0022:{\u0022Configuration\u0022:null,\u0022Attribution\u0022:null,\u0022TelemetryValues\u0022:null,\u0022Overrides\u0022:{\u0022Script\u0022:null,\u0022Command\u0022:\u0022echo ${{inputs.uri}} ${{search_space.learning_rate}}\u0022,\u0022UseAbsolutePath\u0022:true,\u0022Arguments\u0022:[],\u0022SourceDirectoryDataStore\u0022:null,\u0022Framework\u0022:0,\u0022Target\u0022:\u0022testCompute\u0022,\u0022DataReferences\u0022:{},\u0022Data\u0022:{\u0022uri\u0022:{\u0022DataLocation\u0022:{\u0022Dataset\u0022:null,\u0022DataPath\u0022:null,\u0022Uri\u0022:{\u0022Path\u0022:\u0022azureml://subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000/datastores/workspaceblobstore/paths/python/data.csv\u0022,\u0022IsFile\u0022:true},\u0022Type\u0022:\u0022UriFile\u0022},\u0022Mechanism\u0022:\u0022Mount\u0022,\u0022EnvironmentVariableName\u0022:\u0022AZURE_ML_INPUT_uri\u0022,\u0022PathOnCompute\u0022:null,\u0022Overwrite\u0022:false,\u0022Options\u0022:{\u0022IsEvalMode\u0022:\u0022False\u0022,\u0022ReadWrite\u0022:\u0022False\u0022,\u0022ForceFolder\u0022:\u0022False\u0022}}},\u0022InputAssets\u0022:{\u0022uri\u0022:{\u0022Asset\u0022:{\u0022AssetId\u0022:\u0022azureml://locations/centraluseuap/workspaces/2eef7b49-b6d0-4f51-80e8-dcfca1e4b850/data/azureml_test_744477240614_input_data_uri/versions/1\u0022,\u0022Type\u0022:\u0022UriFile\u0022},\u0022Mechanism\u0022:\u0022Mount\u0022,\u0022EnvironmentVariableName\u0022:\u0022AZURE_ML_INPUT_uri\u0022,\u0022PathOnCompute\u0022:null,\u0022Overwrite\u0022:false,\u0022Options\u0022:{\u0022IsEvalMode\u0022:\u0022False\u0022,\u0022ReadWrite\u0022:\u0022False\u0022,\u0022ForceFolder\u0022:\u0022False\u0022}}},\u0022OutputData\u0022:{},\u0022Datacaches\u0022:[],\u0022JobName\u0022:null,\u0022MaxRunDurationSeconds\u0022:null,\u0022NodeCount\u0022:1,\u0022InstanceTypes\u0022:[],\u0022Priority\u0022:null,\u0022CredentialPassthrough\u0022:false,\u0022Identity\u0022:null,\u0022Environment\u0022:{\u0022Name\u0022:\u0022AzureML-sklearn-1.0-ubuntu20.04-py38-cpu\u0022,\u0022Version\u0022:\u002233\u0022,\u0022AssetId\u0022:\u0022azureml://registries/azureml-dev/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/33\u0022,\u0022AutoRebuild\u0022:true,\u0022Python\u0022:{\u0022InterpreterPath\u0022:\u0022python\u0022,\u0022UserManagedDependencies\u0022:true,\u0022CondaDependencies\u0022:null,\u0022BaseCondaEnvironment\u0022:null},\u0022EnvironmentVariables\u0022:{\u0022EXAMPLE_ENV_VAR\u0022:\u0022EXAMPLE_VALUE\u0022},\u0022Docker\u0022:{\u0022BaseImage\u0022:null,\u0022Platform\u0022:{\u0022Os\u0022:\u0022Linux\u0022,\u0022Architecture\u0022:\u0022amd64\u0022},\u0022BaseDockerfile\u0022:\u0022FROM mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:20230103.v1\\n\\nENV AZUREML_CONDA_ENVIRONMENT_PATH /azureml-envs/sklearn-1.0\\n# Create conda environment\\nRUN conda create -p $AZUREML_CONDA_ENVIRONMENT_PATH \\\\\\n    python=3.8 pip=21.3.1 -c anaconda -c conda-forge\\n\\n# Prepend path to AzureML conda environment\\nENV PATH $AZUREML_CONDA_ENVIRONMENT_PATH/bin:$PATH\\n\\n# Install pip dependencies\\nRUN pip install \u0027matplotlib~=3.5.0\u0027 \\\\\\n                \u0027psutil~=5.8.0\u0027 \\\\\\n                \u0027tqdm~=4.62.0\u0027 \\\\\\n                \u0027pandas~=1.3.0\u0027 \\\\\\n                \u0027scipy~=1.7.0\u0027 \\\\\\n                \u0027numpy~=1.21.0\u0027 \\\\\\n                \u0027ipykernel~=6.0\u0027 \\\\\\n                \u0027azureml-core==1.48.0\u0027 \\\\\\n                \u0027azureml-defaults==1.48.0\u0027 \\\\\\n                \u0027azureml-mlflow==1.48.0\u0027 \\\\\\n                \u0027azureml-telemetry==1.48.0\u0027 \\\\\\n                \u0027scikit-learn~=1.0.0\u0027 \\\\\\n                \u0027debugpy~=1.6.3\u0027\\n\\n# This is needed for mpi to locate libpython\\nENV LD_LIBRARY_PATH $AZUREML_CONDA_ENVIRONMENT_PATH/lib:$LD_LIBRARY_PATH\\n\u0022,\u0022BaseImageRegistry\u0022:{\u0022Address\u0022:null,\u0022Username\u0022:null,\u0022Password\u0022:null},\u0022Enabled\u0022:false,\u0022Arguments\u0022:[]},\u0022Spark\u0022:{\u0022Repositories\u0022:[],\u0022Packages\u0022:[],\u0022PrecachePackages\u0022:true},\u0022InferencingStackVersion\u0022:null},\u0022History\u0022:{\u0022OutputCollection\u0022:true,\u0022DirectoriesToWatch\u0022:[\u0022logs\u0022],\u0022EnableMLflowTracking\u0022:true},\u0022Spark\u0022:{\u0022Configuration\u0022:{}},\u0022ParallelTask\u0022:{\u0022MaxRetriesPerWorker\u0022:0,\u0022WorkerCountPerNode\u0022:1,\u0022TerminalExitCodes\u0022:null,\u0022Configuration\u0022:{}},\u0022BatchAi\u0022:{\u0022NodeCount\u0022:0},\u0022AmlCompute\u0022:{\u0022Name\u0022:null,\u0022VmSize\u0022:null,\u0022RetainCluster\u0022:false,\u0022ClusterMaxNodeCount\u0022:null},\u0022AISuperComputer\u0022:{\u0022InstanceType\u0022:\u0022D2\u0022,\u0022FrameworkImage\u0022:null,\u0022ImageVersion\u0022:\u0022pytorch-1.7.0\u0022,\u0022Location\u0022:null,\u0022AISuperComputerStorageData\u0022:null,\u0022Interactive\u0022:false,\u0022ScalePolicy\u0022:null,\u0022VirtualClusterArmId\u0022:null,\u0022TensorboardLogDirectory\u0022:null,\u0022SSHPublicKey\u0022:null,\u0022SSHPublicKeys\u0022:null,\u0022EnableAzmlInt\u0022:true,\u0022Priority\u0022:\u0022Medium\u0022,\u0022SLATier\u0022:\u0022Standard\u0022,\u0022UserAlias\u0022:null},\u0022KubernetesCompute\u0022:{\u0022InstanceType\u0022:null},\u0022Tensorflow\u0022:{\u0022WorkerCount\u0022:0,\u0022ParameterServerCount\u0022:0},\u0022Mpi\u0022:{\u0022ProcessCountPerNode\u0022:0},\u0022PyTorch\u0022:{\u0022CommunicationBackend\u0022:null,\u0022ProcessCount\u0022:null},\u0022Hdi\u0022:{\u0022YarnDeployMode\u0022:0},\u0022ContainerInstance\u0022:{\u0022Region\u0022:null,\u0022CpuCores\u0022:2.0,\u0022MemoryGb\u0022:3.5},\u0022ExposedPorts\u0022:null,\u0022Docker\u0022:{\u0022UseDocker\u0022:true,\u0022SharedVolumes\u0022:null,\u0022ShmSize\u0022:null,\u0022Arguments\u0022:null},\u0022Cmk8sCompute\u0022:{\u0022Configuration\u0022:{}},\u0022CommandReturnCodeConfig\u0022:{\u0022ReturnCode\u0022:0,\u0022SuccessfulReturnCodes\u0022:[]},\u0022EnvironmentVariables\u0022:{},\u0022ApplicationEndpoints\u0022:{},\u0022Parameters\u0022:[]},\u0022SnapshotId\u0022:null,\u0022Snapshots\u0022:[],\u0022SourceCodeDataReference\u0022:null,\u0022ParentRunId\u0022:null,\u0022DataContainerId\u0022:null,\u0022RunType\u0022:null,\u0022DisplayName\u0022:\u0022new_builder_command_job\u0022,\u0022EnvironmentAssetId\u0022:null,\u0022Properties\u0022:{},\u0022Tags\u0022:{},\u0022AggregatedArtifactPath\u0022:null},\u0022ParentRunId\u0022:\u0022test_744477240614\u0022}",
             "_aml_system_resume_child_runs": "null",
             "_aml_system_all_jobs_generated": "false",
             "_aml_system_cancellation_requested": "false"
@@ -107,7 +107,7 @@
             "azureml.runsource": "hyperdrive",
             "platform": "AML",
             "ContentSnapshotId": "",
-            "user_agent": "managementfrontend/f303596d22384a1941518f0d9a3ec22c9c9ae359"
+            "user_agent": "managementfrontend/58b50b579a118e73966b12236ccfea7030907176"
           },
           "displayName": "new_builder_command_job",
           "status": "Running",
@@ -116,7 +116,7 @@
             "Studio": {
               "jobServiceType": "Studio",
               "port": null,
-              "endpoint": "https://ml.azure.com/runs/test_509965066061?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
+              "endpoint": "https://ml.azure.com/runs/test_744477240614?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
               "status": null,
               "errorMessage": null,
               "properties": null,
@@ -127,6 +127,8 @@
           "isArchived": false,
           "identity": null,
           "componentId": null,
+          "notificationSetting": null,
+          "secretsConfiguration": null,
           "jobType": "Sweep",
           "searchSpace": {
             "lr": [
@@ -168,7 +170,9 @@
             "distribution": null,
             "resources": {
               "instanceCount": 1,
+              "maxInstanceCount": null,
               "instanceType": null,
+              "locations": null,
               "properties": null,
               "dockerArgs": null
             }
@@ -176,7 +180,7 @@
           "inputs": {
             "uri": {
               "description": null,
-              "uri": "azureml://locations/eastus/workspaces/3bd2018e-4b43-401e-ad49-85df181c9e0a/data/azureml_test_128244346719_input_data_testdataset/versions/1",
+              "uri": "azureml://locations/centraluseuap/workspaces/2eef7b49-b6d0-4f51-80e8-dcfca1e4b850/data/azureml_test_744477240614_input_data_uri/versions/1",
               "mode": "ReadOnlyMount",
               "jobInputType": "uri_file"
             }
@@ -184,23 +188,25 @@
           "outputs": {
             "default": {
               "description": null,
-              "uri": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.test_509965066061",
+              "uri": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.test_744477240614",
               "assetName": null,
               "assetVersion": null,
               "mode": "ReadWriteMount",
+              "autoDeleteSetting": null,
               "jobOutputType": "uri_folder"
             }
-          }
+          },
+          "queueSettings": null
         },
         "systemData": {
-          "createdAt": "2023-02-22T19:37:06.9896592\u002B00:00",
-          "createdBy": "Firstname Lastname",
+          "createdAt": "2023-04-20T18:29:25.952999\u002B00:00",
+          "createdBy": "Diondra Peck",
           "createdByType": "User"
         }
       }
     }
   ],
   "Variables": {
-    "name": "test_509965066061"
+    "name": "test_744477240614"
   }
 }

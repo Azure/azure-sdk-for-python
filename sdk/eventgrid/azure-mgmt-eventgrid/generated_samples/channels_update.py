@@ -26,18 +26,17 @@ from azure.mgmt.eventgrid import EventGridManagementClient
 def main():
     client = EventGridManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
+        subscription_id="8f6b6269-84f2-4d09-9e31-1127efcd1e40",
     )
 
-    response = client.channels.update(
+    client.channels.update(
         resource_group_name="examplerg",
         partner_namespace_name="examplePartnerNamespaceName1",
         channel_name="exampleChannelName1",
         channel_update_parameters={"properties": {"expirationTimeIfNotActivatedUtc": "2022-03-23T23:06:11.785Z"}},
     )
-    print(response)
 
 
-# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2022-06-15/examples/Channels_Update.json
+# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/preview/2023-06-01-preview/examples/Channels_Update.json
 if __name__ == "__main__":
     main()

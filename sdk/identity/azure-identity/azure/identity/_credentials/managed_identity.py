@@ -31,10 +31,20 @@ class ManagedIdentityCredential:
         or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
         learn what values it expects.
     :paramtype identity_config: Mapping[str, str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_managed_identity_credential]
+            :end-before: [END create_managed_identity_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create a ManagedIdentityCredential.
     """
 
     def __init__(self, **kwargs: Any) -> None:
         self._credential = None  # type: Optional[TokenCredential]
+        exclude_workload_identity = kwargs.pop("_exclude_workload_identity_credential", False)
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
             if os.environ.get(EnvironmentVariables.IDENTITY_HEADER):
                 if os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT):
@@ -63,7 +73,10 @@ class ManagedIdentityCredential:
                 from .cloud_shell import CloudShellCredential
 
                 self._credential = CloudShellCredential(**kwargs)
-        elif all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
+        elif (
+            all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS)
+            and not exclude_workload_identity
+        ):
             _LOGGER.info("%s will use workload identity", self.__class__.__name__)
             from .workload_identity import WorkloadIdentityCredential
 
@@ -103,15 +116,17 @@ class ManagedIdentityCredential:
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """
 
         if not self._credential:
             raise CredentialUnavailableError(
                 message="No managed identity endpoint found. \n"
-                        "The Target Azure platform could not be determined from environment variables. \n"
-                        "Visit https://aka.ms/azsdk/python/identity/managedidentitycredential/troubleshoot to "
-                        "troubleshoot this issue."
+                "The Target Azure platform could not be determined from environment variables. \n"
+                "Visit https://aka.ms/azsdk/python/identity/managedidentitycredential/troubleshoot to "
+                "troubleshoot this issue."
             )
         return self._credential.get_token(*scopes, **kwargs)

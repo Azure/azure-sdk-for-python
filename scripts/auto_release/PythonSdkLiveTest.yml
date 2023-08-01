@@ -33,7 +33,7 @@ jobs:
         addToPath: true
         architecture: 'x64'
     - bash: |
-        script_path=$(pwd)/scripts/auto_release
+        python scripts/dev_setup.py -p azure-core
         cd ..
         git config --global user.email "PythonSdkPipelines"
         git config --global user.name "PythonSdkPipelines"
@@ -41,6 +41,12 @@ jobs:
         # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
         mkdir azure-sdk-for-python
         git clone ${REPO:0:8}$(USR_NAME):$(azuresdk-github-pat)@${REPO:8} $(pwd)/azure-sdk-for-python
+    - template: /eng/common/testproxy/test-proxy-tool.yml
+      parameters:
+        rootFolder: ../azure-sdk-for-python
+    - bash: |
+        script_path=$(pwd)/scripts/auto_release
+        cd ..
 
         # prepare env if need to generate SDK code
         if [ "$(SPEC_README)" ]; then
@@ -71,7 +77,7 @@ jobs:
         # create virtual env
         python -m venv venv-sdk
         source venv-sdk/bin/activate
-        pip install -r $script_path/requirement.txt
+        python -m pip install -r $script_path/requirement.txt
 
         # import env variable
         export AZURE_TEST_RUN_LIVE=$(AZURE_TEST_RUN_LIVE)
@@ -91,6 +97,7 @@ jobs:
         export STORAGE_ENDPOINT=$(storage-endpoint)
         export PYTHON_TAG=$(PYTHON_TAG)
         export DEBUG_SDK_BRANCH=$(DEBUG_SDK_BRANCH)
+        export TARGET_DATE=$(TARGET_DATE)
 
         # run
         cd azure-sdk-for-python

@@ -5,7 +5,7 @@
 import json
 import logging
 import traceback
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union, NoReturn
 
 from colorama import Fore, Style, init
 from marshmallow.exceptions import ValidationError as SchemaValidationError
@@ -20,16 +20,17 @@ from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationE
 module_logger = logging.getLogger(__name__)
 
 
-def _find_deepest_dictionary(data):
+def _find_deepest_dictionary(data: dict) -> dict:
     """
     Find deepest dictionary in nested dictionary.
     Used here to get nested error message. Can't be in utils.py due to circular import.
     """
-    if not any([isinstance(data.get(key), dict) for key in data]):
-        return data
-    for key in data:
-        if isinstance(data.get(key), dict):
-            return _find_deepest_dictionary(data.get(key))
+
+    for v in data.values():
+        if isinstance(v, dict):
+            return _find_deepest_dictionary(v)
+
+    return data
 
 
 def get_entity_type(error: Union[SchemaValidationError, ValidationException]) -> Tuple[str, str]:
@@ -49,7 +50,7 @@ def get_entity_type(error: Union[SchemaValidationError, ValidationException]) ->
             entity_type = ErrorTarget.ENVIRONMENT
         elif "CodeAssetSchema" in error_name:
             entity_type = ErrorTarget.CODE
-        elif any([x in error_name for x in DATASTORE_SCHEMA_TYPES]):
+        elif any(x in error_name for x in DATASTORE_SCHEMA_TYPES):
             entity_type = ErrorTarget.DATASTORE
         elif "BaseJobSchema" in error_name:
             entity_type = ErrorTarget.JOB
@@ -266,7 +267,7 @@ def format_create_validation_error(
     return formatted_error
 
 
-def log_and_raise_error(error, debug=False, yaml_operation=False):
+def log_and_raise_error(error: Exception, debug: bool = False, yaml_operation: bool = False) -> NoReturn:
     init()
 
     # use an f-string to automatically call str() on error

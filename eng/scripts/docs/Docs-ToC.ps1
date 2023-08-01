@@ -124,11 +124,6 @@ function Get-python-UpdatedDocsMsToc($toc) {
     if ($services[$i].name -eq 'Mixed Reality') {
       $services[$i] = addManagementPackage $services[$i] 'azure-mgmt-mixedreality'
     }
-
-    # Retired package
-    if ($services[$i].name -eq 'Container Registry') {
-      $services[$i] = addManagementPackage $services[$i] 'azure-mgmt-containerregistry'
-    }
   }
 
   $functionService =  [PSCustomObject]@{

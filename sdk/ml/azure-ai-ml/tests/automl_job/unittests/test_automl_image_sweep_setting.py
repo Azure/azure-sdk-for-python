@@ -7,12 +7,12 @@ from typing import Optional
 
 import pytest
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2023_02_01_preview.models import EarlyTerminationPolicyType
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ImageSweepSettings as RestImageSweepSettings
-from azure.ai.ml._restclient.v2023_02_01_preview.models import MedianStoppingPolicy as RestMedianStoppingPolicy
-from azure.ai.ml._restclient.v2023_02_01_preview.models import SamplingAlgorithmType
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import BanditPolicy as RestBanditPolicy
+from azure.ai.ml._restclient.v2023_04_01_preview.models import EarlyTerminationPolicyType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MedianStoppingPolicy as RestMedianStoppingPolicy
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     TruncationSelectionPolicy as RestTruncationSelectionPolicy,
 )
 from azure.ai.ml.entities._job.automl.image import ImageSweepSettings
@@ -21,7 +21,6 @@ from azure.ai.ml.sweep import BanditPolicy, MedianStoppingPolicy, TruncationSele
 
 @pytest.mark.unittest
 class TestImageSweepSettings:
-
     _EARLY_TERMINATION_POLICY_OPTIONS = [
         None,
         EarlyTerminationPolicyType.BANDIT,

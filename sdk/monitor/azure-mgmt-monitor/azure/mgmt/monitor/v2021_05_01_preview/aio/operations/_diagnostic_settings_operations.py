@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -45,7 +45,7 @@ class DiagnosticSettingsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2021_05_01_preview.aio.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2021_05_01_preview.aio.MonitorManagementClient`'s
         :attr:`diagnostic_settings` attribute.
     """
 
@@ -68,7 +68,7 @@ class DiagnosticSettingsOperations:
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticSettingsResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_05_01_preview.models.DiagnosticSettingsResource
+        :rtype: ~azure.mgmt.monitor.v2021_05_01_preview.models.DiagnosticSettingsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -82,8 +82,8 @@ class DiagnosticSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DiagnosticSettingsResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[_models.DiagnosticSettingsResource] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_uri=resource_uri,
@@ -94,10 +94,11 @@ class DiagnosticSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -114,7 +115,7 @@ class DiagnosticSettingsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings/{name}"}  # type: ignore
+    get.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings/{name}"}
 
     @overload
     async def create_or_update(
@@ -133,14 +134,13 @@ class DiagnosticSettingsOperations:
         :param name: The name of the diagnostic setting. Required.
         :type name: str
         :param parameters: Parameters supplied to the operation. Required.
-        :type parameters:
-         ~$(python-base-namespace).v2021_05_01_preview.models.DiagnosticSettingsResource
+        :type parameters: ~azure.mgmt.monitor.v2021_05_01_preview.models.DiagnosticSettingsResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticSettingsResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_05_01_preview.models.DiagnosticSettingsResource
+        :rtype: ~azure.mgmt.monitor.v2021_05_01_preview.models.DiagnosticSettingsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -161,7 +161,7 @@ class DiagnosticSettingsOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticSettingsResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_05_01_preview.models.DiagnosticSettingsResource
+        :rtype: ~azure.mgmt.monitor.v2021_05_01_preview.models.DiagnosticSettingsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -175,16 +175,16 @@ class DiagnosticSettingsOperations:
         :type resource_uri: str
         :param name: The name of the diagnostic setting. Required.
         :type name: str
-        :param parameters: Parameters supplied to the operation. Is either a model type or a IO type.
-         Required.
-        :type parameters:
-         ~$(python-base-namespace).v2021_05_01_preview.models.DiagnosticSettingsResource or IO
+        :param parameters: Parameters supplied to the operation. Is either a DiagnosticSettingsResource
+         type or a IO type. Required.
+        :type parameters: ~azure.mgmt.monitor.v2021_05_01_preview.models.DiagnosticSettingsResource or
+         IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DiagnosticSettingsResource or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2021_05_01_preview.models.DiagnosticSettingsResource
+        :rtype: ~azure.mgmt.monitor.v2021_05_01_preview.models.DiagnosticSettingsResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -198,9 +198,9 @@ class DiagnosticSettingsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DiagnosticSettingsResource]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DiagnosticSettingsResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -222,10 +222,11 @@ class DiagnosticSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -242,7 +243,7 @@ class DiagnosticSettingsOperations:
 
         return deserialized
 
-    create_or_update.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings/{name}"}  # type: ignore
+    create_or_update.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings/{name}"}
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -270,8 +271,8 @@ class DiagnosticSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_uri=resource_uri,
@@ -282,10 +283,11 @@ class DiagnosticSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -298,7 +300,7 @@ class DiagnosticSettingsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings/{name}"}  # type: ignore
+    delete.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings/{name}"}
 
     @distributed_trace
     def list(self, resource_uri: str, **kwargs: Any) -> AsyncIterable["_models.DiagnosticSettingsResource"]:
@@ -310,14 +312,14 @@ class DiagnosticSettingsOperations:
         :return: An iterator like instance of either DiagnosticSettingsResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2021_05_01_preview.models.DiagnosticSettingsResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitor.v2021_05_01_preview.models.DiagnosticSettingsResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DiagnosticSettingsResourceCollection]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[_models.DiagnosticSettingsResourceCollection] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -338,16 +340,23 @@ class DiagnosticSettingsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -355,14 +364,15 @@ class DiagnosticSettingsOperations:
             deserialized = self._deserialize("DiagnosticSettingsResourceCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -375,4 +385,4 @@ class DiagnosticSettingsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings"}  # type: ignore
+    list.metadata = {"url": "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings"}

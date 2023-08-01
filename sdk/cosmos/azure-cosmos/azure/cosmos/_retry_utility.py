@@ -96,7 +96,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
 
             return result
         except exceptions.CosmosHttpResponseError as e:
-            retry_policy = None
+            retry_policy = defaultRetry_policy
+            # Re-assign retry policy based on error code
             if e.status_code == StatusCodes.FORBIDDEN and e.sub_status == SubStatusCodes.WRITE_FORBIDDEN:
                 retry_policy = endpointDiscovery_retry_policy
             elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:
@@ -111,8 +112,6 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 retry_policy = partition_key_range_gone_retry_policy
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code == StatusCodes.SERVICE_UNAVAILABLE:
                 retry_policy = timeout_failover_retry_policy
-            else:
-                retry_policy = defaultRetry_policy
 
             # If none of the retry policies applies or there is no retry needed, set the
             # throttle related response headers and re-throw the exception back arg[0]

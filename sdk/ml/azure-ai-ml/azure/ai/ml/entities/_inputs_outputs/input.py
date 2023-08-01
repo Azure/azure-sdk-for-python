@@ -12,6 +12,7 @@ from typing import Dict, Optional, Union, overload
 from typing_extensions import Literal
 
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
+from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 from azure.ai.ml.exceptions import (
     ErrorCategory,
     ErrorTarget,
@@ -32,29 +33,34 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     :param type: The type of the data input. Possible values include:
         'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', 'integer', 'number', 'string', 'boolean'
     :type type: str
-    :param path: The path to which the input is pointing.
+    :param path: The path to which the input is pointing. Default to None.
         Could be pointing to local data, cloud data, a registered name, etc.
-    :type path: str
+    :type path: str, optional
     :param mode: The mode of the data input. Possible values are:
-                        'ro_mount': Read-only mount the data,
-                        'download': Download the data to the compute target,
-                        'direct': Pass in the URI as a string
-    :type mode: str
+        'ro_mount': Read-only mount the data,
+        'download': Download the data to the compute target,
+        'direct': Pass in the URI as a string
+    :type mode: str, optional
     :param default: The default value of this input. When a `default` is set, the input will be optional
-    :type default: Union[str, integer, float, bool]
+    :type default: Union[str, int, float, bool], optional
     :param min: The min value -- if a smaller value is passed to a job, the job execution will fail
-    :type min: Union[integer, float]
+    :type min: Union[int, float], optional
     :param max: The max value -- if a larger value is passed to a job, the job execution will fail
-    :type max: Union[integer, float]
-    :param optional: Determine if this input is optional
-    :type optional: bool
+    :type max: Union[int, float], optional
+    :param optional: Determine if this input is optional.
+    :type optional: bool, optional
     :param description: Description of the input
-    :type description: str
+    :type description: str, optional
+    :param datastore: The datastore to upload local files to.
+    :type datastore: str, optional
+    :param intellectual_property: Intellectual property for the input.
+    :type intellectual_property: IntellectualProperty, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
         Details will be provided in the error message.
     """
 
     _EMPTY = Parameter.empty
+    _IO_KEYS = ["path", "type", "mode", "description", "default", "min", "max", "enum", "optional", "datastore"]
 
     @overload
     def __init__(
@@ -66,26 +72,27 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         optional: Optional[bool] = None,
         description: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         """Initialize an input.
 
         :param type: The type of the data input. Possible values include:
-                            'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
+            'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
+            Defaults to 'uri_folder'.
         :type type: str
         :param path: The path to which the input is pointing.
             Could be pointing to local data, cloud data, a registered name, etc.
-        :type path: str
+        :type path: str, optional
         :param mode: The mode of the data input. Possible values are:
-                            'ro_mount': Read-only mount the data,
-                            'download': Download the data to the compute target,
-                            'direct': Pass in the URI as a string
-        :type mode: str
-        :param optional: Determine if this input is optional
-        :type optional: bool
-        :param description: Description of the input
-        :type description: str
+            'ro_mount': Read-only mount the data,
+            'download': Download the data to the compute target,
+            'direct': Pass in the URI as a string.
+        :type mode: str, optional
+        :param optional: Determine if this input is optional.
+        :type optional: bool, optional
+        :param description: Description of the input.
+        :type description: str, optional
         :param datastore: The datastore to upload local files to.
-        :type datastore: str
+        :type datastore: str, optional
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
             Details will be provided in the error message.
         """
@@ -101,21 +108,21 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         optional: Optional[bool] = None,
         description: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         """Initialize a number input.
 
         :param type: The type of the data input. Can only be set to "number".
         :type type: str
-        :param default: The default value of this input. When a `default` is set, input will be optional
-        :type default: float
-        :param min: The min value -- if a smaller value is passed to a job, the job execution will fail
-        :type min: float
-        :param max: The max value -- if a larger value is passed to a job, the job execution will fail
-        :type max: float
-        :param optional: Determine if this input is optional
-        :type optional: bool
-        :param description: Description of the input
-        :type description: str
+        :param default: The default value of this input. When a `default` is set, the input will be optional.
+        :type default: float, optional
+        :param min: The min value -- if a smaller value is passed to a job, the job execution will fail.
+        :type min: float, optional
+        :param max: The max value -- if a larger value is passed to a job, the job execution will fail.
+        :type max: float, optional
+        :param optional: Determine if this input is optional.
+        :type optional: bool, optional
+        :param description: Description of the input.
+        :type description: str, optional
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
             Details will be provided in the error message.
         """
@@ -131,21 +138,22 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         optional: Optional[bool] = None,
         description: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         """Initialize an integer input.
 
         :param type: The type of the data input. Can only be set to "integer".
         :type type: str
-        :param default: The default value of this input. When a `default` is set, the input will be optional
-        :type default: integer
-        :param min: The min value -- if a smaller value is passed to a job, the job execution will fail
-        :type min: integer
-        :param max: The max value -- if a larger value is passed to a job, the job execution will fail
-        :type max: integer
-        :param optional: Determine if this input is optional
-        :type optional: bool
-        :param description: Description of the input
-        :type description: str
+        :param default: The default value of this input. When a `default` is set,
+                        the input will be optional.
+        :type default: int, optional
+        :param min: The min value -- if a smaller value is passed to a job, the job execution will fail.
+        :type min: int, optional
+        :param max: The max value -- if a larger value is passed to a job, the job execution will fail.
+        :type max: int, optional
+        :param optional: Determine if this input is optional.
+        :type optional: bool, optional
+        :param description: Description of the input.
+        :type description: str, optional
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
             Details will be provided in the error message.
         """
@@ -159,17 +167,17 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         optional: Optional[bool] = None,
         description: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         """Initialize a string input.
 
         :param type: The type of the data input. Can only be set to "string".
         :type type: str
-        :param default: The default value of this input. When a `default` is set, the input will be optional
-        :type default: str
-        :param optional: Determine if this input is optional
-        :type optional: bool
-        :param description: Description of the input
-        :type description: str
+        :param default: The default value of this input. When a `default` is set, the input will be optional.
+        :type default: str, optional
+        :param optional: Determine if this input is optional.
+        :type optional: bool, optional
+        :param description: Description of the input.
+        :type description: str, optional
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
             Details will be provided in the error message.
         """
@@ -183,17 +191,17 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         optional: Optional[bool] = None,
         description: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         """Initialize a bool input.
 
         :param type: The type of the data input. Can only be set to "boolean".
         :type type: str
-        :param default: The default value of this input. When a `default` is set, input will be optional
-        :type default: bool
-        :param optional: Determine if this input is optional
-        :type optional: bool
-        :param description: Description of the input
-        :type description: str
+        :param default: The default value of this input. When a `default` is set, the input will be optional.
+        :type default: bool, optional
+        :param optional: Determine if this input is optional.
+        :type optional: bool, optional
+        :param description: Description of the input.
+        :type description: str, optional
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
             Details will be provided in the error message.
         """
@@ -212,7 +220,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         datastore: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         super(Input, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the _port_name.
         self._port_name = None
@@ -233,6 +241,13 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         self.max = max
         self.enum = enum
         self.datastore = datastore
+        intellectual_property = kwargs.pop("intellectual_property", None)
+        if intellectual_property:
+            self._intellectual_property = (
+                intellectual_property
+                if isinstance(intellectual_property, IntellectualProperty)
+                else IntellectualProperty(**intellectual_property)
+            )
         # normalize properties like ["default", "min", "max", "optional"]
         self._normalize_self_properties()
 
@@ -271,7 +286,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
     def _to_dict(self):
         """Convert the Input object to a dict."""
-        keys = ["path", "type", "mode", "description", "default", "min", "max", "enum", "optional", "datastore"]
+        keys = self._IO_KEYS
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 
@@ -282,7 +297,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :return: The parsed value.
         """
         if self.type == "integer":
-            return int(val)
+            return int(float(val))  # backend returns 10.0，for integer， parse it to float before int
         if self.type == "number":
             return float(val)
         if self.type == "boolean":
@@ -304,7 +319,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def _parse_and_validate(self, val):
         """Parse the val passed from the command line and validate the value.
 
-        :param str_val: The input string value from the command line.
+        :param val: The input string value from the command line.
         :return: The parsed value, an exception will be raised if the value is invalid.
         """
         if self._is_primitive_type:

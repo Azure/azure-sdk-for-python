@@ -25,8 +25,10 @@ USAGE:
 
 import os
 
+
 def format_address_value(address_value):
-    return f'\n......House/building number: {address_value.house_number}\n......Road: {address_value.road}\n......City: {address_value.city}\n......State: {address_value.state}\n......Postal code: {address_value.postal_code}'
+    return f"\n......House/building number: {address_value.house_number}\n......Road: {address_value.road}\n......City: {address_value.city}\n......State: {address_value.state}\n......Postal code: {address_value.postal_code}"
+
 
 def analyze_tax_us_w2():
     path_to_sample_documents = os.path.abspath(
@@ -54,170 +56,131 @@ def analyze_tax_us_w2():
     w2s = poller.result()
 
     for idx, w2 in enumerate(w2s.documents):
-        print("--------Analyzing US Tax W-2 Form #{}--------".format(idx + 1))
+        print(f"--------Analyzing US Tax W-2 Form #{idx + 1}--------")
         form_variant = w2.fields.get("W2FormVariant")
         if form_variant:
             print(
-                "Form variant: {} has confidence: {}".format(
-                    form_variant.value, form_variant.confidence
-                )
+                f"Form variant: {form_variant.value} has confidence: "
+                f"{form_variant.confidence}"
             )
         tax_year = w2.fields.get("TaxYear")
         if tax_year:
-            print(
-                "Tax year: {} has confidence: {}".format(
-                    tax_year.value, tax_year.confidence
-                )
-            )
+            print(f"Tax year: {tax_year.value} has confidence: {tax_year.confidence}")
         w2_copy = w2.fields.get("W2Copy")
         if w2_copy:
-            print(
-                "W-2 Copy: {} has confidence: {}".format(
-                    w2_copy.value,
-                    w2_copy.confidence,
-                )
-            )
+            print(f"W-2 Copy: {w2_copy.value} has confidence: {w2_copy.confidence}")
         employee = w2.fields.get("Employee")
         if employee:
             print("Employee data:")
             employee_name = employee.value.get("Name")
             if employee_name:
-                print("...Name: {} has confidence: {}".format(
-                        employee_name.value, employee_name.confidence
-                    )
+                print(
+                    f"...Name: {employee_name.value} has confidence: {employee_name.confidence}"
                 )
             employee_ssn = employee.value.get("SocialSecurityNumber")
             if employee_ssn:
-                print("...SSN: {} has confidence: {}".format(
-                    employee_ssn.value, employee_ssn.confidence
-                    )
+                print(
+                    f"...SSN: {employee_ssn.value} has confidence: {employee_ssn.confidence}"
                 )
             employee_address = employee.value.get("Address")
             if employee_address:
-                print("...Address: {}\n......has confidence: {}".format(
-                    format_address_value(employee_address.value), employee_address.confidence
-                    )
-                )
+                print(f"...Address: {format_address_value(employee_address.value)}")
+                print(f"......has confidence: {employee_address.confidence}")
             employee_zipcode = employee.value.get("ZipCode")
             if employee_zipcode:
-                print("...Zipcode: {} has confidence: {}".format(
-                    employee_zipcode.value, employee_zipcode.confidence
-                    )
+                print(
+                    f"...Zipcode: {employee_zipcode.value} has confidence: "
+                    f"{employee_zipcode.confidence}"
                 )
         control_number = w2.fields.get("ControlNumber")
         if control_number:
             print(
-                "Control Number: {} has confidence: {}".format(
-                    control_number.value, control_number.confidence
-                )
+                f"Control Number: {control_number.value} has confidence: "
+                f"{control_number.confidence}"
             )
         employer = w2.fields.get("Employer")
         if employer:
             print("Employer data:")
             employer_name = employer.value.get("Name")
             if employer_name:
-                print("...Name: {} has confidence: {}".format(
-                        employer_name.value, employer_name.confidence
-                    )
+                print(
+                    f"...Name: {employer_name.value} has confidence: {employer_name.confidence}"
                 )
             employer_id = employer.value.get("IdNumber")
             if employer_id:
-                print("...ID Number: {} has confidence: {}".format(
-                    employer_id.value, employer_id.confidence
-                    )
+                print(
+                    f"...ID Number: {employer_id.value} has confidence: {employer_id.confidence}"
                 )
             employer_address = employer.value.get("Address")
             if employer_address:
-                print("...Address: {}\n......has confidence: {}".format(
-                    format_address_value(employer_address.value), employer_address.confidence
-                    )
-                )
+                print(f"...Address: {format_address_value(employer_address.value)}")
+                print(f"\n......has confidence: {employer_address.confidence}")
             employer_zipcode = employer.value.get("ZipCode")
             if employer_zipcode:
-                print("...Zipcode: {} has confidence: {}".format(
-                    employer_zipcode.value, employer_zipcode.confidence
-                    )
+                print(
+                    f"...Zipcode: {employer_zipcode.value} has confidence: {employer_zipcode.confidence}"
                 )
         wages_tips = w2.fields.get("WagesTipsAndOtherCompensation")
         if wages_tips:
             print(
-                "Wages, tips, and other compensation: {} has confidence: {}".format(
-                    wages_tips.value,
-                    wages_tips.confidence,
-                )
+                f"Wages, tips, and other compensation: {wages_tips.value} "
+                f"has confidence: {wages_tips.confidence}"
             )
         fed_income_tax_withheld = w2.fields.get("FederalIncomeTaxWithheld")
         if fed_income_tax_withheld:
             print(
-                "Federal income tax withheld: {} has confidence: {}".format(
-                    fed_income_tax_withheld.value, fed_income_tax_withheld.confidence
-                )
+                f"Federal income tax withheld: {fed_income_tax_withheld.value} has "
+                f"confidence: {fed_income_tax_withheld.confidence}"
             )
         social_security_wages = w2.fields.get("SocialSecurityWages")
         if social_security_wages:
             print(
-                "Social Security wages: {} has confidence: {}".format(
-                    social_security_wages.value, social_security_wages.confidence
-                )
+                f"Social Security wages: {social_security_wages.value} has confidence: "
+                f"{social_security_wages.confidence}"
             )
         social_security_tax_withheld = w2.fields.get("SocialSecurityTaxWithheld")
         if social_security_tax_withheld:
             print(
-                "Social Security tax withheld: {} has confidence: {}".format(
-                    social_security_tax_withheld.value, social_security_tax_withheld.confidence
-                )
+                f"Social Security tax withheld: {social_security_tax_withheld.value} "
+                f"has confidence: {social_security_tax_withheld.confidence}"
             )
         medicare_wages_tips = w2.fields.get("MedicareWagesAndTips")
         if medicare_wages_tips:
             print(
-                "Medicare wages and tips: {} has confidence: {}".format(
-                    medicare_wages_tips.value, medicare_wages_tips.confidence
-                )
+                f"Medicare wages and tips: {medicare_wages_tips.value} has confidence: "
+                f"{medicare_wages_tips.confidence}"
             )
         medicare_tax_withheld = w2.fields.get("MedicareTaxWithheld")
         if medicare_tax_withheld:
             print(
-                "Medicare tax withheld: {} has confidence: {}".format(
-                    medicare_tax_withheld.value, medicare_tax_withheld.confidence
-                )
+                f"Medicare tax withheld: {medicare_tax_withheld.value} has confidence: "
+                f"{medicare_tax_withheld.confidence}"
             )
         social_security_tips = w2.fields.get("SocialSecurityTips")
         if social_security_tips:
             print(
-                "Social Security tips: {} has confidence: {}".format(
-                    social_security_tips.value, social_security_tips.confidence
-                )
+                f"Social Security tips: {social_security_tips.value} has confidence: "
+                f"{social_security_tips.confidence}"
             )
         allocated_tips = w2.fields.get("AllocatedTips")
         if allocated_tips:
             print(
-                "Allocated tips: {} has confidence: {}".format(
-                    allocated_tips.value,
-                    allocated_tips.confidence,
-                )
+                f"Allocated tips: {allocated_tips.value} has confidence: {allocated_tips.confidence}"
             )
         verification_code = w2.fields.get("VerificationCode")
         if verification_code:
             print(
-                "Verification code: {} has confidence: {}".format(
-                    verification_code.value, verification_code.confidence
-                )
+                f"Verification code: {verification_code.value} has confidence: {verification_code.confidence}"
             )
         dependent_care_benefits = w2.fields.get("DependentCareBenefits")
         if dependent_care_benefits:
             print(
-                "Dependent care benefits: {} has confidence: {}".format(
-                    dependent_care_benefits.value,
-                    dependent_care_benefits.confidence,
-                )
+                f"Dependent care benefits: {dependent_care_benefits.value} has confidence: {dependent_care_benefits.confidence}"
             )
         non_qualified_plans = w2.fields.get("NonQualifiedPlans")
         if non_qualified_plans:
             print(
-                "Non-qualified plans: {} has confidence: {}".format(
-                    non_qualified_plans.value,
-                    non_qualified_plans.confidence,
-                )
+                f"Non-qualified plans: {non_qualified_plans.value} has confidence: {non_qualified_plans.confidence}"
             )
         additional_info = w2.fields.get("AdditionalInfo")
         if additional_info:
@@ -226,45 +189,32 @@ def analyze_tax_us_w2():
                 letter_code = item.value.get("LetterCode")
                 if letter_code:
                     print(
-                        "...Letter code: {} has confidence: {}".format(
-                            letter_code.value, letter_code.confidence
-                        )
+                        f"...Letter code: {letter_code.value} has confidence: {letter_code.confidence}"
                     )
                 amount = item.value.get("Amount")
                 if amount:
                     print(
-                        "...Amount: {} has confidence: {}".format(
-                            amount.value, amount.confidence
-                        )
+                        f"...Amount: {amount.value} has confidence: {amount.confidence}"
                     )
         is_statutory_employee = w2.fields.get("IsStatutoryEmployee")
         if is_statutory_employee:
             print(
-                "Is statutory employee: {} has confidence: {}".format(
-                    is_statutory_employee.value, is_statutory_employee.confidence
-                )
+                f"Is statutory employee: {is_statutory_employee.value} has confidence: {is_statutory_employee.confidence}"
             )
         is_retirement_plan = w2.fields.get("IsRetirementPlan")
         if is_retirement_plan:
             print(
-                "Is retirement plan: {} has confidence: {}".format(
-                    is_retirement_plan.value, is_retirement_plan.confidence
-                )
+                f"Is retirement plan: {is_retirement_plan.value} has confidence: {is_retirement_plan.confidence}"
             )
         third_party_sick_pay = w2.fields.get("IsThirdPartySickPay")
         if third_party_sick_pay:
             print(
-                "Is third party sick pay: {} has confidence: {}".format(
-                    third_party_sick_pay.value, third_party_sick_pay.confidence
-                )
+                f"Is third party sick pay: {third_party_sick_pay.value} has confidence: {third_party_sick_pay.confidence}"
             )
         other_info = w2.fields.get("Other")
         if other_info:
             print(
-                "Other information: {} has confidence: {}".format(
-                    other_info.value,
-                    other_info.confidence,
-                )
+                f"Other information: {other_info.value} has confidence: {other_info.confidence}"
             )
         state_tax_info = w2.fields.get("StateTaxInfos")
         if state_tax_info:
@@ -272,67 +222,60 @@ def analyze_tax_us_w2():
             for tax in state_tax_info.value:
                 state = tax.value.get("State")
                 if state:
-                    print(
-                        "...State: {} has confidence: {}".format(
-                            state.value, state.confidence
-                        )
-                    )
+                    print(f"...State: {state.value} has confidence: {state.confidence}")
                 employer_state_id_number = tax.value.get("EmployerStateIdNumber")
                 if employer_state_id_number:
                     print(
-                        "...Employer state ID number: {} has confidence: {}".format(
-                            employer_state_id_number.value, employer_state_id_number.confidence
-                        )
+                        f"...Employer state ID number: {employer_state_id_number.value} has "
+                        f"confidence: {employer_state_id_number.confidence}"
                     )
-                state_wages_tips  = tax.value.get("StateWagesTipsEtc")
+                state_wages_tips = tax.value.get("StateWagesTipsEtc")
                 if state_wages_tips:
                     print(
-                        "...State wages, tips, etc: {} has confidence: {}".format(
-                            state_wages_tips.value, state_wages_tips.confidence
-                        )
+                        f"...State wages, tips, etc: {state_wages_tips.value} has confidence: "
+                        f"{state_wages_tips.confidence}"
                     )
-                state_income_tax  = tax.value.get("StateIncomeTax")
+                state_income_tax = tax.value.get("StateIncomeTax")
                 if state_income_tax:
                     print(
-                        "...State income tax: {} has confidence: {}".format(
-                            state_income_tax.value, state_income_tax.confidence
-                        )
+                        f"...State income tax: {state_income_tax.value} has confidence: "
+                        f"{state_income_tax.confidence}"
                     )
         local_tax_info = w2.fields.get("LocalTaxInfos")
         if local_tax_info:
             print("Local Tax info:")
             for tax in local_tax_info.value:
-                local_wages_tips  = tax.value.get("LocalWagesTipsEtc")
+                local_wages_tips = tax.value.get("LocalWagesTipsEtc")
                 if local_wages_tips:
                     print(
-                        "...Local wages, tips, etc: {} has confidence: {}".format(
-                            local_wages_tips.value, local_wages_tips.confidence
-                        )
+                        f"...Local wages, tips, etc: {local_wages_tips.value} has confidence: "
+                        f"{local_wages_tips.confidence}"
                     )
-                local_income_tax  = tax.value.get("LocalIncomeTax")
+                local_income_tax = tax.value.get("LocalIncomeTax")
                 if local_income_tax:
                     print(
-                        "...Local income tax: {} has confidence: {}".format(
-                            local_income_tax.value, local_income_tax.confidence
-                        )
+                        f"...Local income tax: {local_income_tax.value} has confidence: "
+                        f"{local_income_tax.confidence}"
                     )
-                locality_name  = tax.value.get("LocalityName")
+                locality_name = tax.value.get("LocalityName")
                 if locality_name:
                     print(
-                        "...Locality name: {} has confidence: {}".format(
-                            locality_name.value, locality_name.confidence
-                        )
+                        f"...Locality name: {locality_name.value} has confidence: "
+                        f"{locality_name.confidence}"
                     )
 
 
 if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         analyze_tax_us_w2()
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

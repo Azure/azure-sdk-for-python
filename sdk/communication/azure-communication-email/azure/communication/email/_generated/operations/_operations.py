@@ -43,7 +43,7 @@ def build_email_get_send_result_request(operation_id: str, **kwargs: Any) -> Htt
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-01-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-03-31"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_email_send_request(**kwargs: Any) -> HttpRequest:
         "client_request_id", _headers.pop("x-ms-client-request-id", None)
     )  # type: Optional[str]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-01-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-03-31"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -269,8 +269,9 @@ class EmailOperations:
 
         :param message: Message payload for sending an email. Required.
         :type message: JSON
-        :keyword operation_id: This is the ID used by the status monitor for this long running
-         operation. Default value is None.
+        :keyword operation_id: This is the ID provided by the customer to identify the long running
+         operation. If an ID is not provided by the customer, the service will generate one. Default
+         value is None.
         :paramtype operation_id: str
         :keyword client_request_id: Tracking ID sent with the request to help with debugging. Default
          value is None.
@@ -383,8 +384,9 @@ class EmailOperations:
 
         :param message: Message payload for sending an email. Required.
         :type message: IO
-        :keyword operation_id: This is the ID used by the status monitor for this long running
-         operation. Default value is None.
+        :keyword operation_id: This is the ID provided by the customer to identify the long running
+         operation. If an ID is not provided by the customer, the service will generate one. Default
+         value is None.
         :paramtype operation_id: str
         :keyword client_request_id: Tracking ID sent with the request to help with debugging. Default
          value is None.
@@ -444,8 +446,9 @@ class EmailOperations:
         :param message: Message payload for sending an email. Is either a model type or a IO type.
          Required.
         :type message: JSON or IO
-        :keyword operation_id: This is the ID used by the status monitor for this long running
-         operation. Default value is None.
+        :keyword operation_id: This is the ID provided by the customer to identify the long running
+         operation. If an ID is not provided by the customer, the service will generate one. Default
+         value is None.
         :paramtype operation_id: str
         :keyword client_request_id: Tracking ID sent with the request to help with debugging. Default
          value is None.

@@ -40,7 +40,6 @@ def main():
                 "imageReference": {
                     "id": "/subscriptions/0ac520ee-14c0-480f-b6c9-0a90c58ffff/resourceGroups/Example/providers/Microsoft.DevCenter/devcenters/Contoso/galleries/contosogallery/images/exampleImage/version/1.0.0"
                 },
-                "osStorageType": "SSD_1024",
                 "sku": {"name": "Preview"},
             },
         },
@@ -48,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-11-11-preview/examples/DevBoxDefinitions_Create.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/DevBoxDefinitions_Create.json
 if __name__ == "__main__":
     main()
