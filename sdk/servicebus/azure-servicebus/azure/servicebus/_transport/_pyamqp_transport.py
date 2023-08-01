@@ -5,6 +5,8 @@
 # pylint: disable=too-many-lines
 import functools
 import time
+import math
+import random
 import datetime
 from datetime import timezone
 from typing import Optional, Tuple, cast, List, TYPE_CHECKING, Any, Callable, Dict, Union, Iterator, Type
@@ -581,14 +583,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         link_properties = kwargs.pop("link_properties")
 
         if receiver._session_id == NEXT_AVAILABLE_SESSION and receiver._max_wait_time: # pylint: disable=protected-access
-            timeout_in_ms = ((receiver._max_wait_time * 1000) - 100) # pylint: disable=protected-access
-            # open_receive_link_base_jitter_in_ms = 100
-            # open_recieve_link_buffer_in_ms = 20
-            # open_receive_link_buffer_threshold_in_ms = 1000
-            # jitter_base_in_ms = min(timeout_in_ms * 0.01, open_receive_link_base_jitter_in_ms)
-            # timeout_in_ms = math.floor(timeout_in_ms - jitter_base_in_ms * random.random())
-            # if timeout_in_ms >= open_receive_link_buffer_threshold_in_ms:
-            #     timeout_in_ms -= open_recieve_link_buffer_in_ms
+            timeout_in_ms = receiver._max_wait_time * 1000 # pylint: disable=protected-access
+            open_receive_link_base_jitter_in_ms = 100
+            open_recieve_link_buffer_in_ms = 20
+            open_receive_link_buffer_threshold_in_ms = 1000
+            jitter_base_in_ms = min(timeout_in_ms * 0.01, open_receive_link_base_jitter_in_ms)
+            timeout_in_ms = math.floor(timeout_in_ms - jitter_base_in_ms * random.random())
+            if timeout_in_ms >= open_receive_link_buffer_threshold_in_ms:
+                timeout_in_ms -= open_recieve_link_buffer_in_ms
 
             # If we have specified a client-side timeout, assure that it is encoded as an uint
             link_properties[OPERATION_TIMEOUT] = amqp_uint_value(timeout_in_ms)
