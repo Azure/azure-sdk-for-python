@@ -28,8 +28,8 @@ async def test_receive_storage_checkpoint(connstr_senders, uamqp_transport, chec
 
     sequence_numbers_0 = []
     sequence_numbers_1 = []
-    async def on_event(partition_context, event):
-        await partition_context.update_checkpoint(event)
+    def on_event(partition_context, event):
+        partition_context.update_checkpoint(event)
         sequence_num = event.sequence_number
         if partition_context.partition_id == "0":
             if sequence_num in sequence_numbers_0:
