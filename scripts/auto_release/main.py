@@ -128,9 +128,9 @@ class CodegenTestPR:
         self.storage_endpoint = os.getenv('STORAGE_ENDPOINT').strip('/')
         self.target_date = os.getenv('TARGET_DATE', '')
 
-        self.package_name = ''
+        self.package_name = '' # 'dns' of 'sdk/compute/azure-mgmt-dns'
         self.new_branch = ''
-        self.sdk_folder = ''  # 'compute' in 'sdk/compute/azure-mgmt-dns'
+        self.sdk_folder = ''  # 'compute' of 'sdk/compute/azure-mgmt-dns'
         self.autorest_result = ''
         self.next_version = ''
         self.test_result = ''
@@ -467,6 +467,9 @@ class CodegenTestPR:
         else:
             log(f'{test_mode} run done, do not find failure !!!')
             self.test_result = succeeded_result
+        
+        # push recording files: https://github.com/Azure/azure-sdk-for-python/blob/7764d2cb6646b5c611df24d15798555638096603/scripts/manage_recordings.py#L42C8-L42C57
+        print_exec("python ../../../scripts/manage_recordings.py push")
 
     @staticmethod
     def clean_test_env():
