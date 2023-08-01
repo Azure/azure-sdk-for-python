@@ -35,7 +35,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @app_config_decorator
     def test_backoff_max_attempts(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         client = self.create_client(
-            appconfiguration_connection_string, keyvault_secret_url=appconfiguration_keyvault_secret_url
+            appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
         min_backoff = 3000
 
@@ -49,6 +50,37 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         client._refresh_timer.attempts = attempts
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff >= min_backoff and backoff <= (min_backoff * (1 << 30))
+
+    # method: _calculate_backoff
+    @recorded_by_proxy
+    @app_config_decorator
+    def test_backoff_bounds(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+        client = self.create_client(
+            appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            refresh_interval=1,
+        )
+
+        assert client._refresh_timer._min_backoff == 1
+        assert client._refresh_timer._max_backoff == 1
+
+        client = self.create_client(
+            appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            refresh_interval=45,
+        )
+
+        assert client._refresh_timer._min_backoff == 30
+        assert client._refresh_timer._max_backoff == 45
+
+        client = self.create_client(
+            appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            refresh_interval=700,
+        )
+
+        assert client._refresh_timer._min_backoff == 30
+        assert client._refresh_timer._max_backoff == 600
 
     # method: _calculate_backoff
     @recorded_by_proxy
