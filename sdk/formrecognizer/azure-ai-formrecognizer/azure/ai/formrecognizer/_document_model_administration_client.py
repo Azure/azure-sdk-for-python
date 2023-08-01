@@ -197,6 +197,11 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :keyword str model_id: A unique ID for your model. If not specified, a model ID will be created for you.
         :keyword str description: An optional description to add to the model.
         :keyword tags: List of user defined key-value tag attributes associated with the model.
+        :keyword str prefix: A case-sensitive prefix string to filter documents in the blob container url path.
+            For example, when using an Azure storage blob URI, use the prefix to restrict sub folders.
+            `prefix` should end in '/' to avoid cases where filenames share the same prefix.
+        :keyword str file_list: Path to a JSONL file within the container specifying a subset of
+            documents for training.
         :paramtype tags: dict[str, str]
         :return: An instance of an DocumentModelAdministrationLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.DocumentModelDetails`.
