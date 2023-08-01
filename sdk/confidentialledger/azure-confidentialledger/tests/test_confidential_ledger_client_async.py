@@ -489,10 +489,16 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
 
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
-        confidentialledger_id = kwargs.pop("confidentialledger_id")
 
-        client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+        # Create the client directly instead of going through the create_confidentialledger_client
+        # as we don't need any additional setup.
+        credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
+        client = self.create_client_from_credential(
+            ConfidentialLedgerClient,
+            credential=credential,
+            endpoint=confidentialledger_endpoint,
+            # self.network_certificate_path is set via self.set_ledger_identity
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
 
         self.tls_cert_convenience_actions(client)
@@ -503,10 +509,17 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
 
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
-        confidentialledger_id = kwargs.pop("confidentialledger_id")
 
-        client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+        # Create the client directly instead of going through the create_confidentialledger_client
+        # as we don't need any additional setup.
+        certificate_credential = ConfidentialLedgerCertificateCredential(
+            certificate_path=self.user_certificate_path
+        )
+        client = ConfidentialLedgerClient(
+            credential=certificate_credential,
+            endpoint=confidentialledger_endpoint,
+            # self.network_certificate_path is set via self.set_ledger_identity
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
 
         self.tls_cert_convenience_actions(client)
