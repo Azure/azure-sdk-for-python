@@ -210,6 +210,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         :rtype: ~azure.ai.formrecognizer.aio.AsyncDocumentModelAdministrationLROPoller[DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
+        .. versionadded:: 2023-07-31
+            The *file_list* keyword argument.
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2/async_samples/sample_build_model_async.py
