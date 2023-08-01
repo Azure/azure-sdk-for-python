@@ -180,8 +180,7 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
 
     def _update_status(self):
         if (
-            self.auth_state == CbsAuthState.OK
-            or self.auth_state == CbsAuthState.REFRESH_REQUIRED
+            self.auth_state in (CbsAuthState.OK, CbsAuthState.REFRESH_REQUIRED)
         ):
             is_expired, is_refresh_required = check_expiration_and_refresh_status(
                 self._expires_on, self._refresh_window
@@ -209,7 +208,7 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             if put_timeout:
                 self.auth_state = CbsAuthState.TIMEOUT
 
-    def _cbs_link_ready(self):
+    def _cbs_link_ready(self): # pylint: disable=inconsistent-return-statements
         if self.state == CbsState.OPEN:
             return True
         if self.state != CbsState.OPEN:
@@ -261,7 +260,7 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             utc_from_timestamp(self._expires_on),
         )
 
-    def handle_token(self):
+    def handle_token(self): # pylint: disable=inconsistent-return-statements
         if not self._cbs_link_ready():
             return False
         self._update_status()
