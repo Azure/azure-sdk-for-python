@@ -1,12 +1,5 @@
 # Release History
 
-## 25.0.0 (2023-08-01)
-
-### Breaking Changes
-
-  - Removed operation group NspLinkReconcileOperations
-  - Removed operation group NspLinkReferenceReconcileOperations
-
 ## 24.0.0 (2023-07-21)
 
 ### Breaking Changes
