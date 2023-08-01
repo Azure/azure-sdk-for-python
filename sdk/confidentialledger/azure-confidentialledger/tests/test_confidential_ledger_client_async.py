@@ -484,7 +484,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             assert quote["quoteVersion"]
 
     @ConfidentialLedgerPreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_async
     async def test_tls_cert_convenience_aad_user(self, **kwargs):
         os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
 
@@ -498,7 +498,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         self.tls_cert_convenience_actions(client)
 
     @ConfidentialLedgerPreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_async
     async def test_tls_cert_convenience_cert_user(self, **kwargs):
         os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
 
