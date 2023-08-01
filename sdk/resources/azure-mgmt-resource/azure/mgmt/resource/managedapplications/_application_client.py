@@ -72,6 +72,8 @@ class ApplicationClient(ApplicationClientOperationsMixin, MultiApiClientMixin, _
         profile: KnownProfiles=KnownProfiles.default,
         **kwargs: Any
     ):
+        if api_version:
+            kwargs.setdefault('api_version', api_version)
         self._config = ApplicationClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(ApplicationClient, self).__init__(
@@ -106,7 +108,7 @@ class ApplicationClient(ApplicationClientOperationsMixin, MultiApiClientMixin, _
         else:
             raise ValueError("API version {} does not have operation group 'application_definitions'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def applications(self):
@@ -120,7 +122,7 @@ class ApplicationClient(ApplicationClientOperationsMixin, MultiApiClientMixin, _
         else:
             raise ValueError("API version {} does not have operation group 'applications'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def jit_requests(self):
@@ -134,7 +136,7 @@ class ApplicationClient(ApplicationClientOperationsMixin, MultiApiClientMixin, _
         else:
             raise ValueError("API version {} does not have operation group 'jit_requests'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     def close(self):
         self._client.close()

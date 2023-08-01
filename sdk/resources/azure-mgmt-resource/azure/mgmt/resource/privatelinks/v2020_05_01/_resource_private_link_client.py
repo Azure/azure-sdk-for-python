@@ -59,10 +59,10 @@ class ResourcePrivateLinkClient:  # pylint: disable=client-accepts-api-version-k
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.private_link_association = PrivateLinkAssociationOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-05-01"
         )
         self.resource_management_private_link = ResourceManagementPrivateLinkOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-05-01"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:

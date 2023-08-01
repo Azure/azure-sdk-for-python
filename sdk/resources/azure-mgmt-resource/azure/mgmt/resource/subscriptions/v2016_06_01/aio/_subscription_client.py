@@ -54,9 +54,11 @@ class SubscriptionClient(SubscriptionClientOperationsMixin):  # pylint: disable=
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.subscriptions = SubscriptionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.tenants = TenantsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2016-06-01")
+        self.subscriptions = SubscriptionsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2016-06-01"
+        )
+        self.tenants = TenantsOperations(self._client, self._config, self._serialize, self._deserialize, "2016-06-01")
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

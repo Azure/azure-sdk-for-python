@@ -1,5 +1,13 @@
 # Release History
 
+## 23.1.0b3 (2023-08-01)
+
+### Features Added
+
+  - Added model DeploymentParameter
+  - Added model KeyVaultParameterReference
+  - Added model KeyVaultReference
+
 ## 23.1.0b2 (2023-06-16)
 
 ### Breaking Changes

@@ -667,6 +667,40 @@ class DeploymentOperationsListResult(_serialization.Model):
         self.next_link = None
 
 
+class DeploymentParameter(_serialization.Model):
+    """Deployment parameter for the template.
+
+    :ivar value: Input value to the parameter .
+    :vartype value: any
+    :ivar reference: Azure Key Vault parameter reference.
+    :vartype reference:
+     ~azure.mgmt.resource.resources.v2022_09_01.models.KeyVaultParameterReference
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "object"},
+        "reference": {"key": "reference", "type": "KeyVaultParameterReference"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[Any] = None,
+        reference: Optional["_models.KeyVaultParameterReference"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Input value to the parameter .
+        :paramtype value: any
+        :keyword reference: Azure Key Vault parameter reference.
+        :paramtype reference:
+         ~azure.mgmt.resource.resources.v2022_09_01.models.KeyVaultParameterReference
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.reference = reference
+
+
 class DeploymentProperties(_serialization.Model):
     """Deployment properties.
 
@@ -684,7 +718,8 @@ class DeploymentProperties(_serialization.Model):
      You use this element when you want to provide the parameter values directly in the request
      rather than link to an existing parameter file. Use either the parametersLink property or the
      parameters property, but not both. It can be a JObject or a well formed JSON string.
-    :vartype parameters: JSON
+    :vartype parameters: dict[str,
+     ~azure.mgmt.resource.resources.v2022_09_01.models.DeploymentParameter]
     :ivar parameters_link: The URI of parameters file. You use this element to link to an existing
      parameters file. Use either the parametersLink property or the parameters property, but not
      both.
@@ -715,7 +750,7 @@ class DeploymentProperties(_serialization.Model):
     _attribute_map = {
         "template": {"key": "template", "type": "object"},
         "template_link": {"key": "templateLink", "type": "TemplateLink"},
-        "parameters": {"key": "parameters", "type": "object"},
+        "parameters": {"key": "parameters", "type": "{DeploymentParameter}"},
         "parameters_link": {"key": "parametersLink", "type": "ParametersLink"},
         "mode": {"key": "mode", "type": "str"},
         "debug_setting": {"key": "debugSetting", "type": "DebugSetting"},
@@ -729,7 +764,7 @@ class DeploymentProperties(_serialization.Model):
         mode: Union[str, "_models.DeploymentMode"],
         template: Optional[JSON] = None,
         template_link: Optional["_models.TemplateLink"] = None,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[Dict[str, "_models.DeploymentParameter"]] = None,
         parameters_link: Optional["_models.ParametersLink"] = None,
         debug_setting: Optional["_models.DebugSetting"] = None,
         on_error_deployment: Optional["_models.OnErrorDeployment"] = None,
@@ -749,7 +784,8 @@ class DeploymentProperties(_serialization.Model):
          template. You use this element when you want to provide the parameter values directly in the
          request rather than link to an existing parameter file. Use either the parametersLink property
          or the parameters property, but not both. It can be a JObject or a well formed JSON string.
-        :paramtype parameters: JSON
+        :paramtype parameters: dict[str,
+         ~azure.mgmt.resource.resources.v2022_09_01.models.DeploymentParameter]
         :keyword parameters_link: The URI of parameters file. You use this element to link to an
          existing parameters file. Use either the parametersLink property or the parameters property,
          but not both.
@@ -978,7 +1014,8 @@ class DeploymentWhatIfProperties(DeploymentProperties):
      You use this element when you want to provide the parameter values directly in the request
      rather than link to an existing parameter file. Use either the parametersLink property or the
      parameters property, but not both. It can be a JObject or a well formed JSON string.
-    :vartype parameters: JSON
+    :vartype parameters: dict[str,
+     ~azure.mgmt.resource.resources.v2022_09_01.models.DeploymentParameter]
     :ivar parameters_link: The URI of parameters file. You use this element to link to an existing
      parameters file. Use either the parametersLink property or the parameters property, but not
      both.
@@ -1012,7 +1049,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
     _attribute_map = {
         "template": {"key": "template", "type": "object"},
         "template_link": {"key": "templateLink", "type": "TemplateLink"},
-        "parameters": {"key": "parameters", "type": "object"},
+        "parameters": {"key": "parameters", "type": "{DeploymentParameter}"},
         "parameters_link": {"key": "parametersLink", "type": "ParametersLink"},
         "mode": {"key": "mode", "type": "str"},
         "debug_setting": {"key": "debugSetting", "type": "DebugSetting"},
@@ -1027,7 +1064,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
         mode: Union[str, "_models.DeploymentMode"],
         template: Optional[JSON] = None,
         template_link: Optional["_models.TemplateLink"] = None,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[Dict[str, "_models.DeploymentParameter"]] = None,
         parameters_link: Optional["_models.ParametersLink"] = None,
         debug_setting: Optional["_models.DebugSetting"] = None,
         on_error_deployment: Optional["_models.OnErrorDeployment"] = None,
@@ -1048,7 +1085,8 @@ class DeploymentWhatIfProperties(DeploymentProperties):
          template. You use this element when you want to provide the parameter values directly in the
          request rather than link to an existing parameter file. Use either the parametersLink property
          or the parameters property, but not both. It can be a JObject or a well formed JSON string.
-        :paramtype parameters: JSON
+        :paramtype parameters: dict[str,
+         ~azure.mgmt.resource.resources.v2022_09_01.models.DeploymentParameter]
         :keyword parameters_link: The URI of parameters file. You use this element to link to an
          existing parameters file. Use either the parametersLink property or the parameters property,
          but not both.
@@ -1695,6 +1733,78 @@ class IdentityUserAssignedIdentitiesValue(_serialization.Model):
         super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
+
+
+class KeyVaultParameterReference(_serialization.Model):
+    """Azure Key Vault parameter reference.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar key_vault: Azure Key Vault reference. Required.
+    :vartype key_vault: ~azure.mgmt.resource.resources.v2022_09_01.models.KeyVaultReference
+    :ivar secret_name: Azure Key Vault secret name. Required.
+    :vartype secret_name: str
+    :ivar secret_version: Azure Key Vault secret version.
+    :vartype secret_version: str
+    """
+
+    _validation = {
+        "key_vault": {"required": True},
+        "secret_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "key_vault": {"key": "keyVault", "type": "KeyVaultReference"},
+        "secret_name": {"key": "secretName", "type": "str"},
+        "secret_version": {"key": "secretVersion", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        key_vault: "_models.KeyVaultReference",
+        secret_name: str,
+        secret_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword key_vault: Azure Key Vault reference. Required.
+        :paramtype key_vault: ~azure.mgmt.resource.resources.v2022_09_01.models.KeyVaultReference
+        :keyword secret_name: Azure Key Vault secret name. Required.
+        :paramtype secret_name: str
+        :keyword secret_version: Azure Key Vault secret version.
+        :paramtype secret_version: str
+        """
+        super().__init__(**kwargs)
+        self.key_vault = key_vault
+        self.secret_name = secret_name
+        self.secret_version = secret_version
+
+
+class KeyVaultReference(_serialization.Model):
+    """Azure Key Vault reference.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure Key Vault resource id. Required.
+    :vartype id: str
+    """
+
+    _validation = {
+        "id": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Azure Key Vault resource id. Required.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
 
 
 class OnErrorDeployment(_serialization.Model):

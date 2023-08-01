@@ -71,6 +71,8 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs: Any
     ) -> None:
+        if api_version:
+            kwargs.setdefault('api_version', api_version)
         self._config = FeatureClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(FeatureClient, self).__init__(
@@ -112,7 +114,7 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
         else:
             raise ValueError("API version {} does not have operation group 'features'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def subscription_feature_registrations(self):
@@ -126,7 +128,7 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
         else:
             raise ValueError("API version {} does not have operation group 'subscription_feature_registrations'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     async def close(self):
         await self._client.close()
