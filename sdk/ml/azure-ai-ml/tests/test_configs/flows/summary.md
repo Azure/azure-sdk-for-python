@@ -42,7 +42,7 @@ After customer finalized a flow in prompt-flow, they may want to integrate it wi
   def pipeline_with_flow(job_input):
       flow_node = flow_component(data=job_input)
       flow_node.logging_level = "DEBUG"
-      return {"job_output": flow_outputs}
+      return {"job_output": flow_node.outputs.flow_outputs}
   ```
 
   - CLI experience
