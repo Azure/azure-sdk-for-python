@@ -38,7 +38,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             ConfidentialLedgerClient,
             credential=credential,
             endpoint=endpoint,
-            # self.network_certificate_path is set via self.set_ledger_identity
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
 
@@ -48,7 +47,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         certificate_based_client = ConfidentialLedgerClient(
             credential=certificate_credential,
             endpoint=endpoint,
-            # self.network_certificate_path is set via self.set_ledger_identity
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
 
@@ -435,7 +433,10 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
     def test_tls_cert_convenience_aad_user(self, **kwargs):
-        os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
+        try:
+            os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
+        except FileNotFoundError:
+            pass
 
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
@@ -454,7 +455,10 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
     def test_tls_cert_convenience_cert_user(self, **kwargs):
-        os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
+        try:
+            os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
+        except FileNotFoundError:
+            pass
 
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")

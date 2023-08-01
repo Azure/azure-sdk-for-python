@@ -68,6 +68,8 @@ class ConfidentialLedgerClient(GeneratedClient):
 
             # Ledger URIs are of the form https://<ledger id>.confidential-ledger.azure.com.
             ledger_id = endpoint.replace("https://", "").split(".")[0]
+
+            # We use the sync client here because async __init__ is not allowed.
             ledger_cert = identity_service_client.get_ledger_identity(ledger_id, **kwargs)
 
             with open(ledger_certificate_path, "w", encoding="utf-8") as outfile:
