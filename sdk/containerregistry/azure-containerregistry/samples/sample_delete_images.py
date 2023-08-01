@@ -53,12 +53,7 @@ class DeleteImages(object):
                     manifest_count += 1
                     if manifest_count > 3:
                         # Make sure will have the permission to delete the manifest later
-                        client.update_manifest_properties(
-                            repository,
-                            manifest.digest,
-                            can_write=True,
-                            can_delete=True
-                        )
+                        client.update_manifest_properties(repository, manifest.digest, can_write=True, can_delete=True)
                         print(f"Deleting {repository}:{manifest.digest}")
                         client.delete_manifest(repository, manifest.digest)
         # [END delete_manifests]

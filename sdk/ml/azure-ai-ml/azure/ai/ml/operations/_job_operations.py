@@ -241,9 +241,9 @@ class JobOperations(_ScopeDependentOperations):
     ) -> Iterable[Job]:
         """List jobs of the workspace.
 
-        :param parent_job_name: When provided, returns children of named job.
+        :keyword parent_job_name: When provided, returns children of named job.
         :type parent_job_name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived jobs. Default: ACTIVE_ONLY.
+        :keyword list_view_type: View type for including/excluding (for example) archived jobs. Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Job objects.
         :rtype: ~azure.core.paging.ItemPaged[Job]
@@ -272,7 +272,7 @@ class JobOperations(_ScopeDependentOperations):
         try:
             return self._resolve_azureml_id(Job._from_rest_object(job_object))
         except JobParsingError:
-            pass
+            return None
 
     @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
@@ -414,7 +414,7 @@ class JobOperations(_ScopeDependentOperations):
 
         :param job: Job object to be validated.
         :type job: Job
-        :param raise_on_failure: Whether raise error when there are validation errors.
+        :keyword raise_on_failure: Whether raise error when there are validation errors.
         :type raise_on_failure: bool
         :return: a ValidationResult object containing all found errors.
         :rtype: ValidationResult
@@ -489,16 +489,16 @@ class JobOperations(_ScopeDependentOperations):
         Environment, Code, they'll be created together with the job.
 
         :param Job job: Job definition or object which can be translate to a job.
-        :param description: Description to overwrite when submitting the pipeline.
+        :keyword description: Description to overwrite when submitting the pipeline.
         :type description: str
-        :param compute: Compute target to overwrite when submitting the pipeline.
+        :keyword compute: Compute target to overwrite when submitting the pipeline.
         :type compute: str
-        :param tags: Tags to overwrite when submitting the pipeline.
+        :keyword tags: Tags to overwrite when submitting the pipeline.
         :type tags: dict
-        :param experiment_name: Name of the experiment the job will be created under, if None is provided,
+        :keyword experiment_name: Name of the experiment the job will be created under, if None is provided,
             job will be created under experiment 'Default'.
         :type experiment_name: str
-        :param skip_validation: whether to skip validation before creating/updating the job. Note that dependent
+        :keyword skip_validation: whether to skip validation before creating/updating the job. Note that dependent
             resources like anonymous component won't skip their validation in creating.
         :type skip_validation: bool
         :raises [~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised if
@@ -675,17 +675,13 @@ class JobOperations(_ScopeDependentOperations):
     ) -> None:
         """Download logs and output of a job.
 
-        :param str name: Name of a job.
-        :param Union[PathLike, str] download_path: Local path as download destination, defaults to '.'.
-        :param str output_name: Named output to download, defaults to None.
-        :param bool all: Whether to download logs and all named outputs, defaults to False.
         :param name: Name of a job.
         :type name: str
-        :param download_path: Local path as download destination, defaults to '.'.
+        :keyword download_path: Local path as download destination, defaults to '.'.
         :type download_path: Union[PathLike, str]
-        :param output_name: Named output to download, defaults to None.
+        :keyword output_name: Named output to download, defaults to None.
         :type output_name: str
-        :param all: Whether to download logs and all named outputs, defaults to False.
+        :keyword all: Whether to download logs and all named outputs, defaults to False.
         :type all: bool
         :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state.
             Details will be provided in the error message.
@@ -1202,9 +1198,7 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_automl_job(  # pylint: disable=no-self-use
-        self, job: Job, resolver: Callable, inside_pipeline: bool
-    ) -> Job:
+    def _resolve_arm_id_for_automl_job(self, job: Job, resolver: Callable, inside_pipeline: bool) -> Job:
         """Resolve arm_id for AutoMLJob."""
         # AutoML does not have dependency uploads. Only need to resolve reference to arm id.
 

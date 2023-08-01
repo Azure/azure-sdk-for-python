@@ -33,6 +33,12 @@ module_logger = logging.getLogger(__name__)
 
 
 def parse_inputs_outputs(data):
+    """Parse inputs and outputs from data. If data is a list, parse each item in the list.
+
+    :return: parsed data
+    :rtype: Dict
+    """
+
     if "inputs" in data:
         data["inputs"] = {key: build_input_output(val) for key, val in data["inputs"].items()}
     if "outputs" in data:
@@ -41,7 +47,13 @@ def parse_inputs_outputs(data):
 
 
 def pipeline_node_decorator(func):
-    """Wrap func and add it return value to current DSL pipeline."""
+    """Wrap a function and add its return value to the current DSL pipeline.
+
+    :param func: The function to be wrapped.
+    :type func: callable
+    :return: The wrapped function.
+    :rtype: callable
+    """
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -67,31 +79,42 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
     You should not instantiate this class directly. Instead, you should
     create from a builder function.
 
-    :param type: Type of pipeline node
+    :param type: Type of pipeline node. Defaults to JobType.COMPONENT.
     :type type: str
     :param component: Id or instance of the component version to be run for the step
-    :type component: Union[Component, str]
-    :param inputs: Inputs to the node.
-    :type inputs: Dict[str, Union[Input, SweepDistribution, str, bool, int, float, Enum, dict]]
+    :type component: Component
+    :param inputs: The inputs for the node.
+    :type inputs: Optional[Dict[str, Union[
+        ~azure.ai.ml.entities._job.pipeline._io.PipelineInput,
+        ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
+        ~azure.ai.ml.entities.Input,
+        str,
+        bool,
+        int,
+        float,
+        Enum,
+        'Input']]]
     :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Dict[str, Union[str, Output, dict]]
-    :param name: Name of the node.
-    :type name: str
-    :param description: Description of the node.
-    :type description: str
+    :type outputs: Optional[Dict[str, Union[str, ~azure.ai.ml.entities.Output, 'Output']]]
+    :param name: The name of the node.
+    :type name: Optional[str]
+    :param display_name: The display name of the node.
+    :type display_name: Optional[str]
+    :param description: The description of the node.
+    :type description: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The job property dictionary.
-    :type properties: dict[str, str]
+    :type tags: Optional[Dict]
+    :param properties: The properties of the job.
+    :type properties: Optional[Dict]
     :param comment: Comment of the pipeline node, which will be shown in designer canvas.
-    :type comment: str
-    :param display_name: Display name of the job.
-    :type display_name: str
-    :param compute: Compute definition containing the compute information for the step
-    :type compute: str
-    :param experiment_name:  Name of the experiment the job will be created under,
-        if None is provided, default will be set to current directory name. Will be ignored as a pipeline step.
-    :type experiment_name: str
+    :type comment: Optional[str]
+    :param compute: Compute definition containing the compute information for the step.
+    :type compute: Optional[str]
+    :param experiment_name: Name of the experiment the job will be created under,
+        if None is provided, default will be set to current directory name.
+        Will be ignored as a pipeline step.
+    :type experiment_name: Optional[str]
+    :param kwargs: Additional keyword arguments for future compatibility.
     """
 
     def __init__(
@@ -125,7 +148,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         compute: Optional[str] = None,
         experiment_name: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         self._init = True
         # property _source can't be set
         kwargs.pop("_source", None)
@@ -185,12 +208,21 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
 
     @property
     def name(self) -> str:
-        """Name of the node."""
+        """Get the name of the node.
+
+        :return: The name of the node.
+        :rtype: str
+        """
         return self._name
 
     @name.setter
     def name(self, value):
-        """Set name of the node."""
+        """Set the name of the node.
+
+        :param value: The name to set for the node.
+        :type value: str
+        :return: None
+        """
         # when name is not lower case, lower it to make sure it's a valid node name
         if value and value != value.lower():
             module_logger.warning(
@@ -203,6 +235,14 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
 
     @classmethod
     def _get_supported_inputs_types(cls):
+        """Get the supported input types for node input.
+
+        :param cls: The class (or instance) to retrieve supported input types for.
+        :type cls: object
+
+        :return: A tuple of supported input types.
+        :rtype: tuple
+        """
         # supported input types for node input
         return (
             PipelineInput,
@@ -231,8 +271,8 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
     def _set_base_path(self, base_path):
         """Set the base path for the node.
 
-        Will be used for schema validation. If not set, will use Path.cwd() as the base path (default logic defined in
-        SchemaValidatableMixin._base_path_for_validation).
+        Will be used for schema validation. If not set, will use Path.cwd() as the base path
+        (default logic defined in SchemaValidatableMixin._base_path_for_validation).
         """
         self._base_path = base_path
 
@@ -324,8 +364,8 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
 
     @abstractmethod
     def _to_job(self) -> Job:
-        """This private function is used by the CLI to get a plain job object so that the CLI can properly serialize the
-        object.
+        """This private function is used by the CLI to get a plain job object
+        so that the CLI can properly serialize the object.
 
         It is needed as BaseNode._to_dict() dumps objects using pipeline child job schema instead of standalone job
         schema, for example Command objects dump have a nested component property, which doesn't apply to stand alone
@@ -416,10 +456,20 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
 
     @property
     def inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
+        """Get the inputs for the object.
+
+        :return: A dictionary containing the inputs for the object.
+        :rtype: Dict[str, Union[~azure.ai.ml.entities.Input, str, bool, int, float]]
+        """
         return self._inputs
 
     @property
     def outputs(self) -> Dict[str, Union[str, Output]]:
+        """Get the outputs of the object.
+
+        :return: A dictionary containing the outputs for the object.
+        :rtype: Dict[str, Union[str, ~azure.ai.ml.entities.Output]]
+        """
         return self._outputs
 
     def __str__(self):
@@ -436,6 +486,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         # only show help when component has definition
         if isinstance(self._component, Component):
             return self._component.__help__()
+        return None
 
     def __bool__(self):
         # _attr_dict will return False if no extra attributes are set

@@ -38,8 +38,8 @@ def suggest_query():
 
     print("Search suggestions for 'coffee'")
     for result in results:
-        hotel = search_client.get_document(key=result["HotelId"])
-        print("    Text: {} for Hotel: {}".format(repr(result["text"]), hotel["HotelName"]))
+        hotel = search_client.get_document(key=result["hotelId"])
+        print("    Text: {} for Hotel: {}".format(repr(result["text"]), hotel["hotelName"]))
     # [END suggest_query]
 
 

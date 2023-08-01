@@ -64,7 +64,7 @@ class SampleTablesQuery(object):
                 e["Name"] = random.choice(names)
                 e["Brand"] = random.choice(brands)
                 e["Color"] = random.choice(colors)
-                e["Value"] = random.randint(0, 100) # type: ignore[assignment]
+                e["Value"] = random.randint(0, 100)  # type: ignore[assignment]
                 await table_client.create_entity(entity=e)
 
     async def sample_query_entities(self):
@@ -75,41 +75,41 @@ class SampleTablesQuery(object):
             try:
                 print("Basic sample:")
                 print("Entities with name: marker")
-                parameters = {u"name": u"marker"}
-                name_filter = u"Name eq @name"
+                parameters = {"name": "marker"}
+                name_filter = "Name eq @name"
                 queried_entities = table_client.query_entities(
-                    query_filter=name_filter, select=[u"Brand", u"Color"], parameters=parameters
+                    query_filter=name_filter, select=["Brand", "Color"], parameters=parameters
                 )
                 async for entity_chosen in queried_entities:
                     print(entity_chosen)
 
                 print("Sample for querying entities withtout metadata:")
                 print("Entities with name: marker")
-                parameters = {u"name": u"marker"}
-                name_filter = u"Name eq @name"
-                headers = {"Accept" : "application/json;odata=nometadata"}
+                parameters = {"name": "marker"}
+                name_filter = "Name eq @name"
+                headers = {"Accept": "application/json;odata=nometadata"}
                 queried_entities = table_client.query_entities(
-                    query_filter=name_filter, select=[u"Brand", u"Color"], parameters=parameters, headers=headers
+                    query_filter=name_filter, select=["Brand", "Color"], parameters=parameters, headers=headers
                 )
                 async for entity_chosen in queried_entities:
                     print(entity_chosen)
 
                 print("Sample for querying entities with multiple params:")
                 print("Entities with name: marker and brand: Crayola")
-                parameters = {u"name": u"marker", u"brand": u"Crayola"}
-                name_filter = u"Name eq @name and Brand eq @brand"
+                parameters = {"name": "marker", "brand": "Crayola"}
+                name_filter = "Name eq @name and Brand eq @brand"
                 queried_entities = table_client.query_entities(
-                    query_filter=name_filter, select=[u"Brand", u"Color"], parameters=parameters
+                    query_filter=name_filter, select=["Brand", "Color"], parameters=parameters
                 )
                 async for entity_chosen in queried_entities:
                     print(entity_chosen)
 
                 print("Sample for querying entities' values:")
                 print("Entities with 25 < Value < 50")
-                parameters = {u"lower": 25, u"upper": 50} # type: ignore
-                name_filter = u"Value gt @lower and Value lt @upper"
+                parameters = {"lower": 25, "upper": 50}  # type: ignore
+                name_filter = "Value gt @lower and Value lt @upper"
                 queried_entities = table_client.query_entities(
-                    query_filter=name_filter, select=[u"Value"], parameters=parameters
+                    query_filter=name_filter, select=["Value"], parameters=parameters
                 )
                 async for entity_chosen in queried_entities:
                     print(entity_chosen)

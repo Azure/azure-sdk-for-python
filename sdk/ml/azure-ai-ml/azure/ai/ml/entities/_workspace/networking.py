@@ -4,7 +4,7 @@
 
 from typing import Any, Dict, Optional, List
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     ManagedNetworkSettings as RestManagedNetwork,
     FqdnOutboundRule as RestFqdnOutboundRule,
     PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
@@ -42,7 +42,7 @@ class OutboundRule:
         self.status = kwargs.pop("status", None)
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: Any, name: str) -> "OutboundRule":
+    def _from_rest_object(cls, rest_obj: Any, name: str) -> Optional["OutboundRule"]:
         if isinstance(rest_obj, RestFqdnOutboundRule):
             rule = FqdnDestination(destination=rest_obj.destination, name=name)
             rule.category = rest_obj.category
@@ -68,6 +68,8 @@ class OutboundRule:
             rule.category = rest_obj.category
             rule.status = rest_obj.status
             return rule
+
+        return None
 
 
 @experimental

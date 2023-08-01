@@ -31,8 +31,9 @@ class BaseProperty(dict):
     def __getattr__(self, key: str) -> Any:
         if key.startswith("_"):
             super().__getattribute__(key)
-        else:
-            return self[key]
+            return None
+
+        return self[key]
 
     def __repr__(self) -> str:
         return json.dumps(self.as_dict())
@@ -110,7 +111,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_command_configurations.py
+        .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
             :start-after: [START command_job_resource_configuration]
             :end-before: [END command_job_resource_configuration]
             :language: python

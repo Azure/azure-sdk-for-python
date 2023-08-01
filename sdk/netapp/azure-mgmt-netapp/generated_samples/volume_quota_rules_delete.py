@@ -29,16 +29,15 @@ def main():
         subscription_id="5275316f-a498-48d6-b324-2cbfdc4311b9",
     )
 
-    response = client.volume_quota_rules.begin_delete(
+    client.volume_quota_rules.begin_delete(
         resource_group_name="myRG",
         account_name="account-9957",
         pool_name="pool-5210",
         volume_name="volume-6387",
         volume_quota_rule_name="rule-0004",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-09-01/examples/VolumeQuotaRules_Delete.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-11-01/examples/VolumeQuotaRules_Delete.json
 if __name__ == "__main__":
     main()

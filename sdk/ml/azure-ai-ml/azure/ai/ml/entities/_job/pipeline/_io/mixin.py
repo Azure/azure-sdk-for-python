@@ -78,7 +78,7 @@ class NodeIOMixin:
         # For un-configured outputs, settings it to None, so we won't pass extra fields(eg: default mode)
         return NodeOutput(port_name=name, meta=meta, data=data, owner=self)
 
-    def _get_default_input_val(self, val):  # pylint: disable=unused-argument, no-self-use
+    def _get_default_input_val(self, val):  # pylint: disable=unused-argument
         # use None value as data placeholder for unfilled inputs.
         # server side will fill the default value
         return None
@@ -93,7 +93,7 @@ class NodeIOMixin:
         accessing attribute, eg: node1.inputs.xxx.
 
         :param inputs: Provided kwargs when parameterizing component func.
-        :param input_definition_dict: Static input definition dict. If not provided, will build inputs without meta.
+        :keyword input_definition_dict: Static input definition dict. If not provided, will build inputs without meta.
         :return: Built dynamic input attribute dict.
         """
         if input_definition_dict is not None:
@@ -319,7 +319,7 @@ def flatten_dict(dct, _type, *, allow_dict_fields=None):
 class NodeWithGroupInputMixin(NodeIOMixin):
     """This class provide build_inputs_dict for a node to use ParameterGroup as an input."""
 
-    def _validate_group_input_type(  # pylint: disable=no-self-use
+    def _validate_group_input_type(
         self,
         input_definition_dict: dict,
         inputs: Dict[str, Union[Input, str, bool, int, float]],
@@ -360,7 +360,7 @@ class NodeWithGroupInputMixin(NodeIOMixin):
         """Build an input attribute dict so user can get/set inputs by
         accessing attribute, eg: node1.inputs.xxx.
 
-        :param input_definition_dict: Input definition dict from component entity.
+        :keyword input_definition_dict: Input definition dict from component entity.
         :param inputs: Provided kwargs when parameterizing component func.
         :return: Built input attribute dict.
         """
@@ -401,7 +401,7 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         """Build an input attribute dict so user can get/set inputs by
         accessing attribute, eg: node1.inputs.xxx.
 
-        :param input_definition_dict: Input definition dict from component entity.
+        :keyword input_definition_dict: Input definition dict from component entity.
         :param inputs: Provided kwargs when parameterizing component func.
         :return: Built input attribute dict.
         """
@@ -415,7 +415,6 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         """Build an output object for pipeline and copy settings from source output.
 
         :param name: Output name.
-        :param meta: Output metadata.
         :param data: Output data.
         :return: Built output object.
         """
