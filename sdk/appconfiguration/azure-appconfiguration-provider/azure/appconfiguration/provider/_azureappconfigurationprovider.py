@@ -62,6 +62,7 @@ def load(
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
+    on_refresh_error: Optional[Callable[[Exception], None]] = None,
     **kwargs
 ) -> "AzureAppConfigurationProvider":
     """
@@ -81,6 +82,8 @@ def load(
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
+    :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
+    :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings.
     """
 
 
@@ -93,6 +96,7 @@ def load(
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
+    on_refresh_error: Optional[Callable[[Exception], None]] = None,
     **kwargs
 ) -> "AzureAppConfigurationProvider":
     """
@@ -110,6 +114,8 @@ def load(
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
+    :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
+    :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings.
     """
 
 
