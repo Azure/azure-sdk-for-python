@@ -67,7 +67,6 @@ setup(
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
             "azure.mgmt",
-            "azure.mgmt.compute.v20*",
         ]
     ),
     include_package_data=True,
