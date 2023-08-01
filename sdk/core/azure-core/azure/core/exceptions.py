@@ -28,20 +28,27 @@ import json
 import logging
 import sys
 
-from typing import Callable, Any, Optional, Union, Type, List, Mapping, TypeVar, Generic, Dict, TYPE_CHECKING
+from typing import (
+    Callable,
+    Any,
+    Optional,
+    Union,
+    Type,
+    List,
+    Mapping,
+    TypeVar,
+    Generic,
+    Dict,
+    Protocol,
+    runtime_checkable,
+    TYPE_CHECKING,
+)
 from types import TracebackType
 
 _LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from azure.core.pipeline.policies import RequestHistory
-    from .pipeline.transport import (
-        HttpResponse as LegacyHttpResponse,
-        AsyncHttpResponse as LegacyAsyncHttpResponse,
-    )
-    from .rest import HttpResponse, AsyncHttpResponse
-
-    AllHTTPResponseType = Union[LegacyHttpResponse, HttpResponse, LegacyAsyncHttpResponse, AsyncHttpResponse]
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -122,7 +129,7 @@ class ErrorMap(Generic[KeyType, ValueType]):
         return self._default_error
 
 
-def map_error(status_code: int, response: "AllHTTPResponseType", error_map: Mapping[int, Type[Any]]) -> None:
+def map_error(status_code: int, response: "_HttpResponseCommonAPI", error_map: Mapping[int, Type[Any]]) -> None:
     if not error_map:
         return
     error_type = error_map.get(status_code)
@@ -302,6 +309,30 @@ class ServiceResponseTimeoutError(ServiceResponseError):
     """Error raised when timeout happens"""
 
 
+@runtime_checkable
+class _HttpResponseCommonAPI(Protocol):
+    """Protocol used by exceptions for HTTP response.
+
+    As HttpResponseError uses very few properties of HttpResponse, a protocol
+    is faster and simpler than import all the possible types (at least 6).
+    """
+
+    @property
+    def reason(self) -> Optional[str]:
+        pass
+
+    @property
+    def status_code(self) -> Optional[int]:
+        pass
+
+    def text(self) -> str:
+        pass
+
+    @property
+    def request(self) -> object:  # object as type, since all we need is str() on it
+        pass
+
+
 class HttpResponseError(AzureError):
     """A request was made, and a non-success status code was received from the service.
 
@@ -322,14 +353,14 @@ class HttpResponseError(AzureError):
     """
 
     def __init__(
-        self, message: Optional[object] = None, response: "Optional[AllHTTPResponseType]" = None, **kwargs: Any
+        self, message: Optional[object] = None, response: "Optional[_HttpResponseCommonAPI]" = None, **kwargs: Any
     ) -> None:
         # Don't want to document this one yet.
         error_format = kwargs.get("error_format", ODataV4Format)
 
         self.reason: Optional[str] = None
         self.status_code: Optional[int] = None
-        self.response: "Optional[AllHTTPResponseType]" = response
+        self.response: "Optional[_HttpResponseCommonAPI]" = response
         if response:
             self.reason = response.reason
             self.status_code = response.status_code
@@ -357,7 +388,7 @@ class HttpResponseError(AzureError):
 
     @staticmethod
     def _parse_odata_body(
-        error_format: Type[ODataV4Format], response: "Optional[AllHTTPResponseType]"
+        error_format: Type[ODataV4Format], response: "Optional[_HttpResponseCommonAPI]"
     ) -> Optional[ODataV4Format]:
         if response:
             try:
@@ -447,7 +478,7 @@ class ODataV4Error(HttpResponseError):
 
     _ERROR_FORMAT = ODataV4Format
 
-    def __init__(self, response: "AllHTTPResponseType", **kwargs: Any) -> None:
+    def __init__(self, response: "_HttpResponseCommonAPI", **kwargs: Any) -> None:
         # Ensure field are declared, whatever can happen afterwards
         self.odata_json: Optional[Dict[str, Any]] = None
         try:
@@ -494,7 +525,7 @@ class StreamConsumedError(AzureError):
     :type response: ~azure.core.rest.HttpResponse or ~azure.core.rest.AsyncHttpResponse
     """
 
-    def __init__(self, response: "AllHTTPResponseType") -> None:
+    def __init__(self, response: "_HttpResponseCommonAPI") -> None:
         message = (
             "You are attempting to read or stream the content from request {}. "
             "You have likely already consumed this stream, so it can not be accessed anymore.".format(response.request)
@@ -512,7 +543,7 @@ class StreamClosedError(AzureError):
     :type response: ~azure.core.rest.HttpResponse or ~azure.core.rest.AsyncHttpResponse
     """
 
-    def __init__(self, response: "AllHTTPResponseType") -> None:
+    def __init__(self, response: "_HttpResponseCommonAPI") -> None:
         message = (
             "The content for response from request {} can no longer be read or streamed, since the "
             "response has already been closed.".format(response.request)
@@ -530,7 +561,7 @@ class ResponseNotReadError(AzureError):
     :type response: ~azure.core.rest.HttpResponse or ~azure.core.rest.AsyncHttpResponse
     """
 
-    def __init__(self, response: "AllHTTPResponseType") -> None:
+    def __init__(self, response: "_HttpResponseCommonAPI") -> None:
         message = (
             "You have not read in the bytes for the response from request {}. "
             "Call .read() on the response first.".format(response.request)
