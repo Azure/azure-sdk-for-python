@@ -123,21 +123,22 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     """A feature flag configuration value.
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar etag: Entity tag (etag) of the object
+    :ivar etag: Entity tag (etag) of the object.
     :vartype etag: str
-    :param feature_id:
+    :param feature_id: The identity of the configuration setting.
     :type feature_id: str
-    :ivar value: The value of the configuration setting
+    :ivar value: The value of the configuration setting.
     :vartype value: str
-    :keyword enabled:
+    :keyword enabled: The value indicating whether the feature flag is enabled. A feature is OFF if enabled is false.
+        If enabled is true, then the feature is ON if there are no conditions or if all conditions are satisfied.
     :paramtype enabled: bool
-    :keyword filters:
+    :keyword filters: Filters that must run on the client and be evaluated as true for the feature to be considered enabled.
     :paramtype filters: list[dict[str, Any]]
-    :ivar label:
+    :ivar label: A label used to group this configuration setting with others.
     :vartype label: str
-    :ivar display_name:
+    :ivar display_name: A name for the feature to use for display rather than the ID.
     :vartype display_name: str
-    :ivar description:
+    :ivar description: A description of the feature.
     :vartype description: str
     :ivar content_type:
     :vartype content_type: str
@@ -185,14 +186,16 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         self.display_name = kwargs.get("display_name", None)
         self.filters = [] if filters is None else filters
         self.enabled = enabled
-        self._value = json.dumps({"enabled": self.enabled, "conditions": {"client_filters": self.filters}})
+        self._value = json.dumps(
+            {"id": self.feature_id, "enabled": self.enabled, "conditions": {"client_filters": self.filters}}
+        )
 
     @property
     def value(self):
         try:
             temp = json.loads(self._value)
+            temp["id"] = self.feature_id
             temp["enabled"] = self.enabled
-
             if "conditions" not in temp.keys():
                 temp["conditions"] = {}
             temp["conditions"]["client_filters"] = self.filters
@@ -205,7 +208,8 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     def value(self, new_value):
         try:
             temp = json.loads(new_value)
-            self._value = new_value
+            temp["id"] = self.feature_id
+            self._value = json.dumps(temp)
             self.enabled = temp.get("enabled", None)
             self.filters = None
             conditions = temp.get("conditions", None)
