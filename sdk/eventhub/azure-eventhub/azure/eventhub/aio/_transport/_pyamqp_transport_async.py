@@ -228,65 +228,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         consumer._callback_task_run = True
         consumer._last_callback_called_time = time.time()
 
-
-        # max_retries = consumer._client._config.max_retries
-        # retried_times = 0
-        # running = True
-        # deadline = time.time() + (max_wait_time or 0)  # max_wait_time can be None
-        # has_not_fetched_once = True
-
-        # while len(consumer._message_buffer) < max_batch_size and (time.time() < deadline):
-        #     has_not_fetched_once = False
-
-        #     while retried_times <= max_retries and running:
-        #         try:
-        #             await consumer._open() # pylint: disable=protected-access
-        #             running = await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch)
-        #             break
-        #         except asyncio.CancelledError:  # pylint: disable=try-except-raise
-        #             raise
-        #         except Exception as exception:  # pylint: disable=broad-except
-        #             # If optional dependency is not installed, do not retry.
-        #             if isinstance(exception, ImportError):
-        #                 raise exception
-        #             if (
-        #                 isinstance(exception, errors.AMQPLinkError)
-        #                 and exception.condition == errors.ErrorCondition.LinkStolen  # pylint: disable=no-member
-        #             ):
-        #                 raise await consumer._handle_exception(exception)
-        #             if not consumer.running:  # exit by close
-        #                 return
-        #             if consumer._last_received_event:
-        #                 consumer._offset = consumer._last_received_event.offset
-        #             last_exception = await consumer._handle_exception(exception)
-        #             retried_times += 1
-        #             if retried_times > max_retries:
-        #                 _LOGGER.info(
-        #                     "%r operation has exhausted retry. Last exception: %r.",
-        #                     consumer._name,
-        #                     last_exception,
-        #                 )
-        #                 raise last_exception
-                    
-        # if consumer._message_buffer:
-        #     while consumer._message_buffer:
-        #         events = [
-        #             consumer._next_message_in_buffer() # pylint: disable=protected-access
-        #             for _ in range(min(max_batch_size, len(consumer._message_buffer))) # pylint: disable=protected-access
-        #         ]
-        #         now_time = time.time()
-        #         if len(events) > 0:
-        #             await consumer._on_event_received(events if batch else events[0]) # pylint: disable=protected-access
-        #             consumer._last_callback_called_time = now_time # pylint: disable=protected-access
-        #         else:
-        #             if max_wait_time and (now_time - consumer._last_callback_called_time) > max_wait_time: # pylint: disable=protected-access
-        #                 # no events received, and need to callback
-        #                 await consumer._on_event_received([] if batch else None) # pylint: disable=protected-access
-        #                 consumer._last_callback_called_time = now_time # pylint: disable=protected-access
-        #             # backoff a bit to avoid throttling CPU when no events are coming
-        #             await asyncio.sleep(0.05)
-
-
         callback_task = asyncio.create_task(
             PyamqpTransportAsync._callback_task(consumer, batch, max_batch_size, max_wait_time)
         )
@@ -300,7 +241,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             for t in tasks:
                 if not t.done():
                     await asyncio.wait([t], timeout=1)
-
 
     @staticmethod
     async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):
