@@ -112,6 +112,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             attributes = resource.attributes
         envelope = _utils._create_telemetry_item(time_ns())
         envelope.name = _METRIC_ENVELOPE_NAME
+        envelope.tags.update(_utils._populate_part_a_fields(resource))
         envelope.instrumentation_key = self._instrumentation_key
         data_point = MetricDataPoint(
             name=str("_OTELRESOURCE_")[:1024],
