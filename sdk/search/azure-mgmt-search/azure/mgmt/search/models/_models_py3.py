@@ -1019,7 +1019,7 @@ class SearchService(TrackedResource):  # pylint: disable=too-many-instance-attri
      state. If your service is in the degraded, disabled, or error states, it means the Azure
      Cognitive Search team is actively investigating the underlying issue. Dedicated services in
      these states are still chargeable based on the number of search units provisioned. Known values
-     are: "running", "provisioning", "deleting", "degraded", "disabled", "error", and "stopped".
+     are: "running", "provisioning", "deleting", "degraded", "disabled", and "error".
     :vartype status: str or ~azure.mgmt.search.models.SearchServiceStatus
     :ivar status_details: The details of the search service status.
     :vartype status_details: str
@@ -1259,7 +1259,7 @@ class SearchServiceUpdate(Resource):  # pylint: disable=too-many-instance-attrib
      state. If your service is in the degraded, disabled, or error states, it means the Azure
      Cognitive Search team is actively investigating the underlying issue. Dedicated services in
      these states are still chargeable based on the number of search units provisioned. Known values
-     are: "running", "provisioning", "deleting", "degraded", "disabled", "error", and "stopped".
+     are: "running", "provisioning", "deleting", "degraded", "disabled", and "error".
     :vartype status: str or ~azure.mgmt.search.models.SearchServiceStatus
     :ivar status_details: The details of the search service status.
     :vartype status_details: str

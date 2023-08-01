@@ -170,8 +170,6 @@ class SearchServiceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ERROR = "error"
     """The search service is in error state, indicating either a failure to provision or to be
     #: deleted."""
-    STOPPED = "stopped"
-    """The search service is in a subscription that's disabled."""
 
 
 class SharedPrivateLinkResourceAsyncOperationResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
