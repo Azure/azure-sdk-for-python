@@ -77,7 +77,7 @@ def load(
     :paramtype trim_prefixes: Optional[List[str]]
     :keyword key_vault_options: Options for resolving Key Vault references
     :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
-    :keyword refresh_on: One or more settings whos modification will trigger a full refresh after a fixed interval.
+    :keyword refresh_on: One or more settings whose modification will trigger a full refresh after a fixed interval.
     This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
@@ -109,7 +109,7 @@ def load(
     :paramtype trim_prefixes: Optional[List[str]]
     :keyword key_vault_options: Options for resolving Key Vault references
     :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
-    :keyword refresh_on: One or more settings whos modification will trigger a full refresh after a fixed interval.
+    :keyword refresh_on: One or more settings whose modification will trigger a full refresh after a fixed interval.
     This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
@@ -279,14 +279,22 @@ def _is_retryable_error(error: HttpResponseError) -> bool:
     """Determine whether the service error should be silently retried after a backoff period, or raised.
     Don't know what errors this applies to yet, so just always raising for now.
     """
-    return error.status_code in [429]  # Back off on throttling error
+    # 408: Request Timeout
+    # 429: Too Many Requests
+    # 500: Internal Server Error
+    # 504: Gateway Timeout
+    return error.status_code in [408, 429, 500, 504]  # Back off on throttling error
 
 
 class _RefreshTimer:
+    """
+    A timer that tracks the next refresh time and the number of attempts.
+    """
+
     def __init__(self, **kwargs):
-        self._interval = kwargs.pop("refresh_interval", 30)
+        self._interval: int = kwargs.pop("refresh_interval", 30)
         self._next_refresh_time: float = time.time() + self._interval
-        self._attempts = 1
+        self._attempts: int = 1
         self._min_backoff: int = (
             kwargs.pop("min_backoff", 30) if kwargs.get("min_backoff", 30) <= self._interval else self._interval
         )
@@ -372,7 +380,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                             label,
                         )
                         self._load_all(**kwargs)
-                        # TODO: We need to reset all etags, not just the one that triggered it, could cause extra refreshes.
                         self._refresh_on[(key, label)] = updated_sentinel.etag
                         self._refresh_timer.reset()
                         return
@@ -402,8 +409,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                 key_filter=select.key_filter, label_filter=select.label_filter, **kwargs
             )
             for config in configurations:
-                key = self._proccess_key_name(config)
-                value = self._proccess_key_value(config)
+                key = self._process_key_name(config)
+                value = self._process_key_value(config)
 
                 if isinstance(config, FeatureFlagConfigurationSetting):
                     feature_management = self._dict.get(FEATURE_MANAGEMENT_KEY, {})
@@ -419,7 +426,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                     self._refresh_on[(config.key, config.label)] = config.etag
         self._dict = configuration_settings
 
-    def _proccess_key_name(self, config):
+    def _process_key_name(self, config):
         trimmed_key = config.key
         # Trim the key if it starts with one of the prefixes provided
         for trim in self._trim_prefixes:
@@ -430,7 +437,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             return trimmed_key[len(FEATURE_FLAG_PREFIX) :]
         return trimmed_key
 
-    def _proccess_key_value(self, config):
+    def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
             return _resolve_keyvault_reference(config, self)
         if _is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):

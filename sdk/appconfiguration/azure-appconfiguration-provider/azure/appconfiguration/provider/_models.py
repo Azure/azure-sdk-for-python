@@ -3,9 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import Optional, Callable, TYPE_CHECKING, Union, Awaitable, Mapping, Any
+from typing import Optional, Callable, TYPE_CHECKING, Union, Awaitable, Mapping, Any, NamedTuple
 from ._constants import EMPTY_LABEL
-from typing import NamedTuple
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
