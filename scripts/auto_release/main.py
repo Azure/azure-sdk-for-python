@@ -138,6 +138,7 @@ class CodegenTestPR:
         self.container_name = ''
         self.private_package_link = []  # List[str]
         self.tag_is_stable = False
+        self.has_test = False
 
     @property
     def target_release_date(self) -> str:
@@ -444,12 +445,16 @@ class CodegenTestPR:
     def prepare_test_env(self):
         self.install_package_locally()
         set_test_env_var()
+    
+    @staticmethod
+    def is_live_test()-> bool:
+        return str(os.getenv("AZURE_TEST_RUN_LIVE")).lower() == "true"
 
     @return_origin_path
     def run_test_proc(self):
         # run test
         os.chdir(self.sdk_code_path())
-        test_mode = "Live test" if os.getenv("AZURE_TEST_RUN_LIVE") else "Recording test"
+        test_mode = "Live test" if self.is_live_test() else "Recording test"
         succeeded_result = f'{test_mode} success'
         failed_result = f'{test_mode} fail, detailed info is in pipeline log(search keyword FAILED)!!!'
         try:
@@ -468,8 +473,7 @@ class CodegenTestPR:
             log(f'{test_mode} run done, do not find failure !!!')
             self.test_result = succeeded_result
         
-        # push recording files: https://github.com/Azure/azure-sdk-for-python/blob/7764d2cb6646b5c611df24d15798555638096603/scripts/manage_recordings.py#L42C8-L42C57
-        print_exec("python ../../../scripts/manage_recordings.py push")
+        self.has_test = True
 
     @staticmethod
     def clean_test_env():
@@ -477,11 +481,17 @@ class CodegenTestPR:
             if os.getenv(item):
                 os.environ.pop(item)
 
+    @return_origin_path
+    def upload_recording_files(self):
+        if self.is_live_test() and self.has_test:
+            os.chdir(self.sdk_code_path())
+            print_exec("python ../../../scripts/manage_recordings.py push")
+
     def run_test(self):
         self.prepare_test_env()
         self.run_test_proc()
         self.clean_test_env()
-        
+        self.upload_recording_files()
 
     def create_pr_proc(self):
         api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.bot_token)
@@ -577,11 +587,15 @@ class CodegenTestPR:
         self.zero_version_policy()
         self.ask_check_policy()
 
-    def create_pr(self):
-        # commit all code
+    @staticmethod
+    def commit_and_push():
         print_exec('git add sdk/')
         print_exec('git commit -m \"code and test\"')
         print_check('git push origin HEAD -f')
+
+    def create_pr(self):
+        # commit all code
+        self.commit_and_push()
 
         # create PR
         self.create_pr_proc()
@@ -600,6 +614,7 @@ class CodegenTestPR:
             self.package_name = self.spec_readme.split('/')[-1].split('-')[-1]
             self.checkout_branch("DEBUG_SDK_BRANCH", "azure-sdk-for-python")
             self.run_test()
+            self.commit_and_push()
 
 
 if __name__ == '__main__':

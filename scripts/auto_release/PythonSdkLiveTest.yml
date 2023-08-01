@@ -36,7 +36,7 @@ jobs:
         python scripts/dev_setup.py -p azure-core
         cd ..
         git config --global user.email "PythonSdkPipelines"
-        git config --global user.name "PythonSdkPipelines"
+        git config --global user.name "$(USR_NAME)"
 
         # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
         mkdir azure-sdk-for-python
