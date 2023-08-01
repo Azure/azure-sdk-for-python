@@ -23,6 +23,9 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import UserAssignedIdent
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     UsernamePassword as RestWorkspaceConnectionUsernamePassword,
 )
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    WorkspaceConnectionApiKey as RestWorkspaceConnectionApiKey,
+)
 from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestUserAssignedIdentityConfiguration
 from azure.ai.ml._restclient.v2022_10_01.models import (
@@ -42,7 +45,7 @@ from azure.ai.ml._restclient.v2022_10_01.models import (
 from azure.ai.ml._restclient.v2022_10_01.models import (
     ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ConnectionAuthType
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
 )
@@ -189,6 +192,37 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
             return NotImplemented
         return self.username == other.username and self.password == other.password
 
+class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
+    """Api Key Credentials.
+
+    :param key: key
+    :type key: str
+    """
+
+    def __init__(
+        self,
+        *,
+        key: str,
+    ):
+        super().__init__()
+        self.type = camel_to_snake(ConnectionAuthType.API_KEY)
+        self.key = key
+
+    def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionApiKey:
+        return RestWorkspaceConnectionApiKey(key=self.key)
+
+    @classmethod
+    def _from_workspace_connection_rest_object(
+        cls, obj: Optional[RestWorkspaceConnectionApiKey]
+    ) -> "ApiKeyConfiguration":
+        return cls(
+            key=obj.key if obj is not None and obj.key else None,
+        )
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, ApiKeyConfiguration):
+            return NotImplemented
+        return self.key == other.key
 
 class BaseTenantCredentials(RestTranslatableMixin, DictMixin, ABC):
     def __init__(

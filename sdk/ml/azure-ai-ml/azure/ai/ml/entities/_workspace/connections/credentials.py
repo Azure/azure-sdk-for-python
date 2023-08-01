@@ -2,12 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     ConnectionAuthType,
     ManagedIdentity,
-    ServicePrincipal,
-    SharedAccessSignature,
-    UsernamePassword,
+    WorkspaceConnectionServicePrincipal as ServicePrincipal,
+    WorkspaceConnectionSharedAccessSignature as SharedAccessSignature,
+    WorkspaceConnectionUsernamePassword as UsernamePassword,
+    WorkspaceConnectionApiKey
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -76,7 +77,36 @@ class UsernamePasswordCredentials(WorkspaceConnectionCredentials):
         if not isinstance(other, UsernamePasswordCredentials):
             return NotImplemented
         return self.username == other.username and self.password == other.password
+    
+class ApiKeyCredentials(WorkspaceConnectionCredentials):
+    """Api Key Credentials.
 
+    :param key: key
+    :type key: str
+    """
+
+    def __init__(
+        self,
+        *,
+        key: str,
+    ):
+        super().__init__()
+        self.type = ConnectionAuthType.API_KEY
+        self.key = key
+
+    def _to_rest_object(self) -> WorkspaceConnectionApiKey:
+        return WorkspaceConnectionApiKey(key=self.key)
+
+    @classmethod
+    def _from_rest_object(cls, obj: WorkspaceConnectionApiKey) -> "ApiKeyCredentials":
+        return cls(
+            key=obj.key if obj.key else None,
+        )
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, ApiKeyCredentials):
+            return NotImplemented
+        return self.key == other.key
 
 class ManagedIdentityCredentials(WorkspaceConnectionCredentials):
     """Managed Identity Credentials.
