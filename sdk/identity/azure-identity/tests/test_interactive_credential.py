@@ -328,7 +328,10 @@ def test_multitenant_authentication():
             ),
         )
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert "/oauth2/v2.0/token" not in request.url, 'mock "request_token" should prevent sending a token request'
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
@@ -371,7 +374,10 @@ def test_multitenant_authentication_not_allowed():
             ),
         )
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert "/oauth2/v2.0/token" not in request.url, 'mock "request_token" should prevent sending a token request'
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]

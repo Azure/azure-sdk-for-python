@@ -103,7 +103,10 @@ def test_no_scopes():
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
-    def send(*_, **__):
+    def send(*_, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         return mock_response(json_payload=build_aad_response(access_token="**"))
 
     credential = SharedTokenCacheCredential(
@@ -585,7 +588,10 @@ def test_authority_environment_variable():
 def test_authentication_record_empty_cache():
     record = AuthenticationRecord("tenant-id", "client_id", "authority", "home_account_id", "username")
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         # expecting only MSAL discovery requests
         assert request.method == "GET"
         return get_discovery_response()
@@ -607,7 +613,10 @@ def test_authentication_record_no_match():
     username = "me"
     record = AuthenticationRecord(tenant_id, client_id, authority, home_account_id, username)
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         # expecting only MSAL discovery requests
         assert request.method == "GET"
         return get_discovery_response()
@@ -811,7 +820,10 @@ def test_authentication_record_authenticating_tenant():
 def test_client_capabilities():
     """the credential should configure MSAL for capability CP1 only if enable_cae is passed."""
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         # expecting only the discovery requests triggered by creating an msal.PublicClientApplication
         # because the cache is empty--the credential shouldn't send a token request
         return get_discovery_response("https://localhost/tenant")
@@ -836,7 +848,10 @@ def test_client_capabilities():
 
 
 def test_within_dac_error():
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         # expecting only the discovery requests triggered by creating an msal.PublicClientApplication
         # because the cache is empty--the credential shouldn't send a token request
         return get_discovery_response("https://localhost/tenant")
@@ -880,7 +895,10 @@ def test_multitenant_authentication():
     second_tenant = "second-tenant"
     second_token = first_token * 2
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant_id = parsed.path.split("/")[1]
         assert tenant_id in (default_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant_id)
@@ -925,7 +943,10 @@ def test_multitenant_authentication_auth_record():
     home_account_id = object_id + "." + default_tenant
     record = AuthenticationRecord(default_tenant, "client-id", authority, home_account_id, "user")
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant_id = parsed.path.split("/")[1]
         if "/oauth2/v2.0/token" not in request.url:
@@ -1000,7 +1021,10 @@ def test_multitenant_authentication_not_allowed():
     default_tenant = "organizations"
     expected_token = "***"
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant_id = parsed.path.split("/")[1]
         assert tenant_id == default_tenant
