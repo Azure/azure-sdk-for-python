@@ -184,17 +184,19 @@ async def simple_hybrid_search():
     # [END simple_hybrid_search]
 
 
-if __name__ == "__main__":
+async def main():
     credential = AzureKeyCredential(key)
     index_client = SearchIndexClient(service_endpoint, credential)
     index = get_hotel_index(index_name)
     index_client.create_index(index)
     client = SearchClient(service_endpoint, index_name, credential)
     hotel_docs = get_hotel_documents()
-    client.upload_documents(documents=hotel_docs)
+    await client.upload_documents(documents=hotel_docs)
 
-    single_vector_search()
-    single_vector_search_with_filter()
-    asyncio.run(single_vector_search())
-    asyncio.run(single_vector_search_with_filter())
-    asyncio.run(simple_hybrid_search())
+    await single_vector_search()
+    await single_vector_search_with_filter()
+    await simple_hybrid_search()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
