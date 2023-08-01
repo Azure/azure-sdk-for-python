@@ -37,7 +37,7 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
                     tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
                     client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
                     client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
-                    authority=authority
+                    authority=authority,
                 )
             return DefaultAzureCredential(**kwargs)
         return AsyncFakeTokenCredential()

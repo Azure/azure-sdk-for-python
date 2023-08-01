@@ -43,13 +43,6 @@ class InteractiveBrowserCredential(InteractiveCredential):
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
-    :keyword bool allow_broker: Brokers provide single sign-on, device identification, and application identification
-        verification. If this parameter is set to True, the broker will be used when possible. Defaults to False.
-        Check https://learn.microsoft.com/azure/active-directory/develop/scenario-desktop-acquire-token-wam
-        for more WAM information.
-    :keyword int parent_window_handle: OPTIONAL. If your app is a GUI app running on modern Windows system,
-        and your app opts in to use broker, you are recommended to also provide its window handle, so that the
-        sign in UI window will properly pop up on top of your window.
     :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
         to authenticate. Setting this to true will completely disable both instance discovery and authority validation.
         This functionality is intended for use in scenarios where the metadata endpoint cannot be reached, such as in
@@ -142,7 +135,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
                 timeout=self._timeout,
                 prompt="select_account",
                 port=port,
-                parent_window_handle=self._parent_window_handle,
+                # parent_window_handle=self._parent_window_handle,
             )
         except socket.error as ex:
             raise CredentialUnavailableError(message="Couldn't start an HTTP server.") from ex
