@@ -53,12 +53,17 @@ class AsyncStatePollingMethod(BaseStatePollingMethod, AsyncPollingMethod):
                 try:
                     response = await self._operation()
                     self._evaluate_response(response)
-                except ResourceNotFoundError:
+                except ResourceNotFoundError as not_found_exception:
                     # We'll allow some instances of resource not found to account for replication
                     # delay if session stickiness is lost.
                     self._not_found_count += 1
 
-                    if not self._retry_not_found or self._not_found_count >=3:
+                    not_retryable = (
+                        not self._retry_not_found or
+                        self._give_up_not_found_error(not_found_exception)
+                    )
+
+                    if not_retryable or self._not_found_count >=3:
                         raise
 
                 if not self.finished():

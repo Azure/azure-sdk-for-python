@@ -63,6 +63,12 @@ class BaseStatePollingMethod:
         self._status = "finished" if response.get("state", None) == self._desired_state else "polling"
         self._latest_response = response
 
+    def _give_up_not_found_error(self, exception: ResourceNotFoundError) -> bool:
+        if exception.error is not None and exception.error.code == "InvalidTransactionId":
+            return True
+        
+        return False
+
     def status(self) -> str:
         return self._status
 
@@ -96,12 +102,17 @@ class StatePollingMethod(BaseStatePollingMethod, PollingMethod):
                 try:
                     response = self._operation()
                     self._evaluate_response(response)
-                except ResourceNotFoundError:
+                except ResourceNotFoundError as not_found_exception:
                     # We'll allow some instances of resource not found to account for replication
                     # delay if session stickiness is lost.
                     self._not_found_count += 1
 
-                    if not self._retry_not_found or self._not_found_count >=3:
+                    not_retryable = (
+                        not self._retry_not_found or
+                        self._give_up_not_found_error(not_found_exception)
+                    )
+
+                    if not_retryable or self._not_found_count >=3:
                         raise
 
                 if not self.finished():
