@@ -54,12 +54,12 @@ class AsyncStatePollingMethod(BaseStatePollingMethod, AsyncPollingMethod):
                     response = await self._operation()
                     self._evaluate_response(response)
                 except ResourceNotFoundError:
-                    # We'll allow one instance of resource not found to account for replication
-                    # delay.
-                    if not self._retry_not_found or self._received_not_found_exception:
-                        raise
+                    # We'll allow some instances of resource not found to account for replication
+                    # delay if session stickiness is lost.
+                    self._not_found_count += 1
 
-                    self._received_not_found_exception = True
+                    if not self._retry_not_found or self._not_found_count >=3:
+                        raise
 
                 if not self.finished():
                     await asyncio.sleep(self._polling_interval_s)
@@ -220,7 +220,15 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
                 transaction_id=transaction_id, **kwargs
             )
 
-        initial_response = await operation()
+        try:
+            initial_response = operation()
+        except ResourceNotFoundError:
+            if polling is False and polling is None:
+                raise
+
+            # This method allows for temporary resource not found errors, which may occur if session
+            # stickiness is lost and there is replication lag.
+            initial_response = {}
 
         if polling is True:
             polling_method = cast(
