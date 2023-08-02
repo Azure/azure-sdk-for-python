@@ -16,6 +16,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     SASAuthTypeWorkspaceConnectionProperties,
     ServicePrincipalAuthTypeWorkspaceConnectionProperties,
     UsernamePasswordAuthTypeWorkspaceConnectionProperties,
+    ApiKeyAuthWorkspaceConnectionProperties
 )
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
@@ -35,6 +36,7 @@ from azure.ai.ml.entities._credentials import (
     ServicePrincipalConfiguration,
     UsernamePasswordConfiguration,
     AccessKeyConfiguration,
+    ApiKeyConfiguration
 )
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
@@ -204,6 +206,8 @@ class WorkspaceConnection(Resource):
             credentials = AccessKeyConfiguration._from_workspace_connection_rest_object(properties.credentials)
         if properties.auth_type == ConnectionAuthType.SERVICE_PRINCIPAL:
             credentials = ServicePrincipalConfiguration._from_workspace_connection_rest_object(properties.credentials)
+        if properties.auth_type == ConnectionAuthType.API_KEY:
+            credentials = ApiKeyConfiguration._from_workspace_connection_rest_object(properties.credentials)
 
         workspace_connection = WorkspaceConnection(
             id=rest_obj.id,
@@ -236,6 +240,8 @@ class WorkspaceConnection(Resource):
             workspace_connection_properties_class = SASAuthTypeWorkspaceConnectionProperties
         elif auth_type == camel_to_snake(ConnectionAuthType.SERVICE_PRINCIPAL):
             workspace_connection_properties_class = ServicePrincipalAuthTypeWorkspaceConnectionProperties
+        elif auth_type == camel_to_snake(ConnectionAuthType.API_KEY):
+            workspace_connection_properties_class = ApiKeyAuthWorkspaceConnectionProperties
         elif auth_type is None:
             workspace_connection_properties_class = NoneAuthTypeWorkspaceConnectionProperties
 
