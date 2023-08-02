@@ -23,16 +23,9 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_RETRY_NAME,
     _REQ_SUCCESS_NAME,
     _REQ_THROTTLE_NAME,
-    _CLOUD_RESOURCE_ID_RESOURCE_ATTRIBUTE,
-    _WEBSITE_SITE_NAME,
-    _REGION_NAME,
-    _WEBSITE_SITE_NAME,
     _WEBSITE_HOME_STAMPNAME,
     _WEBSITE_HOSTNAME,
-    _WEBSITE_INSTANCE_ID,
-    _WEBSITE_OWNER_NAME,
-    _WEBSITE_RESOURCE_GROUP,
-    _WEBSITE_SLOT_NAME,
+    _WEBSITE_SITE_NAME,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP_LOCK,

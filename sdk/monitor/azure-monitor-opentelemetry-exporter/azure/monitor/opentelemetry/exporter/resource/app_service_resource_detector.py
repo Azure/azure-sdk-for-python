@@ -6,16 +6,16 @@ from opentelemetry.sdk.resources import ResourceDetector, Resource
 from opentelemetry.semconv.resource import ResourceAttributes, CloudPlatformValues, CloudProviderValues
 
 from azure.monitor.opentelemetry.exporter._constants import (
+    _AZURE_APP_SERVICE_STAMP_RESOURCE_ATTRIBUTE,
     _CLOUD_RESOURCE_ID_RESOURCE_ATTRIBUTE,
     _REGION_NAME,
-    _WEBSITE_SITE_NAME,
     _WEBSITE_HOME_STAMPNAME,
     _WEBSITE_HOSTNAME,
     _WEBSITE_INSTANCE_ID,
     _WEBSITE_OWNER_NAME,
     _WEBSITE_RESOURCE_GROUP,
+    _WEBSITE_SITE_NAME,
     _WEBSITE_SLOT_NAME,
-    _AZURE_APP_SERVICE_STAMP_RESOURCE_ATTRIBUTE,
 )
 
 
