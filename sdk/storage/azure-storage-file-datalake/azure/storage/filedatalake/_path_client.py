@@ -346,11 +346,12 @@ class PathClient(StorageAccountHostsMixin):
         :returns: A dictionary containing information about the deleted path.
         :rtype: Dict[str, Any]
         """
-        # Perform paginated delete only if using OAuth and api version is 2023-08-03 or later
-        # The pagination is only for ACL checks, the final requests remains the atomic delete operation
+        # Perform paginated delete only if using OAuth, deleting a directory, and api version is 2023-08-03 or later
+        # The pagination is only for ACL checks, the final request remains the atomic delete operation
         paginated = None
         if (compare_api_versions(self.api_version, '2023-08-03') >= 0 and
-            hasattr(self.credential, 'get_token')):
+            hasattr(self.credential, 'get_token') and
+            kwargs.get('recursive')):  # Directory delete will always specify recursive
             paginated = True
 
         options = self._delete_path_options(paginated, **kwargs)

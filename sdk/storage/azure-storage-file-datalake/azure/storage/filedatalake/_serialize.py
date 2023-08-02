@@ -31,7 +31,7 @@ _SUPPORTED_API_VERSIONS = [
     '2023-01-03',
     '2023-05-03',
     '2023-08-03',
-]
+]  # This list must be in chronological order!
 
 
 def get_api_version(kwargs):
