@@ -1,12 +1,18 @@
 from unittest.mock import DEFAULT, Mock
 
 import pytest
+from azure.core.polling import LROPoller
+from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import FeatureStore, Workspace
+from azure.ai.ml.entities._feature_store._constants import (
+    OFFLINE_MATERIALIZATION_STORE_TYPE,
+    ONLINE_MATERIALIZATION_STORE_TYPE,
+)
+from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
 from azure.ai.ml.operations._feature_store_operations import FeatureStoreOperations
-from azure.core.polling import LROPoller
 
 
 @pytest.fixture
@@ -69,6 +75,24 @@ class TestFeatureStoreOperation:
         mock_feature_store_operation.begin_create(feature_store=FeatureStore(name="name"))
         mock_feature_store_operation._operation.begin_update.assert_called()
 
+        # create missing managed identity
+        mock_feature_store_operation._operation.get.side_effect = Exception()
+
+        with pytest.raises(ValidationError):
+            mock_feature_store_operation.begin_create(
+                feature_store=FeatureStore(
+                    name="name",
+                    offline_store=MaterializationStore(type=OFFLINE_MATERIALIZATION_STORE_TYPE, target="test_path"),
+                )
+            )
+        with pytest.raises(ValidationError):
+            mock_feature_store_operation.begin_create(
+                feature_store=FeatureStore(
+                    name="name",
+                    online_store=MaterializationStore(type=ONLINE_MATERIALIZATION_STORE_TYPE, target="test_path"),
+                )
+            )
+
     def test_update(self, mock_feature_store_operation: FeatureStoreOperations) -> None:
         fs = FeatureStore(
             name="name",
@@ -76,7 +100,11 @@ class TestFeatureStoreOperation:
         )
 
         def outgoing_get_call(rg, name):
-            return Workspace(name=name, kind="featurestore")._to_rest_object()
+            from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
+
+            ws = Workspace(name=name, kind="featurestore")
+            ws._feature_store_settings = FeatureStoreSettings()
+            return ws._to_rest_object()
 
         def outgoing_call(rg, name, params, polling, cls):
             assert rg == "test_resource_group"
@@ -90,6 +118,21 @@ class TestFeatureStoreOperation:
         mock_feature_store_operation._operation.begin_update.side_effect = outgoing_call
         mock_feature_store_operation.begin_update(fs, update_dependent_resources=True)
         mock_feature_store_operation._operation.begin_update.assert_called()
+
+        with pytest.raises(ValidationError):
+            mock_feature_store_operation.begin_update(
+                feature_store=FeatureStore(
+                    name="name",
+                    offline_store=MaterializationStore(type=OFFLINE_MATERIALIZATION_STORE_TYPE, target="test_path"),
+                )
+            )
+        with pytest.raises(ValidationError):
+            mock_feature_store_operation.begin_update(
+                feature_store=FeatureStore(
+                    name="name",
+                    online_store=MaterializationStore(type=ONLINE_MATERIALIZATION_STORE_TYPE, target="test_path"),
+                )
+            )
 
     def test_delete(self, mock_feature_store_operation: FeatureStoreOperations, mocker: MockFixture) -> None:
         def outgoing_call(rg, name):

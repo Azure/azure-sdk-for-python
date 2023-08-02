@@ -3764,7 +3764,7 @@ class DocumentModelSummary:
             expires_on=data.get("expires_on", None),
         )
 
-class AzureBlobFileListSource:
+class BlobFileListSource:
     """Content source for a file list in Azure Blob Storage."""
 
     container_url: str
@@ -3783,7 +3783,7 @@ class AzureBlobFileListSource:
 
     def __repr__(self) -> str:
         return (
-            f"AzureBlobFileListSource(container_url={self.container_url}, file_list={self.file_list})"
+            f"BlobFileListSource(container_url={self.container_url}, file_list={self.file_list})"
         )
 
     @classmethod
@@ -3797,7 +3797,7 @@ class AzureBlobFileListSource:
         return AzureBlobFileListContentSource(container_url=self.container_url, file_list=self.file_list)
 
     def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of AzureBlobFileListSource.
+        """Returns a dict representation of BlobFileListSource.
 
         :return: Dict[str, Any]
         :rtype: Dict[str, Any]
@@ -3808,12 +3808,12 @@ class AzureBlobFileListSource:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "AzureBlobFileListSource":
-        """Converts a dict in the shape of a AzureBlobFileListSource to the model itself.
+    def from_dict(cls, data: Dict[str, Any]) -> "BlobFileListSource":
+        """Converts a dict in the shape of a BlobFileListSource to the model itself.
 
-        :param Dict[str, Any] data: A dictionary in the shape of AzureBlobFileListSource.
-        :return: AzureBlobFileListSource
-        :rtype: AzureBlobFileListSource
+        :param Dict[str, Any] data: A dictionary in the shape of BlobFileListSource.
+        :return: BlobFileListSource
+        :rtype: BlobFileListSource
         """
         return cls(
             container_url=data.get("container_url", None),
@@ -3821,7 +3821,7 @@ class AzureBlobFileListSource:
         )
 
 
-class AzureBlobSource:
+class BlobSource:
     """Content source for Azure Blob Storage."""
 
     container_url: str
@@ -3841,7 +3841,7 @@ class AzureBlobSource:
 
     def __repr__(self) -> str:
         return (
-            f"AzureBlobSource(container_url={self.container_url}, prefix={self.prefix})"
+            f"BlobSource(container_url={self.container_url}, prefix={self.prefix})"
         )
 
     @classmethod
@@ -3855,7 +3855,7 @@ class AzureBlobSource:
         return AzureBlobContentSource(container_url=self.container_url, prefix=self.prefix)
 
     def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of AzureBlobSource.
+        """Returns a dict representation of BlobSource.
 
         :return: Dict[str, Any]
         :rtype: Dict[str, Any]
@@ -3866,12 +3866,12 @@ class AzureBlobSource:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "AzureBlobSource":
-        """Converts a dict in the shape of a AzureBlobSource to the model itself.
+    def from_dict(cls, data: Dict[str, Any]) -> "BlobSource":
+        """Converts a dict in the shape of a BlobSource to the model itself.
 
-        :param Dict[str, Any] data: A dictionary in the shape of AzureBlobSource.
-        :return: AzureBlobSource
-        :rtype: AzureBlobSource
+        :param Dict[str, Any] data: A dictionary in the shape of BlobSource.
+        :return: BlobSource
+        :rtype: BlobSource
         """
         return cls(
             container_url=data.get("container_url", None),
@@ -3885,12 +3885,12 @@ class ClassifierDocumentTypeDetails:
     source_kind: Literal["azureBlob", "azureBlobFileList"]
     """Type of training data source, known values are: "azureBlob" and "azureBlobFileList"."""
 
-    source: Union[AzureBlobSource, AzureBlobFileListSource]
+    source: Union[BlobSource, BlobFileListSource]
     """Content source containing the training data."""
 
     def __init__(  # pylint: disable=unused-argument
         self,
-        source: Union[AzureBlobSource, AzureBlobFileListSource]
+        source: Union[BlobSource, BlobFileListSource]
     ) -> None:
         self.source_kind = source._kind
         self.source = source
@@ -3904,9 +3904,9 @@ class ClassifierDocumentTypeDetails:
     def _from_generated(cls, model):
         source = None
         if model.azure_blob_source is not None:
-            source = AzureBlobSource._from_generated(model.azure_blob_source)
+            source = BlobSource._from_generated(model.azure_blob_source)
         elif model.azure_blob_file_list_source is not None:
-            source=AzureBlobFileListSource._from_generated(model.azure_blob_file_list_source)
+            source=BlobFileListSource._from_generated(model.azure_blob_file_list_source)
 
         return cls(
             source=source,
@@ -3940,9 +3940,9 @@ class ClassifierDocumentTypeDetails:
         kind = data.get("source_kind", None)
         if source is not None and kind is not None:
             if kind == "azureBlobFileList":
-                source = AzureBlobFileListSource.from_dict(source)
+                source = BlobFileListSource.from_dict(source)
             else:
-                source = AzureBlobSource.from_dict(source)
+                source = BlobSource.from_dict(source)
         return cls(
             source=source,
         )
@@ -4743,23 +4743,24 @@ class ResourceDetails:
     """Details regarding the Form Recognizer resource.
 
     .. versionadded:: 2023-07-31
-        The *custom_neural_document_model_builds* property.
+        The *neural_document_model_quota* property.
     """
 
     custom_document_models: CustomDocumentModelsDetails
     """Details regarding the custom models under the Form Recognizer resource."""
-    custom_neural_document_model_builds: QuotaDetails
+    neural_document_model_quota: QuotaDetails
+    """Quota details regarding the custom neural document model builds under the Form Recognizer resource."""
 
     def __init__(
         self,
         **kwargs: Any
     ) -> None:
         self.custom_document_models = kwargs.get("custom_document_models", None)
-        self.custom_neural_document_model_builds = kwargs.get("custom_neural_document_model_builds", None)
+        self.neural_document_model_quota = kwargs.get("neural_document_model_quota", None)
 
     def __repr__(self) -> str:
         return f"ResourceDetails(custom_document_models={repr(self.custom_document_models)}, " \
-               f"custom_neural_document_model_builds={repr(self.custom_neural_document_model_builds)})"
+               f"neural_document_model_quota={repr(self.neural_document_model_quota)})"
 
     @classmethod
     def _from_generated(cls, info):
@@ -4768,7 +4769,7 @@ class ResourceDetails:
         return cls(
             custom_document_models=CustomDocumentModelsDetails._from_generated(info.custom_document_models)
             if info.custom_document_models else None,
-            custom_neural_document_model_builds=QuotaDetails._from_generated(custom_neural_builds)
+            neural_document_model_quota=QuotaDetails._from_generated(custom_neural_builds)
             if custom_neural_builds else None,
         )
 
@@ -4782,8 +4783,8 @@ class ResourceDetails:
                 "custom_document_models": self.custom_document_models.to_dict()
                 if self.custom_document_models
                 else None,
-                "custom_neural_document_model_builds": self.custom_neural_document_model_builds.to_dict()
-                if self.custom_neural_document_model_builds
+                "neural_document_model_quota": self.neural_document_model_quota.to_dict()
+                if self.neural_document_model_quota
                 else None,
             }
 
@@ -4799,9 +4800,9 @@ class ResourceDetails:
             custom_document_models=CustomDocumentModelsDetails.from_dict(
                 data.get("custom_document_models")  # type: ignore
             ) if data.get("custom_document_models") else None,
-            custom_neural_document_model_builds=QuotaDetails.from_dict(
-                data.get("custom_neural_document_model_builds")  # type: ignore
-            ) if data.get("custom_neural_document_model_builds") else None,
+            neural_document_model_quota=QuotaDetails.from_dict(
+                data.get("neural_document_model_quota")  # type: ignore
+            ) if data.get("neural_document_model_quota") else None,
         )
 
 

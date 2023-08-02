@@ -10,10 +10,10 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class Objective(RestTranslatableMixin):
     """Optimization objective.
 
-    :param goal: Required. Defines supported metric goals for hyperparameter tuning. Acceptable values
+    :param goal: Defines supported metric goals for hyperparameter tuning. Accepted values
      are: "minimize", "maximize".
     :type goal: str
-    :param primary_metric: Required. Name of the metric to optimize.
+    :param primary_metric: The name of the metric to optimize.
     :type primary_metric: str
 
     .. admonition:: Example:
@@ -24,7 +24,7 @@ class Objective(RestTranslatableMixin):
             :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
             :language: python
             :dedent: 8
-            :caption: Assigning an objective to a SweepJob
+            :caption: Assigning an objective to a SweepJob.
     """
 
     def __init__(self, goal: str, primary_metric: Optional[str] = None) -> None:
