@@ -153,8 +153,6 @@ from .operations import (
     NspAccessRulesReconcileOperations,
     NspAssociationReconcileOperations,
     NspAssociationsOperations,
-    NspLinkReconcileOperations,
-    NspLinkReferenceReconcileOperations,
     NspLinkReferencesOperations,
     NspLinksOperations,
     NspProfilesOperations,
@@ -233,8 +231,6 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             'nsp_access_rules_reconcile': '2021-02-01-preview',
             'nsp_association_reconcile': '2021-02-01-preview',
             'nsp_associations': '2021-02-01-preview',
-            'nsp_link_reconcile': '2021-02-01-preview',
-            'nsp_link_reference_reconcile': '2021-02-01-preview',
             'nsp_link_references': '2021-02-01-preview',
             'nsp_links': '2021-02-01-preview',
             'nsp_profiles': '2021-02-01-preview',
@@ -2060,34 +2056,6 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def nsp_associations(self):
         api_version = self._get_api_version("nsp_associations")
         return NspAssociationsOperations(
-            self._client,
-            self._config,
-            Serializer(self._models_dict()),
-            Deserializer(self._models_dict()),
-            api_version=api_version,
-        )
-
-    @property
-    @api_version_validation(
-        method_valid_on=['2021-02-01-preview']
-    )
-    def nsp_link_reconcile(self):
-        api_version = self._get_api_version("nsp_link_reconcile")
-        return NspLinkReconcileOperations(
-            self._client,
-            self._config,
-            Serializer(self._models_dict()),
-            Deserializer(self._models_dict()),
-            api_version=api_version,
-        )
-
-    @property
-    @api_version_validation(
-        method_valid_on=['2021-02-01-preview']
-    )
-    def nsp_link_reference_reconcile(self):
-        api_version = self._get_api_version("nsp_link_reference_reconcile")
-        return NspLinkReferenceReconcileOperations(
             self._client,
             self._config,
             Serializer(self._models_dict()),

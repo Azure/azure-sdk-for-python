@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Export OTel Resource
+    ([#31355](https://github.com/Azure/azure-sdk-for-python/pull/31355))
+
 ### Breaking Changes
 
 ### Bugs Fixed

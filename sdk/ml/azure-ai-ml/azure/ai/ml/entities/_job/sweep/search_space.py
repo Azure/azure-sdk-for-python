@@ -16,16 +16,13 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 class SweepDistribution(ABC, RestTranslatableMixin):
     """Base class for sweep distribution configuration.
 
+    This class should not be instantiated directly. Instead, use one of its subclasses.
+
     :param type: Type of distribution.
     :type type: str
     """
 
     def __init__(self, *, type: Optional[str] = None) -> None:  # pylint: disable=redefined-builtin
-        """Sweep distribution configuration.
-
-        :param type: Type of distribution.
-        :type type: str
-        """
         self.type = type
 
     @classmethod
@@ -65,12 +62,12 @@ class Choice(SweepDistribution):
     """Choice distribution configuration.
 
     :param values: List of values to choose from.
-    :type values: List[Union[float, str, dict]]
+    :type values: list[Union[float, str, dict]]
 
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_choice_loguniform]
             :end-before: [END configure_sweep_job_choice_loguniform]
             :language: python
@@ -79,10 +76,6 @@ class Choice(SweepDistribution):
     """
 
     def __init__(self, values: Optional[List[Union[float, str, dict]]] = None, **kwargs) -> None:
-        """
-        :param values: List of values to choose from.
-        :type values: List[Union[float, str, dict]]
-        """
         kwargs.setdefault(TYPE, SearchSpace.CHOICE)
         super().__init__(**kwargs)
         self.values = values
@@ -135,7 +128,7 @@ class Normal(SweepDistribution):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_randint_normal]
             :end-before: [END configure_sweep_job_randint_normal]
             :language: python
@@ -144,13 +137,6 @@ class Normal(SweepDistribution):
     """
 
     def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs) -> None:
-        """Normal distribution configuration.
-
-        :param mu: Mean of the distribution.
-        :type mu: float
-        :param sigma: Standard deviation of the distribution.
-        :type sigma: float
-        """
         kwargs.setdefault(TYPE, SearchSpace.NORMAL)
         super().__init__(**kwargs)
         self.mu = mu
@@ -175,7 +161,7 @@ class LogNormal(Normal):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_lognormal_qlognormal]
             :end-before: [END configure_sweep_job_lognormal_qlognormal]
             :language: python
@@ -184,13 +170,6 @@ class LogNormal(Normal):
     """
 
     def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs) -> None:
-        """LogNormal distribution configuration.
-
-        :param mu: Mean of the log of the distribution.
-        :type mu: float
-        :param sigma: Standard deviation of the log of the distribution.
-        :type sigma: float
-        """
         kwargs.setdefault(TYPE, SearchSpace.LOGNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
 
@@ -208,7 +187,7 @@ class QNormal(Normal):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_qloguniform_qnormal]
             :end-before: [END configure_sweep_job_qloguniform_qnormal]
             :language: python
@@ -219,15 +198,6 @@ class QNormal(Normal):
     def __init__(
         self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs
     ) -> None:
-        """QNormal distribution configuration.
-
-        :param mu: Mean of the distribution.
-        :type mu: float
-        :param sigma: Standard deviation of the distribution.
-        :type sigma: float
-        :param q: Quantization factor.
-        :type q: int
-        """
         kwargs.setdefault(TYPE, SearchSpace.QNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
         self.q = q
@@ -250,7 +220,7 @@ class QLogNormal(QNormal):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_lognormal_qlognormal]
             :end-before: [END configure_sweep_job_lognormal_qlognormal]
             :language: python
@@ -261,13 +231,6 @@ class QLogNormal(QNormal):
     def __init__(
         self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs
     ) -> None:
-        """QLogNormal distribution configuration.
-
-        :param mu: Mean of the log of the distribution.
-        :type mu: float
-        :param sigma: Standard deviation of the log of the distribution.
-        :type sigma: float
-        """
         kwargs.setdefault(TYPE, SearchSpace.QLOGNORMAL)
         super().__init__(mu=mu, sigma=sigma, q=q, **kwargs)
 
@@ -281,7 +244,7 @@ class Randint(SweepDistribution):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_randint_normal]
             :end-before: [END configure_sweep_job_randint_normal]
             :language: python
@@ -290,11 +253,6 @@ class Randint(SweepDistribution):
     """
 
     def __init__(self, upper: Optional[int] = None, **kwargs) -> None:
-        """Randint distribution configuration.
-
-        :param upper: Upper bound of the distribution.
-        :type upper: int
-        """
         kwargs.setdefault(TYPE, SearchSpace.RANDINT)
         super().__init__(**kwargs)
         self.upper = upper
@@ -318,7 +276,7 @@ class Uniform(SweepDistribution):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_uniform]
             :end-before: [END configure_sweep_job_uniform]
             :language: python
@@ -328,13 +286,6 @@ class Uniform(SweepDistribution):
     """
 
     def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs) -> None:
-        """Uniform distribution configuration.
-
-        :param min_value: Minimum value of the distribution.
-        :type min_value: float
-        :param max_value: Maximum value of the distribution.
-        :type max_value: float
-        """
         kwargs.setdefault(TYPE, SearchSpace.UNIFORM)
         super().__init__(**kwargs)
         self.min_value = min_value
@@ -359,22 +310,15 @@ class LogUniform(Uniform):
     .. admonition:: Example:
         :class: tip
 
-            .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
-                :start-after: [START configure_sweep_job_choice_loguniform]
-                :end-before: [END configure_sweep_job_choice_loguniform]
-                :language: python
-                :dedent: 8
-                :caption: Configuring a LogUniform distribution for a hyperparameter sweep job learning rate
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+            :start-after: [START configure_sweep_job_choice_loguniform]
+            :end-before: [END configure_sweep_job_choice_loguniform]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a LogUniform distribution for a hyperparameter sweep job learning rate
     """
 
     def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs) -> None:
-        """LogUniform distribution configuration.
-
-        :param min_value: Minimum value of the log of the distribution.
-        :type min_value: float
-        :param max_value: Maximum value of the log of the distribution.
-        :type max_value: float
-        """
         kwargs.setdefault(TYPE, SearchSpace.LOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, **kwargs)
 
@@ -392,7 +336,7 @@ class QUniform(Uniform):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_truncation_selection_policy]
             :end-before: [END configure_sweep_job_truncation_selection_policy]
             :language: python
@@ -407,15 +351,6 @@ class QUniform(Uniform):
         q: Optional[int] = None,
         **kwargs,
     ) -> None:
-        """QUniform distribution configuration.
-
-        :param min_value: Minimum value of the distribution.
-        :type min_value: float
-        :param max_value: Maximum value of the distribution.
-        :type max_value: float
-        :param q: Quantization factor.
-        :type q: int
-        """
         kwargs.setdefault(TYPE, SearchSpace.QUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, **kwargs)
         self.q = q
@@ -439,7 +374,7 @@ class QLogUniform(QUniform):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_qloguniform_qnormal]
             :end-before: [END configure_sweep_job_qloguniform_qnormal]
             :language: python
@@ -450,12 +385,5 @@ class QLogUniform(QUniform):
     def __init__(
         self, min_value: Optional[float] = None, max_value: Optional[float] = None, q: Optional[int] = None, **kwargs
     ) -> None:
-        """QLogUniform distribution configuration.
-
-        :param min_value: Minimum value of the log of the distribution.
-        :type min_value: float
-        :param max_value: Maximum value of the log of the distribution.
-        :type max_value: float
-        """
         kwargs.setdefault(TYPE, SearchSpace.QLOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, q=q, **kwargs)
