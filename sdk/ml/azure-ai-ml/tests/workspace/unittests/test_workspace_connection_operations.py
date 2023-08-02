@@ -27,7 +27,7 @@ def mock_workspace_connection_operation(
     yield WorkspaceConnectionsOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client=mock_aml_services_2022_01_01_preview,
+        service_client=mock_aml_services_2023_06_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
     )
