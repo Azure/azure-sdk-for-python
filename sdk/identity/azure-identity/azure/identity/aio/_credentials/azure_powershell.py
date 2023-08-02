@@ -55,7 +55,11 @@ class AzurePowerShellCredential(AsyncContextManager):
 
     @log_get_token_async
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs  # pylint:disable=unused-argument
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        **kwargs,  # pylint:disable=unused-argument
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
