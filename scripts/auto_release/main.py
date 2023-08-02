@@ -562,11 +562,11 @@ class CodegenTestPR:
     def commit_code():
         print_exec('git add sdk/')
         print_exec('git commit -m \"code and test\"')
+        print_check('git push origin HEAD -f')
 
     def create_pr(self):
         # commit all code
         self.commit_code()
-        print_check('git push origin HEAD -f')
 
         # create PR
         self.create_pr_proc()
@@ -591,7 +591,6 @@ class CodegenTestPR:
 
             # commit all code
             self.commit_code()
-            print_check('git push origin HEAD -f')
 
 
 if __name__ == '__main__':
