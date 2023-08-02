@@ -213,46 +213,44 @@ class OnlineEndpoint(Endpoint):
         return switcher.get(yaml_auth_mode, yaml_auth_mode)
 
     @classmethod
-    def _from_rest_object(cls, resource: OnlineEndpointData):  # pylint: disable=arguments-renamed
-        auth_mode = cls._rest_auth_mode_to_yaml_auth_mode(resource.properties.auth_mode)
+    def _from_rest_object(cls, obj: OnlineEndpointData) -> "OnlineEndpoint":
+        auth_mode = cls._rest_auth_mode_to_yaml_auth_mode(obj.properties.auth_mode)
         # pylint: disable=protected-access
-        identity = (
-            IdentityConfiguration._from_online_endpoint_rest_object(resource.identity) if resource.identity else None
-        )
-        if resource.properties.compute:
+        identity = IdentityConfiguration._from_online_endpoint_rest_object(obj.identity) if obj.identity else None
+        if obj.properties.compute:
             endpoint = KubernetesOnlineEndpoint(
-                id=resource.id,
-                name=resource.name,
-                tags=resource.tags,
-                properties=resource.properties.properties,
-                compute=resource.properties.compute,
+                id=obj.id,
+                name=obj.name,
+                tags=obj.tags,
+                properties=obj.properties.properties,
+                compute=obj.properties.compute,
                 auth_mode=auth_mode,
-                description=resource.properties.description,
-                location=resource.location,
-                traffic=resource.properties.traffic,
-                provisioning_state=resource.properties.provisioning_state,
-                scoring_uri=resource.properties.scoring_uri,
-                openapi_uri=resource.properties.swagger_uri,
+                description=obj.properties.description,
+                location=obj.location,
+                traffic=obj.properties.traffic,
+                provisioning_state=obj.properties.provisioning_state,
+                scoring_uri=obj.properties.scoring_uri,
+                openapi_uri=obj.properties.swagger_uri,
                 identity=identity,
-                kind=resource.kind,
+                kind=obj.kind,
             )
         else:
             endpoint = ManagedOnlineEndpoint(
-                id=resource.id,
-                name=resource.name,
-                tags=resource.tags,
-                properties=resource.properties.properties,
+                id=obj.id,
+                name=obj.name,
+                tags=obj.tags,
+                properties=obj.properties.properties,
                 auth_mode=auth_mode,
-                description=resource.properties.description,
-                location=resource.location,
-                traffic=resource.properties.traffic,
-                mirror_traffic=resource.properties.mirror_traffic,
-                provisioning_state=resource.properties.provisioning_state,
-                scoring_uri=resource.properties.scoring_uri,
-                openapi_uri=resource.properties.swagger_uri,
+                description=obj.properties.description,
+                location=obj.location,
+                traffic=obj.properties.traffic,
+                mirror_traffic=obj.properties.mirror_traffic,
+                provisioning_state=obj.properties.provisioning_state,
+                scoring_uri=obj.properties.scoring_uri,
+                openapi_uri=obj.properties.swagger_uri,
                 identity=identity,
-                kind=resource.kind,
-                public_network_access=resource.properties.public_network_access,
+                kind=obj.kind,
+                public_network_access=obj.properties.public_network_access,
             )
 
         return endpoint

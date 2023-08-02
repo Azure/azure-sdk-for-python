@@ -444,7 +444,7 @@ class PipelineExpression(PipelineExpressionMixin):
         return self._create_component()
 
     @staticmethod
-    def parse_pipeline_input_names_from_data_binding(data_binding: str) -> List[str]:
+    def parse_pipeline_inputs_from_data_binding(data_binding: str) -> List[str]:
         """Parse all PipelineInputs name from data binding expression.
 
         :param data_binding: Data binding expression
