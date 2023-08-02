@@ -29,8 +29,8 @@ from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._feature_store_utils import (
     _archive_or_restore,
-    read_feature_set_metadata_contents,
-    read_remote_feature_set_spec_metadata_contents,
+    read_feature_set_metadata,
+    read_remote_feature_set_spec_metadata,
     _datetime_to_str,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -406,7 +406,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         featureset_spec_path = str(featureset.specification.path)
         if is_url(featureset_spec_path):
             try:
-                featureset_spec_contents = read_remote_feature_set_spec_metadata_contents(
+                featureset_spec_contents = read_remote_feature_set_spec_metadata(
                     base_uri=featureset_spec_path,
                     datastore_operations=self._datastore_operation,
                 )
@@ -428,6 +428,6 @@ class FeatureSetOperations(_ScopeDependentOperations):
                 error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
             )
 
-        featureset_spec_contents = read_feature_set_metadata_contents(path=featureset_spec_path)
+        featureset_spec_contents = read_feature_set_metadata(path=featureset_spec_path)
         featureset_spec_yaml_path = Path(featureset_spec_path, "FeatureSetSpec.yaml")
         return FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)
