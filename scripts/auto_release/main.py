@@ -617,12 +617,10 @@ class CodegenTestPR:
             branch = env_var.split(":")[-1]
 
             print_check(f'git checkout {branch}')
-            # self.run_test()
+            self.run_test()
 
             # commit all code
             self.commit_code()
-            os.remove("swagger_to_sdk_config.json")
-
             print_check('git push origin HEAD -f')
 
 
