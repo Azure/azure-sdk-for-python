@@ -45,8 +45,8 @@ class PipelineContext(Dict[str, Any]):
 
     _PICKLE_CONTEXT = {"deserialized_data"}
 
-    def __init__(self, transport: Any, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
-        self.transport: Optional[Any] = transport
+    def __init__(self, transport, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+        self.transport = transport
         self.options = kwargs
         self._protected = ["transport", "options"]
 
