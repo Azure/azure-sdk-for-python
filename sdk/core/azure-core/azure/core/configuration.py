@@ -26,11 +26,12 @@
 from __future__ import annotations
 from typing import Union, Optional, Any, Generic, TypeVar, TYPE_CHECKING
 
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
+
 if TYPE_CHECKING:
     from .pipeline.policies import HTTPPolicy, AsyncHTTPPolicy, SansIOHTTPPolicy
 
-    HTTPResponseType = TypeVar("HTTPResponseType")
-    HTTPRequestType = TypeVar("HTTPRequestType")
     AnyPolicy = Union[
         HTTPPolicy[HTTPRequestType, HTTPResponseType],
         AsyncHTTPPolicy[HTTPRequestType, HTTPResponseType],
