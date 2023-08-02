@@ -169,7 +169,7 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
     def test_layout_url_barcode(self, client):
-        poller = client.begin_analyze_document_from_url("prebuilt-layout", self.barcode_url_tif)
+        poller = client.begin_analyze_document_from_url("prebuilt-layout", self.barcode_url_tif, features=AnalysisFeature.BARCODES)
         layout = poller.result()
         assert len(layout.pages) > 0
         assert len(layout.pages[0].barcodes) == 2
