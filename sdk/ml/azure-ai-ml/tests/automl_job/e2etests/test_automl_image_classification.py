@@ -145,7 +145,6 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
                 early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
             )
 
-
             # Configure AutoMode job
             image_classification_job_automode = copy.deepcopy(image_classification_job)
             image_classification_job_automode.set_limits(max_trials=2, max_concurrent_trials=2)
@@ -156,9 +155,7 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
             submitted_job_automode = client.jobs.create_or_update(image_classification_job_automode)
 
         # Assert completion of sweep job
-        assert_final_job_status(
-            submitted_job_sweep, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600
-        )
+        assert_final_job_status(submitted_job_sweep, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600)
 
         if not components:
             # Assert completion of Automode job

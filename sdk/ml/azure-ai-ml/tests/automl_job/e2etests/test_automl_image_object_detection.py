@@ -183,7 +183,6 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
         if not components:
             submitted_job_automode = client.jobs.create_or_update(image_object_detection_job_automode)
 
-
         # Assert completion of sweep job
         assert_final_job_status(
             submitted_job_sweep, client, ImageObjectDetectionJob, JobStatus.COMPLETED, deadline=3600

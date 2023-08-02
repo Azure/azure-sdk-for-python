@@ -94,7 +94,7 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
         image_instance_segmentation_job_sweep.set_limits(max_trials=2, max_concurrent_trials=2)
 
         if components:
-             # Configure component Sweep Job
+            # Configure component Sweep Job
             image_instance_segmentation_job_sweep.extend_search_space(
                 [
                     SearchSpace(
@@ -132,7 +132,6 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
             # Configure AutoMode job
             image_instance_segmentation_job_automode = copy.deepcopy(image_instance_segmentation_job)
             image_instance_segmentation_job_automode.set_limits(max_trials=2, max_concurrent_trials=2)
-
 
         # Trigger sweep job and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_instance_segmentation_job_sweep)
