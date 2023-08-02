@@ -222,39 +222,9 @@ class CodegenTestPR:
         self.get_sdk_folder_with_autorest_result()
         self.create_new_branch()
 
-    def get_package_name_with_branch(self) -> (str, str):
-        origin_base_branch = os.getenv('BASE_BRANCH')
-        # e.g. AzureSDKAutomation:sdkAuto/track2_azure-mgmt-network or azclibot:t2-network-2022-01-05-26928
-        branch_info = origin_base_branch.split(':')
-        split_str = 'azure-mgmt-'
-        if 'azure-mgmt-' in branch_info[1]:
-            self.package_name = branch_info[1].split(split_str)[-1]
-        else:
-            self.package_name = branch_info[1].split('-')[1]
-
-        return branch_info[0], branch_info[1]
-
     def create_new_branch(self):
         self.new_branch = f't2-{self.package_name}-{current_time()}-{str(time.time())[-5:]}'
         print_check(f'git checkout -b {self.new_branch}')
-
-    def create_branch_with_base_branch(self, github_usr: str, base_branch: str):
-        # checkout base branch
-        print_exec(f'git remote add {github_usr} https://github.com/{github_usr}/azure-sdk-for-python.git')
-        print_check(f'git fetch {github_usr} {base_branch}')
-        print_check(f'git checkout {github_usr}/{base_branch}')
-
-        # create new branch
-        self.create_new_branch()
-
-    def prepare_branch_with_base_branch(self):
-        github_usr, base_branch = self.get_package_name_with_branch()
-        self.create_branch_with_base_branch(github_usr, base_branch)
-        self.get_sdk_folder_with_package_name()
-
-    def get_sdk_folder_with_package_name(self):
-        folder_info = glob(f'sdk/*/azure-mgmt-{self.package_name}')[0]
-        self.sdk_folder = Path(folder_info).parts[1]
 
     def check_sdk_readme(self):
         sdk_readme = str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/README.md'))

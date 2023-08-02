@@ -1,6 +1,6 @@
 # Live Test For Python SDK
 
-name: $(BASE_BRANCH)
+name: AUTO RELEASE
 
 trigger:
   branches:
@@ -90,7 +90,6 @@ jobs:
         export AZURE_CLIENT_SECRET=$(ENV-CLIENT-SECRET)
         export AZURE_SUBSCRIPTION_ID=$(ENV-SUBSCRIPTION-ID)
         export ISSUE_LINK=$(ISSUE_LINK)
-        export BASE_BRANCH=$(BASE_BRANCH)
         export SCRIPT_PATH=$script_path
         export GIT_TOKEN=$(azuresdk-github-pat)
         export STORAGE_CONN_STR=$(storage-conn-str)
