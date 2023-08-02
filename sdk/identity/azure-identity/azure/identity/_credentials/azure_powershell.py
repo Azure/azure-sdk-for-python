@@ -84,7 +84,7 @@ class AzurePowerShellCredential:
 
     @log_get_token("AzurePowerShellCredential")
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs  # pylint:disable=unused-argument
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
@@ -95,7 +95,7 @@ class AzurePowerShellCredential:
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-        :keyword str claims: not supported by this credential.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken

@@ -55,7 +55,7 @@ class AzurePowerShellCredential(AsyncContextManager):
 
     @log_get_token_async
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs  # pylint:disable=unused-argument
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
@@ -66,7 +66,7 @@ class AzurePowerShellCredential(AsyncContextManager):
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-        :keyword str claims: not supported by this credential.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -77,7 +77,7 @@ class AzurePowerShellCredential(AsyncContextManager):
         """
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
-            return _SyncCredential().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+            return _SyncCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
 
         tenant_id = resolve_tenant(
             default_tenant=self.tenant_id,
