@@ -139,8 +139,6 @@ function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
     $UnzippedDocumentationPath = Join-Path -Path $DocLocation -ChildPath $PkgName
     $VersionFileLocation = Join-Path -Path $UnzippedDocumentationPath -ChildPath "version.txt"
 
-    Expand-Archive -Force -Path $ZippedDocumentationPath -DestinationPath $UnzippedDocumentationPath
-
     if (!(Test-Path $UnzippedDocumentationPath)) {
       New-Item -Path $UnzippedDocumentationPath -ItemType Directory
     }
