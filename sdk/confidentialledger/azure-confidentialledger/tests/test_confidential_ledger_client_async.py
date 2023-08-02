@@ -4,6 +4,7 @@ import os
 from typing import Dict, List, Union
 from urllib.parse import urlparse
 
+from azure.core.pipeline import policies
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import (
     PemCertificate,
@@ -502,6 +503,14 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             credential=credential,
             endpoint=confidentialledger_endpoint,
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
+            # Provide an authentication policy so that the default AsyncBearerTokenCredentialPolicy
+            # is not used. Using that instead can cause an error as there is no event loop running
+            # for this non-async test.
+            authentication_policy=policies.BearerTokenCredentialPolicy(
+                credential, 
+                *["https://confidential-ledger.azure.com/.default"], 
+                **kwargs,
+            ),
         )
 
         self.tls_cert_convenience_actions(confidentialledger_id)
