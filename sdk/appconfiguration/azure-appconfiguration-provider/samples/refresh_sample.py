@@ -23,7 +23,7 @@ configuration_setting = ConfigurationSetting(key="message", value="Hello World!"
 client.set_configuration_setting(configuration_setting=configuration_setting)
 
 
-def my_callback_on_fail():
+def my_callback_on_fail(error):
     print("Refresh failed!")
 
 
