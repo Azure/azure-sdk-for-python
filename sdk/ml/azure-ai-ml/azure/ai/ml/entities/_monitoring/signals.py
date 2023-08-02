@@ -300,12 +300,14 @@ class DataSignal(MonitoringSignal):
         feature_type_override: Dict[str, str] = None,
         metric_thresholds: List[MetricThreshold] = None,
         alert_enabled: bool = True,
+        properties: Optional[Dict[str, str]] = None,
     ):
         super().__init__(
             production_data=production_data,
             reference_data=reference_data,
             metric_thresholds=metric_thresholds,
             alert_enabled=alert_enabled,
+            properties=properties,
         )
         self.features = features
         self.feature_type_override = feature_type_override
@@ -345,6 +347,7 @@ class DataDriftSignal(DataSignal):
         metric_thresholds: DataDriftMetricThreshold = None,
         alert_enabled: bool = True,
         data_segment: DataSegment = None,
+        properties: Optional[Dict[str, str]] = None,
     ):
         super().__init__(
             production_data=production_data,
@@ -353,6 +356,7 @@ class DataDriftSignal(DataSignal):
             features=features,
             feature_type_override=feature_type_override,
             alert_enabled=alert_enabled,
+            properties=properties,
         )
         self.type = MonitorSignalType.DATA_DRIFT
         self.data_segment = data_segment
@@ -371,6 +375,7 @@ class DataDriftSignal(DataSignal):
             metric_thresholds=rest_metrics,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             data_segment=self.data_segment._to_rest_object() if self.data_segment else None,
+            properties=self.properties,
         )
 
     @classmethod
@@ -384,6 +389,7 @@ class DataDriftSignal(DataSignal):
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
             data_segment=DataSegment._from_rest_object(obj.data_segment) if obj.data_segment else None,
+            properties=obj.properties,
         )
 
     @classmethod
@@ -418,12 +424,14 @@ class PredictionDriftSignal(MonitoringSignal):
         reference_data: ReferenceData = None,
         metric_thresholds: PredictionDriftMetricThreshold,
         alert_enabled: bool = True,
+        properties: Optional[Dict[str, str]] = None,
     ):
         super().__init__(
             production_data=production_data,
             reference_data=reference_data,
             metric_thresholds=metric_thresholds,
             alert_enabled=alert_enabled,
+            properties=properties
         )
         self.type = MonitorSignalType.PREDICTION_DRIFT
 
@@ -438,6 +446,7 @@ class PredictionDriftSignal(MonitoringSignal):
             production_data=self.production_data._to_rest_object(),
             reference_data=self.reference_data._to_rest_object(),
             metric_thresholds=rest_metric_thresholds,
+            properties=self.properties,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
         )
 
@@ -450,6 +459,7 @@ class PredictionDriftSignal(MonitoringSignal):
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
+            properties=obj.properties,
         )
 
     @classmethod
@@ -488,6 +498,7 @@ class DataQualitySignal(DataSignal):
         features: Union[List[str], MonitorFeatureFilter, Literal[ALL_FEATURES]] = None,
         metric_thresholds: DataQualityMetricThreshold,
         alert_enabled: bool = True,
+        properties: Optional[Dict[str, str]] = None,
     ):
         super().__init__(
             production_data=production_data,
@@ -495,6 +506,7 @@ class DataQualitySignal(DataSignal):
             metric_thresholds=metric_thresholds,
             features=features,
             alert_enabled=alert_enabled,
+            properties=properties,
         )
         self.type = MonitorSignalType.DATA_QUALITY
 
@@ -510,6 +522,7 @@ class DataQualitySignal(DataSignal):
             features=rest_features,
             metric_thresholds=rest_mertrics,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
+            properties=self.properties,
         )
 
     @classmethod
@@ -522,6 +535,7 @@ class DataQualitySignal(DataSignal):
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
+            properties=obj.properties,
         )
 
     @classmethod
@@ -627,11 +641,13 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
         reference_data: ReferenceData,
         metric_thresholds: FeatureAttributionDriftMetricThreshold,
         alert_enabled: bool = True,
+        properties: Optional[Dict[str, str]] = None,
     ):
         self.production_data = production_data
         self.reference_data = reference_data
         self.metric_thresholds = metric_thresholds
         self.alert_enabled = alert_enabled
+        self.properties = properties
         self.type = MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT
 
     def _to_rest_object(self, **kwargs) -> RestFeatureAttributionDriftMonitoringSignal:
@@ -641,6 +657,7 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
             reference_data=self.reference_data._to_rest_object(),
             metric_threshold=self.metric_thresholds._to_rest_object(),
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
+            properties=self.properties,
         )
 
     @classmethod
@@ -653,6 +670,7 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
+            properties=obj.properties,
         )
 
 
@@ -759,6 +777,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         workspace_connection: WorkspaceConnection,
         input_literals: Dict[str, MonitoringInputDataBase],
         alert_enabled: bool = True,
+        properties: Optional[Dict[str, str]] = None,
     ):
         self.type = MonitorSignalType.CUSTOM
         self.input_data = input_data
@@ -766,6 +785,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         self.component_id = component_id
         self.alert_enabled = alert_enabled
         self.inpit_literals = input_literals
+        self.properties = properties
         self.workspace_connection = workspace_connection
 
     def _to_rest_object(self, **kwargs) -> RestCustomMonitoringSignal:  # pylint:disable=unused-argument
@@ -786,6 +806,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
             workspace_connection=self.workspace_connection._to_rest_object() 
             if self.workspace_connection else None,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
+            properties=self.properties,
         )
 
     @classmethod
@@ -808,6 +829,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
             alert_enabled=False
             if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
             else MonitoringNotificationMode.ENABLED,
+            properties=obj.properties,
         )
 
 

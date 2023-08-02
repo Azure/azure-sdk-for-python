@@ -105,7 +105,7 @@ class ReferenceDataSchema(metaclass=PatchedSchemaMeta):
 class MonitoringSignalSchema(metaclass=PatchedSchemaMeta):
     production_data = NestedField(ProductionDataSchema)
     reference_data = NestedField(ReferenceDataSchema)
-    properties = fields.Dict(keys=fields.Str(), values=fields.Str())
+    properties = fields.Dict()
     alert_enabled = fields.Bool()
 
 
