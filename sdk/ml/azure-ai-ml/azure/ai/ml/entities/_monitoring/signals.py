@@ -205,7 +205,6 @@ class ReferenceData(RestTranslatableMixin):
             if self.data_window.trailing_window_size is not None:
                 return(
                     TrailingInputData(
-                        input_type="Trailing",
                         data_context=self.data_context,
                         target_columns=target_column,
                         job_type=jobInputType,
@@ -218,7 +217,6 @@ class ReferenceData(RestTranslatableMixin):
             elif self.data_window.window_start is not None and self.data_window.window_end is not None:
                 return(
                     StaticInputData(
-                        input_type="Static",
                         data_context=self.data_context,
                         target_columns=target_column,
                         job_type=jobInputType,
@@ -230,7 +228,6 @@ class ReferenceData(RestTranslatableMixin):
                 ) 
         return(
             FixedInputData(
-                input_type="Fixed",
                 data_context=self.data_context,
                 target_columns=target_column,
                 job_type=jobInputType,
