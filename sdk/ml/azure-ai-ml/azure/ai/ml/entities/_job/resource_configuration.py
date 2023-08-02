@@ -16,14 +16,14 @@ module_logger = logging.getLogger(__name__)
 class ResourceConfiguration(RestTranslatableMixin, DictMixin):
     """Resource configuration for a job.
 
-    This class should not be instantiated directly. Instead, use the subclasses.
+    This class should not be instantiated directly. Instead, use its subclasses.
 
     :param instance_count: The number of instances to use for the job.
-    :type instance_count: int
+    :type instance_count: Optional[int]
     :param instance_type: The type of instance to use for the job.
-    :type instance_type: str
+    :type instance_type: Optional[str]
     :param properties: The resource's property dictionary.
-    :type properties: dict
+    :type properties: Optional[dict[str, Any]]
     """
 
     def __init__(

@@ -155,7 +155,7 @@ def command(
     :type tags: Optional[dict[str, str]]
     :param properties: The job property dictionary. Defaults to None.
     :type properties: Optional[dict[str, str]]
-    :param display_name: The display name of the job. Defaults to randomly generated name.
+    :param display_name: The display name of the job. Defaults to a randomly generated name.
     :type display_name: Optional[str]
     :param command: The command to be executed. Defaults to None.
     :type command: Optional[str]
@@ -205,7 +205,7 @@ def command(
         Defaults to True. When True, if a Command Component is deterministic and has been run before in the
         current workspace with the same input and settings, it will reuse results from a previously submitted
         job when used as a node or step in a pipeline. In that scenario, no compute resources will be used.
-    :type is_deterministic: Optional[bool]
+    :type is_deterministic: bool
     :param services: The interactive services for the node. Defaults to None. This is an experimental parameter,
         and may change at any time. Please see https://aka.ms/azuremlexperimental for more information.
     :type services: Optional[dict[str, Union[~azure.ai.ml.entities.JobService, ~azure.ai.ml.entities.JupyterLabJobService,
@@ -213,7 +213,7 @@ def command(
         ~azure.ai.ml.entities.VsCodeJobService]]]
     :param job_tier: The job tier. Accepted values are "Spot", "Basic", "Standard", or "Premium".
     :type job_tier: Optional[str]
-    :param priority: The priority of the job on the compute. Accepted values are: "low", "medium", and "high". Defaults to "medium".
+    :param priority: The priority of the job on the compute. Accepted values are "low", "medium", and "high". Defaults to "medium".
     :type priority: Optional[str]
     :return: A Command object.
     :rtype: ~azure.ai.ml.entities.Command

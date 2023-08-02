@@ -27,8 +27,8 @@ class SparkComponent(
     """Spark component version, used to define a Spark Component or Job.
 
     :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
-        to a remote location. Defaults to ".".
-    :type code: Optional[Union[str, os.PathLike]]
+        to a remote location. Defaults to ".", indicating the current directory.
+    :type code: Union[str, os.PathLike]
     :param entry: The file or class entry point.
     :type entry: Optional[Union[dict[str, str], ~azure.ai.ml.entities.SparkJobEntry]]
     :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps. Defaults to None.

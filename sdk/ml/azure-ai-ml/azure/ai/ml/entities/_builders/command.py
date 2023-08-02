@@ -92,8 +92,7 @@ module_logger = logging.getLogger(__name__)
 class Command(BaseNode, NodeWithGroupInputMixin):
     """Base class for command node, used for command component version consumption.
 
-    You should not instantiate this class directly. Instead, you should
-    create it using the builder function: command().
+    You should not instantiate this class directly. Instead, you should create it using the builder function: command().
 
     :param component: The ID or instance of the command component or job to be run for the step.
     :type component: Union[str, ~azure.ai.ml.entities.CommandComponent]
@@ -101,13 +100,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     :type compute: Optional[str]
     :param inputs: A mapping of input names to input data sources used in the job.
     :type inputs: Optional[dict[str, Union[
-        ~azure.ai.ml.Input,
-        str,
-        bool,
-        int,
-        float,
-        Enum,
-        ]]]
+        ~azure.ai.ml.Input, str, bool, int, float, Enum]]]
     :param outputs: A mapping of output names to output data sources used in the job.
     :type outputs: Optional[dict[str, Union[str, ~azure.ai.ml.Output]]]
     :param limits: The limits for the command component or job.
@@ -583,21 +576,21 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         priority: Optional[str] = None,
     ) -> Sweep:
         """Turns the command into a sweep node with extra sweep run setting. The command component
-        in the current Command node will be used as its trial component. A command node can sweep
+        in the current command node will be used as its trial component. A command node can sweep
         multiple times, and the generated sweep node will share the same trial component.
 
-        :keyword primary_metric: The primary metric of the sweep objective - e.g. AUC (Area Under the Curve).
-        The metric must be logged while running the trial component.
+        :param primary_metric: The primary metric of the sweep objective - e.g. AUC (Area Under the Curve).
+            The metric must be logged while running the trial component.
         :type primary_metric: str
-        :keyword goal: The goal of the Sweep objective. Accepted values are "minimize" or "maximize".
+        :param goal: The goal of the Sweep objective. Accepted values are "minimize" or "maximize".
         :type goal: str
         :param sampling_algorithm: The sampling algorithm to use inside the search space.
             Acceptable values are "random", "grid", or "bayesian". Defaults to "random".
-        :type sampling_algorithm: Optional[str]
+        :type sampling_algorithm: str
         :param compute: The target compute to run the node on. If not specified, the current node's compute
             will be used.
         :type compute: Optional[str]
-        :param max_total_trials: The maximum number of total trials to run. This value will overwrite value in
+        :param max_total_trials: The maximum number of total trials to run. This value will overwrite the value in
             CommandJob.limits if specified.
         :type max_total_trials: Optional[int]
         :param max_concurrent_trials: The maximum number of concurrent trials for the Sweep job.

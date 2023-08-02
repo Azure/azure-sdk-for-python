@@ -11,14 +11,14 @@ class SystemData(RestTranslatableMixin):
 
     :param created_by: The identity that created the resource.
     :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Accepted values are:
+    :param created_by_type: The type of identity that created the resource. Accepted values are
         "User", "Application", "ManagedIdentity", "Key".
     :type created_by_type: Union[str, ~azure.ai.ml.entities.CreatedByType]
     :param created_at: The timestamp of resource creation (UTC).
     :type created_at: datetime
     :param last_modified_by: The identity that last modified the resource.
     :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Accepted values are:
+    :param last_modified_by_type: The type of identity that last modified the resource. Accepted values are
         "User", "Application", "ManagedIdentity", "Key".
     :type last_modified_by_type: Union[str, ~azure.ai.ml.entities.CreatedByType]
     :param last_modified_at: The timestamp of resource last modification in UTC.

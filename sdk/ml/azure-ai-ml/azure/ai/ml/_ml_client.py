@@ -96,7 +96,7 @@ module_logger = logging.getLogger(__name__)
 class MLClient:
     """A client class to interact with Azure ML services.
 
-    Use this client to manage Azure ML resources, e.g. workspaces, jobs, models and so on.
+    Use this client to manage Azure ML resources such as workspaces, jobs, models, and so on.
 
     :param credential: The credential to use for authentication.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -527,7 +527,7 @@ class MLClient:
         file_name=None,
         **kwargs,
     ) -> "MLClient":
-        """Return a client from an existing Azure Machine Learning Workspace using a file configuration.
+        """Returns a client from an existing Azure Machine Learning Workspace using a file configuration.
 
         This method provides a simple way to reuse the same workspace across multiple Python notebooks or projects.
         Users can save the workspace Azure Resource Manager (ARM) properties using the
@@ -543,7 +543,7 @@ class MLClient:
         :param file_name: The configuration file name to search for when path is a directory path. Defaults to
             "config.json".
         :type file_name: Optional[str]
-        :param cloud: The cloud name to use. Defaults to AzureCloud.
+        :param cloud: The cloud name to use. Defaults to "AzureCloud".
         :type cloud: Optional[str]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if "config.json", or file_name if overridden,
             cannot be found in directory. Details will be provided in the error message.
@@ -643,7 +643,7 @@ class MLClient:
 
     @property
     def workspaces(self) -> WorkspaceOperations:
-        """A collection of workspace related operations.
+        """A collection of workspace-related operations.
 
         :return: Workspace operations
         :rtype: ~azure.ai.ml.operations.WorkspaceOperations
@@ -663,8 +663,9 @@ class MLClient:
     @property
     @experimental
     def feature_stores(self) -> FeatureStoreOperations:
-        """A collection of feature-store related operations.
-        :return: Featurestore operations
+        """A collection of feature store related operations.
+
+        :return: FeatureStore operations
         :rtype: ~azure.ai.ml.operations.FeatureStoreOperations
         """
         return self._featurestores
@@ -673,6 +674,7 @@ class MLClient:
     @experimental
     def feature_sets(self) -> FeatureSetOperations:
         """A collection of feature set related operations.
+
         :return: FeatureSet operations
         :rtype: ~azure.ai.ml.operations.FeatureSetOperations
         """
@@ -681,7 +683,8 @@ class MLClient:
     @property
     @experimental
     def workspace_hubs(self) -> WorkspaceHubOperations:
-        """A collection of hubs related operations.
+        """A collection of workspace hub-related operations.
+
         :return: Hub Operations
         :rtype: HubOperations
         """
@@ -691,6 +694,7 @@ class MLClient:
     @experimental
     def feature_store_entities(self) -> FeatureStoreEntityOperations:
         """A collection of feature store entity related operations.
+
         :return: FeatureStoreEntity operations
         :rtype: ~azure.ai.ml.operations.FeatureStoreEntityOperations
         """

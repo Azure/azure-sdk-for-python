@@ -347,6 +347,45 @@ class MiscConfigurationOptions(object):
         )
         # [END ssh_job_service_configuration]
 
+        # [START validation_result]
+        """For example, if repr(self) is:
+        ```python
+            {
+                "errors": [
+                    {
+                        "path": "jobs.job_a.inputs.input_str",
+                        "message": "input_str is required",
+                        "value": None,
+                    },
+                    {
+                        "path": "jobs.job_a.inputs.input_str",
+                        "message": "input_str must be in the format of xxx",
+                        "value": None,
+                    },
+                    {
+                        "path": "settings.on_init",
+                        "message": "On_init job name job_b does not exist in jobs.",
+                        "value": None,
+                    },
+                ],
+                "warnings": [
+                    {
+                        "path": "jobs.job_a.inputs.input_str",
+                        "message": "input_str is required",
+                        "value": None,
+                    }
+                ]
+            }
+            ```
+            then the error_messages will be:
+            ```python
+            {
+                "jobs.job_a.inputs.input_str": "input_str is required; input_str must be in the format of xxx",
+                "settings.on_init": "On_init job name job_b does not exist in jobs.",
+            }
+            ```
+            """
+
 
 if __name__ == "__main__":
     sample = MiscConfigurationOptions()

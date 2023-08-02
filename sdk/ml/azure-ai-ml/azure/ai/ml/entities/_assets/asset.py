@@ -16,7 +16,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 class Asset(Resource):
     """Base class for asset.
 
-    This class should not be instantiated directly. Instead, use one of the child classes.
+    This class should not be instantiated directly. Instead, use one of its subclasses.
 
     :param name: The name of the asset. Defaults to a random GUID.
     :type name: Optional[str]]

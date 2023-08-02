@@ -13,12 +13,12 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class Notification(RestTranslatableMixin):
     """Configuration for notification.
 
-    :param email_on: Send email notification to user on specified notification type. Accepted values are:
+    :param email_on: Send email notification to user on specified notification type. Accepted values are
         "JobCompleted", "JobFailed", and "JobCancelled".
-    :type email_on: list[str].
+    :type email_on: Optional[list[str]]
     :param: The email recipient list which. Note that this parameter has a character limit of 499 which
-    includes all of the recipient strings and each comma seperator.
-    :paramtype emails: list[str]
+        includes all of the recipient strings and each comma seperator.
+    :paramtype emails: Optional[list[str]]
     """
 
     def __init__(self, *, email_on: Optional[List[str]] = None, emails: Optional[List[str]] = None) -> None:

@@ -34,9 +34,8 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
 
     :param name: The name of the model. Defaults to a random GUID.
     :type name: Optional[str]
-    :param version: The version of the model. Defaults to "1" if no name is provided, otherwise defaults to autoincrement
-        from the last registered version of the model with that name. For a model name that has never been registered,
-        the version defaults to "1".
+    :param version: The version of the model. Defaults to "1" if either no name or an unregistered name is provided.
+        Otherwise, defaults to autoincrement from the last registered version of the model with that name.
     :type version: Optional[str]
     :param type: The storage format for this entity, used for NCD (Novel Class Discovery). Accepted values are
         "custom_model", "mlflow_model", or "triton_model". Defaults to "custom_model".

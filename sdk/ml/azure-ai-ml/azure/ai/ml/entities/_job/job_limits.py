@@ -19,9 +19,6 @@ class JobLimits(RestTranslatableMixin, ABC):
     """Base class for Job limits.
 
     This class should not be instantiated directly. Instead, one of its child classes should be used.
-
-    :param type: The job type.
-    :type type: ~azure.ai.ml.constants.JobType
     """
 
     def __init__(
@@ -39,7 +36,7 @@ class CommandJobLimits(JobLimits):
     """Limits for Command Jobs.
 
     :param timeout: The maximum run duration, in seconds, after which the job will be cancelled.
-    :type timeout: int
+    :type timeout: Optional[Union[int, str]]
 
     .. admonition:: Example:
         :class: tip
@@ -52,7 +49,7 @@ class CommandJobLimits(JobLimits):
             :caption: Configuring a CommandJob with CommandJobLimits.
     """
 
-    def __init__(self, *, timeout: Union[int, str, None] = None) -> None:
+    def __init__(self, *, timeout: Optional[Union[int, str]] = None) -> None:
         super().__init__()
         self.type = JobType.COMMAND
         self.timeout = timeout
@@ -80,13 +77,13 @@ class SweepJobLimits(JobLimits):
     """Limits for Sweep Jobs.
 
     :param max_concurrent_trials: The maximum number of concurrent trials for the Sweep Job.
-    :type max_concurrent_trials: int
+    :type max_concurrent_trials: Optional[int]
     :param max_total_trials: The maximum number of total trials for the Sweep Job.
-    :type max_total_trials: int
+    :type max_total_trials: Optional[int]
     :param timeout: The maximum run duration, in seconds, after which the job will be cancelled.
-    :type timeout: int
+    :type timeout: Optional[int]
     :param trial_timeout: The timeout value, in seconds, for each Sweep Job trial.
-    :type trial_timeout: int
+    :type trial_timeout: Optional[int]
 
     .. admonition:: Example:
         :class: tip
@@ -178,8 +175,8 @@ def _get_floored_timeout(value: int) -> int:
 class DoWhileJobLimits(JobLimits):
     """DoWhile Job limit class.
 
-    :param max_iteration_count:
-    :type max_iteration_count: int
+    :param max_iteration_count: The maximum number of iterations for the DoWhile Job.
+    :type max_iteration_count: Optional[int]
     """
 
     def __init__(
@@ -187,10 +184,14 @@ class DoWhileJobLimits(JobLimits):
         *,
         max_iteration_count: Optional[int] = None,
         **kwargs,  # pylint: disable=unused-argument
-    ):
+    ) -> None:
         super().__init__()
         self._max_iteration_count = max_iteration_count
 
     @property
     def max_iteration_count(self) -> int:
+        """The maximum number of iterations for the DoWhile Job.
+
+        :rtype: int
+        """
         return self._max_iteration_count

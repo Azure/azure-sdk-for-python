@@ -38,13 +38,13 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
     :param create_monitor: The schedule action monitor definition.
     :type create_monitor: ~azure.ai.ml.entities.MonitorDefinition
     :param display_name: The display name of the schedule.
-    :type display_name: str
+    :type display_name: Optional[str]
     :param description: A description of the schedule.
-    :type description: str
+    :type description: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :type tags: Optional[dict[str, str]]
     :param properties: The job property dictionary.
-    :type properties: dict[str, str]
+    :type properties: Optional[dict[str, str]]
     """
 
     def __init__(
@@ -138,8 +138,8 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         :type dest: Union[PathLike, str, IO[AnyStr]]
         :param kwargs: Additional arguments to pass to the YAML serializer.
         :type kwargs: dict
-        :raises: FileExistsError if dest is a file path and the file already exists.
-        :raises: IOError if dest is an open file and the file is not writable.
+        :raises FileExistsError: Raised if dest is a file path and the file already exists.
+        :raises IOError: Raised if dest is an open file and the file is not writable.
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()

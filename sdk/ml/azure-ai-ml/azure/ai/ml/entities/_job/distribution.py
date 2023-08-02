@@ -29,10 +29,7 @@ SDK_TO_REST = {
 class DistributionConfiguration(RestTranslatableMixin):
     """Distribution configuration for a component or job.
 
-    This class is not meant to be instantiated directly. Instead, use one of the subclasses.
-
-    :param type: The type of distribution. Accepted values are "Mpi", "TensorFlow", and "PyTorch"
-    :type type: Union[str, ~azure.ai.ml.constants.DistributionType]
+    This class is not meant to be instantiated directly. Instead, use one of its subclasses.
     """
 
     def __init__(self, **kwargs) -> None:
@@ -73,7 +70,7 @@ class MpiDistribution(DistributionConfiguration):
     """MPI distribution configuration.
 
     :param process_count_per_instance: The number of processes per node.
-    :type process_count_per_instance: int
+    :type process_count_per_instance: Optional[int]
 
     .. admonition:: Example:
         :class: tip
@@ -99,7 +96,7 @@ class PyTorchDistribution(DistributionConfiguration):
     """PyTorch distribution configuration.
 
     :param process_count_per_instance: The number of processes per node.
-    :type process_count_per_instance: int
+    :type process_count_per_instance: Optional[int]
 
     .. admonition:: Example:
         :class: tip
@@ -124,10 +121,10 @@ class PyTorchDistribution(DistributionConfiguration):
 class TensorFlowDistribution(DistributionConfiguration):
     """TensorFlow distribution configuration.
 
-    :param parameter_server_count: The number of parameter server tasks.
-    :type parameter_server_count: int
+    :param parameter_server_count: The number of parameter server tasks. Defaults to 0.
+    :type parameter_server_count: Optional[int]
     :param worker_count: The number of workers. Defaults to the instance count.
-    :type worker_count: int
+    :type worker_count: Optional[int]
 
     .. admonition:: Example:
         :class: tip

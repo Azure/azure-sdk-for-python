@@ -12,20 +12,20 @@ module_logger = logging.getLogger(__name__)
 
 
 class ServiceInstance(RestTranslatableMixin, DictMixin):
-    """ServiceInstanceResult.
+    """Service Instance Result.
 
     :param type: The type of service.
-    :type type: str
+    :type type: Optional[str]
     :param port: The port used by the service.
-    :type port: int
+    :type port: Optional[int]
     :param status: The status of the service.
-    :type status: str
+    :type status: Optional[str]
     :param error: The error message.
-    :type error: str
+    :type error: Optional[str]
     :param endpoint: The service endpoint.
-    :type endpoint: str
+    :type endpoint: Optional[str]
     :param properties: The service instance's properties.
-    :type properties: dict[str, str]
+    :type properties: Optional[dict[str, str]]
     """
 
     def __init__(

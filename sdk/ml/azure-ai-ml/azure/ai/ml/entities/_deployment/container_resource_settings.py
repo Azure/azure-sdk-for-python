@@ -20,11 +20,11 @@ class ResourceSettings(RestTranslatableMixin):
     https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/.
 
     :param cpu: The CPU resource settings for a container.
-    :type cpu: str
+    :type cpu: Optional[str]
     :param memory: The memory resource settings for a container.
-    :type memory: str
+    :type memory: Optional[str]
     :param gpu: The GPU resource settings for a container.
-    :type gpu: str
+    :type gpu: Optional[str]
 
     .. admonition:: Example:
         :class: tip

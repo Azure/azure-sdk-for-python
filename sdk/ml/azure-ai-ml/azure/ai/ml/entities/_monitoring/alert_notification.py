@@ -18,7 +18,8 @@ class AlertNotification(RestTranslatableMixin):
     """Alert notification configuration for monitoring jobs
 
     :param emails: A list of email addresses that will receive notifications for monitoring alerts.
-    :type emails: list[str]
+        Defaults to None.
+    :type emails: Optional[list[str]]
 
     .. admonition:: Example:
 

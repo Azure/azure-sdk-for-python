@@ -49,25 +49,25 @@ def _is_pipeline_child_job(job: JobBase) -> bool:
 class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     """Base class for jobs.
 
-    This class should not be instantiated directly. Instead, use one of the subclasses.
+    This class should not be instantiated directly. Instead, use one of its subclasses.
 
     :param name: The name of the job.
-    :type name: str
+    :type name: Optional[str]
     :param display_name: The display name of the job.
-    :type display_name: str
+    :type display_name: Optional[str]
     :param description: The description of the job.
-    :type description: str
+    :type description: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :type tags: Optional[dict[str, str]]
     :param properties: The job property dictionary.
-    :type properties: dict[str, str]
+    :type properties: Optional[dict[str, str]]
     :param experiment_name: The name of the experiment the job will be created under. Defaults to the name of the
         current directory.
-    :type experiment_name: str
+    :type experiment_name: Optional[str]
     :param services: Information on services associated with the job.
-    :type services: dict[str, ~azure.ai.ml.entities.JobService]
+    :type services: Optional[dict[str, ~azure.ai.ml.entities.JobService]]
     :param compute: Information about the compute resources associated with the job.
-    :type compute: str
+    :type compute: Optional[str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -105,7 +105,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     def type(self) -> Optional[str]:
         """The type of the job.
 
-        :rtype: str
+        :rtype: Optional[str]
         """
         return self._type
 
@@ -122,7 +122,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 * Docker image build
                 * conda environment setup
             * Queued - The job is queued on the compute target. For example, in BatchAI, the job is in a queued state
-                    while waiting for all the requested nodes to be ready.
+                while waiting for all the requested nodes to be ready.
             * Running - The job has started to run on the compute target.
             * Finalizing - User code execution has completed, and the run is in post-processing stages.
             * CancelRequested - Cancellation has been requested for the job.
@@ -133,7 +133,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             * NotResponding - For runs that have Heartbeats enabled, no heartbeat has been recently sent.
 
         :return: Status of the job.
-        :rtype: str
+        :rtype: Optional[str]
         """
         return self._status
 
@@ -142,7 +142,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         """Job output files.
 
         :return: The dictionary of log names and URLs.
-        :rtype: Dict[str, str]
+        :rtype: Optional[Dict[str, str]]
         """
         return self._log_files
 
@@ -151,7 +151,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         """Azure ML studio endpoint.
 
         :return: The URL to the job details page.
-        :rtype:str
+        :rtype: Optional[str]
         """
         if self.services and (JobServices.STUDIO in self.services.keys()):
             return self.services[JobServices.STUDIO].endpoint
@@ -167,8 +167,8 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         :type dest: Union[PathLike, str, IO[AnyStr]]
         :param kwargs: Additional arguments to pass to the YAML serializer.
         :type kwargs: dict
-        :raises: FileExistsError if dest is a file path and the file already exists.
-        :raises: IOError if dest is an open file and the file is not writable.
+        :raises FileExistsError: Raised if dest is a file path and the file already exists.
+        :raises IOError: Raised if dest is an open file and the file is not writable.
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()

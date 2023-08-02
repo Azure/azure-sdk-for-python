@@ -255,7 +255,7 @@ class JobOperations(_ScopeDependentOperations):
 
         :param parent_job_name: When provided, only returns jobs that are children of the named job. Defaults to None,
             listing all jobs in the workspace.
-        :type parent_job_name: str
+        :type parent_job_name: Optional[str]
         :param list_view_type: The view type for including/excluding archived jobs. Defaults to
             ~azure.mgt.machinelearningservices.models.ListViewType.ACTIVE_ONLY, excluding archived jobs.
         :type list_view_type: ~azure.mgmt.machinelearningservices.models.ListViewType
@@ -558,16 +558,17 @@ class JobOperations(_ScopeDependentOperations):
         :param job: The job object.
         :type job: ~azure.ai.ml.entities.Job
         :param description: The job description.
-        :type description: str
+        :type description: Optional[str]
         :param compute: The compute target for the job.
-        :type compute: str
+        :type compute: Optional[str]
         :param tags: The tags for the job.
-        :type tags: dict
+        :type tags: Optional[dict]
         :param experiment_name: The name of the experiment the job will be created under. If None is provided,
             job will be created under experiment 'Default'.
-        :type experiment_name: str
+        :type experiment_name: Optional[str]
         :param skip_validation: Specifies whether or not to skip validation before creating or updating the job. Note
-            that validation for dependent resources such as an anonymous component will not be skipped.
+            that validation for dependent resources such as an anonymous component will not be skipped. Defaults to
+            False.
         :type skip_validation: bool
         :raises Union[~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised
             if Job cannot be successfully validated. Details will be provided in the error message.
@@ -790,7 +791,7 @@ class JobOperations(_ScopeDependentOperations):
         :param download_path: The local path to be used as the download destination. Defaults to ".".
         :type download_path: Union[PathLike, str]
         :param output_name: The name of the output to download. Defaults to None.
-        :type output_name: str
+        :type output_name: Optional[str]
         :param all: Specifies if all logs and named outputs should be downloaded. Defaults to False.
         :type all: bool
         :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state.

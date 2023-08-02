@@ -32,7 +32,7 @@ module_logger = logging.getLogger(__name__)
 class Diagnostic(object):
     """Represents a diagnostic of an asset validation error with the location info."""
 
-    def __init__(self, yaml_path: str, message: str, error_code: str):
+    def __init__(self, yaml_path: str, message: str, error_code: str) -> None:
         """Init Diagnostic.
 
         :param yaml_path: A dash path from root to the target element of the diagnostic. jobs.job_a.inputs.input_str
@@ -92,38 +92,11 @@ class ValidationResult(object):
         Return all messages of errors in the validation result.
 
         .. admonition:: Example:
-            For example, if repr(self) is:
-            {
-                "errors": [
-                    {
-                        "path": "jobs.job_a.inputs.input_str",
-                        "message": "input_str is required",
-                        "value": None,
-                    },
-                    {
-                        "path": "jobs.job_a.inputs.input_str",
-                        "message": "input_str must be in the format of xxx",
-                        "value": None,
-                    },
-                    {
-                        "path": "settings.on_init",
-                        "message": "On_init job name job_b not exists in jobs.",
-                        "value": None,
-                    },
-                ],
-                "warnings": [
-                    {
-                        "path": "jobs.job_a.inputs.input_str",
-                        "message": "input_str is required",
-                        "value": None,
-                    }
-                ]
-            }
-            then the error_messages will be:
-            {
-                "jobs.job_a.inputs.input_str": "input_str is required; input_str must be in the format of xxx",
-                "settings.on_init": "On_init job name job_b not exists in jobs.",
-            }
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START validation_result]
+                :end-before: [END validation_result]
+                :language: markdown
+                :dedent: 8
         """
         messages = {}
         for diagnostic in self._errors:
@@ -134,10 +107,11 @@ class ValidationResult(object):
         return messages
 
     @property
-    def passed(self):
-        """Return whether the validation passed.
+    def passed(self) -> bool:
+        """Returns boolean indicating whether any errors were found.
 
-        If there is no error, then it passed.
+        :return: True if the validation passed, False otherwise.
+        :rtype: bool
         """
         return not self._errors
 

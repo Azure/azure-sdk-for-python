@@ -18,17 +18,17 @@ class MaterializationSettings(RestTranslatableMixin):
     """Defines materialization settings.
 
     :param schedule: The schedule details.
-    :type schedule: ~azure.ai.ml.entities.RecurrenceTrigger
+    :type schedule: Optional[~azure.ai.ml.entities.RecurrenceTrigger]
     :param offline_enabled: Specifies if offline store is enabled.
-    :type offline_enabled: bool
+    :type offline_enabled: Optional[bool]
     :param online_enabled: Specifies if online store is enabled.
-    :type online_enabled: bool
+    :type online_enabled: Optional[bool]
     :param notification: The notification details.
-    :type notification: ~azure.ai.ml.entities.Notification
+    :type notification: Optional[~azure.ai.ml.entities.Notification]
     :param resource: The compute resource settings.
-    :type resource: ~azure.ai.ml.entities.MaterializationComputeResource
+    :type resource: Optional[~azure.ai.ml.entities.MaterializationComputeResource]
     :param spark_configuration: The spark compute settings.
-    :type spark_configuration: Dict[str, str]
+    :type spark_configuration: Optional[dict[str, str]]
 
     .. admonition:: Example:
         :class: tip

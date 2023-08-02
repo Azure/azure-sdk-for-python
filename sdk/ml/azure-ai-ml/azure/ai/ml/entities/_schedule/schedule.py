@@ -44,13 +44,13 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
     :param trigger: The schedule trigger configuration.
     :type trigger: Union[~azure.ai.ml.entities.CronTrigger, ~azure.ai.ml.entities.RecurrenceTrigger]
     :param display_name: The display name of the schedule.
-    :type display_name: str
+    :type display_name: Optional[str]
     :param description: The description of the schedule.
-    :type description: str
+    :type description: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :type tags: Optional[dict]]
     :param properties: A dictionary of properties to associate with the schedule.
-    :type properties: dict[str, str]
+    :type properties: Optional[dict[str, str]]
     :param kwargs: Additional keyword arguments passed to the Resource constructor.
     :type kwargs: dict
     """
@@ -84,8 +84,8 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
         :type dest: Union[PathLike, str, IO[AnyStr]]
         :param kwargs: Additional arguments to pass to the YAML serializer.
         :type kwargs: dict
-        :raises: FileExistsError if dest is a file path and the file already exists.
-        :raises: IOError if dest is an open file and the file is not writable.
+        :raises FileExistsError: Raised if dest is a file path and the file already exists.
+        :raises IOError: Raised if dest is an open file and the file is not writable.
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
@@ -127,7 +127,7 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
     @property
     def provisioning_state(self) -> str:
         """Returns the schedule's provisioning state. The possible values include
-        "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+            "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
 
         :rtype: str
         """
@@ -175,13 +175,13 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
     :param create_job: The job definition or an existing job name.
     :type create_job: Union[~azure.ai.ml.entities.Job, str]
     :param display_name: The display name of the schedule.
-    :type display_name: str
+    :type display_name: Optional[str]
     :param description: The description of the schedule.
-    :type description: str
+    :type description: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :type tags: Optional[dict[str, str]]
     :param properties: A dictionary of properties to associate with the schedule.
-    :type properties: dict[str, str]
+    :type properties: Optional[dict[str, str]]
 
     .. admonition:: Example:
 

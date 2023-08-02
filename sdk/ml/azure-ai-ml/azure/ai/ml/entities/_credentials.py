@@ -743,7 +743,7 @@ class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
 
     :param access_key_id: The access key ID.
     :type access_key_id: str
-    :param secret_access_key: The secrete access key.
+    :param secret_access_key: The secret access key.
     :type secret_access_key: str
     """
 

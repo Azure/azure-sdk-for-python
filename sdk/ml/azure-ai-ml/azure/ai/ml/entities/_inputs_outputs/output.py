@@ -18,20 +18,20 @@ from .utils import _remove_empty_values
 
 
 class Output(_InputOutputBase):
-    """Define an output for a Component or Job.
+    """Define an output.
 
     :param type: The type of the data output. Accepted values are 'uri_folder', 'uri_file', 'mltable', 'mlflow_model',
         'custom_model', and user-defined types.
-    :type type: str
+    :type type: str, optional
     :param path: The remote path where the output should be stored.
-    :type path: str
-    :param mode: The access mode of the data output. Accepted values are:
-        'rw_mount': Read-write mount the data,
-        'upload': Upload the data from the compute target,
-        'direct': Pass in the URI as a string
-    :type mode: str
+    :type path: Optional[str]
+    :param mode: The access mode of the data output. Accepted values are
+        * 'rw_mount': Read-write mount the data
+        * 'upload': Upload the data from the compute target
+        * 'direct': Pass in the URI as a string
+    :type mode: Optional[str]
     :param description: The description of the output.
-    :type description: str
+    :type description: Optional[str]
     :param name: The name to be used to register the output as a Data or Model asset. A name can be set without
         setting a version.
     :type name: str
@@ -66,12 +66,12 @@ class Output(_InputOutputBase):
 
         :param type: The type of the data output. Can only be set to "uri_folder".
         :type type: str
-        :param path: The cloud path where the output should be stored.
+        :param path: The remote path where the output should be stored.
         :type path: str
-        :param mode: The access mode of the data output. Accepted values are:
-            'rw_mount': Read-write mount the data,
-            'upload': Upload the data from the compute target,
-            'direct': Pass in the URI as a string
+        :param mode: The access mode of the data output. Accepted values are
+            * 'rw_mount': Read-write mount the data
+            * 'upload': Upload the data from the compute target
+            * 'direct': Pass in the URI as a string
         :type mode: str
         :param description: The description of the output.
         :type description: str
@@ -89,12 +89,12 @@ class Output(_InputOutputBase):
 
         :param type: The type of the data output. Can only be set to 'uri_file'.
         :type type: str
-        :param path: The cloud path where the output should be stored.
+        :param path: The remote path where the output should be stored.
         :type path: str
-        :param mode: The access mode of the data output. Accepted values are:
-            'rw_mount': Read-write mount the data,
-            'upload': Upload the data from the compute target,
-            'direct': Pass in the URI as a string
+        :param mode: The access mode of the data output. Accepted values are
+            * 'rw_mount': Read-write mount the data,
+            * 'upload': Upload the data from the compute target,
+            * 'direct': Pass in the URI as a string
         :type mode: str
         :param description: The description of the output.
         :type description: str

@@ -33,7 +33,7 @@ class PackageInputPathId:
     :param input_path_type: The type of the input path. Accepted values are "Url", "PathId", and "PathVersion".
     :type input_path_type: Optional[str]
     :param resource_id: The resource ID of the input path. e.g. "azureml://subscriptions/<>/resourceGroups/
-    <>/providers/Microsoft.MachineLearningServices/workspaces/<>/data/<>/versions/<>".
+        <>/providers/Microsoft.MachineLearningServices/workspaces/<>/data/<>/versions/<>".
     :type resource_id: Optional[str]
     """
 
@@ -103,7 +103,7 @@ class PackageInputPathUrl:
     :param input_path_type: The type of the input path. Accepted values are "Url", "PathId", and "PathVersion".
     :type input_path_type: Optional[str]
     :param url: The url of the input path. e.g. "azureml://subscriptions/<>/resourceGroups/
-    <>/providers/Microsoft.MachineLearningServices/workspaces/data/<>/versions/<>".
+        <>/providers/Microsoft.MachineLearningServices/workspaces/data/<>/versions/<>".
     :type url: Optional[str]
     """
 
@@ -181,7 +181,7 @@ class ModelPackage(Resource, PackageRequest):
     :type inferencing_server: Union[~azure.ai.ml.entities.AzureMLOnlineInferencingServer,
         ~azure.ai.ml.entities.AzureMLBatchInferencingServer]
     :param base_environment_source: The base environment source of the model package.
-    :type base_environment_source: ~azure.ai.ml.entities.BaseEnvironment
+    :type base_environment_source: Optional[~azure.ai.ml.entities.BaseEnvironment]
     :param target_environment_version: The version of the model package.
     :type target_environment_version: Optional[str]
     :param environment_variables: The environment variables of the model package.
@@ -246,7 +246,7 @@ class ModelPackage(Resource, PackageRequest):
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
         :param kwargs: Additional arguments to pass to the YAML serializer.
-        :type kwargs: dict
+        :type kwargs: Optional[dict]
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """

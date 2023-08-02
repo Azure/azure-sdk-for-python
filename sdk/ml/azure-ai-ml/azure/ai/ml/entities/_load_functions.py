@@ -162,9 +162,9 @@ def load_job(
     :param relative_origin: The root directory for the YAML. This directory will be used as the origin for deducing
         the relative locations of files referenced in the parsed YAML. Defaults to the same directory as source if
         source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :type relative_origin: Optional[str]
     :param params_override: Parameter fields to overwrite values in the YAML file.
-    :type params_override: list[dict]
+    :type params_override: Optional[list[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
         Details will be provided in the error message.
     :return: A loaded Job object.
@@ -292,14 +292,14 @@ def load_code(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :type relative_origin: Optional[str]
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :type params_override: List[Dict]
+    :type params_override: Optional[list[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Code cannot be successfully validated.
         Details will be provided in the error message.
-    :return: Loaded compute object.
-    :rtype: Compute
+    :return: Loaded code object.
+    :rtype: ~azure.ai.ml.entities._assets._artifacts.code.Code
     """
     return load_common(Code, source, relative_origin, **kwargs)
 
@@ -414,9 +414,9 @@ def load_model(
     :param relative_origin: The root directory for the YAML. This directory will be used as the origin for deducing
         the relative locations of files referenced in the parsed YAML. Defaults to the same directory as source if
         source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :type relative_origin: Optional[str]
     :param params_override: Parameter fields to overwrite values in the YAML file.
-    :type params_override: list[dict]
+    :type params_override: Optional[list[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
         Details will be provided in the error message.
     :return: A loaded Model object.
@@ -870,9 +870,9 @@ def load_model_package(
     :param relative_origin: The root directory for the YAML. This directory will be used as the origin for deducing
         the relative locations of files referenced in the parsed YAML. Defaults to the same directory as source if
         source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :type relative_origin: Optional[str]
     :param params_override: Parameter fields to overwrite values in the YAML file.
-    :type params_override: list[dict]
+    :type params_override: Optional[list[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
         Details will be provided in the error message.
     :return: A loaded ModelPackage object.

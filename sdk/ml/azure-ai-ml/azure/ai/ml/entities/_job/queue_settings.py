@@ -23,11 +23,11 @@ module_logger = logging.getLogger(__name__)
 class QueueSettings(RestTranslatableMixin, DictMixin):
     """Queue settings for a pipeline job.
 
-    :param job_tier: The job tier. Accepted values are: "Spot", "Basic", "Standard", and "Premium".
-    :type job_tier: Optional[Union[str, ~azure.mgmt.machinelearningservices.models.JobTier]]
-    :param priority: The priority of the job on a compute. Accepted values are: "low", "medium", and "high".
+    :param job_tier: The job tier. Accepted values are "Spot", "Basic", "Standard", and "Premium".
+    :type job_tier: Optional[Literal]]
+    :param priority: The priority of the job on a compute. Accepted values are "low", "medium", and "high".
         Defaults to "medium".
-    :type priority: Optional[str]
+    :type priority: Optional[Literal]
     :param kwargs: Additional properties for QueueSettings.
     :type kwargs: Optional[dict]
     """

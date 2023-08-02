@@ -18,9 +18,9 @@ class ResourceRequirementsSettings(RestTranslatableMixin):
     """Resource requirements settings for a container.
 
     :param requests: The minimum resource requests for a container.
-    :type requests: ~azure.ai.ml.entities.ResourceSettings
+    :type requests: Optional[~azure.ai.ml.entities.ResourceSettings]
     :param limits: The resource limits for a container.
-    :type limits: ~azure.ai.ml.entities.ResourceSettings
+    :type limits: Optional[~azure.ai.ml.entities.ResourceSettings]
 
     .. admonition:: Example:
         :class: tip

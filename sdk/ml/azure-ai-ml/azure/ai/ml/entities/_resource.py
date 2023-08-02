@@ -21,19 +21,19 @@ from ._system_data import SystemData
 class Resource(abc.ABC):
     """Base class for entity classes.
 
-    This class should not be instantiated directly. Instead, use the subclasses.
-
     Resource is an abstract object that serves as a base for creating resources. It contains common properties and
     methods for all resources.
+
+    This class should not be instantiated directly. Instead, use one of its subclasses.
 
     :param name: The name of the resource.
     :type name: str
     :param description: The description of the resource.
-    :type description: str
+    :type description: Optional[str]
     :param tags: Tags can be added, removed, and updated.
-    :type tags: dict
+    :type tags: Optional[dict]
     :param properties: The resource's property dictionary.
-    :type properties: dict
+    :type properties: Optional[dict]
     :param print_as_yaml: Specifies if the the resource should print out as a YAML-formatted object. If False,
         the resource will print out in a more-compact style. By default, the YAML output is only used in Jupyter
         notebooks. Be aware that some bookkeeping values are shown only in the non-YAML output.
@@ -83,7 +83,7 @@ class Resource(abc.ABC):
         """The resource ID.
 
         :return: The global ID of the resource, an Azure Resource Manager (ARM) ID.
-        :rtype: str
+        :rtype: Optional[str]
         """
         return self._id
 
@@ -92,7 +92,7 @@ class Resource(abc.ABC):
         """The creation context of the resource.
 
         :return: The creation metadata for the resource.
-        :rtype: ~azure.ai.ml.entities.SystemData
+        :rtype: Optional[~azure.ai.ml.entities.SystemData]
         """
         return self._creation_context
 
@@ -100,7 +100,7 @@ class Resource(abc.ABC):
     def base_path(self) -> str:
         """The base path of the resource.
 
-        :return: The base path of the resource
+        :return: The base path of the resource.
         :rtype: str
         """
         return self._base_path

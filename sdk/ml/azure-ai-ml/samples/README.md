@@ -25,7 +25,7 @@ Their main purpose is to be used in inline examples for class and methods throug
 ```
 
 If adding or updating
-a public class or method, please add or update the example. Double-check that you have the correct path for literalinclude::. It needs to be relative to the file you adding the admonition in (e.g. in this case, the MLClient code is in sdk\ml\azure-ai-ml\ so the path to the samples folder has to be ../samples/ml_samples_authentication.py). Each samples file is run during the azure-sdk-for-python Build CI to ensure that examples are up-to-date and functioning.
+a public class or method, please add or update the example. Double-check that you have the correct path for literalinclude::. It needs to be relative to the file you are adding the admonition to (e.g. in this case, the MLClient code is in sdk\ml\azure-ai-ml\ so the path to the samples folder has to be ../samples/ml_samples_authentication.py). Each samples file is run during the azure-sdk-for-python Build CI to ensure that examples are up-to-date and functioning.
 
 
 * [ml_samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_authentication.py)
