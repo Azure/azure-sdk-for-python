@@ -92,12 +92,13 @@ jobs:
         export ISSUE_LINK=$(ISSUE_LINK)
         export BASE_BRANCH=$(BASE_BRANCH)
         export SCRIPT_PATH=$script_path
-        export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
+        export GIT_TOKEN=$(azuresdk-github-pat)
         export STORAGE_CONN_STR=$(storage-conn-str)
         export STORAGE_ENDPOINT=$(storage-endpoint)
         export PYTHON_TAG=$(PYTHON_TAG)
         export DEBUG_SDK_BRANCH=$(DEBUG_SDK_BRANCH)
         export TARGET_DATE=$(TARGET_DATE)
+        export TEST_FOLDER=$(TEST_FOLDER)
 
         # run
         cd azure-sdk-for-python
