@@ -138,10 +138,9 @@ def _is_readonly(p):
 class AzureJSONEncoder(JSONEncoder):
     """A JSON encoder that's capable of serializing datetime objects and bytes."""
 
-    def __init__(self, *args, exclude_readonly: bool = False, exclude_none: bool = False, **kwargs):
+    def __init__(self, *args, exclude_readonly: bool = False, **kwargs):
         super().__init__(*args, **kwargs)
         self.exclude_readonly = exclude_readonly
-        self.exclude_none = exclude_none
 
     def default(self, o):  # pylint: disable=too-many-return-statements
         if _is_model(o):
@@ -150,10 +149,6 @@ class AzureJSONEncoder(JSONEncoder):
                 readonly_props = [p._rest_name for p in o._attr_to_rest_field.values() if _is_readonly(p)]
                 for k in readonly_props:
                     result.pop(k, None)
-            if self.exclude_none:
-                for k in list(result.keys()):
-                    if result[k] is None:
-                        result.pop(k)
             return result
         if isinstance(o, (bytes, bytearray)):
             return base64.b64encode(o).decode()
@@ -580,35 +575,31 @@ class Model(_MyMutableMapping):
             return cls(data)
         return mapped_cls._deserialize(data, exist_discriminators)  # pylint: disable=protected-access
 
-    def as_dict(self, *, exclude_readonly: bool = False, exclude_none: bool = False) -> typing.Dict[str, typing.Any]:
+    def as_dict(self, *, exclude_readonly: bool = False) -> typing.Dict[str, typing.Any]:
         result = {}
         if exclude_readonly:
             readonly_props = [p._rest_name for p in self._attr_to_rest_field.values() if _is_readonly(p)]
         for k, v in self.items():
             if exclude_readonly and k in readonly_props:  # pyright: reportUnboundVariable=false
                 continue
-            if exclude_none and v is None:
-                continue
-            result[k] = Model._as_dict_value(v, exclude_readonly=exclude_readonly, exclude_none=exclude_none)
+            result[k] = Model._as_dict_value(v, exclude_readonly=exclude_readonly)
         return result
 
     @staticmethod
-    def _as_dict_value(v: typing.Any, exclude_readonly: bool = False, exclude_none: bool = False) -> typing.Any:
+    def _as_dict_value(v: typing.Any, exclude_readonly: bool = False) -> typing.Any:
         if v is None or isinstance(v, _Null):
             return None
         if isinstance(v, (list, tuple, set)):
             return [
-                Model._as_dict_value(x, exclude_readonly=exclude_readonly, exclude_none=exclude_none)
+                Model._as_dict_value(x, exclude_readonly=exclude_readonly)
                 for x in v
             ]
         if isinstance(v, dict):
             return {
-                dk: Model._as_dict_value(dv, exclude_readonly=exclude_readonly, exclude_none=exclude_none)
+                dk: Model._as_dict_value(dv, exclude_readonly=exclude_readonly)
                 for dk, dv in v.items()
             }
-        return v.as_dict(exclude_readonly=exclude_readonly, exclude_none=exclude_none) \
-            if hasattr(v, "as_dict") else v
-
+        return v.as_dict(exclude_readonly=exclude_readonly) if hasattr(v, "as_dict") else v
 
 
 def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-return-statements, too-many-statements
