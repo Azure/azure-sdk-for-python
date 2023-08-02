@@ -52,7 +52,7 @@ class MonitorDefinition(RestTranslatableMixin):
     :type alert_notification: Optional[Union[Literal['azmonitoring'], ~azure.ai.ml.entities.AlertNotification]]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_monitor_definition]

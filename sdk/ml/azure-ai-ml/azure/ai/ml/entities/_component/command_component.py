@@ -83,7 +83,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         Details will be provided in the error message.
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
             :start-after: [START command_component_definition]

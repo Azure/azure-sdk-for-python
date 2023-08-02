@@ -50,7 +50,7 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         Details will be provided in the error message.
 
     .. admonition:: Example:
-        :class: tip
+
         .. literalinclude:: ../../../../../samples/ml_samples_input_output_configurations.py
             :start-after: [START configure_database]
             :end-before: [END configure_database]

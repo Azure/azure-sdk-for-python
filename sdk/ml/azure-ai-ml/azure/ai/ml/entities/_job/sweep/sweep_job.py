@@ -116,7 +116,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :type kwargs: dict
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]

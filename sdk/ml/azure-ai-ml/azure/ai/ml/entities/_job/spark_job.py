@@ -111,7 +111,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     :type args: str
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_job_configuration]

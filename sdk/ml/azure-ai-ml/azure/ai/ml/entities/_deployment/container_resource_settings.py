@@ -27,7 +27,7 @@ class ResourceSettings(RestTranslatableMixin):
     :type gpu: Optional[str]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_misc.py
             :start-after: [START resource_requirements_configuration]

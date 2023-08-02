@@ -23,7 +23,7 @@ class CodeConfiguration(DictMixin):
     :type scoring_script: Optional[str]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_misc.py
             :start-after: [START code_configuration]

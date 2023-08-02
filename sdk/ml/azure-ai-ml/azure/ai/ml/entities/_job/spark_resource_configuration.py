@@ -20,7 +20,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
     :type runtime_version: Optional[str]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_resource_configuration]

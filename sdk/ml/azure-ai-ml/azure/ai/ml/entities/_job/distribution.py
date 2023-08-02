@@ -73,7 +73,7 @@ class MpiDistribution(DistributionConfiguration):
     :type process_count_per_instance: Optional[int]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_misc.py
             :start-after: [START mpi_distribution_configuration]
@@ -99,7 +99,7 @@ class PyTorchDistribution(DistributionConfiguration):
     :type process_count_per_instance: Optional[int]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_misc.py
             :start-after: [START pytorch_distribution_configuration]
@@ -127,7 +127,7 @@ class TensorFlowDistribution(DistributionConfiguration):
     :type worker_count: Optional[int]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_misc.py
             :start-after: [START tensorflow_distribution_configuration]

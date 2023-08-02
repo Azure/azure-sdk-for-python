@@ -96,7 +96,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     :type kwargs: dict
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
             :start-after: [START command_job_definition]

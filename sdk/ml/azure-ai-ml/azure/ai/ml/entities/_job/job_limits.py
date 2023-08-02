@@ -39,7 +39,7 @@ class CommandJobLimits(JobLimits):
     :type timeout: Optional[Union[int, str]]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
             :start-after: [START command_job_definition]
@@ -86,7 +86,7 @@ class SweepJobLimits(JobLimits):
     :type trial_timeout: Optional[int]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]

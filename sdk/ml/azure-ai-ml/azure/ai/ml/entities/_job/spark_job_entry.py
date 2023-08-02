@@ -27,7 +27,7 @@ class SparkJobEntry(RestTranslatableMixin):
     :type type: ~azure.ai.ml.entities.SparkJobEntryType, optional
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_component_definition]

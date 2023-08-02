@@ -370,7 +370,7 @@ def load_component(
     :rtype: Union[CommandComponent, ParallelComponent, PipelineComponent]
 
     .. admonition:: Example:
-        :class: tip
+
         .. literalinclude:: ../../../../samples/ml_samples_component_configurations.py
             :start-after: [START configure_load_component]
             :end-before: [END configure_load_component]

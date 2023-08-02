@@ -65,7 +65,7 @@ class Choice(SweepDistribution):
     :type values: list[Union[float, str, dict]]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_choice_loguniform]
@@ -126,7 +126,7 @@ class Normal(SweepDistribution):
     :type sigma: float
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_randint_normal]
@@ -159,7 +159,7 @@ class LogNormal(Normal):
     :type sigma: float
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_lognormal_qlognormal]
@@ -185,7 +185,7 @@ class QNormal(Normal):
     :type q: int
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_qloguniform_qnormal]
@@ -218,7 +218,7 @@ class QLogNormal(QNormal):
     :param sigma: Standard deviation of the log of the distribution.
     :type sigma: float
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_lognormal_qlognormal]
@@ -242,7 +242,7 @@ class Randint(SweepDistribution):
     :type upper: int
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_randint_normal]
@@ -274,7 +274,7 @@ class Uniform(SweepDistribution):
     :type max_value: float
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_uniform]
@@ -333,7 +333,7 @@ class QUniform(Uniform):
     :type q: int
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_truncation_selection_policy]
@@ -371,7 +371,7 @@ class QLogUniform(QUniform):
     :type max_value: float
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_qloguniform_qnormal]

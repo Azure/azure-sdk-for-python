@@ -177,7 +177,7 @@ def spark(
     :type resources: Optional[Union[dict, ~azure.ai.ml.entities.SparkResourceConfiguration]]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_function_configuration_1]
@@ -187,7 +187,7 @@ def spark(
             :caption: Configuring a SparkJob.
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_function_configuration_2]
@@ -197,7 +197,7 @@ def spark(
             :caption: Configuring a SparkJob.
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_dsl_pipeline]

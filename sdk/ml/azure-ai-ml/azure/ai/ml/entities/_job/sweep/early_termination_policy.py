@@ -61,7 +61,7 @@ class BanditPolicy(EarlyTerminationPolicy):
     :type slack_factor: float
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bandit_policy]
@@ -111,7 +111,7 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
     :type evaluation_interval: int
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_median_stopping_policy]
@@ -154,7 +154,7 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
     :type truncation_percentage: int
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_truncation_selection_policy]

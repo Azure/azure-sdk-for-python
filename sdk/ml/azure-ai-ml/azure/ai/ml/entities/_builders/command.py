@@ -474,7 +474,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         :type shm_size: Optional[str]
 
         .. admonition:: Example:
-            :class: tip
+
 
             .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
                 :start-after: [START command_set_resources]
@@ -510,7 +510,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         :type timeout: int
 
         .. admonition:: Example:
-            :class: tip
+
 
             .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
                 :start-after: [START command_set_limits]
@@ -533,7 +533,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         :type priority: Optional[str]
 
         .. admonition:: Example:
-            :class: tip
+
 
             .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
                 :start-after: [START command_set_queue_settings]
@@ -620,7 +620,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         :rtype: ~azure.ai.ml.entities.Sweep
 
         .. admonition:: Example:
-            :class: tip
+
 
             .. literalinclude:: ../../../../../samples/ml_samples_sweep_configurations.py
                 :start-after: [START configure_sweep_job_bandit_policy]

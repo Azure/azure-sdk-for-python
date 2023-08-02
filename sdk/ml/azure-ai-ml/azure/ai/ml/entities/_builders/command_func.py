@@ -208,18 +208,19 @@ def command(
     :type is_deterministic: bool
     :param services: The interactive services for the node. Defaults to None. This is an experimental parameter,
         and may change at any time. Please see https://aka.ms/azuremlexperimental for more information.
-    :type services: Optional[dict[str, Union[~azure.ai.ml.entities.JobService, ~azure.ai.ml.entities.JupyterLabJobService,
-        ~azure.ai.ml.entities.SshJobService, ~azure.ai.ml.entities.TensorBoardJobService,
-        ~azure.ai.ml.entities.VsCodeJobService]]]
+    :type services: Optional[dict[str, Union[~azure.ai.ml.entities.JobService,
+        ~azure.ai.ml.entities.JupyterLabJobService, ~azure.ai.ml.entities.SshJobService,
+        ~azure.ai.ml.entities.TensorBoardJobService, ~azure.ai.ml.entities.VsCodeJobService]]]
     :param job_tier: The job tier. Accepted values are "Spot", "Basic", "Standard", or "Premium".
     :type job_tier: Optional[str]
-    :param priority: The priority of the job on the compute. Accepted values are "low", "medium", and "high". Defaults to "medium".
+    :param priority: The priority of the job on the compute. Accepted values are "low", "medium", and "high".
+        Defaults to "medium".
     :type priority: Optional[str]
     :return: A Command object.
     :rtype: ~azure.ai.ml.entities.Command
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
             :start-after: [START command_function]

@@ -53,7 +53,7 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
     :type logbase: Union[float, str]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_random_sampling_algorithm]
@@ -96,7 +96,7 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
     """Grid Sampling Algorithm.
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_grid_sampling_algorithm]
@@ -123,7 +123,7 @@ class BayesianSamplingAlgorithm(SamplingAlgorithm):
     """Bayesian Sampling Algorithm.
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]

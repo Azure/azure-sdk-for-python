@@ -23,7 +23,7 @@ class ResourceRequirementsSettings(RestTranslatableMixin):
     :type limits: Optional[~azure.ai.ml.entities.ResourceSettings]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_misc.py
             :start-after: [START resource_requirements_configuration]

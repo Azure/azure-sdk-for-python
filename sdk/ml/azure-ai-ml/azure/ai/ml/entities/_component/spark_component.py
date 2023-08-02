@@ -81,7 +81,7 @@ class SparkComponent(
     :type args: Optional[str]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_component_definition]

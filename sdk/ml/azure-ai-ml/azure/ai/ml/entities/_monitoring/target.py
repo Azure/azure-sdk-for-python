@@ -15,7 +15,7 @@ class MonitoringTarget:
     :type model_id: Optional[str]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_monitor_definition]

@@ -263,7 +263,7 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Job]
 
         .. admonition:: Example:
-            :class: tip
+
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_list]
@@ -312,7 +312,7 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Job
 
         .. admonition:: Example:
-            :class: tip
+
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_get]
@@ -350,7 +350,7 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: dict[str, ~azure.ai.ml.entities.ServiceInstance]
 
         .. admonition:: Example:
-            :class: tip
+
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_show_services]
@@ -382,7 +382,7 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[None]
 
         .. admonition:: Example:
-            :class: tip
+
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_begin_cancel]
@@ -477,7 +477,7 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.ValidationResult
 
         .. admonition:: Example:
-            :class: tip
+
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_validate]
@@ -587,7 +587,7 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Job
 
         .. admonition:: Example:
-            :class: tip
+
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_create_and_update]
@@ -712,7 +712,7 @@ class JobOperations(_ScopeDependentOperations):
         :raises azure.core.exceptions.ResourceNotFoundError: Raised if no job with the given name can be found.
 
         .. admonition:: Example:
-            :class: tip
+
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_archive]
@@ -734,7 +734,7 @@ class JobOperations(_ScopeDependentOperations):
         :raises azure.core.exceptions.ResourceNotFoundError: Raised if no job with the given name can be found.
 
         .. admonition:: Example:
-            :class: tip
+
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_restore]
@@ -756,7 +756,7 @@ class JobOperations(_ScopeDependentOperations):
         :raises azure.core.exceptions.ResourceNotFoundError: Raised if no job with the given name can be found.
 
         .. admonition:: Example:
-            :class: tip
+
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_stream_logs]
@@ -800,7 +800,7 @@ class JobOperations(_ScopeDependentOperations):
             Details will be provided in the error message.
 
         .. admonition:: Example:
-            :class: tip
+
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_download]
