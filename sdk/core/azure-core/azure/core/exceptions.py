@@ -28,6 +28,7 @@ import json
 import logging
 import sys
 
+from types import TracebackType
 from typing import (
     Callable,
     Any,
@@ -42,7 +43,6 @@ from typing import (
     TYPE_CHECKING,
 )
 from typing_extensions import Protocol, runtime_checkable
-from types import TracebackType
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -112,7 +112,7 @@ class ErrorMap(Generic[KeyType, ValueType]):
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         custom_error_map: Optional[Mapping[KeyType, ValueType]] = None,
         *,
         default_error: Optional[ValueType] = None,
