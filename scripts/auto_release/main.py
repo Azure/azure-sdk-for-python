@@ -614,11 +614,8 @@ class CodegenTestPR:
             self.sdk_folder = self.test_folder.split('/')[0]
             self.package_name = self.test_folder.split('/')[-1].split('-')[-1]
             env_var = os.getenv("DEBUG_SDK_BRANCH", "")
-            usr = env_var.split(":")[0] or "Azure"
-            branch = env_var.split(":")[-1] or "main"
+            branch = env_var.split(":")[-1]
 
-            print_exec(f'git remote add {usr} https://github.com/{usr}/azure-sdk-for-python.git')
-            print_check(f'git fetch {usr} {branch}')
             print_check(f'git checkout {branch}')
             # self.run_test()
 
