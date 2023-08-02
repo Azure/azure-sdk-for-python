@@ -49,8 +49,8 @@ def get_local_timeout(now, idle_timeout, last_frame_received_time):
     :param float now: The current time to check against.
     :param float idle_timeout: The idle timeout value.
     :param float last_frame_received_time: The time the last frame was received.
-    :rtype: bool
     :returns: Whether to shutdown the connection due to timeout.
+    :rtype: bool
     """
     if idle_timeout and last_frame_received_time:
         time_since_last_received = now - last_frame_received_time
