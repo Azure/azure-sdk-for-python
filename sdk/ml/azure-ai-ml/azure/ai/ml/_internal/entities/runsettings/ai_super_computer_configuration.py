@@ -19,7 +19,7 @@ class PascalCaseProperty(BaseProperty):
         return result
 
 
-class AISuperComputerStorageReferenceConfiguration(PascalCaseProperty):
+class AISuperComputerStorageReferenceConfiguration(PascalCaseProperty):  # pylint: disable=name-too-long
     _KEY_MAPPING = {
         "container_name": "ContainerName",
         "relative_path": "RelativePath",

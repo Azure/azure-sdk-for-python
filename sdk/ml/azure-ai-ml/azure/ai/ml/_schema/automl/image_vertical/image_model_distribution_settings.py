@@ -33,26 +33,26 @@ from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
 
 
-def get_choice_schema_of_type(cls, **kwargs):
+def choice_schema_of_type(cls, **kwargs):
     class CustomChoiceSchema(ChoiceSchema):
         values = fields.List(cls(**kwargs))
 
     return CustomChoiceSchema()
 
 
-def get_choice_and_single_value_schema_of_type(cls, **kwargs):
+def choice_and_single_value_schema_of_type(cls, **kwargs):
     # Reshuffling the order of fields for allowing choice of booleans.
     # The reason is, while dumping [Bool, Choice[Bool]] is parsing even dict as True.
     # Since all unionFields are parsed sequentially, to avoid this, we are giving the "type" field at the end.
-    return UnionField([NestedField(get_choice_schema_of_type(cls, **kwargs)), cls(**kwargs)])
+    return UnionField([NestedField(choice_schema_of_type(cls, **kwargs)), cls(**kwargs)])
 
 
 FLOAT_SEARCH_SPACE_DISTRIBUTION_FIELD = UnionField(
     [
         fields.Float(),
         DumpableIntegerField(strict=True),
-        NestedField(get_choice_schema_of_type(DumpableIntegerField, strict=True)),
-        NestedField(get_choice_schema_of_type(fields.Float)),
+        NestedField(choice_schema_of_type(DumpableIntegerField, strict=True)),
+        NestedField(choice_schema_of_type(fields.Float)),
         NestedField(UniformSchema()),
         NestedField(QUniformSchema()),
         NestedField(NormalSchema()),
@@ -64,15 +64,15 @@ FLOAT_SEARCH_SPACE_DISTRIBUTION_FIELD = UnionField(
 INT_SEARCH_SPACE_DISTRIBUTION_FIELD = UnionField(
     [
         DumpableIntegerField(strict=True),
-        NestedField(get_choice_schema_of_type(DumpableIntegerField, strict=True)),
+        NestedField(choice_schema_of_type(DumpableIntegerField, strict=True)),
         NestedField(RandintSchema()),
         NestedField(IntegerQUniformSchema()),
         NestedField(IntegerQNormalSchema()),
     ]
 )
 
-STRING_SEARCH_SPACE_DISTRIBUTION_FIELD = get_choice_and_single_value_schema_of_type(DumpableStringField)
-BOOL_SEARCH_SPACE_DISTRIBUTION_FIELD = get_choice_and_single_value_schema_of_type(fields.Bool)
+STRING_SEARCH_SPACE_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(DumpableStringField)
+BOOL_SEARCH_SPACE_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(fields.Bool)
 
 model_size_enum_args = {"allowed_values": [o.value for o in ModelSize], "casing_transform": camel_to_snake}
 learning_rate_scheduler_enum_args = {
@@ -86,14 +86,12 @@ validation_metric_enum_args = {
 }
 
 
-MODEL_SIZE_DISTRIBUTION_FIELD = get_choice_and_single_value_schema_of_type(
-    StringTransformedEnum, **model_size_enum_args
-)
-LEARNING_RATE_SCHEDULER_DISTRIBUTION_FIELD = get_choice_and_single_value_schema_of_type(
+MODEL_SIZE_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(StringTransformedEnum, **model_size_enum_args)
+LEARNING_RATE_SCHEDULER_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(
     StringTransformedEnum, **learning_rate_scheduler_enum_args
 )
-OPTIMIZER_DISTRIBUTION_FIELD = get_choice_and_single_value_schema_of_type(StringTransformedEnum, **optimizer_enum_args)
-VALIDATION_METRIC_DISTRIBUTION_FIELD = get_choice_and_single_value_schema_of_type(
+OPTIMIZER_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(StringTransformedEnum, **optimizer_enum_args)
+VALIDATION_METRIC_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(
     StringTransformedEnum, **validation_metric_enum_args
 )
 
@@ -128,6 +126,7 @@ class ImageModelDistributionSettingsSchema(metaclass=PatchedSchemaMeta):
     weight_decay = FLOAT_SEARCH_SPACE_DISTRIBUTION_FIELD
 
 
+# pylint: disable-next=name-too-long
 class ImageModelDistributionSettingsClassificationSchema(ImageModelDistributionSettingsSchema):
     model_name = STRING_SEARCH_SPACE_DISTRIBUTION_FIELD
     training_crop_size = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
@@ -163,6 +162,7 @@ class ImageModelDistributionSettingsClassificationSchema(ImageModelDistributionS
         return ImageClassificationSearchSpace(**data)
 
 
+# pylint: disable-next=name-too-long
 class ImageModelDistributionSettingsDetectionCommonSchema(ImageModelDistributionSettingsSchema):
     box_detections_per_image = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
     box_score_threshold = FLOAT_SEARCH_SPACE_DISTRIBUTION_FIELD
@@ -206,9 +206,11 @@ class ImageModelDistributionSettingsDetectionCommonSchema(ImageModelDistribution
         return ImageObjectDetectionSearchSpace(**data)
 
 
+# pylint: disable-next=name-too-long
 class ImageModelDistributionSettingsObjectDetectionSchema(ImageModelDistributionSettingsDetectionCommonSchema):
     model_name = STRING_SEARCH_SPACE_DISTRIBUTION_FIELD
 
 
+# pylint: disable-next=name-too-long
 class ImageModelDistributionSettingsInstanceSegmentationSchema(ImageModelDistributionSettingsObjectDetectionSchema):
     model_name = STRING_SEARCH_SPACE_DISTRIBUTION_FIELD
