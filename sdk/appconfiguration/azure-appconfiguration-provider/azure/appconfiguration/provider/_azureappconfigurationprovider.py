@@ -278,6 +278,10 @@ def _build_sentinel(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
 def _is_retryable_error(error: HttpResponseError) -> bool:
     """Determine whether the service error should be silently retried after a backoff period, or raised.
     Don't know what errors this applies to yet, so just always raising for now.
+    :param error: The http error to check.
+    :type error: ~azure.core.exceptions.HttpResponseError
+    :return: Whether the error should be retried.
+    :rtype: bool
     """
     # 408: Request Timeout
     # 429: Too Many Requests
