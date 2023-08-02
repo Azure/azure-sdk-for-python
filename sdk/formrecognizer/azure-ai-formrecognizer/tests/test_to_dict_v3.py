@@ -2213,7 +2213,7 @@ class TestToDict(FormRecognizerTest):
     def test_resource_details_to_dict(self):
         model = _models.ResourceDetails(
             custom_document_models=_models.CustomDocumentModelsDetails(limit=5000, count=10),
-            custom_neural_document_model_builds=_models.QuotaDetails(
+            neural_document_model_quota=_models.QuotaDetails(
                 used=0,
                 quota=20,
                 quota_resets_on="1994-11-05T13:15:30Z"
@@ -2222,7 +2222,7 @@ class TestToDict(FormRecognizerTest):
 
         d = model.to_dict()
 
-        final = {'custom_document_models': {'count': 10, 'limit': 5000}, 'custom_neural_document_model_builds': {'used': 0, 'quota': 20, 'quota_resets_on': '1994-11-05T13:15:30Z'}}
+        final = {'custom_document_models': {'count': 10, 'limit': 5000}, 'neural_document_model_quota': {'used': 0, 'quota': 20, 'quota_resets_on': '1994-11-05T13:15:30Z'}}
         assert d == final
 
     def test_document_analysis_inner_error_to_dict(self):

@@ -63,7 +63,7 @@ class BanditPolicy(EarlyTerminationPolicy):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bandit_policy]
             :end-before: [END configure_sweep_job_bandit_policy]
             :language: python
@@ -79,18 +79,6 @@ class BanditPolicy(EarlyTerminationPolicy):
         slack_amount: float = 0,
         slack_factor: float = 0,
     ) -> None:
-        """Defines an early termination policy based on slack criteria and a frequency and delay interval
-        for evaluation.
-
-        :param delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
-        :type delay_evaluation: int
-        :param evaluation_interval: Interval (number of runs) between policy evaluations. Defaults to 0.
-        :type evaluation_interval: int
-        :param slack_amount: Absolute distance allowed from the best performing run. Defaults to 0.
-        :type slack_amount: float
-        :param slack_factor: Ratio of the allowed distance from the best performing run. Defaults to 0.
-        :type slack_factor: float
-        """
         super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
         self.type = EarlyTerminationPolicyType.BANDIT.lower()
         self.slack_factor = slack_factor
@@ -125,7 +113,7 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_median_stopping_policy]
             :end-before: [END configure_sweep_job_median_stopping_policy]
             :language: python
@@ -139,13 +127,6 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
         delay_evaluation: int = 0,
         evaluation_interval: int = 1,
     ) -> None:
-        """Defines an early termination policy based on a running average of the primary metric of all runs.
-
-        :param delay_evaluation: Number of intervals by which to delay the first evaluation. Defaults to 0.
-        :type delay_evaluation: int
-        :param evaluation_interval: Interval (number of runs) between policy evaluations. Defaults to 1.
-        :type evaluation_interval: int
-        """
         super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
         self.type = camel_to_snake(EarlyTerminationPolicyType.MEDIAN_STOPPING)
 
@@ -175,7 +156,7 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_truncation_selection_policy]
             :end-before: [END configure_sweep_job_truncation_selection_policy]
             :language: python
@@ -191,15 +172,6 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
         evaluation_interval: int = 0,
         truncation_percentage: int = 0,
     ) -> None:
-        """Defines an early termination policy that cancels a given percentage of runs at each evaluation interval.
-
-        :param delay_evaluation: Number of intervals by which to delay the first evaluation.
-        :type delay_evaluation: int
-        :param evaluation_interval: Interval (number of runs) between policy evaluations.
-        :type evaluation_interval: int
-        :param truncation_percentage: The percentage of runs to cancel at each evaluation interval.
-        :type truncation_percentage: int
-        """
         super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
         self.type = camel_to_snake(EarlyTerminationPolicyType.TRUNCATION_SELECTION)
         self.truncation_percentage = truncation_percentage
