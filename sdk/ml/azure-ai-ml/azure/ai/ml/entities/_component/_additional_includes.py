@@ -17,7 +17,7 @@ from azure.ai.ml.constants._common import AzureDevopsArtifactsType
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 
 from ..._utils._artifact_utils import ArtifactCache
-from ..._utils._asset_utils import IgnoreFile, traverse_directory
+from ..._utils._asset_utils import IgnoreFile, get_upload_files_from_folder
 from ..._utils.utils import is_concurrent_component_registration_enabled, is_private_preview_enabled
 from ...entities._util import _general_copy
 from .._assets import Code
@@ -214,9 +214,10 @@ class AdditionalIncludes:
         zip_file = dst_path / zip_additional_include.name
         with zipfile.ZipFile(zip_file, "w") as zf:
             zf.write(folder_to_zip, os.path.relpath(folder_to_zip, folder_to_zip.parent))  # write root in zip
-            for root, _, files in os.walk(folder_to_zip, followlinks=True):
-                for path, _ in traverse_directory(root, files, str(folder_to_zip), "", ignore_file=ignore_file):
-                    zf.write(path, os.path.relpath(path, folder_to_zip.parent))
+            paths = [path for path, _ in get_upload_files_from_folder(folder_to_zip, ignore_file=ignore_file)]
+            # sort the paths to make sure the zip file (namelist) is deterministic
+            for path in sorted(paths):
+                zf.write(path, os.path.relpath(path, folder_to_zip.parent))
 
     def _get_resolved_additional_include_configs(self) -> List[str]:
         """

@@ -34,8 +34,6 @@ from .operations import (
     NspAccessRulesReconcileOperations,
     NspAssociationReconcileOperations,
     NspAssociationsOperations,
-    NspLinkReconcileOperations,
-    NspLinkReferenceReconcileOperations,
     NspLinkReferencesOperations,
     NspLinksOperations,
     NspProfilesOperations,
@@ -130,15 +128,9 @@ class NetworkManagementClient:  # pylint: disable=client-accepts-api-version-key
      azure.mgmt.network.v2021_02_01_preview.aio.operations.NspAccessRulesReconcileOperations
     :ivar nsp_links: NspLinksOperations operations
     :vartype nsp_links: azure.mgmt.network.v2021_02_01_preview.aio.operations.NspLinksOperations
-    :ivar nsp_link_reconcile: NspLinkReconcileOperations operations
-    :vartype nsp_link_reconcile:
-     azure.mgmt.network.v2021_02_01_preview.aio.operations.NspLinkReconcileOperations
     :ivar nsp_link_references: NspLinkReferencesOperations operations
     :vartype nsp_link_references:
      azure.mgmt.network.v2021_02_01_preview.aio.operations.NspLinkReferencesOperations
-    :ivar nsp_link_reference_reconcile: NspLinkReferenceReconcileOperations operations
-    :vartype nsp_link_reference_reconcile:
-     azure.mgmt.network.v2021_02_01_preview.aio.operations.NspLinkReferenceReconcileOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription credentials which uniquely identify the Microsoft
@@ -244,13 +236,7 @@ class NetworkManagementClient:  # pylint: disable=client-accepts-api-version-key
         self.nsp_links = NspLinksOperations(
             self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
-        self.nsp_link_reconcile = NspLinkReconcileOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
-        )
         self.nsp_link_references = NspLinkReferencesOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
-        )
-        self.nsp_link_reference_reconcile = NspLinkReferenceReconcileOperations(
             self._client, self._config, self._serialize, self._deserialize, "2021-02-01-preview"
         )
 
