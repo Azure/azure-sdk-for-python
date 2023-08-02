@@ -13,6 +13,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from .._constants import EnvironmentVariables, KnownAuthorities
 
 within_credential_chain = ContextVar("within_credential_chain", default=False)
+within_dac = ContextVar("within_dac", default=False)
 
 _LOGGER = logging.getLogger(__name__)
 

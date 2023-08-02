@@ -14361,6 +14361,8 @@ class PrivateEndpointConnection(ProxyResource):
     :vartype type: str
     :ivar private_endpoint: Private endpoint which the connection belongs to.
     :vartype private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+    :ivar group_ids: Group IDs.
+    :vartype group_ids: list[str]
     :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
     :vartype private_link_service_connection_state:
@@ -14374,6 +14376,7 @@ class PrivateEndpointConnection(ProxyResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "group_ids": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -14382,6 +14385,7 @@ class PrivateEndpointConnection(ProxyResource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpointProperty"},
+        "group_ids": {"key": "properties.groupIds", "type": "[str]"},
         "private_link_service_connection_state": {
             "key": "properties.privateLinkServiceConnectionState",
             "type": "PrivateLinkServiceConnectionStateProperty",
@@ -14406,6 +14410,7 @@ class PrivateEndpointConnection(ProxyResource):
         """
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
+        self.group_ids = None
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
 

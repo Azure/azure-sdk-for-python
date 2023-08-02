@@ -23,7 +23,9 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         super(ContainerRegistryChallengePolicy, self).__init__()
         self._credential = credential
         if self._credential is None:
-            self._exchange_client = AnonymousACRExchangeClient(endpoint, **kwargs) # type: Union[AnonymousACRExchangeClient, ACRExchangeClient] # pylint: disable=line-too-long
+            self._exchange_client = AnonymousACRExchangeClient(
+                endpoint, **kwargs
+            )  # type: Union[AnonymousACRExchangeClient, ACRExchangeClient] # pylint: disable=line-too-long
         else:
             self._exchange_client = ACRExchangeClient(endpoint, self._credential, **kwargs)
 
@@ -54,7 +56,7 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         if response.http_response.status_code == 401:
             challenge = response.http_response.headers.get("WWW-Authenticate")
             if challenge and self.on_challenge(request, response, challenge):
-                if request.http_request.body and hasattr(request.http_request.body, 'read'):
+                if request.http_request.body and hasattr(request.http_request.body, "read"):
                     try:
                         # attempt to rewind the body to the initial position
                         request.http_request.body.seek(0, SEEK_SET)

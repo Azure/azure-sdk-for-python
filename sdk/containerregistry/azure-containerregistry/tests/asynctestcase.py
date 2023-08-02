@@ -25,7 +25,7 @@ class AsyncFakeTokenCredential(object):
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
 
-    async def get_token(self, *args):
+    async def get_token(self, *args, **kwargs):
         return self.token
 
 
@@ -37,7 +37,7 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
                     tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
                     client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
                     client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
-                    authority=authority
+                    authority=authority,
                 )
             return DefaultAzureCredential(**kwargs)
         return AsyncFakeTokenCredential()
@@ -54,7 +54,7 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
         authority = get_authority(endpoint)
         audience = get_audience(authority)
         return ContainerRegistryClient(endpoint=endpoint, credential=None, audience=audience, **kwargs)
-    
+
     async def upload_oci_manifest_prerequisites(self, repo, client):
         layer = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
         config = "config.json"

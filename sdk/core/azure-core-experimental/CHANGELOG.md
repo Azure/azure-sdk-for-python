@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Create new httpx client when used without "with" ([#31362](https://github.com/Azure/azure-sdk-for-python/pull/31370))
+- Fix httpx sample with right API name
+
 ### Other Changes
 
 ## 1.0.0b3 (2023-07-06)

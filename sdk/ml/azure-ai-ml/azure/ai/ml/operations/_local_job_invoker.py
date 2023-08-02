@@ -28,11 +28,11 @@ from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml.constants._common import (
     AZUREML_RUN_SETUP_DIR,
     AZUREML_RUNS_DIR,
-    DefaultOpenEncoding,
     EXECUTION_SERVICE_URL_KEY,
     INVOCATION_BASH_FILE,
     INVOCATION_BAT_FILE,
     LOCAL_JOB_FAILURE_MSG,
+    DefaultOpenEncoding,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
@@ -232,12 +232,12 @@ class CommonRuntimeHelper:
         if registry:
             try:
                 client.login(
-                    username=registry["username"],
-                    password=registry["password"],
-                    registry=registry["url"],
+                    username=registry.get("username"),
+                    password=registry.get("password"),
+                    registry=registry.get("url"),
                 )
             except Exception as e:
-                raise RuntimeError(self.DOCKER_LOGIN_FAILURE_MSG.format(registry["url"], e)) from e
+                raise RuntimeError(self.DOCKER_LOGIN_FAILURE_MSG.format(registry.get("url"), e)) from e
         else:
             raise RuntimeError("Registry information is missing from bootstrapper configuration.")
 
@@ -402,23 +402,25 @@ def start_run_if_local(
     token = credential.get_token(ws_base_url + "/.default").token
     (zip_content, snapshot_id) = get_execution_service_response(job_definition, token, requests_pipeline)
 
-    if os.name != "nt":
-        cr_helper = CommonRuntimeHelper(job_definition.name)
-        bootstrapper_info, job_spec = cr_helper.get_common_runtime_info_from_response(zip_content)
-        cr_helper.get_bootstrapper_binary(bootstrapper_info)
-        bootstrapper_process = None
+    # TODO: re-enable this once CommonRuntime error is fixed (2578431)
+    # if os.name != "nt":
+    #     cr_helper = CommonRuntimeHelper(job_definition.name)
+    #     bootstrapper_info, job_spec = cr_helper.get_common_runtime_info_from_response(zip_content)
+    #     cr_helper.get_bootstrapper_binary(bootstrapper_info)
+    #     bootstrapper_process = None
 
-        bootstrapper_process = cr_helper.execute_bootstrapper(cr_helper.vm_bootstrapper_full_path, job_spec)
-        while not os.path.exists(
-            cr_helper.common_runtime_temp_folder
-        ) and not cr_helper.check_bootstrapper_process_status(bootstrapper_process):
-            time.sleep(3)
-    else:
-        try:
-            temp_dir = unzip_to_temporary_file(job_definition, zip_content)
-            invoke_command(temp_dir)
-        except Exception as e:
-            raise Exception(LOCAL_JOB_FAILURE_MSG.format(e)) from e
+    #     bootstrapper_process = cr_helper.execute_bootstrapper(cr_helper.vm_bootstrapper_full_path, job_spec)
+    #     while not os.path.exists(
+    #         cr_helper.common_runtime_temp_folder
+    #     ) and not cr_helper.check_bootstrapper_process_status(bootstrapper_process):
+    #         time.sleep(3)
+    # else:
+    try:
+        temp_dir = unzip_to_temporary_file(job_definition, zip_content)
+        invoke_command(temp_dir)
+    except Exception as e:
+        raise Exception(LOCAL_JOB_FAILURE_MSG.format(e)) from e
+
     return snapshot_id
 
 

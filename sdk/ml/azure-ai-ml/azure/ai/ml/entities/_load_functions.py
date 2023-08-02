@@ -9,11 +9,13 @@ from typing import IO, AnyStr, Optional, Type, Union
 
 from marshmallow import ValidationError
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import load_yaml
+from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackage
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._assets._artifacts.data import Data
-from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
+from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
@@ -23,10 +25,11 @@ from azure.ai.ml.entities._compute.compute import Compute
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 from azure.ai.ml.entities._deployment.model_batch_deployment import ModelBatchDeployment
-from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
+from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
 from azure.ai.ml.entities._endpoint.online_endpoint import OnlineEndpoint
+from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
 from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
 from azure.ai.ml.entities._job.job import Job
@@ -36,9 +39,7 @@ from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, _ValidationResultBuilder
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackage
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml._utils._experimental import experimental
 
 module_logger = logging.getLogger(__name__)
 
@@ -337,18 +338,6 @@ def load_component(
 ) -> Union[CommandComponent, ParallelComponent, PipelineComponent]:
     """Load component from local or remote to a component function.
 
-    For example:
-
-    .. code-block:: python
-
-        # Load a local component to a component function.
-        component_func = load_component(source="custom_component/component_spec.yaml")
-        # Load a remote component to a component function.
-        component_func = load_component(client=ml_client, name="my_component", version=1)
-
-        # Consuming the component func
-        component = component_func(param1=xxx, param2=xxx)
-
     :param source: The local yaml source of a component. Must be either a
         path to a local file, or an already-open file.
         If the source is a path, it will be open and read.
@@ -375,6 +364,15 @@ def load_component(
 
     :return: A function that can be called with parameters to get a `azure.ai.ml.entities.Component`
     :rtype: Union[CommandComponent, ParallelComponent, PipelineComponent]
+
+    .. admonition:: Example:
+        :class: tip
+        .. literalinclude:: ../../../../samples/ml_samples_component_configurations.py
+            :start-after: [START configure_load_component]
+            :end-before: [END configure_load_component]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Component object from a YAML file.
     """
 
     client = kwargs.pop("client", None)
@@ -818,6 +816,34 @@ def load_feature_store_entity(
     :rtype: FeatureStoreEntity
     """
     return load_common(FeatureStoreEntity, source, relative_origin, **kwargs)
+
+
+def load_workspace_hub(
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
+    relative_origin: Optional[str] = None,
+    **kwargs,
+) -> WorkspaceHub:
+    """Load a WorkspaceHub object from a yaml file.
+    :param source: The local yaml source of a WorkspaceHub. Must be either a
+        path to a local file, or an already-open file.
+        If the source is a path, it will be open and read.
+        An exception is raised if the file does not exist.
+        If the source is an open file, the file will be read directly,
+        and an exception is raised if the file is not readable.
+    :type source: Union[PathLike, str, io.TextIOWrapper]
+    :param relative_origin: The origin to be used when deducing
+        the relative locations of files referenced in the parsed yaml.
+        Defaults to the inputted source's directory if it is a file or file path input.
+        Defaults to "./" if the source is a stream input with no name value.
+    :type relative_origin: str
+    :param params_override: Fields to overwrite on top of the yaml file.
+        Format is [{"field1": "value1"}, {"field2": "value2"}]
+    :type params_override: List[Dict]
+    :return: Loaded WorkspaceHub object.
+    :rtype: WorkspaceHub
+    """
+    return load_common(WorkspaceHub, source, relative_origin, **kwargs)
 
 
 @experimental

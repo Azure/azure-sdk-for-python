@@ -114,8 +114,9 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
     def dump(self, dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None, **kwargs) -> None:
         pass
 
+    @classmethod
     @abstractmethod
-    def _from_rest_object(self, obj: Any) -> Any:
+    def _from_rest_object(cls, obj: Any) -> Any:
         pass
 
     def _merge_with(self, other: "Endpoint") -> None:

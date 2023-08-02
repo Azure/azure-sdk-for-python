@@ -10,7 +10,7 @@ import os
 
 
 async def main():
-    connection_string = os.environ.get("AZURE_APPCONFIG_CONNECTION_STRING")
+    connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
 
     # Connecting to Azure App Configuration using connection string
     config = await load(connection_string=connection_string)
