@@ -56,7 +56,8 @@ class WorkspaceConnection(Resource):
     :type credentials: Union[
         ~azure.ai.ml.entities.PatTokenConfiguration, ~azure.ai.ml.entities.SasTokenConfiguration,
         ~azure.ai.ml.entities.UsernamePasswordConfiguration, ~azure.ai.ml.entities.ManagedIdentityConfiguration
-        ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.AccessKeyConfiguration
+        ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.AccessKeyConfiguration,
+        ~azure.ai.ml.entities.ApiKeyConfiguration
         ]
     :param type: The category of external resource for this connection.
     :type type: The type of workspace connection, possible values are: [

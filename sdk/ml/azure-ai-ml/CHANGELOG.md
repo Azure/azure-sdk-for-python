@@ -5,6 +5,8 @@
 
 ### Features Added
 - Added support of features that are known into the future/at forecast time for dnn in AutoML Forecasting jobs.
+- Added support for new workspace connection types: azure_open_ai, cognitive_search, and cognitive_service.
+- Added support for new credential type: ApiKeyConfiguration.
 
 ### Bugs Fixed
 - Local job runs will no longer fail if Docker registry has no username/password
@@ -22,7 +24,6 @@
 
 ### Features Added
 - Added support to enable gpu access (local_enable_gpu) for local deployment.
-- Added support for new workspace connection types: azure_open_ai, cognitive_search, and cognitive_service.
 
 ### Other Changes
 
