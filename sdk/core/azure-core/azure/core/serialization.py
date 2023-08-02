@@ -576,6 +576,13 @@ class Model(_MyMutableMapping):
         return mapped_cls._deserialize(data, exist_discriminators)  # pylint: disable=protected-access
 
     def as_dict(self, *, exclude_readonly: bool = False) -> typing.Dict[str, typing.Any]:
+        """Return a dict that can be JSONify using json.dump.
+
+        :keyword bool exclude_readonly: Whether to remove the readonly properties.
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+
         result = {}
         if exclude_readonly:
             readonly_props = [p._rest_name for p in self._attr_to_rest_field.values() if _is_readonly(p)]
