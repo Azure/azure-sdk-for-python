@@ -614,9 +614,10 @@ class CodegenTestPR:
             self.sdk_folder = self.test_folder.split('/')[0]
             self.package_name = self.test_folder.split('/')[-1].split('-')[-1]
             self.checkout_branch("DEBUG_SDK_BRANCH", "azure-sdk-for-python")
-            self.run_test()
+            # self.run_test()
+            
             # commit all code
-            # self.commit_code()
+            self.commit_code()
             os.remove("swagger_to_sdk_config.json")
 
             env_var = os.getenv("DEBUG_SDK_BRANCH", "")
