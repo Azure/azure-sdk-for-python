@@ -37,7 +37,7 @@ def move_output_and_compress(target_dir, package_dir, package_name):
         os.mkdir(ci_doc_dir)
 
     individual_zip_location = os.path.join(ci_doc_dir, package_name, package_name)
-    shutil.make_archive(individual_zip_location, 'tar', target_dir)
+    shutil.make_archive(individual_zip_location, 'gztar', target_dir)
 
 def sphinx_build(target_dir, output_dir):
     command_array = [
