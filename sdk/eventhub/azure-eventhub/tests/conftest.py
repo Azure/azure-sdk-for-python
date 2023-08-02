@@ -200,31 +200,16 @@ def live_eventhub(resource_group, eventhub_namespace):  # pylint: disable=redefi
             warnings.warn(UserWarning("eventhub teardown failed"))
 
 @pytest.fixture()
-def schedule_update_properties(live_eventhub):  # pylint: disable=redefined-outer-name
-        try:
-            SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
-        except KeyError:
-            pytest.skip('AZURE_SUBSCRIPTION_ID defined')
-            return
-        base_url = os.environ.get("EVENTHUB_RESOURCE_MANAGER_URL", "https://management.azure.com/")
-        credential_scopes = ["{}.default".format(base_url)]
-        resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
-        eventhub = resource_client.event_hubs.get(
-            live_eventhub["resource_group"],
-            live_eventhub["namespace"],
-            live_eventhub["event_hub"]
-        )
-        properties = eventhub.as_dict()
-        if properties["message_retention_in_days"] == 1:
-            properties["message_retention_in_days"] = 2
-        else:
-            properties["message_retention_in_days"] = 1
-        resource_client.event_hubs.create_or_update(
-            live_eventhub["resource_group"],
-            live_eventhub["namespace"],
-            live_eventhub["event_hub"],
-            properties
-        )
+def resource_mgmt_client():
+    try:
+        SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
+    except KeyError:
+        pytest.skip('AZURE_SUBSCRIPTION_ID defined')
+        return
+    base_url = os.environ.get("EVENTHUB_RESOURCE_MANAGER_URL", "https://management.azure.com/")
+    credential_scopes = ["{}.default".format(base_url)]
+    resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
+    yield resource_client
 
 @pytest.fixture()
 def connection_str(live_eventhub):

@@ -10,10 +10,9 @@ from azure.eventhub.aio._eventprocessor.in_memory_checkpoint_store import InMemo
 from azure.eventhub._constants import ALL_PARTITIONS
 
 
-
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_storage_checkpoint_async(connstr_senders, uamqp_transport, checkpoint_store_aio, schedule_update_properties):
+async def test_receive_storage_checkpoint_async(connstr_senders, uamqp_transport, checkpoint_store_aio, live_eventhub, resource_mgmt_client):
     connection_str, senders = connstr_senders
 
     for i in range(10):
@@ -44,10 +43,24 @@ async def test_receive_storage_checkpoint_async(connstr_senders, uamqp_transport
     async with client:
         task = asyncio.ensure_future(
             client.receive(on_event, starting_position="-1"))
-        t = threading.Timer(2, schedule_update_properties)
-        t.start()
+        # Update the eventhub
+        eventhub = resource_mgmt_client.event_hubs.get(
+            live_eventhub["resource_group"],
+            live_eventhub["namespace"],
+            live_eventhub["event_hub"]
+        )
+        properties = eventhub.as_dict()
+        if properties["message_retention_in_days"] == 1:
+            properties["message_retention_in_days"] = 2
+        else:
+            properties["message_retention_in_days"] = 1
+        resource_mgmt_client.event_hubs.create_or_update(
+            live_eventhub["resource_group"],
+            live_eventhub["namespace"],
+            live_eventhub["event_hub"],
+            properties
+        )
         await asyncio.sleep(10)
-
 
  
     await task

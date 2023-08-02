@@ -12,7 +12,7 @@ from azure.eventhub._constants import ALL_PARTITIONS
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_storage_checkpoint(connstr_senders, uamqp_transport, checkpoint_store, schedule_update_properties):
+async def test_receive_storage_checkpoint(connstr_senders, uamqp_transport, checkpoint_store, live_eventhub, resource_mgmt_client):
     connection_str, senders = connstr_senders
 
     for i in range(10):
@@ -46,9 +46,25 @@ async def test_receive_storage_checkpoint(connstr_senders, uamqp_transport, chec
                                   kwargs={"starting_position": "-1"})
         worker.start()
 
-        t = threading.Timer(2, schedule_update_properties)
-        t.start()
-        time.sleep(10)
+        # Update the eventhub
+        eventhub = resource_mgmt_client.event_hubs.get(
+            live_eventhub["resource_group"],
+            live_eventhub["namespace"],
+            live_eventhub["event_hub"]
+        )
+        properties = eventhub.as_dict()
+        if properties["message_retention_in_days"] == 1:
+            properties["message_retention_in_days"] = 2
+        else:
+            properties["message_retention_in_days"] = 1
+        resource_mgmt_client.event_hubs.create_or_update(
+            live_eventhub["resource_group"],
+            live_eventhub["namespace"],
+            live_eventhub["event_hub"],
+            properties
+        )
+        
+        time.sleep(20)
 
  
     assert len(sequence_numbers_0) == 10
