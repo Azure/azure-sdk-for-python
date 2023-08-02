@@ -28,7 +28,6 @@ _APP_SERVICE_ATTRIBUTE_ENV_VARS = {
 }
 
 class AzureAppServiceResourceDetector(ResourceDetector):
-    # pylint: disable=no-self-use
     def detect(self) -> "Resource":
         attributes = {}
         website_site_name = environ.get(_WEBSITE_SITE_NAME)
@@ -41,10 +40,10 @@ class AzureAppServiceResourceDetector(ResourceDetector):
             azure_resource_uri = _get_azure_resource_uri(website_site_name)
             if azure_resource_uri:
                 attributes[_CLOUD_RESOURCE_ID_RESOURCE_ATTRIBUTE] = azure_resource_uri
-            for attribute_key in _APP_SERVICE_ATTRIBUTE_ENV_VARS:
-                attribute_value = environ.get(_APP_SERVICE_ATTRIBUTE_ENV_VARS[attribute_key])
-                if attribute_value:
-                    attributes[attribute_key] = attribute_value
+            for (key, env_var) in _APP_SERVICE_ATTRIBUTE_ENV_VARS.items():
+                value = environ.get(env_var)
+                if value:
+                    attributes[key] = value
 
         print(attributes)
         return Resource(attributes)
@@ -59,5 +58,9 @@ def _get_azure_resource_uri(website_site_name):
 
     if not (website_resource_group and subscription_id):
         return None
-    
-    return f"/subscriptions/{subscription_id}/resourceGroups/{website_resource_group}/providers/Microsoft.Web/sites/{website_site_name}"
+
+    return "/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Web/sites/%s" % (
+        subscription_id,
+        website_resource_group,
+        website_site_name,
+    )
