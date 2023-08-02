@@ -69,12 +69,6 @@ def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str
             return os.path.join(extract_location, extracted_dir)
 
 
-def unzip_sdist_to_directory(containing_folder):
-    # grab the first one
-    path_to_zip_file = glob.glob(os.path.join(containing_folder, "*.tar.gz"))[0]
-    return unzip_file_to_directory(path_to_zip_file, containing_folder)
-
-
 def move_and_rename(source_location):
     new_location = os.path.join(os.path.dirname(source_location), "unzipped")
 
