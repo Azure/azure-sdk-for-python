@@ -2,9 +2,8 @@
 
 ## 12.7.0b1 (Unreleased)
 
-### Features Added
-
-### Bugs Fixed
+### Other Changes
+- Bumped `azure-core` minimum dependency to 1.28.0 and `typing-extensions` to 4.3.0.
 
 ## 12.6.0 (2023-02-22)
 

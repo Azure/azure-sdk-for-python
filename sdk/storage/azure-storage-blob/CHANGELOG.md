@@ -3,6 +3,7 @@
 ## 12.18.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service versions 2023-05-03 and 2023-08-03.
 - Added `version_id` as a client constructor parameter to `BlobClient`. This change makes `BlobClient`s version-aware, such that
 all APIs that accept `version_id` will operate on the version ID provided during client construction by default.
 - Added optional keyword `version_id` to `get_blob_client` APIs which, if provided, will result in a version-aware `BlobClient` in which
