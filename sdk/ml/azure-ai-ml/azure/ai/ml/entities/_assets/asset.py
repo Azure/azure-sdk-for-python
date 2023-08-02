@@ -20,9 +20,9 @@ class Asset(Resource):
 
     :param name: The name of the asset. Defaults to a random GUID.
     :type name: Optional[str]]
-    :param version: The version of the asset. Defaults to "1" if no name is provided, otherwise defaults to autoincrement
-        from the last registered version of the asset with that name. For a model name that has never been registered,
-        a default version will be assigned.
+    :param version: The version of the asset. Defaults to "1" if no name is provided, otherwise defaults to
+        autoincrement from the last registered version of the asset with that name. For a model name that has
+        never been registered, a default version will be assigned.
     :type version: Optional[str]
     :param description: The description of the resource. Defaults to None.
     :type description: Optional[str]
@@ -30,7 +30,7 @@ class Asset(Resource):
     :type tags: Optional[dict[str, str]]
     :param properties: The asset property dictionary. Defaults to None.
     :type properties: Optional[dict[str, str]]
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: Optional[dict]
     """
 
@@ -81,6 +81,7 @@ class Asset(Resource):
     def version(self) -> str:
         """The asset version.
 
+        :return: The asset version.
         :rtype: str
         """
         return self._version
@@ -115,7 +116,7 @@ class Asset(Resource):
             If dest is a file path, a new file will be created.
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :param kwargs: Additional arguments to pass to the YAML serializer.
+        :keyword kwargs: Additional arguments to pass to the YAML serializer.
         :type kwargs: dict
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.

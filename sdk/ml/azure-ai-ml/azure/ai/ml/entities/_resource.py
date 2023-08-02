@@ -34,7 +34,7 @@ class Resource(abc.ABC):
     :type tags: Optional[dict]
     :param properties: The resource's property dictionary.
     :type properties: Optional[dict]
-    :param print_as_yaml: Specifies if the the resource should print out as a YAML-formatted object. If False,
+    :keyword print_as_yaml: Specifies if the the resource should print out as a YAML-formatted object. If False,
         the resource will print out in a more-compact style. By default, the YAML output is only used in Jupyter
         notebooks. Be aware that some bookkeeping values are shown only in the non-YAML output.
     :type print_as_yaml: bool

@@ -35,29 +35,29 @@ from .component import Component
 class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin):
     """Command component version, used to define a Command Component or Job.
 
-    :param name: The name of the Command job or component.
+    :keyword name: The name of the Command job or component.
     :type name: Optional[str]
-    :param version: The version of the Command job or component.
+    :keyword version: The version of the Command job or component.
     :type version: Optional[str]
-    :param description: The description of the component. Defaults to None.
+    :keyword description: The description of the component. Defaults to None.
     :type description: Optional[str]
-    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
     :type tags: Optional[dict]
-    :param display_name: The display name of the component.
+    :keyword display_name: The display name of the component.
     :type display_name: Optional[str]
-    :param command: The command to be executed.
+    :keyword command: The command to be executed.
     :type command: Optional[str]
-    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
+    :keyword code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
         to a remote location.
     :type code: Optional[str]
-    :param environment: The environment that the job will run in.
+    :keyword environment: The environment that the job will run in.
     :type environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
-    :param distribution: The configuration for distributed jobs. Defaults to None.
+    :keyword distribution: The configuration for distributed jobs. Defaults to None.
     :type distribution: Optional[Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]]
-    :param resources: The compute resource configuration for the command.
+    :keyword resources: The compute resource configuration for the command.
     :type resources: Optional[~azure.ai.ml.entities.JobResourceConfiguration]
-    :param inputs: A mapping of input names to input data sources used in the job. Defaults to None.
+    :keyword inputs: A mapping of input names to input data sources used in the job. Defaults to None.
     :type inputs: Optional[dict[str, Union[
         ~azure.ai.ml.Input,
         str,
@@ -66,18 +66,18 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         float,
         Enum,
         ]]]
-    :param outputs: A mapping of output names to output data sources used in the job. Defaults to None.
+    :keyword outputs: A mapping of output names to output data sources used in the job. Defaults to None.
     :type outputs: Optional[dict[str, Union[str, ~azure.ai.ml.Output]]]
-    :param instance_count: The number of instances or nodes to be used by the compute target. Defaults to 1.
+    :keyword instance_count: The number of instances or nodes to be used by the compute target. Defaults to 1.
     :type instance_count: Optional[int]
-    :param is_deterministic: Specifies whether the Command will return the same output given the same input.
+    :keyword is_deterministic: Specifies whether the Command will return the same output given the same input.
         Defaults to True. When True, if a Command (component) is deterministic and has been run before in the
         current workspace with the same input and settings, it will reuse results from a previous submitted job
         when used as a node or step in a pipeline. In that scenario, no compute resources will be used.
     :type is_deterministic: Optional[bool]
-    :param additional_includes: A list of shared additional files to be included in the component. Defaults to None.
+    :keyword additional_includes: A list of shared additional files to be included in the component. Defaults to None.
     :type additional_includes: Optional[list[str]]
-    :param properties: The job property dictionary. Defaults to None.
+    :keyword properties: The job property dictionary. Defaults to None.
     :type properties: Optional[dict[str, str]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
         Details will be provided in the error message.

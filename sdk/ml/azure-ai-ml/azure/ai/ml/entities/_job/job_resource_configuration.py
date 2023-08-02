@@ -87,25 +87,25 @@ class Properties(BaseProperty):
 class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     """Job resource configuration class, inherited and extended functionalities from ResourceConfiguration.
 
-    :param locations: A list of locations where the job can run.
+    :keyword locations: A list of locations where the job can run.
     :type locations: Optional[list[str]]
-    :param instance_count: The number of instances or nodes used by the compute target.
+    :keyword instance_count: The number of instances or nodes used by the compute target.
     :type instance_count: Optional[int]
-    :param instance_type: The type of VM to be used, as supported by the compute target.
+    :keyword instance_type: The type of VM to be used, as supported by the compute target.
     :type instance_type: Optional[str]
-    :param properties: A dictionary of properties for the job.
+    :keyword properties: A dictionary of properties for the job.
     :type properties: Optional[dict[str, Any]]
-    :param docker_args: Extra arguments to pass to the Docker run command. This would override any
+    :keyword docker_args: Extra arguments to pass to the Docker run command. This would override any
         parameters that have already been set by the system, or in this section. This parameter is only
         supported for Azure ML compute types.
     :type docker_args: Optional[str]
-    :param shm_size: The size of the docker container's shared memory block. This should be in the
+    :keyword shm_size: The size of the docker container's shared memory block. This should be in the
         format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
         b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
     :type shm_size: Optional[str]
-    :param max_instance_count: The maximum number of instances or nodes used by the compute target.
+    :keyword max_instance_count: The maximum number of instances or nodes used by the compute target.
     :type max_instance_count: Optional[int]
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
     .. admonition:: Example:

@@ -12,11 +12,11 @@ from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 class StoredProcedureParameter(DictMixin, RestTranslatableMixin):
     """Define a stored procedure parameter class for DataTransfer import database task.
 
-    :param name: The name of the database stored procedure.
+    :keyword name: The name of the database stored procedure.
     :type name: str, optional
-    :param value: The value of the database stored procedure.
+    :keyword value: The value of the database stored procedure.
     :type value: str, optional
-    :param type: The type of the database stored procedure.
+    :keyword type: The type of the database stored procedure.
     :type type: str, optional
     """
 
@@ -35,15 +35,15 @@ class StoredProcedureParameter(DictMixin, RestTranslatableMixin):
 class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-instance-attributes
     """Define a database class for a DataTransfer Component or Job.
 
-    :param query: The SQL query to retrieve data from the database.
+    :keyword query: The SQL query to retrieve data from the database.
     :type query: str, optional
-    :param table_name: The name of the database table.
+    :keyword table_name: The name of the database table.
     :type table_name: str, optional
-    :param stored_procedure: The name of the stored procedure.
+    :keyword stored_procedure: The name of the stored procedure.
     :type stored_procedure: str, optional
-    :param stored_procedure_params: The parameters for the stored procedure.
+    :keyword stored_procedure_params: The parameters for the stored procedure.
     :type stored_procedure_params: List[dict, StoredProcedureParameter], optional
-    :param connection: The connection string for the database.
+    :keyword connection: The connection string for the database.
         The credential information should be stored in the workspace connection.
     :type connection: str, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the Database object cannot be successfully validated.
@@ -145,7 +145,7 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
     :param path: The path to which the input is pointing. Could be pointing to the path of file system. Default is None.
     :type path: str, optional
     :param connection: Connection is workspace, we didn't support storage connection here, need leverage workspace
-    connection to store these credential info. Default is None.
+        connection to store these credential info. Default is None.
     :type connection: str, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Source cannot be successfully validated.
         Details will be provided in the error message.

@@ -9,19 +9,19 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class SystemData(RestTranslatableMixin):
     """Metadata related to the creation and most recent modification of a resource.
 
-    :param created_by: The identity that created the resource.
+    :keyword created_by: The identity that created the resource.
     :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Accepted values are
+    :keyword created_by_type: The type of identity that created the resource. Accepted values are
         "User", "Application", "ManagedIdentity", "Key".
     :type created_by_type: Union[str, ~azure.ai.ml.entities.CreatedByType]
-    :param created_at: The timestamp of resource creation (UTC).
+    :keyword created_at: The timestamp of resource creation (UTC).
     :type created_at: datetime
-    :param last_modified_by: The identity that last modified the resource.
+    :keyword last_modified_by: The identity that last modified the resource.
     :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Accepted values are
+    :keyword last_modified_by_type: The type of identity that last modified the resource. Accepted values are
         "User", "Application", "ManagedIdentity", "Key".
     :type last_modified_by_type: Union[str, ~azure.ai.ml.entities.CreatedByType]
-    :param last_modified_at: The timestamp of resource last modification in UTC.
+    :keyword last_modified_at: The timestamp of resource last modification in UTC.
     :type last_modified_at: datetime
     """
 

@@ -233,7 +233,7 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
 
     :param client_secret: The client secret.
     :type client_secret: str
-    :param kwargs: Additional arguments to pass to the parent class.
+    :keyword kwargs: Additional arguments to pass to the parent class.
     :type kwargs: Optional[dict]
     """
 
@@ -409,13 +409,13 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
 class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
     """Managed Identity credential configuration.
 
-    :param client_id: The client ID of the managed identity.
+    :keyword client_id: The client ID of the managed identity.
     :type client_id: Optional[str]
-    :param resource_id: The resource ID of the managed identity.
+    :keyword resource_id: The resource ID of the managed identity.
     :type resource_id: Optional[str]
-    :param object_id: The object ID.
+    :keyword object_id: The object ID.
     :type object_id: Optional[str]
-    :param principal_id: The principal ID.
+    :keyword principal_id: The principal ID.
     :type principal_id: Optional[str]
     """
 

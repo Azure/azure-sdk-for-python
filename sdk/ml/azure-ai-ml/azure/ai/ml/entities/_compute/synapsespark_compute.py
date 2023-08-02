@@ -21,11 +21,11 @@ from azure.ai.ml.entities._util import load_from_dict
 class AutoScaleSettings:
     """Auto-scale settings for Synapse Spark compute.
 
-    :param min_node_count: The minimum compute node count.
+    :keyword min_node_count: The minimum compute node count.
     :type min_node_count: Optional[int]
-    :param max_node_count: The maximum compute node count.
+    :keyword max_node_count: The maximum compute node count.
     :type max_node_count: Optional[int]
-    :param enabled: Specifies if auto-scale is enabled.
+    :keyword enabled: Specifies if auto-scale is enabled.
     :type enabled: Optional[bool]
 
     .. admonition:: Example:
@@ -70,9 +70,9 @@ class AutoScaleSettings:
 class AutoPauseSettings:
     """Auto pause settings for Synapse Spark compute.
 
-    :param delay_in_minutes: The time delay in minutes before pausing cluster.
+    :keyword delay_in_minutes: The time delay in minutes before pausing cluster.
     :type delay_in_minutes: Optional[int]
-    :param enabled: Specifies if auto-pause is enabled.
+    :keyword enabled: Specifies if auto-pause is enabled.
     :type enabled: Optional[bool]
 
     .. admonition:: Example:
@@ -108,27 +108,27 @@ class AutoPauseSettings:
 class SynapseSparkCompute(Compute):
     """SynapseSpark Compute resource.
 
-    :param name: The name of the compute.
+    :keyword name: The name of the compute.
     :type name: str
-    :param description: The description of the resource. Defaults to None.
+    :keyword description: The description of the resource. Defaults to None.
     :type description: Optional[str]
-    :param tags: The set of resource tags defined as key/value pairs. Defaults to None.
+    :keyword tags: The set of resource tags defined as key/value pairs. Defaults to None.
     :type tags: Optional[[dict[str, str]]
-    :param node_count: The number of nodes in the compute.
+    :keyword node_count: The number of nodes in the compute.
     :type node_count: Optional[int]
-    :param node_family: The node family of the compute.
+    :keyword node_family: The node family of the compute.
     :type node_family: Optional[str]
-    :param node_size: The size of the node.
+    :keyword node_size: The size of the node.
     :type node_size: Optional[str]
-    :param spark_version: The version of Spark to use.
+    :keyword spark_version: The version of Spark to use.
     :type spark_version: Optional[str]
-    :param identity: The configuration of identities that are associated with the compute cluster.
+    :keyword identity: The configuration of identities that are associated with the compute cluster.
     :type identity: Optional[~azure.ai.ml.entities.IdentityConfiguration]
-    :param scale_settings: The scale settings for the compute.
+    :keyword scale_settings: The scale settings for the compute.
     :type scale_settings: Optional[~azure.ai.ml.entities.AutoScaleSettings]
-    :param auto_pause_settings: The auto pause settings for the compute.
+    :keyword auto_pause_settings: The auto pause settings for the compute.
     :type auto_pause_settings: Optional[~azure.ai.ml.entities.AutoPauseSettings]
-    :param kwargs: Additional keyword arguments passed to the parent class.
+    :keyword kwargs: Additional keyword arguments passed to the parent class.
     :type kwargs: Optional[dict]
 
     .. admonition:: Example:

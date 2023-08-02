@@ -20,29 +20,29 @@ from .utils import _remove_empty_values
 class Output(_InputOutputBase):
     """Define an output.
 
-    :param type: The type of the data output. Accepted values are 'uri_folder', 'uri_file', 'mltable', 'mlflow_model',
+    :keyword type: The type of the data output. Accepted values are 'uri_folder', 'uri_file', 'mltable', 'mlflow_model',
         'custom_model', and user-defined types.
     :type type: str, optional
-    :param path: The remote path where the output should be stored.
+    :keyword path: The remote path where the output should be stored.
     :type path: Optional[str]
-    :param mode: The access mode of the data output. Accepted values are
+    :keyword mode: The access mode of the data output. Accepted values are
         * 'rw_mount': Read-write mount the data
         * 'upload': Upload the data from the compute target
         * 'direct': Pass in the URI as a string
     :type mode: Optional[str]
-    :param description: The description of the output.
+    :keyword description: The description of the output.
     :type description: Optional[str]
-    :param name: The name to be used to register the output as a Data or Model asset. A name can be set without
+    :keyword name: The name to be used to register the output as a Data or Model asset. A name can be set without
         setting a version.
     :type name: str
-    :param version: The version used to register the output as a Data or Model asset. A version can be set only
+    :keyword version: The version used to register the output as a Data or Model asset. A version can be set only
         when name is set.
     :type version: str
-    :param is_control: Determine if the output is a control output.
+    :keyword is_control: Determine if the output is a control output.
     :type is_control: bool, optional
-    :param early_available: Mark the output for early node orchestration.
+    :keyword early_available: Mark the output for early node orchestration.
     :type early_available: bool, optional
-    :param intellectual_property: Intellectual property associated with the output.
+    :keyword intellectual_property: Intellectual property associated with the output.
         It can be an instance of `IntellectualProperty` or a dictionary that will be used to create an instance.
     :type intellectual_property: Union[
         ~azure.ai.ml.entities._assets.intellectual_property.IntellectualProperty,
@@ -85,7 +85,7 @@ class Output(_InputOutputBase):
 
     @overload
     def __init__(self, type: Literal["uri_file"] = "uri_file", path=None, mode=None, description=None):
-        """Define a URI file outputS.
+        """Define a URI file outputs.
 
         :param type: The type of the data output. Can only be set to 'uri_file'.
         :type type: str

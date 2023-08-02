@@ -68,7 +68,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     :type services: Optional[dict[str, ~azure.ai.ml.entities.JobService]]
     :param compute: Information about the compute resources associated with the job.
     :type compute: Optional[str]
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
 
@@ -105,6 +105,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     def type(self) -> Optional[str]:
         """The type of the job.
 
+        :return: The type of the job.
         :rtype: Optional[str]
         """
         return self._type
@@ -165,7 +166,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             If dest is a file path, a new file will be created.
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :param kwargs: Additional arguments to pass to the YAML serializer.
+        :keyword kwargs: Additional arguments to pass to the YAML serializer.
         :type kwargs: dict
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.

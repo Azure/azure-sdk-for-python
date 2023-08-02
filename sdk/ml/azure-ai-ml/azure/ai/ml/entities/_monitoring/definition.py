@@ -37,18 +37,18 @@ from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 class MonitorDefinition(RestTranslatableMixin):
     """Monitor definition
 
-    :param compute: The Spark resource configuration to be associated with the monitor
+    :keyword compute: The Spark resource configuration to be associated with the monitor
     :type compute: ~azure.ai.ml.entities.SparkResourceConfiguration
-    :param monitoring_target: The ARM ID object associated with the model or deployment that is being monitored.
+    :keyword monitoring_target: The ARM ID object associated with the model or deployment that is being monitored.
     :type monitoring_target: Optional[~azure.ai.ml.entities.MonitoringTarget]
-    :param monitoring_signals: The dictionary of signals to monitor. The key is the name of the signal and the value
+    :keyword monitoring_signals: The dictionary of signals to monitor. The key is the name of the signal and the value
         is the DataSignal object. Accepted values for the DataSignal objects are DataDriftSignal, DataQualitySignal,
         PredictionDriftSignal, FeatureAttributionDriftSignal, and CustomMonitoringSignal.
     :type monitoring_signals: Optional[Dict[str, Union[~azure.ai.ml.entities.DataDriftSignal
         , ~azure.ai.ml.entities.DataQualitySignal, ~azure.ai.ml.entities.PredictionDriftSignal
         , ~azure.ai.ml.entities.FeatureAttributionDriftSignal
         , ~azure.ai.ml.entities.CustomMonitoringSignal]]]
-    :param alert_notification: The alert configuration for the monitor.
+    :keyword alert_notification: The alert configuration for the monitor.
     :type alert_notification: Optional[Union[Literal['azmonitoring'], ~azure.ai.ml.entities.AlertNotification]]
 
     .. admonition:: Example:

@@ -15,11 +15,11 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class ScriptReference(RestTranslatableMixin):
     """Script reference.
 
-    :param path: The location of scripts in workspace storage.
+    :keyword path: The location of scripts in workspace storage.
     :type path: Optional[str]
-    :param command: Command line arguments passed to the script to run.
+    :keyword command: Command line arguments passed to the script to run.
     :type command: Optional[str]
-    :param timeout_minutes: Timeout, in minutes, for the script to run.
+    :keyword timeout_minutes: Timeout, in minutes, for the script to run.
     :type timeout_minutes: Optional[int]
     """
 
@@ -55,9 +55,9 @@ class ScriptReference(RestTranslatableMixin):
 class SetupScripts(RestTranslatableMixin):
     """Customized setup scripts.
 
-    :param startup_script: The script to be run every time the compute is started.
+    :keyword startup_script: The script to be run every time the compute is started.
     :type startup_script: Optional[~azure.ai.ml.entities.ScriptReference]
-    :param creation_script: The script to be run only when the compute is created.
+    :keyword creation_script: The script to be run only when the compute is created.
     :type creation_script: Optional[~azure.ai.ml.entities.ScriptReference]
     """
 

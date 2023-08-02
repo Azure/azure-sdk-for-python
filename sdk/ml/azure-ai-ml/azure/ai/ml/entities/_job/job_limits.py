@@ -35,7 +35,7 @@ class JobLimits(RestTranslatableMixin, ABC):
 class CommandJobLimits(JobLimits):
     """Limits for Command Jobs.
 
-    :param timeout: The maximum run duration, in seconds, after which the job will be cancelled.
+    :keyword timeout: The maximum run duration, in seconds, after which the job will be cancelled.
     :type timeout: Optional[Union[int, str]]
 
     .. admonition:: Example:
@@ -76,13 +76,13 @@ class CommandJobLimits(JobLimits):
 class SweepJobLimits(JobLimits):
     """Limits for Sweep Jobs.
 
-    :param max_concurrent_trials: The maximum number of concurrent trials for the Sweep Job.
+    :keyword max_concurrent_trials: The maximum number of concurrent trials for the Sweep Job.
     :type max_concurrent_trials: Optional[int]
-    :param max_total_trials: The maximum number of total trials for the Sweep Job.
+    :keyword max_total_trials: The maximum number of total trials for the Sweep Job.
     :type max_total_trials: Optional[int]
-    :param timeout: The maximum run duration, in seconds, after which the job will be cancelled.
+    :keyword timeout: The maximum run duration, in seconds, after which the job will be cancelled.
     :type timeout: Optional[int]
-    :param trial_timeout: The timeout value, in seconds, for each Sweep Job trial.
+    :keyword trial_timeout: The timeout value, in seconds, for each Sweep Job trial.
     :type trial_timeout: Optional[int]
 
     .. admonition:: Example:
@@ -115,6 +115,7 @@ class SweepJobLimits(JobLimits):
     def timeout(self) -> int:
         """The maximum run duration, in seconds, after which the job will be cancelled.
 
+        :return: The maximum run duration, in seconds, after which the job will be cancelled.
         :rtype: int
         """
         return self._timeout
@@ -132,6 +133,7 @@ class SweepJobLimits(JobLimits):
     def trial_timeout(self) -> int:
         """The timeout value, in seconds, for each Sweep Job trial.
 
+        :return: The timeout value, in seconds, for each Sweep Job trial.
         :rtype: int
         """
         return self._trial_timeout
@@ -175,7 +177,7 @@ def _get_floored_timeout(value: int) -> int:
 class DoWhileJobLimits(JobLimits):
     """DoWhile Job limit class.
 
-    :param max_iteration_count: The maximum number of iterations for the DoWhile Job.
+    :keyword max_iteration_count: The maximum number of iterations for the DoWhile Job.
     :type max_iteration_count: Optional[int]
     """
 

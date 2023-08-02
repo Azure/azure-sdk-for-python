@@ -24,14 +24,14 @@ class TriggerBase(RestTranslatableMixin, ABC):
 
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
-    :param type: The type of trigger.
+    :keyword type: The type of trigger.
     :type type: str
-    :param start_time: Specifies the start time of the schedule in ISO 8601 format.
+    :keyword start_time: Specifies the start time of the schedule in ISO 8601 format.
     :type start_time: Optional[Union[str, datetime]]
-    :param end_time: Specifies the end time of the schedule in ISO 8601 format.
+    :keyword end_time: Specifies the end time of the schedule in ISO 8601 format.
         Note that end_time is not supported for compute schedules.
     :type end_time: Optional[Union[str, datetime]]
-    :param time_zone: The time zone where the schedule will run. Defaults to UTC(+00:00).
+    :keyword time_zone: The time zone where the schedule will run. Defaults to UTC(+00:00).
         Note that this applies to the start_time and end_time.
     :type time_zone: ~azure.ai.ml.constants.TimeZone
     """
@@ -63,14 +63,14 @@ class TriggerBase(RestTranslatableMixin, ABC):
 class RecurrencePattern(RestTranslatableMixin):
     """Recurrence pattern for a job schedule.
 
-    :param hours: The number of hours for the recurrence schedule pattern.
+    :keyword hours: The number of hours for the recurrence schedule pattern.
     :type hours: Union[int, list[int]]
-    :param minutes: The number of minutes for the recurrence schedule pattern.
+    :keyword minutes: The number of minutes for the recurrence schedule pattern.
     :type minutes: Union[int, list[int]]
-    :param week_days: A list of days of the week for the recurrence schedule pattern.
+    :keyword week_days: A list of days of the week for the recurrence schedule pattern.
         Acceptable values include: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
     :type week_days: Optional[Union[str, list[str]]]
-    :param month_days: A list of days of the month for the recurrence schedule pattern.
+    :keyword month_days: A list of days of the month for the recurrence schedule pattern.
     :type month_days: Optional[Union[int, list[int]]]
 
     .. admonition:: Example:
@@ -130,19 +130,19 @@ class RecurrencePattern(RestTranslatableMixin):
 class CronTrigger(TriggerBase):
     """Cron Trigger for a job schedule.
 
-    :param expression: The cron expression of schedule, following NCronTab format.
+    :keyword expression: The cron expression of schedule, following NCronTab format.
     :type expression: str
-    :param start_time: The start time for the trigger. If using a datetime object, leave the tzinfo as None and use
+    :keyword start_time: The start time for the trigger. If using a datetime object, leave the tzinfo as None and use
         the ``time_zone`` parameter to specify a time zone if needed. If using a string, use the format
         YYYY-MM-DDThh:mm:ss. Defaults to running the first workload instantly and continuing future workloads
         based on the schedule. If the start time is in the past, the first workload is run at the next calculated run
         time.
     :type start_time: Optional[Union[str, datetime]]
-    :param end_time: The start time for the trigger. If using a datetime object, leave the tzinfo as None and use
+    :keyword end_time: The start time for the trigger. If using a datetime object, leave the tzinfo as None and use
         the ``time_zone`` parameter to specify a time zone if needed. If using a string, use the format
         YYYY-MM-DDThh:mm:ss. Note that end_time is not supported for compute schedules.
     :type end_time: Optional[Union[str, datetime]]
-    :param time_zone: The time zone where the schedule will run. Defaults to UTC(+00:00).
+    :keyword time_zone: The time zone where the schedule will run. Defaults to UTC(+00:00).
         Note that this applies to the start_time and end_time.
     :type time_zone: Union[str, ~azure.ai.ml.constants.TimeZone]
     :raises Exception: Raised if end_time is in the past.
@@ -206,21 +206,21 @@ class CronTrigger(TriggerBase):
 class RecurrenceTrigger(TriggerBase):
     """Recurrence trigger for a job schedule.
 
-    :param start_time: Specifies the start time of the schedule in ISO 8601 format.
+    :keyword start_time: Specifies the start time of the schedule in ISO 8601 format.
     :type start_time: Optional[Union[str, datetime]]
-    :param end_time: Specifies the end time of the schedule in ISO 8601 format.
+    :keyword end_time: Specifies the end time of the schedule in ISO 8601 format.
         Note that end_time is not supported for compute schedules.
     :type end_time: Optional[Union[str, datetime]]
-    :param time_zone: The time zone where the schedule will run. Defaults to UTC(+00:00).
+    :keyword time_zone: The time zone where the schedule will run. Defaults to UTC(+00:00).
         Note that this applies to the start_time and end_time.
     :type time_zone: Union[str, ~azure.ai.ml.constants.TimeZone]
-    :param frequency: Specifies the frequency that the schedule should be triggered with.
+    :keyword frequency: Specifies the frequency that the schedule should be triggered with.
      Possible values include: "minute", "hour", "day", "week", "month".
     :type frequency: str
-    :param interval: Specifies the interval in conjunction with the frequency that the schedule should be triggered
+    :keyword interval: Specifies the interval in conjunction with the frequency that the schedule should be triggered
         with.
     :type interval: int
-    :param schedule: Specifies the recurrence pattern.
+    :keyword schedule: Specifies the recurrence pattern.
     :type schedule: Optional[~azure.ai.ml.entities.RecurrencePattern]
 
     .. admonition:: Example:

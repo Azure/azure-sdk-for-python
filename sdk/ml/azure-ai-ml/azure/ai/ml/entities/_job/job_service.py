@@ -23,19 +23,19 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
 
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
-    :param endpoint: The endpoint URL.
+    :keyword endpoint: The endpoint URL.
     :type endpoint: Optional[str]
-    :param type: The endpoint type. Accepted values are "jupyter_lab", "ssh", "tensor_board", and "vs_code".
+    :keyword type: The endpoint type. Accepted values are "jupyter_lab", "ssh", "tensor_board", and "vs_code".
     :type type: Optional[Literal["jupyter_lab", "ssh", "tensor_board", "vs_code"]]
-    :param port: The port for the endpoint.
+    :keyword port: The port for the endpoint.
     :type port: Optional[int]
-    :param nodes: Indicates whether the service has to run in all nodes.
+    :keyword nodes: Indicates whether the service has to run in all nodes.
     :type nodes: Optional[Literal["all"]]
-    :param properties: Additional properties to set on the endpoint.
+    :keyword properties: Additional properties to set on the endpoint.
     :type properties: Optional[dict[str, str]]
-    :param status: The status of the endpoint.
+    :keyword status: The status of the endpoint.
     :type status: Optional[str]
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
 
@@ -150,19 +150,19 @@ class JobService(JobServiceBase):
 
     This class is not intended to be used directly. Instead, use one of its subclasses specific to your job type.
 
-    :param endpoint: The endpoint URL.
+    :keyword endpoint: The endpoint URL.
     :type endpoint: Optional[str]
-    :param type: The endpoint type. Accepted values are "jupyter_lab", "ssh", "tensor_board", and "vs_code".
+    :keyword type: The endpoint type. Accepted values are "jupyter_lab", "ssh", "tensor_board", and "vs_code".
     :type type: Optional[Literal["jupyter_lab", "ssh", "tensor_board", "vs_code"]]
-    :param port: The port for the endpoint.
+    :keyword port: The port for the endpoint.
     :type port: Optional[int]
-    :param nodes: Indicates whether the service has to run in all nodes.
+    :keyword nodes: Indicates whether the service has to run in all nodes.
     :type nodes: Optional[Literal["all"]]
-    :param properties: Additional properties to set on the endpoint.
+    :keyword properties: Additional properties to set on the endpoint.
     :type properties: Optional[dict[str, str]]
-    :param status: The status of the endpoint.
+    :keyword status: The status of the endpoint.
     :type status: Optional[str]
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
 
@@ -177,19 +177,19 @@ class JobService(JobServiceBase):
 class SshJobService(JobServiceBase):
     """SSH job service configuration.
 
-    :param endpoint: The endpoint URL.
+    :keyword endpoint: The endpoint URL.
     :type endpoint: Optional[str]
-    :param port: The port for the endpoint.
+    :keyword port: The port for the endpoint.
     :type port: Optional[int]
-    :param nodes: Indicates whether the service has to run in all nodes.
+    :keyword nodes: Indicates whether the service has to run in all nodes.
     :type nodes: Optional[Literal["all"]]
-    :param properties: Additional properties to set on the endpoint.
+    :keyword properties: Additional properties to set on the endpoint.
     :type properties: Optional[dict[str, str]]
-    :param status: The status of the endpoint.
+    :keyword status: The status of the endpoint.
     :type status: Optional[str]
-    :param ssh_public_keys: The SSH Public Key to access the job container.
+    :keyword ssh_public_keys: The SSH Public Key to access the job container.
     :type ssh_public_keys: Optional[str]
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
     .. admonition:: Example:
@@ -238,19 +238,19 @@ class SshJobService(JobServiceBase):
 class TensorBoardJobService(JobServiceBase):
     """TensorBoard job service configuration.
 
-    :param endpoint: The endpoint URL.
+    :keyword endpoint: The endpoint URL.
     :type endpoint: Optional[str]
-    :param port: The port for the endpoint.
+    :keyword port: The port for the endpoint.
     :type port: Optional[int]
-    :param nodes: Indicates whether the service has to run in all nodes.
+    :keyword nodes: Indicates whether the service has to run in all nodes.
     :type nodes: Optional[Literal["all"]]
-    :param properties: Additional properties to set on the endpoint.
+    :keyword properties: Additional properties to set on the endpoint.
     :type properties: Optional[dict[str, str]]
-    :param status: The status of the endpoint.
+    :keyword status: The status of the endpoint.
     :type status: Optional[str]
-    :param log_dir: The directory path for the log file.
+    :keyword log_dir: The directory path for the log file.
     :type log_dir: Optional[str]
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
     .. admonition:: Example:
@@ -299,17 +299,17 @@ class TensorBoardJobService(JobServiceBase):
 class JupyterLabJobService(JobServiceBase):
     """JupyterLab job service configuration.
 
-    :param endpoint: The endpoint URL.
+    :keyword endpoint: The endpoint URL.
     :type endpoint: Optional[str]
-    :param port: The port for the endpoint.
+    :keyword port: The port for the endpoint.
     :type port: Optional[int]
-    :param nodes: Indicates whether the service has to run in all nodes.
+    :keyword nodes: Indicates whether the service has to run in all nodes.
     :type nodes: Optional[Literal["all"]]
-    :param properties: Additional properties to set on the endpoint.
+    :keyword properties: Additional properties to set on the endpoint.
     :type properties: Optional[dict[str, str]]
-    :param status: The status of the endpoint.
+    :keyword status: The status of the endpoint.
     :type status: Optional[str]
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
     .. admonition:: Example:
@@ -353,17 +353,17 @@ class JupyterLabJobService(JobServiceBase):
 class VsCodeJobService(JobServiceBase):
     """VS Code job service configuration.
 
-    :param endpoint: The endpoint URL.
+    :keyword endpoint: The endpoint URL.
     :type endpoint: Optional[str]
-    :param port: The port for the endpoint.
+    :keyword port: The port for the endpoint.
     :type port: Optional[int]
-    :param nodes: Indicates whether the service has to run in all nodes.
+    :keyword nodes: Indicates whether the service has to run in all nodes.
     :type nodes: Optional[Literal["all"]]
-    :param properties: Additional properties to set on the endpoint.
+    :keyword properties: Additional properties to set on the endpoint.
     :type properties: Optional[dict[str, str]]
-    :param status: The status of the endpoint.
+    :keyword status: The status of the endpoint.
     :type status: Optional[str]
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
     .. admonition:: Example:

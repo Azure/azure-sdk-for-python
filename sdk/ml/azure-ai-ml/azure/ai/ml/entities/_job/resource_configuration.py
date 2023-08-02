@@ -18,11 +18,11 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
 
     This class should not be instantiated directly. Instead, use its subclasses.
 
-    :param instance_count: The number of instances to use for the job.
+    :keyword instance_count: The number of instances to use for the job.
     :type instance_count: Optional[int]
-    :param instance_type: The type of instance to use for the job.
+    :keyword instance_type: The type of instance to use for the job.
     :type instance_type: Optional[str]
-    :param properties: The resource's property dictionary.
+    :keyword properties: The resource's property dictionary.
     :type properties: Optional[dict[str, Any]]
     """
 

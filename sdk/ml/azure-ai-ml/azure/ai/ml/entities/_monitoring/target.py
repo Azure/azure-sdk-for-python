@@ -9,9 +9,9 @@ from azure.ai.ml._utils._experimental import experimental
 class MonitoringTarget:
     """Monitoring target.
 
-    :param endpoint_deployment_id: The ARM ID of the target deployment. Mutually exclusive with model_id.
+    :keyword endpoint_deployment_id: The ARM ID of the target deployment. Mutually exclusive with model_id.
     :type endpoint_deployment_id: Optional[str]
-    :param model_id: ARM ID of the target model id. Mutually exclusive with endpoint_deployment_id.
+    :keyword model_id: ARM ID of the target model ID. Mutually exclusive with endpoint_deployment_id.
     :type model_id: Optional[str]
 
     .. admonition:: Example:

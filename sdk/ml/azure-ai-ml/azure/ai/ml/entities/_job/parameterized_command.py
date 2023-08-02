@@ -61,7 +61,7 @@ class ParameterizedCommand:
     :type environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
     :param queue_settings: The queue settings for the job.
     :type queue_settings: Optional[~azure.ai.ml.entities.QueueSettings]
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
 
@@ -104,6 +104,7 @@ class ParameterizedCommand:
     ) -> Union[MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution]:
         """The configuration for the distributed command component or job.
 
+        :return: The distribution configuration.
         :rtype: Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
             ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
         """
@@ -133,6 +134,7 @@ class ParameterizedCommand:
     def resources(self) -> JobResourceConfiguration:
         """The compute resource configuration for the command component or job.
 
+        :return: The compute resource configuration for the command component or job.
         :rtype: ~azure.ai.ml.entities.JobResourceConfiguration
         """
         return self._resources

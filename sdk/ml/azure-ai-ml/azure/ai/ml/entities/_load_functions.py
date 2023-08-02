@@ -159,11 +159,11 @@ def load_job(
         If the source is a path, it will be opened and read. If the source is an open file, the file will be read
         directly.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The root directory for the YAML. This directory will be used as the origin for deducing
+    :keyword relative_origin: The root directory for the YAML. This directory will be used as the origin for deducing
         the relative locations of files referenced in the parsed YAML. Defaults to the same directory as source if
         source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: Optional[str]
-    :param params_override: Parameter fields to overwrite values in the YAML file.
+    :keyword params_override: Parameter fields to overwrite values in the YAML file.
     :type params_override: Optional[list[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
         Details will be provided in the error message.
@@ -411,11 +411,11 @@ def load_model(
         If the source is a path, it will be opened and read. If the source is an open file, the file will be read
         directly.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The root directory for the YAML. This directory will be used as the origin for deducing
+    :keyword relative_origin: The root directory for the YAML. This directory will be used as the origin for deducing
         the relative locations of files referenced in the parsed YAML. Defaults to the same directory as source if
         source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: Optional[str]
-    :param params_override: Parameter fields to overwrite values in the YAML file.
+    :keyword params_override: Parameter fields to overwrite values in the YAML file.
     :type params_override: Optional[list[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
         Details will be provided in the error message.
@@ -840,12 +840,12 @@ def load_workspace_hub(
         If the source is an open file, the file will be read directly,
         and an exception is raised if the file is not readable.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The origin to be used when deducing
+    :keyword relative_origin: The origin to be used when deducing
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: str
-    :param params_override: Fields to overwrite on top of the yaml file.
+    :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :return: Loaded WorkspaceHub object.
@@ -867,11 +867,11 @@ def load_model_package(
         If the source is a path, it will be opened and read. If the source is an open file, the file will be read
         directly.
     :type source: Union[PathLike, str, io.TextIOWrapper]
-    :param relative_origin: The root directory for the YAML. This directory will be used as the origin for deducing
+    :keyword relative_origin: The root directory for the YAML. This directory will be used as the origin for deducing
         the relative locations of files referenced in the parsed YAML. Defaults to the same directory as source if
         source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
     :type relative_origin: Optional[str]
-    :param params_override: Parameter fields to overwrite values in the YAML file.
+    :keyword params_override: Parameter fields to overwrite values in the YAML file.
     :type params_override: Optional[list[dict]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
         Details will be provided in the error message.

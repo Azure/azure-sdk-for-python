@@ -55,44 +55,44 @@ module_logger = logging.getLogger(__name__)
 class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     """Command job.
 
-    :param name: The name of the job.
+    :keyword name: The name of the job.
     :type name: str
-    :param description: The job description.
+    :keyword description: The job description.
     :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
-    :param display_name: The job display name.
+    :keyword display_name: The job display name.
     :type display_name: str
-    :param properties: A dictionary of properties for the job.
+    :keyword properties: A dictionary of properties for the job.
     :type properties: dict[str, str]
-    :param experiment_name: The name of the experiment that the job will be created under. Defaults to current
+    :keyword experiment_name: The name of the experiment that the job will be created under. Defaults to current
         directory name.
     :type experiment_name: str
-    :param services: Read-only information on services associated with the job.
+    :keyword services: Read-only information on services associated with the job.
     :type services: Optional[dict[str, ~azure.ai.ml.entities.JobService]]
-    :param inputs: Mapping of output data bindings used in the command.
+    :keyword inputs: Mapping of output data bindings used in the command.
     :type inputs: Optional[dict[str, Union[~azure.ai.ml.Input, str, bool, int, float]]]
-    :param outputs: Mapping of output data bindings used in the job.
+    :keyword outputs: Mapping of output data bindings used in the job.
     :type outputs: Optional[dict[str, ~azure.ai.ml.Output]]
-    :param command: The command to be executed.
+    :keyword command: The command to be executed.
     :type command: str
-    :param compute: The compute target the job runs on.
+    :keyword compute: The compute target the job runs on.
     :type compute: str
-    :param resources: The compute resource configuration for the job.
+    :keyword resources: The compute resource configuration for the job.
     :type resources: ~azure.ai.ml.entities.ResourceConfiguration
-    :param code: A local path or "http:", "https:", or "azureml:" url pointing to a remote location.
+    :keyword code: A local path or "http:", "https:", or "azureml:" url pointing to a remote location.
     :type code: str
-    :param distribution: The distribution configuration for distributed jobs.
+    :keyword distribution: The distribution configuration for distributed jobs.
     :type distribution: Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
-    :param environment: The environment that the job will run in.
+    :keyword environment: The environment that the job will run in.
     :type environment: Union[~azure.ai.ml.entities.Environment, str]
-    :param identity: The identity that the job will use while running on compute.
+    :keyword identity: The identity that the job will use while running on compute.
     :type identity: Optional[Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
         ~azure.ai.ml.UserIdentityConfiguration]]
-    :param limits: The limits for the job.
+    :keyword limits: The limits for the job.
     :type limits: Optional[~azure.ai.ml.entities.CommandJobLimits]
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
     .. admonition:: Example:

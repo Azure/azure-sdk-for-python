@@ -38,7 +38,7 @@ class ParameterizedSpark(SparkJobEntryMixin):
     :type environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
     :param args: The arguments for the job.
     :type args: Optional[str]
-    :param kwargs: A dictionary of additional configuration parameters.
+    :keyword kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
 
@@ -70,6 +70,7 @@ class ParameterizedSpark(SparkJobEntryMixin):
     def environment(self) -> Optional[Union[str, Environment]]:
         """The Azure ML environment to run the Spark component or job in.
 
+        :return: The Azure ML environment to run the Spark component or job in.
         :rtype: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
         """
         if isinstance(self._environment, Environment) and self._environment.image is None:

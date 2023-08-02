@@ -28,32 +28,33 @@ from .utils import _get_param_with_standard_annotation, _remove_empty_values
 class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     """Initialize an Input object.
 
-    :param type: The type of the data input. Accepted values are
-        'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', 'integer', 'number', 'string', and 'boolean'
+    :keyword type: The type of the data input. Accepted values are
+        'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', 'integer', 'number', 'string', and
+        'boolean'.
     :type type: str, optional
-    :param path: The path to the input data. Paths can be local paths, remote data uris, or a registered AzureML asset
+    :keyword path: The path to the input data. Paths can be local paths, remote data uris, or a registered AzureML asset
         ID.
     :type path: Optional[str]
-    :param mode: The access mode of the data input. Accepted values are:
+    :keyword mode: The access mode of the data input. Accepted values are:
         * 'ro_mount': Mount the data to the compute target as read-only,
         * 'download': Download the data to the compute target,
         * 'direct': Pass in the URI as a string to be accessed at runtime
     :type mode: Optional[str]
-    :param default: The default value of the input. If a default is set, the input data will be optional.
+    :keyword default: The default value of the input. If a default is set, the input data will be optional.
     :type default: Union[str, int, float, bool]
-    :param min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
+    :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
         execution will fail.
     :type min: Union[int, float]
-    :param max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
+    :keyword max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
         execution will fail.
     :type max: Union[integer, float]
-    :param optional: Specifies if the input is optional.
+    :keyword optional: Specifies if the input is optional.
     :type optional: Optional[bool]
-    :param description: Description of the input
+    :keyword description: Description of the input
     :type description: Optional[str]
-    :param datastore: The datastore to upload local files to.
+    :keyword datastore: The datastore to upload local files to.
     :type datastore: str, optional
-    :param intellectual_property: Intellectual property for the input.
+    :keyword intellectual_property: Intellectual property for the input.
     :type intellectual_property: IntellectualProperty, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
         Details will be provided in the error message.

@@ -35,11 +35,11 @@ class Diagnostic(object):
     def __init__(self, yaml_path: str, message: str, error_code: str) -> None:
         """Init Diagnostic.
 
-        :param yaml_path: A dash path from root to the target element of the diagnostic. jobs.job_a.inputs.input_str
+        :keyword yaml_path: A dash path from root to the target element of the diagnostic. jobs.job_a.inputs.input_str
         :type yaml_path: str
-        :param message: Error message of diagnostic.
+        :keyword message: Error message of diagnostic.
         :type message: str
-        :param error_code: Error code of diagnostic.
+        :keyword error_code: Error code of diagnostic.
         :type error_code: str
         """
         self.yaml_path = yaml_path
@@ -91,7 +91,12 @@ class ValidationResult(object):
         """
         Return all messages of errors in the validation result.
 
+        :return: A dictionary of error messages. The key is the yaml path of the error, and the value is the error
+            message.
+        :rtype: dict
+
         .. admonition:: Example:
+
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START validation_result]
                 :end-before: [END validation_result]

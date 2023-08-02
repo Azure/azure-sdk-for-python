@@ -18,7 +18,7 @@ class SweepDistribution(ABC, RestTranslatableMixin):
 
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
-    :param type: Type of distribution.
+    :keyword type: Type of distribution.
     :type type: str
     """
 
@@ -214,9 +214,11 @@ class QLogNormal(QNormal):
     """QLogNormal distribution configuration.
 
     :param mu: Mean of the log of the distribution.
-    :type mu: float
+    :type mu: Optional[float]
     :param sigma: Standard deviation of the log of the distribution.
-    :type sigma: float
+    :type sigma: Optional[float]
+    :param q: Quantization factor.
+    :type q: Optional[int]
     .. admonition:: Example:
 
 
@@ -326,11 +328,11 @@ class QUniform(Uniform):
     """QUniform distribution configuration.
 
     :param min_value: Minimum value of the distribution.
-    :type min_value: float
+    :type min_value: Optional[Union[int, float]]
     :param max_value: Maximum value of the distribution.
-    :type max_value: float
+    :type max_value: Optional[Union[int, float]]
     :param q: Quantization factor.
-    :type q: int
+    :type q: Optional[int]
 
     .. admonition:: Example:
 
@@ -366,9 +368,11 @@ class QLogUniform(QUniform):
     """QLogUniform distribution configuration.
 
     :param min_value: Minimum value of the log of the distribution.
-    :type min_value: float
+    :type min_value: Optional[float]
     :param max_value: Maximum value of the log of the distribution.
-    :type max_value: float
+    :type max_value: Optional[float]
+    :param q: Quantization factor.
+    :type q: Optional[int]
 
     .. admonition:: Example:
 

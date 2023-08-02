@@ -69,7 +69,7 @@ class DistributionConfiguration(RestTranslatableMixin):
 class MpiDistribution(DistributionConfiguration):
     """MPI distribution configuration.
 
-    :param process_count_per_instance: The number of processes per node.
+    :keyword process_count_per_instance: The number of processes per node.
     :type process_count_per_instance: Optional[int]
 
     .. admonition:: Example:
@@ -95,7 +95,7 @@ class MpiDistribution(DistributionConfiguration):
 class PyTorchDistribution(DistributionConfiguration):
     """PyTorch distribution configuration.
 
-    :param process_count_per_instance: The number of processes per node.
+    :keyword process_count_per_instance: The number of processes per node.
     :type process_count_per_instance: Optional[int]
 
     .. admonition:: Example:
@@ -121,9 +121,9 @@ class PyTorchDistribution(DistributionConfiguration):
 class TensorFlowDistribution(DistributionConfiguration):
     """TensorFlow distribution configuration.
 
-    :param parameter_server_count: The number of parameter server tasks. Defaults to 0.
+    :keyword parameter_server_count: The number of parameter server tasks. Defaults to 0.
     :type parameter_server_count: Optional[int]
-    :param worker_count: The number of workers. Defaults to the instance count.
+    :keyword worker_count: The number of workers. Defaults to the instance count.
     :type worker_count: Optional[int]
 
     .. admonition:: Example:

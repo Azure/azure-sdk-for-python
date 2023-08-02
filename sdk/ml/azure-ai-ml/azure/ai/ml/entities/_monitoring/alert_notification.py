@@ -17,7 +17,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class AlertNotification(RestTranslatableMixin):
     """Alert notification configuration for monitoring jobs
 
-    :param emails: A list of email addresses that will receive notifications for monitoring alerts.
+    :keyword emails: A list of email addresses that will receive notifications for monitoring alerts.
         Defaults to None.
     :type emails: Optional[list[str]]
 

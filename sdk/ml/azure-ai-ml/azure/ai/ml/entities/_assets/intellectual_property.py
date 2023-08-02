@@ -14,9 +14,9 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class IntellectualProperty(RestTranslatableMixin):
     """Intellectual property settings definition.
 
-    :param publisher: The publisher's name.
+    :keyword publisher: The publisher's name.
     :type publisher: Optional[str]
-    :param protection_level: Asset Protection Level. Accepted values are IPProtectionLevel.ALL ("all") and
+    :keyword protection_level: Asset Protection Level. Accepted values are IPProtectionLevel.ALL ("all") and
         IPProtectionLevel.NONE ("none"). Defaults to IPProtectionLevel.ALL ("all").
     :type protection_level: Optional[Union[str, ~azure.ai.ml.constants.IPProtectionLevel]]
 

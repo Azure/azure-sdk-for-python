@@ -253,17 +253,16 @@ class JobOperations(_ScopeDependentOperations):
     ) -> Iterable[Job]:
         """Lists jobs in the workspace.
 
-        :param parent_job_name: When provided, only returns jobs that are children of the named job. Defaults to None,
+        :keyword parent_job_name: When provided, only returns jobs that are children of the named job. Defaults to None,
             listing all jobs in the workspace.
         :type parent_job_name: Optional[str]
-        :param list_view_type: The view type for including/excluding archived jobs. Defaults to
+        :keyword list_view_type: The view type for including/excluding archived jobs. Defaults to
             ~azure.mgt.machinelearningservices.models.ListViewType.ACTIVE_ONLY, excluding archived jobs.
         :type list_view_type: ~azure.mgmt.machinelearningservices.models.ListViewType
         :return: An iterator-like instance of Job objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Job]
 
         .. admonition:: Example:
-
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_list]
@@ -313,7 +312,6 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_get]
                 :end-before: [END job_operations_get]
@@ -351,7 +349,6 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_show_services]
                 :end-before: [END job_operations_show_services]
@@ -382,7 +379,6 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[None]
 
         .. admonition:: Example:
-
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_begin_cancel]
@@ -471,13 +467,12 @@ class JobOperations(_ScopeDependentOperations):
 
         :param job: The job object to be validated.
         :type job: ~azure.ai.ml.entities.Job
-        :param raise_on_failure: Specifies if an error should be raised if validation fails. Defaults to False.
+        :keyword raise_on_failure: Specifies if an error should be raised if validation fails. Defaults to False.
         :type raise_on_failure: bool
         :return: A ValidationResult object containing all found errors.
         :rtype: ~azure.ai.ml.entities.ValidationResult
 
         .. admonition:: Example:
-
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_validate]
@@ -557,16 +552,16 @@ class JobOperations(_ScopeDependentOperations):
 
         :param job: The job object.
         :type job: ~azure.ai.ml.entities.Job
-        :param description: The job description.
+        :keyword description: The job description.
         :type description: Optional[str]
-        :param compute: The compute target for the job.
+        :keyword compute: The compute target for the job.
         :type compute: Optional[str]
-        :param tags: The tags for the job.
+        :keyword tags: The tags for the job.
         :type tags: Optional[dict]
-        :param experiment_name: The name of the experiment the job will be created under. If None is provided,
+        :keyword experiment_name: The name of the experiment the job will be created under. If None is provided,
             job will be created under experiment 'Default'.
         :type experiment_name: Optional[str]
-        :param skip_validation: Specifies whether or not to skip validation before creating or updating the job. Note
+        :keyword skip_validation: Specifies whether or not to skip validation before creating or updating the job. Note
             that validation for dependent resources such as an anonymous component will not be skipped. Defaults to
             False.
         :type skip_validation: bool
@@ -587,7 +582,6 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Job
 
         .. admonition:: Example:
-
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_create_and_update]
@@ -713,7 +707,6 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_archive]
                 :end-before: [END job_operations_archive]
@@ -735,7 +728,6 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_restore]
                 :end-before: [END job_operations_restore]
@@ -756,7 +748,6 @@ class JobOperations(_ScopeDependentOperations):
         :raises azure.core.exceptions.ResourceNotFoundError: Raised if no job with the given name can be found.
 
         .. admonition:: Example:
-
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_stream_logs]
@@ -788,11 +779,11 @@ class JobOperations(_ScopeDependentOperations):
 
         :param name: The name of a job.
         :type name: str
-        :param download_path: The local path to be used as the download destination. Defaults to ".".
+        :keyword download_path: The local path to be used as the download destination. Defaults to ".".
         :type download_path: Union[PathLike, str]
-        :param output_name: The name of the output to download. Defaults to None.
+        :keyword output_name: The name of the output to download. Defaults to None.
         :type output_name: Optional[str]
-        :param all: Specifies if all logs and named outputs should be downloaded. Defaults to False.
+        :keyword all: Specifies if all logs and named outputs should be downloaded. Defaults to False.
         :type all: bool
         :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state.
             Details will be provided in the error message.
@@ -800,7 +791,6 @@ class JobOperations(_ScopeDependentOperations):
             Details will be provided in the error message.
 
         .. admonition:: Example:
-
 
             .. literalinclude:: ../../../../samples/ml_samples_misc.py
                 :start-after: [START job_operations_download]
