@@ -292,6 +292,7 @@ class ArmConstants:
     STORAGE_ACCOUNT_PARAMETER_NAME = "storageAccounts"
     APP_INSIGHTS_PARAMETER_NAME = "components"
     CONTAINER_REGISTRY_PARAMETER_NAME = "registries"
+    USER_ASSIGNED_IDENTITES = "userAssignedIdentities"
 
     CODE_TYPE = "code"
     CODE_VERSION_TYPE = "code_version"
@@ -305,6 +306,8 @@ class ArmConstants:
     BASE_TYPE = "base"
     WORKSPACE_BASE = "workspace_base"
     WORKSPACE_PARAM = "workspace_param"
+    FEATURE_STORE_ROLE_ASSIGNMENTS = "feature_store_role_assignments"
+    FEATURE_STORE_ROLE_ASSIGNMENTS_PARAM = "feature_store_role_assignments_param"
 
     OPERATION_CREATE = "create"
     OPERATION_UPDATE = "update"

@@ -128,9 +128,6 @@
     "managedNetwork": {
         "value": {}
     },
-    "setup_materialization_store" : {
-        "value": "false"
-    },
     "spark_runtime_version" : {
         "value": ""
     },
@@ -140,11 +137,14 @@
     "offline_store_connection_target" : {
         "value": ""
     },
-    "materialization_identity_client_id" : {
+    "materializationIdentityName": {
         "value": ""
     },
     "materialization_identity_resource_id" : {
         "value": ""
+    },
+    "grant_materialization_identity_permissions" : {
+        "value": "true"
     },
     "online_store_connection_name" : {
         "value": ""
