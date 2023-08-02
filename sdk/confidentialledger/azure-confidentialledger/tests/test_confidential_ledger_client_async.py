@@ -496,7 +496,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
         # Create the client directly instead of going through the create_confidentialledger_client
         # as we don't need any additional setup.
-        credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
+        credential = self.get_credential(ConfidentialLedgerClient, is_async=False)
         self.create_client_from_credential(
             ConfidentialLedgerClient,
             credential=credential,
