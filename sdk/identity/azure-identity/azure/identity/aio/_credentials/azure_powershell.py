@@ -83,7 +83,6 @@ class AzurePowerShellCredential(AsyncContextManager):
             default_tenant=self.tenant_id,
             tenant_id=tenant_id,
             additionally_allowed_tenants=self._additionally_allowed_tenants,
-            claims=claims,
             **kwargs,
         )
         command_line = get_command_line(scopes, tenant_id)
