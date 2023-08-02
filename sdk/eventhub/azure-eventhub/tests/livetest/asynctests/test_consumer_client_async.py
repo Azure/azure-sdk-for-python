@@ -1,6 +1,5 @@
 import pytest
 import asyncio
-import threading
 
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
