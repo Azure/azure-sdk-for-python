@@ -169,8 +169,9 @@ class CodegenTestPR:
         usr = env_var.split(":")[0] or "Azure"
         branch = env_var.split(":")[-1] or "main"
         print_exec(f'git remote add {usr} https://github.com/{usr}/{repo}.git')
+        print_exec(f'git remote set-url origin https://github.com/{usr}/{repo}.git')
         print_check(f'git fetch {usr} {branch}')
-        print_check(f'git checkout {branch}')
+        print_check(f'git checkout --track {usr}/{branch}')
 
     @return_origin_path
     def checkout_azure_default_branch(self):
