@@ -23,12 +23,19 @@ class TestTextNer(AzureRecordedTestCase):
     def test_remote_run_text_ner(self, conll: Tuple[Input, Input], client: MLClient, components: bool) -> None:
         training_data, validation_data = conll
 
+        properties = get_automl_job_properties()
+        if components:
+            properties["_automl_subgraph_orchestration"] = "true"
+            properties[
+                "_pipeline_id_override"
+            ] = "azureml://registries/azmlft-dev-registry01/components/nlp_textclassification_ner"
+
         job = text_ner(
             training_data=training_data,
             validation_data=validation_data,
             compute="gpu-cluster",
             experiment_name="DPv2-text-ner",
-            properties=get_automl_job_properties(),
+            properties=properties,
         )
 
         # use component specific model name so that the test fails if components are not run
@@ -36,8 +43,7 @@ class TestTextNer(AzureRecordedTestCase):
             job.set_training_parameters(model_name="microsoft/deberta-base")
 
         job.set_limits(timeout_minutes=60, max_concurrent_trials=1)
-        if components:
-            job.set_training_parameters(model_name="microsoft/deberta-large-mnli")
+
         created_job = client.jobs.create_or_update(job)
 
         assert_final_job_status(created_job, client, TextNerJob, JobStatus.COMPLETED)
