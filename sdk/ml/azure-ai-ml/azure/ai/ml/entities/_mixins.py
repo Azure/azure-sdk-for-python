@@ -139,3 +139,9 @@ class YamlTranslatableMixin:
         sorted_dict_value = _sort_dict_according_to_list(order_keys, self._to_dict())
 
         return dump_yaml(sorted_dict_value, sort_keys=False)
+
+
+class LocalizableMixin:
+    def _localize(self, base_path: str):
+        """Called on an asset got from service to clean up remote attributes like id, creation_context, etc."""
+        pass

@@ -48,7 +48,7 @@ from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarge
 
 from .._utils._cache_utils import CachedNodeResolver
 from .._utils._experimental import experimental
-from .._utils.utils import is_data_binding_expression
+from .._utils.utils import extract_name_and_version, is_data_binding_expression
 from ..entities._builders import BaseNode
 from ..entities._builders.condition_node import ConditionNode
 from ..entities._builders.control_flow_node import LoopNode
@@ -236,6 +236,38 @@ class ComponentOperations(_ScopeDependentOperations):
         """
         return self._get(name=name, version=version, label=label)
 
+    @classmethod
+    def _localize_code(cls, component: Component, base_dir: Path) -> None:
+        if isinstance(component, ComponentCodeMixin):
+            code = component._get_origin_code_value()
+            if code is not None:
+                raise NotImplementedError("Code downloading is not implemented for now.")
+                # local_code = "./code"
+                # # TODO: download code
+                # base_dir.joinpath(local_code).mkdir()
+                # setattr(component, component._get_code_field_name(), local_code)
+
+    def _localize_environment(self, component: Component, base_dir: Path) -> None:
+        from azure.ai.ml.entities import ParallelComponent
+
+        if hasattr(component, "environment"):
+            parent = component
+        elif isinstance(component, ParallelComponent):
+            parent = component.task
+        else:
+            return
+
+        # environment can be None
+        if not isinstance(parent.environment, str):
+            return
+        # registry environment can be used directly
+        if parent.environment.startswith("azureml:"):
+            return
+
+        environment = self._environment_operations.get(**extract_name_and_version(parent.environment))
+        environment._localize(base_path=base_dir.absolute().as_posix())
+        parent.environment = environment
+
     @experimental
     @monitor_with_telemetry_mixin(logger, "Component.Download", ActivityType.PUBLICAPI)
     def download(self, name: str, download_path: Union[PathLike, str] = ".", *, version: str = None) -> None:
@@ -254,14 +286,22 @@ class ComponentOperations(_ScopeDependentOperations):
         :return: The specified component object.
         :rtype: ~azure.ai.ml.entities.Component
         """
+        download_path = Path(download_path)
         component = self._get(name=name, version=version)
         self._resolve_azureml_id(component)
-        component._localize()
+
         output_dir = Path(download_path)
         if output_dir.is_dir():
             # an OSError will be raised if the directory is not empty
             output_dir.rmdir()
         output_dir.mkdir(parents=True)
+        # download code
+        self._localize_code(component, output_dir)
+
+        # download environment
+        self._localize_environment(component, output_dir)
+
+        component._localize(output_dir.absolute().as_posix())
         (output_dir / "component_spec.yaml").write_text(component._to_yaml())
 
     def _get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:

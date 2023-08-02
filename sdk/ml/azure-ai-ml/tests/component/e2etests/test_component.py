@@ -1,6 +1,7 @@
 import os.path
 import re
 import shutil
+import tempfile
 import uuid
 from itertools import tee
 from pathlib import Path
@@ -1085,23 +1086,68 @@ class TestComponent(AzureRecordedTestCase):
         "component_path",
         [
             pytest.param("./tests/test_configs/components/helloworld_component.yml", id="command"),
-            pytest.param("./tests/test_configs/components/helloworld_parallel.yml", id="parallel"),
+            pytest.param(
+                "./tests/test_configs/components/helloworld_components_with_env/helloworld_component_env_inline.yml",
+                id="command_with_env_inline",
+            ),
+            pytest.param(
+                "./tests/test_configs/components/helloworld_components_with_env/helloworld_component_env_path_1.yml",
+                id="command_with_env_path",
+            ),
+            # pytest.param("./tests/test_configs/components/basic_component_code_local_path.yml", id="command_with_code"),
+            # pytest.param("./tests/test_configs/components/helloworld_parallel.yml", id="parallel_with_code"),
+            # pytest.param(
+            #     "./tests/test_configs/dsl_pipeline/parallel_component_with_tabular_input/tabular_input_e2e.yml",
+            #     id="parallel_with_env_and_code",
+            # ),
         ],
     )
     def test_component_download(self, client: MLClient, randstr, component_path: str, request):
-        component = load_component(component_path)
+        save_dir = Path(f"./tests/test_configs/components/downloaded", request.node.callspec.id)
+        temp_component_name = randstr("component_name")
 
-        component.name = randstr("component_name")
-        _ = client.components.create_or_update(
-            component,
-        )
+        with tempfile.TemporaryDirectory() as temp_dir:
+            download_path = Path(temp_dir)
+            component = load_component(component_path)
 
-        output_dir = f"./tests/test_configs/components/downloaded/{request.node.callspec.id}"
-        if os.path.isdir(output_dir):
-            shutil.rmtree(Path(output_dir))
+            component.name = temp_component_name
+            created_component = client.components.create_or_update(
+                component,
+            )
+            client.components.download(
+                component.name,
+                version=component.version,
+                download_path=download_path,
+            )
 
-        client.components.download(
-            component.name,
-            version=component.version,
-            download_path=output_dir,
-        )
+            spec_path = download_path.joinpath("component_spec.yaml")
+            downloaded_component = load_component(spec_path)
+            downloaded_component.name += "_recreated"
+            recreated_component = client.components.create_or_update(downloaded_component)
+
+            omit_fields = [
+                "id",
+                "name",
+                "creation_context",
+            ]
+            assert omit_with_wildcard(recreated_component._to_dict(), *omit_fields) == omit_with_wildcard(
+                created_component._to_dict(), *omit_fields
+            )
+
+            # normalize component name
+            spec_path.write_text(spec_path.read_text().replace(temp_component_name, "random_component_name"))
+
+            if save_dir.is_dir():
+                try:
+                    for file in save_dir.glob("**/*"):
+                        if file.is_file():
+                            assert file.read_text() == download_path.joinpath(file.relative_to(save_dir)).read_text(), (
+                                f"downloaded component is not the same as last snapshot. "
+                                f"Please check if changes under {download_path} are expected."
+                            )
+                except AssertionError:
+                    shutil.rmtree(save_dir)
+                    shutil.copytree(download_path, save_dir)
+                    raise
+            else:
+                shutil.copytree(download_path, save_dir)
