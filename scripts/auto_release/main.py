@@ -615,7 +615,7 @@ class CodegenTestPR:
             self.package_name = self.test_folder.split('/')[-1].split('-')[-1]
             self.checkout_branch("DEBUG_SDK_BRANCH", "azure-sdk-for-python")
             # self.run_test()
-            
+
             # commit all code
             self.commit_code()
             os.remove("swagger_to_sdk_config.json")
@@ -623,7 +623,7 @@ class CodegenTestPR:
             env_var = os.getenv("DEBUG_SDK_BRANCH", "")
             usr = env_var.split(":")[0] or "Azure"
             branch = env_var.split(":")[-1] or "main"
-            print_exec(f'git remote set-url origin https://github.com/{usr}/{repo}.git')
+            print_exec(f'git remote set-url origin https://github.com/{usr}/azure-sdk-for-python.git')
             print_check(f'git push origin HEAD:{branch}')
 
 
