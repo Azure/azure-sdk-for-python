@@ -6,7 +6,7 @@ import pytest
 from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._load_functions import load_schedule
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2023_06_01_preview.models import Schedule as RestSchedule
 
 
 def validate_to_from_rest_translation(json_path: str, yaml_path: str) -> None:

@@ -8,6 +8,7 @@ from marshmallow import fields, post_load
 
 from azure.ai.ml.constants._monitoring import AZMONITORING
 from azure.ai.ml._schema.monitoring.target import MonitoringTargetSchema
+from azure.ai.ml._schema.monitoring.compute import ServerLessSparkComputeSchema
 from azure.ai.ml._schema.monitoring.signals import (
     DataDriftSignalSchema,
     DataQualitySignalSchema,
@@ -22,7 +23,7 @@ from azure.ai.ml._schema.spark_resource_configuration import SparkResourceConfig
 
 
 class MonitorDefinitionSchema(metaclass=PatchedSchemaMeta):
-    compute = NestedField(SparkResourceConfigurationSchema)
+    compute = NestedField(ServerLessSparkComputeSchema)
     monitoring_target = NestedField(MonitoringTargetSchema)
     monitoring_signals = fields.Dict(
         keys=fields.Str(),

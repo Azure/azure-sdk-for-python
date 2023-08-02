@@ -7,27 +7,43 @@
 from marshmallow import fields, post_load
 
 from azure.ai.ml.constants._monitoring import MonitorFeatureType, MonitorMetricName
-from azure.ai.ml._schema.core.fields import StringTransformedEnum
+from azure.ai.ml._schema.core.fields import StringTransformedEnum, NestedField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 
 class MetricThresholdSchema(metaclass=PatchedSchemaMeta):
     threshold = fields.Number()
 
+class NumericalDriftMetricsSchema(metaclass=PatchedSchemaMeta):
+    jensen_shannon_distance = fields.Number()
+    normalized_wasserstein_distance = fields.Number()
+    population_stability_index = fields.Number()
+    two_sample_kolmogorov_smirnov_test = fields.Number()
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.thresholds import NumericalDataDriftMetrics
+
+        return NumericalDataDriftMetrics(**data)
+
+class CategoricalDriftMetricsSchema(metaclass=PatchedSchemaMeta):
+    jensen_shannon_distance = fields.Number()
+    population_stability_index = fields.Number()
+    pearsons_chi_squared_test = fields.Number()
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.thresholds import CategoricalDataDriftMetrics
+
+        return CategoricalDataDriftMetrics(**data)
 
 class DataDriftMetricThresholdSchema(MetricThresholdSchema):
-    applicable_feature_type = StringTransformedEnum(
+    data_type = StringTransformedEnum(
         allowed_values=[MonitorFeatureType.NUMERICAL, MonitorFeatureType.CATEGORICAL]
     )
-    metric_name = StringTransformedEnum(
-        allowed_values=[
-            MonitorMetricName.JENSEN_SHANNON_DISTANCE,
-            MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
-            MonitorMetricName.POPULATION_STABILITY_INDEX,
-            MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST,
-            MonitorMetricName.PEARSONS_CHI_SQUARED_TEST,
-        ]
-    )
+
+    numerical = NestedField(NumericalDriftMetricsSchema)
+    categorical = NestedField(CategoricalDriftMetricsSchema)
 
     @post_load
     def make(self, data, **kwargs):
@@ -35,18 +51,34 @@ class DataDriftMetricThresholdSchema(MetricThresholdSchema):
 
         return DataDriftMetricThreshold(**data)
 
+class DataQualityMetricsNumericalSchema(metaclass=PatchedSchemaMeta):
+    null_value_rate = fields.Number()
+    data_type_error_rate = fields.Number()
+    out_of_bounds_rate = fields.Number()
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.thresholds import DataQualityMetricsNumerical
+
+        return DataQualityMetricsNumerical(**data)
+
+class DataQualityMetricsCategoricalSchema(metaclass=PatchedSchemaMeta):
+    null_value_rate = fields.Number()
+    data_type_error_rate = fields.Number()
+    out_of_bounds_rate = fields.Number()
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.thresholds import DataQualityMetricsCategorical
+
+        return DataQualityMetricsCategorical(**data)
 
 class DataQualityMetricThresholdSchema(MetricThresholdSchema):
-    applicable_feature_type = StringTransformedEnum(
+    data_type = StringTransformedEnum(
         allowed_values=[MonitorFeatureType.NUMERICAL, MonitorFeatureType.CATEGORICAL]
     )
-    metric_name = StringTransformedEnum(
-        allowed_values=[
-            MonitorMetricName.NULL_VALUE_RATE,
-            MonitorMetricName.DATA_TYPE_ERROR_RATE,
-            MonitorMetricName.OUT_OF_BOUND_RATE,
-        ]
-    )
+    numerical = NestedField(DataQualityMetricsNumericalSchema)
+    categorical = NestedField(DataQualityMetricsCategoricalSchema)
 
     @post_load
     def make(self, data, **kwargs):
@@ -56,18 +88,11 @@ class DataQualityMetricThresholdSchema(MetricThresholdSchema):
 
 
 class PredictionDriftMetricThresholdSchema(MetricThresholdSchema):
-    applicable_feature_type = StringTransformedEnum(
+    data_type = StringTransformedEnum(
         allowed_values=[MonitorFeatureType.NUMERICAL, MonitorFeatureType.CATEGORICAL]
     )
-    metric_name = StringTransformedEnum(
-        allowed_values=[
-            MonitorMetricName.JENSEN_SHANNON_DISTANCE,
-            MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
-            MonitorMetricName.POPULATION_STABILITY_INDEX,
-            MonitorMetricName.TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST,
-            MonitorMetricName.PEARSONS_CHI_SQUARED_TEST,
-        ]
-    )
+    numerical = NestedField(NumericalDriftMetricsSchema)
+    categorical = NestedField(CategoricalDriftMetricsSchema)
 
     @post_load
     def make(self, data, **kwargs):
@@ -77,6 +102,7 @@ class PredictionDriftMetricThresholdSchema(MetricThresholdSchema):
 
 
 class FeatureAttributionDriftMetricThresholdSchema(MetricThresholdSchema):
+    normalized_discounted_cumulative_gain = fields.Number()
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._monitoring.thresholds import FeatureAttributionDriftMetricThreshold

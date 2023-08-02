@@ -3,26 +3,34 @@
         "action": {
             "actionType": "CreateMonitor",
             "monitorDefinition": {
-                "computeId": "spark",
-                "monitoringTarget": "fake_endpoint_id",
+                "compute_configuration":{
+                    "computeType": "ServerlessSpark",
+                    "instanceType": "Standard_D2_v2",
+                    "runtime_version": "3.2",
+                    "computeIdentity": {
+                        "type": "AmlToken"
+                    }
+                },
+                "monitoringTarget": {
+                    "task_type" : "classification",
+                    "deploymentId": "fake_endpoint_id"
+                },
                 "signals": {
                     "testSignal": {
                         "signalType": "DataQuality",
                         "mode": "Enabled",
-                        "lookbackPeriod": "P60D",
-                        "targetData": {
+                        "productionData": {
                             "dataContext": "test",
-                            "asset": {
-                                "jobInputType": "mltable",
-                                "uri": "Direct:1"
-                            }
+                            "inputDataType": "Trailing",
+                            "jobInputType": "mltable",
+                            "uri": "Direct:1",
+                            "window_size": "P60D",
+                            "window_offset": "P60D"
                         },
-                        "baselineData": {
+                        "referenceData": {
                             "dataContext": "test",
-                            "asset": {
-                                "jobInputType": "mltable",
-                                "uri": "Direct:1"
-                            }
+                            "jobInputType": "mltable",
+                            "uri": "Direct:1"
                         },
                         "metricThresholds": [
                             {

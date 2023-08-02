@@ -8,8 +8,8 @@ from typing import Dict, Optional, Union
 
 from typing_extensions import Literal
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AzMonMonitoringAlertNotificationSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MonitorDefinition as RestMonitorDefinition
+from azure.ai.ml._restclient.v2023_06_01_preview.models import AzMonMonitoringAlertNotificationSettings
+from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitorDefinition as RestMonitorDefinition
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._monitoring import (
     AZMONITORING,
@@ -31,6 +31,7 @@ from azure.ai.ml.entities._monitoring.signals import (
     PredictionDriftSignal,
 )
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
+from azure.ai.ml.entities._monitoring.compute import ServerLessSparkCompute
 
 
 @experimental
@@ -65,7 +66,7 @@ class MonitorDefinition(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        compute: SparkResourceConfiguration,
+        compute: ServerLessSparkCompute,
         monitoring_target: Optional[MonitoringTarget] = None,
         monitoring_signals: Optional[
             Dict[
@@ -95,8 +96,8 @@ class MonitorDefinition(RestTranslatableMixin):
             else:
                 rest_alert_notification = self.alert_notification._to_rest_object()
         return RestMonitorDefinition(
-            compute_id="spark",
-            monitoring_target=(self.monitoring_target.endpoint_deployment_id or self.monitoring_target.model_id)
+            compute_configuration=self.compute._to_rest_object(),
+            monitoring_target=self.monitoring_target._to_rest_object()
             if self.monitoring_target
             else None,
             signals={
@@ -118,11 +119,8 @@ class MonitorDefinition(RestTranslatableMixin):
             else:
                 from_rest_alert_notification = AlertNotification._from_rest_object(obj.alert_notification_setting)
         return cls(
-            compute=SparkResourceConfiguration(
-                instance_type=tags.pop(SPARK_INSTANCE_TYPE_KEY),
-                runtime_version=tags.pop(SPARK_RUNTIME_VERSION),
-            ),
-            monitoring_target=MonitoringTarget(endpoint_deployment_id=obj.monitoring_target),
+            compute=ServerLessSparkCompute._from_rest_object(obj.compute_configuration),
+            monitoring_target=MonitoringTarget(endpoint_deployment_id=obj.monitoring_target, ml_task=obj.task_type),
             monitoring_signals={
                 signal_name: MonitoringSignal._from_rest_object(signal) for signal_name, signal in obj.signals.items()
             },
