@@ -169,9 +169,8 @@ class CodegenTestPR:
         usr = env_var.split(":")[0] or "Azure"
         branch = env_var.split(":")[-1] or "main"
         print_exec(f'git remote add {usr} https://github.com/{usr}/{repo}.git')
-        print_exec(f'git remote set-url origin https://github.com/{usr}/{repo}.git')
         print_check(f'git fetch {usr} {branch}')
-        print_check(f'git checkout --track {usr}/{branch}')
+        print_check(f'git checkout {usr}/{branch}')
 
     @return_origin_path
     def checkout_azure_default_branch(self):
@@ -590,14 +589,14 @@ class CodegenTestPR:
         self.ask_check_policy()
 
     @staticmethod
-    def commit_and_push():
+    def commit_code():
         print_exec('git add sdk/')
         print_exec('git commit -m \"code and test\"')
-        print_check('git push origin HEAD -f')
 
     def create_pr(self):
         # commit all code
-        self.commit_and_push()
+        self.commit_code()
+        print_check('git push origin HEAD -f')
 
         # create PR
         self.create_pr_proc()
@@ -616,7 +615,12 @@ class CodegenTestPR:
             self.package_name = self.test_folder.split('/')[-1].split('-')[-1]
             self.checkout_branch("DEBUG_SDK_BRANCH", "azure-sdk-for-python")
             self.run_test()
-            self.commit_and_push()
+            # commit all code
+            self.commit_code()
+            env_var = os.getenv("DEBUG_SDK_BRANCH", "")
+            usr = env_var.split(":")[0] or "Azure"
+            branch = env_var.split(":")[-1] or "main"
+            print_check(f'git push {usr} HEAD:{branch}')
 
 
 if __name__ == '__main__':
