@@ -86,7 +86,7 @@ function IsPythonPackageVersionPublished($pkgId, $pkgVersion)
   }
 }
 
-# Parse out package publishing information given a python sdist of ZIP format.
+# Parse out package publishing information given a python sdist of tar.gz format.
 function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
 {
   $pkg.Basename -match $SDIST_PACKAGE_REGEX | Out-Null
@@ -101,7 +101,8 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
   $readmeContent = ""
 
   New-Item -ItemType Directory -Force -Path $workFolder
-  Expand-Archive -Path $pkg -DestinationPath $workFolder
+  Write-Host "tar -zxvf $pkg -C $workFolder"
+  tar -zxvf $pkg -C $workFolder
 
   $changeLogLoc = @(Get-ChildItem -Path $workFolder -Recurse -Include "CHANGELOG.md")[0]
   if ($changeLogLoc) {
