@@ -123,7 +123,7 @@ def create_vnext_issue(package_name: str, check_type: Literal["mypy", "pylint", 
         repo.create_issue(
             title=title,
             body=template,
-            labels=["bug"]
+            labels=[check_type]
         )
         return
 
