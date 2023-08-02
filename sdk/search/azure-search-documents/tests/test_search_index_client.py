@@ -24,7 +24,7 @@ class TestSearchIndexClient:
 
     def test_index_credential_roll(self):
         credential = AzureKeyCredential(key="old_api_key")
-        client = SearchIndexClient("endpoint", credential)
+        client = SearchIndexClient("endpoint", credential, retry_backoff_factor=60)
         assert client._headers == {
             "api-key": "old_api_key",
             "Accept": "application/json;odata.metadata=minimal",
