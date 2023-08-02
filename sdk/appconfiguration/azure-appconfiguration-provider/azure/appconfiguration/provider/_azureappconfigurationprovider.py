@@ -83,7 +83,7 @@ def load(
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
     :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
-    :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings.
+    :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings. If not specified, errors will be raised.
     """
 
 
