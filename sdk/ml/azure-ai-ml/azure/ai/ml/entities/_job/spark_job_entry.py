@@ -29,7 +29,7 @@ class SparkJobEntry(RestTranslatableMixin):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_component_definition]
             :end-before: [END spark_component_definition]
             :language: python
@@ -37,14 +37,14 @@ class SparkJobEntry(RestTranslatableMixin):
             :caption: Creating SparkComponent.
     """
 
-    def __init__(self, *, entry: str, type: Optional[str] = SparkJobEntryType.SPARK_JOB_FILE_ENTRY) -> None:
+    def __init__(self, *, entry: str, type: str = SparkJobEntryType.SPARK_JOB_FILE_ENTRY) -> None:
         self.entry_type = type
         self.entry = entry
 
     @classmethod
     def _from_rest_object(cls, obj: Union[SparkJobPythonEntry, SparkJobScalaEntry]) -> Optional["SparkJobEntry"]:
         if obj is None:
-            return
+            return None
         if isinstance(obj, dict):
             obj = RestSparkJobEntry.from_dict(obj)
         if obj.spark_job_entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY:

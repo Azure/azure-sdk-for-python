@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class LivyStatementStates(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LivyStatementStates(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     WAITING = "waiting"
     RUNNING = "running"
@@ -35,7 +19,7 @@ class LivyStatementStates(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CANCELLING = "cancelling"
     CANCELLED = "cancelled"
 
-class LivyStates(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LivyStates(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The batch state
     """
 
@@ -51,7 +35,7 @@ class LivyStates(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RUNNING = "running"
     RECOVERING = "recovering"
 
-class PluginCurrentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PluginCurrentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     PREPARATION = "Preparation"
     RESOURCE_ACQUISITION = "ResourceAcquisition"
@@ -61,13 +45,13 @@ class PluginCurrentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CLEANUP = "Cleanup"
     ENDED = "Ended"
 
-class SchedulerCurrentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SchedulerCurrentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     QUEUED = "Queued"
     SCHEDULED = "Scheduled"
     ENDED = "Ended"
 
-class SparkBatchJobResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SparkBatchJobResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Spark batch job result.
     """
 
@@ -76,28 +60,28 @@ class SparkBatchJobResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     FAILED = "Failed"
     CANCELLED = "Cancelled"
 
-class SparkErrorSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SparkErrorSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SYSTEM = "System"
     USER = "User"
     UNKNOWN = "Unknown"
     DEPENDENCY = "Dependency"
 
-class SparkJobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SparkJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The job type.
     """
 
     SPARK_BATCH = "SparkBatch"
     SPARK_SESSION = "SparkSession"
 
-class SparkSessionResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SparkSessionResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     UNCERTAIN = "Uncertain"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELLED = "Cancelled"
 
-class SparkStatementLanguageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SparkStatementLanguageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SPARK = "spark"
     PY_SPARK = "pyspark"

@@ -15,7 +15,6 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
     - [Tox](#tox)
     - [The `devtools_testutils` package](#the-devtools_testutils-package)
     - [Write or run tests](#write-or-run-tests)
-        - [Perform one-time test proxy setup](#perform-one-time-test-proxy-setup)
         - [Set up test resources](#set-up-test-resources)
         - [Configure credentials](#configure-credentials)
         - [Start the test proxy server](#start-the-test-proxy-server)
@@ -23,7 +22,7 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
         - [Write your tests](#write-your-tests)
         - [Configure live or playback testing mode](#configure-live-or-playback-testing-mode)
         - [Run and record tests](#run-and-record-tests)
-        - [Run tests with out-of-repo recordings](#run-tests-with-out-of-repo-recordings)
+        - [Update test recordings](#update-test-recordings)
         - [Sanitize secrets](#sanitize-secrets)
             - [Special case: SAS tokens](#special-case-sas-tokens)
     - [Functional vs. unit tests](#functional-vs-unit-tests)
@@ -167,10 +166,6 @@ Newer SDK tests utilize the [Azure SDK Tools Test Proxy][proxy_general_docs] to 
 To migrate an existing test suite to use the test proxy, or to learn more about using the test proxy, refer to the
 [test proxy migration guide][proxy_migration_guide].
 
-### Perform one-time test proxy setup
-
-The test proxy uses a self-signed certificate to communicate with HTTPS. Follow the general setup instructions [here][proxy_cert_docs] to trust this certificate locally.
-
 ### Set up test resources
 
 Live Azure resources will be necessary in order to run live tests and produce recordings. There are PowerShell test
@@ -273,6 +268,11 @@ The parameters for the `functools.partial` method are:
 A method that's decorated by the ServicePreparer from the example would be called with `testservice_endpoint` and
 `testservice_secret` as keyword arguments. These arguments use the real values from your `.env` file as the variable
 values in live mode, and the fake values specified in the decorator in playback mode.
+
+**Be sure to match the formatting of live values in playback values.** For example, if the actual service endpoint in
+your `.env` file doesn't end with a trailing slash (`/`), adding a trailing slash to your playback endpoint value will
+result in playback errors. The exact value of your live variables will be replaced with the exact value of your playback
+variables in recordings.
 
 > **Note:** The EnvironmentVariableLoader expects environment variables for service tests to be prefixed with the
 > service name (e.g. `KEYVAULT_` for Key Vault tests). You'll need to set environment variables for

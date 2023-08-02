@@ -89,19 +89,19 @@ class BatchEndpoint(Endpoint):
         return BatchEndpointData(location=location, tags=self.tags, properties=batch_endpoint)
 
     @classmethod
-    def _from_rest_object(cls, endpoint: BatchEndpointData):  # pylint: disable=arguments-renamed
+    def _from_rest_object(cls, obj: BatchEndpointData) -> "BatchEndpoint":
         return BatchEndpoint(
-            id=endpoint.id,
-            name=endpoint.name,
-            tags=endpoint.tags,
-            properties=endpoint.properties.properties,
-            auth_mode=camel_to_snake(endpoint.properties.auth_mode),
-            description=endpoint.properties.description,
-            location=endpoint.location,
-            defaults=endpoint.properties.defaults,
-            provisioning_state=endpoint.properties.provisioning_state,
-            scoring_uri=endpoint.properties.scoring_uri,
-            openapi_uri=endpoint.properties.swagger_uri,
+            id=obj.id,
+            name=obj.name,
+            tags=obj.tags,
+            properties=obj.properties.properties,
+            auth_mode=camel_to_snake(obj.properties.auth_mode),
+            description=obj.properties.description,
+            location=obj.location,
+            defaults=obj.properties.defaults,
+            provisioning_state=obj.properties.provisioning_state,
+            scoring_uri=obj.properties.scoring_uri,
+            openapi_uri=obj.properties.swagger_uri,
         )
 
     def dump(

@@ -30,6 +30,11 @@ class TestTextNer(AzureRecordedTestCase):
             experiment_name="DPv2-text-ner",
             properties=get_automl_job_properties(),
         )
+
+        # use component specific model name so that the test fails if components are not run
+        if components:
+            job.set_training_parameters(model_name="microsoft/deberta-base")
+
         job.set_limits(timeout_minutes=60, max_concurrent_trials=1)
         if components:
             job.set_training_parameters(model_name="microsoft/deberta-large-mnli")

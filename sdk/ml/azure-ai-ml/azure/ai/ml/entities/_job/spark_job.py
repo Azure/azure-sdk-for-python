@@ -116,7 +116,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_job_configuration]
             :end-before: [END spark_job_configuration]
             :language: python
@@ -328,7 +328,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         """Translate a spark job to component.
 
         :param context: Context of spark job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated spark component.
         """
         from azure.ai.ml.entities import SparkComponent
@@ -368,7 +368,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         """Translate a spark job to a pipeline node.
 
         :param context: Context of spark job YAML file.
-        :param kwargs: Extra arguments.
+        :keyword kwargs: Extra arguments.
         :return: Translated spark component.
         """
         from azure.ai.ml.entities._builders import Spark

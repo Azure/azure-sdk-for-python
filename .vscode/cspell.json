@@ -128,6 +128,7 @@
     "addinivalue",
     "adfs",
     "adls",
+    "aenter",
     "aiohttp",
     "amqp",
     "amqps",
@@ -215,6 +216,7 @@
     "ints",
     "iohttp",
     "IOHTTP",
+    "IOLRO",
     "inprogress",
     "ipconfiguration",
     "ipconfigurations",
@@ -404,7 +406,8 @@
     "SDDL",
     "dacl",
     "whls",
-    "aiter"
+    "aiter",
+    "solft"
   ],
   "overrides": [
     {
@@ -564,7 +567,6 @@
         "fhir",
         "FHIR",
         "naam",
-        "aenter"
       ]
     },
     {
@@ -817,6 +819,7 @@
       "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*",
       "words": [
         "otel",
+        "OTELRESOURCE",
         "OTLP",
         "otlp",
         "grpc"
@@ -1335,6 +1338,13 @@
     },
     {
       "filename": "sdk/purview/azure-purview-workflow/azure/purview/workflow/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-sharing/azure/purview/sharing/_serialization.py",
       "words": [
         "ctxt",
         "wday"

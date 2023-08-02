@@ -178,7 +178,7 @@ def build_create_request(library_name: str, **kwargs: Any) -> HttpRequest:
 def build_append_request(
     library_name: str,
     *,
-    comp: Union[str, _models.Enum9],
+    comp: Union[str, _models.Enum13],
     content: IO,
     blob_condition_append_position: Optional[int] = None,
     **kwargs: Any
@@ -794,7 +794,7 @@ class LibraryOperations:
     @distributed_trace
     def append(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum9],
+        comp: Union[str, _models.Enum13],
         library_name: str,
         content: IO,
         blob_condition_append_position: Optional[int] = None,
@@ -804,7 +804,7 @@ class LibraryOperations:
         content size is 4MiB. Content larger than 4MiB must be appended in 4MiB chunks.
 
         :param comp: "appendblock" Required.
-        :type comp: str or ~azure.synapse.artifacts.models.Enum9
+        :type comp: str or ~azure.synapse.artifacts.models.Enum13
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
          the extension length. Required.
         :type library_name: str

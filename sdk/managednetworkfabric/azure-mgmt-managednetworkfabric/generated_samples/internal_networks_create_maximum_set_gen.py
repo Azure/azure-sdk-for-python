@@ -26,43 +26,58 @@ from azure.mgmt.managednetworkfabric import ManagedNetworkFabricMgmtClient
 def main():
     client = ManagedNetworkFabricMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subscriptionId",
+        subscription_id="1234ABCD-0A1B-1234-5678-123456ABCDEF",
     )
 
     response = client.internal_networks.begin_create(
-        resource_group_name="resourceGroupName",
+        resource_group_name="example-rg",
         l3_isolation_domain_name="example-l3domain",
         internal_network_name="example-internalnetwork",
         body={
             "properties": {
+                "annotation": "annotation",
                 "bgpConfiguration": {
-                    "allowAS": 1,
+                    "allowAS": 10,
                     "allowASOverride": "Enable",
-                    "bfdConfiguration": {},
+                    "annotation": "annotation",
+                    "bfdConfiguration": {"intervalInMilliSeconds": 300, "multiplier": 5},
                     "defaultRouteOriginate": "True",
                     "ipv4ListenRangePrefixes": ["10.1.0.0/25"],
                     "ipv4NeighborAddress": [{"address": "10.1.0.0"}],
                     "ipv6ListenRangePrefixes": ["2fff::/66"],
                     "ipv6NeighborAddress": [{"address": "2fff::"}],
-                    "peerASN": 6,
+                    "peerASN": 61234,
                 },
-                "connectedIPv4Subnets": [{"prefix": "10.0.0.0/24"}],
-                "connectedIPv6Subnets": [{"prefix": "3FFE:FFFF:0:CD30::a0/29"}],
-                "exportRoutePolicyId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName2",
-                "importRoutePolicyId": "/subscriptions/subscriptionId/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName1",
+                "connectedIPv4Subnets": [{"annotation": "annotation", "prefix": "10.0.0.0/24"}],
+                "connectedIPv6Subnets": [{"annotation": "annotation", "prefix": "3FFE:FFFF:0:CD30::a0/29"}],
+                "egressAclId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/accessControlLists/example-acl",
+                "exportRoutePolicy": {
+                    "exportIpv4RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
+                    "exportIpv6RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
+                },
+                "exportRoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
+                "extension": "NoExtension",
+                "importRoutePolicy": {
+                    "importIpv4RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
+                    "importIpv6RoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
+                },
+                "importRoutePolicyId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/routePolicies/routePolicyName",
+                "ingressAclId": "/subscriptions/1234ABCD-0A1B-1234-5678-123456ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/accessControlLists/example-acl",
+                "isMonitoringEnabled": "True",
                 "mtu": 1500,
                 "staticRouteConfiguration": {
-                    "bfdConfiguration": {},
-                    "ipv4Routes": [{"nextHop": ["10.0.0.1"], "prefix": "10.1.0.0/24"}],
-                    "ipv6Routes": [{"nextHop": ["2ffe::1"], "prefix": "2fff::/64"}],
+                    "bfdConfiguration": {"intervalInMilliSeconds": 300, "multiplier": 15},
+                    "extension": "NoExtension",
+                    "ipv4Routes": [{"nextHop": ["10.0.0.1"], "prefix": "jffgck"}],
+                    "ipv6Routes": [{"nextHop": ["3ffe::1"], "prefix": "2fff::/64"}],
                 },
-                "vlanId": 501,
+                "vlanId": 755,
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/preview/2023-02-01-preview/examples/InternalNetworks_Create_MaximumSet_Gen.json
+# x-ms-original-file: specification/managednetworkfabric/resource-manager/Microsoft.ManagedNetworkFabric/stable/2023-06-15/examples/InternalNetworks_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

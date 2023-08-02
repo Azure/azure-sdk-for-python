@@ -33,7 +33,7 @@ class MaterializationSettings(RestTranslatableMixin):
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START materialization_setting_configuration]
             :end-before: [END materialization_setting_configuration]
             :language: python
@@ -91,8 +91,8 @@ class MaterializationSettings(RestTranslatableMixin):
             notification=Notification._from_rest_object(obj.notification),  # pylint: disable=protected-access
             resource=MaterializationComputeResource._from_rest_object(obj.resource),  # pylint: disable=protected-access
             spark_configuration=obj.spark_configuration,
-            offline_enabled=obj.store_type == MaterializationStoreType.OFFLINE
-            or obj.store_type == MaterializationStoreType.ONLINE_AND_OFFLINE,
-            online_enabled=obj.store_type == MaterializationStoreType.ONLINE
-            or obj.store_type == MaterializationStoreType.ONLINE_AND_OFFLINE,
+            offline_enabled=obj.store_type
+            in {MaterializationStoreType.OFFLINE, MaterializationStoreType.ONLINE_AND_OFFLINE},
+            online_enabled=obj.store_type
+            in {MaterializationStoreType.ONLINE, MaterializationStoreType.ONLINE_AND_OFFLINE},
         )

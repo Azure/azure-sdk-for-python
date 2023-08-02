@@ -26,11 +26,17 @@ from azure.monitor.opentelemetry.exporter._constants import _INSTRUMENTATIONS_BI
 opentelemetry_version = version("opentelemetry-sdk")
 
 
+def _is_on_app_service():
+    return "WEBSITE_SITE_NAME" in environ
+
+
+def _is_attach_enabled():
+    return isdir("/agents/python/")
+
+
 def _get_sdk_version_prefix():
-    is_on_app_service = "WEBSITE_SITE_NAME" in environ
-    is_attach_enabled = isdir("/agents/python/")
     sdk_version_prefix = ''
-    if is_on_app_service and is_attach_enabled:
+    if _is_on_app_service() and _is_attach_enabled():
         os = 'u'
         system = platform.system()
         if system == "Linux":

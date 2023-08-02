@@ -37,6 +37,7 @@ class StorageStreamDownloader(object):
     def chunks(self) -> Iterator[bytes]:
         """Iterate over chunks in the download stream.
 
+        :returns: An iterator containing the chunks in the download stream.
         :rtype: Iterator[bytes]
         """
         return self._downloader.chunks()
@@ -46,7 +47,7 @@ class StorageStreamDownloader(object):
         Read up to size bytes from the stream and return them. If size
         is unspecified or is -1, all bytes will be read.
 
-        :param size:
+        :param int size:
             The number of bytes to download from the stream. Leave unspecified
             or set to -1 to download all bytes.
         :returns:
@@ -59,6 +60,7 @@ class StorageStreamDownloader(object):
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
+        :returns: The contents of the specified file.
         :rtype: bytes
         """
         return self._downloader.readall()
@@ -66,7 +68,7 @@ class StorageStreamDownloader(object):
     def readinto(self, stream: IO[bytes]) -> int:
         """Download the contents of this file to a stream.
 
-        :param stream:
+        :param IO[bytes] stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.

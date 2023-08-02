@@ -39,6 +39,7 @@ from azure.ai.ml.constants._common import (
     AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    DefaultOpenEncoding,
 )
 
 module_logger = logging.getLogger(__name__)
@@ -59,15 +60,13 @@ def _is_https_url(url: str) -> Union[bool, str]:
     return False
 
 
-def _csv_parser(text: Optional[str], convert: Callable) -> str:
-    if text:
-        if "," in text:
-            txts = []
-            for t in text.split(","):
-                t = convert(t.strip())
-                txts.append(t)
-            return ",".join(txts)
-        return convert(text)
+def _csv_parser(text: Optional[str], convert: Callable) -> Optional[str]:
+    if not text:
+        return None
+    if "," in text:
+        return ",".join(convert(t.strip()) for t in text.split(","))
+
+    return convert(text)
 
 
 def _snake_to_pascal_convert(text: str) -> str:
@@ -81,6 +80,7 @@ def snake_to_pascal(text: Optional[str]) -> str:
 def snake_to_kebab(text: Optional[str]) -> Optional[str]:
     if text:
         return re.sub("_", "-", text)
+    return None
 
 
 # https://stackoverflow.com/questions/1175208
@@ -100,6 +100,7 @@ def snake_to_camel(text: Optional[str]) -> Optional[str]:
     """convert snake name to camel."""
     if text:
         return re.sub("_([a-zA-Z0-9])", lambda m: m.group(1).upper(), text)
+    return None
 
 
 # This is real snake to camel
@@ -196,7 +197,7 @@ def load_file(file_path: str) -> str:
     # exceptions.py via _get_mfe_url_override
 
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
             cfg = f.read()
     except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
@@ -225,7 +226,7 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
     # exceptions.py via _get_mfe_url_override
 
     try:
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding=DefaultOpenEncoding.READ) as f:
             cfg = json.load(f)
     except OSError as e:  # FileNotFoundError introduced in Python 3
         msg = "No such file or directory: {}"
@@ -245,8 +246,10 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     # via CLI, which is then populated through CLArgs.
     """Load a local YAML file.
 
-    :param file_path: The relative or absolute path to the local file.
-    :type file_path: str
+    :param source: Either
+       * The relative or absolute path to the local file.
+       * A readable File-like object
+    :type source: Optional[Union[AnyStr, PathLike, IO]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if file or folder cannot be successfully loaded.
         Details will be provided in the error message.
     :return: A dictionary representation of the local file's contents.
@@ -262,7 +265,7 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
 
     if isinstance(source, (str, os.PathLike)):
         try:
-            cm = open(source, "r")
+            cm = open(source, "r", encoding=DefaultOpenEncoding.READ)
         except OSError as e:
             msg = "No such file or directory: {}"
             raise ValidationException(
@@ -361,7 +364,7 @@ def dump_yaml_to_file(
 
     if isinstance(dest, (str, os.PathLike)):
         try:
-            cm = open(dest, "w")
+            cm = open(dest, "w", encoding=DefaultOpenEncoding.WRITE)
         except OSError as e:  # FileNotFoundError introduced in Python 3
             msg = "No such file or directory: {}"
             raise ValidationException(
@@ -402,12 +405,6 @@ def dict_eq(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> bool:
     if not dict1 and not dict2:
         return True
     return dict1 == dict2
-
-
-def get_http_response_and_deserialized_from_pipeline_response(
-    pipeline_response: Any, deserialized: Any
-) -> Tuple[Any, Any]:
-    return pipeline_response.http_response, deserialized
 
 
 def xor(a: Any, b: Any) -> bool:
@@ -452,8 +449,7 @@ def resolve_short_datastore_url(value: Union[PathLike, str], workspace: Operatio
 
 def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
     try:
-        if urlparse(str(value)).scheme == "runs":
-            return value
+        return urlparse(str(value)).scheme == "runs"
     except ValueError:
         return False
 
@@ -763,7 +759,7 @@ def is_on_disk_cache_enabled():
     return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True]
 
 
-def is_concurrent_component_registration_enabled():
+def is_concurrent_component_registration_enabled():  # pylint: disable=name-too-long
     return os.getenv(AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION) not in ["True", "true", True]
 
 
@@ -775,7 +771,8 @@ def try_enable_internal_components(*, force=False):
     """Try to enable internal components for the current process. This is the only function outside _internal that
     references _internal.
 
-    :param force: Force enable internal components even if enabled before.
+    :keyword force: Force enable internal components even if enabled before.
+    :type force: bool
     """
     if is_internal_components_enabled():
         from azure.ai.ml._internal import enable_internal_components_in_pipeline
@@ -865,12 +862,11 @@ def _str_to_bool(s):
     return s.lower() == "true"
 
 
-def _is_user_error_from_exception_type(e: Union[Exception, None]):
+def _is_user_error_from_exception_type(e: Optional[Exception]) -> bool:
     """Determine whether if an exception is user error from it's exception type."""
     # Connection error happens on user's network failure, should be user error.
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
-    if isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28):
-        return True
+    return isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28)
 
 
 class DockerProxy:
@@ -898,7 +894,7 @@ def write_to_shared_file(file_path: Union[str, PathLike], content: str):
     :param file_path: Path to the file.
     :param content: Content to write to the file.
     """
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         f.write(content)
 
     # share_mode means read/write for owner, group and others
@@ -973,7 +969,7 @@ def get_valid_dot_keys_with_wildcard(
     :type root: Dict[str, Any]
     :param dot_key_wildcard: Dot key with wildcard, e.g. "a.*.c".
     :type dot_key_wildcard: str
-    :param validate_func: Validation function. It takes two parameters: the root node and the dot key parts.
+    :keyword validate_func: Validation function. It takes two parameters: the root node and the dot key parts.
     If None, no validation will be performed.
     :type validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]]
     :return: List of valid dot keys.

@@ -32,7 +32,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
 
     async def __aenter__(self):
         if self._client:
-            await self._client.__aenter__() # type: ignore
+            await self._client.__aenter__()  # type: ignore
         return self
 
     async def close(self) -> None:
@@ -53,7 +53,8 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-
+        :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
@@ -65,20 +66,28 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
-        if not self._initialized:
-            self._initialize()
+        if not self._client_initialized:
+            self._initialize_client()
 
-        if not self._client:
-            raise CredentialUnavailableError(message="Shared token cache unavailable")
+        is_cae = bool(kwargs.get("enable_cae", False))
+        token_cache = self._cae_cache if is_cae else self._cache
 
-        account = self._get_account(self._username, self._tenant_id)
+        # Try to load the cache if it is None.
+        if not token_cache:
+            token_cache = self._initialize_cache(is_cae=is_cae)
 
-        token = self._get_cached_access_token(scopes, account)
+            # If the cache is still None, raise an error.
+            if not token_cache:
+                raise CredentialUnavailableError(message="Shared token cache unavailable")
+
+        account = self._get_account(self._username, self._tenant_id, is_cae=is_cae)
+
+        token = self._get_cached_access_token(scopes, account, is_cae=is_cae)
         if token:
             return token
 
         # try each refresh token, returning the first access token acquired
-        for refresh_token in self._get_refresh_tokens(account):
+        for refresh_token in self._get_refresh_tokens(account, is_cae=is_cae):
             token = await self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)
             return token
 

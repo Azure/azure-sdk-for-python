@@ -11,20 +11,20 @@ from azure.ai.ml import Output
 from azure.ai.ml._schema import NestedField
 from azure.ai.ml._schema.pipeline.component_job import SweepSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, SOURCE_PATH_CONTEXT_KEY, CommonYamlFields
-from azure.ai.ml.constants._component import ControlFlowType, NodeType, DataTransferTaskType
+from azure.ai.ml.constants._component import ControlFlowType, DataTransferTaskType, NodeType
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.dsl._component_func import to_component_func
 from azure.ai.ml.dsl._overrides_definition import OverrideDefinition
 from azure.ai.ml.entities._builders import (
     BaseNode,
     Command,
+    DataTransferCopy,
+    DataTransferExport,
+    DataTransferImport,
     Import,
     Parallel,
     Spark,
     Sweep,
-    DataTransferCopy,
-    DataTransferImport,
-    DataTransferExport,
 )
 from azure.ai.ml.entities._builders.condition_node import ConditionNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
@@ -167,13 +167,13 @@ class _PipelineNodeFactory:
 
         :param _type: The type of the node.
         :type _type: str
-        :param create_instance_func: A function to create a new instance of the node, defaults to None
+        :keyword create_instance_func: A function to create a new instance of the node
         :type create_instance_func: typing.Optional[typing.Callable[..., typing.Union[BaseNode, AutoMLJob]]]
-        :param load_from_rest_object_func: A function to load a node from a rest object, defaults to None
+        :keyword load_from_rest_object_func: A function to load a node from a rest object
         :type load_from_rest_object_func: typing.Optional[typing.Callable[[Any], typing.Union[BaseNode, AutoMLJob\
             , ControlFlowNode]]]
-        :param nested_schema: schema/schemas of corresponding nested field, will be used in \
-            PipelineJobSchema.jobs.value, defaults to None
+        :keyword nested_schema: schema/schemas of corresponding nested field, will be used in \
+            PipelineJobSchema.jobs.value
         :type nested_schema: typing.Optional[typing.Union[NestedField, List[NestedField]]]
         """
         # pylint: disable=no-member
@@ -199,9 +199,9 @@ class _PipelineNodeFactory:
     def load_from_dict(self, *, data: dict, _type: Optional[str] = None) -> Union[BaseNode, AutoMLJob]:
         """Load a node from a dict.
 
-        :param data: A dict containing the node's data.
+        :keyword data: A dict containing the node's data.
         :type data: dict
-        :param _type: The type of the node. If not specified, it will be inferred from the data.
+        :keyword _type: The type of the node. If not specified, it will be inferred from the data.
         :type _type: str
         """
         if _type is None:
@@ -231,9 +231,9 @@ class _PipelineNodeFactory:
     ) -> Union[BaseNode, AutoMLJob, ControlFlowNode]:
         """Load a node from a rest object.
 
-        :param obj: A rest object containing the node's data.
+        :keyword obj: A rest object containing the node's data.
         :type obj: dict
-        :param _type: The type of the node. If not specified, it will be inferred from the data.
+        :keyword _type: The type of the node. If not specified, it will be inferred from the data.
         :type _type: str
         """
 
