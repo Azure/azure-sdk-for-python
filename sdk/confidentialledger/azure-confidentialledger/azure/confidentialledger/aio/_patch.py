@@ -64,11 +64,14 @@ class ConfidentialLedgerClient(GeneratedClient):
     ) -> None:
         # Remove some kwargs first so that there aren't unexpected kwargs passed to
         # get_ledger_identity.
-        credential_scopes = kwargs.pop("credential_scopes", ["https://confidential-ledger.azure.com/.default"])
-        auth_policy = kwargs.pop(
-            "authentication_policy",
-            policies.AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
-        )
+        if isinstance(credential, ConfidentialLedgerCertificateCredential):
+            auth_policy = None
+        else:
+            credential_scopes = kwargs.pop("credential_scopes", ["https://confidential-ledger.azure.com/.default"])
+            auth_policy = kwargs.pop(
+                "authentication_policy",
+                policies.AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
+            )
     
         if os.path.isfile(ledger_certificate_path) is False:
             # We'll need to fetch the TLS certificate.
