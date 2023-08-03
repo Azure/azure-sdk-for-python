@@ -6,7 +6,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "46",
+        "Content-Length": "44",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-communication-phonenumbers/1.1.1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
@@ -15,8 +15,8 @@
       },
       "RequestBody": {
         "phoneNumbers": [
-          "\u002Bsanitized",
-          "\u002Bsanitized"
+          "sanitized",
+          "sanitized"
         ]
       },
       "StatusCode": 400,
@@ -29,7 +29,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "11ms"
+        "X-Processing-Time": "8ms"
       },
       "ResponseBody": {
         "error": {

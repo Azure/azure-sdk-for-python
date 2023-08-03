@@ -16,14 +16,14 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-12-01, 2022-12-02-preview2, 2023-05-01-preview",
-        "Content-Length": "308",
+        "Content-Length": "301",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1256ms"
+        "X-Processing-Time": "1169ms"
       },
       "ResponseBody": {
         "id": "sanitized",
@@ -31,8 +31,8 @@
         "countryCode": "US",
         "phoneNumberType": "tollFree",
         "capabilities": {
-          "calling": "inbound",
-          "sms": "inbound\u002Boutbound"
+          "calling": "outbound",
+          "sms": "outbound"
         },
         "assignmentType": "application",
         "purchaseDate": "2021-06-23T23:31:47.0550566\u002B00:00",

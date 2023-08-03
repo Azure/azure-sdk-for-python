@@ -24,7 +24,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "133ms"
+        "X-Processing-Time": "79ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -71,7 +71,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1234ms"
+        "X-Processing-Time": "852ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -106,7 +106,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "125ms"
+        "X-Processing-Time": "71ms"
       },
       "ResponseBody": {
         "trunks": {

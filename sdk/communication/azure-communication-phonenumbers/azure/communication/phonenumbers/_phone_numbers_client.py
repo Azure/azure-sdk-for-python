@@ -431,7 +431,7 @@ class PhoneNumbersClient(object):
     @distributed_trace
     def search_operator_information(
             self,
-            phone_numbers,  # type: list(str)
+            phone_numbers,  # type: PhoneNumberSearchType
             **kwargs  # type: Any
     ):
         # type: (...) -> OperatorInformationResult
@@ -442,7 +442,7 @@ class PhoneNumbersClient(object):
         :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
         """
         if not isinstance(phone_numbers, list):
-            phone_numbers = cast(list(str), [phone_numbers])
+            phone_numbers = cast(PhoneNumberSearchType, [ phone_numbers ])
         request = OperatorInformationRequest(phone_numbers = phone_numbers)
         return self._phone_number_client.phone_numbers.operator_information_search(
             request,

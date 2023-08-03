@@ -27,7 +27,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1196ms"
+        "X-Processing-Time": "121ms"
       },
       "ResponseBody": {
         "error": {

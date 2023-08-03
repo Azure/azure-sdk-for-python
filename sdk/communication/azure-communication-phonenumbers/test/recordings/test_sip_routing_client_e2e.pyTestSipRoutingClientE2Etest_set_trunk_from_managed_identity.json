@@ -190,7 +190,6 @@
         "Cache-Control": "no-store, no-cache",
         "client-request-id": "sanitized",
         "Content-Length": "111",
-        "Content-Security-Policy-Report-Only": "sanitized",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "Expires": "-1",
@@ -240,7 +239,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "324ms"
+        "X-Processing-Time": "267ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -275,7 +274,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "119ms"
+        "X-Processing-Time": "89ms"
       },
       "ResponseBody": {
         "trunks": {

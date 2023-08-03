@@ -17,14 +17,14 @@
       "ResponseHeaders": {
         "api-supported-versions": "2022-12-01, 2022-12-02-preview2, 2023-05-01-preview",
         "Cache-Control": "max-age=21600, private, stale-while-revalidate=86400",
-        "Content-Length": "1487",
+        "Content-Length": "1539",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1720ms"
+        "X-Processing-Time": "1771ms"
       },
       "ResponseBody": {
         "countries": [
@@ -115,6 +115,10 @@
           {
             "localizedName": "Puerto Rico",
             "countryCode": "PR"
+          },
+          {
+            "localizedName": "Saudi Arabia",
+            "countryCode": "SA"
           },
           {
             "localizedName": "Singapore",

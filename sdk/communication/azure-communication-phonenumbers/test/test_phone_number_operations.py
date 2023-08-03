@@ -54,4 +54,5 @@ def test_build_phone_numbers_operator_information_search_request():
 
     assert isinstance(request, HttpRequest)
     assert request.method == "POST"
+    assert "operatorInformation/:search" in request.url
     assert request.headers["Accept"] == "application/json"
