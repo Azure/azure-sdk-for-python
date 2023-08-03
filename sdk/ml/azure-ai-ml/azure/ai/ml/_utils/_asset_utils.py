@@ -1042,5 +1042,8 @@ def _get_existing_asset_name_and_version(existing_asset):
     match = re.search(regex, arm_id)
     name = match.group(1)
     version = match.group(2)
+    from azure.ai.ml._vendor.azureml._restclient.operations import SnapshotOperations
+
+    SnapshotOperations
 
     return name, version

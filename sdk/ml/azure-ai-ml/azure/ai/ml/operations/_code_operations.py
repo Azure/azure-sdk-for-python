@@ -225,26 +225,41 @@ class CodeOperations(_ScopeDependentOperations):
 
         # TODO: how should we maintain this regex?
         m = re.match(
-            r"https://(?P<account_name>.+)\.blob\.core\.windows\.net(:[0-9]+)?/(?P<container_name>.+)/(?P<blob_name>.*)",
+            r"https://(?P<account_name>.+)\.blob\.core\.windows\.net"
+            r"(:[0-9]+)?/(?P<container_name>.+)/(?P<blob_name>.*)",
             code.path,
         )
         if not m:
             raise ValueError(f"Invalid code path: {code.path}")
 
-        # different content now saved in different storage account
-        datastore_name = _get_datastore_name()
-        datastore_info = get_datastore_info(self._datastore_operation, datastore_name)
+        # 1. different content now saved in different container, so we need to override the container name
+        # 2. get credentials from datastore requires authorization to perform action
+        #    'Microsoft.MachineLearningServices/workspaces/datastores/listSecrets/action' over target datastore,
+        #    so we use local credential instead if so.
         # check more information here:
         # https://github.com/Azure/azureml_run_specification/blob/master/specs/create_workspace_asset_from_local_upload.md
-        storage_client = get_storage_client(
-            credential=datastore_info["credential"],
-            storage_account=datastore_info["storage_account"],
-            container_name=m.group("container_name"),
-        )
+        try:
+            datastore_info = get_datastore_info(
+                self._datastore_operation,
+                # always use WORKSPACE_BLOB_STORE
+                name=_get_datastore_name(),
+                container_name=m.group("container_name"),
+            )
+        except HttpResponseError:
+            datastore_info = get_datastore_info(
+                self._datastore_operation,
+                # always use WORKSPACE_BLOB_STORE
+                name=_get_datastore_name(),
+                credential=self._service_client._config.credential,
+                container_name=m.group("container_name"),
+            )
+        storage_client = get_storage_client(**datastore_info)
         storage_client.download(
             starts_with=m.group("blob_name"),
             destination=output_dir.as_posix(),
         )
+        if not output_dir.is_dir() or not any(output_dir.iterdir()):
+            raise RuntimeError(f"Failed to download code to {output_dir}")
 
     def _get(self, name: str, version: str = None) -> Code:
         if not version:
