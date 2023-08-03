@@ -213,12 +213,15 @@ class PrioritizedSetting(Generic[ValidInputType, ValueType]):
 
     The ``env_var`` argument specifies the name of an environment to check for
     setting values, e.g. ``"AZURE_LOG_LEVEL"``.
+    If a ``convert`` function is provided, the result will be converted before being used.
 
     The optional ``system_hook`` can be used to specify a function that will
     attempt to look up a value for the setting from system-wide configurations.
+    If a ``convert`` function is provided, the hook result will be converted before being used.
 
     The optional ``default`` argument specified an implicit default value for
-    the setting that is returned if no other methods provide a value.
+    the setting that is returned if no other methods provide a value. If a ``convert`` function is provided,
+    ``default`` will be converted before being used.
 
     A ``convert`` argument may be provided to convert values before they are
     returned. For instance to concert log levels in environment variables
@@ -229,7 +232,7 @@ class PrioritizedSetting(Generic[ValidInputType, ValueType]):
     :param str env_var: the name of an environment variable to check for the setting
     :param callable system_hook: a function that will attempt to look up a value for the setting
     :param default: an implicit default value for the setting
-    :type default: str or int or float
+    :type default: any
     :param callable convert: a function to convert values before they are returned
     """
 
