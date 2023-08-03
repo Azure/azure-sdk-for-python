@@ -243,9 +243,6 @@ class MLClient:
                     self._credential,
                 )
                 workspace_details = ws_ops.get(workspace_reference)
-                # import debugpy
-                # debugpy.connect(("localhost", 5678))
-                # debugpy.breakpoint()
                 workspace_location, workspace_id = workspace_details.location, workspace_details._workspace_id
 
             self._service_client_10_2021_dataplanepreview, resource_group_name, subscription_id = get_registry_client(
