@@ -628,7 +628,7 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
         return None
 
     # is it a type alias?
-    if isinstance(annotation, str):  # type: ignore
+    if isinstance(annotation, str):
         if module is not None:
             annotation = _get_type_alias_type(module, annotation)
 
