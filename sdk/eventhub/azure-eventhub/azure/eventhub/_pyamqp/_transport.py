@@ -824,8 +824,8 @@ class WebSocketTransport(_AbstractTransport):
         from websocket import WebSocketConnectionClosedException, WebSocketTimeoutException
         try:
             self.sock.send_binary(s)
-        except AttributeError as exc:
-            raise IOError("Websocket connection has already been closed.") from exc
+        except AttributeError:
+            raise IOError("Websocket connection has already been closed.") from None
         except WebSocketTimeoutException as e:
             raise socket.timeout('Websocket send timed out (%s)' % e) from e
         except (WebSocketConnectionClosedException, SSLError) as e:
