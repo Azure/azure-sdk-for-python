@@ -11,7 +11,9 @@ from typing import (
     Union,
     cast,
     TypeVar,
-    Mapping
+    Mapping,
+    TYPE_CHECKING,
+    Tuple
 )
 import json
 
@@ -25,8 +27,44 @@ from ._message_protocol import (  # pylint: disable=import-error
 from ._constants import (  # pylint: disable=import-error
     JSON_MIME_TYPE,
 )
+if TYPE_CHECKING:
+    from logging import Logger
+    from ._schema_registry_json_encoder import JsonSchemaEncoder
+    from .aio._schema_registry_json_encoder_async import JsonSchemaEncoder as JsonSchemaEncoderAsync
 
 MessageType = TypeVar("MessageType", bound=MessageTypeProtocol)
+
+def load_schema(
+    encoder: Union["JsonSchemaEncoder", "JsonSchemaEncoderAsync"],
+    schema: Union[str, Callable],
+    content: Mapping[str, Any],
+) -> Tuple[str, str, Mapping[str, Any]]:
+    """Returns the tuple: (schema name, schema string, schema dict).
+    """
+
+    # get schema string
+    try:
+        # str or bytes
+        schema_dict = json.loads(schema)
+        schema_str = schema
+    except TypeError:
+        # callable
+        encoder._auto_register_schema_func = encoder._schema_registry_client.register_schema    # pylint: disable=protected-access
+        try:
+            schema_dict = schema(content)
+        except Exception as exc:
+            raise InvalidContentError(
+                f"Cannot generate schema with callable given the following content: {content}"
+            ) from exc
+        schema_str = json.dumps(schema_dict)
+
+    # get schema name for client operation
+    try:
+        schema_fullname = schema_dict['title']
+    except KeyError:
+        raise ValueError("Schema must have 'title' property.")
+
+    return schema_fullname, schema_str, schema_dict
 
 def create_message_content(
     validate: Callable,
