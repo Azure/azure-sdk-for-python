@@ -72,18 +72,6 @@ class JsonSchemaEncoder(object):
     :paramtype client: ~azure.schemaregistry.SchemaRegistryClient
     :keyword Optional[str] group_name: Required for encoding. Not used when decoding.
      Schema group under which schema should be registered.
-    :keyword bool auto_register: When true, registers new schemas passed to encode.
-     Otherwise, and by default, encode will fail if the schema has not been pre-registered in the registry.
-    :keyword schema: The schema used to validate the content. Exactly one of `schema` or `schema_id`
-     must be passed. If a string is passed in, it must have been pre-registered.
-     If a callable is passed in, it must have the following method signature:
-     `(content: Mapping[str, Any]) -> Mapping[str, Any]`.
-     If an error is raised during generation, an ~azure.schemaregistry.encoder.jsonencoder.InvalidContentError
-     will be wrapped around it and raised.
-    :paramtype schema: str or Callable or None
-    :keyword schema_id: The schema ID corresponding to the pre-registered schema to be used for validation. Required if
-     `schema` was not passed in. Else, must be None.
-    :paramtype schema_id: str or None
     :keyword validate: Callable that validates the given content against the given schema. Must validate against
      schema draft version supported by the Schema Registry service. It must have the following method signature:
      `(content: Mapping[str, Any], schema: Mapping[str, Any]) -> None`.
@@ -104,7 +92,7 @@ class JsonSchemaEncoder(object):
         self._schema_registry_client = client
         self._validate = validate
         self._schema_group = group_name
-        self._auto_register_schema_func = self._schema_registry_client.get_schema_properties
+        self._schema_id_client_op = self._schema_registry_client.get_schema_properties
 
     def __enter__(self) -> "JsonSchemaEncoder":
         self._schema_registry_client.__enter__()
@@ -131,7 +119,7 @@ class JsonSchemaEncoder(object):
         :return: Schema Id
         :rtype: str
         """
-        schema_id = self._auto_register_schema_func(
+        schema_id = self._schema_id_client_op(
             self._schema_group, schema_name, schema_str, SchemaFormat.JSON.value, **kwargs
         ).id
         return schema_id
@@ -156,7 +144,7 @@ class JsonSchemaEncoder(object):
         self,
         content: Mapping[str, Any],
         *,
-        schema: Optional[Union[str, Callable[[Mapping[str, Any]], Mapping[str, Any]]]] = None,
+        schema: Optional[str] = None,
         schema_id: None = None,
         message_type: Type[MessageType],
         request_options: Optional[Dict[str, Any]] = None,
@@ -182,7 +170,7 @@ class JsonSchemaEncoder(object):
         self,
         content: Mapping[str, Any],
         *,
-        schema: Optional[Union[str, Callable[[Mapping[str, Any]], Mapping[str, Any]]]] = None,
+        schema: Optional[str] = None,
         schema_id: None = None,
         message_type: None = None,
         request_options: Optional[Dict[str, Any]] = None,
@@ -207,7 +195,7 @@ class JsonSchemaEncoder(object):
         self,
         content: Mapping[str, Any],
         *,
-        schema: Optional[Union[str, Callable[[Mapping[str, Any]], Mapping[str, Any]]]] = None,
+        schema: Optional[str] = None,
         schema_id: Optional[str] = None,
         message_type: Optional[Type[MessageType]] = None,
         request_options: Optional[Dict[str, Any]] = None,
@@ -227,13 +215,12 @@ class JsonSchemaEncoder(object):
 
         :param content: The content to be encoded.
         :type content: Mapping[str, Any]
-        :keyword schema: The schema used to encode the content. If None, then `schema` must have been specified
-         in the constructor. If passed in, it will override the `schema` value specified in the constructor.
-         If a callable is passed in, it must have the following method signature:
-         `(content: Mapping[str, Any]) -> Mapping[str, Any]`. Schema must include `title` field as the schema name.
-         If an error is raised during generation, an ~azure.schemaregistry.encoder.jsonencoder.InvalidContentError
-         will be wrapped around it and raised.
-        :paramtype schema: str or Callable or None
+        :keyword schema: The pre-registered schema used to validate the content. Exactly one of
+         `schema` or `schema_id` must be passed.
+        :paramtype schema: str or None
+        :keyword schema_id: The schema ID corresponding to the pre-registered schema to be used
+         for validation. Exactly one of `schema` or `schema_id` must be passed.
+        :paramtype schema_id: str or None
         :keyword message_type: The message class to construct the message. Must be a subtype of the
          azure.schemaregistry.encoder.jsonencoder.MessageType protocol.
         :paramtype message_type: Type[MessageType] or None

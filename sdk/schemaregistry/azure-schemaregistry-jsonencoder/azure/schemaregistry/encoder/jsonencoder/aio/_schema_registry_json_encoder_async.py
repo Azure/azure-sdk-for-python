@@ -60,8 +60,6 @@ class JsonSchemaEncoder(object):
     :paramtype client: ~azure.schemaregistry.aio.SchemaRegistryClient
     :keyword Optional[str] group_name: Required for encoding. Not used when decoding.
      Schema group under which schema should be registered.
-    :keyword bool auto_register: When true, registers new schemas passed to encode.
-     Otherwise, and by default, encode will fail if the schema has not been pre-registered in the registry.
     :keyword schema: The schema used to encode the content by default. The `schema` argument passed into the `encode`
      method will override this value. If None, then `schema` must be passed into `encode`.
      If a callable is passed in, it must have the following method signature:
@@ -84,7 +82,6 @@ class JsonSchemaEncoder(object):
         *,
         client: "SchemaRegistryClient",
         group_name: Optional[str] = None,
-        auto_register: bool = False,
         schema: Optional[Union[str, bytes, Callable[[Mapping[str, Any]], Mapping[str, Any]]]] = None,
         validate: Union[Callable[[Mapping[str, Any], Mapping[str, Any]], None], Literal[False]] = False,
     ):
@@ -92,12 +89,7 @@ class JsonSchemaEncoder(object):
         self._validate = validate
         self._schema = schema
         self._schema_group = group_name
-        self._auto_register = auto_register
-        self._auto_register_schema_func = (
-            self._schema_registry_client.register_schema
-            if self._auto_register
-            else self._schema_registry_client.get_schema_properties
-        )
+        self._schema_id_client_op = self._schema_registry_client.get_schema_properties
 
     async def __aenter__(self) -> "JsonSchemaEncoder":
         await self._schema_registry_client.__aenter__()
