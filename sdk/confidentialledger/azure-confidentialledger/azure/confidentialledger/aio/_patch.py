@@ -70,8 +70,13 @@ class ConfidentialLedgerClient(GeneratedClient):
             credential_scopes = kwargs.pop("credential_scopes", ["https://confidential-ledger.azure.com/.default"])
             auth_policy = kwargs.pop(
                 "authentication_policy",
-                policies.AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
+                # Don't call AsyncBearerTokenCredentialPolicy here as an event loop may not be
+                # running if a non-async authentication policy is passed.
+                None,
             )
+
+            if auth_policy is None:
+                auth_policy = policies.AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs)
     
         if os.path.isfile(ledger_certificate_path) is False:
             # We'll need to fetch the TLS certificate.
