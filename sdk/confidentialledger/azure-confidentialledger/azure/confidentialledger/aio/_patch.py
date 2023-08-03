@@ -62,6 +62,14 @@ class ConfidentialLedgerClient(GeneratedClient):
         ledger_certificate_path: Union[bytes, str, os.PathLike],
         **kwargs: Any,
     ) -> None:
+        # Remove some kwargs first so that there aren't unexpected kwargs passed to
+        # get_ledger_identity.
+        credential_scopes = kwargs.pop("credential_scopes", ["https://confidential-ledger.azure.com/.default"])
+        auth_policy = kwargs.pop(
+            "authentication_policy",
+            policies.AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
+        )
+    
         if os.path.isfile(ledger_certificate_path) is False:
             # We'll need to fetch the TLS certificate.
             identity_service_client = ConfidentialLedgerCertificateClient(**kwargs)
@@ -87,13 +95,9 @@ class ConfidentialLedgerClient(GeneratedClient):
         # If the credential is the typical TokenCredential, then construct the authentication policy
         # the normal way.
         else:
-            credential_scopes = kwargs.pop("credential_scopes", ["https://confidential-ledger.azure.com/.default"])
-            kwargs["authentication_policy"] = kwargs.get(
-                "authentication_policy",
-                policies.AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
-            )
+            kwargs["authentication_policy"] = auth_policy
 
         # Customize the underlying client to use a self-signed TLS certificate.
-        kwargs["connection_verify"] = kwargs.get("connection_verify", ledger_certificate_path)
+        kwargs["connection_verify"] = ledger_certificate_path
 
         super().__init__(endpoint, **kwargs)
