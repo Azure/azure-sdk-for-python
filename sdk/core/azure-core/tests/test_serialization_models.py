@@ -3434,36 +3434,9 @@ def test_null_serilization():
         "listOfDictOfMe": None
     }
     model = RecursiveModel(dict_response)
-    assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_none=True)) == {
-        "name": "it's me!",
-        "listOfMe": [
-            {"name": "it's me!"}
-        ],
-        "dictOfMe": {
-            "me": {"name": "it's me!"}
-        },
-        "dictOfListOfMe": {
-            "many mes": [
-                {"name": "it's me!"}
-            ]
-        }
-    }
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == dict_response
 
-    assert model.as_dict() == {
-        "name": "it's me!",
-        "listOfMe": [
-            {"name": "it's me!"}
-        ],
-        "dictOfMe": {
-            "me": {"name": "it's me!"}
-        },
-        "dictOfListOfMe": {
-            "many mes": [
-                {"name": "it's me!"}
-            ]
-        },
-        "listOfDictOfMe": None
-    }
+    assert model.as_dict() == dict_response
 
     model.list_of_me = NULL
     model.dict_of_me = None
@@ -3479,16 +3452,23 @@ def test_null_serilization():
     model.list_of_dict_of_me[0]["me"].list_of_me = NULL
     model.list_of_dict_of_me[0]["me"].dict_of_me = None
 
-    assert json.loads(json.dumps(model, cls=AzureJSONEncoder, exclude_none=True)) == {
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {
         "name": "it's me!",
+        "listOfMe": None,
         "dictOfListOfMe": {
             "many mes": [
-                {"name": "it's me!"}
+                {
+                    "name": "it's me!",
+                    "listOfMe": None,
+                }
             ]
         },
         "listOfDictOfMe": [
             {
-                "me": {"name": "it's me!"}
+                "me": {
+                    "name": "it's me!",
+                    "listOfMe": None,
+                }
             }
         ]
     }
@@ -3635,26 +3615,10 @@ def test_as_dict():
         DogComplex(id=1, name="Potato", food="tomato"),
         DogComplex(id=-1, name="Tomato", food="french fries")
     ])
-    assert model.as_dict(exclude_none=False, exclude_readonly=True) == {
+    assert model.as_dict(exclude_readonly=True) == {
         "id": 2,
         "name": "Siameeee",
         "color": None
-    }
-    assert model.as_dict(exclude_none=True, exclude_readonly=False) == {
-        "id": 2,
-        "name": "Siameeee",
-        "hates": [
-            {
-                "id": 1,
-                "name": "Potato",
-                "food": "tomato"
-            },
-            {
-                "id": -1,
-                "name": "Tomato",
-                "food": "french fries"
-            }
-        ]
     }
 
 
@@ -3713,18 +3677,18 @@ class GoblinShark(Shark, discriminator="goblin"):
 
 class Salmon(Fish, discriminator="salmon"):
     kind: Literal["salmon"] = rest_discriminator(name="kind")
-    friends: Optional[List["_models.Fish"]] = rest_field()
-    hate: Optional[Dict[str, "_models.Fish"]] = rest_field()
-    partner: Optional["_models.Fish"] = rest_field()
+    friends: Optional[List["Fish"]] = rest_field()
+    hate: Optional[Dict[str, "Fish"]] = rest_field()
+    partner: Optional["Fish"] = rest_field()
 
     @overload
     def __init__(
             self,
             *,
             age: int,
-            friends: Optional[List["_models.Fish"]] = None,
-            hate: Optional[Dict[str, "_models.Fish"]] = None,
-            partner: Optional["_models.Fish"] = None,
+            friends: Optional[List["Fish"]] = None,
+            hate: Optional[Dict[str, "Fish"]] = None,
+            partner: Optional["Fish"] = None,
     ):
         ...
 

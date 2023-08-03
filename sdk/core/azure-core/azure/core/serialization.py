@@ -144,12 +144,11 @@ class AzureJSONEncoder(JSONEncoder):
 
     def default(self, o):  # pylint: disable=too-many-return-statements
         if _is_model(o):
-            result = dict(o.items())
             if self.exclude_readonly:
                 readonly_props = [p._rest_name for p in o._attr_to_rest_field.values() if _is_readonly(p)]
-                for k in readonly_props:
-                    result.pop(k, None)
-            return result
+                return {k: v for k, v in o.items() if k not in readonly_props}
+            else:
+                return dict(o.items())
         if isinstance(o, (bytes, bytearray)):
             return base64.b64encode(o).decode()
         if isinstance(o, _Null):
@@ -315,17 +314,28 @@ def get_deserializer(annotation: typing.Any, rf: typing.Optional["_RestField"] =
     return _DESERIALIZE_MAPPING.get(annotation)
 
 
+def _get_type_alias_type(module_name: str, alias_name: str):
+    types = {
+        k: v
+        for k, v in sys.modules[module_name].__dict__.items()
+        if isinstance(v, typing._GenericAlias)  # type: ignore
+    }
+    if alias_name not in types:
+        return alias_name
+    return types[alias_name]
+
+
 def _get_model(module_name: str, model_name: str):
     models = {
         k: v
         for k, v in sys.modules[module_name].__dict__.items()
-        if isinstance(v, (type, typing._GenericAlias))  # type: ignore
+        if isinstance(v, type)
     }
     module_end = module_name.rsplit(".", 1)[0]
     models.update({
         k: v
         for k, v in sys.modules[module_end].__dict__.items()
-        if isinstance(v, (type, typing._GenericAlias))  # type: ignore
+        if isinstance(v, type)
     })
     if isinstance(model_name, str):
         model_name = model_name.split(".")[-1]
@@ -617,6 +627,11 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
     if not annotation or annotation in [int, float]:
         return None
 
+    # is it a type alias?
+    if isinstance(annotation, str):  # type: ignore
+        if module is not None:
+            annotation = _get_type_alias_type(module, annotation)
+
     # is it a forward ref / in quotes?
     if isinstance(annotation, (str, typing.ForwardRef)):
         try:
@@ -638,7 +653,7 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
                     return obj
                 return _deserialize(model_deserializer, obj)
 
-            return functools.partial(_deserialize_model, _get_model(module, annotation))
+            return functools.partial(_deserialize_model, annotation)
     except Exception:
         pass
 
