@@ -289,7 +289,7 @@ def _is_retryable_error(error: HttpResponseError) -> bool:
     # 429: Too Many Requests
     # 500: Internal Server Error
     # 504: Gateway Timeout
-    return error.status_code in [408, 429, 500, 504]  # Back off on throttling error
+    return error.status_code in [408, 429, 500, 504]
 
 
 class _RefreshTimer:
