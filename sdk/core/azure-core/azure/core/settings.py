@@ -311,7 +311,7 @@ class PrioritizedSetting(Generic[ValidInputType, ValueType]):
         return self._env_var
 
     @property
-    def default(self) -> Union[Any, _Unset]:
+    def default(self) -> Union[ValidInputType, _Unset]:
         return self._default
 
 
