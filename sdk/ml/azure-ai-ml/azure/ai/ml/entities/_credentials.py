@@ -59,6 +59,7 @@ from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
+from azure.ai.ml._utils._experimental import experimental
 
 
 class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
@@ -727,7 +728,7 @@ class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
             return NotImplemented
         return self.access_key_id == other.access_key_id and self.secret_access_key == other.secret_access_key
 
-
+@experimental
 class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
     """Api Key Credentials.
 
