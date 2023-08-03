@@ -6,10 +6,14 @@ verifytypes = false
 pylint = false
 
 [tool.interrogate]
-fail-under = 35
+fail-under = 75
 verbose = 2
 ignore-module = true
-exclude = ["setup.py", "tests", "azure/ai/ml/_restclient", "scripts"]
+exclude = ["setup.py", "tests", "azure/ai/ml/_restclient", "scripts", "samples"]
+ignore-init-method = true  # constructor docstrings are placed in the class docstring, not the init docstring 
+ignore-private = true
+ignore-semiprivate = true
+ignore-magic = true
 
 [tool.isort]
 profile = "black"
