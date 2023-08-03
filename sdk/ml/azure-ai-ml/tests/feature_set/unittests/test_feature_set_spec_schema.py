@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from azure.ai.ml._utils._feature_store_utils import read_feature_set_metadata_contents
+from azure.ai.ml._utils._feature_store_utils import read_feature_set_metadata
 from azure.ai.ml.entities._feature_set.featureset_spec_metadata import FeaturesetSpecMetadata
 from azure.ai.ml.exceptions import ValidationException
 
@@ -16,7 +16,7 @@ from azure.ai.ml.exceptions import ValidationException
 class TestFeatureSetSchema:
     def test_feature_set_spec_load(self) -> None:
         spec_path = "./tests/test_configs/feature_set"
-        featureset_spec_contents = read_feature_set_metadata_contents(path=spec_path)
+        featureset_spec_contents = read_feature_set_metadata(path=spec_path)
         featureset_spec_yaml_path = Path(spec_path, "FeatureSetSpec.yaml")
         fspec = FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)
 
@@ -25,7 +25,7 @@ class TestFeatureSetSchema:
         assert len(fspec.features) == 3
 
         spec_path = "./tests/test_configs/feature_set/custom_source_spec"
-        featureset_spec_contents = read_feature_set_metadata_contents(path=spec_path)
+        featureset_spec_contents = read_feature_set_metadata(path=spec_path)
         featureset_spec_yaml_path = Path(spec_path, "FeatureSetSpec.yaml")
         fspec = FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)
 
@@ -38,13 +38,13 @@ class TestFeatureSetSchema:
 
     def test_feature_set_spec_load_failure(self) -> None:
         spec_path = "./tests/test_configs/feature_set/invalid_spec1"
-        featureset_spec_contents = read_feature_set_metadata_contents(path=spec_path)
+        featureset_spec_contents = read_feature_set_metadata(path=spec_path)
         featureset_spec_yaml_path = Path(spec_path, "FeatureSetSpec.yaml")
         with pytest.raises(ValidationException) as ve:
             FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)
 
         spec_path = "./tests/test_configs/feature_set/invalid_spec2"
-        featureset_spec_contents = read_feature_set_metadata_contents(path=spec_path)
+        featureset_spec_contents = read_feature_set_metadata(path=spec_path)
         featureset_spec_yaml_path = Path(spec_path, "FeatureSetSpec.yaml")
         with pytest.raises(ValidationException):
             FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)

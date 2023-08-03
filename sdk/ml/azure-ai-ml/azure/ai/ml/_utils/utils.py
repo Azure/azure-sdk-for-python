@@ -407,12 +407,6 @@ def dict_eq(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> bool:
     return dict1 == dict2
 
 
-def get_http_response_and_deserialized_from_pipeline_response(
-    pipeline_response: Any, deserialized: Any
-) -> Tuple[Any, Any]:
-    return pipeline_response.http_response, deserialized
-
-
 def xor(a: Any, b: Any) -> bool:
     return bool(a) != bool(b)
 
@@ -765,7 +759,7 @@ def is_on_disk_cache_enabled():
     return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True]
 
 
-def is_concurrent_component_registration_enabled():
+def is_concurrent_component_registration_enabled():  # pylint: disable=name-too-long
     return os.getenv(AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION) not in ["True", "true", True]
 
 

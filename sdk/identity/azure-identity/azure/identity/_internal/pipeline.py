@@ -26,7 +26,7 @@ def _get_config(**kwargs) -> Configuration:
     :return: A configuration object.
     :rtype: ~azure.core.configuration.Configuration
     """
-    config = Configuration(**kwargs)
+    config: Configuration = Configuration(**kwargs)
     config.custom_hook_policy = CustomHookPolicy(**kwargs)
     config.headers_policy = HeadersPolicy(**kwargs)
     config.http_logging_policy = HttpLoggingPolicy(**kwargs)
