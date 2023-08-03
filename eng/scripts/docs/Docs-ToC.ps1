@@ -1,11 +1,18 @@
+function GetOnboardingFileForMoniker($docRepoLocation, $moniker) { 
+  $packageOnboardingFile = 'ci-configs/packages-latest.json'
+  if ($moniker -eq 'preview') {
+    $packageOnboardingFile = 'ci-configs/packages-preview.json'
+  } elseif ($moniker -eq 'legacy') {
+    $packageOnboardingFile = 'ci-configs/packages-legacy.json'
+  }
+
+  return (Join-Path $docRepoLocation $packageOnboardingFile)
+}
+
 function Get-python-OnboardedDocsMsPackagesForMoniker($DocRepoLocation, $moniker) {
-  $packageOnboardingFile = ""
-  if ("latest" -eq $moniker) {
-    $packageOnboardingFile = "$DocRepoLocation/ci-configs/packages-latest.json"
-  }
-  if ("preview" -eq $moniker) {
-    $packageOnboardingFile = "$DocRepoLocation/ci-configs/packages-preview.json"
-  }
+  $packageOnboardingFile = GetOnboardingFileForMoniker `
+    -docRepoLocation $DocRepoLocation `
+    -moniker $moniker
 
   $onboardedPackages = @{}
   $onboardingSpec = ConvertFrom-Json (Get-Content $packageOnboardingFile -Raw)
