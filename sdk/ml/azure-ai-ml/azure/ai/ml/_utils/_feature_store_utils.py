@@ -29,12 +29,12 @@ if TYPE_CHECKING:
     from azure.ai.ml.operations._feature_store_entity_operations import FeatureStoreEntityOperations
 
 
-def read_feature_set_metadata_contents(*, path: str) -> Dict:
+def read_feature_set_metadata(*, path: str) -> Dict:
     metadata_path = str(Path(path, "FeatureSetSpec.yaml"))
     return load_yaml(metadata_path)
 
 
-def read_remote_feature_set_spec_metadata_contents(
+def read_remote_feature_set_spec_metadata(
     *,
     base_uri: str,
     datastore_operations: DatastoreOperations,

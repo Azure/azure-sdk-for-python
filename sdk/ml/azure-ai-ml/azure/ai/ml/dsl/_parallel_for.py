@@ -40,10 +40,15 @@ def parallel_for(*, body, items, **kwargs):
                     input=loop_node.outputs.output,
                 )
 
-    :keyword body: Node to execute as the loop body.
-    :type body: BaseNode
-    :keyword items: The loop body's input which will bind to the loop node.
-    :type items: Union[list, dict, str, PipelineInput, NodeOutput]
+    :param body: Node to execute as the loop body.
+    :type body: ~azure.ai.ml.entities._builders.BaseNode
+    :param items: The loop body's input which will bind to the loop node.
+    :type items: Union[
+        list,
+        dict,
+        str,
+        ~azure.ai.ml.entities._job.pipeline._io.PipelineInput,
+        ~azure.ai.ml.entities._job.pipeline._io.NodeOutput]
     """
     parallel_for_node = ParallelFor(
         body=body,

@@ -521,29 +521,43 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
     def test_config_setting_feature_flag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         feature_flag = FeatureFlagConfigurationSetting("test_feature", enabled=True)
-        set_flag = client.set_configuration_setting(feature_flag)
 
+        set_flag = client.set_configuration_setting(feature_flag)
         self._assert_same_keys(feature_flag, set_flag)
+        set_flag_value = json.loads(set_flag.value)
+        assert set_flag_value["id"] == "test_feature"
+        assert set_flag_value["enabled"] == True
+        assert set_flag_value["conditions"] != None
 
         set_flag.enabled = not set_flag.enabled
         changed_flag = client.set_configuration_setting(set_flag)
-
-        changed_flag.enabled = False
+        assert changed_flag.enabled == False
         temp = json.loads(changed_flag.value)
+        assert temp["id"] == set_flag_value["id"]
         assert temp["enabled"] == False
+        assert temp["conditions"] == set_flag_value["conditions"]
 
-        c = json.loads(copy.deepcopy(changed_flag.value))
+        c = json.loads(changed_flag.value)
         c["enabled"] = True
         changed_flag.value = json.dumps(c)
         assert changed_flag.enabled == True
+        temp = json.loads(changed_flag.value)
+        assert temp["id"] == set_flag_value["id"]
+        assert temp["enabled"] == True
+        assert temp["conditions"] == set_flag_value["conditions"]
 
         changed_flag.value = json.dumps({})
         assert changed_flag.enabled == None
-        assert changed_flag.value == json.dumps({"enabled": None, "conditions": {"client_filters": None}})
+        temp = json.loads(changed_flag.value)
+        assert temp["id"] == set_flag_value["id"]
+        assert temp["enabled"] == None
+        assert temp["conditions"] != None
+        assert temp["conditions"]["client_filters"] == None
 
         set_flag.value = "bad_value"
         assert set_flag.enabled == None
         assert set_flag.filters == None
+        assert set_flag.value == "bad_value"
 
         client.delete_configuration_setting(changed_flag.key)
 

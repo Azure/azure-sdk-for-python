@@ -12,8 +12,8 @@ from sample_utilities import get_authority, get_credential
 
 
 async def main():
-    endpoint = os.environ.get("AZURE_APPCONFIG_ENDPOINT")
-    key_vault_uri = os.environ.get("AZURE_KEYVAULT_URI")
+    endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
+    key_vault_uri = os.environ.get("KEYVAULT_URL")
     authority = get_authority(endpoint)
     credential = get_credential(authority, is_async=True)
 
@@ -30,5 +30,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.set_event_loop_policy(asyncio.DefaultEventLoopPolicy())
     asyncio.run(main())

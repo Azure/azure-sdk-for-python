@@ -86,7 +86,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     .. admonition:: Example:
         :class: tip
 
-        .. literalinclude:: ../samples/ml_samples_command_configurations.py
+        .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
             :start-after: [START command_component_definition]
             :end-before: [END command_component_definition]
             :language: python
@@ -175,6 +175,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     def instance_count(self) -> int:
         """The number of instances or nodes to be used by the compute target.
 
+        :return: The number of instances or nodes.
         :rtype: int
         """
         return self.resources.instance_count if self.resources else None
@@ -183,8 +184,8 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     def instance_count(self, value: int) -> None:
         """Sets the number of instances or nodes to be used by the compute target.
 
-        :param value: The number of instances of nodes to be used by the compute target. Defaults to 1.
-        :type instance_count: int
+        :param value: The number of instances or nodes to be used by the compute target. Defaults to 1.
+        :type value: int
         """
         if not value:
             return

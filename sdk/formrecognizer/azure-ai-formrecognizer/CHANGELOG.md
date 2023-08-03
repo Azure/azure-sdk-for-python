@@ -18,6 +18,9 @@ This version of the client library defaults to the service API version `2023-07-
 - Removed `DocumentAnnotation` model.
 - Removed `common_name` property from `DocumentKeyValuePair`.
 - Changed `AnalysisFeature` enum member names and values. Supported enum members are: `OCR_HIGH_RESOLUTION`, `LANGUAGES`, `BARCODES`, `FORMULAS`, `KEY_VALUE_PAIRS`, `STYLE_FONT`.
+- Renamed `custom_neural_document_model_builds` property to `neural_document_model_quota` on `ResourceDetails` model.
+- Renamed `AzureBlobSource` model to `BlobSource`.
+- Renamed `AzureBlobFileListSource` model to `BlobFileListSource`.
 
 ### Bugs Fixed
 

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.5.0b2 (Unreleased)
+## 1.5.0b3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.5.0b2 (2023-08-02)
+
+### Bugs Fixed
+- Fixed a bug in deserializing and serializing Snapshot when `filters` property is `None`.
+- Fixed a bug when creating `FeatureFlagConfigurationSetting` from SDK but having an error in portal.([#31326](https://github.com/Azure/azure-sdk-for-python/issues/31326))
 
 ## 1.5.0b1 (2023-07-11)
 

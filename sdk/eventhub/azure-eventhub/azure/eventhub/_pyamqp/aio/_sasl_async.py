@@ -106,7 +106,7 @@ class SASLTransport(AsyncTransport, SASLTransportMixinAsync):
         credential,
         *,
         port=AMQPS_PORT,
-        connect_timeout=None,
+        socket_timeout=None,
         ssl_opts=None,
         **kwargs,
     ):
@@ -115,7 +115,7 @@ class SASLTransport(AsyncTransport, SASLTransportMixinAsync):
         super(SASLTransport, self).__init__(
             host,
             port=port,
-            connect_timeout=connect_timeout,
+            socket_timeout=socket_timeout,
             ssl_opts=ssl_opts,
             **kwargs,
         )
@@ -131,7 +131,7 @@ class SASLWithWebSocket(WebSocketTransportAsync, SASLTransportMixinAsync):
         credential,
         *,
         port=WEBSOCKET_PORT,
-        connect_timeout=None,
+        socket_timeout=None,
         ssl_opts=None,
         **kwargs,
     ):
@@ -140,7 +140,7 @@ class SASLWithWebSocket(WebSocketTransportAsync, SASLTransportMixinAsync):
         super().__init__(
             host,
             port=port,
-            connect_timeout=connect_timeout,
+            socket_timeout=socket_timeout,
             ssl_opts=ssl_opts,
             **kwargs,
         )

@@ -328,7 +328,6 @@ class ScheduleOperations(_ScopeDependentOperations):
                     target=ErrorTarget.SCHEDULE,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-        
         # resolve ARM id for each signal and populate any defaults if needed
         for signal_name, signal in schedule.create_monitor.monitoring_signals.items():
             if signal.type == MonitorSignalType.CUSTOM:

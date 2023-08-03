@@ -25,7 +25,7 @@ class TestSearchIndexClient(AzureRecordedTestCase):
     @search_decorator(schema=None, index_batch=None)
     @recorded_by_proxy
     def test_search_index_client(self, api_key, endpoint, index_name):
-        client = SearchIndexClient(endpoint, api_key)
+        client = SearchIndexClient(endpoint, api_key, retry_backoff_factor=60)
         index_name = "hotels"
         self._test_get_service_statistics(client)
         self._test_list_indexes_empty(client)
@@ -63,7 +63,10 @@ class TestSearchIndexClient(AzureRecordedTestCase):
 
     def _test_get_index_statistics(self, client, index_name):
         result = client.get_index_statistics(index_name)
-        assert set(result.keys()) == {"document_count", "storage_size"}
+        keys = set(result.keys())
+        assert "document_count" in keys
+        assert "storage_size" in keys
+        assert "vector_index_size" in keys
 
     def _test_create_index(self, client, index_name):
         fields = [
