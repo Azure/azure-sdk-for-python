@@ -25,6 +25,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
+from azure.search.documents.models import Vector
 
 service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
@@ -34,6 +35,7 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 def get_embeddings(text: str):
     # There are a few ways to get embeddings. This is just one example.
     import openai
+
     open_ai_endpoint = os.getenv("OpenAIEndpoint")
     open_ai_key = os.getenv("OpenAIKey")
 
@@ -128,12 +130,11 @@ def single_vector_search():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
+    vector = Vector(value=get_embeddings(query), k=3, fields="descriptionVector")
 
     results = search_client.search(
         search_text="",
-        vector=get_embeddings(query),
-        top_k=3,
-        vector_fields="descriptionVector",
+        vectors=[vector],
         select=["hotelId", "hotelName"],
     )
 
@@ -147,12 +148,11 @@ def single_vector_search_with_filter():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
+    vector = Vector(value=get_embeddings(query), k=3, fields="descriptionVector")
 
     results = search_client.search(
         search_text="",
-        vector=get_embeddings(query),
-        top_k=3,
-        vector_fields="descriptionVector",
+        vectors=[vector],
         filter="category eq 'Luxury'",
         select=["hotelId", "hotelName"],
     )
@@ -167,12 +167,11 @@ def simple_hybrid_search():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
+    vector = Vector(value=get_embeddings(query), k=3, fields="descriptionVector")
 
     results = search_client.search(
         search_text=query,
-        vector=get_embeddings(query),
-        top_k=3,
-        vector_fields="descriptionVector",
+        vectors=[vector],
         select=["hotelId", "hotelName"],
     )
     print(results.get_answers())
@@ -189,7 +188,7 @@ if __name__ == "__main__":
     client = SearchClient(service_endpoint, index_name, credential)
     hotel_docs = get_hotel_documents()
     client.upload_documents(documents=hotel_docs)
-    
+
     single_vector_search()
     single_vector_search_with_filter()
     simple_hybrid_search()

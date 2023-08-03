@@ -21,7 +21,7 @@ from marshmallow import Schema, ValidationError
 from .._schema import PathAwareSchema
 from .._vendor.azure_resources.models import Deployment, DeploymentProperties, DeploymentValidateResult, ErrorResponse
 from ..constants._common import BASE_PATH_CONTEXT_KEY, OperationStatus
-from ..entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+from ..entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
 from ..entities._util import convert_ordered_dict_to_dict, decorate_validation_error
 from ..exceptions import ErrorCategory, ErrorTarget, ValidationException
 from ._mixins import RestTranslatableMixin
@@ -403,8 +403,8 @@ class SchemaValidatableMixin:
         return type: str
         """
         return (
-            try_get_non_arbitrary_attr_for_potential_attr_dict(self, "base_path")
-            or try_get_non_arbitrary_attr_for_potential_attr_dict(self, "_base_path")
+            try_get_non_arbitrary_attr(self, "base_path")
+            or try_get_non_arbitrary_attr(self, "_base_path")
             or Path.cwd()
         )
 

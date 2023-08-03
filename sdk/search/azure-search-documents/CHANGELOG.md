@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added multi-vector search support. Now instead of passing in `vector`, `top_k` and `vector_fields`, search method accepts `vectors` which is a list of `Vector` object.
+
 ### Breaking Changes
 
 ### Bugs Fixed

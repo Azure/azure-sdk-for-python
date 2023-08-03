@@ -22,7 +22,7 @@ from azure.ai.formrecognizer import (
     DocumentAnalysisApiVersion,
     AnalysisFeature,
     ClassifierDocumentTypeDetails,
-    AzureBlobSource
+    BlobSource
 )
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
@@ -255,31 +255,31 @@ class TestMultiapi(AsyncFormRecognizerTest):
                 await client.begin_build_document_classifier(
                             doc_types={
                                 "IRS-1040-A": ClassifierDocumentTypeDetails(
-                                    source=AzureBlobSource(
+                                    source=BlobSource(
                                         container_url=formrecognizer_training_data_classifier,
                                         prefix="IRS-1040-A/train"
                                     )
                                 ),
                                 "IRS-1040-B": ClassifierDocumentTypeDetails(
-                                    source=AzureBlobSource(
+                                    source=BlobSource(
                                         container_url=formrecognizer_training_data_classifier,
                                         prefix="IRS-1040-B/train"
                                     )
                                 ),
                                 "IRS-1040-C": ClassifierDocumentTypeDetails(
-                                    source=AzureBlobSource(
+                                    source=BlobSource(
                                         container_url=formrecognizer_training_data_classifier,
                                         prefix="IRS-1040-C/train"
                                     )
                                 ),
                                 "IRS-1040-D": ClassifierDocumentTypeDetails(
-                                    source=AzureBlobSource(
+                                    source=BlobSource(
                                         container_url=formrecognizer_training_data_classifier,
                                         prefix="IRS-1040-D/train"
                                     )
                                 ),
                                 "IRS-1040-E": ClassifierDocumentTypeDetails(
-                                    source=AzureBlobSource(
+                                    source=BlobSource(
                                         container_url=formrecognizer_training_data_classifier,
                                         prefix="IRS-1040-E/train"
                                     )

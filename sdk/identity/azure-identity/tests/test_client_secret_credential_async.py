@@ -186,19 +186,70 @@ async def test_cache():
     assert mock_send.call_count == 2
 
 
-def test_token_cache():
+@pytest.mark.asyncio
+async def test_token_cache():
     """the credential should default to an in memory cache, and optionally use a persistent cache"""
 
-    with patch(ClientSecretCredential.__module__ + "._load_persistent_cache") as load_persistent_cache:
-        with patch(ClientSecretCredential.__module__ + ".msal") as mock_msal:
-            ClientSecretCredential("tenant", "client-id", "secret")
-        assert mock_msal.TokenCache.call_count == 1
-        assert not load_persistent_cache.called
+    access_token = "token"
+    transport = async_validating_transport(
+        requests=[Request(), Request()],
+        responses=[
+            mock_response(json_payload=build_aad_response(access_token=access_token)),
+            mock_response(json_payload=build_aad_response(access_token=access_token)),
+        ],
+    )
 
-        ClientSecretCredential(
-            "tenant", "client-id", "secret", cache_persistence_options=TokenCachePersistenceOptions()
+    with patch("azure.identity._internal.aad_client_base._load_persistent_cache") as load_persistent_cache:
+        with patch("azure.identity._internal.aad_client_base.TokenCache") as mock_token_cache:
+            credential = ClientSecretCredential("tenant", "client-id", "secret", transport=transport)
+            assert mock_token_cache.call_count == 0
+            assert not load_persistent_cache.called
+
+            await credential.get_token("scope")
+            assert mock_token_cache.call_count == 1
+            assert load_persistent_cache.call_count == 0
+            assert credential._client._cache is not None
+            assert credential._client._cae_cache is None
+
+            await credential.get_token("scope", enable_cae=True)
+            assert mock_token_cache.call_count == 2
+            assert load_persistent_cache.call_count == 0
+            assert credential._client._cae_cache is not None
+
+
+@pytest.mark.asyncio
+async def test_token_cache_persistent():
+    """the credential should use persistent cache if passed in cache options."""
+
+    access_token = "token"
+    transport = async_validating_transport(
+        requests=[Request(), Request()],
+        responses=[
+            mock_response(json_payload=build_aad_response(access_token=access_token)),
+            mock_response(json_payload=build_aad_response(access_token=access_token)),
+        ],
+    )
+
+    with patch("azure.identity._internal.aad_client_base._load_persistent_cache") as load_persistent_cache:
+        credential = ClientSecretCredential(
+            "tenant",
+            "client-id",
+            "secret",
+            cache_persistence_options=TokenCachePersistenceOptions(),
+            transport=transport,
         )
+        await credential.get_token("scope")
         assert load_persistent_cache.call_count == 1
+        assert credential._client._cache is not None
+        assert credential._client._cae_cache is None
+        args, _ = load_persistent_cache.call_args
+        assert args[1] is False
+
+        await credential.get_token("scope", enable_cae=True)
+        assert load_persistent_cache.call_count == 2
+        assert credential._client._cae_cache is not None
+        args, _ = load_persistent_cache.call_args
+        assert args[1] is True
 
 
 @pytest.mark.asyncio
@@ -215,7 +266,7 @@ async def test_cache_multiple_clients():
     )
 
     cache = TokenCache()
-    with patch(ClientSecretCredential.__module__ + "._load_persistent_cache") as mock_cache_loader:
+    with patch("azure.identity._internal.aad_client_base._load_persistent_cache") as mock_cache_loader:
         mock_cache_loader.return_value = Mock(wraps=cache)
         credential_a = ClientSecretCredential(
             "tenant",
@@ -224,7 +275,7 @@ async def test_cache_multiple_clients():
             transport=transport_a,
             cache_persistence_options=TokenCachePersistenceOptions(),
         )
-        assert mock_cache_loader.call_count == 1, "credential should load the persistent cache"
+        assert mock_cache_loader.call_count == 0, "credential should not load the persistent cache yet"
 
         credential_b = ClientSecretCredential(
             "tenant",
@@ -233,20 +284,24 @@ async def test_cache_multiple_clients():
             transport=transport_b,
             cache_persistence_options=TokenCachePersistenceOptions(),
         )
-        assert mock_cache_loader.call_count == 2, "credential should load the persistent cache"
+        assert mock_cache_loader.call_count == 0, "credential should not load the persistent cache yet"
 
-    # A caches a token
-    scope = "scope"
-    token_a = await credential_a.get_token(scope)
-    assert token_a.token == access_token_a
-    assert transport_a.send.call_count == 1
+        # A caches a token
+        scope = "scope"
+        token_a = await credential_a.get_token(scope)
+        assert token_a.token == access_token_a
+        assert transport_a.send.call_count == 1
+        assert mock_cache_loader.call_count == 1
+        args, _ = mock_cache_loader.call_args
+        assert args[1] is False
 
-    # B should get a different token for the same scope
-    token_b = await credential_b.get_token(scope)
-    assert token_b.token == access_token_b
-    assert transport_b.send.call_count == 1
+        # B should get a different token for the same scope
+        token_b = await credential_b.get_token(scope)
+        assert token_b.token == access_token_b
+        assert transport_b.send.call_count == 1
+        assert mock_cache_loader.call_count == 2
 
-    assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2
+        assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2
 
 
 @pytest.mark.asyncio

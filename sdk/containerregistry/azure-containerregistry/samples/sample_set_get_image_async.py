@@ -38,10 +38,13 @@ class SetGetImageAsync(object):
     async def set_get_oci_image(self):
         repository_name = "sample-oci-image-async"
         layer = BytesIO(b"Sample layer")
-        config = BytesIO(json.dumps(
-            {
-                "sample config": "content",
-            }).encode())
+        config = BytesIO(
+            json.dumps(
+                {
+                    "sample config": "content",
+                }
+            ).encode()
+        )
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Upload a layer
             layer_digest, layer_size = await client.upload_blob(repository_name, layer)
@@ -110,7 +113,7 @@ class SetGetImageAsync(object):
                 await client.delete_blob(repository_name, layer["digest"])
             # Delete the config
             await client.delete_blob(repository_name, received_manifest["config"]["digest"])
-            
+
             # Delete the image
             await client.delete_manifest(repository_name, get_manifest_result.digest)
 
@@ -130,20 +133,22 @@ class SetGetImageAsync(object):
                 "config": {
                     "digest": config_digest,
                     "mediaType": "application/vnd.docker.container.image.v1+json",
-                    "size": config_size
+                    "size": config_size,
                 },
                 "layers": [
                     {
                         "digest": layer_digest,
                         "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
-                        "size": layer_size
+                        "size": layer_size,
                     }
                 ],
                 "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
-                "schemaVersion": 2
+                "schemaVersion": 2,
             }
             # Set the image with one custom media type
-            await client.set_manifest(repository_name, docker_manifest, tag="sample", media_type=docker_manifest["mediaType"])
+            await client.set_manifest(
+                repository_name, docker_manifest, tag="sample", media_type=docker_manifest["mediaType"]
+            )
 
             # Get the image
             get_manifest_result = await client.get_manifest(repository_name, "sample")
@@ -151,7 +156,7 @@ class SetGetImageAsync(object):
             print(received_manifest)
             received_manifest_media_type = get_manifest_result.media_type
             print(received_manifest_media_type)
-            
+
             # Delete the image
             client.delete_manifest(repository_name, get_manifest_result.digest)
 
