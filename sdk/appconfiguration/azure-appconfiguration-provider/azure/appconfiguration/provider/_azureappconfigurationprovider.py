@@ -326,7 +326,7 @@ class _RefreshTimer:
         min_backoff_milliseconds = self._min_backoff * millisecond
         max_backoff_milliseconds = self._max_backoff * millisecond
 
-        if self._attempts <= 1 or self._max_backoff <= self._min_backoff:
+        if self._max_backoff <= self._min_backoff:
             return min_backoff_milliseconds
 
         calculated_milliseconds = max(1, min_backoff_milliseconds) * (1 << min(self._attempts, max_attempts))
@@ -393,10 +393,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             logging.debug("Failed to refresh, retrying: %r", e)
             self._refresh_timer.retry()
         except HttpResponseError as e:
-            # There might be specific status codes that we want to silently backoff and retry.
-            # Need more service specific details here, raising for now.
+            # If we get an error we should retry sooner than the next refresh interval
+            self._refresh_timer.retry()
             if _is_retryable_error(e):
-                self._refresh_timer.retry()
                 return
             if self._on_refresh_error:
                 self._on_refresh_error(e)
