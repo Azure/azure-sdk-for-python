@@ -9,7 +9,7 @@ from typing import Dict, Any
 
 def _to_camel_case(string: str) -> str:
     """Convert a string to camel case.
-    
+
     :param str string: The string to convert to camel case.
     :return: The string converted to camel case.
     :rtype: str

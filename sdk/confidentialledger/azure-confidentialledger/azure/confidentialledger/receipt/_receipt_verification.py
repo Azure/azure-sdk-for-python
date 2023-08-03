@@ -90,7 +90,7 @@ def verify_receipt(
 def _preprocess_input_receipt(receipt_dict: Dict[str, Any]) -> Receipt:
     """Preprocess input receipt dictionary, validate its content, and returns a
     valid Receipt object based on the vetted input data.
-    
+
     :param dict[str, any] receipt_dict: Receipt dictionary
     :return: Receipt object
     :rtype: Receipt
@@ -110,7 +110,7 @@ def _preprocess_input_receipt(receipt_dict: Dict[str, Any]) -> Receipt:
 
 def _validate_receipt_content(receipt: Dict[str, Any]):
     """Validate the content of a write transaction receipt.
-    
+
     :param dict[str, any] receipt: Receipt dictionary
     """
 
@@ -165,7 +165,7 @@ def _verify_signature_over_root_node_hash(
 ) -> None:
     """Verify signature over root node hash of the Merkle Tree using node
     certificate public key.
-    
+
     :param str signature: Signature
     :param Certificate node_cert: Node certificate
     :param str node_id: Node ID
@@ -198,7 +198,7 @@ def _verify_signature_over_root_node_hash(
 def _compute_leaf_node_hash(leaf_components: LeafComponents) -> bytes:
     """Compute the hash of the leaf node associated to a transaction given the
     leaf components from a write transaction receipt.
-    
+
     :param LeafComponents leaf_components: Leaf components
     :return: Leaf node hash
     :rtype: bytes
@@ -235,7 +235,7 @@ def _compute_root_node_hash(leaf_hash: bytes, proof: List[ProofElement]) -> byte
     """Re-compute the hash of the root of the Merkle tree from a leaf node hash
     and a receipt proof list containing the required nodes hashes for the
     computation.
-    
+
     :param bytes leaf_hash: Leaf node hash
     :param list[ProofElement] proof: Receipt proof list
     :return: Root node hash
@@ -284,7 +284,7 @@ def _verify_certificate_endorsement(
 ) -> None:
     """Verify that the endorser certificate has endorsed endorsee
     certificate using ECDSA.
-    
+
     :param Certificate endorsee: Endorsee certificate
     :param Certificate endorser: Endorser certificate
     """
@@ -312,7 +312,7 @@ def _verify_ec_signature(
     hash_algorithm: hashes.HashAlgorithm,
 ) -> None:
     """Verify a signature over data using the certificate public key.
-    
+
     :param Certificate certificate: Certificate
     :param bytes signature: Signature
     :param bytes data: Data
@@ -366,7 +366,7 @@ def _verify_node_cert_endorsed_by_service_cert(
 def _load_and_verify_pem_certificate(cert_str: str) -> Certificate:
     """Load PEM certificate from a string representation and verify it is a
     valid certificate with expected Elliptic Curve public key.
-    
+
     :param str cert_str: PEM certificate string
     :return: Certificate
     :rtype: Certificate

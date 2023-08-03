@@ -59,7 +59,7 @@ def compute_claims_digest(application_claims: List[Dict[str, Any]]) -> str:
 
 def _validate_application_claims(application_claims: List[Dict[str, Any]]):
     """Validate the application claims in a write transaction receipt.
-    
+
     :param list[dict[str, any]] application_claims: List of application claims to be verified against the receipt.
     """
 
@@ -118,7 +118,7 @@ def _compute_ledger_entry_v1_claim_digest(
     ledger_entry_claim: LedgerEntryClaim,
 ) -> bytes:
     """Compute the digest of a LedgerEntryV1 claim. It returns the digest in bytes.
-    
+
     :param LedgerEntryClaim ledger_entry_claim: LedgerEntry claim to be digested.
     :return: The digest of the LedgerEntry claim.
     :rtype: bytes
@@ -147,10 +147,10 @@ def _compute_ledger_entry_v1_claim_digest(
 
 def _compute_ledger_entry_claim_digest(ledger_entry_claim: LedgerEntryClaim) -> bytes:
     """Compute the digest of a LedgerEntry claim. It returns the digest in bytes.
-    
-    :param list[ApplicationClaim] application_claims_list: List of application claims to be digested.
-    :return: The hexdigest of the claims digest.
-    :rtype: str
+
+    :param LedgerEntryClaim ledger_entry_claim: LedgerEntry claim to be digested.
+    :return: The digest of the LedgerEntry claim.
+    :rtype: bytes
     """
 
     claim_protocol = ledger_entry_claim.protocol
