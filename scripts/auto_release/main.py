@@ -423,7 +423,7 @@ class CodegenTestPR:
         if self.after_multiapi_combiner:
             packages = self.get_private_package()
             for package in packages:
-                if os.path.getsize(package) > 1024:
+                if os.path.getsize(package) > 2 * 1024 * 1024:
                     self.check_package_size_result.append(f'ERROR: Package size is over 2MBytes: {Path(package).name}!!!')
 
     def check_file(self):
