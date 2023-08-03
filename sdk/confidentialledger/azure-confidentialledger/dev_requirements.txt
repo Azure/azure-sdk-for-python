@@ -4,3 +4,4 @@
 -e ../../identity/azure-identity
 aiohttp
 pylint==2.15.8
+tox<5
