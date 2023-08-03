@@ -21,8 +21,8 @@ class UTC(datetime.tzinfo):
         """UTF offset for UTC is 0.
 
         :param datetime.datetime dt: Ignored.
-        :rtype: datetime.timedelta
         :return: The UTC offset of UTC
+        :rtype: datetime.timedelta
         """
         return datetime.timedelta(0)
 
@@ -30,8 +30,8 @@ class UTC(datetime.tzinfo):
         """Timestamp representation.
 
         :param datetime.datetime dt: Ignored.
-        :rtype: str
         :return: The timestamp representation of UTC
+        :rtype: str
         """
         return "Z"
 
@@ -39,8 +39,8 @@ class UTC(datetime.tzinfo):
         """No daylight saving for UTC.
 
         :param datetime.datetime dt: Ignored.
-        :rtype: datetime.timedelta
         :return: The daylight saving time of UTC
+        :rtype: datetime.timedelta
         """
         return datetime.timedelta(hours=1)
 
@@ -73,8 +73,8 @@ def generate_sas_token(audience, policy, key, expiry=None):
     :param str policy:
     :param str key:
     :param int expiry: abs expiry time
-    :rtype: str
     :return: A sas token
+    :rtype: str
     """
     if not expiry:
         expiry = int(time.time()) + 3600  # Default to 1 hour.

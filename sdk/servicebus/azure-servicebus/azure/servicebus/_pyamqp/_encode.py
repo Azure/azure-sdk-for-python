@@ -605,8 +605,8 @@ def encode_fields(value):
     <type name="fields" class="restricted" source="map"/>
 
     :param dict value: The field values to encode.
-    :rtype: dict
     :return: The encoded field values.
+    :rtype: dict
     """
     if not value:
         return {TYPE: AMQPTypes.null, VALUE: None}
@@ -630,8 +630,8 @@ def encode_annotations(value):
     <type name="annotations" class="restricted" source="map"/>
 
     :param dict value: The annotations to encode.
-    :rtype: dict
     :return: The encoded annotations.
+    :rtype: dict
     """
     if not value:
         return {TYPE: AMQPTypes.null, VALUE: None}
@@ -663,8 +663,8 @@ def encode_application_properties(value):
     and the values are restricted to be of simple types only, that is (excluding map, list, and array types).
 
     :param dict value: The application properties to encode.
-    :rtype: dict
     :return: The encoded application properties.
+    :rtype: dict
     """
     if not value:
         return {TYPE: AMQPTypes.null, VALUE: None}
@@ -683,8 +683,8 @@ def encode_message_id(value):
     <type name="message-id-string" class="restricted" source="string" provides="message-id"/>
 
     :param Any value: The message ID to encode.
-    :rtype: dict
     :return: The encoded message ID.
+    :rtype: dict
     """
     if isinstance(value, int):
         return {TYPE: AMQPTypes.ulong, VALUE: value}
@@ -718,8 +718,8 @@ def encode_node_properties(value):
           type="symbol" multiple="true" requires="distribution-mode"
 
     :param dict value: The node properties.
-    :rtype: dict
     :return: The encoded node properties.
+    :rtype: dict
     """
     if not value:
         return {TYPE: AMQPTypes.null, VALUE: None}
@@ -752,8 +752,8 @@ def encode_filter_set(value):
     by the capabilities of the source.
 
     :param dict value: A set of named filters.
-    :rtype: dict
     :return: A set of encoded named filters.
+    :rtype: dict
     """
     if not value:
         return {TYPE: AMQPTypes.null, VALUE: None}
@@ -785,7 +785,7 @@ def encode_unknown(output, value, **kwargs):
     """
     Dynamic encoding according to the type of `value`.
     :param bytearray output: The output buffer.
-    :param Any value: The value to encode.
+    :param any value: The value to encode.
     """
     if value is None:
         encode_null(output, **kwargs)
