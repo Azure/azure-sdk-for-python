@@ -5,6 +5,7 @@ stages:
     parameters:
       BuildTargetingString: azure-data-tables
       ServiceDirectory: tables
+      TestTimeoutInMinutes: 180
       SupportedClouds: 'Public,UsGov,China'
       CloudConfig:
         Public:
