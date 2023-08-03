@@ -47,7 +47,7 @@ def sample_manage_models():
         f"Our resource has {account_details.custom_document_models.count} custom models, "
         f"and we can have at most {account_details.custom_document_models.limit} custom models"
     )
-    neural_models = account_details.custom_neural_document_model_builds
+    neural_models = account_details.neural_document_model_quota
     print(
         f"The quota limit for custom neural document models is {neural_models.quota} and the resource has"
         f"used {neural_models.used}. The resource quota will reset on {neural_models.quota_resets_on}"

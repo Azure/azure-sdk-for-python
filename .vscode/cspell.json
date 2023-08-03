@@ -819,6 +819,7 @@
       "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*",
       "words": [
         "otel",
+        "OTELRESOURCE",
         "OTLP",
         "otlp",
         "grpc"

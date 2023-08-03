@@ -14,13 +14,13 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
     """Compute resource configuration for Spark component or job.
 
-    :param instance_type: The type of VM to be used by the compute target.
-    :type instance_type: str
-    :param runtime_version: The Spark runtime version.
-    :type runtime_version: str
+    :keyword instance_type: The type of VM to be used by the compute target.
+    :type instance_type: Optional[str]
+    :keyword runtime_version: The Spark runtime version.
+    :type runtime_version: Optional[str]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_resource_configuration]

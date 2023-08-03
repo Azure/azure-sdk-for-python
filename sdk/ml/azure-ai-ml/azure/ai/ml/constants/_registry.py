@@ -9,6 +9,8 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Storage account types."""
+
     STANDARD_LRS = "Standard_LRS".lower()
     STANDARD_GRS = "Standard_GRS".lower()
     STANDARD_RAGRS = "Standard_RAGRS".lower()
@@ -21,6 +23,8 @@ class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 # When will other values be allowed?
 class AcrAccountSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Azure Container Registry SKUs."""
+
     PREMIUM = "Premium".lower()
 
 
