@@ -236,16 +236,22 @@ class ComponentOperations(_ScopeDependentOperations):
         """
         return self._get(name=name, version=version, label=label)
 
-    @classmethod
-    def _localize_code(cls, component: Component, base_dir: Path) -> None:
-        if isinstance(component, ComponentCodeMixin):
-            code = component._get_origin_code_value()
-            if code is not None:
-                raise NotImplementedError("Code downloading is not implemented for now.")
-                # local_code = "./code"
-                # # TODO: download code
-                # base_dir.joinpath(local_code).mkdir()
-                # setattr(component, component._get_code_field_name(), local_code)
+    def _localize_code(self, component: Component, base_dir: Path) -> None:
+        if not isinstance(component, ComponentCodeMixin):
+            return
+        code = component._get_origin_code_value()
+        if not isinstance(code, str):
+            return
+        # registry code will keep the "azureml:" prefix can be used directly
+        if code.startswith("azureml://registries"):
+            return
+
+        target_code_value = "./code"
+        self._code_operations.download(
+            **extract_name_and_version(code), download_path=base_dir.joinpath(target_code_value)
+        )
+
+        setattr(component, component._get_code_field_name(), target_code_value)
 
     def _localize_environment(self, component: Component, base_dir: Path) -> None:
         from azure.ai.ml.entities import ParallelComponent
@@ -260,8 +266,8 @@ class ComponentOperations(_ScopeDependentOperations):
         # environment can be None
         if not isinstance(parent.environment, str):
             return
-        # registry environment can be used directly
-        if parent.environment.startswith("azureml:"):
+        # registry environment will keep the "azureml:" prefix can be used directly
+        if parent.environment.startswith("azureml://registries"):
             return
 
         environment = self._environment_operations.get(**extract_name_and_version(parent.environment))

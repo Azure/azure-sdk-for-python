@@ -160,16 +160,14 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         self.instance_count = instance_count
         self.additional_includes = additional_includes or []
 
-    # region AdditionalIncludesMixin
-    def _get_origin_code_value(self) -> Union[str, os.PathLike, None]:
-        if self.code is not None and isinstance(self.code, str):
-            # directly return code given it will be validated in self._validate_additional_includes
-            return self.code
+    def _to_ordered_dict_for_yaml_dump(self) -> Dict:
+        """Dump the component content into a sorted yaml string."""
 
-        # self.code won't be a Code object, or it will fail schema validation according to CodeFields
-        return None
-
-    # endregion
+        obj = super()._to_ordered_dict_for_yaml_dump()
+        # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
+        if self.code and isinstance(self.code, str):
+            obj["code"] = self.code
+        return obj
 
     @property
     def instance_count(self) -> int:
