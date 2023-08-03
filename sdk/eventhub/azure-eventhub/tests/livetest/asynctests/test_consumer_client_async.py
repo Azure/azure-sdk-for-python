@@ -11,6 +11,68 @@ from azure.eventhub._constants import ALL_PARTITIONS
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
+async def test_receive_storage_checkpoint_async(connstr_senders, uamqp_transport, checkpoint_store_aio, live_eventhub, resource_mgmt_client):
+    connection_str, senders = connstr_senders
+
+    for i in range(10):
+        senders[0].send(EventData("Test EventData"))
+        senders[1].send(EventData("Test EventData"))
+
+    try:
+        await checkpoint_store_aio._container_client.create_container()
+    except:
+        pass
+
+    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', checkpoint_store=checkpoint_store_aio, uamqp_transport=uamqp_transport)
+
+    sequence_numbers_0 = []
+    sequence_numbers_1 = []
+    async def on_event(partition_context, event):
+        await partition_context.update_checkpoint(event)
+        sequence_num = event.sequence_number
+        if partition_context.partition_id == "0":
+            if sequence_num in sequence_numbers_0:
+                assert False
+            sequence_numbers_0.append(sequence_num)
+        else:
+            if sequence_num in sequence_numbers_1:
+                assert False
+            sequence_numbers_1.append(sequence_num)
+
+    async with client:
+        task = asyncio.ensure_future(
+            client.receive(on_event, starting_position="-1"))
+        # Update the eventhub
+        eventhub = resource_mgmt_client.event_hubs.get(
+            live_eventhub["resource_group"],
+            live_eventhub["namespace"],
+            live_eventhub["event_hub"]
+        )
+        properties = eventhub.as_dict()
+        if properties["message_retention_in_days"] == 1:
+            properties["message_retention_in_days"] = 2
+        else:
+            properties["message_retention_in_days"] = 1
+        resource_mgmt_client.event_hubs.create_or_update(
+            live_eventhub["resource_group"],
+            live_eventhub["namespace"],
+            live_eventhub["event_hub"],
+            properties
+        )
+        await asyncio.sleep(10)
+
+ 
+    await task
+    assert len(sequence_numbers_0) == 10
+    assert len(sequence_numbers_1) == 10
+
+    try:
+        await checkpoint_store_aio._container_client.delete_container()
+    except:
+        pass
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
 async def test_receive_no_partition_async(connstr_senders, uamqp_transport):
     connection_str, senders = connstr_senders
     senders[0].send(EventData("Test EventData"))
