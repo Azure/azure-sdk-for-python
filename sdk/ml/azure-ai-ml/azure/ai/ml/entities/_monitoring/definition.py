@@ -68,18 +68,17 @@ class MonitorDefinition(RestTranslatableMixin):
         *,
         compute: ServerLessSparkCompute,
         monitoring_target: Optional[MonitoringTarget] = None,
-        monitoring_signals: Optional[
-            Dict[
-                str,
-                Union[
-                    DataDriftSignal,
-                    DataQualitySignal,
-                    PredictionDriftSignal,
-                    FeatureAttributionDriftSignal,
-                    CustomMonitoringSignal,
-                ],
-            ]
-        ] = None,
+        monitoring_signals:Dict[
+            str,
+            Union[
+                DataDriftSignal,
+                DataQualitySignal,
+                PredictionDriftSignal,
+                FeatureAttributionDriftSignal,
+                CustomMonitoringSignal,
+            ],
+        ]
+        ,
         alert_notification: Optional[Union[Literal[AZMONITORING], AlertNotification]] = None,
     ) -> None:
         self.compute = compute

@@ -3,6 +3,10 @@
         "action": {
             "actionType": "CreateMonitor",
             "monitorDefinition": {
+                "monitoringTarget": {
+                    "task_type" : "classification",
+                    "deploymentId": "fake_endpoint_id"
+                },
                 "compute_configuration":{
                     "computeType": "ServerlessSpark",
                     "instanceType": "Standard_D2_v2",
@@ -11,14 +15,10 @@
                         "type": "AmlToken"
                     }
                 },
-                "monitoringTarget": {
-                    "task_type" : "classification",
-                    "deploymentId": "fake_endpoint_id"
-                },
                 "signals": {
                     "testSignal": {
                         "signalType": "DataDrift",
-                        "mode": "Enabled",
+                        "mode": "Disabled",
                         "productionData": {
                             "dataContext": "test",
                             "inputDataType": "Trailing",

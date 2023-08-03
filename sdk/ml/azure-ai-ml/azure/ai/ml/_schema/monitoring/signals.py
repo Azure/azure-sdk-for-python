@@ -117,7 +117,7 @@ class DataSignalSchema(MonitoringSignalSchema):
             fields.List(fields.Str),
         ]
     )
-    feature_type_override = fields.Dict(keys=fields.Str(), values=fields.Str())
+    feature_type_override = fields.Dict()
 
 
 class DataDriftSignalSchema(DataSignalSchema):

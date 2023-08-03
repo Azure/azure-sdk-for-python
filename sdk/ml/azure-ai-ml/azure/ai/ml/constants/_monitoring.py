@@ -95,3 +95,7 @@ class FADColumnNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PREDICTION = "prediction"
     PREDICTION_PROBABILITY = "prediction_probability"
     CORRELATION_ID = "correlation_id"
+
+class MonitorFeatureDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    NUMERICAL = "numerical"
+    CATEGORICAL = "categorical"

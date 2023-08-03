@@ -29,6 +29,7 @@ create_monitor:
   monitoring_signals:
     testSignal:
       type: prediction_drift
+      model_type: classification
       production_data:
         input_data:
             type: mltable
