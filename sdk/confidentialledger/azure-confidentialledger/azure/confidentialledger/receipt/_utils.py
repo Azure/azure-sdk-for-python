@@ -7,7 +7,7 @@
 from typing import Dict, Any
 
 
-def _to_camel_case(string: str) -> str:
+def _to_camel_case(string: str) -> str:  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     """Convert a string to camel case."""
 
     # Split the string by underscore
@@ -18,7 +18,7 @@ def _to_camel_case(string: str) -> str:
     return components[0] + "".join(elem.title() for elem in components[1:])
 
 
-def _convert_dict_to_camel_case(dictionary: Dict[str, Any]) -> Dict[str, Any]:
+def _convert_dict_to_camel_case(dictionary: Dict[str, Any]) -> Dict[str, Any]:  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     """Convert dictionary keys to camel case recursively."""
 
     new_dictionary = {}

@@ -32,7 +32,7 @@ class LedgerEntryClaim:
     secretKey: str
 
     @classmethod
-    def from_dict(cls, ledger_entry_claim_dict: Dict[str, Any]):
+    def from_dict(cls, ledger_entry_claim_dict: Dict[str, Any]):  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """Create a new instance of this class from a dictionary."""
 
         return cls(**ledger_entry_claim_dict)
@@ -54,7 +54,7 @@ class ClaimDigest:
     value: str
 
     @classmethod
-    def from_dict(cls, ledger_entry_claim_dict: Dict[str, Any]):
+    def from_dict(cls, ledger_entry_claim_dict: Dict[str, Any]):  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """Create a new instance of this class from a dictionary."""
 
         return cls(**ledger_entry_claim_dict)
@@ -117,7 +117,7 @@ class ApplicationClaim:
         self.kwargs = kwargs
 
     @classmethod
-    def from_dict(cls, claim_dict: Dict[str, Any]):
+    def from_dict(cls, claim_dict: Dict[str, Any]):  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """Create a new instance of this class from a dictionary."""
 
         return cls(**claim_dict)

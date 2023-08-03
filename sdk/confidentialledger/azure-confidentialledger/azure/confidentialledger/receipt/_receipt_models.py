@@ -32,7 +32,7 @@ class ProofElement:
     right: Optional[str] = None
 
     @classmethod
-    def from_dict(cls, proof_dict: Dict[str, Any]):
+    def from_dict(cls, proof_dict: Dict[str, Any]):  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """Create a new instance of this class from a dictionary."""
         return cls(**proof_dict)
 
@@ -64,7 +64,7 @@ class LeafComponents:
     writeSetDigest: str
 
     @classmethod
-    def from_dict(cls, leaf_components_dict: Dict[str, Any]):
+    def from_dict(cls, leaf_components_dict: Dict[str, Any]):  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """Create a new instance of this class from a dictionary."""
         return cls(**leaf_components_dict)
 
@@ -164,7 +164,7 @@ class Receipt:
         self.kwargs = kwargs
 
     @classmethod
-    def from_dict(cls, receipt_dict: Dict[str, Any]):
+    def from_dict(cls, receipt_dict: Dict[str, Any]):  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """Create a new instance of this class from a dictionary."""
 
         return cls(**receipt_dict)

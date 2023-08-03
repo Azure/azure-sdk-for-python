@@ -57,7 +57,7 @@ def compute_claims_digest(application_claims: List[Dict[str, Any]]) -> str:
     return _compute_claims_hexdigest(application_claims_obj)
 
 
-def _validate_application_claims(application_claims: List[Dict[str, Any]]):
+def _validate_application_claims(application_claims: List[Dict[str, Any]]):  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     """Validate the application claims in a write transaction receipt."""
 
     assert isinstance(application_claims, list)
@@ -111,7 +111,7 @@ def _validate_application_claims(application_claims: List[Dict[str, Any]]):
             assert False, f"Unknown claim kind: {claim_kind}"
 
 
-def _compute_ledger_entry_v1_claim_digest(
+def _compute_ledger_entry_v1_claim_digest(  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     ledger_entry_claim: LedgerEntryClaim,
 ) -> bytes:
     """Compute the digest of a LedgerEntryV1 claim. It returns the digest in bytes."""
@@ -137,7 +137,7 @@ def _compute_ledger_entry_v1_claim_digest(
     return sha256(collection_id_digest + contents_digest).digest()
 
 
-def _compute_ledger_entry_claim_digest(ledger_entry_claim: LedgerEntryClaim) -> bytes:
+def _compute_ledger_entry_claim_digest(ledger_entry_claim: LedgerEntryClaim) -> bytes:  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     """Compute the digest of a LedgerEntry claim. It returns the digest in bytes."""
 
     claim_protocol = ledger_entry_claim.protocol
@@ -161,7 +161,7 @@ def _compute_claim_digest_from_object(claim_digest_object: ClaimDigest) -> bytes
     ).digest()
 
 
-def _compute_claims_hexdigest(application_claims_list: List[ApplicationClaim]) -> str:
+def _compute_claims_hexdigest(application_claims_list: List[ApplicationClaim]) -> str:  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     """Compute the CCF claims digest from the provided list of application claims objects.
     It returns the hexdigest of the claims digest."""
 

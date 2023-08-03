@@ -77,7 +77,7 @@ class ConfidentialLedgerClient(GeneratedClient):
 
             if auth_policy is None:
                 auth_policy = policies.AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs)
-    
+
         if os.path.isfile(ledger_certificate_path) is False:
             # We'll need to fetch the TLS certificate.
             identity_service_client = ConfidentialLedgerCertificateClient(**kwargs)

@@ -42,7 +42,10 @@ class ConfidentialLedgerCertificateCredential:
 
     @property
     def certificate_path(self) -> Union[bytes, str, os.PathLike]:
-        """The path to the certificate file for this credential."""
+        """The path to the certificate file for this credential.
+
+        :return: The path to the certificate file for this credential.
+        :rtype: Union[bytes, str, os.PathLike]"""
 
         return self._certificate_path
 

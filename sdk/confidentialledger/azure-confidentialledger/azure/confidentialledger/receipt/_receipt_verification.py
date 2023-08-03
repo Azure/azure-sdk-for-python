@@ -87,7 +87,7 @@ def verify_receipt(
     )
 
 
-def _preprocess_input_receipt(receipt_dict: Dict[str, Any]) -> Receipt:
+def _preprocess_input_receipt(receipt_dict: Dict[str, Any]) -> Receipt:  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     """Preprocess input receipt dictionary, validate its content, and returns a
     valid Receipt object based on the vetted input data."""
 
@@ -103,7 +103,7 @@ def _preprocess_input_receipt(receipt_dict: Dict[str, Any]) -> Receipt:
     return Receipt.from_dict(receipt_dict)
 
 
-def _validate_receipt_content(receipt: Dict[str, Any]):
+def _validate_receipt_content(receipt: Dict[str, Any]):  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     """Validate the content of a write transaction receipt."""
 
     try:
@@ -152,7 +152,7 @@ def _validate_receipt_content(receipt: Dict[str, Any]):
         raise ValueError("The receipt content is invalid.") from exception
 
 
-def _verify_signature_over_root_node_hash(
+def _verify_signature_over_root_node_hash(  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     signature: str, node_cert: Certificate, node_id: str, root_node_hash: bytes
 ) -> None:
     """Verify signature over root node hash of the Merkle Tree using node
@@ -181,7 +181,7 @@ def _verify_signature_over_root_node_hash(
         ) from exception
 
 
-def _compute_leaf_node_hash(leaf_components: LeafComponents) -> bytes:
+def _compute_leaf_node_hash(leaf_components: LeafComponents) -> bytes:  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     """Compute the hash of the leaf node associated to a transaction given the
     leaf components from a write transaction receipt."""
 
@@ -212,7 +212,7 @@ def _compute_leaf_node_hash(leaf_components: LeafComponents) -> bytes:
         ) from exception
 
 
-def _compute_root_node_hash(leaf_hash: bytes, proof: List[ProofElement]) -> bytes:
+def _compute_root_node_hash(leaf_hash: bytes, proof: List[ProofElement]) -> bytes:  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     """Re-compute the hash of the root of the Merkle tree from a leaf node hash
     and a receipt proof list containing the required nodes hashes for the
     computation."""
@@ -254,7 +254,7 @@ def _compute_root_node_hash(leaf_hash: bytes, proof: List[ProofElement]) -> byte
         ) from exception
 
 
-def _verify_certificate_endorsement(
+def _verify_certificate_endorsement(  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     endorsee: Certificate, endorser: Certificate
 ) -> None:
     """Verify that the endorser certificate has endorsed endorsee
@@ -276,7 +276,7 @@ def _verify_certificate_endorsement(
         ) from exception
 
 
-def _verify_ec_signature(
+def _verify_ec_signature(  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     certificate: Certificate,
     signature: bytes,
     data: bytes,
@@ -293,7 +293,7 @@ def _verify_ec_signature(
     )
 
 
-def _verify_node_cert_endorsed_by_service_cert(
+def _verify_node_cert_endorsed_by_service_cert(  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     node_cert: Certificate, service_cert_str: str, endorsements_certs: List[str]
 ) -> None:
     """Check a node certificate is endorsed by a service certificate.
@@ -324,7 +324,7 @@ def _verify_node_cert_endorsed_by_service_cert(
         current_cert = endorsement_cert
 
 
-def _load_and_verify_pem_certificate(cert_str: str) -> Certificate:
+def _load_and_verify_pem_certificate(cert_str: str) -> Certificate:  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     """Load PEM certificate from a string representation and verify it is a
     valid certificate with expected Elliptic Curve public key."""
 

@@ -66,7 +66,7 @@ class BaseStatePollingMethod:
     def _give_up_not_found_error(self, exception: ResourceNotFoundError) -> bool:
         if exception.error is not None and exception.error.code == "InvalidTransactionId":
             return True
-        
+
         return False
 
     def status(self) -> str:
@@ -267,7 +267,8 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         # If this poller was called from begin_create_ledger_entry, we should return the
         # create_ledger_entry response, not the transaction status.
         post_result = kwargs.pop("_create_ledger_entry_response", None)
-        deserialization_callback = lambda x: x if post_result is None else post_result
+        def deserialization_callback(value: Any) -> Any:
+            return value if post_result is None else post_result
 
         def operation() -> JSON:
             return super(ConfidentialLedgerClientOperationsMixin, self).get_transaction_status(
