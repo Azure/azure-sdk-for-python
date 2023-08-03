@@ -226,11 +226,12 @@ class MLClient:
         # registry_name is present when the operations need referring assets from registry.
         # the subscription, resource group, if provided, will be ignored and replaced by
         # whatever is received from the registry discovery service.
-
+        workspace_location = None
+        workspace_id = None
         if registry_name:
             # get the workspace location here if workspace_reference is provided
             workspace_reference = kwargs.pop("workspace_reference", None)
-            workspace_location = None
+
             if workspace_reference:
                 ws_ops = WorkspaceOperations(
                     OperationScope(subscription_id, resource_group_name, workspace_reference),
