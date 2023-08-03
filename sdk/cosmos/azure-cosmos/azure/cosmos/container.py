@@ -624,6 +624,39 @@ class ContainerProxy(object):
         return result
 
     @distributed_trace
+    def bulk(
+        self,
+        operations: List[Dict[str, Any]],
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """ **Provisional method** Bulk execute the list of operations on the given items.
+        Can be used for create, upsert, read, replace and delete operations.
+
+        :param operations: The list of bulk operations to execute.
+        :type operations: List[Dict[str, Any]]
+        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
+        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A dict representing the items after the bulk operations went through.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The bulk operations failed or the item with
+            given id does not exist.
+        :rtype: dict[str, Any]
+        """
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        request_options["disableAutomaticIdGeneration"] = True
+
+        result = self.client_connection.Bulk(
+            collection_link=self.container_link, operations=operations, options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)
+        return result
+
+    @distributed_trace
     def delete_item(
         self,
         item,  # type: Union[Dict[str, Any], str]

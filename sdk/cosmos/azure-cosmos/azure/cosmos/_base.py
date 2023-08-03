@@ -224,10 +224,11 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options["populateQueryMetrics"]
 
     if options.get("responseContinuationTokenLimitInKb"):
-        headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options["responseContinuationTokenLimitInKb"] # pylint: disable=line-too-long
+        headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options[
+            "responseContinuationTokenLimitInKb"]  # pylint: disable=line-too-long
 
     if cosmos_client_connection.master_key:
-        #formatedate guarantees RFC 1123 date format regardless of current locale
+        # formatdate guarantees RFC 1123 date format regardless of current locale
         headers[http_constants.HttpHeaders.XDate] = formatdate(timeval=None, localtime=False, usegmt=True)
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
@@ -749,6 +750,10 @@ def _internal_resourcetype(resource_type: str) -> str:
     other SDKs, but the colls resource type needs to be sent for the feature to work. In order to keep it consistent
     with other SDKs, we switch it here.
     """
-    if resource_type.lower() ==  "partitionkey":
+    if resource_type.lower() == "partitionkey":
         return "colls"
     return resource_type
+
+
+def is_key_in_range(min_range, max_range, key):
+    return max_range > str(key) > min_range

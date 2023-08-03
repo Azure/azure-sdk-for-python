@@ -391,6 +391,7 @@ class _OperationType(object):
     SqlQuery = "SqlQuery"
     Update = "Update"
     Upsert = "Upsert"
+    Batch = "Batch"
 
     @staticmethod
     def IsWriteOperation(operationType):

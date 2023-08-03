@@ -26,6 +26,7 @@
 """
 # https://github.com/PyCQA/pylint/issues/3112
 # Currently pylint is locked to 2.3.3 and this is fixed in 2.4.4
+import json
 from typing import Dict, Any, Optional, TypeVar  # pylint: disable=unused-import
 import urllib.parse
 from urllib3.util.retry import Retry
@@ -47,6 +48,7 @@ from . import documents
 from .documents import ConnectionPolicy
 from . import _constants as constants
 from . import http_constants
+from . import _murmurhash as murmurhash
 from . import _query_iterable as query_iterable
 from . import _runtime_constants as runtime_constants
 from . import _request_object
@@ -1765,6 +1767,82 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
+    def Bulk(self, collection_link, operations, options=None, **kwargs):
+        """Executes the given operations in bulk.
+
+        :param str collection_link: The link to the collection
+        :param list operations: The operations for the bulk request.
+        :param dict options: The request options for the request.
+
+        :return:
+            The result of the bulk operation.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        pk_ranges = self._ReadPartitionKeyRanges(collection_link)
+        batches = []
+        for pk_range in pk_ranges:
+            batch = {
+                "min": pk_range.get("minInclusive"),
+                "max": pk_range.get("maxExclusive"),
+                "range_id": pk_range.get("id"),
+                "indexes": [],
+                "operations": []
+            }
+            batches.append(batch)
+        for operation in operations:
+            partition_key = operation.get("partitionKey", None)
+            if partition_key is None:
+                operation = self._AddPartitionKey(collection_link, operation.get("resourceBody"), operation)
+                partition_key = operation.get("partitionKey", None)
+                if partition_key is None:
+                    raise AttributeError("Bulk operation must have a partition key specified.")
+            operation["partitionKey"] = json.dumps([partition_key])
+            hashed_key = murmurhash.murmur64(partition_key)
+            for batch in batches:
+                if base.is_key_in_range(batch.get("min"), batch.get("max"), hashed_key):
+                    batch.get("operations").append(operation)
+                    break
+
+        path = base.GetPathFromLink(collection_link, "docs")
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        response = []
+        for batch in batches:
+            if len(batch.get("operations")) > 100:
+                raise ValueError("Cannot run bulk request with more than 100 operations per partition.")
+            try:
+                result = self._Bulk(
+                    batch.get("operations"),
+                    batch.get("range_id"),
+                    path,
+                    collection_id,
+                    options,
+                    **kwargs)
+                response.append(result)
+            except Exception as e:
+                # Leaving this here while I figure out 410s for batch within Python
+                print(e)
+
+        return response
+
+    def _Bulk(self, operations, pk_range_id, path, collection_id, options, **kwargs):
+        if options is None:
+            options = {}
+
+        initial_headers = self.default_headers
+        initial_headers.update({http_constants.HttpHeaders.IsBatchRequest: True})
+        initial_headers.update({http_constants.HttpHeaders.PartitionKeyRangeID: pk_range_id})
+        initial_headers.update({http_constants.HttpHeaders.IsBatchAtomic: False})
+        headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "docs", options)
+
+        request_params = _request_object.RequestObject("docs", documents._OperationType.Batch)
+        return self.__Post(path, request_params, operations, headers, **kwargs)
+
     def DeleteItem(self, document_link, options=None, **kwargs):
         """Deletes a document.
 
@@ -1809,7 +1887,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         path = base.GetPathFromLink(collection_link)
-        #Specified url to perform background operation to delete all items by partition key
+        # Specified url to perform background operation to delete all items by partition key
         path = '{}{}/{}'.format(path, "operations", "partitionkeydelete")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         initial_headers = dict(self.default_headers)
