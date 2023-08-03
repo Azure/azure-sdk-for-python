@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+from __future__ import annotations
 import json
 import logging
 import sys
@@ -140,7 +140,7 @@ class ErrorMap(Generic[KeyType, ValueType]):
         custom_error_map: Optional[Mapping[KeyType, ValueType]] = None,
         *,
         default_error: Optional[ValueType] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._custom_error_map = custom_error_map or {}
         self._default_error = default_error
@@ -152,7 +152,9 @@ class ErrorMap(Generic[KeyType, ValueType]):
         return self._default_error
 
 
-def map_error(status_code: int, response: _HttpResponseCommonAPI, error_map: Mapping[int, Type[Any]]) -> None:
+def map_error(
+    status_code: int, response: _HttpResponseCommonAPI, error_map: Mapping[int, Type[HttpResponseError]]
+) -> None:
     if not error_map:
         return
     error_type = error_map.get(status_code)
@@ -389,24 +391,24 @@ class HttpResponseError(AzureError):
     def _parse_odata_body(
         error_format: Type[ODataV4Format], response: Optional[_HttpResponseCommonAPI]
     ) -> Optional[ODataV4Format]:
-        if response:
-            try:
-                odata_json = json.loads(response.text())
-                return error_format(odata_json)
-            except Exception:  # pylint: disable=broad-except
-                # If the body is not JSON valid, just stop now
-                pass
+        try:
+            # https://github.com/python/mypy/issues/14743#issuecomment-1664725053
+            odata_json = json.loads(response.text())  # type: ignore
+            return error_format(odata_json)
+        except Exception:  # pylint: disable=broad-except
+            # If the body is not JSON valid, just stop now
+            pass
         return None
 
     def __str__(self) -> str:
         retval = super(HttpResponseError, self).__str__()
-        if self.response:
-            try:
-                body = self.response.text()
-                if body and not self.error:
-                    return "{}\nContent: {}".format(retval, body)[:2048]
-            except Exception:  # pylint: disable=broad-except
-                pass
+        try:
+            # https://github.com/python/mypy/issues/14743#issuecomment-1664725053
+            body = self.response.text()  # type: ignore
+            if body and not self.error:
+                return "{}\nContent: {}".format(retval, body)[:2048]
+        except Exception:  # pylint: disable=broad-except
+            pass
         return retval
 
 
