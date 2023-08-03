@@ -341,10 +341,10 @@ class AsyncTransport(
                         toread
                     )
                     nbytes = toread
-                except AttributeError as exc:
+                except AttributeError:
                     # This means that close() was called concurrently
                     # self.reader has been set to None.
-                    raise IOError("Connection has already been closed") from exc
+                    raise IOError("Connection has already been closed") from None
                 except asyncio.IncompleteReadError as exc:
                     pbytes = len(exc.partial)
                     view[nbytes : nbytes + pbytes] = exc.partial
