@@ -123,7 +123,7 @@ def get_text_translation_multiple_inputs():
         print(f"Message: {exception.error.message}")
     # [END get_text_translation_multiple_inputs]
 
-def get_text_translation_multiple_lanuages():
+def get_text_translation_multiple_languages():
     # [START get_text_translation_multiple_languages]
     try:
         target_languages = ["cs", "es", "de"]
