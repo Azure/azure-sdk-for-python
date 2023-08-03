@@ -7,6 +7,7 @@
 from os import PathLike, path
 from typing import Dict, Iterable, Optional, Union
 from contextlib import contextmanager
+from azure.ai.ml.constants._common import REGISTRY_URI_FORMAT
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -602,9 +603,11 @@ class ModelOperations(_ScopeDependentOperations):
             if package_request.base_environment_source and hasattr(
                 package_request.base_environment_source, "resource_id"
             ):
-                package_request.base_environment_source.resource_id = orchestrators.get_asset_arm_id(
-                    package_request.base_environment_source.resource_id, azureml_type=AzureMLResourceType.ENVIRONMENT
-                )
+                if not package_request.base_environment_source.resource_id.startswith(REGISTRY_URI_FORMAT):
+                    package_request.base_environment_source.resource_id = orchestrators.get_asset_arm_id(
+                        package_request.base_environment_source.resource_id,
+                        azureml_type=AzureMLResourceType.ENVIRONMENT,
+                    )
 
                 package_request.base_environment_source.resource_id = (
                     "azureml:/" + package_request.base_environment_source.resource_id
