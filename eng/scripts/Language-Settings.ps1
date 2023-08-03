@@ -135,7 +135,7 @@ function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 
   foreach ($Item in $PublishedDocs)
   {
-    $PkgName = $Item.BaseName
+    $PkgName = $Item.BaseName.Replace(".tar", "")
     $ZippedDocumentationPath = Join-Path -Path $DocLocation -ChildPath $Item.Name
     $UnzippedDocumentationPath = Join-Path -Path $DocLocation -ChildPath $PkgName
     $VersionFileLocation = Join-Path -Path $UnzippedDocumentationPath -ChildPath "version.txt"
