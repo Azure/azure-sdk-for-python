@@ -102,6 +102,16 @@ input-file:
 output-folder: $(python-sdks-folder)/runhistory
 ```
 
+### Tag: workspace-dataplane
+
+These settings apply only when `--tag=workspace-dataplane` is specified on the command line.
+
+```yaml $(tag) == 'workspace-dataplane'
+input-file:
+  - Microsoft.MachineLearningServices/preview/workspace-dataplane/swagger.json
+output-folder: $(python-sdks-folder)/workspace-dataplane
+```
+
 ### Tag: registry-discovery
 
 These settings apply only when `--tag=registry-discovery` is specified on the command line.
