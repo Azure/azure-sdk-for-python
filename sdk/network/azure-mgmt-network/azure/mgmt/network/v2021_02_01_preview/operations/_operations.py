@@ -31,7 +31,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -65,7 +65,7 @@ def build_network_managers_get_request(
         "networkManagerName": _SERIALIZER.url("network_manager_name", network_manager_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -97,7 +97,7 @@ def build_network_managers_create_or_update_request(
         "networkManagerName": _SERIALIZER.url("network_manager_name", network_manager_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -130,7 +130,7 @@ def build_network_managers_delete_request(
         "networkManagerName": _SERIALIZER.url("network_manager_name", network_manager_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -162,7 +162,7 @@ def build_network_managers_patch_tags_request(
         "networkManagerName": _SERIALIZER.url("network_manager_name", network_manager_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -190,7 +190,7 @@ def build_network_managers_list_by_subscription_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -229,7 +229,7 @@ def build_network_managers_list_request(
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -265,7 +265,7 @@ def build_network_manager_commits_post_request(
         "networkManagerName": _SERIALIZER.url("network_manager_name", network_manager_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -299,7 +299,7 @@ def build_network_manager_deployment_status_list_request(
         "networkManagerName": _SERIALIZER.url("network_manager_name", network_manager_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -339,7 +339,7 @@ def build_effective_virtual_networks_list_by_network_manager_request(
         "networkManagerName": _SERIALIZER.url("network_manager_name", network_manager_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -378,7 +378,7 @@ def build_effective_virtual_networks_list_by_network_group_request(
         "networkGroupName": _SERIALIZER.url("network_group_name", network_group_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -412,7 +412,7 @@ def build_active_connectivity_configurations_list_request(
         "networkManagerName": _SERIALIZER.url("network_manager_name", network_manager_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -446,7 +446,7 @@ def build_active_security_admin_rules_list_request(
         "networkManagerName": _SERIALIZER.url("network_manager_name", network_manager_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -480,7 +480,7 @@ def build_active_security_user_rules_list_request(
         "networkManagerName": _SERIALIZER.url("network_manager_name", network_manager_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -514,7 +514,7 @@ def build_connectivity_configurations_get_request(
         "configurationName": _SERIALIZER.url("configuration_name", configuration_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -547,7 +547,7 @@ def build_connectivity_configurations_create_or_update_request(
         "configurationName": _SERIALIZER.url("configuration_name", configuration_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -581,7 +581,7 @@ def build_connectivity_configurations_delete_request(
         "configurationName": _SERIALIZER.url("configuration_name", configuration_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -618,7 +618,7 @@ def build_connectivity_configurations_list_request(
         "networkManagerName": _SERIALIZER.url("network_manager_name", network_manager_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -654,7 +654,7 @@ def build_effective_connectivity_configurations_list_request(
         "virtualNetworkName": _SERIALIZER.url("virtual_network_name", virtual_network_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -688,7 +688,7 @@ def build_network_manager_effective_security_admin_rules_list_request(
         "virtualNetworkName": _SERIALIZER.url("virtual_network_name", virtual_network_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -722,7 +722,7 @@ def build_network_groups_get_request(
         "networkGroupName": _SERIALIZER.url("network_group_name", network_group_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -761,7 +761,7 @@ def build_network_groups_create_or_update_request(
         "networkGroupName": _SERIALIZER.url("network_group_name", network_group_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -797,7 +797,7 @@ def build_network_groups_delete_request(
         "networkGroupName": _SERIALIZER.url("network_group_name", network_group_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -834,7 +834,7 @@ def build_network_groups_list_request(
         "networkManagerName": _SERIALIZER.url("network_manager_name", network_manager_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -875,7 +875,7 @@ def build_security_user_configurations_list_request(
         "networkManagerName": _SERIALIZER.url("network_manager_name", network_manager_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -911,7 +911,7 @@ def build_security_user_configurations_get_request(
         "configurationName": _SERIALIZER.url("configuration_name", configuration_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -944,7 +944,7 @@ def build_security_user_configurations_create_or_update_request(
         "configurationName": _SERIALIZER.url("configuration_name", configuration_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -978,7 +978,7 @@ def build_security_user_configurations_delete_request(
         "configurationName": _SERIALIZER.url("configuration_name", configuration_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1017,7 +1017,7 @@ def build_user_rule_collections_list_request(
         "configurationName": _SERIALIZER.url("configuration_name", configuration_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1059,7 +1059,7 @@ def build_user_rule_collections_get_request(
         "ruleCollectionName": _SERIALIZER.url("rule_collection_name", rule_collection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1098,7 +1098,7 @@ def build_user_rule_collections_create_or_update_request(
         "ruleCollectionName": _SERIALIZER.url("rule_collection_name", rule_collection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1138,7 +1138,7 @@ def build_user_rule_collections_delete_request(
         "ruleCollectionName": _SERIALIZER.url("rule_collection_name", rule_collection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1179,7 +1179,7 @@ def build_user_rules_list_request(
         "ruleCollectionName": _SERIALIZER.url("rule_collection_name", rule_collection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1223,7 +1223,7 @@ def build_user_rules_get_request(
         "ruleName": _SERIALIZER.url("rule_name", rule_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1264,7 +1264,7 @@ def build_user_rules_create_or_update_request(
         "ruleName": _SERIALIZER.url("rule_name", rule_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1306,7 +1306,7 @@ def build_user_rules_delete_request(
         "ruleName": _SERIALIZER.url("rule_name", rule_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1343,7 +1343,7 @@ def build_security_admin_configurations_list_request(
         "networkManagerName": _SERIALIZER.url("network_manager_name", network_manager_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1379,7 +1379,7 @@ def build_security_admin_configurations_get_request(
         "configurationName": _SERIALIZER.url("configuration_name", configuration_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1412,7 +1412,7 @@ def build_security_admin_configurations_create_or_update_request(
         "configurationName": _SERIALIZER.url("configuration_name", configuration_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1446,7 +1446,7 @@ def build_security_admin_configurations_delete_request(
         "configurationName": _SERIALIZER.url("configuration_name", configuration_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1485,7 +1485,7 @@ def build_admin_rule_collections_list_request(
         "configurationName": _SERIALIZER.url("configuration_name", configuration_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1527,7 +1527,7 @@ def build_admin_rule_collections_get_request(
         "ruleCollectionName": _SERIALIZER.url("rule_collection_name", rule_collection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1566,7 +1566,7 @@ def build_admin_rule_collections_create_or_update_request(
         "ruleCollectionName": _SERIALIZER.url("rule_collection_name", rule_collection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1606,7 +1606,7 @@ def build_admin_rule_collections_delete_request(
         "ruleCollectionName": _SERIALIZER.url("rule_collection_name", rule_collection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1647,7 +1647,7 @@ def build_admin_rules_list_request(
         "ruleCollectionName": _SERIALIZER.url("rule_collection_name", rule_collection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1691,7 +1691,7 @@ def build_admin_rules_get_request(
         "ruleName": _SERIALIZER.url("rule_name", rule_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1732,7 +1732,7 @@ def build_admin_rules_create_or_update_request(
         "ruleName": _SERIALIZER.url("rule_name", rule_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1774,7 +1774,7 @@ def build_admin_rules_delete_request(
         "ruleName": _SERIALIZER.url("rule_name", rule_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1807,7 +1807,7 @@ def build_network_security_perimeters_get_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1841,7 +1841,7 @@ def build_network_security_perimeters_create_or_update_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1876,7 +1876,7 @@ def build_network_security_perimeters_delete_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1904,7 +1904,7 @@ def build_network_security_perimeters_list_by_subscription_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1943,7 +1943,7 @@ def build_network_security_perimeters_list_request(
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1985,7 +1985,7 @@ def build_nsp_profiles_get_request(
         "profileName": _SERIALIZER.url("profile_name", profile_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2024,7 +2024,7 @@ def build_nsp_profiles_create_or_update_request(
         "profileName": _SERIALIZER.url("profile_name", profile_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2064,7 +2064,7 @@ def build_nsp_profiles_delete_request(
         "profileName": _SERIALIZER.url("profile_name", profile_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2103,7 +2103,7 @@ def build_nsp_profiles_list_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2147,7 +2147,7 @@ def build_nsp_access_rules_get_request(
         "accessRuleName": _SERIALIZER.url("access_rule_name", access_rule_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2188,7 +2188,7 @@ def build_nsp_access_rules_create_or_update_request(
         "accessRuleName": _SERIALIZER.url("access_rule_name", access_rule_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2230,7 +2230,7 @@ def build_nsp_access_rules_delete_request(
         "accessRuleName": _SERIALIZER.url("access_rule_name", access_rule_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2271,7 +2271,7 @@ def build_nsp_access_rules_list_request(
         "profileName": _SERIALIZER.url("profile_name", profile_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2313,7 +2313,7 @@ def build_nsp_associations_get_request(
         "associationName": _SERIALIZER.url("association_name", association_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2352,7 +2352,7 @@ def build_nsp_associations_create_or_update_request(
         "associationName": _SERIALIZER.url("association_name", association_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2392,7 +2392,7 @@ def build_nsp_associations_delete_request(
         "associationName": _SERIALIZER.url("association_name", association_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2431,7 +2431,7 @@ def build_nsp_associations_list_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2476,7 +2476,7 @@ def build_nsp_association_reconcile_post_request(
         "associationName": _SERIALIZER.url("association_name", association_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2508,7 +2508,7 @@ def build_perimeter_associable_resource_types_list_request(
         "location": _SERIALIZER.url("location", location, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2551,7 +2551,7 @@ def build_nsp_access_rules_reconcile_post_request(
         "accessRuleName": _SERIALIZER.url("access_rule_name", access_rule_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2587,7 +2587,7 @@ def build_nsp_links_get_request(
         "linkName": _SERIALIZER.url("link_name", link_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2622,7 +2622,7 @@ def build_nsp_links_create_or_update_request(
         "linkName": _SERIALIZER.url("link_name", link_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2658,7 +2658,7 @@ def build_nsp_links_delete_request(
         "linkName": _SERIALIZER.url("link_name", link_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2697,7 +2697,7 @@ def build_nsp_links_list_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2710,40 +2710,6 @@ def build_nsp_links_list_request(
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_nsp_link_reconcile_post_request(
-    resource_group_name: str, network_security_perimeter_name: str, link_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/links/{linkName}/reconcile",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "networkSecurityPerimeterName": _SERIALIZER.url(
-            "network_security_perimeter_name", network_security_perimeter_name, "str"
-        ),
-        "linkName": _SERIALIZER.url("link_name", link_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_nsp_link_references_get_request(
@@ -2773,7 +2739,7 @@ def build_nsp_link_references_get_request(
         "linkReferenceName": _SERIALIZER.url("link_reference_name", link_reference_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2811,7 +2777,7 @@ def build_nsp_link_references_delete_request(
         "linkReferenceName": _SERIALIZER.url("link_reference_name", link_reference_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2850,7 +2816,7 @@ def build_nsp_link_references_list_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2863,44 +2829,6 @@ def build_nsp_link_references_list_request(
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_nsp_link_reference_reconcile_post_request(
-    resource_group_name: str,
-    network_security_perimeter_name: str,
-    link_reference_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/linkReferences/{linkReferenceName}/reconcile",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "networkSecurityPerimeterName": _SERIALIZER.url(
-            "network_security_perimeter_name", network_security_perimeter_name, "str"
-        ),
-        "linkReferenceName": _SERIALIZER.url("link_reference_name", link_reference_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class NetworkManagersOperations:
@@ -11238,91 +11166,6 @@ class NspLinksOperations:
     }
 
 
-class NspLinkReconcileOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.NetworkManagementClient`'s
-        :attr:`nsp_link_reconcile` attribute.
-    """
-
-    models = _models
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
-
-    @distributed_trace
-    def post(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, network_security_perimeter_name: str, link_name: str, **kwargs: Any
-    ) -> None:
-        """Reconcile NSP link resource.
-
-        :param resource_group_name: The name of the resource group. Required.
-        :type resource_group_name: str
-        :param network_security_perimeter_name: The name of the network security perimeter. Required.
-        :type network_security_perimeter_name: str
-        :param link_name: The name of the NSP link. Required.
-        :type link_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop(
-            "api_version", _params.pop("api-version", self._api_version or "2021-02-01-preview")
-        )
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        request = build_nsp_link_reconcile_post_request(
-            resource_group_name=resource_group_name,
-            network_security_perimeter_name=network_security_perimeter_name,
-            link_name=link_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self.post.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    post.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/links/{linkName}/reconcile"
-    }
-
-
 class NspLinkReferencesOperations:
     """
     .. warning::
@@ -11644,89 +11487,4 @@ class NspLinkReferencesOperations:
 
     list.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/linkReferences"
-    }
-
-
-class NspLinkReferenceReconcileOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.NetworkManagementClient`'s
-        :attr:`nsp_link_reference_reconcile` attribute.
-    """
-
-    models = _models
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
-
-    @distributed_trace
-    def post(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, network_security_perimeter_name: str, link_reference_name: str, **kwargs: Any
-    ) -> None:
-        """Reconcile NSP linkReference resource.
-
-        :param resource_group_name: The name of the resource group. Required.
-        :type resource_group_name: str
-        :param network_security_perimeter_name: The name of the network security perimeter. Required.
-        :type network_security_perimeter_name: str
-        :param link_reference_name: The name of the NSP linkReference. Required.
-        :type link_reference_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop(
-            "api_version", _params.pop("api-version", self._api_version or "2021-02-01-preview")
-        )
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        request = build_nsp_link_reference_reconcile_post_request(
-            resource_group_name=resource_group_name,
-            network_security_perimeter_name=network_security_perimeter_name,
-            link_reference_name=link_reference_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self.post.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    post.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/linkReferences/{linkReferenceName}/reconcile"
     }

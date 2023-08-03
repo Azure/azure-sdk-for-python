@@ -18,7 +18,7 @@ class TestClientTestAsync(AzureRecordedTestCase):
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
     async def test_search_client(self, endpoint, api_key, index_name):
-        client = SearchClient(endpoint, index_name, api_key)
+        client = SearchClient(endpoint, index_name, api_key, retry_backoff_factor=60)
         async with client:
             await self._test_get_search_simple(client)
             await self._test_get_search_simple_with_top(client)
