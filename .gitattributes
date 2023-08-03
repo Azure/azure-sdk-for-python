@@ -61,3 +61,11 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+##############################################################################
+# diff behaviour for generated code within an hand-written SDK
+#
+# By default, code within a directory called '_generated' inside an SDK will
+# be collapsed in the diff.
+##############################################################################
+sdk/**/_generated/**  linguist-generated=true
