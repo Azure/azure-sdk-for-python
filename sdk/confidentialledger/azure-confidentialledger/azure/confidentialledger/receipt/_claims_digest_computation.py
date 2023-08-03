@@ -177,7 +177,7 @@ def _compute_claim_digest_from_object(claim_digest_object: ClaimDigest) -> bytes
 def _compute_claims_hexdigest(application_claims_list: List[ApplicationClaim]) -> str:
     """Compute the CCF claims digest from the provided list of application claims objects.
     It returns the hexdigest of the claims digest.
-    
+
     :param list[ApplicationClaim] application_claims_list: List of application claims to be digested.
     :return: The hexdigest of the claims digest.
     :rtype: str
