@@ -439,6 +439,7 @@ class PhoneNumbersClient(object):
 
         :param phone_numbers: The phone number(s) whose operator information should be searched
         :type phone_numbers: str or list(str)
+        :return: A search result containing operator information associated with the requested phone numbers
         :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
         """
         if not isinstance(phone_numbers, list):
