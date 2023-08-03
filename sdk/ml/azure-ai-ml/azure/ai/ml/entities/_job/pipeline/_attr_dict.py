@@ -142,7 +142,7 @@ def has_attr_safe(obj, attr):
     return has_attr
 
 
-def try_get_non_arbitrary_attr_for_potential_attr_dict(obj, attr):
+def try_get_non_arbitrary_attr(obj, attr):
     """Try to get non-arbitrary attribute for potential attribute dict.
 
     Will not create target attribute if it is an arbitrary attribute in _AttrDict.
