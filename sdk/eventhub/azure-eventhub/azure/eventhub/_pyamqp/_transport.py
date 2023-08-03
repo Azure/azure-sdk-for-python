@@ -72,8 +72,8 @@ def set_cloexec(fd, cloexec):  # noqa # pylint: disable=inconsistent-return-stat
     """Set flag to close fd after exec.
     :param int fd: File descriptor.
     :param bool cloexec: Close on exec.
-    :rtype: int
     :return: Returns 0 on success, raises an OSError exception on failure.
+    :rtype: int
     """
     if fcntl is None:
         return

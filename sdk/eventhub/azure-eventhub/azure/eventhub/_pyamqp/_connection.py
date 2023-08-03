@@ -462,7 +462,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
     def _outgoing_close(self, error=None):
         # type: (Optional[AMQPError]) -> None
         """Send a Close frame to shutdown connection with optional error information.
-        :param AMQPError or None error: Optional error information.
+        :param ~pyamqp.error.AMQPError or None error: Optional error information.
         """
         close_frame = CloseFrame(error=error)
         if self._network_trace:
