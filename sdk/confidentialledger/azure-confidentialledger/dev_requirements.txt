@@ -1,5 +1,6 @@
 -e ../../../tools/azure-sdk-tools
-../../core/azure-core
+-e ../../core/azure-core
 -e ../../../tools/azure-devtools
-../../identity/azure-identity
+-e ../../identity/azure-identity
 aiohttp
+pylint==2.15.8
