@@ -6,7 +6,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "44",
+        "Content-Length": "31",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-communication-phonenumbers/1.1.1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
@@ -15,27 +15,34 @@
       },
       "RequestBody": {
         "phoneNumbers": [
-          "sanitized",
           "sanitized"
         ]
       },
-      "StatusCode": 400,
+      "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2023-05-01-preview",
-        "Content-Type": "application/json",
+        "Content-Length": "183",
+        "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
-        "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "7ms"
+        "X-Processing-Time": "22191ms"
       },
       "ResponseBody": {
-        "error": {
-          "code": "BadRequest",
-          "message": "Can only accept one phoneNumber"
-        }
+        "values": [
+          {
+            "phoneNumber": "sanitized",
+            "numberType": "other",
+            "operatorDetails": {
+              "name": "Multiple OCN Listing",
+              "mobileNetworkCode": null,
+              "mobileCountryCode": null
+            },
+            "isoCountryCode": "US"
+          }
+        ]
       }
     }
   ],

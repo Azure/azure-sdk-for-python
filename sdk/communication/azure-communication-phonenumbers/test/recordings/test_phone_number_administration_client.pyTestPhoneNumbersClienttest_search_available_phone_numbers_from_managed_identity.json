@@ -235,20 +235,20 @@
         "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-12-01, 2022-12-02-preview2, 2023-05-01-preview",
         "Content-Length": "0",
         "Date": "sanitized",
-        "Location": "/availablePhoneNumbers/searchResults/071bd893-a4b1-4196-b85e-0649937b7f18?api-version=2023-05-01-preview",
+        "Location": "/availablePhoneNumbers/searchResults/1c2b3208-c138-493c-ad0c-d099be495426?api-version=2023-05-01-preview",
         "MS-CV": "sanitized",
-        "operation-id": "search_071bd893-a4b1-4196-b85e-0649937b7f18",
-        "Operation-Location": "/phoneNumbers/operations/search_071bd893-a4b1-4196-b85e-0649937b7f18?api-version=2023-05-01-preview",
-        "search-id": "071bd893-a4b1-4196-b85e-0649937b7f18",
+        "operation-id": "search_1c2b3208-c138-493c-ad0c-d099be495426",
+        "Operation-Location": "/phoneNumbers/operations/search_1c2b3208-c138-493c-ad0c-d099be495426?api-version=2023-05-01-preview",
+        "search-id": "1c2b3208-c138-493c-ad0c-d099be495426",
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "908ms"
+        "X-Processing-Time": "1297ms"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/operations/search_071bd893-a4b1-4196-b85e-0649937b7f18?api-version=2023-05-01-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/operations/search_1c2b3208-c138-493c-ad0c-d099be495426?api-version=2023-05-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -263,25 +263,25 @@
         "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-11-15-preview, 2022-12-01, 2022-12-02-preview2, 2023-05-01-preview",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "/availablePhoneNumbers/searchResults/071bd893-a4b1-4196-b85e-0649937b7f18?api-version=2023-05-01-preview",
+        "Location": "/availablePhoneNumbers/searchResults/1c2b3208-c138-493c-ad0c-d099be495426?api-version=2023-05-01-preview",
         "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "230ms"
+        "X-Processing-Time": "280ms"
       },
       "ResponseBody": {
         "operationType": "search",
         "status": "notStarted",
-        "resourceLocation": "/availablePhoneNumbers/searchResults/071bd893-a4b1-4196-b85e-0649937b7f18?api-version=2023-05-01-preview",
-        "createdDateTime": "2023-08-03T17:56:58.2207275\u002B00:00",
+        "resourceLocation": "/availablePhoneNumbers/searchResults/1c2b3208-c138-493c-ad0c-d099be495426?api-version=2023-05-01-preview",
+        "createdDateTime": "2023-08-03T22:45:42.4554435\u002B00:00",
         "id": "sanitized",
         "lastActionDateTime": "0001-01-01T00:00:00\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/operations/search_071bd893-a4b1-4196-b85e-0649937b7f18?api-version=2023-05-01-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/operations/search_1c2b3208-c138-493c-ad0c-d099be495426?api-version=2023-05-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -296,25 +296,25 @@
         "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-11-15-preview, 2022-12-01, 2022-12-02-preview2, 2023-05-01-preview",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "/availablePhoneNumbers/searchResults/071bd893-a4b1-4196-b85e-0649937b7f18?api-version=2023-05-01-preview",
+        "Location": "/availablePhoneNumbers/searchResults/1c2b3208-c138-493c-ad0c-d099be495426?api-version=2023-05-01-preview",
         "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "212ms"
+        "X-Processing-Time": "277ms"
       },
       "ResponseBody": {
         "operationType": "search",
         "status": "succeeded",
-        "resourceLocation": "/availablePhoneNumbers/searchResults/071bd893-a4b1-4196-b85e-0649937b7f18?api-version=2023-05-01-preview",
-        "createdDateTime": "2023-08-03T17:56:58.2207275\u002B00:00",
+        "resourceLocation": "/availablePhoneNumbers/searchResults/1c2b3208-c138-493c-ad0c-d099be495426?api-version=2023-05-01-preview",
+        "createdDateTime": "2023-08-03T22:45:42.4554435\u002B00:00",
         "id": "sanitized",
         "lastActionDateTime": "0001-01-01T00:00:00\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/searchResults/071bd893-a4b1-4196-b85e-0649937b7f18?api-version=2023-05-01-preview",
+      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/searchResults/1c2b3208-c138-493c-ad0c-d099be495426?api-version=2023-05-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -333,10 +333,10 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "402ms"
+        "X-Processing-Time": "487ms"
       },
       "ResponseBody": {
-        "searchId": "071bd893-a4b1-4196-b85e-0649937b7f18",
+        "searchId": "1c2b3208-c138-493c-ad0c-d099be495426",
         "phoneNumbers": [
           "sanitized"
         ],
@@ -351,7 +351,7 @@
           "currencyCode": "USD",
           "billingFrequency": "monthly"
         },
-        "searchExpiresBy": "2023-08-03T18:13:00.0124677\u002B00:00",
+        "searchExpiresBy": "2023-08-03T23:01:45.3314961\u002B00:00",
         "error": "NoError"
       }
     }
