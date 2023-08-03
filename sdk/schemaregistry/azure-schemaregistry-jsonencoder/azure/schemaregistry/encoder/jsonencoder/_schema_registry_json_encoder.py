@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 from __future__ import annotations
 import logging
+import json
 from functools import lru_cache
 from typing import (
     TYPE_CHECKING,
@@ -44,7 +45,7 @@ from ._utils import (  # pylint: disable=import-error
     create_message_content,
     parse_message,
     decode_content,
-    load_schema,
+    get_loaded_schema,
     MessageType,
 )
 
@@ -242,17 +243,34 @@ class JsonSchemaEncoder(object):
         :raises ~azure.schemaregistry.encoder.jsonencoder.InvalidContentError:
             Indicates an issue with encoding content with schema or generating the schema if a callable was passed.
         """
+        request_options = request_options or {}
+
+        # If schema_id, get schema for validation. If schema, get schema_id for content type.
         if schema_id and not schema:
-            pass
+            cache_misses = (
+                self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
+            )
+            schema_str = self._get_schema(schema_id, **request_options)
+            new_cache_misses = (
+                self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
+            )
+            if new_cache_misses > cache_misses:
+                cache_info = (
+                    self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter
+                )
+                _LOGGER.info(
+                    "New entry has been added to schema cache. Cache info: %s",
+                    str(cache_info),
+                )
+            schema_dict = json.loads(schema_str)
         elif schema and not schema_id:
             if not self._schema_group:
                 raise TypeError("'group_name' is required in constructor, if 'schema' is passed to encode.")
 
-            schema_fullname, schema_str, schema_dict = load_schema(self, schema, content)
+            schema_fullname, schema_str, schema_dict = get_loaded_schema(self, schema, content)
             cache_misses = (
                 self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
             )
-            request_options = request_options or {}
             schema_id = self._get_schema_id(
                 schema_fullname, schema_str, **request_options
             )

@@ -28,13 +28,12 @@ from ._constants import (  # pylint: disable=import-error
     JSON_MIME_TYPE,
 )
 if TYPE_CHECKING:
-    from logging import Logger
     from ._schema_registry_json_encoder import JsonSchemaEncoder
     from .aio._schema_registry_json_encoder_async import JsonSchemaEncoder as JsonSchemaEncoderAsync
 
 MessageType = TypeVar("MessageType", bound=MessageTypeProtocol)
 
-def load_schema(
+def get_loaded_schema(
     encoder: Union["JsonSchemaEncoder", "JsonSchemaEncoderAsync"],
     schema: Union[str, Callable],
     content: Mapping[str, Any],
