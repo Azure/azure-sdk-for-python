@@ -14,6 +14,7 @@ import yaml
 
 from .swaggertosdk.autorest_tools import build_autorest_options, generate_code
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE_DPG, read_config
+from .conf import CONF_NAME
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -60,18 +61,21 @@ def get_package_names(sdk_folder):
     return package_names
 
 
+def call_build_config(package_name: str, folder_name: str):
+    check_call(
+        f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
+        shell=True,
+    )
+
 def init_new_service(package_name, folder_name, is_typespec = False):
     if not is_typespec:
         setup = Path(folder_name, package_name, "setup.py")
         if not setup.exists():
-            check_call(
-                f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
-                shell=True,
-            )
+            call_build_config(package_name, folder_name)
     else:
         output_path = Path(folder_name) / package_name
-        if not (output_path / "sdk_packaging.toml").exists():
-            with open(output_path / "sdk_packaging.toml", "w") as file_out:
+        if not (output_path / CONF_NAME).exists():
+            with open(output_path / CONF_NAME, "w") as file_out:
                 file_out.write("[packaging]\nauto_update = false")
 
     # add ci.yaml

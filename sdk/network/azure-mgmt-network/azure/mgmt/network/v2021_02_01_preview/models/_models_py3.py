@@ -3498,7 +3498,7 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype fully_qualified_domain_names: list[str]
     :ivar subscriptions: List of subscription ids.
     :vartype subscriptions: list[~azure.mgmt.network.v2021_02_01_preview.models.SubscriptionId]
-    :ivar network_security_perimeters: Inbound rule specified by the perimeter id.
+    :ivar network_security_perimeters: Rule specified by the perimeter id.
     :vartype network_security_perimeters:
      list[~azure.mgmt.network.v2021_02_01_preview.models.PerimeterBasedAccessRule]
     :ivar email_addresses: Outbound rules email address format.
@@ -3511,6 +3511,7 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
         "name": {"readonly": True},
         "type": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "network_security_perimeters": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3542,7 +3543,6 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
         address_prefixes: Optional[List[str]] = None,
         fully_qualified_domain_names: Optional[List[str]] = None,
         subscriptions: Optional[List["_models.SubscriptionId"]] = None,
-        network_security_perimeters: Optional[List["_models.PerimeterBasedAccessRule"]] = None,
         email_addresses: Optional[List[str]] = None,
         phone_numbers: Optional[List[str]] = None,
         **kwargs: Any
@@ -3563,9 +3563,6 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype fully_qualified_domain_names: list[str]
         :keyword subscriptions: List of subscription ids.
         :paramtype subscriptions: list[~azure.mgmt.network.v2021_02_01_preview.models.SubscriptionId]
-        :keyword network_security_perimeters: Inbound rule specified by the perimeter id.
-        :paramtype network_security_perimeters:
-         list[~azure.mgmt.network.v2021_02_01_preview.models.PerimeterBasedAccessRule]
         :keyword email_addresses: Outbound rules email address format.
         :paramtype email_addresses: list[str]
         :keyword phone_numbers: Outbound rules phone number format.
@@ -3577,7 +3574,7 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
         self.address_prefixes = address_prefixes
         self.fully_qualified_domain_names = fully_qualified_domain_names
         self.subscriptions = subscriptions
-        self.network_security_perimeters = network_security_perimeters
+        self.network_security_perimeters = None
         self.email_addresses = email_addresses
         self.phone_numbers = phone_numbers
 
@@ -4225,6 +4222,7 @@ class PerimeterBasedAccessRule(_serialization.Model):
     """
 
     _validation = {
+        "id": {"readonly": True},
         "perimeter_guid": {"readonly": True},
         "location": {"readonly": True},
     }
@@ -4235,13 +4233,10 @@ class PerimeterBasedAccessRule(_serialization.Model):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
-        """
-        :keyword id: NSP id in the ARM id format.
-        :paramtype id: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.id = id
+        self.id = None
         self.perimeter_guid = None
         self.location = None
 

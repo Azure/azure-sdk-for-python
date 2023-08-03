@@ -674,13 +674,13 @@ class TestRepr():
             custom_document_models=_models.CustomDocumentModelsDetails(
                 limit=5000, count=10
             ),
-            custom_neural_document_model_builds=_models.QuotaDetails(
+            neural_document_model_quota=_models.QuotaDetails(
                 used=0,
                 quota=20,
                 quota_resets_on=datetime.datetime(2024, 9, 16, 10, 10, 59, 342380)
             )
         )
-        model_repr = "ResourceDetails(custom_document_models={}, custom_neural_document_model_builds={})".format(
+        model_repr = "ResourceDetails(custom_document_models={}, neural_document_model_quota={})".format(
             "CustomDocumentModelsDetails(count=10, limit=5000)",
             "QuotaDetails(used=0, quota=20, quota_resets_on=2024-09-16 10:10:59.342380)"
         )

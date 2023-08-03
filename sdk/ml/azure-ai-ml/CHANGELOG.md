@@ -4,8 +4,12 @@
 ## 1.10.0 (Unreleased)
 
 ### Features Added
+- Added support of features that are known into the future/at forecast time for dnn in AutoML Forecasting jobs.
 
 ### Bugs Fixed
+- Local job runs will no longer fail if Docker registry has no username/password
+
+- Fixed an issue that code asset doesn't work with relative symbol links.
 
 ### Breaking Changes
 
@@ -18,7 +22,6 @@
 
 ### Features Added
 - Added support to enable gpu access (local_enable_gpu) for local deployment.
-- Added support for workspaceHub and Project workspace
 
 ### Other Changes
 

@@ -26,12 +26,13 @@ class ParallelFor(LoopNode, NodeIOMixin):
     pipeline yml containing parallel_for node. Please do not manually initialize this class.
 
     :param body: Pipeline job for the parallel for loop body.
-    :type body: Pipeline
+    :type body: ~azure.ai.ml.entities.Pipeline
     :param items: The loop body's input which will bind to the loop node.
-    :type items: typing.Union[list, dict, str, NodeOutput, PipelineInput]
+    :type items: typing.Union[list, dict, str, ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
+        ~azure.ai.ml.entities._job.pipeline._io.PipelineInput]
     :param max_concurrency: Maximum number of concurrent iterations to run. All loop body nodes will be executed
         in parallel if not specified.
-    :type max_concurrency: int
+    :type max_concurrency: int, optional
     """
 
     OUT_TYPE_MAPPING = {
@@ -56,7 +57,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         items,
         max_concurrency=None,
         **kwargs,
-    ):
+    ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
@@ -87,11 +88,19 @@ class ParallelFor(LoopNode, NodeIOMixin):
 
     @property
     def outputs(self) -> Dict[str, Union[str, Output]]:
+        """Get the outputs of the parallel for loop.
+
+        :return: The dictionary containing the outputs of the parallel for loop.
+        :rtype: dict[str, Union[str, ~azure.ai.ml.Output]]
+        """
         return self._outputs
 
     @property
     def items(self):
-        """The loop body's input which will bind to the loop node."""
+        """Get the loop body's input which will bind to the loop node.
+
+        :return: The input for the loop body.
+        """
         return self._items
 
     @classmethod
