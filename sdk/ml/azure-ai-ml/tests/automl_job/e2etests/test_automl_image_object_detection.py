@@ -139,9 +139,14 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
                     SearchSpace(
                         model_name=Choice(["atss_r50_fpn_1x_coco"]),
                         number_of_epochs=Choice([1]),
+                        gradient_accumulation_step=Choice([1]),
+                        learning_rate=Choice([0.005]),
                     ),
                     SearchSpace(
                         model_name=Choice(["fasterrcnn_resnet50_fpn"]),
+                        learning_rate=Choice([0.001]),
+                        optimizer=Choice(["sgd"]),
+                        min_size=Choice([600]),  # model-specific
                         number_of_epochs=Choice([1]),
                     ),
                 ]

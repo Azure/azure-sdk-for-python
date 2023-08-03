@@ -100,9 +100,14 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
                     SearchSpace(
                         model_name=Choice(["mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco"]),
                         number_of_epochs=Choice([1]),
+                        gradient_accumulation_step=Choice([1]),
+                        learning_rate=Choice([0.005]),
                     ),
                     SearchSpace(
                         model_name=Choice(["maskrcnn_resnet50_fpn"]),
+                        learning_rate=Choice([0.001]),
+                        optimizer=Choice(["sgd"]),
+                        min_size=Choice([600]),
                         number_of_epochs=Choice([1]),
                     ),
                 ]

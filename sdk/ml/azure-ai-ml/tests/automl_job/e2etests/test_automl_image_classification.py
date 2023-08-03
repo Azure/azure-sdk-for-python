@@ -108,9 +108,15 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
                     SearchSpace(
                         model_name=Choice(["microsoft/beit-base-patch16-224"]),
                         number_of_epochs=Choice([1]),
+                        gradient_accumulation_step=Choice([1]),
+                        learning_rate=Choice([0.005]),
                     ),
                     SearchSpace(
-                        model_name=Choice(["vitb16r224"]),
+                        model_name=Choice(["seresnext"]),
+                        # model-specific, valid_resize_size should be larger or equal than valid_crop_size
+                        validation_resize_size=Choice([288]),
+                        validation_crop_size=Choice([224]),  # model-specific
+                        training_crop_size=Choice([224]),  # model-specific
                         number_of_epochs=Choice([1]),
                     ),
                 ]
