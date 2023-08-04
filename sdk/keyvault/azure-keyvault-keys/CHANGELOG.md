@@ -3,12 +3,14 @@
 ## 4.9.0b3 (Unreleased)
 
 ### Features Added
+- Added support for service API version `7.5-preview.1`
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+- Key Vault API version `7.5-preview.1` is now the default
 
 ## 4.9.0b2 (2023-10-12)
 
