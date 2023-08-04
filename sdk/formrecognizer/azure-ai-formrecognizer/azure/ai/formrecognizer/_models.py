@@ -3811,7 +3811,7 @@ class BlobFileListSource:
     def from_dict(cls, data: Dict[str, Any]) -> "BlobFileListSource":
         """Converts a dict in the shape of a BlobFileListSource to the model itself.
 
-        :param Dict[str, Any] data: A dictionary in the shape of BlobFileListSource.
+        :param dict data: A dictionary in the shape of BlobFileListSource.
         :return: BlobFileListSource
         :rtype: BlobFileListSource
         """
@@ -3869,7 +3869,7 @@ class BlobSource:
     def from_dict(cls, data: Dict[str, Any]) -> "BlobSource":
         """Converts a dict in the shape of a BlobSource to the model itself.
 
-        :param Dict[str, Any] data: A dictionary in the shape of BlobSource.
+        :param dict data: A dictionary in the shape of BlobSource.
         :return: BlobSource
         :rtype: BlobSource
         """
@@ -3932,7 +3932,7 @@ class ClassifierDocumentTypeDetails:
     def from_dict(cls, data: Dict[str, Any]) -> "ClassifierDocumentTypeDetails":
         """Converts a dict in the shape of a ClassifierDocumentTypeDetails to the model itself.
 
-        :param Dict[str, Any] data: A dictionary in the shape of ClassifierDocumentTypeDetails.
+        :param dict data: A dictionary in the shape of ClassifierDocumentTypeDetails.
         :return: ClassifierDocumentTypeDetails
         :rtype: ClassifierDocumentTypeDetails
         """
