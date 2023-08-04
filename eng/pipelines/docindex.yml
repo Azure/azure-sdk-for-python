@@ -134,7 +134,7 @@ jobs:
           pwsh: true
           filePath: eng/common/scripts/Update-DocsMsToc.ps1
           arguments: >-
-            -DocRepoLocation $(DocsTestDailyBranch)
+            -DocRepoLocation $(DocRepoLocation)
             -OutputLocation $(DocRepoLocation)/docs-ref-mapping/reference-unified.yml
         displayName: Generate ToC for Daily Docs
 
