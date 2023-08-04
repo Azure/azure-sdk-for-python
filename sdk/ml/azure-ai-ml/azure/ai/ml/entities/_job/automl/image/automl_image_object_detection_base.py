@@ -294,6 +294,12 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         :keyword validation_metric_type: Metric computation method to use for validation metrics. Must
          be 'none', 'coco', 'voc', or 'coco_voc'.
         :type validation_metric_type: str or ~azure.mgmt.machinelearningservices.models.ValidationMetricType
+        :keyword log_training_metrics: indicates whether or not to log training metrics. Must
+         be 'Enable' or 'Disable'
+        :type log_training_metrics: str or ~azure.mgmt.machinelearningservices.models.LogTrainingMetrics
+        :keyword log_validation_loss: indicates whether or not to log validation loss. Must
+         be 'Enable' or 'Disable'
+        :type log_validation_loss: str or ~azure.mgmt.machinelearningservices.models.LogValidationLoss
         """
         self._training_parameters = self._training_parameters or ImageModelSettingsObjectDetection()
 

@@ -626,6 +626,12 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
      values include: "None", "Coco", "Voc", "CocoVoc".
     :type validation_metric_type: str or
      ~azure.mgmt.machinelearningservices.models.ValidationMetricType
+    :param log_training_metrics: indicates whether or not to log training metrics
+    :type log_training_metrics: str or
+     ~azure.mgmt.machinelearningservices.models.LogTrainingMetrics
+    :param log_validation_loss: indicates whether or not to log validation loss
+    :type log_validation_loss: str or
+     ~azure.mgmt.machinelearningservices.models.LogValidationLoss
     """
 
     def __init__(
