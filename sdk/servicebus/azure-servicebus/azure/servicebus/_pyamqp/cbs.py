@@ -208,7 +208,7 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             if put_timeout:
                 self.auth_state = CbsAuthState.TIMEOUT
 
-    def _cbs_link_ready(self): # pylint: disable=inconsistent-return-statements
+    def _cbs_link_ready(self):
         if self.state == CbsState.OPEN:
             return True
         if self.state != CbsState.OPEN:
@@ -218,6 +218,7 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
                 status_code=ErrorCondition.ClientError,
                 status_description="CBS authentication link is in broken status, please recreate the cbs link.",
             )
+        return None
 
     def open(self):
         self.state = CbsState.OPENING
