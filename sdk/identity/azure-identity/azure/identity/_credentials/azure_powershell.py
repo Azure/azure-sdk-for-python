@@ -86,9 +86,9 @@ class AzurePowerShellCredential:
     def get_token(
         self,
         *scopes: str,
-        claims: Optional[str] = None,
+        claims: Optional[str] = None,  # pylint:disable=unused-argument
         tenant_id: Optional[str] = None,
-        **kwargs: Any,  # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
