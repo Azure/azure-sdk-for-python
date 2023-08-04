@@ -63,35 +63,41 @@ class TestFeatureStoreOperation:
             "azure.ai.ml.operations._feature_store_operations.FeatureStoreOperations._populate_arm_paramaters",
             return_value=({}, {}, {}),
         )
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase.begin_create",
+            return_value=None,
+        )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
 
         # create
         mock_feature_store_operation._operation.get.side_effect = Exception()
         mock_feature_store_operation.begin_create(feature_store=FeatureStore(name="name"))
+        super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.assert_called_once()
+
+        # create, no materialization identity is allowed
+        super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.reset_mock()
+        mock_feature_store_operation.begin_create(
+            feature_store=FeatureStore(
+                name="name",
+                offline_store=MaterializationStore(type=OFFLINE_MATERIALIZATION_STORE_TYPE, target="test_path"),
+            )
+        )
+        super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.assert_called_once()
+
+        super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.reset_mock()
+        mock_feature_store_operation.begin_create(
+            feature_store=FeatureStore(
+                name="name",
+                online_store=MaterializationStore(type=ONLINE_MATERIALIZATION_STORE_TYPE, target="test_path"),
+            )
+        )
+        super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.assert_called_once()
 
         # double create call
         mock_feature_store_operation._operation.get.side_effect = outgoing_get_call
         mock_feature_store_operation._operation.begin_update.side_effect = None
         mock_feature_store_operation.begin_create(feature_store=FeatureStore(name="name"))
         mock_feature_store_operation._operation.begin_update.assert_called()
-
-        # create missing managed identity
-        mock_feature_store_operation._operation.get.side_effect = Exception()
-
-        with pytest.raises(ValidationError):
-            mock_feature_store_operation.begin_create(
-                feature_store=FeatureStore(
-                    name="name",
-                    offline_store=MaterializationStore(type=OFFLINE_MATERIALIZATION_STORE_TYPE, target="test_path"),
-                )
-            )
-        with pytest.raises(ValidationError):
-            mock_feature_store_operation.begin_create(
-                feature_store=FeatureStore(
-                    name="name",
-                    online_store=MaterializationStore(type=ONLINE_MATERIALIZATION_STORE_TYPE, target="test_path"),
-                )
-            )
 
     def test_update(self, mock_feature_store_operation: FeatureStoreOperations) -> None:
         fs = FeatureStore(
@@ -133,6 +139,271 @@ class TestFeatureStoreOperation:
                     online_store=MaterializationStore(type=ONLINE_MATERIALIZATION_STORE_TYPE, target="test_path"),
                 )
             )
+
+    def test_update_with_role_assignments(
+        self, mock_feature_store_operation: FeatureStoreOperations, mocker: MockFixture
+    ) -> None:
+        from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration
+        from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
+
+        EXISTING_IDENTITY_RESOURCE_ID = "existing_identity_resource_id"
+        EXISTING_OFFLINE_STORE_RESOURCE_ID = "existing_offline_store_resource_id"
+        EXISTING_ONLINE_STORE_RESOURCE_ID = "existing_online_store_resource_id"
+        OFFLINE_STORE_CONNECTION_NAME = "offlineStoreConnectionName"
+        ONLINE_STORE_CONNECTION_NAME = "onlineStoreConnectionName"
+        NEW_IDENTITY_RESOURCE_ID = "new_identity_resource_id"
+        NEW_OFFLINE_STORE_RESOURCE_ID = "new_offline_store_resource_id"
+        NEW_ONLINE_STORE_RESOURCE_ID = "new_online_store_resource_id"
+
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase.begin_update",
+            return_value=None,
+        )
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_connections_operations.WorkspaceConnectionsOperations.get",
+            return_value=None,
+        )
+
+        def outgoing_get_call(rg, name):
+            from azure.ai.ml._utils.utils import camel_to_snake
+            from azure.ai.ml.constants import ManagedServiceIdentityType
+            from azure.ai.ml.entities import IdentityConfiguration, ManagedIdentityConfiguration
+            from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
+
+            ws = Workspace(
+                name=name,
+                kind="featurestore",
+                identity=IdentityConfiguration(
+                    type=camel_to_snake(ManagedServiceIdentityType.USER_ASSIGNED),
+                    user_assigned_identities=[
+                        ManagedIdentityConfiguration(resource_id=EXISTING_IDENTITY_RESOURCE_ID),
+                    ],
+                ),
+            )
+            ws._feature_store_settings = FeatureStoreSettings(
+                offline_store_connection_name=OFFLINE_STORE_CONNECTION_NAME,
+                online_store_connection_name=ONLINE_STORE_CONNECTION_NAME,
+            )
+            return ws._to_rest_object()
+
+        def outgoing_workspace_connection_call(resource_group_name, workspace_name, connection_name):
+            if connection_name == OFFLINE_STORE_CONNECTION_NAME:
+                from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+                    WorkspaceConnectionPropertiesV2,
+                    WorkspaceConnectionPropertiesV2BasicResource,
+                )
+
+                resource = WorkspaceConnectionPropertiesV2BasicResource(
+                    properties=WorkspaceConnectionPropertiesV2(
+                        category=OFFLINE_MATERIALIZATION_STORE_TYPE, target=EXISTING_OFFLINE_STORE_RESOURCE_ID
+                    )
+                )
+                return resource
+            elif connection_name == ONLINE_STORE_CONNECTION_NAME:
+                from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+                    WorkspaceConnectionPropertiesV2,
+                    WorkspaceConnectionPropertiesV2BasicResource,
+                )
+
+                resource = WorkspaceConnectionPropertiesV2BasicResource(
+                    properties=WorkspaceConnectionPropertiesV2(
+                        category=ONLINE_MATERIALIZATION_STORE_TYPE, target=EXISTING_ONLINE_STORE_RESOURCE_ID
+                    )
+                )
+                return resource
+            else:
+                raise Exception("Invalid exception")
+
+        def perform_tests(testcases, mock_feature_store_operation):
+            for testcase in testcases:
+                mock_feature_store_operation.begin_update(testcase[0], update_dependent_resources=True)
+                super(
+                    type(mock_feature_store_operation), mock_feature_store_operation
+                ).begin_update.assert_called_once()
+                kwargs = super(
+                    type(mock_feature_store_operation), mock_feature_store_operation
+                ).begin_update.call_args.kwargs
+
+                assert kwargs["grant_materialization_identity_permissions"] == True
+                assert kwargs["update_workspace_role_assignment"] == testcase[1][0]
+                assert kwargs["update_offline_store_role_assignment"] == testcase[1][1]
+                assert kwargs["update_online_store_role_assignment"] == testcase[1][2]
+                assert kwargs["materialization_identity_id"] == testcase[1][3]
+                assert kwargs["offline_store_target"] == testcase[1][4]
+                assert kwargs["online_store_target"] == testcase[1][5]
+
+                print(f"Passed test case: {testcase}")
+                super(type(mock_feature_store_operation), mock_feature_store_operation).begin_update.reset_mock()
+
+        mock_feature_store_operation._operation.get.side_effect = outgoing_get_call
+
+        # existing stores
+        mock_feature_store_operation._workspace_connection_operation.get.side_effect = (
+            outgoing_workspace_connection_call
+        )
+
+        testcases1 = [
+            (FeatureStore(name="name", description="description"), [False, False, False, None, None, None]),
+            (
+                FeatureStore(
+                    name="name",
+                    description="description",
+                    materialization_identity=ManagedIdentityConfiguration(resource_id=NEW_IDENTITY_RESOURCE_ID),
+                ),
+                [
+                    True,
+                    True,
+                    True,
+                    NEW_IDENTITY_RESOURCE_ID,
+                    EXISTING_OFFLINE_STORE_RESOURCE_ID,
+                    EXISTING_ONLINE_STORE_RESOURCE_ID,
+                ],
+            ),
+            (
+                FeatureStore(
+                    name="name",
+                    description="description",
+                    offline_store=MaterializationStore(
+                        type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=NEW_OFFLINE_STORE_RESOURCE_ID
+                    ),
+                ),
+                [False, True, False, EXISTING_IDENTITY_RESOURCE_ID, NEW_OFFLINE_STORE_RESOURCE_ID, None],
+            ),
+            (
+                FeatureStore(
+                    name="name",
+                    description="description",
+                    online_store=MaterializationStore(
+                        type=ONLINE_MATERIALIZATION_STORE_TYPE, target=NEW_ONLINE_STORE_RESOURCE_ID
+                    ),
+                ),
+                [False, False, True, EXISTING_IDENTITY_RESOURCE_ID, None, NEW_ONLINE_STORE_RESOURCE_ID],
+            ),
+            (
+                FeatureStore(
+                    name="name",
+                    description="description",
+                    materialization_identity=ManagedIdentityConfiguration(resource_id=NEW_IDENTITY_RESOURCE_ID),
+                    offline_store=MaterializationStore(
+                        type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=NEW_OFFLINE_STORE_RESOURCE_ID
+                    ),
+                    online_store=MaterializationStore(
+                        type=ONLINE_MATERIALIZATION_STORE_TYPE, target=NEW_ONLINE_STORE_RESOURCE_ID
+                    ),
+                ),
+                [
+                    True,
+                    True,
+                    True,
+                    NEW_IDENTITY_RESOURCE_ID,
+                    NEW_OFFLINE_STORE_RESOURCE_ID,
+                    NEW_ONLINE_STORE_RESOURCE_ID,
+                ],
+            ),
+            (
+                FeatureStore(
+                    name="name",
+                    description="description",
+                    materialization_identity=ManagedIdentityConfiguration(resource_id=NEW_IDENTITY_RESOURCE_ID),
+                    offline_store=MaterializationStore(
+                        type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=EXISTING_OFFLINE_STORE_RESOURCE_ID
+                    ),
+                    online_store=MaterializationStore(
+                        type=ONLINE_MATERIALIZATION_STORE_TYPE, target=EXISTING_ONLINE_STORE_RESOURCE_ID
+                    ),
+                ),
+                [
+                    True,
+                    True,
+                    True,
+                    NEW_IDENTITY_RESOURCE_ID,
+                    EXISTING_OFFLINE_STORE_RESOURCE_ID,
+                    EXISTING_ONLINE_STORE_RESOURCE_ID,
+                ],
+            ),
+            (
+                FeatureStore(
+                    name="name",
+                    description="description",
+                    materialization_identity=ManagedIdentityConfiguration(resource_id=EXISTING_IDENTITY_RESOURCE_ID),
+                    offline_store=MaterializationStore(
+                        type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=NEW_OFFLINE_STORE_RESOURCE_ID
+                    ),
+                    online_store=MaterializationStore(
+                        type=ONLINE_MATERIALIZATION_STORE_TYPE, target=NEW_ONLINE_STORE_RESOURCE_ID
+                    ),
+                ),
+                [
+                    False,
+                    True,
+                    True,
+                    EXISTING_IDENTITY_RESOURCE_ID,
+                    NEW_OFFLINE_STORE_RESOURCE_ID,
+                    NEW_ONLINE_STORE_RESOURCE_ID,
+                ],
+            ),
+            (
+                FeatureStore(
+                    name="name",
+                    description="description",
+                    offline_store=MaterializationStore(
+                        type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=EXISTING_OFFLINE_STORE_RESOURCE_ID
+                    ),
+                    online_store=MaterializationStore(
+                        type=ONLINE_MATERIALIZATION_STORE_TYPE, target=EXISTING_ONLINE_STORE_RESOURCE_ID
+                    ),
+                ),
+                [False, False, False, None, None, None],
+            ),
+        ]
+
+        perform_tests(testcases1, mock_feature_store_operation)
+
+        # non existing stores
+        mock_feature_store_operation._workspace_connection_operation.get.reset_mock(side_effect=True)
+        mock_feature_store_operation._workspace_connection_operation.get.return_value = None
+
+        testcases2 = [
+            (FeatureStore(name="name", description="description"), [False, False, False, None, None, None]),
+            (
+                FeatureStore(
+                    name="name",
+                    description="description",
+                    materialization_identity=ManagedIdentityConfiguration(resource_id=NEW_IDENTITY_RESOURCE_ID),
+                ),
+                [True, False, False, NEW_IDENTITY_RESOURCE_ID, None, None],
+            ),
+            (
+                FeatureStore(
+                    name="name",
+                    description="description",
+                    offline_store=MaterializationStore(
+                        type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=NEW_OFFLINE_STORE_RESOURCE_ID
+                    ),
+                    online_store=MaterializationStore(
+                        type=ONLINE_MATERIALIZATION_STORE_TYPE, target=NEW_ONLINE_STORE_RESOURCE_ID
+                    ),
+                ),
+                [
+                    False,
+                    True,
+                    True,
+                    EXISTING_IDENTITY_RESOURCE_ID,
+                    NEW_OFFLINE_STORE_RESOURCE_ID,
+                    NEW_ONLINE_STORE_RESOURCE_ID,
+                ],
+            ),
+            (
+                FeatureStore(
+                    name="name",
+                    description="description",
+                    materialization_identity=ManagedIdentityConfiguration(resource_id=EXISTING_IDENTITY_RESOURCE_ID),
+                ),
+                [False, False, False, None, None, None],
+            ),
+        ]
+
+        perform_tests(testcases2, mock_feature_store_operation)
 
     def test_delete(self, mock_feature_store_operation: FeatureStoreOperations, mocker: MockFixture) -> None:
         def outgoing_call(rg, name):

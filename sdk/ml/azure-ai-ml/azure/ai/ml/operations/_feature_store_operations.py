@@ -225,7 +225,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         self,
         feature_store: FeatureStore,
         *,
-        grant_materialization_identity_permissions: bool = False,
+        grant_materialization_identity_permissions: bool = True,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
     ) -> LROPoller[FeatureStore]:
@@ -291,8 +291,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             raise ValidationError("offline store type should be azure_data_lake_gen2")
 
         if (
-            offline_store
-            and rest_workspace_obj.feature_store_settings
+            rest_workspace_obj.feature_store_settings
             and rest_workspace_obj.feature_store_settings.offline_store_connection_name
         ):
             existing_offline_store_connection = self._workspace_connection_operation.get(
@@ -315,13 +314,14 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                         "any data that was materialized "
                         "earlier will not be available. You have to run backfill again."
                     )
+            elif offline_store:
+                update_offline_store_role_assignment = True
 
         if online_store and online_store.type != ONLINE_MATERIALIZATION_STORE_TYPE:
             raise ValidationError("online store type should be redis")
 
         if (
-            online_store
-            and rest_workspace_obj.feature_store_settings
+            rest_workspace_obj.feature_store_settings
             and rest_workspace_obj.feature_store_settings.online_store_connection_name
         ):
             existing_online_store_connection = self._workspace_connection_operation.get(
@@ -343,6 +343,8 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                         "any data that was materialized earlier "
                         "will not be available. You have to run backfill again."
                     )
+            elif online_store:
+                update_online_store_role_assignment = True
 
         feature_store_settings = FeatureStoreSettings._from_rest_object(rest_workspace_obj.feature_store_settings)
 
@@ -394,6 +396,11 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             else:
                 raise ValidationError("Materialization identity is required to setup online store connection")
 
+        if not offline_store_target_to_update:
+            update_offline_store_role_assignment = False
+        if not online_store_target_to_update:
+            update_online_store_role_assignment = False
+
         identity = kwargs.pop("identity", feature_store.identity)
         if materialization_identity:
             identity = IdentityConfiguration(
@@ -415,9 +422,13 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             update_workspace_role_assignment=update_workspace_role_assignment,
             update_offline_store_role_assignment=update_offline_store_role_assignment,
             update_online_store_role_assignment=update_online_store_role_assignment,
-            materialization_identity_id=materialization_identity.resource_id,
-            offline_store_target=offline_store_target_to_update,
-            online_store_target=online_store_target_to_update,
+            materialization_identity_id=materialization_identity.resource_id
+            if update_workspace_role_assignment
+            or update_offline_store_role_assignment
+            or update_online_store_role_assignment
+            else None,
+            offline_store_target=offline_store_target_to_update if update_offline_store_role_assignment else None,
+            online_store_target=online_store_target_to_update if update_online_store_role_assignment else None,
             **kwargs,
         )
 

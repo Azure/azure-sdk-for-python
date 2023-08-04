@@ -8,17 +8,17 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
 from azure.ai.ml._restclient.v2023_06_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
-from azure.ai.ml._restclient.v2023_06_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2023_06_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
-from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND
 
 from .customer_managed_key import CustomerManagedKey
 from .feature_store_settings import FeatureStoreSettings
@@ -265,9 +265,9 @@ class Workspace(Resource):
         return armid.split("/")[-7], armid.split("/")[-5], armid.split("/")[-1]
 
     def _to_rest_object(self) -> RestWorkspace:
-        feature_store_Settings = None
+        feature_store_settings = None
         if is_private_preview_enabled() and self._feature_store_settings:
-            feature_store_Settings = self._feature_store_settings._to_rest_object()  # pylint: disable=protected-access
+            feature_store_settings = self._feature_store_settings._to_rest_object()  # pylint: disable=protected-access
 
         return RestWorkspace(
             identity=self.identity._to_workspace_rest_object()  # pylint: disable=protected-access
@@ -290,7 +290,7 @@ class Workspace(Resource):
             managed_network=self.managed_network._to_rest_object()  # pylint: disable=protected-access
             if self.managed_network
             else None,  # pylint: disable=protected-access
-            feature_store_Settings=feature_store_Settings,
+            feature_store_settings=feature_store_settings,
             enable_data_isolation=self.enable_data_isolation,
             hub_resource_id=self.workspace_hub,
         )
