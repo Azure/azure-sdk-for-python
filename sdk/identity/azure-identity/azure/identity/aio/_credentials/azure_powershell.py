@@ -4,7 +4,7 @@
 # ------------------------------------
 import asyncio
 import sys
-from typing import cast, List, Optional
+from typing import Any, cast, List, Optional
 from azure.core.credentials import AccessToken
 
 from .._internal import AsyncContextManager
@@ -59,7 +59,7 @@ class AzurePowerShellCredential(AsyncContextManager):
         *scopes: str,
         claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
+        **kwargs: Any,  # pylint:disable=unused-argument
     ) -> AccessToken:
         """Request an access token for `scopes`.
 

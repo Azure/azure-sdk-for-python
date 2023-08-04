@@ -6,7 +6,7 @@ import asyncio
 import os
 import shutil
 import sys
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
@@ -84,7 +84,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         *scopes: str,
         claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
+        **kwargs: Any,  # pylint:disable=unused-argument
     ) -> AccessToken:
         """Request an access token for `scopes`.
 

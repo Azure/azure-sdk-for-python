@@ -6,7 +6,7 @@ import base64
 import logging
 import subprocess
 import sys
-from typing import List, Tuple, Optional
+from typing import Any, List, Tuple, Optional
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -88,7 +88,7 @@ class AzurePowerShellCredential:
         *scopes: str,
         claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
+        **kwargs: Any,  # pylint:disable=unused-argument
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
