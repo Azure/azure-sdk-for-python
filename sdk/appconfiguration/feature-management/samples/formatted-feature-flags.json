@@ -1,0 +1,129 @@
+{
+    "FeatureManagement": {
+        "FeatureFlags": [
+            {
+                "id": "Alpha",
+                "description": "",
+                "enabled": "true",
+                "conditions": {
+                    "client_filters": []
+                }
+            },
+            {
+                "id": "Beta",
+                "description": "",
+                "enabled": "false",
+                "conditions": {
+                    "client_filters": []
+                }
+            },
+            {
+                "id": "Gamma",
+                "description": "",
+                "enabled": "true",
+                "conditions": {
+                    "client_filters": [
+                        {
+                            "name": "Microsoft.Random",
+                            "parameters": {
+                                "Value": 50
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "Delta",
+                "description": "",
+                "enabled": "true",
+                "conditions": {
+                    "client_filters": [
+                        {
+                            "name": "Microsoft.TimeWindowFilter",
+                            "parameters": {
+                                "Start": "Thu, 29 Jun 2023 07:00:00 GMT",
+                                "End": "Wed, 30 Aug 2023 07:00:00 GMT"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "Sigma",
+                "description": "",
+                "enabled": "true",
+                "conditions": {
+                    "client_filters": [
+                        {
+                            "name": "Microsoft.TimeWindowFilter",
+                            "parameters": {
+                                "Start": "Tue, 27 Jun 2023 06:00:00 GMT",
+                                "End": "Wen, 28 Jun 2023 06:05:00 GMT"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "Epsilon",
+                "description": "",
+                "enabled": "true",
+                "conditions": {
+                    "client_filters": [
+                        {
+                            "name": "Microsoft.TimeWindowFilter",
+                            "parameters": {
+                                "Start": "Tue, 27 Jun 2023 06:00:00 GMT"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "Zeta",
+                "description": "",
+                "enabled": "true",
+                "conditions": {
+                    "client_filters": [
+                        {
+                            "name": "Microsoft.TimeWindowFilter",
+                            "parameters": {
+                                "End": "Tue, 28 Jun 2024 06:00:00 GMT"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "Target",
+                "description": "",
+                "enabled": "true",
+                "conditions": {
+                    "client_filters": [
+                        {
+                            "name": "Microsoft.Targeting",
+                            "parameters": {
+                                "Audience": {
+                                    "Users": [
+                                        "Adam"
+                                    ],
+                                    "Groups": [
+                                        {
+                                            "Name": "Stage1",
+                                            "RolloutPercentage": 100
+                                        }
+                                    ],
+                                    "DefaultRolloutPercentage": 50,
+                                    "Exclusion": {
+                                        "Users": [],
+                                        "Groups": []
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

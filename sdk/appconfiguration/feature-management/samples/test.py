@@ -1,21 +1,16 @@
-from feature.management import FeatureManager, RandomFilter, TimeWindowFilter, TargetingFilter
+from feature.management import FeatureManager
+from randomfilter import RandomFilter
 import json
 import os
 import sys
 
 script_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
 
-f = open(script_directory + "/feature-flags.json", "r")
+f = open(script_directory + "/formatted-feature-flags.json", "r")
 
 feature_flags = json.load(f)
 
-feature_filters = {}
-feature_filters["Microsoft.Random"] = RandomFilter()
-feature_filters["Microsoft.TimeWindowFilter"] = TimeWindowFilter()
-feature_filters["Microsoft.Targeting"] = TargetingFilter()
-
-
-feature_manager = FeatureManager(feature_flags, filters=feature_filters)
+feature_manager = FeatureManager(feature_flags, feature_filters={"Microsoft.Random": RandomFilter()})
 
 # Is always true
 print("Alpha is ", feature_manager.is_enabled("Alpha"))

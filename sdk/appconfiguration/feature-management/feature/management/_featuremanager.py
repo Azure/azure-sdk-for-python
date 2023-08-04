@@ -5,12 +5,22 @@
 # -------------------------------------------------------------------------
 
 from ._constants import FEATURE_MANAGEMENT_KEY
+from ._defaultfilters import TimeWindowFilter, TargetingFilter
 
-class FeatureManager():
 
+class FeatureManager:
     def __init__(self, feature_flags, **kwargs):
-        self._feature_flags = feature_flags.get(FEATURE_MANAGEMENT_KEY, feature_flags)
-        self._filters = kwargs.get('filters', {})
+        feature_flags = feature_flags.get(FEATURE_MANAGEMENT_KEY, feature_flags)
+        feature_flags_lst = feature_flags.get("FeatureFlags", feature_flags)
+        self._feature_flags = {}
+        for feature_flag in feature_flags_lst:
+            self._feature_flags[feature_flag["id"]] = feature_flag
+
+        feature_filters = {}
+        feature_filters["Microsoft.TimeWindowFilter"] = TimeWindowFilter()
+        feature_filters["Microsoft.Targeting"] = TargetingFilter()
+        feature_filters.update(kwargs.pop("feature_filters", {}))
+        self._filters = feature_filters
 
     def is_enabled(self, feature_flag_name, **kwargs):
         feature_flag = self._feature_flags.get(feature_flag_name, None)
@@ -20,24 +30,24 @@ class FeatureManager():
             # Unknown feature flags are disabled by default
             return False
 
-        if not feature_flag.get('enabled', False):
+        if not feature_flag.get("enabled", False):
             # Feature flags that are disabled are always disabled
             return False
 
-        if len(feature_flag.get('conditions', {'client_filters':[]})['client_filters']) == 0:
+        if len(feature_flag.get("conditions", {"client_filters": []})["client_filters"]) == 0:
             # Feature flags without any filters return evaluate
-            return feature_flag['enabled']
-        
-        if feature_flag.get('requirement_type', "Any") == "All":
-            for feature_filter in feature_flag['conditions']['client_filters']:
-                if feature_filter['name'] in self._filters:
-                    if not self._filters[feature_filter['name']].evaluate(feature_filter['parameters'], **kwargs):
+            return feature_flag["enabled"]
+
+        if feature_flag.get("requirement_type", "Any") == "All":
+            for feature_filter in feature_flag["conditions"]["client_filters"]:
+                if feature_filter["name"] in self._filters:
+                    if not self._filters[feature_filter["name"]].evaluate(feature_filter["parameters"], **kwargs):
                         return False
             return True
         else:
-            for feature_filter in feature_flag['conditions']['client_filters']:
-                if feature_filter['name'] in self._filters:
-                    if self._filters[feature_filter['name']].evaluate(feature_filter, **kwargs):
+            for feature_filter in feature_flag["conditions"]["client_filters"]:
+                if feature_filter["name"] in self._filters:
+                    if self._filters[feature_filter["name"]].evaluate(feature_filter, **kwargs):
                         return True
             return False
 

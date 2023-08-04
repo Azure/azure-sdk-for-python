@@ -11,10 +11,4 @@ from ._defaultfilters import TimeWindowFilter, TargetingFilter
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = [
-    'FeatureManager',
-    'TimeWindowFilter',
-    'TargetingFilter',
-    'FeatureFilter',
-    'RandomFilter'
-]
+__all__ = ["FeatureManager", "TimeWindowFilter", "TargetingFilter", "FeatureFilter"]
