@@ -1,10 +1,10 @@
 # Azure Form Recognizer client library for Python
 
-Azure Form Recognizer is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
+Azure Document Intelligence (previously Form Recognizer) is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
 
 - Layout - Extract content and structure (ex. words, selection marks, tables) from documents.
 - Document - Analyze key-value pairs in addition to general layout from documents.
-- Read - Read page information and detected languages from documents.
+- Read - Read page information from documents.
 - Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents, U.S. W-2 tax documents, among others) using prebuilt models.
 - Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
 - Classifiers - Build custom classification models that combine layout and language features to accurately detect and identify documents you process within your application.
@@ -45,7 +45,7 @@ This table shows the relationship between SDK versions and supported API version
 |3.0.0| 2.0
 
 > Note: Starting with version `3.2.X`, a new set of clients were introduced to leverage the newest features
-> of the Form Recognizer service. Please see the [Migration Guide][migration-guide] for detailed instructions on how to update application
+> of the Document Intelligence service. Please see the [Migration Guide][migration-guide] for detailed instructions on how to update application
 > code from client library version `3.1.X` or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
 > The below table describes the relationship of each client and its supported API version(s):
 
@@ -58,7 +58,7 @@ This table shows the relationship between SDK versions and supported API version
 
 #### Create a Cognitive Services or Form Recognizer resource
 
-Form Recognizer supports both [multi-service and single-service access][cognitive_resource_portal]. Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Form Recognizer access only, create a Form Recognizer resource. Please note that you will need a single-service resource if you intend to use [Azure Active Directory authentication](#create-the-client-with-an-azure-active-directory-credential).
+Document Intelligence supports both [multi-service and single-service access][cognitive_resource_portal]. Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Document Intelligence access only, create a Form Recognizer resource. Please note that you will need a single-service resource if you intend to use [Azure Active Directory authentication](#create-the-client-with-an-azure-active-directory-credential).
 
 You can create either resource using: 
 
@@ -68,7 +68,7 @@ You can create either resource using:
 Below is an example of how you can create a Form Recognizer resource using the CLI:
 
 ```PowerShell
-# Create a new resource group to hold the form recognizer resource
+# Create a new resource group to hold the Form Recognizer resource
 # if using an existing resource group, skip this step
 az group create --name <your-resource-name> --location <location>
 ```
@@ -88,7 +88,7 @@ For more information about creating the resource or how to get the location and 
 
 ### Authenticate the client
 
-In order to interact with the Form Recognizer service, you will need to create an instance of a client.
+In order to interact with the Document Intelligence service, you will need to create an instance of a client.
 An **endpoint** and **credential** are necessary to instantiate the client object.
 
 #### Get the endpoint
@@ -98,7 +98,7 @@ You can find the endpoint for your Form Recognizer resource using the
 or [Azure CLI][azure_cli_endpoint_lookup]:
 
 ```bash
-# Get the endpoint for the form recognizer resource
+# Get the endpoint for the Form Recognizer resource
 az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "properties.endpoint"
 ```
 
@@ -147,7 +147,7 @@ with the Azure SDK, please install the `azure-identity` package:
 
 ```pip install azure-identity```
 
-You will also need to [register a new AAD application and grant access][register_aad_app] to Form Recognizer by assigning the `"Cognitive Services User"` role to your service principal.
+You will also need to [register a new AAD application and grant access][register_aad_app] to Document Intelligence by assigning the `"Cognitive Services User"` role to your service principal.
 
 Once completed, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
@@ -192,7 +192,7 @@ More information about analyzing documents, including supported features, locale
 - Copying a custom model from one Form Recognizer resource to another.
 - Build and manage a custom classification model to classify the documents you process within your application.
 
-Please note that models can also be built using a graphical user interface such as [Form Recognizer Studio][fr-studio].
+Please note that models can also be built using a graphical user interface such as [Document Intelligence Studio][fr-studio].
 
 Sample code snippets are provided to illustrate using a DocumentModelAdministrationClient [here](#examples "Examples").
 
@@ -209,7 +209,7 @@ Sample code snippets are provided to illustrate using long-running operations [b
 
 ## Examples
 
-The following section provides several code snippets covering some of the most common Form Recognizer tasks, including:
+The following section provides several code snippets covering some of the most common Document Intelligence tasks, including:
 
 * [Extract Layout](#extract-layout "Extract Layout")
 * [Using the General Document Model](#using-the-general-document-model "Using the General Document Model")
@@ -316,7 +316,7 @@ print("----------------------------------------")
 
 ### Using the General Document Model
 
-Analyze key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Form Recognizer service.
+Analyze key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Document Intelligence service.
 Select the General Document Model by passing `model_id="prebuilt-document"` into the `begin_analyze_document` method:
 
 ```python
@@ -428,7 +428,7 @@ print("----------------------------------------")
 
 ### Using Prebuilt Models
 
-Extract fields from select document types such as receipts, invoices, business cards, identity documents, and U.S. W-2 tax documents using prebuilt models provided by the Form Recognizer service.
+Extract fields from select document types such as receipts, invoices, business cards, identity documents, and U.S. W-2 tax documents using prebuilt models provided by the Document Intelligence service.
 
 For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model_id="prebuilt-receipt"` into the `begin_analyze_document` method:
 
@@ -679,7 +679,7 @@ except ResourceNotFoundError:
 ### General
 
 Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
-Error codes and messages raised by the Form Recognizer service can be found in the [service documentation][fr-errors].
+Error codes and messages raised by the Document Intelligence service can be found in the [service documentation][fr-errors].
 
 ### Logging
 
@@ -707,7 +707,7 @@ See the [Sample README][sample_readme] for several code snippets illustrating co
 
 ### Additional documentation
 
-For more extensive documentation on Azure Cognitive Services Form Recognizer, see the [Form Recognizer documentation][python-fr-product-docs] on docs.microsoft.com.
+For more extensive documentation on Azure AI Document Intelligence, see the [Document Intelligence documentation][python-fr-product-docs] on docs.microsoft.com.
 
 ## Contributing
 

@@ -15,7 +15,7 @@ from ._models import AnalyzeResult
 
 
 class DocumentAnalysisClient(FormRecognizerClientBase):
-    """DocumentAnalysisClient analyzes information from documents and images.
+    """DocumentAnalysisClient analyzes information from documents and images, and classifies documents.
     It is the interface to use for analyzing with prebuilt models (receipts, business cards,
     invoices, identity documents, among others), analyzing layout from documents, analyzing general
     document types, and analyzing custom documents with built models (to see a full list of models
