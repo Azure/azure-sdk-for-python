@@ -57,12 +57,10 @@ class TestFeatureStore(AzureRecordedTestCase):
 
         from azure.ai.ml.entities import ManagedIdentityConfiguration
 
-        new_materialization_identity_resource_id = "/subscriptions/1aefdc5e-3a7c-4d71-a9f9-f5d3b03be19a/resourceGroups/mdctest/providers/Microsoft.ManagedIdentity/userAssignedIdentities/runhli-fstoreuai-update"
+        new_materialization_identity_resource_id = "/subscriptions/1aefdc5e-3a7c-4d71-a9f9-f5d3b03be19a/resourceGroups/rg-runhliml/providers/Microsoft.ManagedIdentity/userAssignedIdentities/materialization-uai-update"
         fs = FeatureStore(
             name=fs_name,
-            materialization_identity=ManagedIdentityConfiguration(
-                client_id="b398ae3c-31fd-4f66-b2bd-75b990fedfaf", resource_id=new_materialization_identity_resource_id
-            ),
+            materialization_identity=ManagedIdentityConfiguration(resource_id=new_materialization_identity_resource_id),
         )
         fs_poller = client.feature_stores.begin_update(feature_store=fs)
         assert isinstance(fs_poller, LROPoller)
@@ -71,11 +69,10 @@ class TestFeatureStore(AzureRecordedTestCase):
         assert isinstance(updated_fs, FeatureStore)
         assert updated_fs.materialization_identity.resource_id == new_materialization_identity_resource_id
 
-        new_materialization_identity_resource_id = "/subscriptions/1aefdc5e-3a7c-4d71-a9f9-f5d3b03be19a/resourceGroups/mdctest/providers/Microsoft.ManagedIdentity/userAssignedIdentities/fstoreuai-runhli-simple-featurestore1"
+        new_materialization_identity_resource_id = "/subscriptions/1aefdc5e-3a7c-4d71-a9f9-f5d3b03be19a/resourceGroups/rg-runhliml/providers/Microsoft.ManagedIdentity/userAssignedIdentities/materialization-uai-update1"
         fs = FeatureStore(
             name=fs_name,
             materialization_identity=ManagedIdentityConfiguration(
-                client_id="bb6b969d-d2c7-44e0-aea8-bd0f7e798cb1",
                 resource_id=new_materialization_identity_resource_id,
             ),
         )

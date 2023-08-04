@@ -12,7 +12,7 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from marshmallow import ValidationError
 
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -50,7 +50,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient042023Preview,
+        service_client: ServiceClient062023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -107,7 +107,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
         feature_store = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
-        rest_workspace_obj = self._operation.get(resource_group, name)
+        rest_workspace_obj = kwargs.get("rest_workspace_obj", None) or self._operation.get(resource_group, name)
         if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND:
             feature_store = FeatureStore._from_rest_object(rest_workspace_obj)
 
@@ -366,7 +366,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                     resource_group_name=resource_group,
                     workspace_name=feature_store.name,
                     connection_name=offline_store_connection_name,
-                    parameters=rest_offline_store_connection,
+                    body=rest_offline_store_connection,
                 )
                 feature_store_settings.offline_store_connection_name = offline_store_connection_name
             else:
@@ -390,7 +390,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                     resource_group_name=resource_group,
                     workspace_name=feature_store.name,
                     connection_name=online_store_connection_name,
-                    parameters=rest_online_store_connection,
+                    body=rest_online_store_connection,
                 )
                 feature_store_settings.online_store_connection_name = online_store_connection_name
             else:
@@ -410,7 +410,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             )
 
         def deserialize_callback(rest_obj):
-            return FeatureStore._from_rest_object(rest_obj=rest_obj)
+            return self.get(rest_obj.name, rest_workspace_obj=rest_obj)
 
         return super().begin_update(
             workspace=feature_store,
