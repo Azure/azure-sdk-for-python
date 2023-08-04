@@ -11,6 +11,8 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ModelSize,
     StochasticOptimizer,
     ValidationMetricType,
+    LogTrainingMetrics,
+    LogValidationLoss,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._job.automl import SearchSpace
@@ -56,6 +58,8 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
                 learning_rate_scheduler=value.learning_rate_scheduler,
                 model_size=value.model_size,
                 validation_metric_type=value.validation_metric_type,
+                log_training_metrics=value.log_training_metrics,
+                log_validation_loss=value.log_validation_loss,
             )
         elif value is None:
             self._training_parameters = value
@@ -148,6 +152,8 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         tile_predictions_nms_threshold: Optional[float] = None,
         validation_iou_threshold: Optional[float] = None,
         validation_metric_type: Optional[Union[str, ValidationMetricType]] = None,
+        log_training_metrics: Optional[Union[str, LogTrainingMetrics]] = None,
+        log_validation_loss: Optional[Union[str, LogValidationLoss]] = None,
     ) -> None:
         """Setting Image training parameters for for AutoML Image Object Detection and Image Instance Segmentation
         tasks.
@@ -431,6 +437,16 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
             ValidationMetricType[camel_to_snake(validation_metric_type)]
             if validation_metric_type is not None
             else self._training_parameters.validation_metric_type
+        )
+        self._training_parameters.log_training_metrics = (
+            LogTrainingMetrics[camel_to_snake(log_training_metrics)]
+            if log_training_metrics is not None
+            else self._training_parameters.log_training_metrics
+        )
+        self._training_parameters.log_validation_loss = (
+            LogValidationLoss[camel_to_snake(log_validation_loss)]
+            if log_validation_loss is not None
+            else self._training_parameters.log_validation_loss
         )
 
     # pylint: enable=too-many-locals

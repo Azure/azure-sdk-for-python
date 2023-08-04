@@ -16,6 +16,8 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ModelSize,
     StochasticOptimizer,
     ValidationMetricType,
+    LogTrainingMetrics,
+    LogValidationLoss,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -672,8 +674,8 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
         tile_predictions_nms_threshold: Optional[float] = None,
         validation_iou_threshold: Optional[float] = None,
         validation_metric_type: Optional[ValidationMetricType] = None,
-        log_training_metrics: Optional[str] = None,
-        log_validation_loss: Optional[str] = None,
+        log_training_metrics: Optional[LogTrainingMetrics] = None,
+        log_validation_loss: Optional[LogValidationLoss] = None,
         **kwargs,
     ):
         super(ImageModelSettingsObjectDetection, self).__init__(
