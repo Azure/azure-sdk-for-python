@@ -21,6 +21,10 @@ This version of the client library defaults to the service API version `2023-07-
 - Renamed `AzureBlobFileListSource` model to `BlobFileListSource`.
 - Marked `neural_document_model_quota` as optional on `ResourceDetails`.
 
+### Other Changes
+- Corrected typing for the `polygon` property on `DocumentWord`, `DocumentSelectionMark`, `DocumentLine`.
+- Corrected typing for `words`, `lines`, and `selection_marks` properties on `DocumentPage`.
+
 ## 3.3.0b1 (2023-04-13)
 
 This version of the client library defaults to the service API version `2023-02-28-preview`.
