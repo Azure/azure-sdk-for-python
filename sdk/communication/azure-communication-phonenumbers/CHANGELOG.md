@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0b1 (Unreleased)
+## 1.1.1b0 (2023-08-04)
 
 ### Features Added
 - Number Lookup API public preview
