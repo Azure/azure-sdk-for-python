@@ -23,23 +23,20 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._version import VERSION
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
-__version__ = VERSION
 
-from ._schema_registry_client import SchemaRegistryClient
-from ._common._constants import SchemaFormat, ApiVersion
-from ._common._schema import Schema, SchemaProperties
-from ._encoder_protocols import SchemaContentValidate, MessageContent, MessageType, SchemaEncoder
+class JsonSchemaDraftVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """
+    The JSON schema draft versions available for validation.
+    """
 
-__all__ = [
-    "ApiVersion",
-    "SchemaRegistryClient",
-    "SchemaFormat",
-    "Schema",
-    "SchemaProperties",
-    "SchemaContentValidate",
-    "MessageContent",
-    "MessageType",
-    "SchemaEncoder"
-]
+    DRAFT2020_12 = 'draft2020-12'
+    DRAFT2019_09 = 'draft2019-09'
+    DRAFT_07 = 'draft-07'
+    DRAFT_06 = 'draft-06'
+    DRAFT_04 = 'draft-04'
+    DRAFT_03 = 'draft-03'
+
+JSON_MIME_TYPE = "application/json;serialization=Json"
