@@ -1,10 +1,8 @@
 # Release History
 
-## 3.3.0 (Unreleased)
+## 3.3.0 (2023-08-08)
 
 This version of the client library defaults to the service API version `2023-07-31`.
-
-### Features Added
 
 ### Breaking Changes
  > Note: The following changes are only breaking from the previous beta. They are not breaking against previous stable versions.
@@ -21,11 +19,8 @@ This version of the client library defaults to the service API version `2023-07-
 - Renamed `custom_neural_document_model_builds` property to `neural_document_model_quota` on `ResourceDetails` model.
 - Renamed `AzureBlobSource` model to `BlobSource`.
 - Renamed `AzureBlobFileListSource` model to `BlobFileListSource`.
-
-### Bugs Fixed
-
-### Other Changes
-
+- Marked `formulas` and `barcodes` as optional on `DocumentPage`.
+- Marked `neural_document_model_quota` as optional on `ResourceDetails`.
 
 ## 3.3.0b1 (2023-04-13)
 
