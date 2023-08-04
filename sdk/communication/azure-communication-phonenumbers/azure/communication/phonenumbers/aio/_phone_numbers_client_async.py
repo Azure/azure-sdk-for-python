@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, List, cast, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio._client import PhoneNumbersClient as PhoneNumbersClientGen
@@ -13,6 +13,8 @@ from .._generated.models import (
     PhoneNumberCapabilitiesRequest,
     PhoneNumberPurchaseRequest,
     PhoneNumberType,
+    OperatorInformationRequest,
+    OperatorInformationResult,
 )
 from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
@@ -36,6 +38,10 @@ if TYPE_CHECKING:
         PurchasedPhoneNumber,
     )
 
+PhoneNumberSearchType = Union[
+    str,
+    List[str],
+]
 
 class PhoneNumbersClient(object):
     """A client to interact with the AzureCommunicationService Phone Numbers gateway.
@@ -418,6 +424,28 @@ class PhoneNumbersClient(object):
                 "locality", None),
             administrative_division=kwargs.pop(
                 "administrative_division", None),
+            **kwargs
+        )
+
+    @distributed_trace
+    def search_operator_information(
+            self,
+            phone_numbers,  # type: PhoneNumberSearchType
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> OperatorInformationResult
+        """Searches for operator information for a given list of phone numbers.
+
+        :param phone_numbers: The phone number(s) whose operator information should be searched
+        :type phone_numbers: str or list(str)
+        :return: A search result containing operator information associated with the requested phone numbers
+        :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
+        """
+        if not isinstance(phone_numbers, list):
+            phone_numbers = cast(PhoneNumberSearchType, [ phone_numbers ])
+        request = OperatorInformationRequest(phone_numbers = phone_numbers)
+        return self._phone_number_client.phone_numbers.operator_information_search(
+            request,
             **kwargs
         )
 

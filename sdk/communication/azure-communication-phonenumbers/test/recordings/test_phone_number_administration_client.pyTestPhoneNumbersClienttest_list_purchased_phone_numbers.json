@@ -1,13 +1,13 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers?skip=0\u0026top=100\u0026api-version=2022-12-01",
+      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers?skip=0\u0026top=100\u0026api-version=2023-05-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.1 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
@@ -15,15 +15,15 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-12-01",
+        "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-12-01, 2022-12-02-preview2, 2023-05-01-preview",
+        "Content-Length": "31580",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
-        "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1502ms"
+        "X-Processing-Time": "1400ms"
       },
       "ResponseBody": {
         "phoneNumbers": [
@@ -322,8 +322,8 @@
             "countryCode": "US",
             "phoneNumberType": "tollFree",
             "capabilities": {
-              "calling": "inbound\u002Boutbound",
-              "sms": "inbound\u002Boutbound"
+              "calling": "outbound",
+              "sms": "outbound"
             },
             "assignmentType": "application",
             "purchaseDate": "2021-06-23T23:31:47.0550566\u002B00:00",
@@ -373,7 +373,7 @@
             "countryCode": "US",
             "phoneNumberType": "tollFree",
             "capabilities": {
-              "calling": "inbound",
+              "calling": "outbound",
               "sms": "outbound"
             },
             "assignmentType": "application",
@@ -871,6 +871,23 @@
             },
             "assignmentType": "application",
             "purchaseDate": "2021-06-23T23:38:51.5548845\u002B00:00",
+            "cost": {
+              "amount": 2.0,
+              "currencyCode": "USD",
+              "billingFrequency": "monthly"
+            }
+          },
+          {
+            "id": "sanitized",
+            "phoneNumber": "sanitized",
+            "countryCode": "US",
+            "phoneNumberType": "tollFree",
+            "capabilities": {
+              "calling": "outbound",
+              "sms": "inbound\u002Boutbound"
+            },
+            "assignmentType": "application",
+            "purchaseDate": "2023-01-04T17:11:40.2093547\u002B00:00",
             "cost": {
               "amount": 2.0,
               "currencyCode": "USD",
@@ -1709,26 +1726,9 @@
               "currencyCode": "USD",
               "billingFrequency": "monthly"
             }
-          },
-          {
-            "id": "sanitized",
-            "phoneNumber": "sanitized",
-            "countryCode": "US",
-            "phoneNumberType": "tollFree",
-            "capabilities": {
-              "calling": "inbound\u002Boutbound",
-              "sms": "inbound\u002Boutbound"
-            },
-            "assignmentType": "application",
-            "purchaseDate": "2021-06-24T03:18:42.3038608\u002B00:00",
-            "cost": {
-              "amount": 2.0,
-              "currencyCode": "USD",
-              "billingFrequency": "monthly"
-            }
           }
         ],
-        "nextLink": "/phoneNumbers?skip=100\u0026top=100\u0026api-version=2022-12-01"
+        "nextLink": "/phoneNumbers?skip=100\u0026top=100\u0026api-version=2023-05-01-preview"
       }
     }
   ],

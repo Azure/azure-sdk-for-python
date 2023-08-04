@@ -1,20 +1,20 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://login.windows-ppe.net/sanitized/oauth2/v2.0/token",
+      "RequestUri": "https://login.microsoftonline.com/sanitized/oauth2/v2.0/token",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "131",
+        "Content-Length": "226",
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.11.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.14.0b2 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "client_id=sanitized\u0026client_secret=sanitized\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fcommunication.azure.com%2F%2F.default",
+      "RequestBody": "client_id=sanitized\u0026client_secret=sanitized\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fcommunication.azure.com%2F%2F.default\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "Content-Length": "90",
+        "Content-Length": "92",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "Expires": "-1",
@@ -24,13 +24,12 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-ests-server": "sanitized",
-        "x-ms-httpver": "1.1",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "token_type": "Bearer",
-        "expires_in": 3599,
-        "ext_expires_in": 3599,
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
         "access_token": "Sanitized"
       }
     },
@@ -42,7 +41,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "62",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b4 Python/3.11.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "trunks": {
@@ -53,7 +52,8 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "api-supported-versions": "2021-05-01-preview, 2022-09-01-preview, 2023-01-01-preview, 2023-03-01",
+        "api-deprecated-versions": "2021-05-01-preview, 2022-09-01-preview, 2023-01-01-preview",
+        "api-supported-versions": "2023-03-01, 2023-04-01-preview",
         "Content-Length": "118",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
@@ -61,7 +61,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "431ms"
+        "X-Processing-Time": "236ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -81,12 +81,13 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b4 Python/3.11.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "api-supported-versions": "2021-05-01-preview, 2022-09-01-preview, 2023-01-01-preview, 2023-03-01",
+        "api-deprecated-versions": "2021-05-01-preview, 2022-09-01-preview, 2023-01-01-preview",
+        "api-supported-versions": "2023-03-01, 2023-04-01-preview",
         "Content-Length": "118",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
@@ -94,7 +95,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "216ms"
+        "X-Processing-Time": "85ms"
       },
       "ResponseBody": {
         "trunks": {

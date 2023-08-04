@@ -127,6 +127,141 @@ class OfferingsResponse(_serialization.Model):
         self.next_link = next_link
 
 
+class OperatorDetails(_serialization.Model):
+    """Represents metadata describing the operator of a phone number.
+
+    :ivar name: Name of the phone operator.
+    :vartype name: str
+    :ivar mobile_network_code: Mobile Network Code.
+    :vartype mobile_network_code: str
+    :ivar mobile_country_code: Mobile Country Code.
+    :vartype mobile_country_code: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "mobile_network_code": {"key": "mobileNetworkCode", "type": "str"},
+        "mobile_country_code": {"key": "mobileCountryCode", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        mobile_network_code: Optional[str] = None,
+        mobile_country_code: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of the phone operator.
+        :paramtype name: str
+        :keyword mobile_network_code: Mobile Network Code.
+        :paramtype mobile_network_code: str
+        :keyword mobile_country_code: Mobile Country Code.
+        :paramtype mobile_country_code: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.mobile_network_code = mobile_network_code
+        self.mobile_country_code = mobile_country_code
+
+
+class OperatorInformation(_serialization.Model):
+    """Represents metadata about a phone number that is controlled/provided by that phone number's
+    operator.
+
+    :ivar phone_number: E.164 formatted string representation of the phone number.
+    :vartype phone_number: str
+    :ivar number_type: Type of service associated with the phone number. Known values are:
+     "unknown", "other", "geographic", and "mobile".
+    :vartype number_type: str or ~azure.communication.phonenumbers.models.OperatorNumberType
+    :ivar iso_country_code: ISO 3166-1 two character ('alpha-2') code associated with the phone
+     number.
+    :vartype iso_country_code: str
+    :ivar operator_details: Represents metadata describing the operator of a phone number.
+    :vartype operator_details: ~azure.communication.phonenumbers.models.OperatorDetails
+    """
+
+    _attribute_map = {
+        "phone_number": {"key": "phoneNumber", "type": "str"},
+        "number_type": {"key": "numberType", "type": "str"},
+        "iso_country_code": {"key": "isoCountryCode", "type": "str"},
+        "operator_details": {"key": "operatorDetails", "type": "OperatorDetails"},
+    }
+
+    def __init__(
+        self,
+        *,
+        phone_number: Optional[str] = None,
+        number_type: Optional[Union[str, "_models.OperatorNumberType"]] = None,
+        iso_country_code: Optional[str] = None,
+        operator_details: Optional["_models.OperatorDetails"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword phone_number: E.164 formatted string representation of the phone number.
+        :paramtype phone_number: str
+        :keyword number_type: Type of service associated with the phone number. Known values are:
+         "unknown", "other", "geographic", and "mobile".
+        :paramtype number_type: str or ~azure.communication.phonenumbers.models.OperatorNumberType
+        :keyword iso_country_code: ISO 3166-1 two character ('alpha-2') code associated with the phone
+         number.
+        :paramtype iso_country_code: str
+        :keyword operator_details: Represents metadata describing the operator of a phone number.
+        :paramtype operator_details: ~azure.communication.phonenumbers.models.OperatorDetails
+        """
+        super().__init__(**kwargs)
+        self.phone_number = phone_number
+        self.number_type = number_type
+        self.iso_country_code = iso_country_code
+        self.operator_details = operator_details
+
+
+class OperatorInformationRequest(_serialization.Model):
+    """Represents a search request for operator information for the given phone numbers.
+
+    :ivar phone_numbers: Phone number(s) whose operator information is being requested.
+    :vartype phone_numbers: list[str]
+    """
+
+    _attribute_map = {
+        "phone_numbers": {"key": "phoneNumbers", "type": "[str]"},
+    }
+
+    def __init__(self, *, phone_numbers: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword phone_numbers: Phone number(s) whose operator information is being requested.
+        :paramtype phone_numbers: list[str]
+        """
+        super().__init__(**kwargs)
+        self.phone_numbers = phone_numbers
+
+
+class OperatorInformationResult(_serialization.Model):
+    """Represents a search result containing operator information associated with the requested phone
+    numbers.
+
+    :ivar values: Results of a search.
+     This array will have one entry per requested phone number which will contain the relevant
+     operator information.
+    :vartype values: list[~azure.communication.phonenumbers.models.OperatorInformation]
+    """
+
+    _attribute_map = {
+        "values": {"key": "values", "type": "[OperatorInformation]"},
+    }
+
+    def __init__(self, *, values: Optional[List["_models.OperatorInformation"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword values: Results of a search.
+         This array will have one entry per requested phone number which will contain the relevant
+         operator information.
+        :paramtype values: list[~azure.communication.phonenumbers.models.OperatorInformation]
+        """
+        super().__init__(**kwargs)
+        self.values = values
+
+
 class PhoneNumberAdministrativeDivision(_serialization.Model):
     """Represents an administrative division. e.g. state or province.
 
@@ -744,6 +879,14 @@ class PhoneNumberSearchResult(_serialization.Model):
      longer on hold. A search result expires in less than 15min, e.g. 2020-11-19T16:31:49.048Z.
      Required.
     :vartype search_expires_by: ~datetime.datetime
+    :ivar error_code: The error code of the search.
+    :vartype error_code: int
+    :ivar error: Mapping Error Messages to Codes. Known values are: "NoError", "UnknownErrorCode",
+     "OutOfStock", "AuthorizationDenied", "MissingAddress", "InvalidAddress", "InvalidOfferModel",
+     "NotEnoughLicenses", "NoWallet", "NotEnoughCredit", "NumbersPartiallyAcquired",
+     "AllNumbersNotAcquired", "ReservationExpired", "PurchaseFailed", "BillingUnavailable",
+     "ProvisioningFailed", and "UnknownSearchError".
+    :vartype error: str or ~azure.communication.phonenumbers.models.PhoneNumberSearchResultError
     """
 
     _validation = {
@@ -764,6 +907,8 @@ class PhoneNumberSearchResult(_serialization.Model):
         "capabilities": {"key": "capabilities", "type": "PhoneNumberCapabilities"},
         "cost": {"key": "cost", "type": "PhoneNumberCost"},
         "search_expires_by": {"key": "searchExpiresBy", "type": "iso-8601"},
+        "error_code": {"key": "errorCode", "type": "int"},
+        "error": {"key": "error", "type": "str"},
     }
 
     def __init__(
@@ -776,6 +921,8 @@ class PhoneNumberSearchResult(_serialization.Model):
         capabilities: "_models.PhoneNumberCapabilities",
         cost: "_models.PhoneNumberCost",
         search_expires_by: datetime.datetime,
+        error_code: Optional[int] = None,
+        error: Optional[Union[str, "_models.PhoneNumberSearchResultError"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -799,6 +946,14 @@ class PhoneNumberSearchResult(_serialization.Model):
          longer on hold. A search result expires in less than 15min, e.g. 2020-11-19T16:31:49.048Z.
          Required.
         :paramtype search_expires_by: ~datetime.datetime
+        :keyword error_code: The error code of the search.
+        :paramtype error_code: int
+        :keyword error: Mapping Error Messages to Codes. Known values are: "NoError",
+         "UnknownErrorCode", "OutOfStock", "AuthorizationDenied", "MissingAddress", "InvalidAddress",
+         "InvalidOfferModel", "NotEnoughLicenses", "NoWallet", "NotEnoughCredit",
+         "NumbersPartiallyAcquired", "AllNumbersNotAcquired", "ReservationExpired", "PurchaseFailed",
+         "BillingUnavailable", "ProvisioningFailed", and "UnknownSearchError".
+        :paramtype error: str or ~azure.communication.phonenumbers.models.PhoneNumberSearchResultError
         """
         super().__init__(**kwargs)
         self.search_id = search_id
@@ -808,6 +963,8 @@ class PhoneNumberSearchResult(_serialization.Model):
         self.capabilities = capabilities
         self.cost = cost
         self.search_expires_by = search_expires_by
+        self.error_code = error_code
+        self.error = error
 
 
 class PurchasedPhoneNumber(_serialization.Model):

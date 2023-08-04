@@ -375,3 +375,39 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     def test_list_offerings(self):
         offerings = self.phone_number_client.list_available_offerings("US")
         assert offerings.next()
+
+    @recorded_by_proxy
+    def test_search_operator_information_with_too_many_phone_numbers(self):
+        if self.is_playback():
+            phone_numbers = [ "sanitized", "sanitized" ]
+        else:
+            phone_numbers = [ self.phone_number, self.phone_number ]
+
+        with pytest.raises(Exception) as ex:
+            self.phone_number_client.search_operator_information(phone_numbers)
+
+        assert is_client_error_status_code(
+            ex.value.status_code) is True, 'Status code {ex.value.status_code} does not indicate a client error'  # type: ignore
+        assert ex.value.message is not None  # type: ignore
+
+    @recorded_by_proxy
+    def test_search_operator_information_with_list(self):
+        if self.is_playback():
+            phone_number = "sanitized"
+        else:
+            phone_number = self.phone_number
+
+        results = self.phone_number_client.search_operator_information([ phone_number ])
+        assert len(results.values) == 1
+        assert results.values[0].phone_number == self.phone_number
+
+    @recorded_by_proxy
+    def test_search_operator_information_with_single_string(self):
+        if self.is_playback():
+            phone_number = "sanitized"
+        else:
+            phone_number = self.phone_number
+
+        results = self.phone_number_client.search_operator_information(phone_number)
+        assert len(results.values) == 1
+        assert results.values[0].phone_number == self.phone_number

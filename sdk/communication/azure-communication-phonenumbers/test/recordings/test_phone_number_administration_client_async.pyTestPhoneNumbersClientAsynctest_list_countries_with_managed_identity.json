@@ -6,11 +6,11 @@
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "131",
+        "Content-Length": "226",
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "azsdk-python-identity/1.13.0b1 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.14.0b2 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "client_id=sanitized\u0026client_secret=sanitized\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fcommunication.azure.com%2F%2F.default",
+      "RequestBody": "client_id=sanitized\u0026client_secret=sanitized\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fcommunication.azure.com%2F%2F.default\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
@@ -24,7 +24,6 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-ests-server": "sanitized",
-        "x-ms-httpver": "1.1",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -35,51 +34,144 @@
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/countries?skip=0\u0026api-version=2022-12-01",
+      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/countries?skip=0\u0026api-version=2023-05-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "api-supported-versions": "2022-12-01",
+        "api-supported-versions": "2022-12-01, 2022-12-02-preview2, 2023-05-01-preview",
+        "Cache-Control": "max-age=21600, private, stale-while-revalidate=86400",
+        "Content-Length": "1539",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
-        "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "2028ms"
+        "X-Processing-Time": "2083ms"
       },
       "ResponseBody": {
         "countries": [
           {
+            "localizedName": "Argentina",
+            "countryCode": "AR"
+          },
+          {
+            "localizedName": "Brazil",
+            "countryCode": "BR"
+          },
+          {
             "localizedName": "Canada",
             "countryCode": "CA"
+          },
+          {
+            "localizedName": "Chile",
+            "countryCode": "CL"
+          },
+          {
+            "localizedName": "China",
+            "countryCode": "CN"
+          },
+          {
+            "localizedName": "Colombia",
+            "countryCode": "CO"
           },
           {
             "localizedName": "Denmark",
             "countryCode": "DK"
           },
           {
+            "localizedName": "Finland",
+            "countryCode": "FI"
+          },
+          {
+            "localizedName": "France",
+            "countryCode": "FR"
+          },
+          {
+            "localizedName": "Hong Kong SAR",
+            "countryCode": "HK"
+          },
+          {
+            "localizedName": "Indonesia",
+            "countryCode": "ID"
+          },
+          {
             "localizedName": "Ireland",
             "countryCode": "IE"
+          },
+          {
+            "localizedName": "Israel",
+            "countryCode": "IL"
           },
           {
             "localizedName": "Italy",
             "countryCode": "IT"
           },
           {
+            "localizedName": "Korea",
+            "countryCode": "KR"
+          },
+          {
+            "localizedName": "Malaysia",
+            "countryCode": "MY"
+          },
+          {
+            "localizedName": "Mexico",
+            "countryCode": "MX"
+          },
+          {
+            "localizedName": "Netherlands",
+            "countryCode": "NL"
+          },
+          {
+            "localizedName": "New Zealand",
+            "countryCode": "NZ"
+          },
+          {
+            "localizedName": "Philippines",
+            "countryCode": "PH"
+          },
+          {
+            "localizedName": "Poland",
+            "countryCode": "PL"
+          },
+          {
             "localizedName": "Puerto Rico",
             "countryCode": "PR"
           },
           {
+            "localizedName": "Saudi Arabia",
+            "countryCode": "SA"
+          },
+          {
+            "localizedName": "Singapore",
+            "countryCode": "SG"
+          },
+          {
+            "localizedName": "South Africa",
+            "countryCode": "ZA"
+          },
+          {
             "localizedName": "Sweden",
             "countryCode": "SE"
+          },
+          {
+            "localizedName": "Taiwan",
+            "countryCode": "TW"
+          },
+          {
+            "localizedName": "Thailand",
+            "countryCode": "TH"
+          },
+          {
+            "localizedName": "United Arab Emirates",
+            "countryCode": "AE"
           },
           {
             "localizedName": "United Kingdom",
