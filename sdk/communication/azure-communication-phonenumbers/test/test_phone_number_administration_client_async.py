@@ -122,7 +122,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                 capabilities,
                 polling=True
             )
-        # assert poller.result()
+        assert poller.result()
 
     @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
     @recorded_by_proxy_async
@@ -139,7 +139,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                 capabilities,
                 polling=True
             )
-        # assert poller.result()
+        assert poller.result()
 
     @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
     @pytest.mark.skipif(SKIP_UPDATE_CAPABILITIES_TESTS, reason=SKIP_UPDATE_CAPABILITIES_TESTS_REASON)

@@ -24,7 +24,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "271ms"
+        "X-Processing-Time": "231ms"
       },
       "ResponseBody": {
         "phoneNumberLocalities": [
@@ -756,7 +756,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "291ms"
+        "X-Processing-Time": "956ms"
       },
       "ResponseBody": {
         "phoneNumberLocalities": [
