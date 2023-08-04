@@ -101,13 +101,12 @@ class SharedAccessSignature(object):
         :rtype: str
         """
         sas = _SharedAccessHelper()
-        sas.add_base(
-            permission, expiry, start, ip_address_or_range, protocol, self.x_ms_version
-        )
+        sas.add_base(permission, expiry, start, ip_address_or_range, protocol, self.x_ms_version)
         sas.add_account(services, resource_types)
         sas.add_account_signature(self.account_name, self.account_key)
 
         return sas.get_token()
+
 
 # cspell:ignoreRegExp rsc.
 class QueryStringConstants(object):
@@ -201,9 +200,7 @@ class _SharedAccessHelper(object):
         content_type,
     ):
         self._add_query(QueryStringConstants.SIGNED_CACHE_CONTROL, cache_control)
-        self._add_query(
-            QueryStringConstants.SIGNED_CONTENT_DISPOSITION, content_disposition
-        )
+        self._add_query(QueryStringConstants.SIGNED_CONTENT_DISPOSITION, content_disposition)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_ENCODING, content_encoding)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_LANGUAGE, content_language)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_TYPE, content_type)
@@ -273,10 +270,4 @@ class _SharedAccessHelper(object):
         )
 
     def get_token(self) -> str:
-        return "&".join(
-            [
-                f"{n}={url_quote(v)}"
-                for n, v in self.query_dict.items()
-                if v is not None
-            ]
-        )
+        return "&".join([f"{n}={url_quote(v)}" for n, v in self.query_dict.items() if v is not None])

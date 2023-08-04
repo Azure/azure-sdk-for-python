@@ -22,7 +22,6 @@ except ImportError:
 
 
 class TablesEntityDatetime(datetime):
-
     @property
     def tables_service_value(self):
         try:
@@ -60,13 +59,9 @@ def _from_entity_datetime(value):
     # Cosmos returns this with a decimal point that throws an error on deserialization
     cleaned_value = clean_up_dotnet_timestamps(value)
     try:
-        dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
-            tzinfo=timezone.utc
-        )
+        dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
     except ValueError:
-        dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(
-            tzinfo=timezone.utc
-        )
+        dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
     dt_obj._service_value = value  # pylint:disable=protected-access,assigning-non-slot
     return dt_obj
 
@@ -98,7 +93,7 @@ def _from_entity_guid(value):
 
 def _from_entity_str(value: Union[str, bytes]) -> str:
     if isinstance(value, bytes):
-        return value.decode('utf-8')
+        return value.decode("utf-8")
     return value
 
 
@@ -181,7 +176,7 @@ def _convert_to_entity(entry_element):
         if isinstance(value, int) and mtype is None:
             mtype = EdmType.INT32
 
-            if value >= 2 ** 31 or value < (-(2 ** 31)):
+            if value >= 2**31 or value < (-(2**31)):
                 mtype = EdmType.INT64
 
         # Add type for String
@@ -212,13 +207,13 @@ def _convert_to_entity(entry_element):
         if not etag:
             etag = "W/\"datetime'" + url_quote(timestamp) + "'\""
         timestamp = _from_entity_datetime(timestamp)
-    odata.update({'etag': etag, 'timestamp': timestamp})
+    odata.update({"etag": etag, "timestamp": timestamp})
     entity._metadata = odata  # pylint: disable=protected-access
     return entity
 
 
 def _extract_etag(response):
-    """ Extracts the etag from the response headers.
+    """Extracts the etag from the response headers.
 
     :param response: The PipelineResponse object.
     :type response: ~azure.core.pipeline.PipelineResponse
@@ -255,16 +250,12 @@ def _normalize_headers(headers):
     return normalized
 
 
-def _return_headers_and_deserialized(
-    response, deserialized, response_headers
-):  # pylint: disable=unused-argument
+def _return_headers_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return _normalize_headers(response_headers), deserialized
 
 
-def _return_context_and_deserialized(
-    response, deserialized, response_headers
-):  # pylint: disable=unused-argument
-    return response.context['location_mode'], deserialized, response_headers
+def _return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+    return response.context["location_mode"], deserialized, response_headers
 
 
 def _trim_service_metadata(metadata: Dict[str, str], content: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
@@ -273,7 +264,7 @@ def _trim_service_metadata(metadata: Dict[str, str], content: Optional[Dict[str,
         "etag": metadata.pop("etag", None),
         "version": metadata.pop("version", None),
     }
-    preference = metadata.pop('preference_applied', None)
+    preference = metadata.pop("preference_applied", None)
     if preference:
         result["preference_applied"] = preference
         result["content"] = content  # type: ignore

@@ -11,7 +11,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from .._exceptions import CredentialUnavailableError
 from .._constants import AzureAuthorityHosts, AZURE_VSCODE_CLIENT_ID, EnvironmentVariables
-from .._internal import normalize_authority, validate_tenant_id
+from .._internal import normalize_authority, validate_tenant_id, within_dac
 from .._internal.aad_client import AadClient, AadClientBase
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.decorators import log_get_token
@@ -29,7 +29,6 @@ class _VSCodeCredentialBase(abc.ABC):
         super(_VSCodeCredentialBase, self).__init__()
 
         user_settings = get_user_settings()
-        self._is_chained = kwargs.pop("is_chained", False)
         self._cloud = user_settings.get("azure.cloud", "AzureCloud")
         self._refresh_token = None
         self._unavailable_reason = ""
@@ -162,7 +161,7 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
                 " to troubleshoot this issue."
             )
             raise CredentialUnavailableError(message=error_message)
-        if self._is_chained:
+        if within_dac.get():
             try:
                 token = super(VisualStudioCodeCredential, self).get_token(*scopes, **kwargs)
                 return token

@@ -567,11 +567,9 @@ class EventDataBatch(object):
 
         self._count = 0
         self._internal_events: List[Union[EventData, AmqpAnnotatedMessage]] = []
-        self._uamqp_message = (
-            None
-            if PyamqpTransport.TIMEOUT_FACTOR == self._amqp_transport.TIMEOUT_FACTOR
-            else self._message
-        )
+        self._uamqp_message: Optional[Union[BatchMessage, LegacyBatchMessage]] = None
+        if self._amqp_transport.KIND == "uamqp":
+            self._uamqp_message = self._message
 
     def __repr__(self) -> str:
         batch_repr = (

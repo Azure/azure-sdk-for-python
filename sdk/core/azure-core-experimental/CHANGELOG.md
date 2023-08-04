@@ -1,14 +1,11 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.0b4 (2023-08-03)
 
 ### Bugs Fixed
 
-### Other Changes
+- Create new httpx client when used without "with" ([#31362](https://github.com/Azure/azure-sdk-for-python/pull/31370))
+- Fix httpx sample with right API name
 
 ## 1.0.0b3 (2023-07-06)
 

@@ -3,6 +3,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 import azure.ai.ml._schema._datastore as DatastoreSchemaDir
 from azure.ai.ml import load_datastore
+from azure.ai.ml._restclient.v2023_04_01_preview.models import OneLakeDatastore as RestOneLakeDatastore
 from azure.ai.ml._restclient.v2022_10_01_preview import models as models_preview
 from azure.ai.ml._restclient.v2022_10_01.models import AzureBlobDatastore as RestAzureBlobDatastore
 from azure.ai.ml._restclient.v2022_10_01.models import AzureDataLakeGen1Datastore as RestAzureDataLakeGen1Datastore
@@ -16,6 +17,7 @@ from azure.ai.ml.entities import (
     AzureDataLakeGen1Datastore,
     AzureDataLakeGen2Datastore,
     AzureFileDatastore,
+    OneLakeDatastore,
     Datastore,
 )
 from azure.ai.ml.entities._credentials import (
@@ -243,6 +245,37 @@ class TestDatastore:
         assert ds_properties.filesystem == cfg["filesystem"]
         self.assert_rest_internal_service_principal_equal(ds_properties.credentials, internal_credential)
         # test the REST to internal translation
+        internal_ds_from_rest = Datastore._from_rest_object(datastore_resource)
+        assert internal_ds_from_rest == internal_ds
+
+    def test_one_lake_schema(self):
+        test_path = "./tests/test_configs/datastore/one_lake.yml"
+        cfg = load_yaml(test_path)
+        internal_ds = load_datastore(test_path)
+        assert isinstance(internal_ds, OneLakeDatastore)
+        assert cfg["artifact"] == internal_ds.artifact
+
+        cfg_credentials = cfg["credentials"]
+        internal_credentials = internal_ds.credentials
+        assert isinstance(internal_credentials, ServicePrincipalConfiguration)
+        assert cfg_credentials["tenant_id"] == internal_credentials.tenant_id
+        assert cfg_credentials["client_id"] == internal_credentials.client_id
+        assert cfg_credentials["client_secret"] == internal_credentials.client_secret
+
+        assert cfg["one_lake_workspace_name"] == internal_ds.one_lake_workspace_name
+        assert cfg["endpoint"] == internal_ds.endpoint
+
+        # test REST translation
+        datastore_resource = internal_ds._to_rest_object()
+        datastore_resource.name = internal_ds.name
+        ds_properties = datastore_resource.properties
+        assert ds_properties
+        assert isinstance(ds_properties, RestOneLakeDatastore)
+        assert ds_properties.one_lake_workspace_name == cfg["one_lake_workspace_name"]
+        assert ds_properties.endpoint == cfg["endpoint"]
+        self.assert_rest_internal_service_principal_equal(ds_properties.credentials, internal_credentials)
+
+        # test REST to internal translation
         internal_ds_from_rest = Datastore._from_rest_object(datastore_resource)
         assert internal_ds_from_rest == internal_ds
 

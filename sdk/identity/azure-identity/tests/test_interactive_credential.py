@@ -12,6 +12,7 @@ from azure.identity import (
 )
 from azure.identity._internal import InteractiveCredential
 from azure.identity._constants import EnvironmentVariables
+from msal import TokenCache
 import pytest
 from urllib.parse import urlparse
 from unittest.mock import Mock, patch
@@ -202,24 +203,52 @@ def test_get_token_wraps_exceptions():
     assert msal_app.acquire_token_silent_with_error.call_count == 1, "credential didn't attempt silent auth"
 
 
-def test_token_cache():
+def test_token_cache_persistent():
     """the credential should default to an in memory cache, and optionally use a persistent cache"""
 
     class TestCredential(InteractiveCredential):
         def __init__(self, **kwargs):
             super(TestCredential, self).__init__(client_id="...", **kwargs)
 
-        def _request_token(self, *_, **__):
-            pass
+        def _request_token(self, *_, **kwargs):
+            self._get_app(**kwargs)
+            return build_aad_response(
+                access_token="foo",
+                id_token_claims=id_token_claims(
+                    aud="...",
+                    iss="http://localhost/tenant",
+                    sub="subject",
+                    preferred_username="...",
+                    tenant_id="...",
+                    object_id="...",
+                ),
+            )
 
     with patch("azure.identity._internal.msal_credentials._load_persistent_cache") as load_persistent_cache:
-        with patch("azure.identity._internal.msal_credentials.msal") as mock_msal:
-            TestCredential()
+        credential = TestCredential(
+            cache_persistence_options=TokenCachePersistenceOptions(),
+        )
         assert not load_persistent_cache.called
-        assert mock_msal.TokenCache.call_count == 1
 
-        TestCredential(cache_persistence_options=TokenCachePersistenceOptions())
+        credential.get_token("scope")
         assert load_persistent_cache.call_count == 1
+        assert credential._cache is not None
+        assert credential._cae_cache is None
+
+        credential.get_token("scope", enable_cae=True)
+        assert load_persistent_cache.call_count == 2
+        assert credential._cae_cache is not None
+
+        credential2 = TestCredential()
+        assert credential2._cache is None
+        assert credential2._cae_cache is None
+
+        credential2.get_token("scope")
+        assert isinstance(credential2._cache, TokenCache)
+        assert credential2._cae_cache is None
+
+        credential2.get_token("scope", enable_cae=True)
+        assert isinstance(credential2._cae_cache, TokenCache)
 
 
 def test_home_account_id_client_info():

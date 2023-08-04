@@ -20,7 +20,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_create_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
+        ts = TableServiceClient(
+            self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key
+        )
 
         table_name = self._get_table_reference()
 
@@ -36,7 +38,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_create_table_fail_on_exist(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
+        ts = TableServiceClient(
+            self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key
+        )
         table_name = self._get_table_reference()
 
         # Act
@@ -52,7 +56,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_query_tables_per_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
+        ts = TableServiceClient(
+            self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key
+        )
 
         table_name = "mytable"
 
@@ -80,7 +86,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_query_tables(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
+        ts = TableServiceClient(
+            self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key
+        )
         table = self._create_table(ts)
 
         # Act
@@ -88,7 +96,7 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
 
         # Assert
         assert tables is not None
-        assert len(tables) >=  1
+        assert len(tables) >= 1
         assert tables[0] is not None
         ts.delete_table(table.table_name)
 
@@ -96,7 +104,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_query_tables_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
+        ts = TableServiceClient(
+            self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key
+        )
         table = self._create_table(ts)
 
         # Act
@@ -105,7 +115,7 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
 
         # Assert
         assert tables is not None
-        assert len(tables) ==  1
+        assert len(tables) == 1
         ts.delete_table(table.table_name)
 
         self._delete_all_tables(ts)
@@ -114,8 +124,10 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_query_tables_with_num_results(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        prefix = 'listtable'
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
+        prefix = "listtable"
+        ts = TableServiceClient(
+            self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key
+        )
         table_list = []
         for i in range(0, 4):
             self._create_table(ts, prefix + str(i), table_list)
@@ -131,8 +143,8 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
             assert t.name.startswith(prefix)
 
         # Assert
-        assert len(small_page) ==  3
-        assert len(big_page) >=  4
+        assert len(small_page) == 3
+        assert len(big_page) >= 4
 
         self._delete_all_tables(ts)
 
@@ -140,8 +152,10 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_query_tables_with_marker(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
-        prefix = 'listtable'
+        ts = TableServiceClient(
+            self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key
+        )
+        prefix = "listtable"
         table_names = []
         for i in range(0, 4):
             self._create_table(ts, prefix + str(i), table_names)
@@ -151,16 +165,15 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
         # Act
         generator1 = ts.list_tables(results_per_page=2).by_page()
         next(generator1)
-        generator2 = ts.list_tables(results_per_page=2).by_page(
-            continuation_token=generator1.continuation_token)
+        generator2 = ts.list_tables(results_per_page=2).by_page(continuation_token=generator1.continuation_token)
         next(generator2)
 
         tables1 = generator1._current_page
         tables2 = generator2._current_page
 
         # Assert
-        assert len(tables1) ==  2
-        assert len(tables2) ==  2
+        assert len(tables1) == 2
+        assert len(tables2) == 2
         assert tables1 != tables2
 
         self._delete_all_tables(ts)
@@ -169,7 +182,9 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_delete_table_with_existing_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
+        ts = TableServiceClient(
+            self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key
+        )
         table = self._create_table(ts)
 
         # Act
@@ -181,37 +196,44 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
 
     @cosmos_decorator
     @recorded_by_proxy
-    def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_cosmos_account_name,
-                                                                 tables_primary_cosmos_account_key):
+    def test_delete_table_with_non_existing_table_fail_not_exist(
+        self, tables_cosmos_account_name, tables_primary_cosmos_account_key
+    ):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
+        ts = TableServiceClient(
+            self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key
+        )
         table_name = self._get_table_reference()
         ts.delete_table(table_name)
-        
+
     @cosmos_decorator
     @recorded_by_proxy
     def test_create_table_underscore_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
+        ts = TableServiceClient(
+            self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key
+        )
         table_name = "my_table"
 
         client = ts.create_table(table_name)
         assert client.table_name == table_name
-        
+
         ts.delete_table(table_name)
-        
+
     @cosmos_decorator
     @recorded_by_proxy
     def test_create_table_unicode_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
-        table_name = u'啊齄丂狛狜'
+        ts = TableServiceClient(
+            self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key
+        )
+        table_name = "啊齄丂狛狜"
 
         client = ts.create_table(table_name)
         assert client.table_name == table_name
-        
+
         ts.delete_table(table_name)
-    
+
     @cosmos_decorator
     @recorded_by_proxy
     def test_client_with_url_ends_with_table_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):

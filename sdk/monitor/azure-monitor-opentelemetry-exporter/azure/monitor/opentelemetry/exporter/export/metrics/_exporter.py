@@ -25,7 +25,10 @@ from opentelemetry.sdk.metrics.export import (
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 
-from azure.monitor.opentelemetry.exporter._constants import _AUTOCOLLECTED_INSTRUMENT_NAMES
+from azure.monitor.opentelemetry.exporter._constants import (
+    _AUTOCOLLECTED_INSTRUMENT_NAMES,
+    _METRIC_ENVELOPE_NAME,
+)
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
     MetricDataPoint,
@@ -167,7 +170,7 @@ def _convert_point_to_envelope(
     scope: Optional[InstrumentationScope] = None
 ) -> TelemetryItem:
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
-    envelope.name = "Microsoft.ApplicationInsights.Metric"
+    envelope.name = _METRIC_ENVELOPE_NAME
     envelope.tags.update(_utils._populate_part_a_fields(resource))
     namespace = None
     if scope is not None:
