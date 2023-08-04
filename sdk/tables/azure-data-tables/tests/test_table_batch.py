@@ -964,6 +964,17 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
 
         finally:
             self._tear_down()
+    
+    @tables_decorator
+    @recorded_by_proxy
+    def test_empty_batch(self, tables_storage_account_name, tables_primary_storage_account_key):
+        url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+            client.create_table()
+            result = client.submit_transaction([])
+            assert result == []
+            client.delete_table()
 
 
 class RequestCorrect(Exception):

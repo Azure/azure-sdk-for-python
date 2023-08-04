@@ -888,6 +888,17 @@ class TestTableBatchAsync(AzureRecordedTestCase, AsyncTableTestCase):
             assert len(entities) == transaction_count
         finally:
             await self._tear_down()
+    
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_empty_batch(self, tables_storage_account_name, tables_primary_storage_account_key):
+        url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        async with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+            await client.create_table()
+            result = await client.submit_transaction([])
+            assert result == []
+            await client.delete_table()
 
 
 class RequestCorrect(Exception):

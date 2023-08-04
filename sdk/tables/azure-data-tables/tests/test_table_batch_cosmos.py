@@ -13,7 +13,7 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, set_cus
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.data.tables import (
     EdmType,
     EntityProperty,
@@ -689,6 +689,18 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
 
         finally:
             self._tear_down()
+
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_empty_batch(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        table_name = self.get_resource_name("mytable")
+        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
+            client.create_table()
+            with pytest.raises(HttpResponseError) as ex:
+                client.submit_transaction([])
+            assert "The batch request body is malformed." in str(ex.value)
+            client.delete_table()
 
 
 class TestBatchCosmosUnitTests(TableTestCase):
