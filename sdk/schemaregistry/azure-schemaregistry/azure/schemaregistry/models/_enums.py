@@ -6,20 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._client import SchemaRegistryClient
-from ._version import VERSION
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
-__version__ = VERSION
 
-try:
-    from ._patch import __all__ as _patch_all
-    from ._patch import *  # pylint: disable=unused-wildcard-import
-except ImportError:
-    _patch_all = []
-from ._patch import patch_sdk as _patch_sdk
-__all__ = [
-    'SchemaRegistryClient',
-]
-__all__.extend([p for p in _patch_all if p not in __all__])
+class ContentTypeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ContentTypeType.
+    """
 
-_patch_sdk()
+    APPLICATION_JSON;_SERIALIZATION=_AVRO = "application/json; serialization=Avro"
+    APPLICATION_JSON;_SERIALIZATION=JSON = "application/json; serialization=json"
+    TEXT_PLAIN;_CHARSET=UTF_8 = "text/plain; charset=utf-8"

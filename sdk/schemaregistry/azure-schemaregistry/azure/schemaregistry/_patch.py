@@ -1,53 +1,189 @@
-# --------------------------------------------------------------------------
-#
-# Copyright (c) Microsoft Corporation. All rights reserved.
-#
-# The MIT License (MIT)
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the ""Software""), to
-# deal in the Software without restriction, including without limitation the
-# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-# sell copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-# IN THE SOFTWARE.
-#
-# --------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+"""Customize generated code here.
+
+Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+"""
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING, Union, overload, cast, IO, Dict
+from typing import (
+    cast,
+    Tuple,
+    Mapping,
+    Dict,
+    TYPE_CHECKING,
+    Iterator,
+    AsyncIterator,
+    Union,
+    List,
+    Any,
+    overload,
+    IO
+)
 from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
-from ._utils import (
-    get_http_request_kwargs,
-    get_case_insensitive_format,
-    get_content_type,
-)
-from ._common._constants import SchemaFormat, DEFAULT_VERSION
-from ._common._schema import Schema, SchemaProperties
-from ._common._response_handlers import (
-    prepare_schema_result,
-    prepare_schema_properties_result,
-)
-from ._generated._client import AzureSchemaRegistry
-
+from ._client import SchemaRegistryClient as AzureSchemaRegistry
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from azure.core.rest import HttpResponse
+    from azure.core.pipeline import PipelineResponse
+    from azure.core.rest import HttpResponse, AsyncHttpResponse
 
 
+class SchemaProperties(object):
+    """
+    Meta properties of a schema.
+
+    :ivar id: References specific schema in registry namespace.
+    :vartype id: str
+    :ivar format: Format for the schema being stored.
+    :vartype format: ~azure.schemaregistry.SchemaFormat
+    :ivar group_name: Schema group under which schema is stored.
+    :vartype group_name: str
+    :ivar name: Name of schema.
+    :vartype name: str
+    :ivar version: Version of schema.
+    :vartype version: int
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.pop("id")
+        self.format = kwargs.pop("format")
+        self.group_name = kwargs.pop("group_name")
+        self.name = kwargs.pop("name")
+        self.version = kwargs.pop("version")
+
+    def __repr__(self):
+        return (
+            f"SchemaProperties(id={self.id}, format={self.format}, "
+            f"group_name={self.group_name}, name={self.name}, version={self.version})"[
+                :1024
+            ]
+        )
+
+class Schema(object):
+    """
+    The schema content of a schema, along with id and meta properties.
+
+    :ivar definition: The content of the schema.
+    :vartype definition: str
+    :ivar properties: The properties of the schema.
+    :vartype properties: SchemaProperties
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.definition = kwargs.pop("definition")
+        self.properties = kwargs.pop("properties")
+
+    def __repr__(self):
+        return "Schema(definition={}, properties={})".format(
+            self.definition, self.properties
+        )[:1024]
+
+class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """
+    Represents the format of the schema to be stored by the Schema Registry service.
+    """
+
+    AVRO = "Avro"
+    """Represents the Apache Avro schema format."""
+
+    JSON = "Json"
+    """Represents the JSON schema format."""
+
+    CUSTOM = "Custom"
+    """Represents a custom schema format."""
+
+class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """
+    Represents the Schema Registry API version to use for requests.
+    """
+
+    V2021_10 = "2021-10"
+    V2022_10 = "2022-10"
+    """This is the default version."""
+
+DEFAULT_VERSION = ApiVersion.V2022_10
+
+
+###### Response Handlers ######
+def _parse_schema_properties_dict(
+    response_headers: Mapping[str, Union[str, int]]
+) -> Dict[str, Union[str, int]]:
+    return {
+        "id": response_headers["Schema-Id"],
+        "group_name": response_headers["Schema-Group-Name"],
+        "name": response_headers["Schema-Name"],
+        "version": int(response_headers["Schema-Version"]),
+    }
+
+def _get_format(content_type: str) -> SchemaFormat:
+    # pylint:disable=redefined-builtin
+    try:
+        format = content_type.split("serialization=")[1]
+        try:
+            format = SchemaFormat(format)
+        except ValueError:
+            format = SchemaFormat(format.capitalize())
+    except IndexError:
+        format = SchemaFormat.CUSTOM
+    return format
+
+def prepare_schema_properties_result(  # pylint:disable=unused-argument,redefined-builtin
+    format: str,
+    pipeline_response: "PipelineResponse",
+    deserialized: Union[Iterator[bytes], AsyncIterator[bytes]],
+    response_headers: Mapping[str, Union[str, int]],
+) -> Dict[str, Union[str, int]]:
+    properties_dict = _parse_schema_properties_dict(response_headers)
+    properties_dict["format"] = SchemaFormat(format)
+    pipeline_response.http_response.raise_for_status()
+    return properties_dict
+
+
+def prepare_schema_result(  # pylint:disable=unused-argument
+    pipeline_response: "PipelineResponse",
+    deserialized: Union[Iterator[bytes], AsyncIterator[bytes]],
+    response_headers: Mapping[str, Union[str, int]],
+) -> Tuple[Union["HttpResponse", "AsyncHttpResponse"], Dict[str, Union[int, str]]]:
+    properties_dict = _parse_schema_properties_dict(response_headers)
+    properties_dict["format"] = _get_format(
+        cast(str, response_headers.get("Content-Type"))
+    )
+    pipeline_response.http_response.raise_for_status()
+    return pipeline_response.http_response, properties_dict
+
+
+###### Helper Functions ######
+def get_http_request_kwargs(kwargs):
+    http_request_keywords = ["params", "headers", "json", "data", "files"]
+    http_request_kwargs = {
+        key: kwargs.pop(key, None) for key in http_request_keywords if key in kwargs
+    }
+    return http_request_kwargs
+
+def get_content_type(format: str):  # pylint:disable=redefined-builtin
+    if format.lower() == SchemaFormat.CUSTOM.value.lower():
+        return "text/plain; charset=utf-8"
+    return f"application/json; serialization={format}"
+
+def get_case_insensitive_format(
+    format: Union[str, SchemaFormat]  # pylint:disable=redefined-builtin
+) -> str:
+    try:
+        format = cast(SchemaFormat, format)
+        format = format.value
+    except AttributeError:
+        pass
+    return format.capitalize()
+
+
+###### Wrapper Class ######
 class SchemaRegistryClient(object):
     """
     SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema Registry service.
@@ -276,3 +412,18 @@ class SchemaRegistryClient(object):
             )
         )
         return SchemaProperties(**schema_properties)
+
+def patch_sdk():
+    """Do not remove from this file.
+
+    `patch_sdk` is a last resort escape hatch that allows you to do customizations
+    you can't accomplish using the techniques described in
+    https://aka.ms/azsdk/python/dpcodegen/python/customize
+    """
+
+__all__: List[str] = [
+    "ApiVersion",
+    "SchemaFormat",
+    "Schema",
+    "SchemaProperties",
+]  # Add all objects you want publicly available to users at this package level
