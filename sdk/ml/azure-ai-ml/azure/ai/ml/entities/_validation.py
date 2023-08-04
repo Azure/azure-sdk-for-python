@@ -11,7 +11,7 @@ import os.path
 import typing
 from os import PathLike
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import msrest
 import pydash
@@ -32,14 +32,14 @@ module_logger = logging.getLogger(__name__)
 class Diagnostic(object):
     """Represents a diagnostic of an asset validation error with the location info."""
 
-    def __init__(self, yaml_path: str, message: str, error_code: str):
+    def __init__(self, yaml_path: str, message: str, error_code: str) -> None:
         """Init Diagnostic.
 
-        :param yaml_path: A dash path from root to the target element of the diagnostic. jobs.job_a.inputs.input_str
+        :keyword yaml_path: A dash path from root to the target element of the diagnostic. jobs.job_a.inputs.input_str
         :type yaml_path: str
-        :param message: Error message of diagnostic.
+        :keyword message: Error message of diagnostic.
         :type message: str
-        :param error_code: Error code of diagnostic.
+        :keyword error_code: Error code of diagnostic.
         :type error_code: str
         """
         self.yaml_path = yaml_path
@@ -81,46 +81,27 @@ class ValidationResult(object):
     is immutable.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._target_obj = None
         self._errors = []
         self._warnings = []
 
     @property
-    def error_messages(self):
-        """Return all messages of errors in the validation result.
-        For example, if repr(self) is:
-        {
-            "errors": [
-                {
-                    "path": "jobs.job_a.inputs.input_str",
-                    "message": "input_str is required",
-                    "value": None,
-                },
-                {
-                    "path": "jobs.job_a.inputs.input_str",
-                    "message": "input_str must be in the format of xxx",
-                    "value": None,
-                },
-                {
-                    "path": "settings.on_init",
-                    "message": "On_init job name job_b not exists in jobs.",
-                    "value": None,
-                },
-            ],
-            "warnings": [
-                {
-                    "path": "jobs.job_a.inputs.input_str",
-                    "message": "input_str is required",
-                    "value": None,
-                }
-            ]
-        }
-        then the error_messages will be:
-        {
-            "jobs.job_a.inputs.input_str": "input_str is required; input_str must be in the format of xxx",
-            "settings.on_init": "On_init job name job_b not exists in jobs.",
-        }
+    def error_messages(self) -> Dict:
+        """
+        Return all messages of errors in the validation result.
+
+        :return: A dictionary of error messages. The key is the yaml path of the error, and the value is the error
+            message.
+        :rtype: dict
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START validation_result]
+                :end-before: [END validation_result]
+                :language: markdown
+                :dedent: 8
         """
         messages = {}
         for diagnostic in self._errors:
@@ -131,10 +112,11 @@ class ValidationResult(object):
         return messages
 
     @property
-    def passed(self):
-        """Return whether the validation passed.
+    def passed(self) -> bool:
+        """Returns boolean indicating whether any errors were found.
 
-        If there is no error, then it passed.
+        :return: True if the validation passed, False otherwise.
+        :rtype: bool
         """
         return not self._errors
 
@@ -160,7 +142,7 @@ class ValidationResult(object):
                 result[diagnostic_type] = messages
         return result
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Get the string representation of the validation result."""
         return json.dumps(self._to_dict(), indent=2)
 

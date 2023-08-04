@@ -42,19 +42,21 @@ from azure.ai.ml._restclient.v2022_10_01.models import (
 from azure.ai.ml._restclient.v2022_10_01.models import (
     ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
 )
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
-)
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
-    WorkspaceConnectionApiKey as WorkspaceConnectionApiKey,
-)
+
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ConnectionAuthType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfigurationType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedIdentity as RestJobManagedIdentity
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
 from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
+)
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    WorkspaceConnectionApiKey as WorkspaceConnectionApiKey,
+)
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
@@ -71,7 +73,7 @@ class AccountKeyConfiguration(RestTranslatableMixin, DictMixin):
         self,
         *,
         account_key: str,
-    ):
+    ) -> None:
         self.type = camel_to_snake(CredentialsType.ACCOUNT_KEY)
         self.account_key = account_key
 
@@ -97,7 +99,7 @@ class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
         self,
         *,
         sas_token: str,
-    ):
+    ) -> None:
         super().__init__()
         self.type = camel_to_snake(CredentialsType.SAS)
         self.sas_token = sas_token
@@ -131,11 +133,20 @@ class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
 class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
     """Personal access token credentials.
 
-    :param pat: personal access token
+    :param pat: Personal access token.
     :type pat: str
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            :start-after: [START personal_access_token_configuration]
+            :end-before: [END personal_access_token_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a personal access token configuration for a WorkspaceConnection.
     """
 
-    def __init__(self, *, pat: str):
+    def __init__(self, *, pat: str) -> None:
         super().__init__()
         self.type = camel_to_snake(ConnectionAuthType.PAT)
         self.pat = pat
@@ -156,11 +167,11 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
 
 
 class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
-    """Username Password Credentials.
+    """Username and password credentials.
 
-    :param username: username
+    :param username: The username.
     :type username: str
-    :param password: password
+    :param password: The password.
     :type password: str
     """
 
@@ -169,7 +180,7 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
         *,
         username: str,
         password: str,
-    ):
+    ) -> None:
         super().__init__()
         self.type = camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
         self.username = username
@@ -194,13 +205,27 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
 
 
 class BaseTenantCredentials(RestTranslatableMixin, DictMixin, ABC):
+    """Base class for tenant credentials.
+
+    This class should not be instantiated directly. Instead, use one of its subclasses.
+
+    :param authority_url: The authority URL. If None specified, a URL will be retrieved from the metadata in the cloud.
+    :type authority_url: Optional[str]
+    :param resource_url: The resource URL.
+    :type resource_url: Optional[str]
+    :param tenant_id: The tenant ID.
+    :type tenant_id: Optional[str]
+    :param client_id: The client ID.
+    :type client_id: Optional[str]
+    """
+
     def __init__(
         self,
         authority_url: str = _get_active_directory_url_from_metadata(),
         resource_url: Optional[str] = None,
         tenant_id: Optional[str] = None,
         client_id: Optional[str] = None,
-    ):
+    ) -> None:
         super().__init__()
         self.authority_url = authority_url
         self.resource_url = resource_url
@@ -209,12 +234,20 @@ class BaseTenantCredentials(RestTranslatableMixin, DictMixin, ABC):
 
 
 class ServicePrincipalConfiguration(BaseTenantCredentials):
+    """Service Principal credentials configuration.
+
+    :param client_secret: The client secret.
+    :type client_secret: str
+    :keyword kwargs: Additional arguments to pass to the parent class.
+    :type kwargs: Optional[dict]
+    """
+
     def __init__(
         self,
         *,
         client_secret: str,
         **kwargs,
-    ):
+    ) -> None:
         super().__init__(**kwargs)
         self.type = camel_to_snake(CredentialsType.SERVICE_PRINCIPAL)
         self.client_secret = client_secret
@@ -280,7 +313,7 @@ class CertificateConfiguration(BaseTenantCredentials):
         certificate: Optional[str] = None,
         thumbprint: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         super().__init__(**kwargs)
         self.type = CredentialsType.CERTIFICATE
         self.certificate = certificate
@@ -379,12 +412,16 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
 
 
 class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
-    """Managed Identity Credentials.
+    """Managed Identity credential configuration.
 
-    :param client_id: client id, should be guid
-    :type client_id: str
-    :param resource_id: resource id
-    :type resource_id: str
+    :keyword client_id: The client ID of the managed identity.
+    :type client_id: Optional[str]
+    :keyword resource_id: The resource ID of the managed identity.
+    :type resource_id: Optional[str]
+    :keyword object_id: The object ID.
+    :type object_id: Optional[str]
+    :keyword principal_id: The principal ID.
+    :type principal_id: Optional[str]
     """
 
     def __init__(
@@ -394,7 +431,7 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
         resource_id: Optional[str] = None,
         object_id: Optional[str] = None,
         principal_id: Optional[str] = None,
-    ):
+    ) -> None:
         super().__init__()
         self.type = IdentityType.MANAGED_IDENTITY
         self.client_id = client_id
@@ -477,9 +514,19 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
 
 
 class UserIdentityConfiguration(_BaseIdentityConfiguration):
-    """User identity configuration."""
+    """User identity configuration.
 
-    def __init__(self):
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../samples/ml_samples_authentication.py
+            :start-after: [START user_identity_configuration]
+            :end-before: [END user_identity_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a UserIdentityConfiguration for a command().
+    """
+
+    def __init__(self) -> None:
         super().__init__()
         self.type = IdentityType.USER_IDENTITY
 
@@ -511,9 +558,19 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
 
 
 class AmlTokenConfiguration(_BaseIdentityConfiguration):
-    """AML Token identity configuration."""
+    """AzureML Token identity configuration.
 
-    def __init__(self):
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../samples/ml_samples_authentication.py
+            :start-after: [START aml_token_configuration]
+            :end-before: [END aml_token_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring an AmlTokenConfiguration for a command().
+    """
+
+    def __init__(self) -> None:
         super().__init__()
         self.type = IdentityType.AML_TOKEN
 
@@ -541,19 +598,17 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
 
 # This class will be used to represent Identity property on compute, endpoint, and registry
 class IdentityConfiguration(RestTranslatableMixin):
-    """Managed identity specification."""
+    """Identity configuration used to represent identity property on compute, endpoint, and registry resources.
+
+    :param type: The type of managed identity.
+    :type type: str
+    :param user_assigned_identities: A list of ManagedIdentityConfiguration objects.
+    :type user_assigned_identities: Optional[list[~azure.ai.ml.entities.ManagedIdentityConfiguration]]
+    """
 
     def __init__(
         self, *, type: str, user_assigned_identities: Optional[List[ManagedIdentityConfiguration]] = None, **kwargs
-    ):
-        """Managed identity specification.
-
-        :param type: Managed identity type, defaults to None
-        :type type: str, optional
-        :param user_assigned_identities: List of UserAssignedIdentity objects.
-        :type user_assigned_identities: list, optional
-        """
-
+    ) -> None:
         self.type = type
         self.user_assigned_identities = user_assigned_identities
         self.principal_id = kwargs.pop("principal_id", None)
@@ -691,9 +746,9 @@ class NoneCredentialConfiguration(RestTranslatableMixin):
 class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
     """Access Key Credentials.
 
-    :param access_key_id: access key id
+    :param access_key_id: The access key ID.
     :type access_key_id: str
-    :param secret_access_key: secret access key
+    :param secret_access_key: The secret access key.
     :type secret_access_key: str
     """
 
@@ -702,7 +757,7 @@ class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
         *,
         access_key_id: str,
         secret_access_key: str,
-    ):
+    ) -> None:
         super().__init__()
         self.type = camel_to_snake(ConnectionAuthType.ACCESS_KEY)
         self.access_key_id = access_key_id

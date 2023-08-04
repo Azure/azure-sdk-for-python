@@ -18,7 +18,7 @@ class SweepDistribution(ABC, RestTranslatableMixin):
 
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
-    :param type: Type of distribution.
+    :keyword type: Type of distribution.
     :type type: str
     """
 
@@ -65,7 +65,7 @@ class Choice(SweepDistribution):
     :type values: list[Union[float, str, dict]]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_choice_loguniform]
@@ -126,7 +126,7 @@ class Normal(SweepDistribution):
     :type sigma: float
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_randint_normal]
@@ -159,7 +159,7 @@ class LogNormal(Normal):
     :type sigma: float
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_lognormal_qlognormal]
@@ -185,7 +185,7 @@ class QNormal(Normal):
     :type q: int
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_qloguniform_qnormal]
@@ -214,11 +214,13 @@ class QLogNormal(QNormal):
     """QLogNormal distribution configuration.
 
     :param mu: Mean of the log of the distribution.
-    :type mu: float
+    :type mu: Optional[float]
     :param sigma: Standard deviation of the log of the distribution.
-    :type sigma: float
+    :type sigma: Optional[float]
+    :param q: Quantization factor.
+    :type q: Optional[int]
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_lognormal_qlognormal]
@@ -242,7 +244,7 @@ class Randint(SweepDistribution):
     :type upper: int
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_randint_normal]
@@ -274,7 +276,7 @@ class Uniform(SweepDistribution):
     :type max_value: float
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_uniform]
@@ -308,7 +310,6 @@ class LogUniform(Uniform):
     :type max_value: float
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_choice_loguniform]
@@ -327,14 +328,14 @@ class QUniform(Uniform):
     """QUniform distribution configuration.
 
     :param min_value: Minimum value of the distribution.
-    :type min_value: float
+    :type min_value: Optional[Union[int, float]]
     :param max_value: Maximum value of the distribution.
-    :type max_value: float
+    :type max_value: Optional[Union[int, float]]
     :param q: Quantization factor.
-    :type q: int
+    :type q: Optional[int]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_truncation_selection_policy]
@@ -367,12 +368,14 @@ class QLogUniform(QUniform):
     """QLogUniform distribution configuration.
 
     :param min_value: Minimum value of the log of the distribution.
-    :type min_value: float
+    :type min_value: Optional[float]
     :param max_value: Maximum value of the log of the distribution.
-    :type max_value: float
+    :type max_value: Optional[float]
+    :param q: Quantization factor.
+    :type q: Optional[int]
 
     .. admonition:: Example:
-        :class: tip
+
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_qloguniform_qnormal]
