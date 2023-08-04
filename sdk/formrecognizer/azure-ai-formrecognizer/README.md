@@ -1,4 +1,4 @@
-# Azure Document Intelligence (previously Form Recognizer) client library for Python
+# Azure Form Recognizer client library for Python
 
 Azure Document Intelligence (previously Form Recognizer) is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
 
@@ -27,7 +27,7 @@ Azure Document Intelligence (previously Form Recognizer) is a cloud service that
 
 ### Install the package
 
-Install the Azure Document Intelligence (previously Form Recognizer) client library for Python with [pip][pip]:
+Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
 pip install azure-ai-formrecognizer
@@ -56,25 +56,25 @@ This table shows the relationship between SDK versions and supported API version
 |2.1 | FormRecognizerClient and FormTrainingClient
 |2.0 | FormRecognizerClient and FormTrainingClient
 
-#### Create a Cognitive Services or Document Intelligence (Form Recognizer) resource
+#### Create a Cognitive Services or Form Recognizer resource
 
-Document Intelligence supports both [multi-service and single-service access][cognitive_resource_portal]. Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Document Intelligence access only, create a Document Intelligence (Form Recognizer) resource. Please note that you will need a single-service resource if you intend to use [Azure Active Directory authentication](#create-the-client-with-an-azure-active-directory-credential).
+Document Intelligence supports both [multi-service and single-service access][cognitive_resource_portal]. Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Document Intelligence access only, create a Form Recognizer resource. Please note that you will need a single-service resource if you intend to use [Azure Active Directory authentication](#create-the-client-with-an-azure-active-directory-credential).
 
 You can create either resource using: 
 
 * Option 1: [Azure Portal][cognitive_resource_portal].
 * Option 2: [Azure CLI][cognitive_resource_cli].
 
-Below is an example of how you can create a Document Intelligence (Form Recognizer) resource using the CLI:
+Below is an example of how you can create a Form Recognizer resource using the CLI:
 
 ```PowerShell
-# Create a new resource group to hold the Document Intelligence (Form Recognizer) resource
+# Create a new resource group to hold the Form Recognizer resource
 # if using an existing resource group, skip this step
 az group create --name <your-resource-name> --location <location>
 ```
 
 ```PowerShell
-# Create Document Intelligence (Form Recognizer)
+# Create form recognizer
 az cognitiveservices account create \
     --name <your-resource-name> \
     --resource-group <your-resource-group-name> \
@@ -93,12 +93,12 @@ An **endpoint** and **credential** are necessary to instantiate the client objec
 
 #### Get the endpoint
 
-You can find the endpoint for your Document Intelligence resource using the
+You can find the endpoint for your Form Recognizer resource using the
 [Azure Portal][azure_portal_get_endpoint]
 or [Azure CLI][azure_cli_endpoint_lookup]:
 
 ```bash
-# Get the endpoint for the Document Intelligence (Form Recognizer) resource
+# Get the endpoint for the Form Recognizer resource
 az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "properties.endpoint"
 ```
 
@@ -111,7 +111,7 @@ Custom subdomain: https://<resource-name>.cognitiveservices.azure.com/
 
 A regional endpoint is the same for every resource in a region. A complete list of supported regional endpoints can be consulted [here][regional_endpoints]. Please note that regional endpoints do not support AAD authentication.
 
-A custom subdomain, on the other hand, is a name that is unique to the Document Intelligence resource. They can only be used by [single-service resources][cognitive_resource_portal].
+A custom subdomain, on the other hand, is a name that is unique to the Form Recognizer resource. They can only be used by [single-service resources][cognitive_resource_portal].
 
 #### Get the API key
 
@@ -189,7 +189,7 @@ More information about analyzing documents, including supported features, locale
 - Creating a composed model from a collection of existing models.
 - Managing models created in your account.
 - Listing operations or getting a specific model operation created within the last 24 hours.
-- Copying a custom model from one Document Intelligence (previously Form Recognizer) resource to another.
+- Copying a custom model from one Form Recognizer resource to another.
 - Build and manage a custom classification model to classify the documents you process within your application.
 
 Please note that models can also be built using a graphical user interface such as [Document Intelligence Studio][fr-studio].
@@ -678,7 +678,7 @@ except ResourceNotFoundError:
 
 ### General
 
-Document Intelligence (previously Form Recognizer) client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
+Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
 Error codes and messages raised by the Document Intelligence service can be found in the [service documentation][fr-errors].
 
 ### Logging
@@ -703,7 +703,7 @@ describes available configurations for retries, logging, transport protocols, an
 
 ### More sample code
 
-See the [Sample README][sample_readme] for several code snippets illustrating common patterns used in the Document Intelligence (previously Form Recognizer) Python API.
+See the [Sample README][sample_readme] for several code snippets illustrating common patterns used in the Form Recognizer Python API.
 
 ### Additional documentation
 
