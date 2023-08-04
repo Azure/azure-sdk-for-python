@@ -92,7 +92,6 @@ class JsonSchemaEncoder(object):
         self._schema_registry_client = client
         self._validate = validate
         self._schema_group = group_name
-        self._schema_id_client_op = self._schema_registry_client.get_schema_properties
 
     def __enter__(self) -> "JsonSchemaEncoder":
         self._schema_registry_client.__enter__()
@@ -119,7 +118,7 @@ class JsonSchemaEncoder(object):
         :return: Schema Id
         :rtype: str
         """
-        schema_id = self._schema_id_client_op(
+        schema_id = self._schema_registry_client.get_schema_properties(
             self._schema_group, schema_name, schema_str, SchemaFormat.JSON.value, **kwargs
         ).id
         return schema_id

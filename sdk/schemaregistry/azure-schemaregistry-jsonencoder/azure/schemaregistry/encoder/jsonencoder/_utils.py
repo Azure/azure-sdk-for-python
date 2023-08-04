@@ -48,7 +48,6 @@ def get_loaded_schema(
         schema_str = schema
     except TypeError:
         # callable
-        encoder._schema_id_client_op = encoder._schema_registry_client.register_schema    # pylint: disable=protected-access
         try:
             schema_dict = schema(content)
         except Exception as exc:
