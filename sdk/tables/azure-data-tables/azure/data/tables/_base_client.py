@@ -298,7 +298,10 @@ class TablesBaseClient(AccountHostsMixin):
             _validate_tablename_error(decoded, table_name)
             raise decoded
 
-        parts = list(response.parts())
+        try:
+            parts = list(response.parts())
+        except IndexError:
+            return []
         error_parts = [p for p in parts if not 200 <= p.status_code < 300]
         if any(error_parts):
             if error_parts[0].status_code == 413:
