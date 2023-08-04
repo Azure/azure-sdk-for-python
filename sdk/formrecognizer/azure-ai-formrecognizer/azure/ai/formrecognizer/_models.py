@@ -3011,7 +3011,7 @@ class DocumentBarcode:
      "MicroQRCode", "Aztec", "DataMatrix", "MaxiCode"."""
     value: str
     """Barcode value."""
-    polygon: Sequence[Point]
+    polygon: Optional[Sequence[Point]]
     """Bounding polygon of the barcode."""
     span: DocumentSpan
     """Location of the barcode in the reading order concatenated content."""
@@ -3088,7 +3088,7 @@ class DocumentFormula:
     """Formula kind. Known values are "inline", "display"."""
     value: str
     """LaTex expression describing the formula."""
-    polygon: Sequence[Point]
+    polygon: Optional[Sequence[Point]]
     """Bounding polygon of the formula."""
     span: DocumentSpan
     """Location of the formula in the reading order concatenated content."""
@@ -4748,7 +4748,7 @@ class ResourceDetails:
 
     custom_document_models: CustomDocumentModelsDetails
     """Details regarding the custom models under the Form Recognizer resource."""
-    neural_document_model_quota: QuotaDetails
+    neural_document_model_quota: Optional[QuotaDetails]
     """Quota details regarding the custom neural document model builds under the Form Recognizer resource."""
 
     def __init__(
