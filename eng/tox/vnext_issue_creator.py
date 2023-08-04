@@ -107,11 +107,13 @@ def create_vnext_issue(package_name: str, check_type: Literal["mypy", "pylint", 
 
     title = f"{package_name} needs {error_type} updates for {check_type} version {version}"
     template = (
-        f"**ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. The build will begin to fail for this library if errors are not fixed."
+        f"**ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. "
+        f"The build will begin to fail for this library if errors are not fixed."
         f"\n\n**Library name:** {package_name}"
         f"\n**{check_type.capitalize()} version:** {version}"
         f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
-        f"\n**How to fix:** Run the `next-{check_type}` tox command at the library package-level and resolve the {error_type} errors.\n"
+        f"\n**How to fix:** Run the `next-{check_type}` tox command at the library package-level and resolve "
+        f"the {error_type} errors.\n"
         f"1) `../{package_name}>pip install tox<5`\n"
         f"2) `../{package_name}>tox run -e next-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
         f"See the {guide_link} for more information."

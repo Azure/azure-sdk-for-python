@@ -73,8 +73,8 @@ if __name__ == "__main__":
     try:
         check_call(commands)
     except CalledProcessError as error:
-        if args.next and in_ci() and is_check_enabled(args.target_package, "pyright"):
-            create_vnext_issue(args.target_package, "pyright")
+        if args.next and in_ci() and is_check_enabled(args.target_package, "pyright") and not is_typing_ignored(package_name):
+            create_vnext_issue(package_name, "pyright")
 
         print("See https://aka.ms/python/typing-guide for information.\n\n")
         raise error

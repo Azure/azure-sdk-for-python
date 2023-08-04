@@ -90,7 +90,7 @@ if __name__ == "__main__":
         except CalledProcessError as sample_err:
             sample_code_error = sample_err
 
-    if args.next and in_ci() and is_check_enabled(args.target_package, "mypy"):
+    if args.next and in_ci() and is_check_enabled(args.target_package, "mypy") and not is_typing_ignored(package_name):
         if src_code_error or sample_code_error:
             create_vnext_issue(package_name, "mypy")
 
