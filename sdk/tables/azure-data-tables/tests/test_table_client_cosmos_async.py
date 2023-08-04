@@ -239,7 +239,7 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
-        async with TableClient.from_table_url(sas_url, credential=DefaultAzureCredential()) as client:
+        async with TableClient.from_table_url(sas_url, credential=self.get_token_credential()) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
@@ -264,8 +264,9 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     async def test_client_with_token_credential(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         base_url = self.account_url(tables_cosmos_account_name, "table")
         table_name = self.get_resource_name("mytable")
+        default_azure_credential = self.get_token_credential()
 
-        async with TableServiceClient(base_url, credential=DefaultAzureCredential()) as client:
+        async with TableServiceClient(base_url, credential=default_azure_credential) as client:
             await client.create_table(table_name)
             name_filter = "TableName eq '{}'".format(table_name)
             count = 0
@@ -274,7 +275,7 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 count += 1
             assert count == 1
 
-        async with TableClient(base_url, table_name, credential=DefaultAzureCredential()) as client:
+        async with TableClient(base_url, table_name, credential=default_azure_credential) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
@@ -283,7 +284,7 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 pass
 
         async with TableClient.from_table_url(
-            f"{base_url}/{table_name}", credential=DefaultAzureCredential()
+            f"{base_url}/{table_name}", credential=default_azure_credential
         ) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",

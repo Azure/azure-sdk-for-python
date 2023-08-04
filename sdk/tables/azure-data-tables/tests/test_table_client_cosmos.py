@@ -233,7 +233,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
         ex_msg = "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature."
         assert ex_msg == str(ex.value)
 
-        with TableClient.from_table_url(sas_url, credential=DefaultAzureCredential()) as client:
+        with TableClient.from_table_url(sas_url, credential=self.get_token_credential()) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
@@ -258,14 +258,15 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
     def test_client_with_token_credential(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         base_url = self.account_url(tables_cosmos_account_name, "table")
         table_name = self.get_resource_name("mytable")
+        default_azure_credential = self.get_token_credential()
 
-        with TableServiceClient(base_url, credential=DefaultAzureCredential()) as client:
+        with TableServiceClient(base_url, credential=default_azure_credential) as client:
             client.create_table(table_name)
             name_filter = "TableName eq '{}'".format(table_name)
             result = client.query_tables(name_filter)
             assert len(list(result)) == 1
 
-        with TableClient(base_url, table_name, credential=DefaultAzureCredential()) as client:
+        with TableClient(base_url, table_name, credential=default_azure_credential) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
@@ -273,7 +274,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             for e in entities:
                 pass
 
-        with TableClient.from_table_url(f"{base_url}/{table_name}", credential=DefaultAzureCredential()) as client:
+        with TableClient.from_table_url(f"{base_url}/{table_name}", credential=default_azure_credential) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},

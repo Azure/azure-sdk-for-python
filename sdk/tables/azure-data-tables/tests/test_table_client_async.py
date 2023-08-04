@@ -269,7 +269,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             async for e in entities:
                 pass
 
-        async with TableClient.from_table_url(sas_url, credential=DefaultAzureCredential()) as client:
+        async with TableClient.from_table_url(sas_url, credential=self.get_token_credential()) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
@@ -283,8 +283,9 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
     async def test_client_with_token_credential(self, tables_storage_account_name, tables_primary_storage_account_key):
         base_url = self.account_url(tables_storage_account_name, "table")
         table_name = self.get_resource_name("mytable")
+        default_azure_credential = self.get_token_credential()
 
-        async with TableServiceClient(base_url, credential=DefaultAzureCredential()) as client:
+        async with TableServiceClient(base_url, credential=default_azure_credential) as client:
             await client.create_table(table_name)
             name_filter = "TableName eq '{}'".format(table_name)
             count = 0
@@ -293,7 +294,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 count += 1
             assert count == 1
 
-        async with TableClient(base_url, table_name, credential=DefaultAzureCredential()) as client:
+        async with TableClient(base_url, table_name, credential=default_azure_credential) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
                 parameters={"pk": "dummy-pk"},
@@ -302,7 +303,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 pass
 
         async with TableClient.from_table_url(
-            f"{base_url}/{table_name}", credential=DefaultAzureCredential()
+            f"{base_url}/{table_name}", credential=default_azure_credential
         ) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",

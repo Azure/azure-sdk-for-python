@@ -18,10 +18,6 @@ stages:
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         STORAGE_ACCOUNT_NAME: $(python-storage-storage-account-name)
         STORAGE_ACCOUNT_KEY: $(python-storage-storage-account-key)
         BLOB_STORAGE_ACCOUNT_NAME: $(python-storage-blob-storage-account-name)
