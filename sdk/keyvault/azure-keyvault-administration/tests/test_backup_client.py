@@ -50,7 +50,7 @@ class TestBackupClientTests(KeyVaultTestCase):
         sas_token = kwargs.pop("sas_token")
 
         # backup the vault
-        backup_poller = client.begin_backup(container_uri, sas_token)
+        backup_poller = client.begin_backup(blob_storage_url=container_uri, sas_token=sas_token)
 
         # create a new poller from a continuation token
         token = backup_poller.continuation_token()
@@ -62,7 +62,7 @@ class TestBackupClientTests(KeyVaultTestCase):
         assert backup_operation.folder_url == rehydrated_operation.folder_url
 
         # restore the backup
-        restore_poller = client.begin_restore(backup_operation.folder_url, sas_token)
+        restore_poller = client.begin_restore(folder_url=backup_operation.folder_url, sas_token=sas_token)
 
         # create a new poller from a continuation token
         token = restore_poller.continuation_token()

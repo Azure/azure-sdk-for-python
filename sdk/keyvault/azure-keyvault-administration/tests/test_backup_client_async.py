@@ -50,7 +50,7 @@ class TestBackupClientTests(KeyVaultTestCase):
         # backup the vault
         container_uri = kwargs.pop("container_uri")
         sas_token = kwargs.pop("sas_token")
-        backup_poller = await client.begin_backup(container_uri, sas_token)
+        backup_poller = await client.begin_backup(blob_storage_url=container_uri, sas_token=sas_token)
 
         # create a new poller from a continuation token
         token = backup_poller.continuation_token()
