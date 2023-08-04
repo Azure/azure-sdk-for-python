@@ -3011,7 +3011,7 @@ class DocumentBarcode:
      "MicroQRCode", "Aztec", "DataMatrix", "MaxiCode"."""
     value: str
     """Barcode value."""
-    polygon: Optional[Sequence[Point]]
+    polygon: Sequence[Point]
     """Bounding polygon of the barcode."""
     span: DocumentSpan
     """Location of the barcode in the reading order concatenated content."""
@@ -3088,7 +3088,7 @@ class DocumentFormula:
     """Formula kind. Known values are "inline", "display"."""
     value: str
     """LaTex expression describing the formula."""
-    polygon: Optional[Sequence[Point]]
+    polygon: Sequence[Point]
     """Bounding polygon of the formula."""
     span: DocumentSpan
     """Location of the formula in the reading order concatenated content."""
