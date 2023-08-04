@@ -44,9 +44,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
     """DocumentModelAdministrationClient is the Form Recognizer interface to use for building
     and managing models.
 
-    It provides methods for building models, as well as methods for viewing and deleting models,
-    viewing model operations, accessing account information, copying models to another
-    Form Recognizer resource, and composing a new model from a collection of existing models.
+    It provides methods for building models and classifiers, as well as methods for viewing and
+    deleting models and classifiers, viewing model and classifier operations, accessing account
+    information, copying models to another Form Recognizer resource, and composing a new model
+    from a collection of existing models.
 
     .. note:: DocumentModelAdministrationClient should be used with API versions
         2022-08-31 and up. To use API versions <=v2.1, instantiate a FormTrainingClient.
