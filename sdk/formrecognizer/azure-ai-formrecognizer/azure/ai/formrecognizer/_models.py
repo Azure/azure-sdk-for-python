@@ -3187,9 +3187,9 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
     lines: Optional[List[DocumentLine]]
     """Extracted lines from the page, potentially containing both textual and
      visual elements."""
-    barcodes: Optional[List[DocumentBarcode]]
+    barcodes: List[DocumentBarcode]
     """Extracted barcodes from the page."""
-    formulas: Optional[List[DocumentFormula]]
+    formulas: List[DocumentFormula]
     """Extracted formulas from the page"""
 
     def __init__(self, **kwargs: Any) -> None:
