@@ -170,8 +170,49 @@ def patch_item(container, doc_id):
                                                  response["service_addition"]))
 
 
+def bulk_items(database):
+    print('\n1.10 Executing Bulk Item operations\n')
+    container = database.create_container_if_not_exists(id="bulk_container",
+                                                        partition_key=PartitionKey(path='/id'))
+    # We create three items to use for the sample.
+    container.create_item(get_sales_order("read_item"))
+    container.create_item(get_sales_order("delete_item"))
+    container.create_item(get_sales_order("replace_item"))
+
+    # We create our bulk operations
+    create_item_operation = {"operationType": "Create",
+                             "resourceBody": get_sales_order("create_item"),
+                             "partitionKey": "create_item"}
+    upsert_item_operation = {"operationType": "Upsert",
+                             "resourceBody": get_sales_order("upsert_item"),
+                             "partitionKey": "upsert_item"}
+    read_item_operation = {"operationType": "Read",
+                             "id": get_sales_order("read_item"),
+                             "partitionKey": "read_item"}
+    delete_item_operation = {"operationType": "Delete",
+                             "id": get_sales_order("delete_item"),
+                             "partitionKey": "delete_item"}
+    replace_item_operation = {"operationType": "Replace",
+                             "id": "replace_item",
+                             "partitionKey": "replace_item",
+                              "resourceBody": {"id": "replace_item", "message": "item was replaced"}}
+
+    # Put our operations into a list
+    bulk_operations = [
+        create_item_operation,
+        upsert_item_operation,
+        read_item_operation,
+        delete_item_operation,
+        replace_item_operation]
+
+    # Run that list of operations
+    bulk_response = container.bulk(bulk_operations)
+    # The bulk response is a list containing each batch of requests that ran.
+    # In this case all our results will be in the first batch index.
+    print("\nResult for the bulk operations: {}\n".format(bulk_response[0]))
+
 def delete_item(container, doc_id):
-    print('\n1.10 Deleting Item by Id\n')
+    print('\n1.11 Deleting Item by Id\n')
 
     response = container.delete_item(item=doc_id, partition_key=doc_id)
 
@@ -179,7 +220,7 @@ def delete_item(container, doc_id):
 
 
 def delete_all_items_by_partition_key(db, partitionkey):
-    print('\n1.11 Deleting all Items by Partition Key\n')
+    print('\n1.12 Deleting all Items by Partition Key\n')
 
     # A container with a partition key that is different from id is needed
     container = db.create_container_if_not_exists(id="Partition Key Delete Container",
@@ -221,7 +262,7 @@ def delete_all_items_by_partition_key(db, partitionkey):
 
 
 def query_items_with_continuation_token_size_limit(container, doc_id):
-    print('\n1.12 Query Items With Continuation Token Size Limit.\n')
+    print('\n1.13 Query Items With Continuation Token Size Limit.\n')
 
     size_limit_in_kb = 8
     sales_order = get_sales_order(doc_id)
@@ -306,6 +347,7 @@ def run_sample():
         upsert_item(container, 'SalesOrder1')
         conditional_patch_item(container, 'SalesOrder1')
         patch_item(container, 'SalesOrder1')
+        bulk_items(db)
         delete_item(container, 'SalesOrder1')
         delete_all_items_by_partition_key(db, "CompanyA")
         query_items_with_continuation_token_size_limit(container, 'SalesOrder1')

@@ -153,7 +153,7 @@ Currently, the features below are **not supported**. For alternatives options, c
 
 * Group By queries
 * Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C)
-* Bulk/Transactional batch processing
+* Transactional batch processing
 * Direct TCP Mode access
 * Continuation token support for aggregate cross-partition queries like sorting, counting, and distinct.
 Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.
@@ -173,10 +173,6 @@ Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.
 * Get the minimum RU/s of a container
 
 ## Workarounds
-
-### Bulk processing Limitation Workaround
-
-If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alternative is to use [stored procedures](https://docs.microsoft.com/azure/cosmos-db/how-to-write-stored-procedures-triggers-udfs) to write multiple items with the same partition key.
 
 ### Control Plane Limitations Workaround
 
@@ -588,6 +584,18 @@ def integrated_cache_snippet():
 ```
 For more information on Integrated Cache, see [Azure Cosmos DB integrated cache - Overview][cosmos_integrated_cache].
 
+### Using Bulk requests
+Bulk requests are a new addition to the Python SDK that allows you to send several operations to be executed at once.
+When using bulk, requests get sent in batches of up to 100 operations per partition, and RUs get consumed faster.
+Available Bulk operation types are:
+- Create
+- Upsert
+- Read
+- Replace
+- Delete
+
+Find here the samples showing how to use bulk with both the [sync][sample_document_mgmt] and [async][sample_document_mgmt_async] clients.
+
 ## Troubleshooting
 
 ### General
@@ -712,6 +720,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [ref_httpfailure]: https://aka.ms/azsdk-python-cosmos-ref-http-failure
 [sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/database_management.py
 [sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/document_management.py
+[sample_document_mgmt_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/document_management_async.py
 [sample_examples_misc]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/examples.py
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos
 [venv]: https://docs.python.org/3/library/venv.html

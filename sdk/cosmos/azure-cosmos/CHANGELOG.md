@@ -4,7 +4,7 @@
 
 #### Features Added
 * Added support for continuation tokens for streamable cross partition queries. See [PR 31189](https://github.com/Azure/azure-sdk-for-python/pull/31189).
-* Added **preview** Bulk API for executing several operations at once. See [PR 31314](https://github.com/Azure/azure-sdk-for-python/pull/31314).
+* Added **preview** Bulk API for executing several operations at once. See [PR 31314](https://github.com/Azure/azure-sdk-for-python/pull/31459).
 
 #### Breaking Changes
 
