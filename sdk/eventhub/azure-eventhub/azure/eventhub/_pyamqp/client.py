@@ -168,7 +168,8 @@ class AMQPClient(
         self._mgmt_links = {}
         self._mgmt_link_lock = threading.Lock()
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
-        self._keep_alive_interval = int(kwargs.get("keep_alive_interval", 0))
+        self._keep_alive_interval = kwargs.get("keep_alive_interval", 0)
+        self._keep_alive_interval = int(self._keep_alive_interval) if self._keep_alive_interval is not None else 0
         self._keep_alive_thread = None
 
         # Connection settings
@@ -970,7 +971,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
     def _message_generator(self, timeout=None):
         """Iterate over processed messages in the receive queue.
 
-        :param int timeout: The timeout in milliseconds for which to wait to receive any messages.
+        :param int or None timeout: The timeout in milliseconds for which to wait to receive any messages.
         :return: A generator of messages.
         :rtype: generator[~pyamqp.message.Message]
         """

@@ -279,7 +279,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     host, port, family, socket.SOCK_STREAM, SOL_TCP
                 )
                 entries_num = len(entries)
-            except socket.gaierror:
+            except socket.gaierror as exc:
                 # we may have depleted all our options
                 if n + 1 >= addr_types_num:
                     # if getaddrinfo succeeded before for another address
@@ -287,7 +287,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     # relevant to users
                     raise e if e is not None else socket.error(
                         "failed to resolve broker hostname"
-                    ) from None
+                    ) from exc
                 continue  # pragma: no cover
 
             # now that we have address(es) for the hostname, connect to broker
@@ -545,7 +545,7 @@ class SSLTransport(_AbstractTransport):
         Default `ssl.wrap_socket` method augmented with support for
         setting the server_hostname field required for SNI hostname header
 
-        :param SSLSocket sock: socket to wrap
+        :param socket.socket sock: socket to wrap
         :param str or None keyfile: key file path
         :param str or None certfile: cert file path
         :param bool or None server_side: server side socket

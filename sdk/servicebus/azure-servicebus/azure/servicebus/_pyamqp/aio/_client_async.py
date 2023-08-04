@@ -864,7 +864,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :param on_message_received: A callback to process messages as they arrive from the
          service. It takes a single argument, a ~pyamqp.message.Message object.
         :type on_message_received: callable[~pyamqp.message.Message]
-        :param int timeout: Timeout in seconds for which to wait to receive any messages.
+        :param float timeout: Timeout in seconds for which to wait to receive any messages.
         :return: A generator of messages.
         :rtype: generator[~pyamqp.message.Message]
         """
@@ -874,7 +874,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def _message_generator_async(self, timeout=None):
         """Iterate over processed messages in the receive queue.
 
-        :param int timeout: Timeout in seconds for which to wait to receive any messages.
+        :param float timeout: Timeout in seconds for which to wait to receive any messages.
         :return: A generator of messages.
         :rtype: generator[~pyamqp.message.Message]
         """

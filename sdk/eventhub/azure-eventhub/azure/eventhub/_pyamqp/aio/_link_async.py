@@ -121,7 +121,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
     async def _set_state(self, new_state):
         # type: (LinkState) -> None
         """Update the session state.
-        :param ~pyamqp.constants.SessionState new_state: The new state.
+        :param ~pyamqp.constants.LinkState new_state: The new state.
         :return: None
         :rtype: None
         """

@@ -113,13 +113,13 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         if self._is_closed:
             try:
                 raise self._error
-            except TypeError as exc:
+            except TypeError:
                 raise AMQPConnectionError(condition=ErrorCondition.InternalError,
-                                          description="Link already closed.") from exc
+                                          description="Link already closed.") from None
 
     def _set_state(self, new_state):
         # type: (LinkState) -> None
-        """Update the session state.
+        """Update the link state.
         :param ~pyamqp.constants.LinkState new_state: The new state.
         """
         if new_state is None:
