@@ -18,7 +18,7 @@ print("Alpha is ", feature_manager.is_enabled("Alpha"))
 print("Beta is ", feature_manager.is_enabled("Beta"))
 # Is false 50% of the time
 print("Gamma is ", feature_manager.is_enabled("Gamma"))
-# Is true between 06-29-2023 to 07-17-2023
+# Is true between two dates
 print("Delta is ", feature_manager.is_enabled("Delta"))
 # Is true After 06-27-2023
 print("Sigma is ", feature_manager.is_enabled("Sigma"))
