@@ -270,15 +270,26 @@ def is_encryption_v2(encryption_data: Optional[_EncryptionData]) -> bool:
     return encryption_data and encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2
 
 
-def get_feature_flag(encryption_version: str) -> int:
+def modify_user_agent_for_encryption(
+        user_agent: str,
+        moniker: str,
+        encryption_version: str,
+        request_options: Dict[str, Any]
+    ) -> None:
     """
-    Returns the azfeatures feature flag for the specific encryption version.
+    Modifies the request options to contain a user agent string updated with encryption information.
+    Adds azstorage-clientsideencryption/<version> immediately proceeding the SDK descriptor.
 
+    :param str user_agent: The existing User Agent to modify.
+    :param str moniker: The specific SDK moniker. The modification will immediately proceed azsdk-python-{moniker}.
     :param str encryption_version: The version of encryption being used.
-    :return: The azfeatures flags int value.
-    :rtype: int
+    :param Dict[str, Any] request_options: The reuqest options to add the user agent override to.
     """
-    return 1 if encryption_version == _ENCRYPTION_PROTOCOL_V1 else 2
+    index = user_agent.find(f"azsdk-python-{moniker}")
+    user_agent = f"{user_agent[:index]}azstorage-clientsideencryption/{encryption_version} {user_agent[index:]}"
+
+    request_options['user_agent'] = user_agent
+    request_options['user_agent_overwrite'] = True
 
 
 def get_adjusted_upload_size(length: int, encryption_version: str) -> int:

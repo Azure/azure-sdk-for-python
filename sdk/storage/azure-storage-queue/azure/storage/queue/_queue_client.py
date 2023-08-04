@@ -25,7 +25,7 @@ from ._shared.response_handlers import (
 from ._generated import AzureQueueStorage
 from ._generated.models import SignedIdentifier, QueueMessage as GenQueueMessage
 from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
-from ._encryption import get_feature_flag, StorageEncryptionMixin
+from ._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
 from ._message_encoding import NoEncodePolicy, NoDecodePolicy
 from ._models import QueueMessage, AccessPolicy, MessagesPaged
 from ._serialize import get_api_version
@@ -505,7 +505,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         time_to_live = kwargs.pop('time_to_live', None)
         timeout = kwargs.pop('timeout', None)
         if self.key_encryption_key:
-            self._add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
 
         try:
             self._config.message_encode_policy.configure(
@@ -586,7 +590,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
         if self.key_encryption_key or self.key_resolver_function:
-            self._add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
 
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
@@ -671,7 +679,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout = kwargs.pop('timeout', None)
         max_messages = kwargs.pop('max_messages', None)
         if self.key_encryption_key or self.key_resolver_function:
-            self._add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
 
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
@@ -754,7 +766,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
         if self.key_encryption_key or self.key_resolver_function:
-            self._add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
 
         try:
             message_id = message.id
@@ -865,7 +881,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
         timeout = kwargs.pop('timeout', None)
         if self.key_encryption_key or self.key_resolver_function:
-            self._add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
 
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,

@@ -56,7 +56,7 @@ from ._deserialize import (
     deserialize_pipeline_response_into_cls
 )
 from ._download import StorageStreamDownloader
-from ._encryption import get_feature_flag, StorageEncryptionMixin
+from ._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
 from ._lease import BlobLeaseClient
 from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
     DelimitedJsonDialect, DelimitedTextDialect, PageRangePaged, PageRange
@@ -424,7 +424,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         kwargs['encryption_options'] = encryption_options
         # Add feature flag to user agent for encryption
         if self.key_encryption_key:
-            self._add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
 
         if blob_type == BlobType.BlockBlob:
             kwargs['client'] = self._client.block_blob
@@ -769,7 +773,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         # Add feature flag to user agent for encryption
         if self.key_encryption_key or self.key_resolver_function:
-            self._add_feature_flag_to_user_agent(get_feature_flag(self.encryption_version), kwargs)
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
 
         options = {
             'clients': self._client,

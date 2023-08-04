@@ -9,16 +9,16 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.18.0b1 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Wed, 26 Jul 2023 20:47:00 GMT",
+        "x-ms-date": "Fri, 04 Aug 2023 22:21:23 GMT",
         "x-ms-version": "2023-01-03"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 26 Jul 2023 20:46:59 GMT",
-        "ETag": "\u00220x8DB8E1975DADF42\u0022",
-        "Last-Modified": "Wed, 26 Jul 2023 20:47:00 GMT",
+        "Date": "Fri, 04 Aug 2023 22:21:22 GMT",
+        "ETag": "\u00220x8DB953922CF8B65\u0022",
+        "Last-Modified": "Fri, 04 Aug 2023 22:21:23 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -36,9 +36,9 @@
         "Connection": "keep-alive",
         "Content-Length": "50",
         "Content-Type": "application/octet-stream",
-        "User-Agent": "azsdk-python-storage-blob/12.18.0b1 azfeatures/2 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azstorage-clientsideencryption/2.0 azsdk-python-storage-blob/12.18.0b1 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-date": "Wed, 26 Jul 2023 20:47:00 GMT",
+        "x-ms-date": "Fri, 04 Aug 2023 22:21:23 GMT",
         "x-ms-meta-encryptiondata": "{\u0022WrappedContentKey\u0022: {\u0022KeyId\u0022: \u0022key1\u0022, \u0022EncryptedKey\u0022: \u0022c3EwcBUQIku7ptntzfboaKwfdJmsOcVcOgfPAe30gAhEPkek8GsgMKRREXKhWZfG\u0022, \u0022Algorithm\u0022: \u0022A256KW\u0022}, \u0022EncryptionAgent\u0022: {\u0022Protocol\u0022: \u00222.0\u0022, \u0022EncryptionAlgorithm\u0022: \u0022AES_GCM_256\u0022}, \u0022EncryptedRegionInfo\u0022: {\u0022DataLength\u0022: 4194304, \u0022NonceLength\u0022: 12}, \u0022KeyWrappingMetadata\u0022: {\u0022EncryptionLibrary\u0022: \u0022Python x.x.x\u0022}, \u0022EncryptionMode\u0022: \u0022FullBlob\u0022}",
         "x-ms-version": "2023-01-03"
       },
@@ -47,9 +47,9 @@
       "ResponseHeaders": {
         "Content-Length": "0",
         "Content-MD5": "xG6OVIdph565MYIjlAzAkQ==",
-        "Date": "Wed, 26 Jul 2023 20:46:59 GMT",
-        "ETag": "\u00220x8DB8E1975ED5BD6\u0022",
-        "Last-Modified": "Wed, 26 Jul 2023 20:47:00 GMT",
+        "Date": "Fri, 04 Aug 2023 22:21:22 GMT",
+        "ETag": "\u00220x8DB953922DC665F\u0022",
+        "Last-Modified": "Fri, 04 Aug 2023 22:21:23 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -67,8 +67,8 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-storage-blob/12.18.0b1 azfeatures/2 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Wed, 26 Jul 2023 20:47:00 GMT",
+        "User-Agent": "azstorage-clientsideencryption/2.0 azsdk-python-storage-blob/12.18.0b1 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Fri, 04 Aug 2023 22:21:23 GMT",
         "x-ms-version": "2023-01-03"
       },
       "RequestBody": null,
@@ -78,9 +78,9 @@
         "Content-Length": "50",
         "Content-MD5": "xG6OVIdph565MYIjlAzAkQ==",
         "Content-Type": "application/octet-stream",
-        "Date": "Wed, 26 Jul 2023 20:47:00 GMT",
-        "ETag": "\u00220x8DB8E1975ED5BD6\u0022",
-        "Last-Modified": "Wed, 26 Jul 2023 20:47:00 GMT",
+        "Date": "Fri, 04 Aug 2023 22:21:22 GMT",
+        "ETag": "\u00220x8DB953922DC665F\u0022",
+        "Last-Modified": "Fri, 04 Aug 2023 22:21:23 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -89,7 +89,7 @@
         "x-ms-access-tier": "Hot",
         "x-ms-access-tier-inferred": "true",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-creation-time": "Wed, 26 Jul 2023 20:47:00 GMT",
+        "x-ms-creation-time": "Fri, 04 Aug 2023 22:21:23 GMT",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
         "x-ms-meta-encryptiondata": "{\u0022WrappedContentKey\u0022: {\u0022KeyId\u0022: \u0022key1\u0022, \u0022EncryptedKey\u0022: \u0022c3EwcBUQIku7ptntzfboaKwfdJmsOcVcOgfPAe30gAhEPkek8GsgMKRREXKhWZfG\u0022, \u0022Algorithm\u0022: \u0022A256KW\u0022}, \u0022EncryptionAgent\u0022: {\u0022Protocol\u0022: \u00222.0\u0022, \u0022EncryptionAlgorithm\u0022: \u0022AES_GCM_256\u0022}, \u0022EncryptedRegionInfo\u0022: {\u0022DataLength\u0022: 4194304, \u0022NonceLength\u0022: 12}, \u0022KeyWrappingMetadata\u0022: {\u0022EncryptionLibrary\u0022: \u0022Python x.x.x\u0022}, \u0022EncryptionMode\u0022: \u0022FullBlob\u0022}",
@@ -105,8 +105,8 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-storage-blob/12.18.0b1 azfeatures/2 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Wed, 26 Jul 2023 20:47:00 GMT",
+        "User-Agent": "azstorage-clientsideencryption/2.0 azsdk-python-storage-blob/12.18.0b1 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Fri, 04 Aug 2023 22:21:23 GMT",
         "x-ms-range": "bytes=0-33554655",
         "x-ms-version": "2023-01-03"
       },
@@ -117,9 +117,9 @@
         "Content-Length": "50",
         "Content-Range": "bytes 0-49/50",
         "Content-Type": "application/octet-stream",
-        "Date": "Wed, 26 Jul 2023 20:47:00 GMT",
-        "ETag": "\u00220x8DB8E1975ED5BD6\u0022",
-        "Last-Modified": "Wed, 26 Jul 2023 20:47:00 GMT",
+        "Date": "Fri, 04 Aug 2023 22:21:22 GMT",
+        "ETag": "\u00220x8DB953922DC665F\u0022",
+        "Last-Modified": "Fri, 04 Aug 2023 22:21:23 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -127,7 +127,7 @@
         "Vary": "Origin",
         "x-ms-blob-content-md5": "xG6OVIdph565MYIjlAzAkQ==",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-creation-time": "Wed, 26 Jul 2023 20:47:00 GMT",
+        "x-ms-creation-time": "Fri, 04 Aug 2023 22:21:23 GMT",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
         "x-ms-meta-encryptiondata": "{\u0022WrappedContentKey\u0022: {\u0022KeyId\u0022: \u0022key1\u0022, \u0022EncryptedKey\u0022: \u0022c3EwcBUQIku7ptntzfboaKwfdJmsOcVcOgfPAe30gAhEPkek8GsgMKRREXKhWZfG\u0022, \u0022Algorithm\u0022: \u0022A256KW\u0022}, \u0022EncryptionAgent\u0022: {\u0022Protocol\u0022: \u00222.0\u0022, \u0022EncryptionAlgorithm\u0022: \u0022AES_GCM_256\u0022}, \u0022EncryptedRegionInfo\u0022: {\u0022DataLength\u0022: 4194304, \u0022NonceLength\u0022: 12}, \u0022KeyWrappingMetadata\u0022: {\u0022EncryptionLibrary\u0022: \u0022Python x.x.x\u0022}, \u0022EncryptionMode\u0022: \u0022FullBlob\u0022}",
