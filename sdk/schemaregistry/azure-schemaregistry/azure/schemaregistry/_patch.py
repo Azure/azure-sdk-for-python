@@ -22,9 +22,9 @@ from typing import (
     IO
 )
 from functools import partial
+from enum import Enum
 
 from azure.core.tracing.decorator import distributed_trace
-from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 from ._client import SchemaRegistryClient as AzureSchemaRegistry
@@ -267,7 +267,7 @@ class SchemaRegistryClient(object):
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
-        schema_properties: Dict[str, Union[int, str]] = self._generated_client.schema.register(  # type: ignore
+        schema_properties: Dict[str, Union[int, str]] = self._generated_client.register_schema(  # type: ignore
             group_name=group_name,
             schema_name=name,
             schema_content=cast(IO[Any], definition),
@@ -336,7 +336,7 @@ class SchemaRegistryClient(object):
                 schema_id = kwargs.pop("schema_id")
             schema_id = cast(str, schema_id)
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = self._generated_client.schema.get_by_id(  # type: ignore
+            http_response, schema_properties = self._generated_client.get_schema_by_id(  # type: ignore
                 id=schema_id, cls=prepare_schema_result, **http_request_kwargs
             )
         except KeyError:
@@ -351,15 +351,13 @@ class SchemaRegistryClient(object):
                     """or `group_name`, `name`, `version."""
                 )
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = self._generated_client.schema.get_schema_version(  # type: ignore
+            http_response, schema_properties = self._generated_client.get_schema_by_version(  # type: ignore
                 group_name=group_name,
-                schema_name=name,
+                name=name,
                 schema_version=version,
                 cls=prepare_schema_result,
                 **http_request_kwargs,
             )
-        print(http_response)
-        print(type(http_response))
         http_response.read()
         return Schema(
             definition=http_response.text(),
@@ -402,7 +400,7 @@ class SchemaRegistryClient(object):
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[str, Union[int, str]] = (
-            self._generated_client.schema.query_id_by_content(  # type: ignore
+            self._generated_client.get_schema_id_by_content(  # type: ignore
                 group_name=group_name,
                 schema_name=name,
                 schema_content=cast(IO[Any], definition),
