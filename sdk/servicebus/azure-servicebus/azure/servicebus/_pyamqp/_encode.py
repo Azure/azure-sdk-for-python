@@ -604,7 +604,7 @@ def encode_fields(value):
 
     <type name="fields" class="restricted" source="map"/>
 
-    :param dict value: The field values to encode.
+    :param dict or None value: The field values to encode.
     :return: The encoded field values.
     :rtype: dict
     """
@@ -629,7 +629,7 @@ def encode_annotations(value):
 
     <type name="annotations" class="restricted" source="map"/>
 
-    :param dict value: The annotations to encode.
+    :param dict or None value: The annotations to encode.
     :return: The encoded annotations.
     :rtype: dict
     """
