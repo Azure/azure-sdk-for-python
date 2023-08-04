@@ -92,14 +92,6 @@ function Get-python-DocsMsTocChildrenForManagementPackages($packageMetadata, $do
   return @($packageMetadata.Package)
 }
 
-function addManagementPackage($serviceEntry, $packageName) {
-  for ($i = 0; $i -lt $serviceEntry.items.Count; $i++) {
-    if ($serviceEntry.items[$i].name -eq "Management") {
-      $serviceEntry.items[$i].children += @($packageName)
-      return $serviceEntry
-    }
-  }
-
   $serviceEntry.items += [PSCustomObject]@{
     name  = "Management";
     landingPageType = 'Service';
@@ -124,12 +116,6 @@ function Get-python-UpdatedDocsMsToc($toc) {
         name  = "adal";
         children = @("adal")
       }
-    }
-
-    # azure-mgmt-mixedreality is not onboarded in an obvious manner, it is
-    # onboarded using a URL to a specific dist.
-    if ($services[$i].name -eq 'Mixed Reality') {
-      $services[$i] = addManagementPackage $services[$i] 'azure-mgmt-mixedreality'
     }
   }
 
