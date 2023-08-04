@@ -650,7 +650,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         a custom classifier model, see https://aka.ms/azsdk/formrecognizer/buildclassifiermodel.
 
         :param doc_types: Mapping of document types to classify against.
-        :paramtype doc_types: Mapping[str, ~azure.ai.formrecognizer.ClassifierDocumentTypeDetails]
+        :type doc_types: Mapping[str, ~azure.ai.formrecognizer.ClassifierDocumentTypeDetails]
         :keyword str classifier_id: Unique document classifier name.
             If not specified, a classifier ID will be created for you.
         :keyword str description: Document classifier description.
