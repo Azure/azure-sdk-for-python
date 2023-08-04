@@ -5,7 +5,7 @@
 import abc
 import logging
 import time
-from typing import Optional
+from typing import Any, Optional
 
 from azure.core.credentials import AccessToken
 from ..._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
@@ -54,7 +54,7 @@ class GetTokenMixin(abc.ABC):
         return True
 
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:
         """Request an access token for `scopes`.
 

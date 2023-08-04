@@ -141,7 +141,7 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
 
     @log_get_token("VSCodeCredential")
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 

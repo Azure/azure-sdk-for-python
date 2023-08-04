@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
-from typing import cast, Optional
+from typing import Any, cast, Optional
 
 from azure.core.credentials import AccessToken
 from . import AsyncContextManager
@@ -40,7 +40,7 @@ class AsyncManagedIdentityBase(AsyncContextManager, GetTokenMixin):
         await self.__aexit__()
 
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:
         if not self._client:
             raise CredentialUnavailableError(message=self.get_unavailable_message())

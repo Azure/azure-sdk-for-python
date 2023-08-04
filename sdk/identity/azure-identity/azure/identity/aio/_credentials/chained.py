@@ -4,7 +4,7 @@
 # ------------------------------------
 import asyncio
 import logging
-from typing import Optional, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
@@ -51,7 +51,7 @@ class ChainedTokenCredential(AsyncContextManager):
         await asyncio.gather(*(credential.close() for credential in self.credentials))
 
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:
         """Asynchronously request a token from each credential, in order, returning the first token received.
 

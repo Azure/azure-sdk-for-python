@@ -115,7 +115,7 @@ class ManagedIdentityCredential(AsyncContextManager):
 
     @log_get_token_async
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 

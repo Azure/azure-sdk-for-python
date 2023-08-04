@@ -55,7 +55,7 @@ class SilentAuthenticationCredential:
         self._client.__exit__(*args)
 
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')

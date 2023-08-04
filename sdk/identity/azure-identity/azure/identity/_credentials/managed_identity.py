@@ -109,7 +109,7 @@ class ManagedIdentityCredential:
 
     @log_get_token("ManagedIdentityCredential")
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
