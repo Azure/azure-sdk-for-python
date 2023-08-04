@@ -5,19 +5,9 @@
 # -------------------------------------------------------------------------
 
 from ._azureappconfigurationprovider import load, AzureAppConfigurationProvider
-from ._models import (
-    AzureAppConfigurationKeyVaultOptions,
-    SettingSelector,
-    SentinelKey,
-)
+from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = [
-    "load",
-    "AzureAppConfigurationProvider",
-    "AzureAppConfigurationKeyVaultOptions",
-    "SettingSelector",
-    "SentinelKey",
-]
+__all__ = ["load", "AzureAppConfigurationProvider", "AzureAppConfigurationKeyVaultOptions", "SettingSelector"]

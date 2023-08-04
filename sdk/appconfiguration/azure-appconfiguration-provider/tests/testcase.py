@@ -17,20 +17,13 @@ class AppConfigTestCase(AzureRecordedTestCase):
         trim_prefixes=[],
         selects={SettingSelector(key_filter="*", label_filter="\0")},
         keyvault_secret_url=None,
-        refresh_on=None,
-        refresh_interval=30,
     ):
         cred = self.get_credential(AzureAppConfigurationClient)
 
         client = AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
         setup_configs(client, keyvault_secret_url)
         return load(
-            credential=cred,
-            endpoint=appconfiguration_endpoint_string,
-            trim_prefixes=trim_prefixes,
-            selects=selects,
-            refresh_on=refresh_on,
-            refresh_interval=refresh_interval,
+            credential=cred, endpoint=appconfiguration_endpoint_string, trim_prefixes=trim_prefixes, selects=selects
         )
 
     def create_client(
@@ -39,18 +32,10 @@ class AppConfigTestCase(AzureRecordedTestCase):
         trim_prefixes=[],
         selects={SettingSelector(key_filter="*", label_filter="\0")},
         keyvault_secret_url=None,
-        refresh_on=None,
-        refresh_interval=30,
     ):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
         setup_configs(client, keyvault_secret_url)
-        return load(
-            connection_string=appconfiguration_connection_string,
-            trim_prefixes=trim_prefixes,
-            selects=selects,
-            refresh_on=refresh_on,
-            refresh_interval=refresh_interval,
-        )
+        return load(connection_string=appconfiguration_connection_string, trim_prefixes=trim_prefixes, selects=selects)
 
 
 def setup_configs(client, keyvault_secret_url):
@@ -64,8 +49,6 @@ def get_configs(keyvault_secret_url):
     configs.append(create_config_setting("message", "dev", "test"))
     configs.append(create_config_setting("my_json", "\0", '{"key": "value"}', "application/json"))
     configs.append(create_config_setting("test.trimmed", "\0", "key"))
-    configs.append(create_config_setting("refresh_message", "\0", "original value"))
-    configs.append(create_config_setting("non_refreshed_message", "\0", "Static"))
     configs.append(
         create_config_setting(
             ".appconfig.featureflag/Alpha",
