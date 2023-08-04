@@ -45,6 +45,7 @@ def load(
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
+    Test build.
 
     :param str endpoint: Endpoint for App Configuration resource.
     :param credential: Credential for App Configuration resource.
