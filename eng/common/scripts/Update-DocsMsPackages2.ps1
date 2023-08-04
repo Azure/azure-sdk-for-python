@@ -62,7 +62,8 @@ function ValidatePackageForOnboarding2($package) {
   return &$ValidateDocsMsPackagesFn `
     -PackageInfo $package `
     -DocValidationImageId $ImageId `
-    -DocRepoLocation $DocRepoLocation
+    -DocRepoLocation $DocRepoLocation `
+    -PackageSourceOverride $PackageSourceOverride
 }
 
 $MONIKERS = @('latest', 'preview', 'legacy')
