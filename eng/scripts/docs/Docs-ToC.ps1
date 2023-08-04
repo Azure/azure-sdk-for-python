@@ -92,15 +92,6 @@ function Get-python-DocsMsTocChildrenForManagementPackages($packageMetadata, $do
   return @($packageMetadata.Package)
 }
 
-  $serviceEntry.items += [PSCustomObject]@{
-    name  = "Management";
-    landingPageType = 'Service';
-    children = @($packageName)
-  }
-
-  return $serviceEntry
-}
-
 function Get-python-RepositoryLink($packageInfo) {
   return "$PackageRepositoryUri/$($packageInfo.Package)"
 }
