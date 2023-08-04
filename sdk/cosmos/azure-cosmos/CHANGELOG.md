@@ -8,7 +8,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
-* Fixed bug with async `create_database_if_not_exists` method not working when passing `offer_throughput` as an option. See [PR](https://github.com/Azure/azure-sdk-for-python/pull/31189).
+* Fixed bug with async `create_database_if_not_exists` method not working when passing `offer_throughput` as an option. See [PR 31478](https://github.com/Azure/azure-sdk-for-python/pull/31478).
 
 #### Other Changes
 
