@@ -151,8 +151,17 @@ class TestAutoMLImageInstanceSegmentation:
                     LogValidationLoss.ENABLE,
                 ),
             ),
-            ((None, None, "coco_voc", "large", "enable", "enable"),
-             (None, None, ValidationMetricType.COCO_VOC, ModelSize.LARGE, LogTrainingMetrics.ENABLE, LogValidationLoss.ENABLE)),
+            (
+                (None, None, "coco_voc", "large", "enable", "enable"),
+                (
+                    None,
+                    None,
+                    ValidationMetricType.COCO_VOC,
+                    ModelSize.LARGE,
+                    LogTrainingMetrics.ENABLE,
+                    LogValidationLoss.ENABLE,
+                ),
+            ),
         ],
         ids=["snake case", "camel case", "with None"],
     )
@@ -167,7 +176,7 @@ class TestAutoMLImageInstanceSegmentation:
             validation_metric_type=settings[2],
             model_size=settings[3],
             log_training_metrics=settings[4],
-            log_validation_loss=settings[5]
+            log_validation_loss=settings[5],
         )
         assert image_instance_segmentation_job.training_parameters.optimizer == expected[0]
         assert image_instance_segmentation_job.training_parameters.learning_rate_scheduler == expected[1]
@@ -179,12 +188,12 @@ class TestAutoMLImageInstanceSegmentation:
     @pytest.mark.parametrize(
         "settings, expected",
         [
-            (("adamW", None, None, None, 'Enable', 'Enable'), pytest.raises(KeyError)),
-            ((None, "Warmup_Cosine", None, None, 'Enable', 'Enable'), pytest.raises(KeyError)),
-            ((None, None, "Coco_Voc", "large", 'Enable', 'Enable'), pytest.raises(KeyError)),
-            ((None, None, None, "Extra_Large", 'Enable', 'Enable'), pytest.raises(KeyError)),
-            ((None, None, None, None, 'false', 'Enable'), pytest.raises(KeyError)),
-            ((None, None, None, None, 'Enable', 'false'), pytest.raises(KeyError)),
+            (("adamW", None, None, None, "Enable", "Enable"), pytest.raises(KeyError)),
+            ((None, "Warmup_Cosine", None, None, "Enable", "Enable"), pytest.raises(KeyError)),
+            ((None, None, "Coco_Voc", "large", "Enable", "Enable"), pytest.raises(KeyError)),
+            ((None, None, None, "Extra_Large", "Enable", "Enable"), pytest.raises(KeyError)),
+            ((None, None, None, None, "false", "Enable"), pytest.raises(KeyError)),
+            ((None, None, None, None, "Enable", "false"), pytest.raises(KeyError)),
         ],
         ids=[
             "optimizer invalid",
@@ -192,7 +201,7 @@ class TestAutoMLImageInstanceSegmentation:
             "validation metric type invalid",
             "model size invalid",
             "log_training_metrics invalid",
-            "log_validation_loss invalid"
+            "log_validation_loss invalid",
         ],
     )
     def test_image_set_training_parameters_with_invalid_values(self, settings, expected):
@@ -207,7 +216,7 @@ class TestAutoMLImageInstanceSegmentation:
                 validation_metric_type=settings[2],
                 model_size=settings[3],
                 log_training_metrics=settings[4],
-                log_validation_loss=settings[5]
+                log_validation_loss=settings[5],
             )
 
     @pytest.mark.parametrize(
@@ -235,8 +244,17 @@ class TestAutoMLImageInstanceSegmentation:
                     LogValidationLoss.ENABLE,
                 ),
             ),
-            ((None, None, "coco_voc", "large", "enable", "enable"),
-             (None, None, ValidationMetricType.COCO_VOC, ModelSize.LARGE, LogTrainingMetrics.ENABLE, LogValidationLoss.ENABLE)),
+            (
+                (None, None, "coco_voc", "large", "enable", "enable"),
+                (
+                    None,
+                    None,
+                    ValidationMetricType.COCO_VOC,
+                    ModelSize.LARGE,
+                    LogTrainingMetrics.ENABLE,
+                    LogValidationLoss.ENABLE,
+                ),
+            ),
         ],
         ids=["snake case", "camel case", "with None"],
     )
@@ -247,7 +265,7 @@ class TestAutoMLImageInstanceSegmentation:
             validation_metric_type=settings[2],
             model_size=settings[3],
             log_training_metrics=settings[4],
-            log_validation_loss=settings[5]
+            log_validation_loss=settings[5],
         )
         image_instance_segmentation_job = image_instance_segmentation(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
