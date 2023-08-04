@@ -10,8 +10,9 @@ from azure.appconfiguration.provider import SettingSelector
 import os
 from sample_utilities import get_authority, get_audience, get_credential
 
+
 async def main():
-    endpoint = os.environ.get("AZURE_APPCONFIG_ENDPOINT")
+    endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
     authority = get_authority(endpoint)
     credential = get_credential(authority, is_async=True)
 
@@ -32,10 +33,9 @@ async def main():
     print("message found: " + str("message" in config))
     print("test.message found: " + str("test.message" in config))
 
-
     await credential.close()
     await config.close()
 
+
 if __name__ == "__main__":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())

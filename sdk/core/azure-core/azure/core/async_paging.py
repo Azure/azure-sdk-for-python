@@ -132,6 +132,7 @@ class AsyncItemPaged(AsyncIterator[ReturnType]):
             continuation_token field of a previous generator object. If specified,
             this generator will begin returning results from this point.
         :returns: An async iterator of pages (themselves async iterator of objects)
+        :rtype: AsyncIterator[AsyncIterator[ReturnType]]
         """
         return self._page_iterator_class(*self._args, **self._kwargs, continuation_token=continuation_token)
 

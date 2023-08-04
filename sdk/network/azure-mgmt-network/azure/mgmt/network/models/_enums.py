@@ -692,7 +692,6 @@ class ApplicationGatewayCustomErrorStatusCode(str, Enum, metaclass=CaseInsensiti
     HTTP_STATUS404 = "HttpStatus404"
     HTTP_STATUS405 = "HttpStatus405"
     HTTP_STATUS408 = "HttpStatus408"
-    HTTP_STATUS499 = "HttpStatus499"
     HTTP_STATUS500 = "HttpStatus500"
     HTTP_STATUS502 = "HttpStatus502"
     HTTP_STATUS503 = "HttpStatus503"
@@ -878,6 +877,7 @@ class WebApplicationFirewallRuleType(str, Enum, metaclass=CaseInsensitiveEnumMet
     """The rule type."""
 
     MATCH_RULE = "MatchRule"
+    RATE_LIMIT_RULE = "RateLimitRule"
     INVALID = "Invalid"
 
 class WebApplicationFirewallTransform(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1222,6 +1222,7 @@ class LoadBalancerSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REGIONAL = "Regional"
     GLOBAL = "Global"
+    GLOBAL_ENUM = "Global"
 
 class NetworkInterfaceNicType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of Network Interface resource."""
@@ -1243,12 +1244,14 @@ class PublicIPAddressSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REGIONAL = "Regional"
     GLOBAL = "Global"
+    GLOBAL_ENUM = "Global"
 
 class PublicIPPrefixSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a public IP prefix SKU."""
 
     REGIONAL = "Regional"
     GLOBAL = "Global"
+    GLOBAL_ENUM = "Global"
 
 class VirtualNetworkGatewayConnectionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gateway connection type."""
@@ -1527,11 +1530,34 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BLOCK = "Block"
     LOG = "Log"
 
+class AdminState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Property to indicate if the Express Route Gateway serves traffic when there are multiple
+    Express Route Gateways in the vnet.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
 class ApplicationGatewayClientRevocationOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Verify client certificate revocation status."""
 
     NONE = "None"
     OCSP = "OCSP"
+
+class ApplicationGatewayFirewallRateLimitDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Duration over which Rate Limit policy will be applied. Applies only when ruleType is
+    RateLimitRule.
+    """
+
+    ONE_MIN = "OneMin"
+    FIVE_MINS = "FiveMins"
+
+class ApplicationGatewayFirewallUserSessionVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """User Session clause variable."""
+
+    CLIENT_ADDR = "ClientAddr"
+    GEO_LOCATION = "GeoLocation"
+    NONE = "None"
 
 class ApplicationGatewayLoadDistributionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Load Distribution Algorithm enums."""
@@ -1576,6 +1602,16 @@ class AutoLearnPrivateRangesMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+class AzureFirewallPacketCaptureFlagsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The flags type to be captured."""
+
+    FIN = "fin"
+    SYN = "syn"
+    RST = "rst"
+    PUSH = "push"
+    ACK = "ack"
+    URG = "urg"
 
 class CustomIpPrefixType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of custom IP prefix. Should be Singular, Parent, or Child."""
@@ -1644,6 +1680,7 @@ class Geo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ME = "ME"
     OCEANIA = "OCEANIA"
     AQ = "AQ"
+    GLOBAL_ENUM = "GLOBAL"
 
 class HubRoutingPreference(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The hub routing preference gateway types."""
@@ -1667,7 +1704,6 @@ class LoadBalancerBackendAddressAdminState(str, Enum, metaclass=CaseInsensitiveE
     NONE = "None"
     UP = "Up"
     DOWN = "Down"
-    DRAIN = "Drain"
 
 class NetworkIntentPolicyBasedService(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Network intent policy based services."""
@@ -1682,6 +1718,16 @@ class NetworkInterfaceAuxiliaryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta
     NONE = "None"
     MAX_CONNECTIONS = "MaxConnections"
     FLOATING = "Floating"
+    ACCELERATED_CONNECTIONS = "AcceleratedConnections"
+
+class NetworkInterfaceAuxiliarySku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Auxiliary sku of Network Interface resource."""
+
+    NONE = "None"
+    A1 = "A1"
+    A2 = "A2"
+    A4 = "A4"
+    A8 = "A8"
 
 class NextStep(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported next step behaviors after a rule is applied to a matched route."""
@@ -1689,12 +1735,24 @@ class NextStep(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNKNOWN = "Unknown"
     CONTINUE = "Continue"
     TERMINATE = "Terminate"
+    CONTINUE_ENUM = "Continue"
 
 class PacketCaptureTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Target type of the resource provided."""
 
     AZURE_VM = "AzureVM"
     AZURE_VMSS = "AzureVMSS"
+
+class PublicIpAddressDnsSettingsDomainNameLabelScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The domain name label scope. If a domain name label and a domain name label scope are
+    specified, an A DNS record is created for the public IP in the Microsoft Azure DNS system with
+    a hashed value includes in FQDN.
+    """
+
+    TENANT_REUSE = "TenantReuse"
+    SUBSCRIPTION_REUSE = "SubscriptionReuse"
+    RESOURCE_GROUP_REUSE = "ResourceGroupReuse"
+    NO_REUSE = "NoReuse"
 
 class RouteMapActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Kind of actions which can be taken on a matched route. Add, Replace, Remove refer to parameters
@@ -1725,6 +1783,30 @@ class ScopeConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REVOKED = "Revoked"
     REJECTED = "Rejected"
 
+class ScrubbingRuleEntryMatchOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """When matchVariable is a collection, operate on the selector to specify which elements in the
+    collection this rule applies to.
+    """
+
+    EQUALS = "Equals"
+    EQUALS_ANY = "EqualsAny"
+
+class ScrubbingRuleEntryMatchVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The variable to be scrubbed from the logs."""
+
+    REQUEST_HEADER_NAMES = "RequestHeaderNames"
+    REQUEST_COOKIE_NAMES = "RequestCookieNames"
+    REQUEST_ARG_NAMES = "RequestArgNames"
+    REQUEST_POST_ARG_NAMES = "RequestPostArgNames"
+    REQUEST_JSON_ARG_NAMES = "RequestJSONArgNames"
+    REQUEST_IP_ADDRESS = "RequestIPAddress"
+
+class ScrubbingRuleEntryState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the state of log scrubbing rule. Default value is Enabled."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
 class SlotType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies slot info on a cloud service."""
 
@@ -1751,6 +1833,12 @@ class VpnPolicyMemberAttributeType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     CERTIFICATE_GROUP_ID = "CertificateGroupId"
     AAD_GROUP_ID = "AADGroupId"
     RADIUS_AZURE_GROUP_ID = "RadiusAzureGroupId"
+
+class WebApplicationFirewallScrubbingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the log scrubbing config. Default value is Enabled."""
+
+    DISABLED = "Disabled"
+    ENABLED = "Enabled"
 
 class WebApplicationFirewallState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes if the custom rule is in enabled or disabled state. Defaults to Enabled if not

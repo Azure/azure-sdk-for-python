@@ -10,7 +10,7 @@ import json
 import logging
 import time
 from typing import Any, Optional
-import six
+from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -33,8 +33,13 @@ _DEFAULT_AUTHENTICATE_SCOPES = {
 }
 
 
-def _decode_client_info(raw):
-    """Taken from msal.oauth2cli.oidc"""
+def _decode_client_info(raw) -> str:
+    """Decode client info. Taken from msal.oauth2cli.oidc.
+
+    :param str raw: base64-encoded client info
+    :return: decoded client info
+    :rtype: str
+    """
 
     raw += "=" * (-len(raw) % 4)
     raw = str(raw)  # On Python 2.7, argument of urlsafe_b64decode must be str, not unicode.
@@ -42,7 +47,14 @@ def _decode_client_info(raw):
 
 
 def _build_auth_record(response):
-    """Build an AuthenticationRecord from the result of an MSAL ClientApplication token request"""
+    """Build an AuthenticationRecord from the result of an MSAL ClientApplication token request.
+
+    :param response: The result of a token request
+    :type response: dict[str, typing.Any]
+    :return: An AuthenticationRecord
+    :rtype: ~azure.identity.AuthenticationRecord
+    :raises ~azure.core.exceptions.ClientAuthenticationError: If the response doesn't contain expected data
+    """
 
     try:
         id_token = response["id_token_claims"]
@@ -55,7 +67,7 @@ def _build_auth_record(response):
             home_account_id = id_token["sub"]
 
         # "iss" is the URL of the issuing tenant e.g. https://authority/tenant
-        issuer = six.moves.urllib_parse.urlparse(id_token["iss"])
+        issuer = urlparse(id_token["iss"])
 
         # tenant which issued the token, not necessarily user's home tenant
         tenant_id = id_token.get("tid") or issuer.path.strip("/")
@@ -74,16 +86,17 @@ def _build_auth_record(response):
         auth_error = ClientAuthenticationError(
             message="Failed to build AuthenticationRecord from unexpected identity token"
         )
-        six.raise_from(auth_error, ex)
+        raise auth_error from ex
 
 
 class InteractiveCredential(MsalCredential, ABC):
     def __init__(
-            self,
-            *,
-            authentication_record: Optional[AuthenticationRecord] = None,
-            disable_automatic_authentication: bool = False,
-            **kwargs: Any) -> None:
+        self,
+        *,
+        authentication_record: Optional[AuthenticationRecord] = None,
+        disable_automatic_authentication: bool = False,
+        **kwargs: Any
+    ) -> None:
         self._disable_automatic_authentication = disable_automatic_authentication
         self._auth_record = authentication_record
         if self._auth_record:
@@ -109,7 +122,10 @@ class InteractiveCredential(MsalCredential, ABC):
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
           claims challenge following an authorization failure
         :keyword str tenant_id: optional tenant to include in the token request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``

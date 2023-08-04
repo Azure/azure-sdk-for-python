@@ -1,5 +1,30 @@
 # Release History
 
+## 3.0.0 (2023-05-22)
+
+### Features Added
+
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkResourcesOperations
+  - Added operation group PrivateLinkScopesOperations
+  - Model Extension has a new parameter current_version
+  - Model Extension has a new parameter is_system_extension
+  - Model Extension has a new parameter plan
+  - Model ExtensionType has a new parameter id
+  - Model ExtensionType has a new parameter name
+  - Model ExtensionType has a new parameter type
+  - Model ExtensionVersionList has a new parameter value
+  - Model FluxConfiguration has a new parameter azure_blob
+  - Model FluxConfigurationPatch has a new parameter azure_blob
+
+### Breaking Changes
+
+  - Model ClusterScopeSettings no longer has parameter id
+  - Model ClusterScopeSettings no longer has parameter name
+  - Model ClusterScopeSettings no longer has parameter type
+  - Model Extension no longer has parameter installed_version
+  - Model ExtensionVersionList no longer has parameter versions
+
 ## 3.0.0b1 (2023-02-13)
 
 ### Features Added

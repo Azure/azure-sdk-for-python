@@ -161,7 +161,7 @@ class Gen2StorageClient:
                     no_personal_data_message=msg,
                     target=ErrorTarget.ARTIFACT,
                     error_category=ErrorCategory.USER_ERROR,
-                )
+                ) from e
             raise e
 
     def _set_confirmation_metadata(self, name: str, version: str) -> None:
@@ -208,7 +208,7 @@ class Gen2StorageClient:
                 target=ErrorTarget.ARTIFACT,
                 error_category=ErrorCategory.USER_ERROR,
                 error=e,
-            )
+            ) from e
 
     def list(self, starts_with: str) -> List[str]:
         """Lists all file names in the specified filesystem with the prefix

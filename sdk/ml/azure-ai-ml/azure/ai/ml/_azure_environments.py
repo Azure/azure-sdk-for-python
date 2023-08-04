@@ -24,7 +24,7 @@ class AzureEnvironments:
     ENV_CHINA = "AzureChinaCloud"
 
 
-class EndpointURLS:  # pylint: disable=too-few-public-methods,no-init
+class EndpointURLS:  # pylint: disable=too-few-public-methods
     AZURE_PORTAL_ENDPOINT = "azure_portal"
     RESOURCE_MANAGER_ENDPOINT = "resource_manager"
     ACTIVE_DIRECTORY_ENDPOINT = "active_directory"
@@ -74,8 +74,8 @@ def _get_cloud(cloud: str):
         new_cloud = arm_clouds[cloud]
         _environments.update(new_cloud)
         return new_cloud
-    except KeyError:
-        raise Exception('Unknown cloud environment "{0}".'.format(cloud))
+    except KeyError as e:
+        raise Exception('Unknown cloud environment "{0}".'.format(cloud)) from e
 
 
 def _get_default_cloud_name():
@@ -106,8 +106,8 @@ def _set_cloud(cloud: str = AzureEnvironments.ENV_DEFAULT):
     if cloud is not None:
         try:
             _get_cloud(cloud)
-        except Exception:
-            raise Exception('Unknown cloud environment supplied: "{0}".'.format(cloud))
+        except Exception as e:
+            raise Exception('Unknown cloud environment supplied: "{0}".'.format(cloud)) from e
     else:
         cloud = _get_default_cloud_name()
     os.environ[AZUREML_CLOUD_ENV_NAME] = cloud

@@ -5,6 +5,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
+import pytest_asyncio
 from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
 from azure.core.rest import HttpRequest as RestHttpRequest
 from azure.core.pipeline import Pipeline
@@ -19,8 +20,7 @@ def old_request(port):
     return PipelineTransportHttpRequest("GET", "http://localhost:{}/streams/basic".format(port))
 
 
-@pytest.fixture
-@pytest.mark.asyncio
+@pytest_asyncio.fixture
 async def get_old_response(old_request):
     async def _callback(transport, **kwargs):
         async with transport() as sender:
@@ -44,8 +44,7 @@ def new_request(port):
     return RestHttpRequest("GET", "http://localhost:{}/streams/basic".format(port))
 
 
-@pytest.fixture
-@pytest.mark.asyncio
+@pytest_asyncio.fixture
 async def get_new_response(new_request):
     async def _callback(transport, **kwargs):
         async with transport() as sender:

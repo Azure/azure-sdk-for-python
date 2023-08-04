@@ -14,7 +14,7 @@ import warnings
 from enum import Enum
 from typing import Any, List, Optional, AsyncIterator, Union, TYPE_CHECKING, cast
 
-from ..exceptions import ServiceBusError
+from ..exceptions import MessageLockLostError
 from ._servicebus_session_async import ServiceBusSession
 from ._base_handler_async import BaseHandler
 from .._common.message import ServiceBusReceivedMessage
@@ -132,6 +132,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     :keyword str client_identifier: A string-based identifier to uniquely identify the client instance.
      Service Bus will associate it with some error messages for easier correlation of errors. If not specified,
      a unique id will be generated.
+    :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+     wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+     and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+     a larger than default value may need to be passed in.
     """
 
     def __init__(
@@ -442,13 +446,11 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         # The following condition check is a hot fix for settling a message received for non-session queue after
         # lock expiration.
-        # uamqp doesn't have the ability to receive disposition result returned from the service after settlement,
-        # so there's no way we could tell whether a disposition succeeds or not and there's no error condition info.
-        # Throwing a general message error type here gives us the evolvability to have more fine-grained exception
-        # subclasses in the future after we add the missing feature support in uamqp.
-        # see issue: https://github.com/Azure/azure-uamqp-c/issues/274
+        # pyamqp doesn't currently (and uamqp doesn't have the ability to) wait to receive disposition result returned
+        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
+        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
         if not self._session and message._lock_expired:
-            raise ServiceBusError(
+            raise MessageLockLostError(
                 message="The lock on the message lock has expired.",
                 error=message.auto_renew_error,
             )

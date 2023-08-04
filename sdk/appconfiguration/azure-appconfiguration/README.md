@@ -67,7 +67,8 @@ Once you have the value of the connection string, you can create the AzureAppCon
 ```python
 import os
 from azure.appconfiguration import AzureAppConfigurationClient
-CONNECTION_STRING = os.environ['APPCONFIGURATION_CONNECTION_STRING']
+
+CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
 # Create app config client
 client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
@@ -139,7 +140,8 @@ client = AzureAppConfigurationClient(base_url="your_endpoint_url", credential=cr
 
 A Configuration Setting is the fundamental resource within a Configuration Store. In its simplest form it is a key and a value. However, there are additional properties such as the modifiable content type and tags fields that allow the value to be interpreted or associated in different ways.
 
-The Label property of a Configuration Setting provides a way to separate Configuration Settings into different dimensions. These dimensions are user defined and can take any form. Some common examples of dimensions to use for a label include regions, semantic versions, or environments. Many applications have a required set of configuration keys that have varying values as the application exists across different dimensions.
+The [Label][label_concept] property of a Configuration Setting provides a way to separate Configuration Settings into different dimensions. These dimensions are user defined and can take any form. Some common examples of dimensions to use for a label include regions, semantic versions, or environments. Many applications have a required set of configuration keys that have varying values as the application exists across different dimensions.
+
 For example, MaxRequests may be 100 in "NorthAmerica", and 200 in "WestEurope". By creating a Configuration Setting named MaxRequests with a label of "NorthAmerica" and another, only with a different value, in the "WestEurope" label, an application can seamlessly retrieve Configuration Settings as it runs in these two dimensions.
 
 Properties of a Configuration Setting:
@@ -155,6 +157,10 @@ tags : dict
 etag : str
 ```
 
+### Snapshot
+
+Azure App Configuration allows users to create a point-in-time snapshot of their configuration store, providing them with the ability to treat settings as one consistent version. This feature enables applications to hold a consistent view of configuration, ensuring that there are no version mismatches to individual settings due to reading as updates were made. Snapshots are immutable, ensuring that configuration can confidently be rolled back to a last-known-good configuration in the event of a problem.
+
 ## Examples
 
 The following sections provide several code snippets covering some of the most common Configuration Service tasks, including:
@@ -163,6 +169,12 @@ The following sections provide several code snippets covering some of the most c
 * [Get a Configuration Setting](#get-a-configuration-setting)
 * [Delete a Configuration Setting](#delete-a-configuration-setting)
 * [List Configuration Settings](#list-configuration-settings)
+* [Create a Snapshot](#create-a-snapshot)
+* [Get a Snapshot](#get-a-snapshot)
+* [Archive a Snapshot](#archive-a-snapshot)
+* [Recover a Snapshot](#recover-a-snapshot)
+* [List Snapshots](#list-snapshots)
+* [List Configuration Settings of a Snapshot](#list-configuration-settings-of-a-snapshot)
 * [Async APIs](#async-apis)
 
 ### Create a Configuration Setting
@@ -176,11 +188,7 @@ There are two ways to store a Configuration Setting:
 
 ```python
 config_setting = ConfigurationSetting(
-    key="MyKey",
-    label="MyLabel",
-    value="my value",
-    content_type="my content type",
-    tags={"my tag": "my tag value"}
+    key="MyKey", label="MyLabel", value="my value", content_type="my content type", tags={"my tag": "my tag value"}
 )
 added_config_setting = client.add_configuration_setting(config_setting)
 ```
@@ -206,9 +214,7 @@ Get a previously stored Configuration Setting.
 <!-- SNIPPET:hello_world_sample.get_config_setting -->
 
 ```python
-fetched_config_setting = client.get_configuration_setting(
-    key="MyKey"
-)
+fetched_config_setting = client.get_configuration_setting(key="MyKey")
 ```
 
 <!-- END SNIPPET -->
@@ -242,6 +248,75 @@ for item in config_settings:
 
 <!-- END SNIPPET -->
 
+### Create a Snapshot
+
+<!-- SNIPPET:snapshot_samples.create_snapshot -->
+
+```python
+from azure.appconfiguration import ConfigurationSettingFilter
+
+filters = [ConfigurationSettingFilter(key="my_key1", label="my_label1")]
+response = client.begin_create_snapshot(name=snapshot_name, filters=filters)
+created_snapshot = response.result()
+print_snapshot(created_snapshot)
+```
+
+<!-- END SNIPPET -->
+
+### Get a Snapshot
+
+<!-- SNIPPET:snapshot_samples.get_snapshot -->
+
+```python
+received_snapshot = client.get_snapshot(name=snapshot_name)
+```
+
+<!-- END SNIPPET -->
+
+### Archive a Snapshot
+
+<!-- SNIPPET:snapshot_samples.archive_snapshot -->
+
+```python
+archived_snapshot = client.archive_snapshot(name=snapshot_name)
+print_snapshot(archived_snapshot)
+```
+
+<!-- END SNIPPET -->
+
+### Recover a Snapshot
+
+<!-- SNIPPET:snapshot_samples.recover_snapshot -->
+
+```python
+recovered_snapshot = client.recover_snapshot(name=snapshot_name)
+print_snapshot(recovered_snapshot)
+```
+
+<!-- END SNIPPET -->
+
+### List Snapshots
+
+<!-- SNIPPET:snapshot_samples.list_snapshots -->
+
+```python
+for snapshot in client.list_snapshots():
+    print_snapshot(snapshot)
+```
+
+<!-- END SNIPPET -->
+
+### List Configuration Settings of a Snapshot
+
+<!-- SNIPPET:snapshot_samples.list_snapshot_configuration_settings -->
+
+```python
+for config_setting in client.list_snapshot_configuration_settings(name=snapshot_name):
+    print_configuration_setting(config_setting)
+```
+
+<!-- END SNIPPET -->
+
 ### Async APIs
 
 Async client is supported.
@@ -252,7 +327,8 @@ To use the async client library, import the AzureAppConfigurationClient from pac
 ```python
 import os
 from azure.appconfiguration.aio import AzureAppConfigurationClient
-CONNECTION_STRING = os.environ['APPCONFIGURATION_CONNECTION_STRING']
+
+CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
 # Create app config client
 client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
@@ -266,9 +342,7 @@ For instance, to retrieve a Configuration Setting asynchronously, async_client c
 <!-- SNIPPET:hello_world_sample_async.get_config_setting -->
 
 ```python
-fetched_config_setting = await client.get_configuration_setting(
-    key="MyKey"
-)
+fetched_config_setting = await client.get_configuration_setting(key="MyKey")
 ```
 
 <!-- END SNIPPET -->
@@ -281,6 +355,63 @@ To use list_configuration_settings, call it synchronously and iterate over the r
 config_settings = client.list_configuration_settings(label_filter="MyLabel")
 async for item in config_settings:
     print_configuration_setting(item)
+```
+
+<!-- END SNIPPET -->
+
+<!-- SNIPPET:snapshot_samples_async.create_snapshot -->
+
+```python
+from azure.appconfiguration import ConfigurationSettingFilter
+
+filters = [ConfigurationSettingFilter(key="my_key1", label="my_label1")]
+response = await client.begin_create_snapshot(name=snapshot_name, filters=filters)
+created_snapshot = await response.result()
+print_snapshot(created_snapshot)
+```
+
+<!-- END SNIPPET -->
+
+<!-- SNIPPET:snapshot_samples_async.get_snapshot -->
+
+```python
+received_snapshot = await client.get_snapshot(name=snapshot_name)
+```
+
+<!-- END SNIPPET -->
+
+<!-- SNIPPET:snapshot_samples_async.archive_snapshot -->
+
+```python
+archived_snapshot = await client.archive_snapshot(name=snapshot_name)
+print_snapshot(archived_snapshot)
+```
+
+<!-- END SNIPPET -->
+
+<!-- SNIPPET:snapshot_samples_async.recover_snapshot -->
+
+```python
+recovered_snapshot = await client.recover_snapshot(name=snapshot_name)
+print_snapshot(recovered_snapshot)
+```
+
+<!-- END SNIPPET -->
+
+<!-- SNIPPET:snapshot_samples_async.list_snapshots -->
+
+```python
+async for snapshot in client.list_snapshots():
+    print_snapshot(snapshot)
+```
+
+<!-- END SNIPPET -->
+
+<!-- SNIPPET:snapshot_samples_async.list_snapshot_configuration_settings -->
+
+```python
+async for config_setting in client.list_snapshot_configuration_settings(name=snapshot_name):
+    print_configuration_setting(config_setting)
 ```
 
 <!-- END SNIPPET -->
@@ -299,6 +430,7 @@ Several App Configuration client library samples are available to you in this Gi
 - [Make a configuration setting readonly](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/read_only_sample.py) / [Async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/hello_world_sample_async.py)
 - [Read revision history](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/list_revision_sample.py) / [Async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/list_revision_sample_async.py)
 - [Get a setting if changed](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/conditional_operation_sample.py) / [Async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/conditional_operation_sample_async.py)
+- [Create, retrieve and update status of a configuration settings snapshot](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/snapshot_samples.py) / [Async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/snapshot_samples_async.py)
 
  For more details see the [samples README](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/README.md).
 
@@ -316,7 +448,7 @@ need to do this once across all repos using our CLA.
 
 This project has adopted the
 [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
-see the Code of Conduct FAQ or contact opencode@microsoft.com with any
+see the [Code of Conduct FAQ][coc_faq] or contact [opencode@microsoft.com][coc_contact] with any
 additional questions or comments.
 
 <!-- LINKS -->
@@ -334,3 +466,4 @@ additional questions or comments.
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
 [troubleshooting_guide]: https://aka.ms/azsdk/python/appconfiguration/troubleshoot
+[label_concept]: https://docs.microsoft.com/azure/azure-app-configuration/concept-key-value#label-keys

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 
 from marshmallow import fields
@@ -13,6 +13,7 @@ from azure.ai.ml._schema.core.schema import YamlFileSchema, PatchedSchemaMeta
 from .source_metadata_schema import SourceMetadataSchema
 
 
+# pylint: disable-next=name-too-long
 class FeatureTransformationCodePropertiesSchema(metaclass=PatchedSchemaMeta):
     path = fields.Str(data_key="Path")
     transformer_class = fields.Str(data_key="TransformerClass")

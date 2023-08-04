@@ -160,12 +160,16 @@ class BaseExporter:
 
         Returns an ExportResult, this function should never
         throw an exception.
+        :param envelopes: The list of telemetry items to transmit.
+        :type envelopes: list of ~azure.monitor.opentelemetry.exporter._generated.models.TelemetryItem
+        :return: The result of the export.
+        :rtype: ~azure.monitor.opentelemetry.exporter.export._base._ExportResult
         """
         if len(envelopes) > 0:
             result = ExportResult.SUCCESS
             reach_ingestion = False
+            start_time = time.time()
             try:
-                start_time = time.time()
                 track_response = self.client.track(envelopes)
                 if not track_response.errors:  # 200
                     self._consecutive_redirects = 0
@@ -332,29 +336,41 @@ def _get_auth_policy(credential, default_auth_policy):
 
 
 def _is_redirect_code(response_code: int) -> bool:
-    """
-    Determine if response is a redirect response.
+    """Determine if response is a redirect response.
+
+    :param int response_code: HTTP response code
+    :return: True if response is a redirect response
+    :rtype: bool
     """
     return response_code in _REDIRECT_STATUS_CODES
 
 
 def _is_retryable_code(response_code: int) -> bool:
-    """
-    Determine if response is retryable
+    """Determine if response is retryable.
+
+    :param int response_code: HTTP response code
+    :return: True if response is retryable
+    :rtype: bool
     """
     return response_code in _RETRYABLE_STATUS_CODES
 
 
 def _is_throttle_code(response_code: int) -> bool:
-    """
-    Determine if response is throttle response
+    """Determine if response is throttle response.
+
+    :param int response_code: HTTP response code
+    :return: True if response is throttle response
+    :rtype: bool
     """
     return response_code in _THROTTLE_STATUS_CODES
 
 
 def _reached_ingestion_code(response_code: int) -> bool:
-    """
-    Determine if response indicates ingestion service has been reached
+    """Determine if response indicates ingestion service has been reached.
+
+    :param int response_code: HTTP response code
+    :return: True if response indicates ingestion service has been reached
+    :rtype: bool
     """
     return response_code in _REACHED_INGESTION_STATUS_CODES
 

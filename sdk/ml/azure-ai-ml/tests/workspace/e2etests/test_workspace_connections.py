@@ -7,7 +7,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient, load_workspace_connection
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ConnectionAuthType, ConnectionCategory
+from azure.ai.ml._restclient.v2022_12_01_preview.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import WorkspaceConnection
 
@@ -28,8 +28,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             source="./tests/test_configs/workspace_connection/python_feed_pat.yaml"
         )
 
-        assert wps_connection.expiryTime == "01/05/2025 00:00:00"
-
         wps_connection.name = wps_connection_name
 
         wps_connection = client.connections.create_or_update(workspace_connection=wps_connection)
@@ -38,7 +36,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
         assert wps_connection.type == camel_to_snake(ConnectionCategory.PYTHON_FEED)
         assert wps_connection.metadata is None
-
         # TODO : Uncomment once service side returns creds correctly
         # assert wps_connection.credentials.pat == "dummy_pat"
 
@@ -75,8 +72,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
         wps_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/git_pat.yaml")
-
-        assert wps_connection.expiryTime == "01/05/2025 00:00:00"
 
         wps_connection.name = wps_connection_name
 

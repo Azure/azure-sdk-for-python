@@ -17,7 +17,10 @@ if TYPE_CHECKING:
 class _PartGenerator(AsyncIterator):
     """Until parts is a real async iterator, wrap the sync call.
 
-    :param parts: An iterable of parts
+    :param response: The response to parse
+    :type response: ~azure.core.pipeline.transport.AsyncHttpResponse
+    :param default_http_response_type: The default HTTP response type to use
+    :type default_http_response_type: any
     """
 
     def __init__(self, response, default_http_response_type: Any) -> None:
@@ -54,4 +57,4 @@ class _PartGenerator(AsyncIterator):
         try:
             return next(self._parts)
         except StopIteration:
-            raise StopAsyncIteration()
+            raise StopAsyncIteration()  # pylint: disable=raise-missing-from

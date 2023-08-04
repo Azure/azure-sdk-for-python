@@ -18,17 +18,30 @@ auto_request_id_values = (True, False, None)
 request_id_init_values = ("foo", None, "_unset")
 request_id_set_values = ("bar", None, "_unset")
 request_id_req_values = ("baz", None, "_unset")
+request_id_header_name_values = ("client-request-id", "_unset")
 full_combination = list(
-    product(auto_request_id_values, request_id_init_values, request_id_set_values, request_id_req_values, HTTP_REQUESTS)
+    product(
+        auto_request_id_values,
+        request_id_init_values,
+        request_id_set_values,
+        request_id_req_values,
+        request_id_header_name_values,
+        HTTP_REQUESTS,
+    )
 )
 
 
 @pytest.mark.parametrize(
-    "auto_request_id, request_id_init, request_id_set, request_id_req, http_request", full_combination
+    "auto_request_id, request_id_init, request_id_set, request_id_req, request_id_header_name, http_request",
+    full_combination,
 )
-def test_request_id_policy(auto_request_id, request_id_init, request_id_set, request_id_req, http_request):
+def test_request_id_policy(
+    auto_request_id, request_id_init, request_id_set, request_id_req, request_id_header_name, http_request
+):
     """Test policy with no other policy and happy path"""
     kwargs = {}
+    if request_id_header_name != "_unset":
+        kwargs["request_id_header_name"] = request_id_header_name
     if auto_request_id is not None:
         kwargs["auto_request_id"] = auto_request_id
     if request_id_init != "_unset":
@@ -44,22 +57,23 @@ def test_request_id_policy(auto_request_id, request_id_init, request_id_set, req
         request_id_policy.on_request(pipeline_request)
 
     assert all(v is not None for v in request.headers.values())
+    expected_header_name = "x-ms-client-request-id" if request_id_header_name == "_unset" else "client-request-id"
     if request_id_req != "_unset" and request_id_req:
-        assert request.headers["x-ms-client-request-id"] == request_id_req
+        assert request.headers[expected_header_name] == request_id_req
     elif not request_id_req:
-        assert not "x-ms-client-request-id" in request.headers
+        assert not expected_header_name in request.headers
     elif request_id_set != "_unset" and request_id_set:
-        assert request.headers["x-ms-client-request-id"] == request_id_set
+        assert request.headers[expected_header_name] == request_id_set
     elif not request_id_set:
-        assert not "x-ms-client-request-id" in request.headers
+        assert not expected_header_name in request.headers
     elif request_id_init != "_unset" and request_id_init:
-        assert request.headers["x-ms-client-request-id"] == request_id_init
+        assert request.headers[expected_header_name] == request_id_init
     elif not request_id_init:
-        assert not "x-ms-client-request-id" in request.headers
+        assert not expected_header_name in request.headers
     elif auto_request_id or auto_request_id is None:
-        assert request.headers["x-ms-client-request-id"] == "VALUE"
+        assert request.headers[expected_header_name] == "VALUE"
     else:
-        assert not "x-ms-client-request-id" in request.headers
+        assert not expected_header_name in request.headers
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

@@ -21,14 +21,15 @@ from .._connection import get_local_timeout, _CLOSING_STATES
 from ..constants import (
     PORT,
     SECURE_PORT,
+    SOCKET_TIMEOUT,
     WEBSOCKET_PORT,
     MAX_CHANNELS,
     MAX_FRAME_SIZE_BYTES,
     HEADER_FRAME,
+    WS_TIMEOUT_INTERVAL,
     ConnectionState,
     EMPTY_FRAME,
     TransportType,
-    READ_TIMEOUT_INTERVAL
 )
 
 from ..error import ErrorCondition, AMQPConnectionError, AMQPError
@@ -64,6 +65,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value). When using these settings,
      the transport_type would be AmqpOverWebSocket.
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword float socket_timeout: The maximum time in seconds that the underlying socket in the transport should
+     wait when reading or writing data before timing out. The default value is 0.2 (for transport type Amqp),
+     and 1 for transport type AmqpOverWebsocket.
     """
 
     def __init__(self, endpoint, **kwargs):  # pylint:disable=too-many-statements
@@ -94,6 +98,15 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
         transport = kwargs.get("transport")
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
+        # socket_timeout that will be used by `asyncio.wait_for()` in send/receive ops
+        self._socket_timeout = kwargs.pop("socket_timeout", None)
+
+        if self._transport_type.value == TransportType.Amqp.value and self._socket_timeout is None:
+            self._socket_timeout = SOCKET_TIMEOUT
+        elif (self._transport_type.value == TransportType.AmqpOverWebsocket.value and
+              self._socket_timeout is None):
+            self._socket_timeout = WS_TIMEOUT_INTERVAL
+
         if transport:
             self._transport = transport
         elif "sasl_credential" in kwargs:
@@ -119,6 +132,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         self._max_frame_size = kwargs.pop(
             "max_frame_size", MAX_FRAME_SIZE_BYTES
         )  # type: int
+
         self._remote_max_frame_size = None  # type: Optional[int]
         self._channel_max = kwargs.pop("channel_max", MAX_CHANNELS)  # type: int
         self._idle_timeout = kwargs.pop("idle_timeout", None)  # type: Optional[int]
@@ -239,7 +253,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         timeout: Optional[Union[int, float]] = None
         if wait is False:
-            timeout = READ_TIMEOUT_INTERVAL
+            timeout = self._socket_timeout
         elif wait is True:
             timeout = None
         else:
@@ -550,8 +564,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         try:
             await self._incoming_endpoints[channel]._incoming_end(frame)  # pylint:disable=protected-access
+            outgoing_channel = self._incoming_endpoints[channel].channel
             self._incoming_endpoints.pop(channel)
-            self._outgoing_endpoints.pop(channel)
+            self._outgoing_endpoints.pop(outgoing_channel)
         except KeyError:
             #close the connection
             await self.close(

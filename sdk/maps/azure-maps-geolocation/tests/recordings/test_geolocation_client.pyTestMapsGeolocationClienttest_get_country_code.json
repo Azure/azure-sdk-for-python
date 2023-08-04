@@ -1,26 +1,28 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://atlas.microsoft.com/geolocation/ip/json?api-version=1.0.0b1\u0026ip=2001%3A4898%3A80e8%3Ab%3A%3A189",
+      "RequestUri": "https://atlas.microsoft.com/geolocation/ip/json?api-version=1.0\u0026ip=2001%3A4898%3A80e8%3Ab%3A%3A189",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "subscription-key": "AzureMapsSubscriptionKey",
-        "User-Agent": "azsdk-python-maps-geolocation/1.0-preview Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-maps-geolocation/1.0-preview Python/3.10.5 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "Content-Length": "70",
+        "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 07 Oct 2022 18:53:37 GMT",
+        "Date": "Tue, 27 Jun 2023 09:51:33 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West US 2",
-        "X-MSEdge-Ref": "Ref A: 0A1AB6F5A00144E98960DA58A1F90C5B Ref B: TPE30EDGE0918 Ref C: 2022-10-07T18:53:38Z"
+        "X-MSEdge-Ref": "Ref A: 3ACC9256CE194AA981F87CB6633E09CD Ref B: TYO01EDGE2214 Ref C: 2023-06-27T09:51:33Z"
       },
       "ResponseBody": {
         "countryRegion": {

@@ -26,7 +26,7 @@ from azure.ai.ml._local_endpoints.validators.model_validator import get_model_ar
 from azure.ai.ml._scope_dependent_operations import OperationsContainer
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
 from azure.ai.ml._utils.utils import DockerProxy
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType, DefaultOpenEncoding
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.exceptions import InvalidLocalEndpointError, LocalEndpointNotFoundError, ValidationException
@@ -51,7 +51,10 @@ class _LocalDeploymentHelper(object):
         self._environment_operations = operation_container.all_operations.get(AzureMLResourceType.ENVIRONMENT)
 
     def create_or_update(
-        self, deployment: OnlineDeployment, local_endpoint_mode: LocalEndpointMode
+        self,
+        deployment: OnlineDeployment,
+        local_endpoint_mode: LocalEndpointMode,
+        local_enable_gpu: Optional[bool] = False,
     ) -> OnlineDeployment:
         """Create or update an deployment locally using Docker.
 
@@ -59,6 +62,8 @@ class _LocalDeploymentHelper(object):
         :type deployment: OnlineDeployment
         :param local_endpoint_mode: Mode for how to create the local user container.
         :type local_endpoint_mode: LocalEndpointMode
+        :param local_enable_gpu: enable local container to access gpu
+        :type local_enable_gpu: bool
         """
         try:
             if deployment is None:
@@ -85,6 +90,7 @@ class _LocalDeploymentHelper(object):
                 endpoint_name=deployment.endpoint_name,
                 deployment=deployment,
                 local_endpoint_mode=local_endpoint_mode,
+                local_enable_gpu=local_enable_gpu,
                 endpoint_metadata=endpoint_metadata,
                 deployment_metadata=deployment_metadata,
             )
@@ -154,17 +160,20 @@ class _LocalDeploymentHelper(object):
         endpoint_name: str,
         deployment: OnlineDeployment,
         local_endpoint_mode: LocalEndpointMode,
+        local_enable_gpu: Optional[bool] = False,
         endpoint_metadata: Optional[dict] = None,
         deployment_metadata: Optional[dict] = None,
     ):
         """Create deployment locally using Docker.
 
-        :param endpoint: OnlineDeployment object with information from user yaml.
-        :type endpoint: OnlineDeployment
+        :param endpoint_name: OnlineDeployment object with information from user yaml.
+        :type endpoint_name: str
         :param deployment: Deployment to create
-        :type deployment: Deployment entity
+        :type deployment: OnlineDeployment
         :param local_endpoint_mode: Mode for local endpoint.
         :type local_endpoint_mode: LocalEndpointMode
+        :param local_enable_gpu: enable local container to access gpu
+        :type local_enable_gpu: bool
         :param endpoint_metadata: Endpoint metadata (json serialied Endpoint entity)
         :type endpoint_metadata: dict
         :param deployment_metadata: Deployment metadata (json serialied Deployment entity)
@@ -287,6 +296,7 @@ class _LocalDeploymentHelper(object):
             azureml_port=inference_config.scoring_route.port if is_byoc else LocalEndpointConstants.DOCKER_PORT,
             local_endpoint_mode=local_endpoint_mode,
             prebuilt_image_name=yaml_base_image_name if is_byoc else None,
+            local_enable_gpu=local_enable_gpu,
         )
 
 
@@ -322,7 +332,7 @@ def _write_conda_file(conda_contents: str, directory_path: str, conda_file_name:
     """
     conda_file_path = f"{directory_path}/{conda_file_name}"
     p = Path(conda_file_path)
-    p.write_text(conda_contents)
+    p.write_text(conda_contents, encoding=DefaultOpenEncoding.WRITE)
 
 
 def _convert_json_to_deployment(deployment_json: dict, **kwargs) -> OnlineDeployment:

@@ -29,13 +29,12 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.workload_groups.begin_delete(
+    client.workload_groups.begin_delete(
         resource_group_name="Default-SQL-SouthEastAsia",
         server_name="testsvr",
         database_name="testdb",
         workload_group_name="wlm_workloadgroup",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/DeleteWorkloadGroup.json

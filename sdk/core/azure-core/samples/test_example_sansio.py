@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import sys
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core import PipelineClient
 from azure.core.pipeline.policies import RedirectPolicy
 from azure.core.pipeline.policies import UserAgentPolicy
@@ -47,8 +47,8 @@ def test_example_headers_policy():
     # or those defined in the config headers policy. They will also overwrite existing
     # identical headers.
     policies.append(headers_policy)
-    client = PipelineClient(base_url=url, policies=policies)
-    request = client.get(url)
+    client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(base_url=url, policies=policies)
+    request = HttpRequest("GET", url)
     pipeline_response = client._pipeline.run(request, headers={"CustomValue": "Bar"})
     # [END headers_policy]
 
@@ -70,8 +70,8 @@ def test_example_request_id_policy():
     # or those defined in the config headers policy. They will also overwrite existing
     # identical headers.
     policies.append(request_id_policy)
-    client = PipelineClient(base_url=url, policies=policies)
-    request = client.get(url)
+    client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(base_url=url, policies=policies)
+    request = HttpRequest("GET", url)
     pipeline_response = client._pipeline.run(request, request_id="azconfig-test")
     # [END request_id_policy]
 
@@ -97,8 +97,8 @@ def test_example_user_agent_policy():
         redirect_policy,
         user_agent_policy,
     ]
-    client = PipelineClient(base_url=url, policies=policies)
-    request = client.get(url)
+    client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(base_url=url, policies=policies)
+    request = HttpRequest("GET", url)
     pipeline_response = client._pipeline.run(request, user_agent="AnotherValue")
     # [END user_agent_policy]
 
@@ -135,8 +135,8 @@ def example_network_trace_logging():
 
     # The logger can also be enabled per operation.
     policies.append(logging_policy)
-    client = PipelineClient(base_url=url, policies=policies)
-    request = client.get(url)
+    client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(base_url=url, policies=policies)
+    request = HttpRequest("GET", url)
     pipeline_response = client._pipeline.run(request, logging_enable=True)
 
     # [END network_trace_logging_policy]
@@ -145,7 +145,6 @@ def example_network_trace_logging():
 
 
 def example_proxy_policy():
-
     # [START proxy_policy]
     from azure.core.pipeline.policies import ProxyPolicy
 

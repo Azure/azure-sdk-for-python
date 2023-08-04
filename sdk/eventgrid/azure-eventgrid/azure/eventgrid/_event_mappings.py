@@ -166,7 +166,17 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ContainerRegistryImagePushedEventName = 'Microsoft.ContainerRegistry.ImagePushed'
 
+    ContainerServiceClusterSupportEndedEventName = 'Microsoft.ContainerService.ClusterSupportEnded'
+
+    ContainerServiceClusterSupportEndingEventName = 'Microsoft.ContainerService.ClusterSupportEnding'
+
     ContainerServiceNewKubernetesVersionAvailableEventName = 'Microsoft.ContainerService.NewKubernetesVersionAvailable'
+
+    ContainerServiceNodePoolRollingFailedEventName = 'Microsoft.ContainerService.NodePoolRollingFailed'
+
+    ContainerServiceNodePoolRollingStartedEventName = 'Microsoft.ContainerService.NodePoolRollingStarted'
+
+    ContainerServiceNodePoolRollingSucceededEventName = 'Microsoft.ContainerService.NodePoolRollingSucceeded'
 
     DataBoxCopyCompletedEventName = 'Microsoft.DataBox.CopyCompleted'
 

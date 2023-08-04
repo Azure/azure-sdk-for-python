@@ -115,7 +115,7 @@ what you can do with the Azure Form Recognizer client library.
 [v3.0.0-samples-tag]: https://github.com/Azure/azure-sdk-for-python/tree/azure-ai-formrecognizer_3.0.0/sdk/formrecognizer/azure-ai-formrecognizer/samples
 [migration-guide]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md
 
-<!-- V3.2 links -->
+<!-- V3.2+ links -->
 
 [sample_auth]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_authentication.py
 [sample_auth_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_authentication_async.py

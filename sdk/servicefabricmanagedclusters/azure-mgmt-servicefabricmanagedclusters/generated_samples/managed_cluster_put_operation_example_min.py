@@ -44,11 +44,12 @@ def main():
                     {"name": "ManagedIdentityTokenService", "parameters": [{"name": "IsEnabled", "value": "true"}]}
                 ],
             },
+            "sku": {"name": "Basic"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2022-08-01-preview/examples/ManagedClusterPutOperation_example_min.json
+# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-02-01-preview/examples/ManagedClusterPutOperation_example_min.json
 if __name__ == "__main__":
     main()

@@ -33,11 +33,20 @@ from ._models import ContinuousDtmfRecognitionToneFailed
 from ._models import ContinuousDtmfRecognitionToneReceived
 from ._models import CreateCallRequest
 from ._models import CustomContext
+from ._models import DialogCompleted
+from ._models import DialogConsent
+from ._models import DialogFailed
+from ._models import DialogHangup
+from ._models import DialogLanguageChange
+from ._models import DialogOptions
+from ._models import DialogSensitivityUpdate
+from ._models import DialogStarted
+from ._models import DialogStateResponse
+from ._models import DialogTransfer
 from ._models import DtmfOptions
 from ._models import DtmfResult
 from ._models import ExternalStorage
 from ._models import FileSource
-from ._models import GetParticipantsResponse
 from ._models import MediaStreamingConfiguration
 from ._models import MicrosoftTeamsUserIdentifierModel
 from ._models import MuteParticipantsRequest
@@ -71,18 +80,21 @@ from ._models import SpeechOptions
 from ._models import SpeechResult
 from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
+from ._models import StartDialogRequest
 from ._models import TextSource
 from ._models import ToneInfo
 from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
 from ._models import UnmuteParticipantsRequest
 from ._models import UnmuteParticipantsResponse
+from ._models import UserConsent
 
 from ._enums import CallConnectionState
 from ._enums import CallLocatorKind
 from ._enums import CallRejectReason
 from ._enums import CommunicationCloudEnvironmentModel
 from ._enums import CommunicationIdentifierModelKind
+from ._enums import DialogInputType
 from ._enums import DtmfTone
 from ._enums import Gender
 from ._enums import MediaStreamingAudioChannelType
@@ -128,11 +140,20 @@ __all__ = [
     "ContinuousDtmfRecognitionToneReceived",
     "CreateCallRequest",
     "CustomContext",
+    "DialogCompleted",
+    "DialogConsent",
+    "DialogFailed",
+    "DialogHangup",
+    "DialogLanguageChange",
+    "DialogOptions",
+    "DialogSensitivityUpdate",
+    "DialogStarted",
+    "DialogStateResponse",
+    "DialogTransfer",
     "DtmfOptions",
     "DtmfResult",
     "ExternalStorage",
     "FileSource",
-    "GetParticipantsResponse",
     "MediaStreamingConfiguration",
     "MicrosoftTeamsUserIdentifierModel",
     "MuteParticipantsRequest",
@@ -166,17 +187,20 @@ __all__ = [
     "SpeechResult",
     "SsmlSource",
     "StartCallRecordingRequest",
+    "StartDialogRequest",
     "TextSource",
     "ToneInfo",
     "TransferCallResponse",
     "TransferToParticipantRequest",
     "UnmuteParticipantsRequest",
     "UnmuteParticipantsResponse",
+    "UserConsent",
     "CallConnectionState",
     "CallLocatorKind",
     "CallRejectReason",
     "CommunicationCloudEnvironmentModel",
     "CommunicationIdentifierModelKind",
+    "DialogInputType",
     "DtmfTone",
     "Gender",
     "MediaStreamingAudioChannelType",

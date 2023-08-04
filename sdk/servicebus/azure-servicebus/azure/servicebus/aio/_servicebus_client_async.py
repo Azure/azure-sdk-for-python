@@ -261,6 +261,10 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         :keyword str client_identifier: A string-based identifier to uniquely identify the sender instance.
          Service Bus will associate it with some error messages for easier correlation of errors.
          If not specified, a unique id will be generated.
+        :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+         wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+         and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+         a larger than default value may need to be passed in.
         :rtype: ~azure.servicebus.aio.ServiceBusSender
 
         .. admonition:: Example:
@@ -336,7 +340,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          the client fails to process the message. The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
-         receiver will automatically stop receiving. The default value is None, meaning no timeout.
+         receiver will automatically stop receiving. The default value is None, meaning no timeout. If connection
+         errors are occurring due to write timing out, the connection timeout value may need to be adjusted. See
+         the `socket_timeout` optional parameter for more details.
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
          receipt. If the receiver is a session receiver, it will apply to the session instead.
@@ -350,6 +356,10 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         :keyword str client_identifier: A string-based identifier to uniquely identify the receiver instance.
          Service Bus will associate it with some error messages for easier correlation of errors.
          If not specified, a unique id will be generated.
+        :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+         wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+         and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+         a larger than default value may need to be passed in.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         .. admonition:: Example:
@@ -423,6 +433,10 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         :keyword str client_identifier: A string-based identifier to uniquely identify the sender instance.
          Service Bus will associate it with some error messages for easier correlation of errors.
          If not specified, a unique id will be generated.
+        :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+         wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+         and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+         a larger than default value may need to be passed in.
         :rtype: ~azure.servicebus.aio.ServiceBusSender
 
         .. admonition:: Example:
@@ -500,7 +514,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          the client fails to process the message. The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
-         receiver will automatically stop receiving. The default value is None, meaning no timeout.
+         receiver will automatically stop receiving. The default value is None, meaning no timeout. If connection
+         errors are occurring due to write timing out, the connection timeout value may need to be adjusted. See
+         the `socket_timeout` optional parameter for more details.
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
          receipt. If the receiver is a session receiver, it will apply to the session instead.
@@ -514,6 +530,10 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         :keyword str client_identifier: A string-based identifier to uniquely identify the receiver instance.
          Service Bus will associate it with some error messages for easier correlation of errors.
          If not specified, a unique id will be generated.
+        :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+         wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+         and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+         a larger than default value may need to be passed in.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         .. admonition:: Example:

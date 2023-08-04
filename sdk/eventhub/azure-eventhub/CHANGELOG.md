@@ -1,12 +1,21 @@
 # Release History
 
-## 5.11.3 (Unreleased)
+## 5.11.4 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 5.11.3 (2023-07-12)
+
+### Bugs Fixed
+
+- Fixed the error `end frame received on invalid channel` which was raised when a disconnect was sent by the service ([#30860](https://github.com/Azure/azure-sdk-for-python/pull/30860))
+- Fixed the error `link already closed` which was raised when the client was closing and disconnecting from the service ([#30836](https://github.com/Azure/azure-sdk-for-python/pull/30836))
 
 ### Other Changes
 
@@ -23,6 +32,7 @@
    - The `component` attribute was removed from all spans.
    - All `send` spans now contain links to `message` spans. Now, `message` spans will no longer contain a link to the `send` span.
    - Message application properties will now contain values for `traceparent` (and `tracestate` if applicable)
+   - Process spans will now be a direct children of message span contexts in when event handling on a per-message basis. ([#30537](https://github.com/Azure/azure-sdk-for-python/pull/30537))
 
 ## 5.11.2 (2023-03-20)
 

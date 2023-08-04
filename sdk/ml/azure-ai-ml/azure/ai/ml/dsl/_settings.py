@@ -75,6 +75,7 @@ class _DSLSettings:
             if id(self.init_job) == id(job):
                 return name
         module_logger.warning("Initialization job setting is ignored as cannot find corresponding job node.")
+        return None
 
     @property
     def finalize_job(self) -> BaseNode:
@@ -93,13 +94,14 @@ class _DSLSettings:
         # note: need to use `BaseNode is not None` as `bool(BaseNode)` will return False
         return self._finalize_job is not None
 
-    def finalize_job_name(self, jobs: Dict[str, BaseNode]) -> str:
+    def finalize_job_name(self, jobs: Dict[str, BaseNode]) -> Optional[str]:
         if isinstance(self._finalize_job, str):
             return self._finalize_job
         for name, job in jobs.items():
             if id(self.finalize_job) == id(job):
                 return name
         module_logger.warning("Finalization job setting is ignored as cannot find corresponding job node.")
+        return None
 
 
 def set_pipeline_settings(
@@ -111,10 +113,10 @@ def set_pipeline_settings(
 
     This function should be called inside a `dsl.pipeline` decorated function, otherwise will raise exception.
 
-    :param on_init: On_init job node or name. On init job will be executed before all other jobs, \
+    :keyword on_init: On_init job node or name. On init job will be executed before all other jobs, \
                 it should not have data connections to regular nodes.
     :type on_init: Union[BaseNode, str]
-    :param on_finalize: On_finalize job node or name. On finalize job will be executed after pipeline run \
+    :keyword on_finalize: On_finalize job node or name. On finalize job will be executed after pipeline run \
                 finishes (completed/failed/canceled), it should not have data connections to regular nodes.
     :type on_finalize: Union[BaseNode, str]
     :return:

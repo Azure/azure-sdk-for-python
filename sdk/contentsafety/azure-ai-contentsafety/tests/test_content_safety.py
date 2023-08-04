@@ -1,14 +1,19 @@
+# coding=utf-8
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
 import os
-import base64
 import functools
 
-from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.ai.contentsafety import ContentSafetyClient
 from azure.ai.contentsafety.models import AnalyzeTextOptions, ImageData, AnalyzeImageOptions, TextBlocklist
 from azure.core.credentials import AzureKeyCredential
 
 ContentSafetyPreparer = functools.partial(
-    PowerShellPreparer,
+    EnvironmentVariableLoader,
     "content_safety",
     content_safety_endpoint="https://fake_cs_resource.cognitiveservices.azure.com",
     content_safety_key="00000000000000000000000000000000",

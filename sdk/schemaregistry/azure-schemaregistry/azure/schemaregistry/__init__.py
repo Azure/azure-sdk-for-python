@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from ._version import VERSION
+
 __version__ = VERSION
 
 from ._schema_registry_client import SchemaRegistryClient
@@ -35,5 +36,5 @@ __all__ = [
     "SchemaRegistryClient",
     "SchemaFormat",
     "Schema",
-    "SchemaProperties"
+    "SchemaProperties",
 ]

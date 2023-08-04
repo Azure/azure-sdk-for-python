@@ -17,43 +17,25 @@ from azure.core.polling import LROPoller
 
 from azure.ai.ml._azure_environments import (
     CloudArgumentKeys,
+    _add_cloud_to_environments,
     _get_base_url_from_metadata,
     _get_cloud_information_from_metadata,
     _get_default_cloud_name,
     _set_cloud,
-    _add_cloud_to_environments,
 )
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient022022Preview,
-)
-from azure.ai.ml._restclient.v2022_05_01 import (
-    AzureMachineLearningWorkspaces as ServiceClient052022,
-)
-from azure.ai.ml._restclient.v2022_10_01 import (
-    AzureMachineLearningWorkspaces as ServiceClient102022,
-)
-from azure.ai.ml._restclient.v2022_10_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient102022Preview,
-)
-from azure.ai.ml._restclient.v2023_02_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient022023Preview,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
-)
-from azure.ai.ml._restclient.v2023_04_01 import (
-    AzureMachineLearningWorkspaces as ServiceClient042023,
-)
-from azure.ai.ml._scope_dependent_operations import (
-    OperationConfig,
-    OperationsContainer,
-    OperationScope,
-)
-
+from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
+from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
+from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2023_04_01 import AzureMachineLearningWorkspaces as ServiceClient042023
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._experimental import experimental
@@ -61,22 +43,22 @@ from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._preflight_utils import get_deployments_operation
 from azure.ai.ml._utils._registry_utils import get_registry_client
 from azure.ai.ml._utils.utils import _is_https_url
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType, DefaultOpenEncoding
 from azure.ai.ml.entities import (
     BatchDeployment,
-    ModelBatchDeployment,
-    PipelineComponentBatchDeployment,
     BatchEndpoint,
     Component,
     Compute,
     Datastore,
     Environment,
     Job,
-    Schedule,
     Model,
+    ModelBatchDeployment,
     OnlineDeployment,
     OnlineEndpoint,
+    PipelineComponentBatchDeployment,
     Registry,
+    Schedule,
     Workspace,
 )
 from azure.ai.ml.entities._assets import WorkspaceAssetReference
@@ -95,16 +77,17 @@ from azure.ai.ml.operations import (
     OnlineEndpointOperations,
     RegistryOperations,
     WorkspaceConnectionsOperations,
+    WorkspaceHubOperations,
     WorkspaceOperations,
 )
-from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
+from azure.ai.ml.operations._feature_set_operations import FeatureSetOperations
+from azure.ai.ml.operations._feature_store_entity_operations import FeatureStoreEntityOperations
+from azure.ai.ml.operations._feature_store_operations import FeatureStoreOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
 from azure.ai.ml.operations._schedule_operations import ScheduleOperations
-from azure.ai.ml.operations._feature_set_operations import FeatureSetOperations
-from azure.ai.ml.operations._feature_store_operations import FeatureStoreOperations
-from azure.ai.ml.operations._feature_store_entity_operations import FeatureStoreEntityOperations
+from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 
 module_logger = logging.getLogger(__name__)
 
@@ -113,36 +96,51 @@ module_logger = logging.getLogger(__name__)
 class MLClient:
     """A client class to interact with Azure ML services.
 
-    Use this client to manage Azure ML resources, e.g. workspaces, jobs, models and so on.
+    Use this client to manage Azure ML resources such as workspaces, jobs, models, and so on.
 
-    :param credential: Credential to use for authentication.
+    :param credential: The credential to use for authentication.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Azure subscription ID, optional for registry assets only, defaults to None.
-    :type subscription_id: typing.Optional[str]
-    :param resource_group_name: Azure resource group, optional for registry assets only, defaults to None.
-    :type resource_group_name: typing.Optional[str]
-    :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations only,
-            defaults to None.
-    :type workspace_name: typing.Optional[str]
-    :param registry_name: Registry to use in the client, optional for non registry dependent operations only,
-            defaults to None.
-    :type registry_name: typing.Optional[str]
-    :param show_progress: Whether to display progress bars for long-running operations. E.g. customers may consider
-            setting this to False if not using this SDK in an interactive setup. defaults to True.
-    :type show_progress: typing.Optional[bool]
-    :param enable_telemetry: Whether to enable telemetry. Will be overridden to False if not in a Jupyter Notebook.
-    :type enable_telemetry: typing.Optional[bool]
-    :keyword cloud: The cloud name to use, defaults to AzureCloud.
-    :paramtype cloud: str
+    :param subscription_id: The Azure subscription ID. Optional for registry assets only. Defaults to None.
+    :type subscription_id: Optional[str]
+    :param resource_group_name: The Azure resource group. Optional for registry assets only. Defaults to None.
+    :type resource_group_name: Optional[str]
+    :param workspace_name: The workspace to use in the client. Optional only for operations that are not
+        workspace-dependent. Defaults to None.
+    :type workspace_name: Optional[str]
+    :param registry_name: The registry to use in the client. Optional only for operations that are not
+        workspace-dependent. Defaults to None.
+    :type registry_name: Optional[str]
+    :keyword show_progress: Specifies whether or not to display progress bars for long-running operations (e.g.
+        customers may consider setting this to False if not using this SDK in an interactive setup). Defaults to True.
+    :type show_progress: Optional[bool]
+    :keyword enable_telemetry: Specifies whether or not to enable telemetry. Will be overridden to False if not in a
+        Jupyter Notebook. Defaults to True if in a Jupyter Notebook.
+    :type enable_telemetry: Optional[bool]
+    :keyword cloud: The cloud name to use. Defaults to "AzureCloud".
+    :type cloud: Optional[str]
+    :raises ValueError: Raised if credential is None.
+    :raises ~azure.ai.ml.ValidationException: Raised if both workspace_name and registry_name are provided.
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/ml_samples_authentication_sovereign_cloud.py
+        .. literalinclude:: ../samples/ml_samples_authentication.py
             :start-after: [START create_ml_client_default_credential]
             :end-before: [END create_ml_client_default_credential]
             :language: python
             :dedent: 8
             :caption: Creating the MLClient with Azure Identity credentials.
+
+    .. admonition:: Additional Note
+       :class: note
+       When using sovereign domains (i.e. any cloud other than AZURE_PUBLIC_CLOUD), you must pass in the cloud name in
+       kwargs and you must use an authority with DefaultAzureCredential.
+
+       .. literalinclude:: ../samples/ml_samples_authentication.py
+            :start-after: [START create_ml_client_sovereign_cloud]
+            :end-before: [END create_ml_client_sovereign_cloud]
+            :language: python
+            :dedent: 8
+            :caption: Creating the MLClient with Azure Identity credentials and a sovereign cloud.
     """
 
     # pylint: disable=client-method-missing-type-annotations
@@ -154,27 +152,7 @@ class MLClient:
         workspace_name: Optional[str] = None,
         registry_name: Optional[str] = None,
         **kwargs: Any,
-    ):
-        """A client class to interact with Azure ML services.
-
-        Use this client to manage Azure ML resources, e.g. workspaces, jobs, models and so on.
-
-        :param credential: Credential to use for authentication.
-        :type credential: ~azure.core.credentials.TokenCredential
-        :param subscription_id: Azure subscription ID, optional for registry assets only, defaults to None
-        :type subscription_id: typing.Optional[str]
-        :param resource_group_name: Azure resource group, optional for registry assets only, defaults to None
-        :type resource_group_name: typing.Optional[str]
-        :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations only,
-                defaults to None
-        :type workspace_name: typing.Optional[str]
-        :param registry_name: Registry to use in the client, optional for non registry dependent operations only,
-                defaults to None
-        :type registry_name: typing.Optional[str]
-        :raises ValueError: Will raise ValueError when both workspace_name and registry_name are used for ml_client
-        :raises ~azure.ai.ml.ValidationException: Raises client-side validation
-        """
-
+    ) -> None:
         if credential is None:
             raise ValueError("credential can not be None")
 
@@ -288,6 +266,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_06_2023_preview = ServiceClient062023Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         # A general purpose, user-configurable pipeline for making
         # http requests
         self._requests_pipeline = HttpPipeline(**kwargs)
@@ -322,7 +307,7 @@ class MLClient:
 
         self._workspaces = WorkspaceOperations(
             self._operation_scope,
-            self._service_client_04_2023_preview,
+            self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
@@ -331,7 +316,7 @@ class MLClient:
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
-            self._service_client_04_2023_preview,
+            self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
             **kwargs,
@@ -452,6 +437,7 @@ class MLClient:
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
+            all_operations=self._operation_container,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATA, self._data)
@@ -474,7 +460,6 @@ class MLClient:
             requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
         )
-        self._data._job_operation = self._jobs
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
         self._schedules = ScheduleOperations(
             self._operation_scope,
@@ -520,6 +505,15 @@ class MLClient:
             self._operation_scope, self._operation_config, self._service_client_04_2023_preview, **ops_kwargs
         )
 
+        self._workspace_hubs = WorkspaceHubOperations(
+            self._operation_scope,
+            self._service_client_06_2023_preview,
+            self._operation_container,
+            self._credential,
+            **app_insights_handler_kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs)
+
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
         self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
@@ -533,11 +527,9 @@ class MLClient:
         file_name=None,
         **kwargs,
     ) -> "MLClient":
-        """Return a workspace object from an existing Azure Machine Learning Workspace.
+        """Returns a client from an existing Azure Machine Learning Workspace using a file configuration.
 
-        Reads workspace configuration from a file. Throws an exception if the config file can't be found.
-
-        The method provides a simple way to reuse the same workspace across multiple Python notebooks or projects.
+        This method provides a simple way to reuse the same workspace across multiple Python notebooks or projects.
         Users can save the workspace Azure Resource Manager (ARM) properties using the
         [workspace.write_config](https://aka.ms/ml-workspace-class) method,
         and use this method to load the same workspace in different Python notebooks or projects without
@@ -545,18 +537,37 @@ class MLClient:
 
         :param credential: The credential object for the workspace.
         :type credential: ~azure.core.credentials.TokenCredential
-        :param path: The path to the config file or starting directory to search.
-            The parameter defaults to starting the search in the current directory.
-            Defaults to None
-        :type path: typing.Union[os.PathLike, str]
-        :param file_name: Allows overriding the config file name to search for when path is a directory path.
-            (Default value = None)
-        :type file_name: str
-        :keyword str cloud: The cloud name to use. Defaults to AzureCloud.
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if config.json cannot be found in directory.
-            Details will be provided in the error message.
-        :returns: The workspace object for an existing Azure ML Workspace.
+        :keyword path: The path to the configuration file or starting directory to search for the configuration file
+            within. Defaults to None, indicating the current directory will be used.
+        :type path: Optional[Union[os.PathLike, str]]
+        :keyword file_name: The configuration file name to search for when path is a directory path. Defaults to
+            "config.json".
+        :type file_name: Optional[str]
+        :keyword cloud: The cloud name to use. Defaults to "AzureCloud".
+        :type cloud: Optional[str]
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if "config.json", or file_name if overridden,
+            cannot be found in directory. Details will be provided in the error message.
+        :returns: The client for an existing Azure ML Workspace.
         :rtype: ~azure.ai.ml.MLClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_authentication.py
+                :start-after: [START create_ml_client_from_config_default]
+                :end-before: [END create_ml_client_from_config_default]
+                :language: python
+                :dedent: 8
+                :caption: Creating an MLClient from a file named "config.json" in directory "src".
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_authentication.py
+                :start-after: [START create_ml_client_from_config_custom_filename]
+                :end-before: [END create_ml_client_from_config_custom_filename]
+                :language: python
+                :dedent: 8
+                :caption: Creating an MLClient from a file named "team_workspace_configuration.json" in the current
+                directory.
         """
 
         path = Path(".") if path is None else Path(path)
@@ -632,10 +643,10 @@ class MLClient:
 
     @property
     def workspaces(self) -> WorkspaceOperations:
-        """A collection of workspace related operations.
+        """A collection of workspace-related operations.
 
         :return: Workspace operations
-        :rtype: WorkspaceOperations
+        :rtype: ~azure.ai.ml.operations.WorkspaceOperations
         """
         return self._workspaces
 
@@ -645,16 +656,17 @@ class MLClient:
         """A collection of registry-related operations.
 
         :return: Registry operations
-        :rtype: RegistryOperations
+        :rtype: ~azure.ai.ml.operations.RegistryOperations
         """
         return self._registries
 
     @property
     @experimental
     def feature_stores(self) -> FeatureStoreOperations:
-        """A collection of feature-store related operations.
-        :return: Featurestore operations
-        :rtype: FeatureStoreOperations
+        """A collection of feature store related operations.
+
+        :return: FeatureStore operations
+        :rtype: ~azure.ai.ml.operations.FeatureStoreOperations
         """
         return self._featurestores
 
@@ -662,17 +674,29 @@ class MLClient:
     @experimental
     def feature_sets(self) -> FeatureSetOperations:
         """A collection of feature set related operations.
+
         :return: FeatureSet operations
-        :rtype: FeatureSetOperations
+        :rtype: ~azure.ai.ml.operations.FeatureSetOperations
         """
         return self._featuresets
 
     @property
     @experimental
+    def workspace_hubs(self) -> WorkspaceHubOperations:
+        """A collection of workspace hub-related operations.
+
+        :return: Hub Operations
+        :rtype: HubOperations
+        """
+        return self._workspace_hubs
+
+    @property
+    @experimental
     def feature_store_entities(self) -> FeatureStoreEntityOperations:
         """A collection of feature store entity related operations.
+
         :return: FeatureStoreEntity operations
-        :rtype: FeatureStoreEntityOperations
+        :rtype: ~azure.ai.ml.operations.FeatureStoreEntityOperations
         """
         return self._featurestoreentities
 
@@ -681,7 +705,7 @@ class MLClient:
         """A collection of workspace connection related operations.
 
         :return: Workspace Connections operations
-        :rtype: WorkspaceConnectionsOperations
+        :rtype: ~azure.ai.ml.operations.WorkspaceConnectionsOperations
         """
         return self._workspace_connections
 
@@ -690,7 +714,7 @@ class MLClient:
         """A collection of job related operations.
 
         :return: Job operations
-        :rtype: JobOperations
+        :rtype: ~azure.ai.ml.operations.JobOperations
         """
         return self._jobs
 
@@ -699,7 +723,7 @@ class MLClient:
         """A collection of compute related operations.
 
         :return: Compute operations
-        :rtype: ComputeOperations
+        :rtype: ~azure.ai.ml.operations.ComputeOperations
         """
         return self._compute
 
@@ -708,7 +732,7 @@ class MLClient:
         """A collection of model related operations.
 
         :return: Model operations
-        :rtype: ModelOperations
+        :rtype: ~azure.ai.ml.operations.ModelOperations
         """
         return self._models
 
@@ -717,7 +741,7 @@ class MLClient:
         """A collection of online endpoint related operations.
 
         :return: Online Endpoint operations
-        :rtype: OnlineEndpointOperations
+        :rtype: ~azure.ai.ml.operations.OnlineEndpointOperations
         """
         return self._online_endpoints
 
@@ -726,7 +750,7 @@ class MLClient:
         """A collection of batch endpoint related operations.
 
         :return: Batch Endpoint operations
-        :rtype: BatchEndpointOperations
+        :rtype: ~azure.ai.ml.operations.BatchEndpointOperations
         """
         return self._batch_endpoints
 
@@ -735,7 +759,7 @@ class MLClient:
         """A collection of online deployment related operations.
 
         :return: Online Deployment operations
-        :rtype: OnlineDeploymentOperations
+        :rtype: ~azure.ai.ml.operations.OnlineDeploymentOperations
         """
         return self._online_deployments
 
@@ -744,7 +768,7 @@ class MLClient:
         """A collection of batch deployment related operations.
 
         :return: Batch Deployment operations.
-        :rtype: BatchDeploymentOperations
+        :rtype: ~azure.ai.ml.operations.BatchDeploymentOperations
         """
         return self._batch_deployments
 
@@ -753,7 +777,7 @@ class MLClient:
         """A collection of datastore related operations.
 
         :return: Datastore operations.
-        :rtype: DatastoreOperations
+        :rtype: ~azure.ai.ml.operations.DatastoreOperations
         """
         return self._datastores
 
@@ -762,7 +786,7 @@ class MLClient:
         """A collection of environment related operations.
 
         :return: Environment operations.
-        :rtype: EnvironmentOperations
+        :rtype: ~azure.ai.ml.operations.EnvironmentOperations
         """
         return self._environments
 
@@ -771,7 +795,7 @@ class MLClient:
         """A collection of data related operations.
 
         :return: Data operations.
-        :rtype: DataOperations
+        :rtype: ~azure.ai.ml.operations.DataOperations
         """
         return self._data
 
@@ -780,7 +804,7 @@ class MLClient:
         """A collection of component related operations.
 
         :return: Component operations.
-        :rtype: ComponentOperations
+        :rtype: ~azure.ai.ml.operations.ComponentOperations
         """
         return self._components
 
@@ -789,22 +813,22 @@ class MLClient:
         """A collection of schedule related operations.
 
         :return: Schedule operations.
-        :rtype: ScheduleOperations
+        :rtype: ~azure.ai.ml.operations.ScheduleOperations
         """
         return self._schedules
 
     @property
     def subscription_id(self) -> str:
-        """Get the subscription Id of a MLClient object.
+        """Get the subscription ID of an MLClient object.
 
-        :return: An Azure subscription Id.
+        :return: An Azure subscription ID.
         :rtype: str
         """
         return self._operation_scope.subscription_id
 
     @property
     def resource_group_name(self) -> str:
-        """Get the resource group name of a MLClient object.
+        """Get the resource group name of an MLClient object.
 
         :return: An Azure resource group name.
         :rtype: str
@@ -813,10 +837,10 @@ class MLClient:
 
     @property
     def workspace_name(self) -> Optional[str]:
-        """The workspace where workspace dependent operations will be executed in.
+        """The name of the workspace where workspace-dependent operations will be executed.
 
-        :return: Default workspace name.
-        :rtype: str
+        :return: The name of the default workspace.
+        :rtype: Optional[str]
         """
         return self._operation_scope.workspace_name
 
@@ -837,13 +861,13 @@ class MLClient:
 
     @classmethod
     def _get_workspace_info(cls, found_path: Optional[str]) -> Tuple[str, str, str]:
-        with open(found_path) as config_file:
+        with open(found_path, encoding=DefaultOpenEncoding.READ) as config_file:
             config = json.load(config_file)
 
         # Checking the keys in the config.json file to check for required parameters.
         scope = config.get("Scope")
         if not scope:
-            if not all([k in config.keys() for k in ("subscription_id", "resource_group", "workspace_name")]):
+            if not all(k in config.keys() for k in ("subscription_id", "resource_group", "workspace_name")):
                 msg = (
                     "The config file found in: {} does not seem to contain the required "
                     "parameters. Please make sure it contains your subscription_id, "
@@ -884,6 +908,7 @@ class MLClient:
     # Each entry here requires a registered _create_or_update function below
     T = TypeVar("T", Job, Model, Environment, Component, Datastore)
 
+    # pylint: disable-next=client-method-missing-tracing-decorator
     def create_or_update(
         self,
         entity: T,
@@ -898,6 +923,15 @@ class MLClient:
         :return: The created or updated resource.
         :rtype: typing.Union[~azure.ai.ml.entities.Job, ~azure.ai.ml.entities.Model
             , ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component, ~azure.ai.ml.entities.Datastore]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START ml_client_create_or_update]
+                :end-before: [END ml_client_create_or_update]
+                :language: python
+                :dedent: 8
+                :caption: Creating a resource asynchronously via MLClient.
         """
 
         return _create_or_update(entity, self._operation_container.all_operations, **kwargs)
@@ -916,6 +950,7 @@ class MLClient:
         Schedule,
     )
 
+    # pylint: disable-next=client-method-missing-tracing-decorator
     def begin_create_or_update(
         self,
         entity: R,
@@ -933,6 +968,15 @@ class MLClient:
             , ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment
             , ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment
             , ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.Schedule]]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START ml_client_begin_create_or_update]
+                :end-before: [END ml_client_begin_create_or_update]
+                :language: python
+                :dedent: 8
+                :caption: Creating a resource asynchronously via MLClient.
         """
 
         return _begin_create_or_update(entity, self._operation_container.all_operations, **kwargs)

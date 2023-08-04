@@ -331,6 +331,7 @@ class AgentPoolsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> Iterable["_models.AgentPool"]:
@@ -351,7 +352,9 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2021-11-01-preview")
+        )
         cls: ClsType[_models.AgentPoolListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -453,7 +456,9 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2021-11-01-preview")
+        )
         cls: ClsType[_models.AgentPool] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -510,7 +515,9 @@ class AgentPoolsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2021-11-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AgentPool] = kwargs.pop("cls", None)
 
@@ -685,7 +692,9 @@ class AgentPoolsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2021-11-01-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AgentPool] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -745,7 +754,9 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2021-11-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
@@ -808,7 +819,9 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2021-11-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -879,7 +892,9 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2021-11-01-preview")
+        )
         cls: ClsType[_models.AgentPoolUpgradeProfile] = kwargs.pop("cls", None)
 
         request = build_get_upgrade_profile_request(
@@ -947,7 +962,9 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2021-11-01-preview")
+        )
         cls: ClsType[_models.AgentPoolAvailableVersions] = kwargs.pop("cls", None)
 
         request = build_get_available_agent_pool_versions_request(
@@ -998,7 +1015,9 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2021-11-01-preview")
+        )
         cls: ClsType[Optional[_models.AgentPool]] = kwargs.pop("cls", None)
 
         request = build_upgrade_node_image_version_request(
@@ -1075,7 +1094,9 @@ class AgentPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2021-11-01-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)

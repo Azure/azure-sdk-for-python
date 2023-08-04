@@ -157,9 +157,7 @@ def build_delete_trigger_request(trigger_name: str, **kwargs: Any) -> HttpReques
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_subscribe_trigger_to_events_request(  # pylint: disable=name-too-long
-    trigger_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_subscribe_trigger_to_events_request(trigger_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -190,9 +188,7 @@ def build_subscribe_trigger_to_events_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_event_subscription_status_request(  # pylint: disable=name-too-long
-    trigger_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_get_event_subscription_status_request(trigger_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -223,9 +219,7 @@ def build_get_event_subscription_status_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_unsubscribe_trigger_from_events_request(  # pylint: disable=name-too-long
-    trigger_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_unsubscribe_trigger_from_events_request(trigger_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 

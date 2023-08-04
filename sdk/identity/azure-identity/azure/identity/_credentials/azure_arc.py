@@ -66,16 +66,18 @@ def _get_secret_key(response: PipelineResponse) -> str:
     # expecting header with structure like 'Basic realm=<file path>'
     try:
         key_file = header.split("=")[1]
-    except IndexError:
+    except IndexError as ex:
         raise ClientAuthenticationError(
             message="Did not receive a correct value from WWW-Authenticate header: {}".format(header)
-        )
-    with open(key_file, "r") as file:
+        ) from ex
+    with open(key_file, "r", encoding="utf-8") as file:
         try:
             return file.read()
         except Exception as error:  # pylint:disable=broad-except
             # user is expected to have obtained read permission prior to this being called
-            raise ClientAuthenticationError(message="Could not read file {} contents: {}".format(key_file, error))
+            raise ClientAuthenticationError(
+                message="Could not read file {} contents: {}".format(key_file, error)
+            ) from error
 
 
 class ArcChallengeAuthPolicy(HTTPPolicy):

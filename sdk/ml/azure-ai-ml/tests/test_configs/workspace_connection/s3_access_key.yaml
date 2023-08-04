@@ -1,7 +1,6 @@
 name: test_ws_conn_s3
 type: s3
 target: dummy
-expiryTime: 01/05/2025 00:00:00
 credentials:
   type: access_key
   access_key_id: dummy

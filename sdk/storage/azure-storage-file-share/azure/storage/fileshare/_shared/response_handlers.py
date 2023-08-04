@@ -3,10 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
-    TYPE_CHECKING
-)
+from typing import NoReturn, TYPE_CHECKING
 import logging
 from xml.etree.ElementTree import Element
 
@@ -44,10 +41,8 @@ class PartialBatchErrorException(HttpResponseError):
         super(PartialBatchErrorException, self).__init__(message=message, response=response)
 
 
+# Parses the blob length from the content range header: bytes 1-3/65537
 def parse_length_from_content_range(content_range):
-    '''
-    Parses the blob length from the content range header: bytes 1-3/65537
-    '''
     if content_range is None:
         return None
 
@@ -90,7 +85,7 @@ def return_raw_deserialized(response, *_):
     return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
 
 
-def process_storage_error(storage_error):   # pylint:disable=too-many-statements
+def process_storage_error(storage_error) -> NoReturn:  # pylint:disable=too-many-statements
     raise_error = HttpResponseError
     serialized = False
     if not storage_error.response:
@@ -187,8 +182,8 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     try:
         # `from None` prevents us from double printing the exception (suppresses generated layer error context)
         exec("raise error from None")   # pylint: disable=exec-used # nosec
-    except SyntaxError:
-        raise error
+    except SyntaxError as exc:
+        raise error from exc
 
 
 def parse_to_internal_user_delegation_key(service_user_delegation_key):

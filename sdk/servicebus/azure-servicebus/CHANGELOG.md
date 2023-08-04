@@ -1,6 +1,6 @@
 # Release History
 
-## 7.10.1 (Unreleased)
+## 7.11.2 (Unreleased)
 
 ### Features Added
 
@@ -10,11 +10,34 @@
 
 ### Other Changes
 
+## 7.11.1 (2023-07-12)
+
+### Bugs Fixed
+
+- Fixed the error `end frame received on invalid channel` which was raised when a disconnect was sent by the service ([#30860](https://github.com/Azure/azure-sdk-for-python/pull/30860))
+- Fixed the error `link already closed` which was raised when the client was closing and disconnecting from the service ([#30836](https://github.com/Azure/azure-sdk-for-python/pull/30836))
+
+### Other Changes
+
+- The error raised when attempting to complete a message with an expired lock received from a non-sessionful entity has been updated to the more fine-grained `MessageLockLostError` from the superclass `ServiceBusError`.
+
+## 7.11.0 (2023-06-12)
+
+### Features Added
+
+- A new float keyword argument `socket_timeout` has been added to `get_queue_sender`, `get_queue_receiver`, `get_topic_sender`, and `get_subscription_receiver` on the sync and async `ServiceBusClient`.
+
+### Bugs Fixed
+
+- Fixed a bug where sending large messages failed on socket write timeout ([#30425](https://github.com/Azure/azure-sdk-for-python/issues/30425)).
+- Fixed a bug where settling large messages failed due to  `delivery_id` being `None`.
+
+### Other Changes
+
 - Tracing updates:
   - Span links on receive/send spans now fall back to using `Diagnostic-Id` if the `traceparent` message application property is not found.
   - Span links will now still be created for receive/send spans even if no context propagation headers are found in message application properties.
   - The `component` attribute was removed from all spans.
-
 
 ## 7.10.0 (2023-05-09)
 
@@ -23,6 +46,13 @@ Version 7.10.0 is our first stable release of the Azure Service Bus client libra
 ### Features Added
 
 - A new boolean keyword argument `uamqp_transport` has been added to sync and async `ServiceBusClient` constructors which indicates whether to use the `uamqp` library or the default pure Python AMQP library as the underlying transport.
+
+### Breaking Changes
+
+- Added the following as dependencies to be used for operations over websocket:
+  - `websocket-client` for sync
+  - `aiohttp` for async
+- Removed uAMQP from required dependencies and added it as an optional dependency for use with the `uamqp_transport` keyword.
 
 ### Bugs Fixed
 

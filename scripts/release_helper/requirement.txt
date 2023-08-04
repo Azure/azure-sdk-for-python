@@ -2,5 +2,5 @@ PyGithub==1.55
 requests==2.28.0
 azure-devops==6.0.0b4
 msrest>=0.6.21
-packaging==23.0
+packaging==23.1
 urllib3==1.26.15

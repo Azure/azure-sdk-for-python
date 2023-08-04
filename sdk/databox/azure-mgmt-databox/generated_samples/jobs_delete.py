@@ -26,12 +26,12 @@ from azure.mgmt.databox import DataBoxManagementClient
 def main():
     client = DataBoxManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="fa68082f-8ff7-4a25-95c7-ce9da541242f",
+        subscription_id="YourSubscriptionId",
     )
 
     response = client.jobs.begin_delete(
-        resource_group_name="SdkRg5154",
-        job_name="SdkJob952",
+        resource_group_name="YourResourceGroupName",
+        job_name="TestJobName1",
     ).result()
     print(response)
 

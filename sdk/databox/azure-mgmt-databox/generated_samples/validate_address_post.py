@@ -26,7 +26,7 @@ from azure.mgmt.databox import DataBoxManagementClient
 def main():
     client = DataBoxManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="fa68082f-8ff7-4a25-95c7-ce9da541242f",
+        subscription_id="YourSubscriptionId",
     )
 
     response = client.service.validate_address(
@@ -35,13 +35,13 @@ def main():
             "deviceType": "DataBox",
             "shippingAddress": {
                 "addressType": "Commercial",
-                "city": "San Francisco",
-                "companyName": "Microsoft",
-                "country": "US",
-                "postalCode": "94107",
-                "stateOrProvince": "CA",
-                "streetAddress1": "16 TOWNSEND ST",
-                "streetAddress2": "Unit 1",
+                "city": "XXXX XXXX",
+                "companyName": "XXXX XXXX",
+                "country": "XX",
+                "postalCode": "00000",
+                "stateOrProvince": "XX",
+                "streetAddress1": "XXXX XXXX",
+                "streetAddress2": "XXXX XXXX",
             },
             "validationType": "ValidateAddress",
         },
