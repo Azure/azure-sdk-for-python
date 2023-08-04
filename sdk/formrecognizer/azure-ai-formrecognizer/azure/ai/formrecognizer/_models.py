@@ -2712,7 +2712,7 @@ class DocumentWord:
     """
     content: str
     """Text content of the word."""
-    polygon: Optional[Sequence[Point]]
+    polygon: Sequence[Point]
     """Bounding polygon of the word."""
     span: DocumentSpan
     """Location of the word in the reading order concatenated content."""
@@ -2781,7 +2781,7 @@ class DocumentSelectionMark:
     state: str
     """State of the selection mark. Possible values include: "selected",
      "unselected"."""
-    polygon: Optional[Sequence[Point]]
+    polygon: Sequence[Point]
     """Bounding polygon of the selection mark."""
     span: DocumentSpan
     """Location of the selection mark in the reading order concatenated
@@ -2850,7 +2850,7 @@ class DocumentLine:
 
     content: str
     """Concatenated content of the contained elements in reading order."""
-    polygon: Optional[Sequence[Point]]
+    polygon: Sequence[Point]
     """Bounding polygon of the line."""
     spans: List[DocumentSpan]
     """Location of the line in the reading order concatenated content."""
@@ -3180,11 +3180,11 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
      "inch"."""
     spans: List[DocumentSpan]
     """Location of the page in the reading order concatenated content."""
-    words: Optional[List[DocumentWord]]
+    words: List[DocumentWord]
     """Extracted words from the page."""
-    selection_marks: Optional[List[DocumentSelectionMark]]
+    selection_marks: List[DocumentSelectionMark]
     """Extracted selection marks from the page."""
-    lines: Optional[List[DocumentLine]]
+    lines: List[DocumentLine]
     """Extracted lines from the page, potentially containing both textual and
      visual elements."""
     barcodes: List[DocumentBarcode]
