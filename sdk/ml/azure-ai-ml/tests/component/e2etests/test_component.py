@@ -404,6 +404,21 @@ class TestComponent(AzureRecordedTestCase):
         assert component_resource.code
         assert is_ARM_id_for_resource(component_resource.code)
 
+    def test_command_component_with_pathlike_as_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        component_name = randstr("component_name")
+
+        component = load_component(source="./tests/test_configs/components/basic_component_code_local_path.yml")
+        from pathlib import Path
+
+        component.name = component_name
+        component.code = Path(component.code)
+
+        component_resource = client.components.create_or_update(component)
+        assert component_resource.name == component_name
+        # make sure code is created
+        assert component_resource.code
+        assert is_ARM_id_for_resource(component_resource.code)
+
     def test_component_list(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_name = randstr("component name")
 

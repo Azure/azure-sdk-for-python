@@ -8,8 +8,8 @@
 
 ### Bugs Fixed
 - Local job runs will no longer fail if Docker registry has no username/password
-
 - Fixed an issue that code asset doesn't work with relative symbol links.
+- Fixed [Issue 31319](https://github.com/Azure/azure-sdk-for-python/issues/31319): can't accept `PathLike` for `CommandComponent.code`.
 
 ### Breaking Changes
 

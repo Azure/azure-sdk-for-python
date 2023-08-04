@@ -202,7 +202,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         return Path(self._source_path).parent
 
     def _get_origin_code_value(self) -> Union[str, PathLike, None]:
-        return self.code or Path(".").as_posix()
+        return self.code or "."
 
     # endregion
 

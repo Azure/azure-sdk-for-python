@@ -40,7 +40,7 @@ class AdditionalIncludes:
     def __init__(
         self,
         *,
-        origin_code_value: Union[None, str],
+        origin_code_value: Optional[str],
         base_path: Path,
         configs: List[Union[str, dict]] = None,
     ) -> None:
@@ -457,7 +457,7 @@ class AdditionalIncludesMixin(ComponentCodeMixin):
         return AdditionalIncludes(
             base_path=self._get_base_path_for_code(),
             configs=self._get_all_additional_includes_configs(),
-            origin_code_value=self._get_origin_code_value(),
+            origin_code_value=self._get_origin_code_in_str(),
         )
 
     @contextmanager
