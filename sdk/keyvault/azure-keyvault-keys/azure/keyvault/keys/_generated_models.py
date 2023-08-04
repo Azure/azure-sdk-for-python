@@ -588,6 +588,8 @@ class KeyAttributes(Attributes):
     :ivar exportable: Indicates if the private key can be exported. Release policy must be provided
      when creating the first version of an exportable key.
     :vartype exportable: bool
+    :ivar hsm_platform: The underlying HSM Platform.
+    :vartype hsm_platform: str
     """
 
     _validation = {
@@ -595,6 +597,7 @@ class KeyAttributes(Attributes):
         "updated": {"readonly": True},
         "recoverable_days": {"readonly": True},
         "recovery_level": {"readonly": True},
+        "hsm_platform": {"readonly": True},
     }
 
     _attribute_map = {
@@ -606,6 +609,7 @@ class KeyAttributes(Attributes):
         "recoverable_days": {"key": "recoverableDays", "type": "int"},
         "recovery_level": {"key": "recoveryLevel", "type": "str"},
         "exportable": {"key": "exportable", "type": "bool"},
+        "hsm_platform": {"key": "hsmPlatform", "type": "str"},
     }
 
     def __init__(
@@ -632,6 +636,7 @@ class KeyAttributes(Attributes):
         self.recoverable_days = None
         self.recovery_level = None
         self.exportable = exportable
+        self.hsm_platform = None
 
 
 class KeyCreateParameters(_serialization.Model):

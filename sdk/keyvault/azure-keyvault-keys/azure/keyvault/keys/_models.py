@@ -254,6 +254,18 @@ class KeyProperties(object):
         """
         return self._release_policy
 
+    @property
+    def hsm_platform(self) -> "Optional[str]":
+        """The underlying HSM platform.
+
+        :returns: The underlying HSM platform.
+        :rtype: str or None
+        """
+        # hsm_platform was added in 7.5-preview.1
+        if self._attributes:
+            return getattr(self._attributes, "hsm_platform", None)
+        return None
+
 
 class KeyReleasePolicy(object):
     """The policy rules under which a key can be exported.
