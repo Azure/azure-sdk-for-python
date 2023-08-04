@@ -16,7 +16,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import resolve_tenant
+from .._internal import resolve_tenant, within_dac
 from .._internal.decorators import log_get_token
 
 CLI_NOT_FOUND = (
@@ -75,11 +75,9 @@ class AzureDeveloperCliCredential:
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
-        _is_chained: bool = False,
     ) -> None:
 
         self.tenant_id = tenant_id
-        self._is_chained = _is_chained
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
@@ -93,7 +91,13 @@ class AzureDeveloperCliCredential:
         """Calling this method is unnecessary."""
 
     @log_get_token("AzureDeveloperCliCredential")
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,  # pylint:disable=unused-argument
+        tenant_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -102,6 +106,7 @@ class AzureDeveloperCliCredential:
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
@@ -119,11 +124,14 @@ class AzureDeveloperCliCredential:
         commandString = " --scope ".join(scopes)
         command = COMMAND_LINE.format(commandString)
         tenant = resolve_tenant(
-            default_tenant=self.tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
+            default_tenant=self.tenant_id,
+            tenant_id=tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            **kwargs,
         )
         if tenant:
             command += " --tenant-id " + tenant
-        output = _run_command(command, self._process_timeout, _is_chained=self._is_chained)
+        output = _run_command(command, self._process_timeout)
 
         token = parse_token(output)
         if not token:
@@ -133,7 +141,7 @@ class AzureDeveloperCliCredential:
                 f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
                 f"https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot."
             )
-            if self._is_chained:
+            if within_dac.get():
                 raise CredentialUnavailableError(message=message)
             raise ClientAuthenticationError(message=message)
 
@@ -189,7 +197,7 @@ def sanitize_output(output: str) -> str:
     return re.sub(r"\"token\": \"(.*?)(\"|$)", "****", output)
 
 
-def _run_command(command: str, timeout: int, _is_chained: bool = False) -> str:
+def _run_command(command: str, timeout: int) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
     if shutil.which(EXECUTABLE_NAME) is None:
         raise CredentialUnavailableError(message=CLI_NOT_FOUND)
@@ -223,7 +231,7 @@ def _run_command(command: str, timeout: int, _is_chained: bool = False) -> str:
             message = sanitize_output(ex.stderr)
         else:
             message = "Failed to invoke Azure Developer CLI"
-        if _is_chained:
+        if within_dac.get():
             raise CredentialUnavailableError(message=message) from ex
         raise ClientAuthenticationError(message=message) from ex
     except OSError as ex:

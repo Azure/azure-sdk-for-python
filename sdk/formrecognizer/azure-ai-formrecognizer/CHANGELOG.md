@@ -1,10 +1,8 @@
 # Release History
 
-## 3.3.0 (Unreleased)
+## 3.3.0 (2023-08-08)
 
 This version of the client library defaults to the service API version `2023-07-31`.
-
-### Features Added
 
 ### Breaking Changes
  > Note: The following changes are only breaking from the previous beta. They are not breaking against previous stable versions.
@@ -18,11 +16,14 @@ This version of the client library defaults to the service API version `2023-07-
 - Removed `DocumentAnnotation` model.
 - Removed `common_name` property from `DocumentKeyValuePair`.
 - Changed `AnalysisFeature` enum member names and values. Supported enum members are: `OCR_HIGH_RESOLUTION`, `LANGUAGES`, `BARCODES`, `FORMULAS`, `KEY_VALUE_PAIRS`, `STYLE_FONT`.
-
-### Bugs Fixed
+- Renamed `custom_neural_document_model_builds` property to `neural_document_model_quota` on `ResourceDetails` model.
+- Renamed `AzureBlobSource` model to `BlobSource`.
+- Renamed `AzureBlobFileListSource` model to `BlobFileListSource`.
+- Marked `neural_document_model_quota` as optional on `ResourceDetails`.
 
 ### Other Changes
-
+- Corrected typing for the `polygon` property on `DocumentWord`, `DocumentSelectionMark`, `DocumentLine`.
+- Corrected typing for `words`, `lines`, and `selection_marks` properties on `DocumentPage`.
 
 ## 3.3.0b1 (2023-04-13)
 

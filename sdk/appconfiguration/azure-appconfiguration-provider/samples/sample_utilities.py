@@ -15,8 +15,8 @@ DESCRIPTION:
 """
 
 import os
-from azure.identity import AzureAuthorityHosts, ClientSecretCredential, DefaultAzureCredential
-from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
+from azure.identity import AzureAuthorityHosts, ClientSecretCredential
+from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
 
 
 def get_authority(endpoint):
@@ -40,14 +40,16 @@ def get_audience(authority):
 
 
 def get_credential(authority, **kwargs):
-    if authority != AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
-        return ClientSecretCredential(
-            tenant_id=os.environ.get("AZURE_TENANT_ID"),
-            client_id=os.environ.get("AZURE_CLIENT_ID"),
-            client_secret=os.environ.get("AZURE_CLIENT_SECRET"),
+    if kwargs.pop("is_async", False):
+        return AsyncClientSecretCredential(
+            tenant_id=os.environ.get("APPCONFIGURATION_TENANT_ID"),
+            client_id=os.environ.get("APPCONFIGURATION_CLIENT_ID"),
+            client_secret=os.environ.get("APPCONFIGURATION_CLIENT_SECRET"),
             authority=authority,
         )
-    is_async = kwargs.pop("is_async", False)
-    if is_async:
-        return AsyncDefaultAzureCredential(**kwargs)
-    return DefaultAzureCredential(**kwargs)
+    return ClientSecretCredential(
+        tenant_id=os.environ.get("APPCONFIGURATION_TENANT_ID"),
+        client_id=os.environ.get("APPCONFIGURATION_CLIENT_ID"),
+        client_secret=os.environ.get("APPCONFIGURATION_CLIENT_SECRET"),
+        authority=authority,
+    )

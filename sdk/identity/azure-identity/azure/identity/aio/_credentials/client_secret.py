@@ -4,13 +4,10 @@
 # ------------------------------------
 from typing import Optional, TypeVar, Any
 
-import msal
-
 from azure.core.credentials import AccessToken
 from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from ..._internal import validate_tenant_id
-from ..._persistent_cache import _load_persistent_cache
 
 T = TypeVar("T", bound="ClientSecretCredential")
 
@@ -53,13 +50,7 @@ class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
             )
         validate_tenant_id(tenant_id)
 
-        cache_options = kwargs.pop("cache_persistence_options", None)
-        if cache_options:
-            cache = _load_persistent_cache(cache_options)
-        else:
-            cache = msal.TokenCache()
-
-        self._client = AadClient(tenant_id, client_id, cache=cache, **kwargs)
+        self._client = AadClient(tenant_id, client_id, **kwargs)
         self._client_id = client_id
         self._secret = client_secret
         super().__init__()

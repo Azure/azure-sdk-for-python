@@ -10,15 +10,15 @@
         "Connection": "keep-alive",
         "Content-Length": "89",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "validFrom": "2023-07-08T15:17:14.399466Z",
-        "validUntil": "2023-07-12T15:17:14.399466Z"
+        "validFrom": "2023-07-30T16:42:06.718053Z",
+        "validUntil": "2023-08-03T16:42:06.718053Z"
       },
       "StatusCode": 400,
       "ResponseHeaders": {

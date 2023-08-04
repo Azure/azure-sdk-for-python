@@ -30,7 +30,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -60,7 +60,7 @@ def build_disks_create_or_update_request(
         "diskName": _SERIALIZER.url("disk_name", disk_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -94,7 +94,7 @@ def build_disks_update_request(
         "diskName": _SERIALIZER.url("disk_name", disk_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -127,7 +127,7 @@ def build_disks_get_request(
         "diskName": _SERIALIZER.url("disk_name", disk_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -155,7 +155,7 @@ def build_disks_delete_request(
         "diskName": _SERIALIZER.url("disk_name", disk_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -182,7 +182,7 @@ def build_disks_list_by_resource_group_request(
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -206,7 +206,7 @@ def build_disks_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -238,7 +238,7 @@ def build_disks_grant_access_request(
         "diskName": _SERIALIZER.url("disk_name", disk_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -268,7 +268,7 @@ def build_disks_revoke_access_request(
         "diskName": _SERIALIZER.url("disk_name", disk_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -297,7 +297,7 @@ def build_disk_accesses_create_or_update_request(
         "diskAccessName": _SERIALIZER.url("disk_access_name", disk_access_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -331,7 +331,7 @@ def build_disk_accesses_update_request(
         "diskAccessName": _SERIALIZER.url("disk_access_name", disk_access_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -364,7 +364,7 @@ def build_disk_accesses_get_request(
         "diskAccessName": _SERIALIZER.url("disk_access_name", disk_access_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -395,7 +395,7 @@ def build_disk_accesses_delete_request(
         "diskAccessName": _SERIALIZER.url("disk_access_name", disk_access_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -425,7 +425,7 @@ def build_disk_accesses_list_by_resource_group_request(
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -449,7 +449,7 @@ def build_disk_accesses_list_request(subscription_id: str, **kwargs: Any) -> Htt
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -480,7 +480,7 @@ def build_disk_accesses_get_private_link_resources_request(
         "diskAccessName": _SERIALIZER.url("disk_access_name", disk_access_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -519,7 +519,7 @@ def build_disk_accesses_update_a_private_endpoint_connection_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -559,7 +559,7 @@ def build_disk_accesses_get_a_private_endpoint_connection_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -597,7 +597,7 @@ def build_disk_accesses_delete_a_private_endpoint_connection_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -628,7 +628,7 @@ def build_disk_accesses_list_private_endpoint_connections_request(
         "diskAccessName": _SERIALIZER.url("disk_access_name", disk_access_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -660,7 +660,7 @@ def build_disk_encryption_sets_create_or_update_request(
         "diskEncryptionSetName": _SERIALIZER.url("disk_encryption_set_name", disk_encryption_set_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -694,7 +694,7 @@ def build_disk_encryption_sets_update_request(
         "diskEncryptionSetName": _SERIALIZER.url("disk_encryption_set_name", disk_encryption_set_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -727,7 +727,7 @@ def build_disk_encryption_sets_get_request(
         "diskEncryptionSetName": _SERIALIZER.url("disk_encryption_set_name", disk_encryption_set_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -758,7 +758,7 @@ def build_disk_encryption_sets_delete_request(
         "diskEncryptionSetName": _SERIALIZER.url("disk_encryption_set_name", disk_encryption_set_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -788,7 +788,7 @@ def build_disk_encryption_sets_list_by_resource_group_request(
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -812,7 +812,7 @@ def build_disk_encryption_sets_list_request(subscription_id: str, **kwargs: Any)
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -843,7 +843,7 @@ def build_disk_encryption_sets_list_associated_resources_request(
         "diskEncryptionSetName": _SERIALIZER.url("disk_encryption_set_name", disk_encryption_set_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -883,7 +883,7 @@ def build_disk_restore_point_get_request(
         "diskRestorePointName": _SERIALIZER.url("disk_restore_point_name", disk_restore_point_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -921,7 +921,7 @@ def build_disk_restore_point_list_by_restore_point_request(
         "vmRestorePointName": _SERIALIZER.url("vm_restore_point_name", vm_restore_point_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -962,7 +962,7 @@ def build_disk_restore_point_grant_access_request(
         "diskRestorePointName": _SERIALIZER.url("disk_restore_point_name", disk_restore_point_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1004,7 +1004,7 @@ def build_disk_restore_point_revoke_access_request(
         "diskRestorePointName": _SERIALIZER.url("disk_restore_point_name", disk_restore_point_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1036,7 +1036,7 @@ def build_snapshots_create_or_update_request(
         "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1070,7 +1070,7 @@ def build_snapshots_update_request(
         "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1103,7 +1103,7 @@ def build_snapshots_get_request(
         "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1131,7 +1131,7 @@ def build_snapshots_delete_request(
         "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1158,7 +1158,7 @@ def build_snapshots_list_by_resource_group_request(
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1182,7 +1182,7 @@ def build_snapshots_list_request(subscription_id: str, **kwargs: Any) -> HttpReq
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1214,7 +1214,7 @@ def build_snapshots_grant_access_request(
         "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1244,7 +1244,7 @@ def build_snapshots_revoke_access_request(
         "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")

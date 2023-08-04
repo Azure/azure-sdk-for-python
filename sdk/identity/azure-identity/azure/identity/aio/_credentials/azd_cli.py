@@ -23,7 +23,7 @@ from ..._credentials.azd_cli import (
     parse_token,
     sanitize_output,
 )
-from ..._internal import resolve_tenant
+from ..._internal import resolve_tenant, within_dac
 
 
 class AzureDeveloperCliCredential(AsyncContextManager):
@@ -72,16 +72,20 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
-        _is_chained: bool = False,
     ) -> None:
 
         self.tenant_id = tenant_id
-        self._is_chained = _is_chained
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,  # pylint:disable=unused-argument
+        tenant_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -90,6 +94,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
@@ -100,7 +105,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         """
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
-            return _SyncAzureDeveloperCliCredential().get_token(*scopes, **kwargs)
+            return _SyncAzureDeveloperCliCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
 
         if not scopes:
             raise ValueError("Missing scope in request. \n")
@@ -108,12 +113,15 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         commandString = " --scope ".join(scopes)
         command = COMMAND_LINE.format(commandString)
         tenant = resolve_tenant(
-            default_tenant=self.tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
+            default_tenant=self.tenant_id,
+            tenant_id=tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            **kwargs,
         )
 
         if tenant:
             command += " --tenant-id " + tenant
-        output = await _run_command(command, self._process_timeout, _is_chained=self._is_chained)
+        output = await _run_command(command, self._process_timeout)
 
         token = parse_token(output)
         if not token:
@@ -123,7 +131,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
                 f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
                 f"https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot."
             )
-            if self._is_chained:
+            if within_dac.get():
                 raise CredentialUnavailableError(message=message)
             raise ClientAuthenticationError(message=message)
 
@@ -133,7 +141,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         """Calling this method is unnecessary"""
 
 
-async def _run_command(command: str, timeout: int, _is_chained: bool = False) -> str:
+async def _run_command(command: str, timeout: int) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
     if shutil.which(EXECUTABLE_NAME) is None:
         raise CredentialUnavailableError(message=CLI_NOT_FOUND)
@@ -175,6 +183,6 @@ async def _run_command(command: str, timeout: int, _is_chained: bool = False) ->
         raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
     message = sanitize_output(stderr) if stderr else "Failed to invoke Azure Developer CLI"
-    if _is_chained:
+    if within_dac.get():
         raise CredentialUnavailableError(message=message)
     raise ClientAuthenticationError(message=message)

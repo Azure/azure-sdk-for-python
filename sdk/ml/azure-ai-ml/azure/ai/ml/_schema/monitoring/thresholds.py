@@ -76,6 +76,7 @@ class PredictionDriftMetricThresholdSchema(MetricThresholdSchema):
         return PredictionDriftMetricThreshold(**data)
 
 
+# pylint: disable-next=name-too-long
 class FeatureAttributionDriftMetricThresholdSchema(MetricThresholdSchema):
     @post_load
     def make(self, data, **kwargs):

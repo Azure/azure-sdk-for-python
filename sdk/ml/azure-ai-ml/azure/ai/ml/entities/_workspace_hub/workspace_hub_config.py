@@ -4,11 +4,14 @@
 
 # pylint: disable=too-many-instance-attributes,protected-access
 
-from typing import Dict, List, Optional
+from os import PathLike
+from pathlib import Path
+from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
 from azure.ai.ml._schema._workspace_hub.workspace_hub import WorkspaceHubConfigSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 
 from azure.ai.ml._utils._experimental import experimental
 
@@ -20,7 +23,6 @@ class WorkspaceHubConfig:
         additional_workspace_storage_accounts: Optional[List[str]] = None,
         default_workspace_resource_group: Optional[str] = None,
     ) -> None:
-         
         """WorkspaceHubConfig.
 
         :param additional_workspace_storage_accounts: A list of resource IDs of existing storage accounts that will be utilized in addition to the default one.
@@ -47,3 +49,20 @@ class WorkspaceHubConfig:
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
         return WorkspaceHubConfigSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+
+    @classmethod
+    def _load(
+        cls,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
+        **kwargs,
+    ) -> "WorkspaceHubConfig":
+        data = data or {}
+        params_override = params_override or []
+        context = {
+            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
+            PARAMS_OVERRIDE_KEY: params_override,
+        }
+        loaded_schema = load_from_dict(WorkspaceHubConfigSchema, data, context, **kwargs)
+        return WorkspaceHubConfig(**loaded_schema)
