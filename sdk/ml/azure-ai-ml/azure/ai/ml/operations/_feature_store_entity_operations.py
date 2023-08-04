@@ -15,7 +15,7 @@ from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationSc
 from azure.ai.ml.exceptions import ValidationException
 
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._feature_store_utils import (
     _archive_or_restore,
 )
@@ -23,9 +23,10 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class FeatureStoreEntityOperations(_ScopeDependentOperations):
@@ -50,7 +51,8 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         self._service_client = service_client
         self._init_kwargs = kwargs
 
-    # @monitor_with_activity(logger, "FeatureStoreEntity.List", ActivityType.PUBLICAPI)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureStoreEntity.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -62,7 +64,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
 
         :param name: Name of a specific FeatureStoreEntity asset, optional.
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived FeatureStoreEntity assets.
+        :keyword list_view_type: View type for including/excluding (for example) archived FeatureStoreEntity assets.
         Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeatureStoreEntity objects
@@ -95,7 +97,8 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    # @monitor_with_activity(logger, "FeatureStoreEntity.Get", ActivityType.PUBLICAPI)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureStoreEntity.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: str, **kwargs: Dict) -> FeatureStoreEntity:
         """Get the specified FeatureStoreEntity asset.
 
@@ -114,7 +117,8 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
-    # @monitor_with_activity(logger, "FeatureStoreEntity.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureStoreEntity.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self, feature_store_entity: FeatureStoreEntity, **kwargs: Dict
     ) -> LROPoller[FeatureStoreEntity]:
@@ -137,7 +141,8 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    # @monitor_with_activity(logger, "FeatureStoreEntity.Archive", ActivityType.PUBLICAPI)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureStoreEntity.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
@@ -162,7 +167,8 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    # @monitor_with_activity(logger, "FeatureStoreEntity.Restore", ActivityType.PUBLICAPI)
+    @distributed_trace
+    @monitor_with_activity(logger, "FeatureStoreEntity.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,

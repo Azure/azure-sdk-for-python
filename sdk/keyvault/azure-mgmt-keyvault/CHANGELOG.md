@@ -1,5 +1,17 @@
 # Release History
 
+## 10.2.3 (2023-07-25)
+
+### Bugs Fixed
+
+  - Do not use configured api_version to relpace the value in nextLink for `VaultsOperation.list`
+
+## 10.2.2 (2023-05-24)
+
+### Other Changes
+
+  - Added default value back for model Sku.family to avoid breaking
+
 ## 10.2.1 (2023-04-03)
 
 ### Bugs Fixed

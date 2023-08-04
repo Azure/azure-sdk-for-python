@@ -6,7 +6,7 @@ import functools
 import json
 import logging
 import time
-
+from unittest.mock import Mock, patch
 
 import pytest
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
@@ -21,6 +21,7 @@ from _shared.test_case import KeyVaultTestCase
 from _test_case import SecretsClientPreparer, get_decorator
 
 all_api_versions = get_decorator()
+only_latest = get_decorator(api_versions=[DEFAULT_VERSION])
 logging_enabled = get_decorator(logging_enable=True)
 logging_disabled = get_decorator(logging_enable=False)
 list_test_size = 7
@@ -363,6 +364,23 @@ class TestSecretClient(KeyVaultTestCase):
                         pass
 
         mock_handler.close()
+
+    @pytest.mark.parametrize("api_version", only_latest)
+    @SecretsClientPreparer()
+    @recorded_by_proxy
+    def test_40x_handling(self, client, **kwargs):
+        """Ensure 404 and 409 responses are raised with azure-core exceptions instead of generated KV ones"""
+
+        # Test that 404 is raised correctly by fetching a nonexistent secret
+        with pytest.raises(ResourceNotFoundError):
+            client.get_secret("secret-that-does-not-exist")
+
+        # Test that 409 is raised correctly (`set_secret` shouldn't actually trigger this, but for raising behavior)
+        def run(*_, **__):
+            return Mock(http_response=Mock(status_code=409))
+        with patch.object(client._client._client._pipeline, "run", run):
+            with pytest.raises(ResourceExistsError):
+                client.set_secret("...", "...")
 
 
 def test_service_headers_allowed_in_logs():

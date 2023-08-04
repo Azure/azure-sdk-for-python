@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.job_steps.delete(
+    client.job_steps.delete(
         resource_group_name="group1",
         server_name="server1",
         job_agent_name="agent1",
         job_name="job1",
         step_name="step1",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/DeleteJobStep.json

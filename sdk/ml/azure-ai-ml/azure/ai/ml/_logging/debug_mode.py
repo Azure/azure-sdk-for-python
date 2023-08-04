@@ -12,7 +12,7 @@ import traceback
 from collections import namedtuple
 from typing import List, Optional
 
-import six.moves.http_client as httpclient
+import http.client
 
 LOG_FILE = os.path.abspath("azureml.log")
 LOG_FORMAT = "%(asctime)s|%(name)s|%(levelname)s|%(message)s"
@@ -42,7 +42,7 @@ def stack_info() -> list:
 
 
 def connection_info(gc_objects: list) -> List[ConnectionInfo]:
-    connections = [obj for obj in gc_objects if isinstance(obj, httpclient.HTTPConnection)]
+    connections = [obj for obj in gc_objects if isinstance(obj, http.client.HTTPConnection)]
     return [ConnectionInfo(host=c.host, port=c.port, hasSocket=(c.sock is not None)) for c in connections]
 
 

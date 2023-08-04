@@ -17,12 +17,11 @@ import msrest
 import pydash
 import strictyaml
 from marshmallow import Schema, ValidationError
-from strictyaml.ruamel.scanner import ScannerError
 
 from .._schema import PathAwareSchema
 from .._vendor.azure_resources.models import Deployment, DeploymentProperties, DeploymentValidateResult, ErrorResponse
 from ..constants._common import BASE_PATH_CONTEXT_KEY, OperationStatus
-from ..entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+from ..entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
 from ..entities._util import convert_ordered_dict_to_dict, decorate_validation_error
 from ..exceptions import ErrorCategory, ErrorTarget, ValidationException
 from ._mixins import RestTranslatableMixin
@@ -259,7 +258,7 @@ class MutableValidationResult(ValidationResult):
             return self
 
         if self._warnings:
-            module_logger.info("Warnings: %s" % str(self._warnings))
+            module_logger.warning("Warnings: %s" % str(self._warnings))
 
         if not self.passed:
             message = (
@@ -385,7 +384,7 @@ class SchemaValidatableMixin:
                 no_personal_data_message=str(e),
                 target=cls._get_validation_error_target(),
                 error_category=ErrorCategory.USER_ERROR,
-            )
+            ) from e
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> PathAwareSchema:
@@ -404,8 +403,8 @@ class SchemaValidatableMixin:
         return type: str
         """
         return (
-            try_get_non_arbitrary_attr_for_potential_attr_dict(self, "base_path")
-            or try_get_non_arbitrary_attr_for_potential_attr_dict(self, "_base_path")
+            try_get_non_arbitrary_attr(self, "base_path")
+            or try_get_non_arbitrary_attr(self, "_base_path")
             or Path.cwd()
         )
 
@@ -453,7 +452,7 @@ class SchemaValidatableMixin:
     @classmethod
     def _get_skip_fields_in_schema_validation(
         cls,
-    ) -> typing.List[str]:  # pylint: disable=no-self-use
+    ) -> typing.List[str]:
         """Get the fields that should be skipped in schema validation.
 
         Override this method to add customized validation logic.
@@ -632,7 +631,7 @@ class _YamlLocationResolver:
         with open(source_path, encoding="utf-8") as f:
             try:
                 loaded_yaml = strictyaml.load(f.read())
-            except (ScannerError, strictyaml.exceptions.StrictYAMLError) as e:
+            except Exception as e:  # pylint: disable=broad-except
                 msg = "Can't load source file %s as a strict yaml:\n%s" % (source_path, str(e))
                 module_logger.debug(msg)
                 return None, None

@@ -143,6 +143,7 @@ from ._data_box_management_client_enums import DataCenterCode
 from ._data_box_management_client_enums import DatacenterAddressType
 from ._data_box_management_client_enums import DoubleEncryption
 from ._data_box_management_client_enums import FilterFileType
+from ._data_box_management_client_enums import HardwareEncryption
 from ._data_box_management_client_enums import JobDeliveryType
 from ._data_box_management_client_enums import KekType
 from ._data_box_management_client_enums import LogCollectionLevel
@@ -301,6 +302,7 @@ __all__ = [
     "DatacenterAddressType",
     "DoubleEncryption",
     "FilterFileType",
+    "HardwareEncryption",
     "JobDeliveryType",
     "KekType",
     "LogCollectionLevel",

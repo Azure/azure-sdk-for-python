@@ -6,16 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
 from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -42,7 +36,7 @@ class LogsIngestionClientConfiguration(Configuration):  # pylint: disable=too-ma
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         super(LogsIngestionClientConfiguration, self).__init__(**kwargs)
-        api_version: Literal["2023-01-01"] = kwargs.pop("api_version", "2023-01-01")
+        api_version: str = kwargs.pop("api_version", "2023-01-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -52,7 +46,7 @@ class LogsIngestionClientConfiguration(Configuration):  # pylint: disable=too-ma
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["user_impersonation"])
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://monitor.azure.com//.default"])
         kwargs.setdefault("sdk_moniker", "monitor-ingestion/{}".format(VERSION))
         self._configure(**kwargs)
 

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.resourcehealth import MicrosoftResourceHealth
+from azure.mgmt.resourcehealth import ResourceHealthMgmtClient
 
 """
 # PREREQUISITES
@@ -24,7 +24,7 @@ from azure.mgmt.resourcehealth import MicrosoftResourceHealth
 
 
 def main():
-    client = MicrosoftResourceHealth(
+    client = ResourceHealthMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
@@ -36,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/resourcehealth/resource-manager/Microsoft.ResourceHealth/stable/2018-07-01/examples/Events_ListBySingleResource.json
+# x-ms-original-file: specification/resourcehealth/resource-manager/Microsoft.ResourceHealth/stable/2022-10-01/examples/Events_ListBySingleResource.json
 if __name__ == "__main__":
     main()

@@ -36,18 +36,21 @@ from .._helpers import (
     _is_tag,
     _parse_next_link,
     _validate_digest,
+    _get_blob_size,
+    _get_manifest_size,
     SUPPORTED_API_VERSIONS,
     OCI_IMAGE_MANIFEST,
     SUPPORTED_MANIFEST_MEDIA_TYPES,
     DEFAULT_AUDIENCE,
     DEFAULT_CHUNK_SIZE,
+    MAX_MANIFEST_SIZE,
 )
 from .._models import (
     RepositoryProperties,
     ArtifactManifestProperties,
     ArtifactTagProperties,
     GetManifestResult,
-    ManifestDigestValidationError,
+    DigestValidationError,
 )
 
 JSON = MutableMapping[str, Any]
@@ -69,15 +72,14 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         *,
         api_version: Optional[str] = None,
         audience: str = DEFAULT_AUDIENCE,
-        **kwargs
+        **kwargs,
     ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
         :param str endpoint: An ACR endpoint.
         :param credential: The credential with which to authenticate. This should be None in anonymous access.
         :type credential: ~azure.core.credentials_async.AsyncTokenCredential or None
-        :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
-            may result in unsupported behavior.
+        :keyword api_version: API Version. The default value is "2021-07-01".
         :paramtype api_version: str
         :keyword audience: URL to use for credential authentication with AAD. Its value could be
             "https://management.azure.com", "https://management.chinacloudapi.cn" or
@@ -98,9 +100,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         if api_version and api_version not in SUPPORTED_API_VERSIONS:
             supported_versions = "\n".join(SUPPORTED_API_VERSIONS)
-            raise ValueError(
-                f"Unsupported API version '{api_version}'. Please select from:\n{supported_versions}"
-            )
+            raise ValueError(f"Unsupported API version '{api_version}'. Please select from:\n{supported_versions}")
         if api_version is not None:
             kwargs["api_version"] = api_version
         defaultScope = [audience + "/.default"]
@@ -109,7 +109,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._endpoint = endpoint
         self._credential = credential
         super(ContainerRegistryClient, self).__init__(
-            endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs)
+            endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs
+        )
 
     async def _get_digest_from_tag(self, repository: str, tag: str) -> str:
         tag_props = await self.get_tag_properties(repository, tag)
@@ -248,6 +249,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """Get the properties of a repository
 
         :param str repository: Name of the repository
+        :return: The properties of a repository.
         :rtype: ~azure.containerregistry.RepositoryProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
@@ -405,6 +407,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository
         :param str tag_or_digest: The tag or digest of the manifest
+        :return: The properties of a registry artifact
         :rtype: ~azure.containerregistry.ArtifactManifestProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
 
@@ -426,7 +429,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             repository, tag_or_digest, **kwargs
         )
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            manifest_properties.manifest, # type: ignore
+            manifest_properties.manifest,  # type: ignore
             repository_name=repository,
             registry=self._endpoint,
         )
@@ -438,6 +441,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str repository: Repository the tag belongs to
         :param tag: The tag to get properties for
         :type tag: str
+        :return: The properties for a tag.
         :rtype: ~azure.containerregistry.ArtifactTagProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
 
@@ -452,11 +456,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             async for tag in client.list_tag_properties("my_repository"):
                 tag_properties = await client.get_tag_properties("my_repository", tag.name)
         """
-        tag_properties = await self._client.container_registry.get_tag_properties(
-            repository, tag, **kwargs
-        )
+        tag_properties = await self._client.container_registry.get_tag_properties(repository, tag, **kwargs)
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            tag_properties.tag, # type: ignore
+            tag_properties.tag,  # type: ignore
             repository=repository,
         )
 
@@ -592,10 +594,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     def update_repository_properties(
-        self,
-        repository: str,
-        properties: RepositoryProperties,
-        **kwargs
+        self, repository: str, properties: RepositoryProperties, **kwargs
     ) -> RepositoryProperties:
         """Set the permission properties of a repository.
 
@@ -618,7 +617,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         can_list: Optional[bool] = None,
         can_read: Optional[bool] = None,
         can_write: Optional[bool] = None,
-        **kwargs
+        **kwargs,
     ) -> RepositoryProperties:
         """Set the permission properties of a repository.
 
@@ -657,11 +656,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     async def update_manifest_properties(
-        self,
-        repository: str,
-        tag_or_digest: str,
-        properties: ArtifactManifestProperties,
-        **kwargs
+        self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs
     ) -> ArtifactManifestProperties:
         """Set the permission properties for a manifest.
 
@@ -705,7 +700,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         can_list: Optional[bool] = None,
         can_read: Optional[bool] = None,
         can_write: Optional[bool] = None,
-        **kwargs
+        **kwargs,
     ) -> ArtifactManifestProperties:
         """Set the permission properties for a manifest.
 
@@ -760,24 +755,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
 
         manifest_properties = await self._client.container_registry.update_manifest_properties(
-            repository,
-            tag_or_digest,
-            value=properties._to_generated(),  # pylint: disable=protected-access
-            **kwargs
+            repository, tag_or_digest, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
         )
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            manifest_properties.manifest, # type: ignore
+            manifest_properties.manifest,  # type: ignore
             repository_name=repository,
             registry=self._endpoint,
         )
 
     @overload
     async def update_tag_properties(
-        self,
-        repository: str,
-        tag: str,
-        properties: ArtifactTagProperties,
-        **kwargs
+        self, repository: str, tag: str, properties: ArtifactTagProperties, **kwargs
     ) -> ArtifactTagProperties:
         """Set the permission properties for a tag.
 
@@ -818,7 +806,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         can_list: Optional[bool] = None,
         can_read: Optional[bool] = None,
         can_write: Optional[bool] = None,
-        **kwargs
+        **kwargs,
     ) -> ArtifactTagProperties:
         """Set the permission properties for a tag.
 
@@ -853,9 +841,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
 
     @distributed_trace_async
-    async def update_tag_properties(
-        self, *args: Union[str, ArtifactTagProperties], **kwargs
-    ) -> ArtifactTagProperties:
+    async def update_tag_properties(self, *args: Union[str, ArtifactTagProperties], **kwargs) -> ArtifactTagProperties:
         repository = str(args[0])
         tag = str(args[1])
         properties = None
@@ -873,8 +859,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
         )
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            tag_attributes.tag, # type: ignore
-            repository=repository
+            tag_attributes.tag, repository=repository  # type: ignore
         )
 
     @distributed_trace_async
@@ -885,7 +870,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         *,
         tag: Optional[str] = None,
         media_type: str = OCI_IMAGE_MANIFEST,
-        **kwargs
+        **kwargs,
     ) -> str:
         """Set a manifest for an artifact.
 
@@ -901,7 +886,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: The digest of the set manifest, calculated by the registry.
         :rtype: str
         :raises ValueError: If the parameter repository or manifest is None.
-        :raises ~azure.containerregistry.ManifestDigestValidationError:
+        :raises ~azure.containerregistry.DigestValidationError:
             If the server-computed digest does not match the client-computed digest.
         """
         try:
@@ -919,13 +904,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 payload=data,
                 content_type=media_type,
                 cls=_return_response_headers,
-                **kwargs
+                **kwargs,
             )
-            digest = response_headers['Docker-Content-Digest']
+            digest = response_headers["Docker-Content-Digest"]
             if not _validate_digest(data, digest):
-                raise ManifestDigestValidationError(
-                    "The server-computed digest does not match the client-computed digest."
-                )
+                raise DigestValidationError("The server-computed digest does not match the client-computed digest.")
         except Exception as e:
             if repository is None or manifest is None:
                 raise ValueError("The parameter repository and manifest cannot be None.") from e
@@ -942,9 +925,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             When tag is provided, will use the digest in response headers to compare.
         :returns: GetManifestResult
         :rtype: ~azure.containerregistry.GetManifestResult
-        :raises ~azure.containerregistry.ManifestDigestValidationError:
+        :raises ~azure.containerregistry.DigestValidationError:
             If the content of retrieved manifest digest does not match the requested digest, or
             the server-computed digest does not match the client-computed digest when tag is passing.
+        :raises ValueError: If the content-length header is missing or invalid in response, or the manifest size is
+            bigger than 4MB.
         """
         response = cast(
             PipelineResponse,
@@ -953,24 +938,26 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 reference=tag_or_digest,
                 accept=SUPPORTED_MANIFEST_MEDIA_TYPES,
                 cls=_return_response,
-                **kwargs
-            )
+                **kwargs,
+            ),
         )
-        media_type = response.http_response.headers['Content-Type']
+        manifest_size = _get_manifest_size(response.http_response.headers)
+        # This check is to address part of the service threat model. If a manifest does not have a proper
+        # content length or is too big, it indicates a malicious or faulty service and should not be trusted.
+        if manifest_size > MAX_MANIFEST_SIZE:
+            raise ValueError("Manifest size is bigger than max allowed size of 4MB.")
+        media_type = response.http_response.headers["Content-Type"]
         manifest_bytes = await response.http_response.read()
         manifest_json = response.http_response.json()
+        manifest_digest = _compute_digest(manifest_bytes)
         if tag_or_digest.startswith("sha256:"):
-            digest = tag_or_digest
-            if not _validate_digest(manifest_bytes, digest):
-                raise ManifestDigestValidationError(
+            if manifest_digest != tag_or_digest:
+                raise DigestValidationError(
                     "The content of retrieved manifest digest does not match the requested digest."
                 )
-        else:
-            digest = response.http_response.headers['Docker-Content-Digest']
-            if not _validate_digest(manifest_bytes, digest):
-                raise ManifestDigestValidationError(
-                    "The server-computed digest does not match the client-computed digest."
-                )
+        digest = response.http_response.headers["Docker-Content-Digest"]
+        if manifest_digest != digest:
+            raise DigestValidationError("The server-computed digest does not match the client-computed digest.")
 
         return GetManifestResult(digest=digest, manifest=manifest_json, media_type=media_type)
 
@@ -984,7 +971,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: The digest and size in bytes of the uploaded blob.
         :rtype: Tuple[str, int]
         :raises ValueError: If the parameter repository or data is None.
-        :raises ~azure.containerregistry.ManifestDigestValidationError:
+        :raises ~azure.containerregistry.DigestValidationError:
             If the server-computed digest does not match the client-computed digest.
         """
         try:
@@ -992,29 +979,24 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 Dict[str, str],
                 await self._client.container_registry_blob.start_upload(
                     repository, cls=_return_response_headers, **kwargs
-                )
+                ),
             )
             digest, location, blob_size = await self._upload_blob_chunk(
-                start_upload_response_headers['Location'], data, **kwargs
+                start_upload_response_headers["Location"], data, **kwargs
             )
             complete_upload_response_headers = cast(
                 Dict[str, str],
                 await self._client.container_registry_blob.complete_upload(
-                    digest=digest,
-                    next_link=location,
-                    cls=_return_response_headers,
-                    **kwargs
-                )
+                    digest=digest, next_link=location, cls=_return_response_headers, **kwargs
+                ),
             )
             if digest != complete_upload_response_headers["Docker-Content-Digest"]:
-                raise ManifestDigestValidationError(
-                    "The server-computed digest does not match the client-computed digest."
-                )
+                raise DigestValidationError("The server-computed digest does not match the client-computed digest.")
         except Exception as e:
             if repository is None or data is None:
                 raise ValueError("The parameter repository and data cannot be None.") from e
             raise
-        return complete_upload_response_headers['Docker-Content-Digest'], blob_size
+        return complete_upload_response_headers["Docker-Content-Digest"], blob_size
 
     async def _upload_blob_chunk(self, location: str, data: IO[bytes], **kwargs) -> Tuple[str, str, int]:
         hasher = hashlib.sha256()
@@ -1026,13 +1008,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 response_headers = cast(
                     Dict[str, str],
                     await self._client.container_registry_blob.upload_chunk(
-                        location,
-                        buffer_stream,
-                        cls=_return_response_headers,
-                        **kwargs
-                    )
+                        location, buffer_stream, cls=_return_response_headers, **kwargs
+                    ),
                 )
-                location = response_headers['Location']
+                location = response_headers["Location"]
                 hasher.update(buffer)
                 buffer = data.read(DEFAULT_CHUNK_SIZE)
                 blob_size += len(buffer)
@@ -1049,20 +1028,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str digest: The digest of the blob to download.
         :returns: AsyncDownloadBlobStream
         :rtype: ~azure.containerregistry.aio.AsyncDownloadBlobStream
-        :raises ManifestDigestValidationError:
+        :raises DigestValidationError:
             If the content of retrieved blob digest does not match the requested digest.
+        :raises ValueError: If the content-range header is missing or invalid in response.
         """
         end_range = DEFAULT_CHUNK_SIZE - 1
         first_chunk, headers = cast(
             Tuple[PipelineResponse, Dict[str, str]],
             await self._client.container_registry_blob.get_chunk(
-                repository,
-                digest,
-                range_header=f"bytes=0-{end_range}",
-                cls=_return_response_and_headers,
-                **kwargs
-            )
+                repository, digest, range_header=f"bytes=0-{end_range}", cls=_return_response_and_headers, **kwargs
+            ),
         )
+        blob_size = _get_blob_size(headers)
         return AsyncDownloadBlobStream(
             response=first_chunk,
             digest=digest,
@@ -1071,11 +1048,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 name=repository,
                 digest=digest,
                 cls=_return_response_and_headers,
-                **kwargs
+                **kwargs,
             ),
-            blob_size=int(headers["Content-Range"].split("/")[1]),
+            blob_size=blob_size,
             downloaded=int(headers["Content-Length"]),
-            chunk_size=DEFAULT_CHUNK_SIZE
+            chunk_size=DEFAULT_CHUNK_SIZE,
         )
 
     @distributed_trace_async

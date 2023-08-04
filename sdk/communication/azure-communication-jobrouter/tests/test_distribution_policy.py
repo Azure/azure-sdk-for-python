@@ -16,7 +16,7 @@ from azure.communication.jobrouter._shared.utils import parse_connection_str  # 
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.communication.jobrouter import (
-    RouterAdministrationClient,
+    JobRouterAdministrationClient,
     BestWorkerMode,
     LongestIdleMode,
     RoundRobinMode, DistributionPolicy
@@ -40,7 +40,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
     def clean_up(self, **kwargs):
         # delete in live mode
         if not self.is_playback():
-            router_client: RouterAdministrationClient = self.create_admin_client()
+            router_client: JobRouterAdministrationClient = self.create_admin_client()
             if self._testMethodName in self.distribution_policy_ids \
                     and any(self.distribution_policy_ids[self._testMethodName]):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
@@ -50,11 +50,11 @@ class TestDistributionPolicy(RouterRecordedTestCase):
     @recorded_by_proxy
     def test_create_distribution_policy(self, **kwargs):
         dp_identifier = "tst_create_dp"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         for mode in distribution_modes:
             policy: DistributionPolicy = DistributionPolicy(
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode,
                 name = dp_identifier,
             )
@@ -72,7 +72,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = distribution_policy_response,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode
             )
 
@@ -80,13 +80,13 @@ class TestDistributionPolicy(RouterRecordedTestCase):
     @recorded_by_proxy
     def test_update_distribution_policy(self, **kwargs):
         dp_identifier = "tst_update_dp"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         for mode in distribution_modes:
             # Arrange
 
             policy: DistributionPolicy = DistributionPolicy(
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode,
                 name = dp_identifier,
             )
@@ -104,7 +104,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = distribution_policy_response,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode
             )
 
@@ -123,7 +123,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = updated_distribution_policy,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode_copy
             )
 
@@ -131,13 +131,13 @@ class TestDistributionPolicy(RouterRecordedTestCase):
     @recorded_by_proxy
     def test_update_distribution_policy_w_kwargs(self, **kwargs):
         dp_identifier = "tst_update_dp_w_kwargs"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         for mode in distribution_modes:
             # Arrange
 
             policy: DistributionPolicy = DistributionPolicy(
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode,
                 name = dp_identifier,
             )
@@ -155,7 +155,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = distribution_policy_response,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode
             )
 
@@ -174,7 +174,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = updated_distribution_policy,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode_copy
             )
 
@@ -182,11 +182,11 @@ class TestDistributionPolicy(RouterRecordedTestCase):
     @recorded_by_proxy
     def test_get_distribution_policy(self, **kwargs):
         dp_identifier = "tst_get_dp"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         for mode in distribution_modes:
             policy: DistributionPolicy = DistributionPolicy(
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode,
                 name = dp_identifier,
             )
@@ -204,7 +204,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = distribution_policy_response,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode
             )
 
@@ -213,7 +213,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = queried_distribution_policy,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode
             )
 
@@ -221,11 +221,11 @@ class TestDistributionPolicy(RouterRecordedTestCase):
     @recorded_by_proxy
     def test_delete_distribution_policy(self, **kwargs):
         dp_identifier = "tst_delete_dp"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         for mode in distribution_modes:
             policy: DistributionPolicy = DistributionPolicy(
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode,
                 name = dp_identifier,
             )
@@ -240,7 +240,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = distribution_policy_response,
                 identifier = dp_identifier,
                 name = dp_identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = mode
             )
 
@@ -256,12 +256,12 @@ class TestDistributionPolicy(RouterRecordedTestCase):
         dp_identifiers = ["tst_list_dp_1", "tst_list_dp_2", "tst_list_dp_3"]
         created_dp_response = {}
         policy_count = len(dp_identifiers)
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         self.distribution_policy_ids[self._testMethodName] = []
 
         for identifier in dp_identifiers:
             policy: DistributionPolicy = DistributionPolicy(
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = distribution_modes[0],
                 name = identifier,
             )
@@ -279,7 +279,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 distribution_policy = distribution_policy_response,
                 identifier = identifier,
                 name = identifier,
-                offer_ttl_seconds = 10.0,
+                offer_expires_after_seconds = 10.0,
                 mode = distribution_modes[0]
             )
             created_dp_response[distribution_policy_response.id] = distribution_policy_response
@@ -299,7 +299,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                     distribution_policy = policy_item.distribution_policy,
                     identifier = response_at_creation.id,
                     name = response_at_creation.name,
-                    offer_ttl_seconds = response_at_creation.offer_ttl_seconds,
+                    offer_expires_after_seconds = response_at_creation.offer_expires_after_seconds,
                     mode = response_at_creation.mode
                 )
                 policy_count -= 1

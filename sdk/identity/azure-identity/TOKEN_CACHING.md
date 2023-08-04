@@ -28,7 +28,7 @@ The in-memory token cache provided by the Azure Identity library can be used by 
 | macOS            | Keychain          |
 | Windows          | DPAPI             |
 
-Users can enable the cache to fall back to storing data in plaintext by setting the `allow_unencrypted_storage argument` to `True` in `TokenCachePersistenceOptions`. Enabling this does not disable encryption, but does allow plaintext storage as a fallback if encryption attempts fail. This is substantially less secure since tokens aren't encrypted to the current user, and anyone with access to the system could potentially access tokens from the cache. As such, enabling this setting is not recommended.
+Users can enable the cache to fall back to storing data in plaintext by setting the `allow_unencrypted_storage` argument to `True` in `TokenCachePersistenceOptions`. Enabling this does not disable encryption, but does allow plaintext storage as a fallback if encryption attempts fail. This is substantially less secure since tokens aren't encrypted to the current user, and anyone with access to the system could potentially access tokens from the cache. As such, enabling this setting is not recommended.
 
 With persistent disk token caching enabled, the library first determines if a valid access token for the requested resource is already stored in the persistent cache. If a valid token is found, it's returned to the app without the need to make another request to Azure AD. Additionally, the tokens are preserved across app runs, which:
 

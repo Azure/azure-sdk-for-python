@@ -6,9 +6,8 @@
 
 from typing import Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkProvisionOptions
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkProvisionStatus
+from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkProvisionOptions
 
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
@@ -22,6 +21,7 @@ from azure.ai.ml.entities import (
     DiagnoseWorkspaceParameters,
     Workspace,
     WorkspaceKeys,
+    ManagedNetworkProvisionStatus,
 )
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
@@ -43,7 +43,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient042023Preview,
+        service_client: ServiceClient062023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -62,7 +62,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Workspace]:
         """List all workspaces that the user has access to in the current resource group or subscription.
 
-        :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
+        :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :type scope: str, optional
         :return: An iterator like instance of Workspace objects
         :rtype: ~azure.core.paging.ItemPaged[Workspace]
@@ -130,19 +130,28 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         *,
         workspace_name: Optional[str] = None,
         include_spark: Optional[bool] = False,
+        **kwargs,
     ) -> LROPoller[ManagedNetworkProvisionStatus]:
         """Triggers the workspace to provision the managed network. Specifying spark enabled
         as true prepares the workspace managed network for supporting Spark.
 
-        :param workspace_name: Name of the workspace.
+        :keyword workspace_name: Name of the workspace.
         :type workspace_name: str
         :return: An instance of LROPoller.
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.ManagedNetworkProvisionStatus]
         """
         workspace_name = self._check_workspace_name(workspace_name)
-        return self._provision_network_operation.begin_provision_managed_network(
-            self._resource_group_name, workspace_name, ManagedNetworkProvisionOptions(include_spark=include_spark)
+
+        poller = self._provision_network_operation.begin_provision_managed_network(
+            self._resource_group_name,
+            workspace_name,
+            ManagedNetworkProvisionOptions(include_spark=include_spark),
+            polling=True,
+            cls=lambda response, deserialized, headers: ManagedNetworkProvisionStatus._from_rest_object(deserialized),
+            **kwargs,
         )
+        module_logger.info("Provision network request initiated for workspace: %s\n", workspace_name)
+        return poller
 
     @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
@@ -186,12 +195,12 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         :param name: Name of the workspace
         :type name: str
-        :param delete_dependent_resources: Whether to delete resources associated with the workspace,
+        :keyword delete_dependent_resources: Whether to delete resources associated with the workspace,
             i.e., container registry, storage account, key vault, and application insights.
             The default is False. Set to True to delete these resources.
         :type delete_dependent_resources: bool
-        :param permanently_delete: Workspaces are soft-deleted state by default to allow recovery of workspace data.
-            Set this flag to override the soft-delete behavior and permanently delete your workspace.
+        :param permanently_delete: Workspaces are soft-deleted by default to allow recovery of workspace data.
+            Set this flag to true to override the soft-delete behavior and permanently delete your workspace.
         :type permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]

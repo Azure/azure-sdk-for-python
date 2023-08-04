@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b5 (Unreleased)
+## 1.2.1 (Unreleased)
 
 ### Features Added
 
@@ -9,7 +9,22 @@
 ### Bugs Fixed
 
 ### Other Changes
-- Changed the digest validation exception type to `ManifestDigestValidationError` in `set/get manifest` and `upload/download blob` operations.
+
+## 1.2.0 (2023-07-11)
+
+### Bugs Fixed
+- Fixed a bug when deserializing unknown architecture and os values in `ArtifactManifestProperties` object. ([#28469](https://github.com/Azure/azure-sdk-for-python/issues/28469) [#30077](https://github.com/Azure/azure-sdk-for-python/issues/30077))
+
+### Other Changes
+- Enum type properties in `ArtifactManifestProperties` class would be type `str` when its value is not in enum's known list.
+
+## 1.1.0 (2023-05-17)
+
+### Breaking Changes
+- Added sanity check for manifest size at download time - if manifest is bigger than 4MB, `ValueError` will be thrown.
+
+### Other Changes
+- Changed the digest validation exception type to `DigestValidationError` in `set/get manifest` and `upload/download blob` operations.
 
 ## 1.1.0b4 (2023-04-25)
 

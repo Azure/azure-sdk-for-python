@@ -57,7 +57,7 @@ def build_create_or_update_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "serverName": _SERIALIZER.url("server_name", server_name, "str"),
+        "serverName": _SERIALIZER.url("server_name", server_name, "str", pattern=r"^[a-z0-9][-a-z0-9]*(?<!-)$"),
         "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
     }
 
@@ -93,7 +93,7 @@ def build_delete_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "serverName": _SERIALIZER.url("server_name", server_name, "str"),
+        "serverName": _SERIALIZER.url("server_name", server_name, "str", pattern=r"^[a-z0-9][-a-z0-9]*(?<!-)$"),
         "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
     }
 
@@ -127,7 +127,7 @@ def build_get_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "serverName": _SERIALIZER.url("server_name", server_name, "str"),
+        "serverName": _SERIALIZER.url("server_name", server_name, "str", pattern=r"^[a-z0-9][-a-z0-9]*(?<!-)$"),
         "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
     }
 
@@ -161,7 +161,7 @@ def build_list_by_server_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "serverName": _SERIALIZER.url("server_name", server_name, "str"),
+        "serverName": _SERIALIZER.url("server_name", server_name, "str", pattern=r"^[a-z0-9][-a-z0-9]*(?<!-)$"),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore

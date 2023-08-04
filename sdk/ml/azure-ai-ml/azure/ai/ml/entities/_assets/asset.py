@@ -120,7 +120,7 @@ class Asset(Resource):
             and self.base_path == other.base_path
             and self._is_anonymous == other._is_anonymous
             and self._auto_increment_version == other._auto_increment_version
-            and self.auto_delete_setting == other._auto_delete_setting
+            and self.auto_delete_setting == other.auto_delete_setting
         )
 
     def __ne__(self, other) -> bool:

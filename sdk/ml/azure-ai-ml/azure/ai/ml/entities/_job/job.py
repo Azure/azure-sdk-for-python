@@ -7,7 +7,7 @@
 import json
 import logging
 import traceback
-from abc import abstractclassmethod, abstractmethod
+from abc import abstractmethod
 from collections import OrderedDict
 from os import PathLike
 from pathlib import Path
@@ -252,7 +252,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         :param params_override: Fields to overwrite on top of the yaml file.
             Format is [{"field1": "value1"}, {"field2": "value2"}], defaults to None
         :type params_override: List[Dict], optional
-        :param kwargs: A dictionary of additional configuration parameters.
+        :keyword kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         :raises Exception: An exception
         :return: Loaded job object.
@@ -318,7 +318,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 message=str(ex),
                 no_personal_data_message=f"Unable to parse a job resource of type:{type(obj).__name__}",
                 error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+            ) from ex
         else:
             msg = f"Unsupported job type {obj.properties.job_type}"
             raise JobException(
@@ -332,6 +332,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         telemetry_values = {"type": self.type}
         return telemetry_values
 
-    @abstractclassmethod
+    @classmethod
+    @abstractmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Job":
         pass

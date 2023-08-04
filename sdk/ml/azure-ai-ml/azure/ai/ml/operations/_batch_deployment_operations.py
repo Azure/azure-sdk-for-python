@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import re
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, TypeVar
 
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import (
@@ -27,7 +27,7 @@ from azure.ai.ml._utils.utils import (
 )
 from azure.ai.ml._utils._package_utils import package_deployment
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
-from azure.ai.ml.entities import BatchDeployment, BatchJob, PipelineComponent
+from azure.ai.ml.entities import BatchDeployment, BatchJob, PipelineComponent, ModelBatchDeployment
 from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.core.credentials import TokenCredential
@@ -39,6 +39,9 @@ from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+DeploymentType = TypeVar(
+    "DeploymentType", bound=Union[BatchDeployment, PipelineComponentBatchDeployment, ModelBatchDeployment]
+)
 
 
 class BatchDeploymentOperations(_ScopeDependentOperations):
@@ -75,11 +78,11 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
     @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
-        deployment: Union[BatchDeployment, PipelineComponentBatchDeployment],
+        deployment: DeploymentType,
         *,
         skip_script_validation: bool = False,
         **kwargs,
-    ) -> LROPoller[BatchDeployment]:
+    ) -> LROPoller[DeploymentType]:
         """Create or update a batch deployment.
 
         :param deployment: The deployment entity.
@@ -131,6 +134,9 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                     deployment_name=deployment.name,
                     body=deployment_rest,
                     **self._init_kwargs,
+                    cls=lambda response, deserialized, headers: PipelineComponentBatchDeployment._from_rest_object(
+                        deserialized
+                    ),
                 )
             else:
                 return self._batch_deployment.begin_create_or_update(
@@ -228,7 +234,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         :param endpoint_name: Name of endpoint.
         :type endpoint_name: str
-        :param name: (Optional) Name of deployment.
+        :keyword name: (Optional) Name of deployment.
         :type name: str
         :raise: Exception if endpoint_type is not BATCH_ENDPOINT_TYPE
         :return: List of jobs
@@ -282,7 +288,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             deployment.component = component_id
         elif isinstance(deployment.job_definition, str):
             job_component = PipelineComponent(source_job_id=deployment.job_definition)
-            deployment.component = self._component_operations.create_or_update(
+            job_component = self._component_operations.create_or_update(
                 name=job_component.name,
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
@@ -290,3 +296,4 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 version=job_component.version,
                 **self._init_kwargs,
             )
+            deployment.component = job_component.id

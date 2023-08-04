@@ -1,0 +1,52 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/rooms?api-version=2023-06-14",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Connection": "keep-alive",
+        "Content-Length": "64",
+        "Content-Type": "application/json",
+        "Repeatability-First-Sent": "sanitized",
+        "Repeatability-Request-ID": "sanitized",
+        "User-Agent": "azsdk-python-communication-rooms/1.0.0 Python/3.10.11 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "sanitized",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "sanitized",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": {
+        "validFrom": null,
+        "validUntil": "2023-07-20T16:41:55.465491Z"
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
+        "Request-Context": "appId=",
+        "Transfer-Encoding": "chunked",
+        "X-Azure-Ref": "sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "x-ms-error-code": "BadRequest"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "BadRequest",
+          "message": "The request could not be understood by the server due to malformed syntax.",
+          "details": [
+            {
+              "code": "BadArgument",
+              "message": "The time range end is in the past.",
+              "target": "ValidUntil"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

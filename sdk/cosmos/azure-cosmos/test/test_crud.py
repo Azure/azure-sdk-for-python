@@ -2667,6 +2667,51 @@ class CRUDTests(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
+    def test_conditional_patching(self):
+        created_container = self.databaseForTest.create_container_if_not_exists(id="patch_filter_container", partition_key=PartitionKey(path="/pk"))
+        #Create item to patch
+        item = {
+            "id": "conditional_patch_item",
+            "pk": "patch_item_pk",
+            "prop": "prop1",
+            "address": {
+                "city": "Redmond"
+            },
+            "company": "Microsoft",
+            "number": 3}
+        created_container.create_item(item)
+
+        #Define patch operations
+        operations = [
+            {"op": "add", "path": "/color", "value": "yellow"},
+            {"op": "remove", "path": "/prop"},
+            {"op": "replace", "path": "/company", "value": "CosmosDB"},
+            {"op": "set", "path": "/address/new_city", "value": "Atlanta"},
+            {"op": "incr", "path": "/number", "value": 7},
+            {"op": "move", "from": "/color", "path": "/favorite_color"}
+        ]
+
+        #Run patch operations with wrong filter
+        num_false = item.get("number") + 1
+        filter_predicate = "from root where root.number = " + str(num_false)
+        try:
+            created_container.patch_item(item="conditional_patch_item", partition_key="patch_item_pk",
+                                         patch_operations=operations, filter_predicate=filter_predicate)
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, StatusCodes.PRECONDITION_FAILED)
+
+        #Run patch operations with correct filter
+        filter_predicate = "from root where root.number = " + str(item.get("number"))
+        patched_item = created_container.patch_item(item="conditional_patch_item", partition_key="patch_item_pk",
+                                                    patch_operations=operations, filter_predicate=filter_predicate)
+        #Verify results from patch operations
+        self.assertTrue(patched_item.get("color") is None)
+        self.assertTrue(patched_item.get("prop") is None)
+        self.assertEqual(patched_item.get("company"), "CosmosDB")
+        self.assertEqual(patched_item.get("address").get("new_city"), "Atlanta")
+        self.assertEqual(patched_item.get("number"), 10)
+        self.assertEqual(patched_item.get("favorite_color"), "yellow")
+
     # Temporarily commenting analytical storage tests until emulator support comes.
     # def test_create_container_with_analytical_store_off(self):
     #     # don't run test, for the time being, if running against the emulator

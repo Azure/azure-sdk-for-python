@@ -22,7 +22,7 @@ class DataContainer(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar workspace: Log Analytics workspace information. Required.
-    :vartype workspace: ~$(python-base-namespace).v2018_11_27_preview.models.WorkspaceInfo
+    :vartype workspace: ~azure.mgmt.monitor.v2018_11_27_preview.models.WorkspaceInfo
     """
 
     _validation = {
@@ -36,7 +36,7 @@ class DataContainer(_serialization.Model):
     def __init__(self, *, workspace: "_models.WorkspaceInfo", **kwargs: Any) -> None:
         """
         :keyword workspace: Log Analytics workspace information. Required.
-        :paramtype workspace: ~$(python-base-namespace).v2018_11_27_preview.models.WorkspaceInfo
+        :paramtype workspace: ~azure.mgmt.monitor.v2018_11_27_preview.models.WorkspaceInfo
         """
         super().__init__(**kwargs)
         self.workspace = workspace
@@ -113,7 +113,7 @@ class ResponseWithError(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar error: Error information. Required.
-    :vartype error: ~$(python-base-namespace).v2018_11_27_preview.models.Error
+    :vartype error: ~azure.mgmt.monitor.v2018_11_27_preview.models.Error
     """
 
     _validation = {
@@ -127,7 +127,7 @@ class ResponseWithError(_serialization.Model):
     def __init__(self, *, error: "_models.Error", **kwargs: Any) -> None:
         """
         :keyword error: Error information. Required.
-        :paramtype error: ~$(python-base-namespace).v2018_11_27_preview.models.Error
+        :paramtype error: ~azure.mgmt.monitor.v2018_11_27_preview.models.Error
         """
         super().__init__(**kwargs)
         self.error = error
@@ -151,13 +151,13 @@ class VMInsightsOnboardingStatus(ProxyResource):
      scope, e.g., resource group or subscription, is considered onboarded if at least one resource
      under it is onboarded. Known values are: "onboarded", "notOnboarded", and "unknown".
     :vartype onboarding_status: str or
-     ~$(python-base-namespace).v2018_11_27_preview.models.OnboardingStatus
+     ~azure.mgmt.monitor.v2018_11_27_preview.models.OnboardingStatus
     :ivar data_status: The status of VM Insights data from the resource. When reported as
      ``present`` the data array will contain information about the data containers to which data for
      the specified resource is being routed. Known values are: "present" and "notPresent".
-    :vartype data_status: str or ~$(python-base-namespace).v2018_11_27_preview.models.DataStatus
+    :vartype data_status: str or ~azure.mgmt.monitor.v2018_11_27_preview.models.DataStatus
     :ivar data: Containers that currently store VM Insights data for the specified resource.
-    :vartype data: list[~$(python-base-namespace).v2018_11_27_preview.models.DataContainer]
+    :vartype data: list[~azure.mgmt.monitor.v2018_11_27_preview.models.DataContainer]
     """
 
     _validation = {
@@ -193,13 +193,13 @@ class VMInsightsOnboardingStatus(ProxyResource):
          scope, e.g., resource group or subscription, is considered onboarded if at least one resource
          under it is onboarded. Known values are: "onboarded", "notOnboarded", and "unknown".
         :paramtype onboarding_status: str or
-         ~$(python-base-namespace).v2018_11_27_preview.models.OnboardingStatus
+         ~azure.mgmt.monitor.v2018_11_27_preview.models.OnboardingStatus
         :keyword data_status: The status of VM Insights data from the resource. When reported as
          ``present`` the data array will contain information about the data containers to which data for
          the specified resource is being routed. Known values are: "present" and "notPresent".
-        :paramtype data_status: str or ~$(python-base-namespace).v2018_11_27_preview.models.DataStatus
+        :paramtype data_status: str or ~azure.mgmt.monitor.v2018_11_27_preview.models.DataStatus
         :keyword data: Containers that currently store VM Insights data for the specified resource.
-        :paramtype data: list[~$(python-base-namespace).v2018_11_27_preview.models.DataContainer]
+        :paramtype data: list[~azure.mgmt.monitor.v2018_11_27_preview.models.DataContainer]
         """
         super().__init__(**kwargs)
         self.resource_id = resource_id

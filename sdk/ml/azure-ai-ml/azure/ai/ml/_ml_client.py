@@ -48,6 +48,9 @@ from azure.ai.ml._restclient.v2023_04_01_preview import (
 from azure.ai.ml._restclient.v2023_04_01 import (
     AzureMachineLearningWorkspaces as ServiceClient042023,
 )
+from azure.ai.ml._restclient.v2023_06_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient062023Preview,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -61,7 +64,7 @@ from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._preflight_utils import get_deployments_operation
 from azure.ai.ml._utils._registry_utils import get_registry_client
 from azure.ai.ml._utils.utils import _is_https_url
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType, DefaultOpenEncoding
 from azure.ai.ml.entities import (
     BatchDeployment,
     ModelBatchDeployment,
@@ -96,6 +99,7 @@ from azure.ai.ml.operations import (
     RegistryOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
+    WorkspaceHubOperations,
 )
 from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
@@ -216,6 +220,9 @@ class MLClient:
             )
         module_logger.debug("Cloud configured in MLClient: '%s'.", cloud_name)
 
+        # Add cloud information to kwargs
+        kwargs.update(_get_cloud_information_from_metadata(cloud_name))
+
         # registry_name is present when the operations need referring assets from registry.
         # the subscription, resource group, if provided, will be ignored and replaced by
         # whatever is received from the registry discovery service.
@@ -248,7 +255,6 @@ class MLClient:
 
         base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
         self._base_url = base_url
-        kwargs.update(_get_cloud_information_from_metadata(cloud_name))
         self._kwargs = kwargs
 
         self._operation_container = OperationsContainer()
@@ -280,6 +286,13 @@ class MLClient:
         )
 
         self._service_client_04_2023 = ServiceClient042023(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
+        self._service_client_06_2023_preview = ServiceClient062023Preview(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
             base_url=base_url,
@@ -320,7 +333,7 @@ class MLClient:
 
         self._workspaces = WorkspaceOperations(
             self._operation_scope,
-            self._service_client_04_2023_preview,
+            self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
@@ -329,7 +342,7 @@ class MLClient:
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
-            self._service_client_04_2023_preview,
+            self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
             **kwargs,
@@ -450,6 +463,7 @@ class MLClient:
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
+            all_operations=self._operation_container,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATA, self._data)
@@ -472,7 +486,6 @@ class MLClient:
             requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
         )
-        self._data._job_operation = self._jobs
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
         self._schedules = ScheduleOperations(
             self._operation_scope,
@@ -518,6 +531,15 @@ class MLClient:
             self._operation_scope, self._operation_config, self._service_client_04_2023_preview, **ops_kwargs
         )
 
+        self._workspace_hubs = WorkspaceHubOperations(
+            self._operation_scope,
+            self._service_client_06_2023_preview,
+            self._operation_container,
+            self._credential,
+            **app_insights_handler_kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs)
+
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
         self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
@@ -543,11 +565,11 @@ class MLClient:
 
         :param credential: The credential object for the workspace.
         :type credential: ~azure.core.credentials.TokenCredential
-        :param path: The path to the config file or starting directory to search.
+        :keyword path: The path to the config file or starting directory to search.
             The parameter defaults to starting the search in the current directory.
             Defaults to None
         :type path: typing.Union[os.PathLike, str]
-        :param file_name: Allows overriding the config file name to search for when path is a directory path.
+        :keyword file_name: Allows overriding the config file name to search for when path is a directory path.
             (Default value = None)
         :type file_name: str
         :keyword str cloud: The cloud name to use. Defaults to AzureCloud.
@@ -664,6 +686,15 @@ class MLClient:
         :rtype: FeatureSetOperations
         """
         return self._featuresets
+
+    @property
+    @experimental
+    def workspace_hubs(self) -> WorkspaceHubOperations:
+        """A collection of hubs related operations.
+        :return: Hub Operations
+        :rtype: HubOperations
+        """
+        return self._workspace_hubs
 
     @property
     @experimental
@@ -835,13 +866,13 @@ class MLClient:
 
     @classmethod
     def _get_workspace_info(cls, found_path: Optional[str]) -> Tuple[str, str, str]:
-        with open(found_path) as config_file:
+        with open(found_path, encoding=DefaultOpenEncoding.READ) as config_file:
             config = json.load(config_file)
 
         # Checking the keys in the config.json file to check for required parameters.
         scope = config.get("Scope")
         if not scope:
-            if not all([k in config.keys() for k in ("subscription_id", "resource_group", "workspace_name")]):
+            if not all(k in config.keys() for k in ("subscription_id", "resource_group", "workspace_name")):
                 msg = (
                     "The config file found in: {} does not seem to contain the required "
                     "parameters. Please make sure it contains your subscription_id, "
@@ -882,6 +913,7 @@ class MLClient:
     # Each entry here requires a registered _create_or_update function below
     T = TypeVar("T", Job, Model, Environment, Component, Datastore)
 
+    # pylint: disable-next=client-method-missing-tracing-decorator
     def create_or_update(
         self,
         entity: T,
@@ -914,6 +946,7 @@ class MLClient:
         Schedule,
     )
 
+    # pylint: disable-next=client-method-missing-tracing-decorator
     def begin_create_or_update(
         self,
         entity: R,

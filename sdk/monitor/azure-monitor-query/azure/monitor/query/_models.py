@@ -42,7 +42,11 @@ class LogsTableRow:
         self._row_dict = {_columns[i]: self._row[i] for i in range(len(self._row))}
 
     def __iter__(self) -> Iterator[Any]:
-        """This will iterate over the row directly."""
+        """This will iterate over the row directly.
+
+        :return: An iterator over the row.
+        :rtype: Iterator
+        """
         return iter(self._row)
 
     def __len__(self) -> int:
@@ -57,6 +61,8 @@ class LogsTableRow:
 
         :param column: The name of the column or the index of the element in a row.
         :type column: str or int
+        :return: The value of the column or the element in the row.
+        :rtype: Any
         """
         try:
             return self._row_dict[column]

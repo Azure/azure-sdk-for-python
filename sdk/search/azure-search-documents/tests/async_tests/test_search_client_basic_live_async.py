@@ -12,8 +12,8 @@ from devtools_testutils import AzureRecordedTestCase
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
-class TestSearchClientAsync(AzureRecordedTestCase):
 
+class TestSearchClientAsync(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async

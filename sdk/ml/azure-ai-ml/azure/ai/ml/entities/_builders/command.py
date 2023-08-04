@@ -23,7 +23,6 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LOCAL_COMPUTE_P
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._component.command_component import CommandComponent
-from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
@@ -37,8 +36,8 @@ from azure.ai.ml.entities._job.distribution import (
     DistributionConfiguration,
     MpiDistribution,
     PyTorchDistribution,
-    TensorFlowDistribution,
     RayDistribution,
+    TensorFlowDistribution,
 )
 from azure.ai.ml.entities._job.job_limits import CommandJobLimits
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
@@ -73,9 +72,10 @@ from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import (
     MPIDistributionSchema,
     PyTorchDistributionSchema,
-    TensorFlowDistributionSchema,
     RayDistributionSchema,
+    TensorFlowDistributionSchema,
 )
+from .._job.pipeline._io import NodeWithGroupInputMixin
 from .._util import (
     convert_ordered_dict_to_dict,
     from_rest_dict_to_dummy_rest_object,
@@ -89,53 +89,71 @@ from .sweep import Sweep
 module_logger = logging.getLogger(__name__)
 
 
-class Command(BaseNode):
+class Command(BaseNode, NodeWithGroupInputMixin):
     """Base class for command node, used for command component version consumption.
 
     You should not instantiate this class directly. Instead, you should
-    create from builder function: command.
+    create it using the builder function: command().
 
-    :param component: Id or instance of the command component/job to be run for the step
-    :type component: CommandComponent
-    :param inputs: Inputs to the command.
-    :type inputs: Dict[str, Union[Input, SweepDistribution, str, bool, int, float, Enum, dict]]
-    :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Dict[str, Union[str, Output, dict]]
-    :param name: Name of the command.
+    :param name: The name of the command.
     :type name: str
-    :param description: Description of the command.
+    :param description: The description of the command.
     :type description: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
     :param properties: The job property dictionary.
     :type properties: dict[str, str]
-    :param display_name: Display name of the job.
+    :param display_name: The display name of the job.
     :type display_name: str
-    :param experiment_name:  Name of the experiment the job will be created under,
-        if None is provided, default will be set to current directory name.
+    :param experiment_name: The name of the experiment the job will be created under. Defaults to current directory
+        name.
     :type experiment_name: str
-    :param command: Command to be executed in training.
+    :param command: The command to be executed during job.
     :type command: str
-    :param compute: The compute target the job runs on.
-    :type compute: str
-    :param resources: Compute Resource configuration for the command.
-    :type resources: Union[Dict, ~azure.ai.ml.entities.JobResourceConfiguration]
-    :param code: A local path or http:, https:, azureml: url pointing to a remote location.
+    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
+        to a remote location.
     :type code: str
-    :param distribution: Distribution configuration for distributed training.
-    :type distribution: Union[Dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
-    :param environment: Environment that training job will run in.
-    :type environment: Union[Environment, str]
-    :param limits: Command Job limit.
+    :param component: The ID or instance of the command component or job to be run for the step.
+    :type component: Union[str, ~azure.ai.ml.entities.CommandComponent]
+    :param compute: The compute target the job will run on.
+    :type compute: str
+    :param inputs: A mapping of input names to input data sources used in the job.
+    :type inputs: dict[str, Union[
+        ~azure.ai.ml.Input,
+        str,
+        bool,
+        int,
+        float,
+        Enum,
+        ]
+    ]
+    :param outputs: A mapping of output names to output data sources used in the job.
+    :type outputs: dict[str, Union[str, ~azure.ai.ml.Output]]
+    :param limits: The limits for the command component or job.
     :type limits: ~azure.ai.ml.entities.CommandJobLimits
-    :param identity: Identity that training job will use while running on compute.
-    :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
-    :param services: Interactive services for the node. This is an experimental parameter, and may change at any time.
-        Please see https://aka.ms/azuremlexperimental for more information.
-    :type services:
-        Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+    :param identity: The identity that the command job will use while running on compute.
+    :type identity: Union[
+        dict[str, str],
+        ~azure.ai.ml.entities.ManagedIdentityConfiguration,
+        ~azure.ai.ml.entities.AmlTokenConfiguration,
+        ~azure.ai.ml.entities.UserIdentityConfiguration]
+    :param distribution: The configuration for distributed jobs.
+    :type distribution: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
+    :param environment: The environment that the job will run in.
+    :type environment: Union[str, ~azure.ai.ml.entities.Environment]
+    :param environment_variables:  A dictionary of environment variable names and values.
+        These environment variables are set on the process where the user script is being executed.
+    :type environment_variables: dict[str, str]
+    :param resources: The compute resource configuration for the command.
+    :type resources: ~azure.ai.ml.entities.JobResourceConfiguration
+    :param services: The interactive services for the node. This is an experimental parameter, and may change at any
+        time. Please see https://aka.ms/azuremlexperimental for more information.
+    :type services: dict[str, Union[~azure.ai.ml.entities.JobService, ~azure.ai.ml.entities.JupyterLabJobService,
+        ~azure.ai.ml.entities.SshJobService, ~azure.ai.ml.entities.TensorBoardJobService,
+        ~azure.ai.ml.entities.VsCodeJobService]]
     :param queue_settings: Queue settings for the job.
-    :type queue_settings: QueueSettings
+    :type queue_settings: ~azure.ai.ml.entities.QueueSettings
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -175,7 +193,7 @@ class Command(BaseNode):
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
         **kwargs,
-    ):
+    ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
@@ -227,10 +245,9 @@ class Command(BaseNode):
 
     @property
     def parameters(self) -> Dict[str, str]:
-        """MLFlow parameters.
+        """MLFlow parameters to be logged during the job.
 
-        :return: MLFlow parameters logged in job.
-        :rtype: Dict[str, str]
+        :rtype: dict[str, str]
         """
         return self._parameters
 
@@ -238,13 +255,24 @@ class Command(BaseNode):
     def distribution(
         self,
     ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]:
+        """The configuration for the distributed command component or job.
+
+        :rtype: Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
+        """
         return self._distribution
 
     @distribution.setter
     def distribution(
         self,
         value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution, RayDistribution],
-    ):
+    ) -> None:
+        """Sets the configuration for the distributed command component or job.
+
+        :param value: The configuration for distributed jobs.
+        :type value: Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
+        """
         if isinstance(value, dict):
             dist_schema = UnionField(
                 [
@@ -259,20 +287,38 @@ class Command(BaseNode):
 
     @property
     def resources(self) -> JobResourceConfiguration:
+        """The compute resource configuration for the command component or job.
+
+        :rtype: ~azure.ai.ml.entities.JobResourceConfiguration
+        """
         return self._resources
 
     @resources.setter
-    def resources(self, value: Union[Dict, JobResourceConfiguration]):
+    def resources(self, value: Union[Dict, JobResourceConfiguration]) -> None:
+        """Sets the compute resource configuration for the command component or job.
+
+        :param value: The compute resource configuration for the command component or job.
+        :type value: Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]
+        """
         if isinstance(value, dict):
             value = JobResourceConfiguration(**value)
         self._resources = value
 
     @property
     def queue_settings(self) -> QueueSettings:
+        """The queue settings for the command component or job.
+
+        :rtype: ~azure.ai.ml.entities.QueueSettings
+        """
         return self._queue_settings
 
     @queue_settings.setter
-    def queue_settings(self, value: Union[Dict, QueueSettings]):
+    def queue_settings(self, value: Union[Dict, QueueSettings]) -> None:
+        """Sets the queue settings for the command component or job.
+
+        :param value: The queue settings for the command component or job.
+        :type value: Union[dict, ~azure.ai.ml.entities.QueueSettings]
+        """
         if isinstance(value, dict):
             value = QueueSettings(**value)
         self._queue_settings = value
@@ -281,7 +327,11 @@ class Command(BaseNode):
     def identity(
         self,
     ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
-        """Configuration of the hyperparameter identity."""
+        """The identity that the job will use while running on compute.
+
+        :rtype: Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
+        ~azure.ai.ml.UserIdentityConfiguration]
+        """
         return self._identity
 
     @identity.setter
@@ -290,7 +340,13 @@ class Command(BaseNode):
         value: Union[
             Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None
         ],
-    ):
+    ) -> None:
+        """Sets the identity that the job will use while running on compute.
+
+        :param value: The identity that the job will use while running on compute.
+        :type value: Union[dict[str, str], ~azure.ai.ml.ManagedIdentityConfiguration,
+        ~azure.ai.ml.AmlTokenConfiguration, ~azure.ai.ml.UserIdentityConfiguration]
+        """
         if isinstance(value, dict):
             identity_schema = UnionField(
                 [
@@ -303,25 +359,66 @@ class Command(BaseNode):
         self._identity = value
 
     @property
-    def services(self) -> Dict:
+    def services(
+        self,
+    ) -> Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]:
+        """The interactive services for the node.
+
+        This is an experimental parameter, and may change at any time.
+        Please see https://aka.ms/azuremlexperimental for more information.
+
+        :rtype: dict[str, Union[~azure.ai.ml.entities.JobService, ~azure.ai.ml.entities.JupyterLabJobService,
+            ~azure.ai.ml.entities.SshJobService, ~azure.ai.ml.entities.TensorBoardJobService,
+            ~azure.ai.ml.entities.VsCodeJobService]]
+        """
         return self._services
 
     @services.setter
-    def services(self, value: Dict):
+    def services(
+        self,
+        value: Dict[
+            str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]
+        ],
+    ) -> None:
+        """Sets the interactive services for the node.
+
+        This is an experimental parameter, and may change at any time.
+        Please see https://aka.ms/azuremlexperimental for more information.
+
+        :param value: The interactive services for the node.
+        :type value: dict[str, Union[~azure.ai.ml.entities.JobService, ~azure.ai.ml.entities.JupyterLabJobService,
+            ~azure.ai.ml.entities.SshJobService, ~azure.ai.ml.entities.TensorBoardJobService,
+            ~azure.ai.ml.entities.VsCodeJobService]]
+        """
         self._services = _resolve_job_services(value)
 
     @property
     def component(self) -> Union[str, CommandComponent]:
+        """The ID or instance of the command component or job to be run for the step.
+
+        :rtype: Union[str, ~azure.ai.ml.entities.CommandComponent]
+        """
         return self._component
 
     @property
     def command(self) -> Optional[str]:
+        """Sets the command to be executed.
+
+        :rtype: str
+        """
         # the same as code
-        return self.component.command if hasattr(self.component, "command") else None
+        if not isinstance(self.component, CommandComponent):
+            return None
+        return self.component.command
 
     @command.setter
     def command(self, value: str) -> None:
-        if isinstance(self.component, Component):
+        """The command to be executed.
+
+        :param value: The command to be executed.
+        :type value: str
+        """
+        if isinstance(self.component, CommandComponent):
             self.component.command = value
         else:
             msg = "Can't set command property for a registered component {}. Tried to set it to {}."
@@ -335,6 +432,10 @@ class Command(BaseNode):
 
     @property
     def code(self) -> Optional[Union[str, PathLike]]:
+        """The source code to run the job.
+
+        :rtype: Union[str, os.PathLike]
+        """
         # BaseNode is an _AttrDict to allow dynamic attributes, so that lower version of SDK can work with attributes
         # added in higher version of SDK.
         # self.code will be treated as an Arbitrary attribute if it raises AttributeError in getting
@@ -342,11 +443,19 @@ class Command(BaseNode):
         # you may check _AttrDict._is_arbitrary_attr for detailed logic for Arbitrary judgement),
         # then its value will be set to _AttrDict and be deserialized as {"shape": {}} instead of None,
         # which is invalid in schema validation.
-        return self.component.code if hasattr(self.component, "code") else None
+        if not isinstance(self.component, CommandComponent):
+            return None
+        return self.component.code
 
     @code.setter
     def code(self, value: str) -> None:
-        if isinstance(self.component, Component):
+        """Sets the source code to run the job.
+
+        :param value: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url
+            pointing to a remote location.
+        :type value: str
+        """
+        if isinstance(self.component, CommandComponent):
             self.component.code = value
         else:
             msg = "Can't set code property for a registered component {}"
@@ -368,8 +477,37 @@ class Command(BaseNode):
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
         **kwargs,  # pylint: disable=unused-argument
-    ):
-        """Set resources for Command."""
+    ) -> None:
+        """Set resources for Command.
+
+        :keyword instance_type: The type of compute instance to run the job on. If not specified, the job will run on
+            the default compute target.
+        :type instance_type: Union[str, list[str]]
+        :keyword instance_count: The number of instances to run the job on. If not specified, the job will run on a
+            single instance.
+        :type instance_count: int
+        :keyword locations: The list of locations where the job will run. If not specified, the job will run on the
+            default compute target.
+        :type locations: list[str]
+        :keyword properties: The properties of the job.
+        :type properties: dict
+        :keyword docker_args: The Docker arguments for the job.
+        :type docker_args: str
+        :keyword shm_size: The size of the docker container's shared memory block. This should be in the
+            format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
+            b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
+        :type shm_size: str
+
+        .. admonition:: Example:
+            :class: tip
+
+            .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
+                :start-after: [START command_set_resources]
+                :end-before: [END command_set_resources]
+                :language: python
+                :dedent: 8
+                :caption: Setting resources on a Command.
+        """
         if self.resources is None:
             self.resources = JobResourceConfiguration()
 
@@ -387,22 +525,47 @@ class Command(BaseNode):
             self.resources.shm_size = shm_size
 
         # Save the resources to internal component as well, otherwise calling sweep() will loose the settings
-        if isinstance(self.component, Component):
+        if isinstance(self.component, CommandComponent):
             self.component.resources = self.resources
 
-    def set_limits(self, *, timeout: int, **kwargs):  # pylint: disable=unused-argument
-        """Set limits for Command."""
+    def set_limits(self, *, timeout: int, **kwargs) -> None:  # pylint: disable=unused-argument
+        """Set limits for Command.
+
+        :keyword timeout: The timeout for the job in seconds.
+        :type timeout: int
+
+        .. admonition:: Example:
+            :class: tip
+
+            .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
+                :start-after: [START command_set_limits]
+                :end-before: [END command_set_limits]
+                :language: python
+                :dedent: 8
+                :caption: Setting a timeout limit of 10 seconds on a Command.
+        """
         if isinstance(self.limits, CommandJobLimits):
             self.limits.timeout = timeout
         else:
             self.limits = CommandJobLimits(timeout=timeout)
 
-    def set_queue_settings(self, *, job_tier: Optional[str] = None, priority: Optional[str] = None):
+    def set_queue_settings(self, *, job_tier: Optional[str] = None, priority: Optional[str] = None) -> None:
         """Set QueueSettings for the job.
-        :param job_tier: determines the job tier.
+
+        :keyword job_tier: The job tier. Accepted values are "Spot", "Basic", "Standard", or "Premium".
         :type job_tier: str
-        :param priority: controls the priority on the compute.
+        :keyword priority:  The priority of the job on the compute. Defaults to "Medium".
         :type priority: str
+
+        .. admonition:: Example:
+            :class: tip
+
+            .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
+                :start-after: [START command_set_queue_settings]
+                :end-before: [END command_set_queue_settings]
+                :language: python
+                :dedent: 8
+                :caption: Configuring queue settings on a Command.
         """
         if isinstance(self.queue_settings, QueueSettings):
             self.queue_settings.job_tier = job_tier
@@ -437,45 +600,61 @@ class Command(BaseNode):
         job_tier: Optional[str] = None,
         priority: Optional[str] = None,
     ) -> Sweep:
-        """Turn the command into a sweep node with extra sweep run setting. The command component in current Command
-        node will be used as its trial component. A command node can sweep for multiple times, and the generated sweep
-        node will share the same trial component.
+        """Turns the command into a sweep node with extra sweep run setting. The command component
+        in the current Command node will be used as its trial component. A command node can sweep
+        multiple times, and the generated sweep node will share the same trial component.
 
-        :param primary_metric: primary metric of the sweep objective, AUC e.g. The metric must be logged in running
-            the trial component.
+        :keyword primary_metric: The primary metric of the sweep objective - e.g. AUC (Area Under the Curve).
+        The metric must be logged while running the trial component.
         :type primary_metric: str
-        :param goal: goal of the sweep objective.
-        :type goal: str, valid values: maximize or minimize
-        :param sampling_algorithm: sampling algorithm to sample inside search space. Defaults to "random"
-        :type sampling_algorithm: str, valid values: random, grid or bayesian
-        :param compute: target compute to run the node. If not specified, compute of current node will be used.
+        :keyword goal: The goal of the Sweep objective. Accepted values are "minimize" or "maximize".
+        :type goal: str
+        :keyword sampling_algorithm: The sampling algorithm to use inside the search space. Defaults to "random".
+        Acceptable values are "random", "grid", or "bayesian".
+        :type sampling_algorithm: str
+        :keyword compute: The target compute to run the node on. If not specified, the current node's compute
+        will be used.
         :type compute: str
-        :param max_total_trials: maximum trials to run, will overwrite value in limits
+        :keyword max_total_trials: The maximum number of trials to run. This value will overwrite value in
+        CommandJob.limits if specified.
         :type max_total_trials: int
-        :param max_concurrent_trials: Sweep Job max concurrent trials.
+        :keyword max_concurrent_trials: The maximum number of concurrent trials for the Sweep job.
         :type max_concurrent_trials: int
-        :param max_total_trials: Sweep Job max total trials.
+        :keyword max_total_trials: The maximum number of total trials for the Sweep Job.
         :type max_total_trials: int
-        :param timeout: The max run duration in seconds, after which the job will be cancelled.
+        :keyword timeout: The maximum run duration in seconds, after which the job will be cancelled.
         :type timeout: int
-        :param trial_timeout: Sweep Job Trial timeout value in seconds.
+        :keyword trial_timeout: The Sweep Job trial timeout value in seconds.
         :type trial_timeout: int
-        :param early_termination_policy: early termination policy of the sweep node:
-        :type early_termination_policy: Union[EarlyTerminationPolicy, str], valid values: bandit, median_stopping
-            or truncation_selection.
-        :param identity: Identity that training job will use while running on compute.
+        :keyword early_termination_policy: The early termination policy of the sweep node. Acceptable
+        values are "bandit", "median_stopping", or "truncation_selection".
+        :type early_termination_policy: Union[~azure.ai.ml.sweep.BanditPolicy,
+        ~azure.ai.ml.sweep.TruncationSelectionPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy, str]
+        :keyword identity: The identity that the job will use while running on compute.
         :type identity: Union[
-            ManagedIdentityConfiguration,
-            AmlTokenConfiguration,
-            UserIdentityConfiguration]
-        :param queue_settings: Queue settings for the job.
-        :type queue_settings: QueueSettings
-        :param job_tier: **Experimental** determines the job tier.
+            ~azure.ai.ml.ManagedIdentityConfiguration,
+            ~azure.ai.ml.AmlTokenConfiguration,
+            ~azure.ai.ml.UserIdentityConfiguration]
+        :keyword queue_settings: The queue settings for the job.
+        :type queue_settings: ~azure.ai.ml.entities.QueueSettings
+        :keyword job_tier: **Experimental** The job tier. Accepted values are "Spot", "Basic",
+        "Standard", or "Premium".
         :type job_tier: str
-        :param priority: **Experimental** controls the priority on the compute.
+        :keyword priority: **Experimental** The compute priority. Accepted values are "low",
+        "medium", and "high".
         :type priority: str
-        :return: A sweep node with component from current Command node as its trial component.
-        :rtype: Sweep
+        :return: A Sweep node with the component from current Command node as its trial component.
+        :rtype: ~azure.ai.ml.entities.Sweep
+
+        .. admonition:: Example:
+            :class: tip
+
+            .. literalinclude:: ../../../../../samples/ml_samples_sweep_configurations.py
+                :start-after: [START configure_sweep_job_bandit_policy]
+                :end-before: [END configure_sweep_job_bandit_policy]
+                :language: python
+                :dedent: 8
+                :caption: Creating a Sweep node from a Command job.
         """
         self._swept = True
         # inputs & outputs are already built in source Command obj
@@ -689,12 +868,12 @@ class Command(BaseNode):
 
     def __call__(self, *args, **kwargs) -> "Command":
         """Call Command as a function will return a new instance each time."""
-        if isinstance(self._component, Component):
+        if isinstance(self._component, CommandComponent):
             # call this to validate inputs
             node = self._component(*args, **kwargs)
             # merge inputs
             for name, original_input in self.inputs.items():
-                if name not in kwargs.keys():
+                if name not in kwargs:
                     # use setattr here to make sure owner of input won't change
                     setattr(node.inputs, name, original_input._data)
                     node._job_inputs[name] = original_input._data
@@ -723,8 +902,8 @@ class Command(BaseNode):
             return node
         msg = "Command can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
-            message=msg.format(type(Component), self._component),
-            no_personal_data_message=msg.format(type(Component), "self._component"),
+            message=msg.format(type(CommandComponent), self._component),
+            no_personal_data_message=msg.format(type(CommandComponent), "self._component"),
             target=ErrorTarget.COMMAND_JOB,
             error_type=ValidationErrorType.INVALID_VALUE,
         )

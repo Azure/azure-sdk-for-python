@@ -136,7 +136,7 @@ def find_type_in_override(params_override: Optional[list] = None) -> Optional[st
 
 
 def is_compute_in_override(params_override: Optional[list] = None) -> bool:
-    return any([EndpointYamlFields.COMPUTE in param for param in params_override])
+    return any(EndpointYamlFields.COMPUTE in param for param in params_override)
 
 
 def load_from_dict(schema: Any, data: Dict, context: Dict, additional_message: str = "", **kwargs):
@@ -144,7 +144,7 @@ def load_from_dict(schema: Any, data: Dict, context: Dict, additional_message: s
         return schema(context=context).load(data, **kwargs)
     except ValidationError as e:
         pretty_error = json.dumps(e.normalized_messages(), indent=2)
-        raise ValidationError(decorate_validation_error(schema, pretty_error, additional_message))
+        raise ValidationError(decorate_validation_error(schema, pretty_error, additional_message)) from e
 
 
 def decorate_validation_error(schema: Any, pretty_error: str, additional_message: str = "") -> str:
@@ -347,7 +347,7 @@ def resolve_pipeline_parameters(pipeline_parameters: dict, remove_empty=False):
     """
 
     if pipeline_parameters is None:
-        return
+        return None
     if not isinstance(pipeline_parameters, dict):
         raise ValidationException(
             message="pipeline_parameters must in dict {parameter: value} format.",

@@ -16,6 +16,7 @@ def parse_connection_string(conn_str: str, case_sensitive_keys: bool = False) ->
     :param bool case_sensitive_keys: Indicates whether the casing of the keys will be preserved. When `False`(the
         default), all keys will be lower-cased. If set to `True`, the original casing of the keys will be preserved.
     :rtype: Mapping
+    :returns: Dict of connection string key/value pairs.
     :raises:
         ValueError: if each key in conn_str does not have a corresponding value and
             for other bad formatting of connection strings - including duplicate
@@ -33,7 +34,7 @@ def parse_connection_string(conn_str: str, case_sensitive_keys: bool = False) ->
     if not case_sensitive_keys:
         # if duplicate case insensitive keys are passed in, raise error
         new_args_dict = {}
-        for key in args_dict.keys():
+        for key in args_dict.keys():  # pylint: disable=consider-using-dict-items
             new_key = key.lower()
             if new_key in new_args_dict:
                 raise ValueError("Duplicate key in connection string: {}".format(new_key))

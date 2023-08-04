@@ -262,6 +262,7 @@ class HttpStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
     GATEWAY_TIMEOUT = "GatewayTimeout"
     HTTP_VERSION_NOT_SUPPORTED = "HttpVersionNotSupported"
+    CONTINUE_ENUM = "Continue"
 
 
 class IAASVMPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -743,6 +744,16 @@ class ValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INVALID = "Invalid"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
+
+
+class VaultSubResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """GroupId for the PrivateEndpointConnection - AzureBackup, AzureBackup_secondary or
+    AzureSiteRecovery.
+    """
+
+    AZURE_BACKUP = "AzureBackup"
+    AZURE_BACKUP_SECONDARY = "AzureBackup_secondary"
+    AZURE_SITE_RECOVERY = "AzureSiteRecovery"
 
 
 class WeekOfMonth(str, Enum, metaclass=CaseInsensitiveEnumMeta):

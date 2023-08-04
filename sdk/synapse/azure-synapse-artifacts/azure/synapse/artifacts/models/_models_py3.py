@@ -41,6 +41,13 @@ class Activity(_serialization.Model):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -57,6 +64,8 @@ class Activity(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
     }
@@ -75,6 +84,8 @@ class Activity(_serialization.Model):
         name: str,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         **kwargs: Any
@@ -87,6 +98,13 @@ class Activity(_serialization.Model):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -97,6 +115,8 @@ class Activity(_serialization.Model):
         self.name = name
         self.type: Optional[str] = None
         self.description = description
+        self.state = state
+        self.on_inactive_mark_as = on_inactive_mark_as
         self.depends_on = depends_on
         self.user_properties = user_properties
 
@@ -1853,7 +1873,7 @@ class AmazonRdsForOracleTableDataset(Dataset):  # pylint: disable=too-many-insta
         self.table = table
 
 
-class AmazonRdsForSqlServerLinkedService(LinkedService):
+class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Amazon RDS for SQL Server linked service.
 
     All required parameters must be populated in order to send to Azure.
@@ -1883,6 +1903,9 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: JSON
+    :ivar always_encrypted_settings: Sql always encrypted properties.
+    :vartype always_encrypted_settings:
+     ~azure.synapse.artifacts.models.SqlAlwaysEncryptedProperties
     """
 
     _validation = {
@@ -1901,6 +1924,10 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):
         "user_name": {"key": "typeProperties.userName", "type": "object"},
         "password": {"key": "typeProperties.password", "type": "SecretBase"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
+        "always_encrypted_settings": {
+            "key": "typeProperties.alwaysEncryptedSettings",
+            "type": "SqlAlwaysEncryptedProperties",
+        },
     }
 
     def __init__(
@@ -1915,6 +1942,7 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
+        always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1941,6 +1969,9 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: JSON
+        :keyword always_encrypted_settings: Sql always encrypted properties.
+        :paramtype always_encrypted_settings:
+         ~azure.synapse.artifacts.models.SqlAlwaysEncryptedProperties
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -1955,6 +1986,7 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):
         self.user_name = user_name
         self.password = password
         self.encrypted_credential = encrypted_credential
+        self.always_encrypted_settings = always_encrypted_settings
 
 
 class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attributes
@@ -1992,6 +2024,10 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
      Example: "{Parameter1: {value: "1", type: "int"}}".
     :vartype stored_procedure_parameters: dict[str,
      ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :ivar isolation_level: Specifies the transaction locking behavior for the SQL source. Allowed
+     values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default value
+     is ReadCommitted. Type: string (or Expression with resultType string).
+    :vartype isolation_level: JSON
     :ivar produce_additional_types: Which additional types to produce.
     :vartype produce_additional_types: JSON
     :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
@@ -2016,6 +2052,7 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
         "sql_reader_query": {"key": "sqlReaderQuery", "type": "object"},
         "sql_reader_stored_procedure_name": {"key": "sqlReaderStoredProcedureName", "type": "object"},
         "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "{StoredProcedureParameter}"},
+        "isolation_level": {"key": "isolationLevel", "type": "object"},
         "produce_additional_types": {"key": "produceAdditionalTypes", "type": "object"},
         "partition_option": {"key": "partitionOption", "type": "object"},
         "partition_settings": {"key": "partitionSettings", "type": "SqlPartitionSettings"},
@@ -2033,6 +2070,7 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
         sql_reader_query: Optional[JSON] = None,
         sql_reader_stored_procedure_name: Optional[JSON] = None,
         stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
+        isolation_level: Optional[JSON] = None,
         produce_additional_types: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SqlPartitionSettings"] = None,
@@ -2068,6 +2106,10 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
          Example: "{Parameter1: {value: "1", type: "int"}}".
         :paramtype stored_procedure_parameters: dict[str,
          ~azure.synapse.artifacts.models.StoredProcedureParameter]
+        :keyword isolation_level: Specifies the transaction locking behavior for the SQL source.
+         Allowed values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default
+         value is ReadCommitted. Type: string (or Expression with resultType string).
+        :paramtype isolation_level: JSON
         :keyword produce_additional_types: Which additional types to produce.
         :paramtype produce_additional_types: JSON
         :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
@@ -2089,6 +2131,7 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
+        self.isolation_level = isolation_level
         self.produce_additional_types = produce_additional_types
         self.partition_option = partition_option
         self.partition_settings = partition_settings
@@ -3212,6 +3255,13 @@ class ControlActivity(Activity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -3228,6 +3278,8 @@ class ControlActivity(Activity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
     }
@@ -3255,6 +3307,8 @@ class ControlActivity(Activity):
         name: str,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         **kwargs: Any
@@ -3267,6 +3321,13 @@ class ControlActivity(Activity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -3276,6 +3337,8 @@ class ControlActivity(Activity):
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             **kwargs
@@ -3297,6 +3360,13 @@ class AppendVariableActivity(ControlActivity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -3317,6 +3387,8 @@ class AppendVariableActivity(ControlActivity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "variable_name": {"key": "typeProperties.variableName", "type": "str"},
@@ -3329,6 +3401,8 @@ class AppendVariableActivity(ControlActivity):
         name: str,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         variable_name: Optional[str] = None,
@@ -3343,6 +3417,13 @@ class AppendVariableActivity(ControlActivity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -3356,6 +3437,8 @@ class AppendVariableActivity(ControlActivity):
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             **kwargs
@@ -4331,6 +4414,8 @@ class AzureBatchLinkedService(LinkedService):  # pylint: disable=too-many-instan
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
     """
 
     _validation = {
@@ -4354,6 +4439,7 @@ class AzureBatchLinkedService(LinkedService):  # pylint: disable=too-many-instan
         "pool_name": {"key": "typeProperties.poolName", "type": "object"},
         "linked_service_name": {"key": "typeProperties.linkedServiceName", "type": "LinkedServiceReference"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
@@ -4370,6 +4456,7 @@ class AzureBatchLinkedService(LinkedService):  # pylint: disable=too-many-instan
         annotations: Optional[List[JSON]] = None,
         access_key: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4401,6 +4488,8 @@ class AzureBatchLinkedService(LinkedService):  # pylint: disable=too-many-instan
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -4417,6 +4506,7 @@ class AzureBatchLinkedService(LinkedService):  # pylint: disable=too-many-instan
         self.pool_name = pool_name
         self.linked_service_name = linked_service_name
         self.encrypted_credential = encrypted_credential
+        self.credential = credential
 
 
 class AzureBlobDataset(Dataset):  # pylint: disable=too-many-instance-attributes
@@ -4719,7 +4809,7 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[JSON]
     :ivar url: Endpoint for the Azure Data Lake Storage Gen2 service. Type: string (or Expression
-     with resultType string). Required.
+     with resultType string).
     :vartype url: JSON
     :ivar account_key: Account key for the Azure Data Lake Storage Gen2 service. Type: string (or
      Expression with resultType string).
@@ -4751,11 +4841,17 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: JSON
+    :ivar sas_uri: SAS URI of the Azure Data Lake Storage Gen2 service. Type: string, SecureString
+     or AzureKeyVaultSecretReference.
+    :vartype sas_uri: JSON
+    :ivar sas_token: The Azure key vault secret reference of sasToken in sas uri.
+    :vartype sas_token: ~azure.synapse.artifacts.models.SecretBase
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
     """
 
     _validation = {
         "type": {"required": True},
-        "url": {"required": True},
     }
 
     _attribute_map = {
@@ -4774,17 +4870,20 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
         "service_principal_credential_type": {"key": "typeProperties.servicePrincipalCredentialType", "type": "object"},
         "service_principal_credential": {"key": "typeProperties.servicePrincipalCredential", "type": "SecretBase"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
+        "sas_uri": {"key": "typeProperties.sasUri", "type": "object"},
+        "sas_token": {"key": "typeProperties.sasToken", "type": "SecretBase"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
         self,
         *,
-        url: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
+        url: Optional[JSON] = None,
         account_key: Optional[JSON] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
@@ -4793,6 +4892,9 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
         service_principal_credential_type: Optional[JSON] = None,
         service_principal_credential: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
+        sas_uri: Optional[JSON] = None,
+        sas_token: Optional["_models.SecretBase"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4808,7 +4910,7 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[JSON]
         :keyword url: Endpoint for the Azure Data Lake Storage Gen2 service. Type: string (or
-         Expression with resultType string). Required.
+         Expression with resultType string).
         :paramtype url: JSON
         :keyword account_key: Account key for the Azure Data Lake Storage Gen2 service. Type: string
          (or Expression with resultType string).
@@ -4840,6 +4942,13 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: JSON
+        :keyword sas_uri: SAS URI of the Azure Data Lake Storage Gen2 service. Type: string,
+         SecureString or AzureKeyVaultSecretReference.
+        :paramtype sas_uri: JSON
+        :keyword sas_token: The Azure key vault secret reference of sasToken in sas uri.
+        :paramtype sas_token: ~azure.synapse.artifacts.models.SecretBase
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -4859,6 +4968,9 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
         self.service_principal_credential_type = service_principal_credential_type
         self.service_principal_credential = service_principal_credential
         self.encrypted_credential = encrypted_credential
+        self.sas_uri = sas_uri
+        self.sas_token = sas_token
+        self.credential = credential
 
 
 class AzureBlobFSLocation(DatasetLocation):
@@ -4950,8 +5062,9 @@ class AzureBlobFSReadSettings(StoreReadSettings):  # pylint: disable=too-many-in
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
     :vartype file_list_path: JSON
-    :ivar enable_partition_discovery: Indicates whether to enable partition discovery.
-    :vartype enable_partition_discovery: bool
+    :ivar enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+     boolean (or Expression with resultType boolean).
+    :vartype enable_partition_discovery: JSON
     :ivar partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
     :vartype partition_root_path: JSON
@@ -4978,7 +5091,7 @@ class AzureBlobFSReadSettings(StoreReadSettings):  # pylint: disable=too-many-in
         "wildcard_folder_path": {"key": "wildcardFolderPath", "type": "object"},
         "wildcard_file_name": {"key": "wildcardFileName", "type": "object"},
         "file_list_path": {"key": "fileListPath", "type": "object"},
-        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "bool"},
+        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "object"},
         "partition_root_path": {"key": "partitionRootPath", "type": "object"},
         "delete_files_after_completion": {"key": "deleteFilesAfterCompletion", "type": "object"},
         "modified_datetime_start": {"key": "modifiedDatetimeStart", "type": "object"},
@@ -4994,7 +5107,7 @@ class AzureBlobFSReadSettings(StoreReadSettings):  # pylint: disable=too-many-in
         wildcard_folder_path: Optional[JSON] = None,
         wildcard_file_name: Optional[JSON] = None,
         file_list_path: Optional[JSON] = None,
-        enable_partition_discovery: Optional[bool] = None,
+        enable_partition_discovery: Optional[JSON] = None,
         partition_root_path: Optional[JSON] = None,
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
@@ -5021,8 +5134,9 @@ class AzureBlobFSReadSettings(StoreReadSettings):  # pylint: disable=too-many-in
          configured in the dataset) that you want to copy. Type: string (or Expression with resultType
          string).
         :paramtype file_list_path: JSON
-        :keyword enable_partition_discovery: Indicates whether to enable partition discovery.
-        :paramtype enable_partition_discovery: bool
+        :keyword enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+         boolean (or Expression with resultType boolean).
+        :paramtype enable_partition_discovery: JSON
         :keyword partition_root_path: Specify the root path where partition discovery starts from.
          Type: string (or Expression with resultType string).
         :paramtype partition_root_path: JSON
@@ -5076,7 +5190,8 @@ class AzureBlobFSSink(CopySink):
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
     :vartype max_concurrent_connections: JSON
-    :ivar copy_behavior: The type of copy behavior for copy sink.
+    :ivar copy_behavior: The type of copy behavior for copy sink. Type: string (or Expression with
+     resultType string).
     :vartype copy_behavior: JSON
     """
 
@@ -5126,7 +5241,8 @@ class AzureBlobFSSink(CopySink):
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
         :paramtype max_concurrent_connections: JSON
-        :keyword copy_behavior: The type of copy behavior for copy sink.
+        :keyword copy_behavior: The type of copy behavior for copy sink. Type: string (or Expression
+         with resultType string).
         :paramtype copy_behavior: JSON
         """
         super().__init__(
@@ -5420,6 +5536,15 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: str
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
+    :ivar authentication_type: The type used for authentication. Type: string. Known values are:
+     "Anonymous", "AccountKey", "SasUri", "ServicePrincipal", and "Msi".
+    :vartype authentication_type: str or
+     ~azure.synapse.artifacts.models.AzureStorageAuthenticationType
+    :ivar container_uri: Container uri of the Azure Blob Storage resource only support for
+     anonymous access. Type: string (or Expression with resultType string).
+    :vartype container_uri: JSON
     """
 
     _validation = {
@@ -5444,6 +5569,9 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         "azure_cloud_type": {"key": "typeProperties.azureCloudType", "type": "object"},
         "account_kind": {"key": "typeProperties.accountKind", "type": "str"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "str"},
+        "container_uri": {"key": "typeProperties.containerUri", "type": "object"},
     }
 
     def __init__(
@@ -5465,6 +5593,9 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         azure_cloud_type: Optional[JSON] = None,
         account_kind: Optional[str] = None,
         encrypted_credential: Optional[str] = None,
+        credential: Optional["_models.CredentialReference"] = None,
+        authentication_type: Optional[Union[str, "_models.AzureStorageAuthenticationType"]] = None,
+        container_uri: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5514,6 +5645,15 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: str
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
+        :keyword authentication_type: The type used for authentication. Type: string. Known values are:
+         "Anonymous", "AccountKey", "SasUri", "ServicePrincipal", and "Msi".
+        :paramtype authentication_type: str or
+         ~azure.synapse.artifacts.models.AzureStorageAuthenticationType
+        :keyword container_uri: Container uri of the Azure Blob Storage resource only support for
+         anonymous access. Type: string (or Expression with resultType string).
+        :paramtype container_uri: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -5535,6 +5675,9 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         self.azure_cloud_type = azure_cloud_type
         self.account_kind = account_kind
         self.encrypted_credential = encrypted_credential
+        self.credential = credential
+        self.authentication_type = authentication_type
+        self.container_uri = container_uri
 
 
 class AzureBlobStorageLocation(DatasetLocation):
@@ -6103,7 +6246,7 @@ class AzureDatabricksDeltaLakeImportCommand(ImportSettings):
         self.timestamp_format = timestamp_format
 
 
-class AzureDatabricksDeltaLakeLinkedService(LinkedService):
+class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Azure Databricks Delta Lake linked service.
 
     All required parameters must be populated in order to send to Azure.
@@ -6135,6 +6278,8 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
     """
 
     _validation = {
@@ -6154,6 +6299,7 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):
         "access_token": {"key": "typeProperties.accessToken", "type": "SecretBase"},
         "cluster_id": {"key": "typeProperties.clusterId", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
@@ -6168,6 +6314,7 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):
         annotations: Optional[List[JSON]] = None,
         cluster_id: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6196,6 +6343,8 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -6210,6 +6359,7 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):
         self.access_token = access_token
         self.cluster_id = cluster_id
         self.encrypted_credential = encrypted_credential
+        self.credential = credential
 
 
 class AzureDatabricksDeltaLakeSink(CopySink):
@@ -6479,6 +6629,8 @@ class AzureDatabricksLinkedService(LinkedService):  # pylint: disable=too-many-i
     :ivar policy_id: The policy id for limiting the ability to configure clusters based on a user
      defined set of rules. Type: string (or Expression with resultType string).
     :vartype policy_id: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
     """
 
     _validation = {
@@ -6511,6 +6663,7 @@ class AzureDatabricksLinkedService(LinkedService):  # pylint: disable=too-many-i
         "new_cluster_enable_elastic_disk": {"key": "typeProperties.newClusterEnableElasticDisk", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
         "policy_id": {"key": "typeProperties.policyId", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -6539,6 +6692,7 @@ class AzureDatabricksLinkedService(LinkedService):  # pylint: disable=too-many-i
         new_cluster_enable_elastic_disk: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
         policy_id: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6618,6 +6772,8 @@ class AzureDatabricksLinkedService(LinkedService):  # pylint: disable=too-many-i
         :keyword policy_id: The policy id for limiting the ability to configure clusters based on a
          user defined set of rules. Type: string (or Expression with resultType string).
         :paramtype policy_id: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -6646,6 +6802,7 @@ class AzureDatabricksLinkedService(LinkedService):  # pylint: disable=too-many-i
         self.new_cluster_enable_elastic_disk = new_cluster_enable_elastic_disk
         self.encrypted_credential = encrypted_credential
         self.policy_id = policy_id
+        self.credential = credential
 
 
 class ExecutionActivity(Activity):
@@ -6672,6 +6829,13 @@ class ExecutionActivity(Activity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -6692,6 +6856,8 @@ class ExecutionActivity(Activity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -6735,6 +6901,8 @@ class ExecutionActivity(Activity):
         name: str,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -6749,6 +6917,13 @@ class ExecutionActivity(Activity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -6762,6 +6937,8 @@ class ExecutionActivity(Activity):
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             **kwargs
@@ -6771,7 +6948,7 @@ class ExecutionActivity(Activity):
         self.policy = policy
 
 
-class AzureDataExplorerCommandActivity(ExecutionActivity):
+class AzureDataExplorerCommandActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Azure Data Explorer command activity.
 
     All required parameters must be populated in order to send to Azure.
@@ -6785,6 +6962,13 @@ class AzureDataExplorerCommandActivity(ExecutionActivity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -6812,6 +6996,8 @@ class AzureDataExplorerCommandActivity(ExecutionActivity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -6827,6 +7013,8 @@ class AzureDataExplorerCommandActivity(ExecutionActivity):
         command: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -6842,6 +7030,13 @@ class AzureDataExplorerCommandActivity(ExecutionActivity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -6861,6 +7056,8 @@ class AzureDataExplorerCommandActivity(ExecutionActivity):
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -6906,6 +7103,8 @@ class AzureDataExplorerLinkedService(LinkedService):  # pylint: disable=too-many
     :ivar tenant: The name or ID of the tenant to which the service principal belongs. Type: string
      (or Expression with resultType string).
     :vartype tenant: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
     """
 
     _validation = {
@@ -6926,6 +7125,7 @@ class AzureDataExplorerLinkedService(LinkedService):  # pylint: disable=too-many
         "service_principal_key": {"key": "typeProperties.servicePrincipalKey", "type": "SecretBase"},
         "database": {"key": "typeProperties.database", "type": "object"},
         "tenant": {"key": "typeProperties.tenant", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
@@ -6941,6 +7141,7 @@ class AzureDataExplorerLinkedService(LinkedService):  # pylint: disable=too-many
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6971,6 +7172,8 @@ class AzureDataExplorerLinkedService(LinkedService):  # pylint: disable=too-many
         :keyword tenant: The name or ID of the tenant to which the service principal belongs. Type:
          string (or Expression with resultType string).
         :paramtype tenant: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -6986,6 +7189,7 @@ class AzureDataExplorerLinkedService(LinkedService):  # pylint: disable=too-many
         self.service_principal_key = service_principal_key
         self.database = database
         self.tenant = tenant
+        self.credential = credential
 
 
 class AzureDataExplorerSink(CopySink):
@@ -7625,6 +7829,8 @@ class AzureDataLakeStoreLinkedService(LinkedService):  # pylint: disable=too-man
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
     """
 
     _validation = {
@@ -7648,6 +7854,7 @@ class AzureDataLakeStoreLinkedService(LinkedService):  # pylint: disable=too-man
         "subscription_id": {"key": "typeProperties.subscriptionId", "type": "object"},
         "resource_group_name": {"key": "typeProperties.resourceGroupName", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
@@ -7667,6 +7874,7 @@ class AzureDataLakeStoreLinkedService(LinkedService):  # pylint: disable=too-man
         subscription_id: Optional[JSON] = None,
         resource_group_name: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7710,6 +7918,8 @@ class AzureDataLakeStoreLinkedService(LinkedService):  # pylint: disable=too-man
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -7729,6 +7939,7 @@ class AzureDataLakeStoreLinkedService(LinkedService):  # pylint: disable=too-man
         self.subscription_id = subscription_id
         self.resource_group_name = resource_group_name
         self.encrypted_credential = encrypted_credential
+        self.credential = credential
 
 
 class AzureDataLakeStoreLocation(DatasetLocation):
@@ -7819,8 +8030,9 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):  # pylint: disable=too-
      lexicographical order. Applies under the folderPath in data set, and filter files/sub-folders
      under the folderPath. Type: string (or Expression with resultType string).
     :vartype list_before: JSON
-    :ivar enable_partition_discovery: Indicates whether to enable partition discovery.
-    :vartype enable_partition_discovery: bool
+    :ivar enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+     boolean (or Expression with resultType boolean).
+    :vartype enable_partition_discovery: JSON
     :ivar partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
     :vartype partition_root_path: JSON
@@ -7849,7 +8061,7 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):  # pylint: disable=too-
         "file_list_path": {"key": "fileListPath", "type": "object"},
         "list_after": {"key": "listAfter", "type": "object"},
         "list_before": {"key": "listBefore", "type": "object"},
-        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "bool"},
+        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "object"},
         "partition_root_path": {"key": "partitionRootPath", "type": "object"},
         "delete_files_after_completion": {"key": "deleteFilesAfterCompletion", "type": "object"},
         "modified_datetime_start": {"key": "modifiedDatetimeStart", "type": "object"},
@@ -7867,7 +8079,7 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):  # pylint: disable=too-
         file_list_path: Optional[JSON] = None,
         list_after: Optional[JSON] = None,
         list_before: Optional[JSON] = None,
-        enable_partition_discovery: Optional[bool] = None,
+        enable_partition_discovery: Optional[JSON] = None,
         partition_root_path: Optional[JSON] = None,
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
@@ -7902,8 +8114,9 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):  # pylint: disable=too-
          lexicographical order. Applies under the folderPath in data set, and filter files/sub-folders
          under the folderPath. Type: string (or Expression with resultType string).
         :paramtype list_before: JSON
-        :keyword enable_partition_discovery: Indicates whether to enable partition discovery.
-        :paramtype enable_partition_discovery: bool
+        :keyword enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+         boolean (or Expression with resultType boolean).
+        :paramtype enable_partition_discovery: JSON
         :keyword partition_root_path: Specify the root path where partition discovery starts from.
          Type: string (or Expression with resultType string).
         :paramtype partition_root_path: JSON
@@ -7959,7 +8172,8 @@ class AzureDataLakeStoreSink(CopySink):
     :ivar max_concurrent_connections: The maximum concurrent connection count for the sink data
      store. Type: integer (or Expression with resultType integer).
     :vartype max_concurrent_connections: JSON
-    :ivar copy_behavior: The type of copy behavior for copy sink.
+    :ivar copy_behavior: The type of copy behavior for copy sink. Type: string (or Expression with
+     resultType string).
     :vartype copy_behavior: JSON
     :ivar enable_adls_single_file_parallel: Single File Parallel.
     :vartype enable_adls_single_file_parallel: JSON
@@ -8013,7 +8227,8 @@ class AzureDataLakeStoreSink(CopySink):
         :keyword max_concurrent_connections: The maximum concurrent connection count for the sink data
          store. Type: integer (or Expression with resultType integer).
         :paramtype max_concurrent_connections: JSON
-        :keyword copy_behavior: The type of copy behavior for copy sink.
+        :keyword copy_behavior: The type of copy behavior for copy sink. Type: string (or Expression
+         with resultType string).
         :paramtype copy_behavior: JSON
         :keyword enable_adls_single_file_parallel: Single File Parallel.
         :paramtype enable_adls_single_file_parallel: JSON
@@ -8123,8 +8338,8 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
     :ivar expiry_date_time: Specifies the expiry time of the written files. The time is applied to
-     the UTC time zone in the format of "2018-12-01T05:00:00Z". Default value is NULL. Type: integer
-     (or Expression with resultType integer).
+     the UTC time zone in the format of "2018-12-01T05:00:00Z". Default value is NULL. Type: string
+     (or Expression with resultType string).
     :vartype expiry_date_time: JSON
     """
 
@@ -8160,7 +8375,7 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
         :paramtype copy_behavior: JSON
         :keyword expiry_date_time: Specifies the expiry time of the written files. The time is applied
          to the UTC time zone in the format of "2018-12-01T05:00:00Z". Default value is NULL. Type:
-         integer (or Expression with resultType integer).
+         string (or Expression with resultType string).
         :paramtype expiry_date_time: JSON
         """
         super().__init__(
@@ -8658,6 +8873,13 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -8693,6 +8915,8 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -8711,6 +8935,8 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         function_name: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -8727,6 +8953,13 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -8753,6 +8986,8 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -8766,7 +9001,7 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         self.body = body
 
 
-class AzureFunctionLinkedService(LinkedService):
+class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """Azure Function linked service.
 
     All required parameters must be populated in order to send to Azure.
@@ -8793,6 +9028,13 @@ class AzureFunctionLinkedService(LinkedService):
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
+    :ivar resource_id: Allowed token audiences for azure function.
+    :vartype resource_id: JSON
+    :ivar authentication: Type of authentication (Required to specify MSI) used to connect to
+     AzureFunction. Type: string (or Expression with resultType string).
+    :vartype authentication: JSON
     """
 
     _validation = {
@@ -8810,6 +9052,9 @@ class AzureFunctionLinkedService(LinkedService):
         "function_app_url": {"key": "typeProperties.functionAppUrl", "type": "object"},
         "function_key": {"key": "typeProperties.functionKey", "type": "SecretBase"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
+        "resource_id": {"key": "typeProperties.resourceId", "type": "object"},
+        "authentication": {"key": "typeProperties.authentication", "type": "object"},
     }
 
     def __init__(
@@ -8823,6 +9068,9 @@ class AzureFunctionLinkedService(LinkedService):
         annotations: Optional[List[JSON]] = None,
         function_key: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
+        resource_id: Optional[JSON] = None,
+        authentication: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8846,6 +9094,13 @@ class AzureFunctionLinkedService(LinkedService):
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
+        :keyword resource_id: Allowed token audiences for azure function.
+        :paramtype resource_id: JSON
+        :keyword authentication: Type of authentication (Required to specify MSI) used to connect to
+         AzureFunction. Type: string (or Expression with resultType string).
+        :paramtype authentication: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -8859,6 +9114,9 @@ class AzureFunctionLinkedService(LinkedService):
         self.function_app_url = function_app_url
         self.function_key = function_key
         self.encrypted_credential = encrypted_credential
+        self.credential = credential
+        self.resource_id = resource_id
+        self.authentication = authentication
 
 
 class AzureKeyVaultLinkedService(LinkedService):
@@ -8882,6 +9140,8 @@ class AzureKeyVaultLinkedService(LinkedService):
     :ivar base_url: The base URL of the Azure Key Vault. e.g. https://myakv.vault.azure.net Type:
      string (or Expression with resultType string). Required.
     :vartype base_url: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
     """
 
     _validation = {
@@ -8897,6 +9157,7 @@ class AzureKeyVaultLinkedService(LinkedService):
         "parameters": {"key": "parameters", "type": "{ParameterSpecification}"},
         "annotations": {"key": "annotations", "type": "[object]"},
         "base_url": {"key": "typeProperties.baseUrl", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
@@ -8908,6 +9169,7 @@ class AzureKeyVaultLinkedService(LinkedService):
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8925,6 +9187,8 @@ class AzureKeyVaultLinkedService(LinkedService):
         :keyword base_url: The base URL of the Azure Key Vault. e.g. https://myakv.vault.azure.net
          Type: string (or Expression with resultType string). Required.
         :paramtype base_url: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -8936,6 +9200,7 @@ class AzureKeyVaultLinkedService(LinkedService):
         )
         self.type: str = "AzureKeyVault"
         self.base_url = base_url
+        self.credential = credential
 
 
 class SecretBase(_serialization.Model):
@@ -9324,6 +9589,13 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):  # pylint: disable=too-m
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -9358,6 +9630,8 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):  # pylint: disable=too-m
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -9373,6 +9647,8 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):  # pylint: disable=too-m
         name: str,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -9390,6 +9666,13 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):  # pylint: disable=too-m
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -9419,6 +9702,8 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):  # pylint: disable=too-m
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -9445,6 +9730,13 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):  # pylint: disable=too-
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -9486,6 +9778,8 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):  # pylint: disable=too-
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -9504,6 +9798,8 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):  # pylint: disable=too-
         ml_pipeline_id: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -9522,6 +9818,13 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):  # pylint: disable=too-
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -9556,6 +9859,8 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):  # pylint: disable=too-
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -9610,6 +9915,9 @@ class AzureMLLinkedService(LinkedService):  # pylint: disable=too-many-instance-
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: JSON
+    :ivar authentication: Type of authentication (Required to specify MSI) used to connect to
+     AzureML. Type: string (or Expression with resultType string).
+    :vartype authentication: JSON
     """
 
     _validation = {
@@ -9632,6 +9940,7 @@ class AzureMLLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         "service_principal_key": {"key": "typeProperties.servicePrincipalKey", "type": "SecretBase"},
         "tenant": {"key": "typeProperties.tenant", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
+        "authentication": {"key": "typeProperties.authentication", "type": "object"},
     }
 
     def __init__(
@@ -9649,6 +9958,7 @@ class AzureMLLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
+        authentication: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9685,6 +9995,9 @@ class AzureMLLinkedService(LinkedService):  # pylint: disable=too-many-instance-
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: JSON
+        :keyword authentication: Type of authentication (Required to specify MSI) used to connect to
+         AzureML. Type: string (or Expression with resultType string).
+        :paramtype authentication: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -9702,6 +10015,7 @@ class AzureMLLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         self.service_principal_key = service_principal_key
         self.tenant = tenant
         self.encrypted_credential = encrypted_credential
+        self.authentication = authentication
 
 
 class AzureMLServiceLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
@@ -9731,6 +10045,9 @@ class AzureMLServiceLinkedService(LinkedService):  # pylint: disable=too-many-in
     :ivar ml_workspace_name: Azure ML Service workspace name. Type: string (or Expression with
      resultType string). Required.
     :vartype ml_workspace_name: JSON
+    :ivar authentication: Type of authentication (Required to specify MSI) used to connect to
+     AzureML. Type: string (or Expression with resultType string).
+    :vartype authentication: JSON
     :ivar service_principal_id: The ID of the service principal used to authenticate against the
      endpoint of a published Azure ML Service pipeline. Type: string (or Expression with resultType
      string).
@@ -9764,6 +10081,7 @@ class AzureMLServiceLinkedService(LinkedService):  # pylint: disable=too-many-in
         "subscription_id": {"key": "typeProperties.subscriptionId", "type": "object"},
         "resource_group_name": {"key": "typeProperties.resourceGroupName", "type": "object"},
         "ml_workspace_name": {"key": "typeProperties.mlWorkspaceName", "type": "object"},
+        "authentication": {"key": "typeProperties.authentication", "type": "object"},
         "service_principal_id": {"key": "typeProperties.servicePrincipalId", "type": "object"},
         "service_principal_key": {"key": "typeProperties.servicePrincipalKey", "type": "SecretBase"},
         "tenant": {"key": "typeProperties.tenant", "type": "object"},
@@ -9781,6 +10099,7 @@ class AzureMLServiceLinkedService(LinkedService):  # pylint: disable=too-many-in
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
+        authentication: Optional[JSON] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[JSON] = None,
@@ -9808,6 +10127,9 @@ class AzureMLServiceLinkedService(LinkedService):  # pylint: disable=too-many-in
         :keyword ml_workspace_name: Azure ML Service workspace name. Type: string (or Expression with
          resultType string). Required.
         :paramtype ml_workspace_name: JSON
+        :keyword authentication: Type of authentication (Required to specify MSI) used to connect to
+         AzureML. Type: string (or Expression with resultType string).
+        :paramtype authentication: JSON
         :keyword service_principal_id: The ID of the service principal used to authenticate against the
          endpoint of a published Azure ML Service pipeline. Type: string (or Expression with resultType
          string).
@@ -9835,6 +10157,7 @@ class AzureMLServiceLinkedService(LinkedService):  # pylint: disable=too-many-in
         self.subscription_id = subscription_id
         self.resource_group_name = resource_group_name
         self.ml_workspace_name = ml_workspace_name
+        self.authentication = authentication
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
         self.tenant = tenant
@@ -9855,6 +10178,13 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):  # pylint: disable=too-m
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -9889,6 +10219,8 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):  # pylint: disable=too-m
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -9910,6 +10242,8 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):  # pylint: disable=too-m
         trained_model_file_path: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -9924,6 +10258,13 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):  # pylint: disable=too-m
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -9948,6 +10289,8 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):  # pylint: disable=too-m
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -11208,10 +11551,15 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
      values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is the data
      factory regions’ cloud type. Type: string (or Expression with resultType string).
     :vartype azure_cloud_type: JSON
+    :ivar always_encrypted_settings: Sql always encrypted properties.
+    :vartype always_encrypted_settings:
+     ~azure.synapse.artifacts.models.SqlAlwaysEncryptedProperties
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
     """
 
     _validation = {
@@ -11232,7 +11580,12 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
         "service_principal_key": {"key": "typeProperties.servicePrincipalKey", "type": "SecretBase"},
         "tenant": {"key": "typeProperties.tenant", "type": "object"},
         "azure_cloud_type": {"key": "typeProperties.azureCloudType", "type": "object"},
+        "always_encrypted_settings": {
+            "key": "typeProperties.alwaysEncryptedSettings",
+            "type": "SqlAlwaysEncryptedProperties",
+        },
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
@@ -11249,7 +11602,9 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
         service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[JSON] = None,
         azure_cloud_type: Optional[JSON] = None,
+        always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
         encrypted_credential: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -11282,10 +11637,15 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
          Allowed values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is
          the data factory regions’ cloud type. Type: string (or Expression with resultType string).
         :paramtype azure_cloud_type: JSON
+        :keyword always_encrypted_settings: Sql always encrypted properties.
+        :paramtype always_encrypted_settings:
+         ~azure.synapse.artifacts.models.SqlAlwaysEncryptedProperties
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -11302,7 +11662,9 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
         self.service_principal_key = service_principal_key
         self.tenant = tenant
         self.azure_cloud_type = azure_cloud_type
+        self.always_encrypted_settings = always_encrypted_settings
         self.encrypted_credential = encrypted_credential
+        self.credential = credential
 
 
 class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
@@ -11346,6 +11708,8 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
     """
 
     _validation = {
@@ -11367,6 +11731,7 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
         "tenant": {"key": "typeProperties.tenant", "type": "object"},
         "azure_cloud_type": {"key": "typeProperties.azureCloudType", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
@@ -11384,6 +11749,7 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
         tenant: Optional[JSON] = None,
         azure_cloud_type: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -11421,6 +11787,8 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -11438,6 +11806,7 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
         self.tenant = tenant
         self.azure_cloud_type = azure_cloud_type
         self.encrypted_credential = encrypted_credential
+        self.credential = credential
 
 
 class AzureSqlDWTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
@@ -11598,10 +11967,15 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
      values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is the data
      factory regions’ cloud type. Type: string (or Expression with resultType string).
     :vartype azure_cloud_type: JSON
+    :ivar always_encrypted_settings: Sql always encrypted properties.
+    :vartype always_encrypted_settings:
+     ~azure.synapse.artifacts.models.SqlAlwaysEncryptedProperties
     :ivar encrypted_credential: The encrypted credential used for authentication. Credentials are
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
     """
 
     _validation = {
@@ -11622,7 +11996,12 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
         "service_principal_key": {"key": "typeProperties.servicePrincipalKey", "type": "SecretBase"},
         "tenant": {"key": "typeProperties.tenant", "type": "object"},
         "azure_cloud_type": {"key": "typeProperties.azureCloudType", "type": "object"},
+        "always_encrypted_settings": {
+            "key": "typeProperties.alwaysEncryptedSettings",
+            "type": "SqlAlwaysEncryptedProperties",
+        },
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
@@ -11639,7 +12018,9 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
         service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[JSON] = None,
         azure_cloud_type: Optional[JSON] = None,
+        always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
         encrypted_credential: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -11672,10 +12053,15 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
          Allowed values are AzurePublic, AzureChina, AzureUsGovernment, AzureGermany. Default value is
          the data factory regions’ cloud type. Type: string (or Expression with resultType string).
         :paramtype azure_cloud_type: JSON
+        :keyword always_encrypted_settings: Sql always encrypted properties.
+        :paramtype always_encrypted_settings:
+         ~azure.synapse.artifacts.models.SqlAlwaysEncryptedProperties
         :keyword encrypted_credential: The encrypted credential used for authentication. Credentials
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -11692,7 +12078,9 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
         self.service_principal_key = service_principal_key
         self.tenant = tenant
         self.azure_cloud_type = azure_cloud_type
+        self.always_encrypted_settings = always_encrypted_settings
         self.encrypted_credential = encrypted_credential
+        self.credential = credential
 
 
 class AzureSqlMITableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
@@ -11993,6 +12381,10 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
      Example: "{Parameter1: {value: "1", type: "int"}}".
     :vartype stored_procedure_parameters: dict[str,
      ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :ivar isolation_level: Specifies the transaction locking behavior for the SQL source. Allowed
+     values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default value
+     is ReadCommitted. Type: string (or Expression with resultType string).
+    :vartype isolation_level: JSON
     :ivar produce_additional_types: Which additional types to produce.
     :vartype produce_additional_types: JSON
     :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
@@ -12017,6 +12409,7 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
         "sql_reader_query": {"key": "sqlReaderQuery", "type": "object"},
         "sql_reader_stored_procedure_name": {"key": "sqlReaderStoredProcedureName", "type": "object"},
         "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "{StoredProcedureParameter}"},
+        "isolation_level": {"key": "isolationLevel", "type": "object"},
         "produce_additional_types": {"key": "produceAdditionalTypes", "type": "object"},
         "partition_option": {"key": "partitionOption", "type": "object"},
         "partition_settings": {"key": "partitionSettings", "type": "SqlPartitionSettings"},
@@ -12034,6 +12427,7 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
         sql_reader_query: Optional[JSON] = None,
         sql_reader_stored_procedure_name: Optional[JSON] = None,
         stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
+        isolation_level: Optional[JSON] = None,
         produce_additional_types: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SqlPartitionSettings"] = None,
@@ -12069,6 +12463,10 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
          Example: "{Parameter1: {value: "1", type: "int"}}".
         :paramtype stored_procedure_parameters: dict[str,
          ~azure.synapse.artifacts.models.StoredProcedureParameter]
+        :keyword isolation_level: Specifies the transaction locking behavior for the SQL source.
+         Allowed values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default
+         value is ReadCommitted. Type: string (or Expression with resultType string).
+        :paramtype isolation_level: JSON
         :keyword produce_additional_types: Which additional types to produce.
         :paramtype produce_additional_types: JSON
         :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
@@ -12090,6 +12488,7 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
+        self.isolation_level = isolation_level
         self.produce_additional_types = produce_additional_types
         self.partition_option = partition_option
         self.partition_settings = partition_settings
@@ -15512,6 +15911,13 @@ class CopyActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attr
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -15577,6 +15983,8 @@ class CopyActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attr
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -15611,6 +16019,8 @@ class CopyActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attr
         sink: "_models.CopySink",
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -15640,6 +16050,13 @@ class CopyActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attr
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -15696,6 +16113,8 @@ class CopyActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attr
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -15824,6 +16243,8 @@ class CosmosDbLinkedService(LinkedService):  # pylint: disable=too-many-instance
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
     """
 
     _validation = {
@@ -15842,6 +16263,7 @@ class CosmosDbLinkedService(LinkedService):  # pylint: disable=too-many-instance
         "database": {"key": "typeProperties.database", "type": "object"},
         "account_key": {"key": "typeProperties.accountKey", "type": "SecretBase"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
@@ -15857,6 +16279,7 @@ class CosmosDbLinkedService(LinkedService):  # pylint: disable=too-many-instance
         database: Optional[JSON] = None,
         account_key: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15887,6 +16310,8 @@ class CosmosDbLinkedService(LinkedService):  # pylint: disable=too-many-instance
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -15902,6 +16327,7 @@ class CosmosDbLinkedService(LinkedService):  # pylint: disable=too-many-instance
         self.database = database
         self.account_key = account_key
         self.encrypted_credential = encrypted_credential
+        self.credential = credential
 
 
 class CosmosDbMongoDbApiCollectionDataset(Dataset):
@@ -17001,6 +17427,54 @@ class CreateRunResponse(_serialization.Model):
         self.run_id = run_id
 
 
+class CredentialReference(_serialization.Model):
+    """Credential reference type.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar type: Credential reference type. Required. "CredentialReference"
+    :vartype type: str or ~azure.synapse.artifacts.models.CredentialReferenceType
+    :ivar reference_name: Reference credential name. Required.
+    :vartype reference_name: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "reference_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "type": {"key": "type", "type": "str"},
+        "reference_name": {"key": "referenceName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.CredentialReferenceType"],
+        reference_name: str,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword type: Credential reference type. Required. "CredentialReference"
+        :paramtype type: str or ~azure.synapse.artifacts.models.CredentialReferenceType
+        :keyword reference_name: Reference credential name. Required.
+        :paramtype reference_name: str
+        """
+        super().__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.type = type
+        self.reference_name = reference_name
+
+
 class CustomActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Custom activity type.
 
@@ -17015,6 +17489,13 @@ class CustomActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -17056,6 +17537,8 @@ class CustomActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -17076,6 +17559,8 @@ class CustomActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         command: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -17096,6 +17581,13 @@ class CustomActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -17129,6 +17621,8 @@ class CustomActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -17522,6 +18016,13 @@ class DatabricksNotebookActivity(ExecutionActivity):  # pylint: disable=too-many
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -17552,6 +18053,8 @@ class DatabricksNotebookActivity(ExecutionActivity):  # pylint: disable=too-many
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -17568,6 +18071,8 @@ class DatabricksNotebookActivity(ExecutionActivity):  # pylint: disable=too-many
         notebook_path: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -17584,6 +18089,13 @@ class DatabricksNotebookActivity(ExecutionActivity):  # pylint: disable=too-many
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -17607,6 +18119,8 @@ class DatabricksNotebookActivity(ExecutionActivity):  # pylint: disable=too-many
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -17633,6 +18147,13 @@ class DatabricksSparkJarActivity(ExecutionActivity):  # pylint: disable=too-many
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -17662,6 +18183,8 @@ class DatabricksSparkJarActivity(ExecutionActivity):  # pylint: disable=too-many
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -17678,6 +18201,8 @@ class DatabricksSparkJarActivity(ExecutionActivity):  # pylint: disable=too-many
         main_class_name: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -17694,6 +18219,13 @@ class DatabricksSparkJarActivity(ExecutionActivity):  # pylint: disable=too-many
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -17716,6 +18248,8 @@ class DatabricksSparkJarActivity(ExecutionActivity):  # pylint: disable=too-many
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -17742,6 +18276,13 @@ class DatabricksSparkPythonActivity(ExecutionActivity):  # pylint: disable=too-m
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -17770,6 +18311,8 @@ class DatabricksSparkPythonActivity(ExecutionActivity):  # pylint: disable=too-m
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -17786,6 +18329,8 @@ class DatabricksSparkPythonActivity(ExecutionActivity):  # pylint: disable=too-m
         python_file: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -17802,6 +18347,13 @@ class DatabricksSparkPythonActivity(ExecutionActivity):  # pylint: disable=too-m
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -17823,6 +18375,8 @@ class DatabricksSparkPythonActivity(ExecutionActivity):  # pylint: disable=too-m
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -18893,6 +19447,13 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):  # pylint: disable=too-m
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -18935,6 +19496,8 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):  # pylint: disable=too-m
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -18956,6 +19519,8 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):  # pylint: disable=too-m
         script_linked_service: "_models.LinkedServiceReference",
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -18975,6 +19540,13 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):  # pylint: disable=too-m
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -19008,6 +19580,8 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):  # pylint: disable=too-m
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -19810,6 +20384,13 @@ class DeleteActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -19848,6 +20429,8 @@ class DeleteActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -19867,6 +20450,8 @@ class DeleteActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         dataset: "_models.DatasetReference",
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -19886,6 +20471,13 @@ class DeleteActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -19915,6 +20507,8 @@ class DeleteActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -22253,6 +22847,8 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
     """
 
     _validation = {
@@ -22280,6 +22876,7 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
         "service_principal_credential_type": {"key": "typeProperties.servicePrincipalCredentialType", "type": "object"},
         "service_principal_credential": {"key": "typeProperties.servicePrincipalCredential", "type": "SecretBase"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(
@@ -22302,6 +22899,7 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
         service_principal_credential_type: Optional[JSON] = None,
         service_principal_credential: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -22361,6 +22959,8 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -22383,6 +22983,7 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
         self.service_principal_credential_type = service_principal_credential_type
         self.service_principal_credential = service_principal_credential
         self.encrypted_credential = encrypted_credential
+        self.credential = credential
 
 
 class DynamicsSink(CopySink):
@@ -23388,6 +23989,13 @@ class ExecuteDataFlowActivity(ExecutionActivity):  # pylint: disable=too-many-in
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -23430,6 +24038,8 @@ class ExecuteDataFlowActivity(ExecutionActivity):  # pylint: disable=too-many-in
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -23451,6 +24061,8 @@ class ExecuteDataFlowActivity(ExecutionActivity):  # pylint: disable=too-many-in
         dataflow: "_models.DataFlowReference",
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -23472,6 +24084,13 @@ class ExecuteDataFlowActivity(ExecutionActivity):  # pylint: disable=too-many-in
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -23507,6 +24126,8 @@ class ExecuteDataFlowActivity(ExecutionActivity):  # pylint: disable=too-many-in
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -23560,7 +24181,7 @@ class ExecuteDataFlowActivityTypePropertiesCompute(_serialization.Model):
         self.core_count = core_count
 
 
-class ExecutePipelineActivity(ControlActivity):
+class ExecutePipelineActivity(ControlActivity):  # pylint: disable=too-many-instance-attributes
     """Execute pipeline activity.
 
     All required parameters must be populated in order to send to Azure.
@@ -23574,6 +24195,13 @@ class ExecutePipelineActivity(ControlActivity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -23598,6 +24226,8 @@ class ExecutePipelineActivity(ControlActivity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "pipeline": {"key": "typeProperties.pipeline", "type": "PipelineReference"},
@@ -23612,6 +24242,8 @@ class ExecutePipelineActivity(ControlActivity):
         pipeline: "_models.PipelineReference",
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         parameters: Optional[Dict[str, JSON]] = None,
@@ -23626,6 +24258,13 @@ class ExecutePipelineActivity(ControlActivity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -23642,6 +24281,8 @@ class ExecutePipelineActivity(ControlActivity):
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             **kwargs
@@ -23666,6 +24307,13 @@ class ExecuteSSISPackageActivity(ExecutionActivity):  # pylint: disable=too-many
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -23719,6 +24367,8 @@ class ExecuteSSISPackageActivity(ExecutionActivity):  # pylint: disable=too-many
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -23751,6 +24401,8 @@ class ExecuteSSISPackageActivity(ExecutionActivity):  # pylint: disable=too-many
         connect_via: "_models.IntegrationRuntimeReference",
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -23775,6 +24427,13 @@ class ExecuteSSISPackageActivity(ExecutionActivity):  # pylint: disable=too-many
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -23821,6 +24480,8 @@ class ExecuteSSISPackageActivity(ExecutionActivity):  # pylint: disable=too-many
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -23948,6 +24609,13 @@ class FailActivity(ControlActivity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -23974,6 +24642,8 @@ class FailActivity(ControlActivity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "message": {"key": "typeProperties.message", "type": "object"},
@@ -23988,6 +24658,8 @@ class FailActivity(ControlActivity):
         error_code: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         **kwargs: Any
@@ -24000,6 +24672,13 @@ class FailActivity(ControlActivity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -24017,6 +24696,8 @@ class FailActivity(ControlActivity):
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             **kwargs
@@ -24718,6 +25399,13 @@ class FilterActivity(ControlActivity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -24740,6 +25428,8 @@ class FilterActivity(ControlActivity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "items": {"key": "typeProperties.items", "type": "Expression"},
@@ -24754,6 +25444,8 @@ class FilterActivity(ControlActivity):
         condition: "_models.Expression",
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         **kwargs: Any
@@ -24766,6 +25458,13 @@ class FilterActivity(ControlActivity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -24779,6 +25478,8 @@ class FilterActivity(ControlActivity):
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             **kwargs
@@ -24871,7 +25572,7 @@ class Flowlet(DataFlow):
         self.script_lines = script_lines
 
 
-class ForEachActivity(ControlActivity):
+class ForEachActivity(ControlActivity):  # pylint: disable=too-many-instance-attributes
     """This activity is used for iterating over a collection and execute given activities.
 
     All required parameters must be populated in order to send to Azure.
@@ -24885,6 +25586,13 @@ class ForEachActivity(ControlActivity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -24913,6 +25621,8 @@ class ForEachActivity(ControlActivity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "is_sequential": {"key": "typeProperties.isSequential", "type": "bool"},
@@ -24929,6 +25639,8 @@ class ForEachActivity(ControlActivity):
         activities: List["_models.Activity"],
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         is_sequential: Optional[bool] = None,
@@ -24943,6 +25655,13 @@ class ForEachActivity(ControlActivity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -24961,6 +25680,8 @@ class ForEachActivity(ControlActivity):
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             **kwargs
@@ -25310,6 +26031,13 @@ class GetMetadataActivity(ExecutionActivity):  # pylint: disable=too-many-instan
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -25339,6 +26067,8 @@ class GetMetadataActivity(ExecutionActivity):  # pylint: disable=too-many-instan
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -25356,6 +26086,8 @@ class GetMetadataActivity(ExecutionActivity):  # pylint: disable=too-many-instan
         dataset: "_models.DatasetReference",
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -25373,6 +26105,13 @@ class GetMetadataActivity(ExecutionActivity):  # pylint: disable=too-many-instan
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -25394,6 +26133,8 @@ class GetMetadataActivity(ExecutionActivity):  # pylint: disable=too-many-instan
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -27763,6 +28504,13 @@ class HDInsightHiveActivity(ExecutionActivity):  # pylint: disable=too-many-inst
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -27801,6 +28549,8 @@ class HDInsightHiveActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -27821,6 +28571,8 @@ class HDInsightHiveActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         name: str,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -27843,6 +28595,13 @@ class HDInsightHiveActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -27875,6 +28634,8 @@ class HDInsightHiveActivity(ExecutionActivity):  # pylint: disable=too-many-inst
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -28047,6 +28808,13 @@ class HDInsightMapReduceActivity(ExecutionActivity):  # pylint: disable=too-many
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -28086,6 +28854,8 @@ class HDInsightMapReduceActivity(ExecutionActivity):  # pylint: disable=too-many
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -28108,6 +28878,8 @@ class HDInsightMapReduceActivity(ExecutionActivity):  # pylint: disable=too-many
         jar_file_path: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -28128,6 +28900,13 @@ class HDInsightMapReduceActivity(ExecutionActivity):  # pylint: disable=too-many
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -28160,6 +28939,8 @@ class HDInsightMapReduceActivity(ExecutionActivity):  # pylint: disable=too-many
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -28293,6 +29074,8 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
     :ivar subnet_name: The ARM resource ID for the subnet in the vNet. If virtualNetworkId was
      specified, then this property is required. Type: string (or Expression with resultType string).
     :vartype subnet_name: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
     """
 
     _validation = {
@@ -28352,6 +29135,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         "script_actions": {"key": "typeProperties.scriptActions", "type": "[ScriptAction]"},
         "virtual_network_id": {"key": "typeProperties.virtualNetworkId", "type": "object"},
         "subnet_name": {"key": "typeProperties.subnetName", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -28395,6 +29179,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         script_actions: Optional[List["_models.ScriptAction"]] = None,
         virtual_network_id: Optional[JSON] = None,
         subnet_name: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -28508,6 +29293,8 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         :keyword subnet_name: The ARM resource ID for the subnet in the vNet. If virtualNetworkId was
          specified, then this property is required. Type: string (or Expression with resultType string).
         :paramtype subnet_name: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -28551,6 +29338,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         self.script_actions = script_actions
         self.virtual_network_id = virtual_network_id
         self.subnet_name = subnet_name
+        self.credential = credential
 
 
 class HDInsightPigActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
@@ -28567,6 +29355,13 @@ class HDInsightPigActivity(ExecutionActivity):  # pylint: disable=too-many-insta
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -28601,6 +29396,8 @@ class HDInsightPigActivity(ExecutionActivity):  # pylint: disable=too-many-insta
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -28619,6 +29416,8 @@ class HDInsightPigActivity(ExecutionActivity):  # pylint: disable=too-many-insta
         name: str,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -28639,6 +29438,13 @@ class HDInsightPigActivity(ExecutionActivity):  # pylint: disable=too-many-insta
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -28667,6 +29473,8 @@ class HDInsightPigActivity(ExecutionActivity):  # pylint: disable=too-many-insta
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -28696,6 +29504,13 @@ class HDInsightSparkActivity(ExecutionActivity):  # pylint: disable=too-many-ins
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -28739,6 +29554,8 @@ class HDInsightSparkActivity(ExecutionActivity):  # pylint: disable=too-many-ins
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -28761,6 +29578,8 @@ class HDInsightSparkActivity(ExecutionActivity):  # pylint: disable=too-many-ins
         entry_file_path: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -28781,6 +29600,13 @@ class HDInsightSparkActivity(ExecutionActivity):  # pylint: disable=too-many-ins
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -28815,6 +29641,8 @@ class HDInsightSparkActivity(ExecutionActivity):  # pylint: disable=too-many-ins
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -28846,6 +29674,13 @@ class HDInsightStreamingActivity(ExecutionActivity):  # pylint: disable=too-many
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -28898,6 +29733,8 @@ class HDInsightStreamingActivity(ExecutionActivity):  # pylint: disable=too-many
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -28927,6 +29764,8 @@ class HDInsightStreamingActivity(ExecutionActivity):  # pylint: disable=too-many
         file_paths: List[JSON],
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -28948,6 +29787,13 @@ class HDInsightStreamingActivity(ExecutionActivity):  # pylint: disable=too-many
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -28991,6 +29837,8 @@ class HDInsightStreamingActivity(ExecutionActivity):  # pylint: disable=too-many
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -30327,7 +31175,7 @@ class HubspotSource(TabularSource):
         self.query = query
 
 
-class IfConditionActivity(ControlActivity):
+class IfConditionActivity(ControlActivity):  # pylint: disable=too-many-instance-attributes
     """This activity evaluates a boolean expression and executes either the activities under the
     ifTrueActivities property or the ifFalseActivities property depending on the result of the
     expression.
@@ -30343,6 +31191,13 @@ class IfConditionActivity(ControlActivity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -30369,6 +31224,8 @@ class IfConditionActivity(ControlActivity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "expression": {"key": "typeProperties.expression", "type": "Expression"},
@@ -30383,6 +31240,8 @@ class IfConditionActivity(ControlActivity):
         expression: "_models.Expression",
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         if_true_activities: Optional[List["_models.Activity"]] = None,
@@ -30397,6 +31256,13 @@ class IfConditionActivity(ControlActivity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -30417,6 +31283,8 @@ class IfConditionActivity(ControlActivity):
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             **kwargs
@@ -33693,11 +34561,17 @@ class LinkConnectionTargetDatabaseTypeProperties(_serialization.Model):
     :ivar drop_existing_target_table_on_start: Drop and recreate same existing target table on link
      connection target database.
     :vartype drop_existing_target_table_on_start: bool
+    :ivar action_on_existing_target_table: Action on existing target table. If not specified,
+     'FailOnNonEmptyTable' action is used. Known values are: "FailOnNonEmptyTable",
+     "DropAndRecreateTable", and "MergeWithExistingData".
+    :vartype action_on_existing_target_table: str or
+     ~azure.synapse.artifacts.models.ActionOnExistingTargetTable
     """
 
     _attribute_map = {
         "cross_table_transaction": {"key": "crossTableTransaction", "type": "bool"},
         "drop_existing_target_table_on_start": {"key": "dropExistingTargetTableOnStart", "type": "bool"},
+        "action_on_existing_target_table": {"key": "actionOnExistingTargetTable", "type": "str"},
     }
 
     def __init__(
@@ -33705,6 +34579,7 @@ class LinkConnectionTargetDatabaseTypeProperties(_serialization.Model):
         *,
         cross_table_transaction: Optional[bool] = None,
         drop_existing_target_table_on_start: Optional[bool] = None,
+        action_on_existing_target_table: Optional[Union[str, "_models.ActionOnExistingTargetTable"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -33714,10 +34589,16 @@ class LinkConnectionTargetDatabaseTypeProperties(_serialization.Model):
         :keyword drop_existing_target_table_on_start: Drop and recreate same existing target table on
          link connection target database.
         :paramtype drop_existing_target_table_on_start: bool
+        :keyword action_on_existing_target_table: Action on existing target table. If not specified,
+         'FailOnNonEmptyTable' action is used. Known values are: "FailOnNonEmptyTable",
+         "DropAndRecreateTable", and "MergeWithExistingData".
+        :paramtype action_on_existing_target_table: str or
+         ~azure.synapse.artifacts.models.ActionOnExistingTargetTable
         """
         super().__init__(**kwargs)
         self.cross_table_transaction = cross_table_transaction
         self.drop_existing_target_table_on_start = drop_existing_target_table_on_start
+        self.action_on_existing_target_table = action_on_existing_target_table
 
 
 class LinkedIntegrationRuntimeType(_serialization.Model):
@@ -34458,6 +35339,13 @@ class LookupActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -34487,6 +35375,8 @@ class LookupActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -34504,6 +35394,8 @@ class LookupActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         dataset: "_models.DatasetReference",
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -34519,6 +35411,13 @@ class LookupActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -34539,6 +35438,8 @@ class LookupActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -36412,6 +37313,9 @@ class MongoDbAtlasLinkedService(LinkedService):
     :ivar database: The name of the MongoDB Atlas database that you want to access. Type: string
      (or Expression with resultType string). Required.
     :vartype database: JSON
+    :ivar driver_version: The driver version that you want to choose. Allowed value are v1 and v2.
+     Type: string (or Expression with resultType string).
+    :vartype driver_version: JSON
     """
 
     _validation = {
@@ -36429,6 +37333,7 @@ class MongoDbAtlasLinkedService(LinkedService):
         "annotations": {"key": "annotations", "type": "[object]"},
         "connection_string": {"key": "typeProperties.connectionString", "type": "object"},
         "database": {"key": "typeProperties.database", "type": "object"},
+        "driver_version": {"key": "typeProperties.driverVersion", "type": "object"},
     }
 
     def __init__(
@@ -36441,6 +37346,7 @@ class MongoDbAtlasLinkedService(LinkedService):
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
+        driver_version: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -36462,6 +37368,9 @@ class MongoDbAtlasLinkedService(LinkedService):
         :keyword database: The name of the MongoDB Atlas database that you want to access. Type: string
          (or Expression with resultType string). Required.
         :paramtype database: JSON
+        :keyword driver_version: The driver version that you want to choose. Allowed value are v1 and
+         v2. Type: string (or Expression with resultType string).
+        :paramtype driver_version: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -36474,6 +37383,7 @@ class MongoDbAtlasLinkedService(LinkedService):
         self.type: str = "MongoDbAtlas"
         self.connection_string = connection_string
         self.database = database
+        self.driver_version = driver_version
 
 
 class MongoDbAtlasSource(CopySource):
@@ -39638,8 +40548,8 @@ class Office365Source(CopySource):  # pylint: disable=too-many-instance-attribut
      with resultType string).
     :vartype end_time: JSON
     :ivar output_columns: The columns to be read out from the Office 365 table. Type: array of
-     objects (or Expression with resultType array of objects). Example: [ { "name": "Id" }, {
-     "name": "CreatedDateTime" } ].
+     objects (or Expression with resultType array of objects). itemType: OutputColumn.  Example: [ {
+     "name": "Id" }, { "name": "CreatedDateTime" } ].
     :vartype output_columns: JSON
     """
 
@@ -39705,8 +40615,8 @@ class Office365Source(CopySource):  # pylint: disable=too-many-instance-attribut
          Expression with resultType string).
         :paramtype end_time: JSON
         :keyword output_columns: The columns to be read out from the Office 365 table. Type: array of
-         objects (or Expression with resultType array of objects). Example: [ { "name": "Id" }, {
-         "name": "CreatedDateTime" } ].
+         objects (or Expression with resultType array of objects). itemType: OutputColumn.  Example: [ {
+         "name": "Id" }, { "name": "CreatedDateTime" } ].
         :paramtype output_columns: JSON
         """
         super().__init__(
@@ -40982,6 +41892,26 @@ class OrcWriteSettings(FormatWriteSettings):
         self.type: str = "OrcWriteSettings"
         self.max_rows_per_file = max_rows_per_file
         self.file_name_prefix = file_name_prefix
+
+
+class OutputColumn(_serialization.Model):
+    """The columns to be read out from the Office 365 table.
+
+    :ivar name: Name of the table column. Type: string.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Name of the table column. Type: string.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
 
 
 class ParameterSpecification(_serialization.Model):
@@ -45178,6 +46108,8 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
     :ivar client_id: The client ID associated with your application. Type: string (or Expression
      with resultType string).
     :vartype client_id: JSON
@@ -45222,6 +46154,7 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
         "azure_cloud_type": {"key": "typeProperties.azureCloudType", "type": "object"},
         "aad_resource_id": {"key": "typeProperties.aadResourceId", "type": "object"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
+        "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
         "client_id": {"key": "typeProperties.clientId", "type": "object"},
         "client_secret": {"key": "typeProperties.clientSecret", "type": "SecretBase"},
         "token_endpoint": {"key": "typeProperties.tokenEndpoint", "type": "object"},
@@ -45229,7 +46162,7 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
         "scope": {"key": "typeProperties.scope", "type": "object"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         url: JSON,
@@ -45249,6 +46182,7 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
         azure_cloud_type: Optional[JSON] = None,
         aad_resource_id: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         client_id: Optional[JSON] = None,
         client_secret: Optional["_models.SecretBase"] = None,
         token_endpoint: Optional[JSON] = None,
@@ -45305,6 +46239,8 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
         :keyword client_id: The client ID associated with your application. Type: string (or Expression
          with resultType string).
         :paramtype client_id: JSON
@@ -45341,6 +46277,7 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
         self.azure_cloud_type = azure_cloud_type
         self.aad_resource_id = aad_resource_id
         self.encrypted_credential = encrypted_credential
+        self.credential = credential
         self.client_id = client_id
         self.client_secret = client_secret
         self.token_endpoint = token_endpoint
@@ -45710,6 +46647,560 @@ class RunFilterParameters(_serialization.Model):
         self.order_by = order_by
 
 
+class RunNotebookError(_serialization.Model):
+    """Run notebook error.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar ename: Error name.
+    :vartype ename: str
+    :ivar evalue: Error message.
+    :vartype evalue: str
+    :ivar traceback: Error trace.
+    :vartype traceback: list[str]
+    """
+
+    _validation = {
+        "ename": {"readonly": True},
+        "evalue": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "ename": {"key": "ename", "type": "str"},
+        "evalue": {"key": "evalue", "type": "str"},
+        "traceback": {"key": "traceback", "type": "[str]"},
+    }
+
+    def __init__(self, *, traceback: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword traceback: Error trace.
+        :paramtype traceback: list[str]
+        """
+        super().__init__(**kwargs)
+        self.ename = None
+        self.evalue = None
+        self.traceback = traceback
+
+
+class RunNotebookParameter(_serialization.Model):
+    """Run notebook parameter.
+
+    :ivar type: Parameter type.
+    :vartype type: str
+    :ivar value: Parameter value.
+    :vartype value: JSON
+    """
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "value": {"key": "value", "type": "object"},
+    }
+
+    def __init__(self, *, type: Optional[str] = None, value: Optional[JSON] = None, **kwargs: Any) -> None:
+        """
+        :keyword type: Parameter type.
+        :paramtype type: str
+        :keyword value: Parameter value.
+        :paramtype value: JSON
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.value = value
+
+
+class RunNotebookRequest(_serialization.Model):
+    """Run notebook request.
+
+    :ivar notebook: Notebook name.
+    :vartype notebook: str
+    :ivar spark_pool: SparkPool name.
+    :vartype spark_pool: str
+    :ivar session_options: Session properties.
+    :vartype session_options: ~azure.synapse.artifacts.models.RunNotebookSparkSessionOptions
+    :ivar honor_session_time_to_live: Whether session should run till time to live after run
+     completes.
+    :vartype honor_session_time_to_live: bool
+    :ivar parameters: Run notebook parameters.
+    :vartype parameters: dict[str, ~azure.synapse.artifacts.models.RunNotebookParameter]
+    """
+
+    _attribute_map = {
+        "notebook": {"key": "notebook", "type": "str"},
+        "spark_pool": {"key": "sparkPool", "type": "str"},
+        "session_options": {"key": "sessionOptions", "type": "RunNotebookSparkSessionOptions"},
+        "honor_session_time_to_live": {"key": "honorSessionTimeToLive", "type": "bool"},
+        "parameters": {"key": "parameters", "type": "{RunNotebookParameter}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        notebook: Optional[str] = None,
+        spark_pool: Optional[str] = None,
+        session_options: Optional["_models.RunNotebookSparkSessionOptions"] = None,
+        honor_session_time_to_live: Optional[bool] = None,
+        parameters: Optional[Dict[str, "_models.RunNotebookParameter"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword notebook: Notebook name.
+        :paramtype notebook: str
+        :keyword spark_pool: SparkPool name.
+        :paramtype spark_pool: str
+        :keyword session_options: Session properties.
+        :paramtype session_options: ~azure.synapse.artifacts.models.RunNotebookSparkSessionOptions
+        :keyword honor_session_time_to_live: Whether session should run till time to live after run
+         completes.
+        :paramtype honor_session_time_to_live: bool
+        :keyword parameters: Run notebook parameters.
+        :paramtype parameters: dict[str, ~azure.synapse.artifacts.models.RunNotebookParameter]
+        """
+        super().__init__(**kwargs)
+        self.notebook = notebook
+        self.spark_pool = spark_pool
+        self.session_options = session_options
+        self.honor_session_time_to_live = honor_session_time_to_live
+        self.parameters = parameters
+
+
+class RunNotebookResponse(_serialization.Model):
+    """Run notebook response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar message: Response message.
+    :vartype message: str
+    :ivar result: Result of run notebook.
+    :vartype result: ~azure.synapse.artifacts.models.RunNotebookResult
+    """
+
+    _validation = {
+        "message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "message": {"key": "message", "type": "str"},
+        "result": {"key": "result", "type": "RunNotebookResult"},
+    }
+
+    def __init__(self, *, result: Optional["_models.RunNotebookResult"] = None, **kwargs: Any) -> None:
+        """
+        :keyword result: Result of run notebook.
+        :paramtype result: ~azure.synapse.artifacts.models.RunNotebookResult
+        """
+        super().__init__(**kwargs)
+        self.message = None
+        self.result = result
+
+
+class RunNotebookResult(_serialization.Model):
+    """Result of run notebook.
+
+    :ivar run_id: Run id.
+    :vartype run_id: str
+    :ivar run_status: Status of the run notebook.
+    :vartype run_status: str
+    :ivar last_checked_on: Timestamp of last update.
+    :vartype last_checked_on: str
+    :ivar session_id: Livy session id.
+    :vartype session_id: int
+    :ivar spark_pool: SparkPool name.
+    :vartype spark_pool: str
+    :ivar session_detail: Run notebook session details.
+    :vartype session_detail: JSON
+    :ivar exit_value: Output of exit command.
+    :vartype exit_value: str
+    :ivar error: Run notebook error.
+    :vartype error: ~azure.synapse.artifacts.models.RunNotebookError
+    """
+
+    _attribute_map = {
+        "run_id": {"key": "runId", "type": "str"},
+        "run_status": {"key": "runStatus", "type": "str"},
+        "last_checked_on": {"key": "lastCheckedOn", "type": "str"},
+        "session_id": {"key": "sessionId", "type": "int"},
+        "spark_pool": {"key": "sparkPool", "type": "str"},
+        "session_detail": {"key": "sessionDetail", "type": "object"},
+        "exit_value": {"key": "exitValue", "type": "str"},
+        "error": {"key": "error", "type": "RunNotebookError"},
+    }
+
+    def __init__(
+        self,
+        *,
+        run_id: Optional[str] = None,
+        run_status: Optional[str] = None,
+        last_checked_on: Optional[str] = None,
+        session_id: Optional[int] = None,
+        spark_pool: Optional[str] = None,
+        session_detail: Optional[JSON] = None,
+        exit_value: Optional[str] = None,
+        error: Optional["_models.RunNotebookError"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword run_id: Run id.
+        :paramtype run_id: str
+        :keyword run_status: Status of the run notebook.
+        :paramtype run_status: str
+        :keyword last_checked_on: Timestamp of last update.
+        :paramtype last_checked_on: str
+        :keyword session_id: Livy session id.
+        :paramtype session_id: int
+        :keyword spark_pool: SparkPool name.
+        :paramtype spark_pool: str
+        :keyword session_detail: Run notebook session details.
+        :paramtype session_detail: JSON
+        :keyword exit_value: Output of exit command.
+        :paramtype exit_value: str
+        :keyword error: Run notebook error.
+        :paramtype error: ~azure.synapse.artifacts.models.RunNotebookError
+        """
+        super().__init__(**kwargs)
+        self.run_id = run_id
+        self.run_status = run_status
+        self.last_checked_on = last_checked_on
+        self.session_id = session_id
+        self.spark_pool = spark_pool
+        self.session_detail = session_detail
+        self.exit_value = exit_value
+        self.error = error
+
+
+class RunNotebookSnapshot(_serialization.Model):
+    """Run notebook snapshot.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar exit_value: Output of exit command.
+    :vartype exit_value: str
+    :ivar id: Run notebook runId. Required.
+    :vartype id: str
+    :ivar notebook: Notebook name. Required.
+    :vartype notebook: str
+    :ivar session_options: Session properties.
+    :vartype session_options: ~azure.synapse.artifacts.models.RunNotebookSparkSessionOptions
+    :ivar honor_session_time_to_live: Whether session should run till time to live after run
+     completes.
+    :vartype honor_session_time_to_live: bool
+    :ivar session_id: Livy session id.
+    :vartype session_id: int
+    :ivar spark_pool: SparkPool name.
+    :vartype spark_pool: str
+    :ivar parameters: Run notebook parameters.
+    :vartype parameters: dict[str, ~azure.synapse.artifacts.models.RunNotebookParameter]
+    :ivar notebook_content: Notebook resource type.
+    :vartype notebook_content: ~azure.synapse.artifacts.models.NotebookResource
+    """
+
+    _validation = {
+        "id": {"required": True},
+        "notebook": {"required": True},
+    }
+
+    _attribute_map = {
+        "exit_value": {"key": "exitValue", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "notebook": {"key": "notebook", "type": "str"},
+        "session_options": {"key": "sessionOptions", "type": "RunNotebookSparkSessionOptions"},
+        "honor_session_time_to_live": {"key": "honorSessionTimeToLive", "type": "bool"},
+        "session_id": {"key": "sessionId", "type": "int"},
+        "spark_pool": {"key": "sparkPool", "type": "str"},
+        "parameters": {"key": "parameters", "type": "{RunNotebookParameter}"},
+        "notebook_content": {"key": "notebookContent", "type": "NotebookResource"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        notebook: str,
+        exit_value: Optional[str] = None,
+        session_options: Optional["_models.RunNotebookSparkSessionOptions"] = None,
+        honor_session_time_to_live: Optional[bool] = None,
+        session_id: Optional[int] = None,
+        spark_pool: Optional[str] = None,
+        parameters: Optional[Dict[str, "_models.RunNotebookParameter"]] = None,
+        notebook_content: Optional["_models.NotebookResource"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword exit_value: Output of exit command.
+        :paramtype exit_value: str
+        :keyword id: Run notebook runId. Required.
+        :paramtype id: str
+        :keyword notebook: Notebook name. Required.
+        :paramtype notebook: str
+        :keyword session_options: Session properties.
+        :paramtype session_options: ~azure.synapse.artifacts.models.RunNotebookSparkSessionOptions
+        :keyword honor_session_time_to_live: Whether session should run till time to live after run
+         completes.
+        :paramtype honor_session_time_to_live: bool
+        :keyword session_id: Livy session id.
+        :paramtype session_id: int
+        :keyword spark_pool: SparkPool name.
+        :paramtype spark_pool: str
+        :keyword parameters: Run notebook parameters.
+        :paramtype parameters: dict[str, ~azure.synapse.artifacts.models.RunNotebookParameter]
+        :keyword notebook_content: Notebook resource type.
+        :paramtype notebook_content: ~azure.synapse.artifacts.models.NotebookResource
+        """
+        super().__init__(**kwargs)
+        self.exit_value = exit_value
+        self.id = id
+        self.notebook = notebook
+        self.session_options = session_options
+        self.honor_session_time_to_live = honor_session_time_to_live
+        self.session_id = session_id
+        self.spark_pool = spark_pool
+        self.parameters = parameters
+        self.notebook_content = notebook_content
+
+
+class RunNotebookSnapshotResponse(_serialization.Model):
+    """Run notebook snapshot response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar message: Response message.
+    :vartype message: str
+    :ivar result: Run notebook snapshot result.
+    :vartype result: ~azure.synapse.artifacts.models.RunNotebookSnapshotResult
+    """
+
+    _validation = {
+        "message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "message": {"key": "message", "type": "str"},
+        "result": {"key": "result", "type": "RunNotebookSnapshotResult"},
+    }
+
+    def __init__(self, *, result: Optional["_models.RunNotebookSnapshotResult"] = None, **kwargs: Any) -> None:
+        """
+        :keyword result: Run notebook snapshot result.
+        :paramtype result: ~azure.synapse.artifacts.models.RunNotebookSnapshotResult
+        """
+        super().__init__(**kwargs)
+        self.message = None
+        self.result = result
+
+
+class RunNotebookSnapshotResult(_serialization.Model):
+    """Run notebook snapshot result.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar snapshot: Run notebook snapshot. Required.
+    :vartype snapshot: ~azure.synapse.artifacts.models.RunNotebookSnapshot
+    :ivar error: Run notebook error.
+    :vartype error: ~azure.synapse.artifacts.models.RunNotebookError
+    :ivar run_id: Run id. Required.
+    :vartype run_id: str
+    :ivar run_status: Status of the run notebook. Required.
+    :vartype run_status: str
+    :ivar last_checked_on: Timestamp of last update.
+    :vartype last_checked_on: str
+    :ivar session_id: Livy session id.
+    :vartype session_id: int
+    :ivar spark_pool: SparkPool name.
+    :vartype spark_pool: str
+    """
+
+    _validation = {
+        "snapshot": {"required": True},
+        "run_id": {"required": True},
+        "run_status": {"required": True},
+    }
+
+    _attribute_map = {
+        "snapshot": {"key": "snapshot", "type": "RunNotebookSnapshot"},
+        "error": {"key": "error", "type": "RunNotebookError"},
+        "run_id": {"key": "runId", "type": "str"},
+        "run_status": {"key": "runStatus", "type": "str"},
+        "last_checked_on": {"key": "lastCheckedOn", "type": "str"},
+        "session_id": {"key": "sessionId", "type": "int"},
+        "spark_pool": {"key": "sparkPool", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        snapshot: "_models.RunNotebookSnapshot",
+        run_id: str,
+        run_status: str,
+        error: Optional["_models.RunNotebookError"] = None,
+        last_checked_on: Optional[str] = None,
+        session_id: Optional[int] = None,
+        spark_pool: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword snapshot: Run notebook snapshot. Required.
+        :paramtype snapshot: ~azure.synapse.artifacts.models.RunNotebookSnapshot
+        :keyword error: Run notebook error.
+        :paramtype error: ~azure.synapse.artifacts.models.RunNotebookError
+        :keyword run_id: Run id. Required.
+        :paramtype run_id: str
+        :keyword run_status: Status of the run notebook. Required.
+        :paramtype run_status: str
+        :keyword last_checked_on: Timestamp of last update.
+        :paramtype last_checked_on: str
+        :keyword session_id: Livy session id.
+        :paramtype session_id: int
+        :keyword spark_pool: SparkPool name.
+        :paramtype spark_pool: str
+        """
+        super().__init__(**kwargs)
+        self.snapshot = snapshot
+        self.error = error
+        self.run_id = run_id
+        self.run_status = run_status
+        self.last_checked_on = last_checked_on
+        self.session_id = session_id
+        self.spark_pool = spark_pool
+
+
+class RunNotebookSparkSessionOptions(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """RunNotebookSparkSessionOptions.
+
+    :ivar tags: Dictionary of :code:`<string>`.
+    :vartype tags: dict[str, str]
+    :ivar kind: The session kind.
+    :vartype kind: str
+    :ivar proxy_user: User to impersonate when starting the session.
+    :vartype proxy_user: str
+    :ivar name: The name of this session.
+    :vartype name: str
+    :ivar jars: jars to be used in this session.
+    :vartype jars: list[str]
+    :ivar python_files: Python files to be used in this session.
+    :vartype python_files: list[str]
+    :ivar files: files to be used in this session.
+    :vartype files: list[str]
+    :ivar archives: Archives to be used in this session.
+    :vartype archives: list[str]
+    :ivar queue: The name of the YARN queue to which submitted.
+    :vartype queue: JSON
+    :ivar configuration: Spark configuration properties.
+    :vartype configuration: dict[str, str]
+    :ivar driver_memory: Amount of memory to use for the driver process.
+    :vartype driver_memory: str
+    :ivar driver_cores: Number of cores to use for the driver process.
+    :vartype driver_cores: int
+    :ivar executor_memory: Amount of memory to use per executor process.
+    :vartype executor_memory: str
+    :ivar executor_cores: Number of cores to use for each executor.
+    :vartype executor_cores: int
+    :ivar executor_count: Number of executors to launch for this session.
+    :vartype executor_count: int
+    :ivar is_queueable: Whether to queue session creation if Spark pool doesn't have enough
+     capacity. Default value is true in notebook runs API.
+    :vartype is_queueable: bool
+    :ivar heartbeat_timeout_in_second: Timeout in second to which session be orphaned.
+    :vartype heartbeat_timeout_in_second: int
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "proxy_user": {"key": "proxyUser", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "jars": {"key": "jars", "type": "[str]"},
+        "python_files": {"key": "pyFiles", "type": "[str]"},
+        "files": {"key": "files", "type": "[str]"},
+        "archives": {"key": "archives", "type": "[str]"},
+        "queue": {"key": "queue", "type": "object"},
+        "configuration": {"key": "conf", "type": "{str}"},
+        "driver_memory": {"key": "driverMemory", "type": "str"},
+        "driver_cores": {"key": "driverCores", "type": "int"},
+        "executor_memory": {"key": "executorMemory", "type": "str"},
+        "executor_cores": {"key": "executorCores", "type": "int"},
+        "executor_count": {"key": "numExecutors", "type": "int"},
+        "is_queueable": {"key": "isQueueable", "type": "bool"},
+        "heartbeat_timeout_in_second": {"key": "heartbeatTimeoutInSecond", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        kind: Optional[str] = None,
+        proxy_user: Optional[str] = None,
+        name: Optional[str] = None,
+        jars: Optional[List[str]] = None,
+        python_files: Optional[List[str]] = None,
+        files: Optional[List[str]] = None,
+        archives: Optional[List[str]] = None,
+        queue: Optional[JSON] = None,
+        configuration: Optional[Dict[str, str]] = None,
+        driver_memory: Optional[str] = None,
+        driver_cores: Optional[int] = None,
+        executor_memory: Optional[str] = None,
+        executor_cores: Optional[int] = None,
+        executor_count: Optional[int] = None,
+        is_queueable: Optional[bool] = None,
+        heartbeat_timeout_in_second: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Dictionary of :code:`<string>`.
+        :paramtype tags: dict[str, str]
+        :keyword kind: The session kind.
+        :paramtype kind: str
+        :keyword proxy_user: User to impersonate when starting the session.
+        :paramtype proxy_user: str
+        :keyword name: The name of this session.
+        :paramtype name: str
+        :keyword jars: jars to be used in this session.
+        :paramtype jars: list[str]
+        :keyword python_files: Python files to be used in this session.
+        :paramtype python_files: list[str]
+        :keyword files: files to be used in this session.
+        :paramtype files: list[str]
+        :keyword archives: Archives to be used in this session.
+        :paramtype archives: list[str]
+        :keyword queue: The name of the YARN queue to which submitted.
+        :paramtype queue: JSON
+        :keyword configuration: Spark configuration properties.
+        :paramtype configuration: dict[str, str]
+        :keyword driver_memory: Amount of memory to use for the driver process.
+        :paramtype driver_memory: str
+        :keyword driver_cores: Number of cores to use for the driver process.
+        :paramtype driver_cores: int
+        :keyword executor_memory: Amount of memory to use per executor process.
+        :paramtype executor_memory: str
+        :keyword executor_cores: Number of cores to use for each executor.
+        :paramtype executor_cores: int
+        :keyword executor_count: Number of executors to launch for this session.
+        :paramtype executor_count: int
+        :keyword is_queueable: Whether to queue session creation if Spark pool doesn't have enough
+         capacity. Default value is true in notebook runs API.
+        :paramtype is_queueable: bool
+        :keyword heartbeat_timeout_in_second: Timeout in second to which session be orphaned.
+        :paramtype heartbeat_timeout_in_second: int
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.kind = kind
+        self.proxy_user = proxy_user
+        self.name = name
+        self.jars = jars
+        self.python_files = python_files
+        self.files = files
+        self.archives = archives
+        self.queue = queue
+        self.configuration = configuration
+        self.driver_memory = driver_memory
+        self.driver_cores = driver_cores
+        self.executor_memory = executor_memory
+        self.executor_cores = executor_cores
+        self.executor_count = executor_count
+        self.is_queueable = is_queueable
+        self.heartbeat_timeout_in_second = heartbeat_timeout_in_second
+
+
 class RunQueryFilter(_serialization.Model):
     """Query filter option for listing runs.
 
@@ -45723,7 +47214,7 @@ class RunQueryFilter(_serialization.Model):
      "ActivityType", "TriggerName", "TriggerRunTimestamp", "RunGroupId", and "LatestOnly".
     :vartype operand: str or ~azure.synapse.artifacts.models.RunQueryFilterOperand
     :ivar operator: Operator to be used for filter. Required. Known values are: "Equals",
-     "NotEquals", "In", and "NotIn".
+     "NotEquals", "In", "NotIn", and "In".
     :vartype operator: str or ~azure.synapse.artifacts.models.RunQueryFilterOperator
     :ivar values: List of filter values. Required.
     :vartype values: list[str]
@@ -45758,7 +47249,7 @@ class RunQueryFilter(_serialization.Model):
          "ActivityType", "TriggerName", "TriggerRunTimestamp", "RunGroupId", and "LatestOnly".
         :paramtype operand: str or ~azure.synapse.artifacts.models.RunQueryFilterOperand
         :keyword operator: Operator to be used for filter. Required. Known values are: "Equals",
-         "NotEquals", "In", and "NotIn".
+         "NotEquals", "In", "NotIn", and "In".
         :paramtype operator: str or ~azure.synapse.artifacts.models.RunQueryFilterOperator
         :keyword values: List of filter values. Required.
         :paramtype values: list[str]
@@ -46754,9 +48245,9 @@ class SalesforceServiceCloudSource(CopySource):
     :vartype max_concurrent_connections: JSON
     :ivar query: Database query. Type: string (or Expression with resultType string).
     :vartype query: JSON
-    :ivar read_behavior: The read behavior for the operation. Default is Query. Known values are:
-     "Query" and "QueryAll".
-    :vartype read_behavior: str or ~azure.synapse.artifacts.models.SalesforceSourceReadBehavior
+    :ivar read_behavior: The read behavior for the operation. Default is Query. Allowed values:
+     Query/QueryAll. Type: string (or Expression with resultType string).
+    :vartype read_behavior: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
     :vartype additional_columns: JSON
@@ -46773,7 +48264,7 @@ class SalesforceServiceCloudSource(CopySource):
         "source_retry_wait": {"key": "sourceRetryWait", "type": "object"},
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "query": {"key": "query", "type": "object"},
-        "read_behavior": {"key": "readBehavior", "type": "str"},
+        "read_behavior": {"key": "readBehavior", "type": "object"},
         "additional_columns": {"key": "additionalColumns", "type": "object"},
     }
 
@@ -46785,7 +48276,7 @@ class SalesforceServiceCloudSource(CopySource):
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        read_behavior: Optional[Union[str, "_models.SalesforceSourceReadBehavior"]] = None,
+        read_behavior: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -46804,9 +48295,9 @@ class SalesforceServiceCloudSource(CopySource):
         :paramtype max_concurrent_connections: JSON
         :keyword query: Database query. Type: string (or Expression with resultType string).
         :paramtype query: JSON
-        :keyword read_behavior: The read behavior for the operation. Default is Query. Known values
-         are: "Query" and "QueryAll".
-        :paramtype read_behavior: str or ~azure.synapse.artifacts.models.SalesforceSourceReadBehavior
+        :keyword read_behavior: The read behavior for the operation. Default is Query. Allowed values:
+         Query/QueryAll. Type: string (or Expression with resultType string).
+        :paramtype read_behavior: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
         :paramtype additional_columns: JSON
@@ -46971,9 +48462,9 @@ class SalesforceSource(TabularSource):
     :vartype additional_columns: JSON
     :ivar query: Database query. Type: string (or Expression with resultType string).
     :vartype query: JSON
-    :ivar read_behavior: The read behavior for the operation. Default is Query. Known values are:
-     "Query" and "QueryAll".
-    :vartype read_behavior: str or ~azure.synapse.artifacts.models.SalesforceSourceReadBehavior
+    :ivar read_behavior: The read behavior for the operation. Default is Query. Allowed values:
+     Query/QueryAll. Type: string (or Expression with resultType string).
+    :vartype read_behavior: JSON
     """
 
     _validation = {
@@ -46989,7 +48480,7 @@ class SalesforceSource(TabularSource):
         "query_timeout": {"key": "queryTimeout", "type": "object"},
         "additional_columns": {"key": "additionalColumns", "type": "object"},
         "query": {"key": "query", "type": "object"},
-        "read_behavior": {"key": "readBehavior", "type": "str"},
+        "read_behavior": {"key": "readBehavior", "type": "object"},
     }
 
     def __init__(
@@ -47002,7 +48493,7 @@ class SalesforceSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        read_behavior: Optional[Union[str, "_models.SalesforceSourceReadBehavior"]] = None,
+        read_behavior: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -47026,9 +48517,9 @@ class SalesforceSource(TabularSource):
         :paramtype additional_columns: JSON
         :keyword query: Database query. Type: string (or Expression with resultType string).
         :paramtype query: JSON
-        :keyword read_behavior: The read behavior for the operation. Default is Query. Known values
-         are: "Query" and "QueryAll".
-        :paramtype read_behavior: str or ~azure.synapse.artifacts.models.SalesforceSourceReadBehavior
+        :keyword read_behavior: The read behavior for the operation. Default is Query. Allowed values:
+         Query/QueryAll. Type: string (or Expression with resultType string).
+        :paramtype read_behavior: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -50100,7 +51591,7 @@ class ScriptAction(_serialization.Model):
         self.parameters = parameters
 
 
-class ScriptActivity(ExecutionActivity):
+class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Script activity type.
 
     All required parameters must be populated in order to send to Azure.
@@ -50114,6 +51605,13 @@ class ScriptActivity(ExecutionActivity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -50138,6 +51636,8 @@ class ScriptActivity(ExecutionActivity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -50152,6 +51652,8 @@ class ScriptActivity(ExecutionActivity):
         name: str,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -50168,6 +51670,13 @@ class ScriptActivity(ExecutionActivity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -50186,6 +51695,8 @@ class ScriptActivity(ExecutionActivity):
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -50343,6 +51854,38 @@ class ScriptActivityTypePropertiesLogSettings(_serialization.Model):
         super().__init__(**kwargs)
         self.log_destination = log_destination
         self.log_location_settings = log_location_settings
+
+
+class SecureInputOutputPolicy(_serialization.Model):
+    """Execution policy for an activity that supports secure input and output.
+
+    :ivar secure_input: When set to true, Input from activity is considered as secure and will not
+     be logged to monitoring.
+    :vartype secure_input: bool
+    :ivar secure_output: When set to true, Output from activity is considered as secure and will
+     not be logged to monitoring.
+    :vartype secure_output: bool
+    """
+
+    _attribute_map = {
+        "secure_input": {"key": "secureInput", "type": "bool"},
+        "secure_output": {"key": "secureOutput", "type": "bool"},
+    }
+
+    def __init__(
+        self, *, secure_input: Optional[bool] = None, secure_output: Optional[bool] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword secure_input: When set to true, Input from activity is considered as secure and will
+         not be logged to monitoring.
+        :paramtype secure_input: bool
+        :keyword secure_output: When set to true, Output from activity is considered as secure and will
+         not be logged to monitoring.
+        :paramtype secure_output: bool
+        """
+        super().__init__(**kwargs)
+        self.secure_input = secure_input
+        self.secure_output = secure_output
 
 
 class SecureString(SecretBase):
@@ -50830,7 +52373,7 @@ class ServiceNowSource(TabularSource):
         self.query = query
 
 
-class SetVariableActivity(ControlActivity):
+class SetVariableActivity(ControlActivity):  # pylint: disable=too-many-instance-attributes
     """Set value for a Variable.
 
     All required parameters must be populated in order to send to Azure.
@@ -50844,14 +52387,25 @@ class SetVariableActivity(ControlActivity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
     :vartype user_properties: list[~azure.synapse.artifacts.models.UserProperty]
+    :ivar policy: Activity policy.
+    :vartype policy: ~azure.synapse.artifacts.models.SecureInputOutputPolicy
     :ivar variable_name: Name of the variable whose value needs to be set.
     :vartype variable_name: str
     :ivar value: Value to be set. Could be a static value or Expression.
     :vartype value: JSON
+    :ivar set_system_variable: If set to true, it sets the pipeline run return value.
+    :vartype set_system_variable: bool
     """
 
     _validation = {
@@ -50864,10 +52418,14 @@ class SetVariableActivity(ControlActivity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
+        "policy": {"key": "policy", "type": "SecureInputOutputPolicy"},
         "variable_name": {"key": "typeProperties.variableName", "type": "str"},
         "value": {"key": "typeProperties.value", "type": "object"},
+        "set_system_variable": {"key": "typeProperties.setSystemVariable", "type": "bool"},
     }
 
     def __init__(
@@ -50876,10 +52434,14 @@ class SetVariableActivity(ControlActivity):
         name: str,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
+        policy: Optional["_models.SecureInputOutputPolicy"] = None,
         variable_name: Optional[str] = None,
         value: Optional[JSON] = None,
+        set_system_variable: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -50890,26 +52452,41 @@ class SetVariableActivity(ControlActivity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
         :paramtype user_properties: list[~azure.synapse.artifacts.models.UserProperty]
+        :keyword policy: Activity policy.
+        :paramtype policy: ~azure.synapse.artifacts.models.SecureInputOutputPolicy
         :keyword variable_name: Name of the variable whose value needs to be set.
         :paramtype variable_name: str
         :keyword value: Value to be set. Could be a static value or Expression.
         :paramtype value: JSON
+        :keyword set_system_variable: If set to true, it sets the pipeline run return value.
+        :paramtype set_system_variable: bool
         """
         super().__init__(
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             **kwargs
         )
         self.type: str = "SetVariable"
+        self.policy = policy
         self.variable_name = variable_name
         self.value = value
+        self.set_system_variable = set_system_variable
 
 
 class SftpLocation(DatasetLocation):
@@ -54110,6 +55687,68 @@ class SparkSource(TabularSource):
         self.query = query
 
 
+class SqlAlwaysEncryptedProperties(_serialization.Model):
+    """Sql always encrypted properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar always_encrypted_akv_auth_type: Sql always encrypted AKV authentication type. Type:
+     string. Required. Known values are: "ServicePrincipal", "ManagedIdentity", and
+     "UserAssignedManagedIdentity".
+    :vartype always_encrypted_akv_auth_type: str or
+     ~azure.synapse.artifacts.models.SqlAlwaysEncryptedAkvAuthType
+    :ivar service_principal_id: The client ID of the application in Azure Active Directory used for
+     Azure Key Vault authentication. Type: string (or Expression with resultType string).
+    :vartype service_principal_id: JSON
+    :ivar service_principal_key: The key of the service principal used to authenticate against
+     Azure Key Vault.
+    :vartype service_principal_key: ~azure.synapse.artifacts.models.SecretBase
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
+    """
+
+    _validation = {
+        "always_encrypted_akv_auth_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "always_encrypted_akv_auth_type": {"key": "alwaysEncryptedAkvAuthType", "type": "str"},
+        "service_principal_id": {"key": "servicePrincipalId", "type": "object"},
+        "service_principal_key": {"key": "servicePrincipalKey", "type": "SecretBase"},
+        "credential": {"key": "credential", "type": "CredentialReference"},
+    }
+
+    def __init__(
+        self,
+        *,
+        always_encrypted_akv_auth_type: Union[str, "_models.SqlAlwaysEncryptedAkvAuthType"],
+        service_principal_id: Optional[JSON] = None,
+        service_principal_key: Optional["_models.SecretBase"] = None,
+        credential: Optional["_models.CredentialReference"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword always_encrypted_akv_auth_type: Sql always encrypted AKV authentication type. Type:
+         string. Required. Known values are: "ServicePrincipal", "ManagedIdentity", and
+         "UserAssignedManagedIdentity".
+        :paramtype always_encrypted_akv_auth_type: str or
+         ~azure.synapse.artifacts.models.SqlAlwaysEncryptedAkvAuthType
+        :keyword service_principal_id: The client ID of the application in Azure Active Directory used
+         for Azure Key Vault authentication. Type: string (or Expression with resultType string).
+        :paramtype service_principal_id: JSON
+        :keyword service_principal_key: The key of the service principal used to authenticate against
+         Azure Key Vault.
+        :paramtype service_principal_key: ~azure.synapse.artifacts.models.SecretBase
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
+        """
+        super().__init__(**kwargs)
+        self.always_encrypted_akv_auth_type = always_encrypted_akv_auth_type
+        self.service_principal_id = service_principal_id
+        self.service_principal_key = service_principal_key
+        self.credential = credential
+
+
 class SqlConnection(_serialization.Model):
     """The connection used to execute the SQL script.
 
@@ -54337,6 +55976,10 @@ class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attribute
      Example: "{Parameter1: {value: "1", type: "int"}}". Type: object (or Expression with resultType
      object), itemType: StoredProcedureParameter.
     :vartype stored_procedure_parameters: JSON
+    :ivar isolation_level: Specifies the transaction locking behavior for the SQL source. Allowed
+     values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default value
+     is ReadCommitted. Type: string (or Expression with resultType string).
+    :vartype isolation_level: JSON
     :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
      Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
     :vartype partition_option: JSON
@@ -54359,6 +56002,7 @@ class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attribute
         "sql_reader_query": {"key": "sqlReaderQuery", "type": "object"},
         "sql_reader_stored_procedure_name": {"key": "sqlReaderStoredProcedureName", "type": "object"},
         "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "object"},
+        "isolation_level": {"key": "isolationLevel", "type": "object"},
         "partition_option": {"key": "partitionOption", "type": "object"},
         "partition_settings": {"key": "partitionSettings", "type": "SqlPartitionSettings"},
     }
@@ -54375,6 +56019,7 @@ class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attribute
         sql_reader_query: Optional[JSON] = None,
         sql_reader_stored_procedure_name: Optional[JSON] = None,
         stored_procedure_parameters: Optional[JSON] = None,
+        isolation_level: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SqlPartitionSettings"] = None,
         **kwargs: Any
@@ -54409,6 +56054,10 @@ class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attribute
          Example: "{Parameter1: {value: "1", type: "int"}}". Type: object (or Expression with resultType
          object), itemType: StoredProcedureParameter.
         :paramtype stored_procedure_parameters: JSON
+        :keyword isolation_level: Specifies the transaction locking behavior for the SQL source.
+         Allowed values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default
+         value is ReadCommitted. Type: string (or Expression with resultType string).
+        :paramtype isolation_level: JSON
         :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
          Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
         :paramtype partition_option: JSON
@@ -54428,6 +56077,7 @@ class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attribute
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
+        self.isolation_level = isolation_level
         self.partition_option = partition_option
         self.partition_settings = partition_settings
 
@@ -54608,6 +56258,10 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
      Example: "{Parameter1: {value: "1", type: "int"}}".
     :vartype stored_procedure_parameters: dict[str,
      ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :ivar isolation_level: Specifies the transaction locking behavior for the SQL source. Allowed
+     values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default value
+     is ReadCommitted. Type: string (or Expression with resultType string).
+    :vartype isolation_level: JSON
     :ivar produce_additional_types: Which additional types to produce.
     :vartype produce_additional_types: JSON
     :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
@@ -54632,6 +56286,7 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
         "sql_reader_query": {"key": "sqlReaderQuery", "type": "object"},
         "sql_reader_stored_procedure_name": {"key": "sqlReaderStoredProcedureName", "type": "object"},
         "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "{StoredProcedureParameter}"},
+        "isolation_level": {"key": "isolationLevel", "type": "object"},
         "produce_additional_types": {"key": "produceAdditionalTypes", "type": "object"},
         "partition_option": {"key": "partitionOption", "type": "object"},
         "partition_settings": {"key": "partitionSettings", "type": "SqlPartitionSettings"},
@@ -54649,6 +56304,7 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
         sql_reader_query: Optional[JSON] = None,
         sql_reader_stored_procedure_name: Optional[JSON] = None,
         stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
+        isolation_level: Optional[JSON] = None,
         produce_additional_types: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SqlPartitionSettings"] = None,
@@ -54684,6 +56340,10 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
          Example: "{Parameter1: {value: "1", type: "int"}}".
         :paramtype stored_procedure_parameters: dict[str,
          ~azure.synapse.artifacts.models.StoredProcedureParameter]
+        :keyword isolation_level: Specifies the transaction locking behavior for the SQL source.
+         Allowed values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default
+         value is ReadCommitted. Type: string (or Expression with resultType string).
+        :paramtype isolation_level: JSON
         :keyword produce_additional_types: Which additional types to produce.
         :paramtype produce_additional_types: JSON
         :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
@@ -54705,6 +56365,7 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
+        self.isolation_level = isolation_level
         self.produce_additional_types = produce_additional_types
         self.partition_option = partition_option
         self.partition_settings = partition_settings
@@ -54978,7 +56639,7 @@ class SqlPoolReference(_serialization.Model):
         self.reference_name = reference_name
 
 
-class SqlPoolStoredProcedureActivity(Activity):
+class SqlPoolStoredProcedureActivity(Activity):  # pylint: disable=too-many-instance-attributes
     """Execute SQL pool stored procedure activity.
 
     All required parameters must be populated in order to send to Azure.
@@ -54992,6 +56653,13 @@ class SqlPoolStoredProcedureActivity(Activity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -55019,6 +56687,8 @@ class SqlPoolStoredProcedureActivity(Activity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "sql_pool": {"key": "sqlPool", "type": "SqlPoolReference"},
@@ -55037,6 +56707,8 @@ class SqlPoolStoredProcedureActivity(Activity):
         stored_procedure_name: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
@@ -55050,6 +56722,13 @@ class SqlPoolStoredProcedureActivity(Activity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -55068,6 +56747,8 @@ class SqlPoolStoredProcedureActivity(Activity):
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             **kwargs
@@ -55339,7 +57020,7 @@ class SqlScriptsListResponse(_serialization.Model):
         self.next_link = next_link
 
 
-class SqlServerLinkedService(LinkedService):
+class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
     """SQL Server linked service.
 
     All required parameters must be populated in order to send to Azure.
@@ -55369,6 +57050,9 @@ class SqlServerLinkedService(LinkedService):
      encrypted using the integration runtime credential manager. Type: string (or Expression with
      resultType string).
     :vartype encrypted_credential: JSON
+    :ivar always_encrypted_settings: Sql always encrypted properties.
+    :vartype always_encrypted_settings:
+     ~azure.synapse.artifacts.models.SqlAlwaysEncryptedProperties
     """
 
     _validation = {
@@ -55387,6 +57071,10 @@ class SqlServerLinkedService(LinkedService):
         "user_name": {"key": "typeProperties.userName", "type": "object"},
         "password": {"key": "typeProperties.password", "type": "SecretBase"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "object"},
+        "always_encrypted_settings": {
+            "key": "typeProperties.alwaysEncryptedSettings",
+            "type": "SqlAlwaysEncryptedProperties",
+        },
     }
 
     def __init__(
@@ -55401,6 +57089,7 @@ class SqlServerLinkedService(LinkedService):
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
+        always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -55427,6 +57116,9 @@ class SqlServerLinkedService(LinkedService):
          are encrypted using the integration runtime credential manager. Type: string (or Expression
          with resultType string).
         :paramtype encrypted_credential: JSON
+        :keyword always_encrypted_settings: Sql always encrypted properties.
+        :paramtype always_encrypted_settings:
+         ~azure.synapse.artifacts.models.SqlAlwaysEncryptedProperties
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -55441,6 +57133,7 @@ class SqlServerLinkedService(LinkedService):
         self.user_name = user_name
         self.password = password
         self.encrypted_credential = encrypted_credential
+        self.always_encrypted_settings = always_encrypted_settings
 
 
 class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
@@ -55619,6 +57312,10 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
      Example: "{Parameter1: {value: "1", type: "int"}}".
     :vartype stored_procedure_parameters: dict[str,
      ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :ivar isolation_level: Specifies the transaction locking behavior for the SQL source. Allowed
+     values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default value
+     is ReadCommitted. Type: string (or Expression with resultType string).
+    :vartype isolation_level: JSON
     :ivar produce_additional_types: Which additional types to produce.
     :vartype produce_additional_types: JSON
     :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
@@ -55643,6 +57340,7 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
         "sql_reader_query": {"key": "sqlReaderQuery", "type": "object"},
         "sql_reader_stored_procedure_name": {"key": "sqlReaderStoredProcedureName", "type": "object"},
         "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "{StoredProcedureParameter}"},
+        "isolation_level": {"key": "isolationLevel", "type": "object"},
         "produce_additional_types": {"key": "produceAdditionalTypes", "type": "object"},
         "partition_option": {"key": "partitionOption", "type": "object"},
         "partition_settings": {"key": "partitionSettings", "type": "SqlPartitionSettings"},
@@ -55660,6 +57358,7 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
         sql_reader_query: Optional[JSON] = None,
         sql_reader_stored_procedure_name: Optional[JSON] = None,
         stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
+        isolation_level: Optional[JSON] = None,
         produce_additional_types: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SqlPartitionSettings"] = None,
@@ -55695,6 +57394,10 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
          Example: "{Parameter1: {value: "1", type: "int"}}".
         :paramtype stored_procedure_parameters: dict[str,
          ~azure.synapse.artifacts.models.StoredProcedureParameter]
+        :keyword isolation_level: Specifies the transaction locking behavior for the SQL source.
+         Allowed values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default
+         value is ReadCommitted. Type: string (or Expression with resultType string).
+        :paramtype isolation_level: JSON
         :keyword produce_additional_types: Which additional types to produce.
         :paramtype produce_additional_types: JSON
         :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
@@ -55716,12 +57419,13 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
+        self.isolation_level = isolation_level
         self.produce_additional_types = produce_additional_types
         self.partition_option = partition_option
         self.partition_settings = partition_settings
 
 
-class SqlServerStoredProcedureActivity(ExecutionActivity):
+class SqlServerStoredProcedureActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """SQL stored procedure activity type.
 
     All required parameters must be populated in order to send to Azure.
@@ -55735,6 +57439,13 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -55762,6 +57473,8 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -55777,6 +57490,8 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
         stored_procedure_name: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -55792,6 +57507,13 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -55811,6 +57533,8 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -57163,7 +58887,7 @@ class StoredProcedureParameter(_serialization.Model):
         self.type = type
 
 
-class SwitchActivity(ControlActivity):
+class SwitchActivity(ControlActivity):  # pylint: disable=too-many-instance-attributes
     """This activity evaluates an expression and executes activities under the cases property that
     correspond to the expression evaluation expected in the equals property.
 
@@ -57178,6 +58902,13 @@ class SwitchActivity(ControlActivity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -57205,6 +58936,8 @@ class SwitchActivity(ControlActivity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "on": {"key": "typeProperties.on", "type": "Expression"},
@@ -57219,6 +58952,8 @@ class SwitchActivity(ControlActivity):
         on: "_models.Expression",
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         cases: Optional[List["_models.SwitchCase"]] = None,
@@ -57233,6 +58968,13 @@ class SwitchActivity(ControlActivity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -57252,6 +58994,8 @@ class SwitchActivity(ControlActivity):
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             **kwargs
@@ -57629,6 +59373,13 @@ class SynapseNotebookActivity(ExecutionActivity):  # pylint: disable=too-many-in
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -57656,8 +59407,17 @@ class SynapseNotebookActivity(ExecutionActivity):  # pylint: disable=too-many-in
      of the notebook you provide. Type: string (or Expression with resultType string).
     :vartype driver_size: JSON
     :ivar num_executors: Number of executors to launch for this session, which will override the
-     'numExecutors' of the notebook you provide.
-    :vartype num_executors: int
+     'numExecutors' of the notebook you provide. Type: integer (or Expression with resultType
+     integer).
+    :vartype num_executors: JSON
+    :ivar configuration_type: The type of the spark config. Known values are: "Default",
+     "Customized", and "Artifact".
+    :vartype configuration_type: str or ~azure.synapse.artifacts.models.ConfigurationType
+    :ivar target_spark_configuration: The spark configuration of the spark job.
+    :vartype target_spark_configuration:
+     ~azure.synapse.artifacts.models.SparkConfigurationParametrizationReference
+    :ivar spark_config: Spark configuration property.
+    :vartype spark_config: dict[str, JSON]
     """
 
     _validation = {
@@ -57671,6 +59431,8 @@ class SynapseNotebookActivity(ExecutionActivity):  # pylint: disable=too-many-in
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -57681,7 +59443,13 @@ class SynapseNotebookActivity(ExecutionActivity):  # pylint: disable=too-many-in
         "executor_size": {"key": "typeProperties.executorSize", "type": "object"},
         "conf": {"key": "typeProperties.conf", "type": "object"},
         "driver_size": {"key": "typeProperties.driverSize", "type": "object"},
-        "num_executors": {"key": "typeProperties.numExecutors", "type": "int"},
+        "num_executors": {"key": "typeProperties.numExecutors", "type": "object"},
+        "configuration_type": {"key": "typeProperties.configurationType", "type": "str"},
+        "target_spark_configuration": {
+            "key": "typeProperties.targetSparkConfiguration",
+            "type": "SparkConfigurationParametrizationReference",
+        },
+        "spark_config": {"key": "typeProperties.sparkConfig", "type": "{object}"},
     }
 
     def __init__(
@@ -57691,6 +59459,8 @@ class SynapseNotebookActivity(ExecutionActivity):  # pylint: disable=too-many-in
         notebook: "_models.SynapseNotebookReference",
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -57700,7 +59470,10 @@ class SynapseNotebookActivity(ExecutionActivity):  # pylint: disable=too-many-in
         executor_size: Optional[JSON] = None,
         conf: Optional[JSON] = None,
         driver_size: Optional[JSON] = None,
-        num_executors: Optional[int] = None,
+        num_executors: Optional[JSON] = None,
+        configuration_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
+        target_spark_configuration: Optional["_models.SparkConfigurationParametrizationReference"] = None,
+        spark_config: Optional[Dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -57711,6 +59484,13 @@ class SynapseNotebookActivity(ExecutionActivity):  # pylint: disable=too-many-in
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -57739,13 +59519,24 @@ class SynapseNotebookActivity(ExecutionActivity):  # pylint: disable=too-many-in
          string).
         :paramtype driver_size: JSON
         :keyword num_executors: Number of executors to launch for this session, which will override the
-         'numExecutors' of the notebook you provide.
-        :paramtype num_executors: int
+         'numExecutors' of the notebook you provide. Type: integer (or Expression with resultType
+         integer).
+        :paramtype num_executors: JSON
+        :keyword configuration_type: The type of the spark config. Known values are: "Default",
+         "Customized", and "Artifact".
+        :paramtype configuration_type: str or ~azure.synapse.artifacts.models.ConfigurationType
+        :keyword target_spark_configuration: The spark configuration of the spark job.
+        :paramtype target_spark_configuration:
+         ~azure.synapse.artifacts.models.SparkConfigurationParametrizationReference
+        :keyword spark_config: Spark configuration property.
+        :paramtype spark_config: dict[str, JSON]
         """
         super().__init__(
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -57760,6 +59551,9 @@ class SynapseNotebookActivity(ExecutionActivity):  # pylint: disable=too-many-in
         self.conf = conf
         self.driver_size = driver_size
         self.num_executors = num_executors
+        self.configuration_type = configuration_type
+        self.target_spark_configuration = target_spark_configuration
+        self.spark_config = spark_config
 
 
 class SynapseNotebookReference(_serialization.Model):
@@ -57813,6 +59607,13 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -57889,6 +59690,8 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -57924,6 +59727,8 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
         spark_job: "_models.SynapseSparkJobReference",
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -57953,6 +59758,13 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -58022,6 +59834,8 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -59631,7 +61445,7 @@ class TypeConversionSettings(_serialization.Model):
         self.culture = culture
 
 
-class UntilActivity(ControlActivity):
+class UntilActivity(ControlActivity):  # pylint: disable=too-many-instance-attributes
     """This activity executes inner activities until the specified boolean expression results to true
     or timeout is reached, whichever is earlier.
 
@@ -59646,6 +61460,13 @@ class UntilActivity(ControlActivity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -59675,6 +61496,8 @@ class UntilActivity(ControlActivity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "expression": {"key": "typeProperties.expression", "type": "Expression"},
@@ -59690,6 +61513,8 @@ class UntilActivity(ControlActivity):
         activities: List["_models.Activity"],
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         timeout: Optional[JSON] = None,
@@ -59703,6 +61528,13 @@ class UntilActivity(ControlActivity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -59723,6 +61555,8 @@ class UntilActivity(ControlActivity):
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             **kwargs
@@ -59802,6 +61636,13 @@ class ValidationActivity(ControlActivity):  # pylint: disable=too-many-instance-
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -59836,6 +61677,8 @@ class ValidationActivity(ControlActivity):  # pylint: disable=too-many-instance-
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "timeout": {"key": "typeProperties.timeout", "type": "object"},
@@ -59852,6 +61695,8 @@ class ValidationActivity(ControlActivity):  # pylint: disable=too-many-instance-
         dataset: "_models.DatasetReference",
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         timeout: Optional[JSON] = None,
@@ -59868,6 +61713,13 @@ class ValidationActivity(ControlActivity):  # pylint: disable=too-many-instance-
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -59894,6 +61746,8 @@ class ValidationActivity(ControlActivity):  # pylint: disable=too-many-instance-
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             **kwargs
@@ -60285,6 +62139,13 @@ class WaitActivity(ControlActivity):
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -60304,6 +62165,8 @@ class WaitActivity(ControlActivity):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "wait_time_in_seconds": {"key": "typeProperties.waitTimeInSeconds", "type": "object"},
@@ -60316,6 +62179,8 @@ class WaitActivity(ControlActivity):
         wait_time_in_seconds: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         **kwargs: Any
@@ -60328,6 +62193,13 @@ class WaitActivity(ControlActivity):
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -60339,6 +62211,8 @@ class WaitActivity(ControlActivity):
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             **kwargs
@@ -60361,6 +62235,13 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -60404,6 +62285,8 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
@@ -60426,6 +62309,8 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         url: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
@@ -60446,6 +62331,13 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -60480,6 +62372,8 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             linked_service_name=linked_service_name,
@@ -60511,8 +62405,13 @@ class WebActivityAuthentication(_serialization.Model):
     :ivar password: Password for the PFX file or basic authentication.
     :vartype password: ~azure.synapse.artifacts.models.SecretBase
     :ivar resource: Resource for which Azure Auth token will be requested when using MSI
-     Authentication.
-    :vartype resource: str
+     Authentication. Type: string (or Expression with resultType string).
+    :vartype resource: JSON
+    :ivar user_tenant: TenantId for which Azure Auth token will be requested when using
+     ServicePrincipal Authentication. Type: string (or Expression with resultType string).
+    :vartype user_tenant: JSON
+    :ivar credential: The credential reference containing authentication information.
+    :vartype credential: ~azure.synapse.artifacts.models.CredentialReference
     """
 
     _validation = {
@@ -60524,7 +62423,9 @@ class WebActivityAuthentication(_serialization.Model):
         "pfx": {"key": "pfx", "type": "SecretBase"},
         "username": {"key": "username", "type": "str"},
         "password": {"key": "password", "type": "SecretBase"},
-        "resource": {"key": "resource", "type": "str"},
+        "resource": {"key": "resource", "type": "object"},
+        "user_tenant": {"key": "userTenant", "type": "object"},
+        "credential": {"key": "credential", "type": "CredentialReference"},
     }
 
     def __init__(
@@ -60534,7 +62435,9 @@ class WebActivityAuthentication(_serialization.Model):
         pfx: Optional["_models.SecretBase"] = None,
         username: Optional[str] = None,
         password: Optional["_models.SecretBase"] = None,
-        resource: Optional[str] = None,
+        resource: Optional[JSON] = None,
+        user_tenant: Optional[JSON] = None,
+        credential: Optional["_models.CredentialReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -60547,8 +62450,13 @@ class WebActivityAuthentication(_serialization.Model):
         :keyword password: Password for the PFX file or basic authentication.
         :paramtype password: ~azure.synapse.artifacts.models.SecretBase
         :keyword resource: Resource for which Azure Auth token will be requested when using MSI
-         Authentication.
-        :paramtype resource: str
+         Authentication. Type: string (or Expression with resultType string).
+        :paramtype resource: JSON
+        :keyword user_tenant: TenantId for which Azure Auth token will be requested when using
+         ServicePrincipal Authentication. Type: string (or Expression with resultType string).
+        :paramtype user_tenant: JSON
+        :keyword credential: The credential reference containing authentication information.
+        :paramtype credential: ~azure.synapse.artifacts.models.CredentialReference
         """
         super().__init__(**kwargs)
         self.type = type
@@ -60556,6 +62464,8 @@ class WebActivityAuthentication(_serialization.Model):
         self.username = username
         self.password = password
         self.resource = resource
+        self.user_tenant = user_tenant
+        self.credential = credential
 
 
 class WebLinkedServiceTypeProperties(_serialization.Model):
@@ -60749,6 +62659,13 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
     :vartype type: str
     :ivar description: Activity description.
     :vartype description: str
+    :ivar state: Activity state. This is an optional property and if not provided, the state will
+     be Active by default. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.synapse.artifacts.models.ActivityState
+    :ivar on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+     This is an optional property and if not provided when the activity is inactive, the status will
+     be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+    :vartype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
     :ivar depends_on: Activity depends on condition.
     :vartype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :ivar user_properties: Activity user properties.
@@ -60790,6 +62707,8 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "on_inactive_mark_as": {"key": "onInactiveMarkAs", "type": "str"},
         "depends_on": {"key": "dependsOn", "type": "[ActivityDependency]"},
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "method": {"key": "typeProperties.method", "type": "str"},
@@ -60809,6 +62728,8 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
         url: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
+        state: Optional[Union[str, "_models.ActivityState"]] = None,
+        on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         timeout: Optional[str] = None,
@@ -60826,6 +62747,13 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
         :paramtype name: str
         :keyword description: Activity description.
         :paramtype description: str
+        :keyword state: Activity state. This is an optional property and if not provided, the state
+         will be Active by default. Known values are: "Active" and "Inactive".
+        :paramtype state: str or ~azure.synapse.artifacts.models.ActivityState
+        :keyword on_inactive_mark_as: Status result of the activity when the state is set to Inactive.
+         This is an optional property and if not provided when the activity is inactive, the status will
+         be Succeeded by default. Known values are: "Succeeded", "Failed", and "Skipped".
+        :paramtype on_inactive_mark_as: str or ~azure.synapse.artifacts.models.ActivityOnInactiveMarkAs
         :keyword depends_on: Activity depends on condition.
         :paramtype depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
         :keyword user_properties: Activity user properties.
@@ -60858,6 +62786,8 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
             additional_properties=additional_properties,
             name=name,
             description=description,
+            state=state,
+            on_inactive_mark_as=on_inactive_mark_as,
             depends_on=depends_on,
             user_properties=user_properties,
             **kwargs

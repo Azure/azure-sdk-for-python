@@ -32,7 +32,6 @@ from ._data_warehouse_user_activities_operations import DataWarehouseUserActivit
 from ._deleted_servers_operations import DeletedServersOperations
 from ._elastic_pool_operations_operations import ElasticPoolOperationsOperations
 from ._encryption_protectors_operations import EncryptionProtectorsOperations
-from ._failover_groups_operations import FailoverGroupsOperations
 from ._firewall_rules_operations import FirewallRulesOperations
 from ._instance_pools_operations import InstancePoolsOperations
 from ._job_agents_operations import JobAgentsOperations
@@ -122,7 +121,6 @@ from ._restorable_dropped_managed_databases_operations import RestorableDroppedM
 from ._server_connection_policies_operations import ServerConnectionPoliciesOperations
 from ._distributed_availability_groups_operations import DistributedAvailabilityGroupsOperations
 from ._server_trust_certificates_operations import ServerTrustCertificatesOperations
-from ._ipv6_firewall_rules_operations import IPv6FirewallRulesOperations
 from ._endpoint_certificates_operations import EndpointCertificatesOperations
 from ._managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
 from ._managed_database_recommended_sensitivity_labels_operations import (
@@ -137,22 +135,6 @@ from ._extended_server_blob_auditing_policies_operations import ExtendedServerBl
 from ._database_advanced_threat_protection_settings_operations import DatabaseAdvancedThreatProtectionSettingsOperations
 from ._server_advanced_threat_protection_settings_operations import ServerAdvancedThreatProtectionSettingsOperations
 from ._managed_server_dns_aliases_operations import ManagedServerDnsAliasesOperations
-from ._database_sql_vulnerability_assessment_baselines_operations import (
-    DatabaseSqlVulnerabilityAssessmentBaselinesOperations,
-)
-from ._database_sql_vulnerability_assessment_execute_scan_operations import (
-    DatabaseSqlVulnerabilityAssessmentExecuteScanOperations,
-)
-from ._database_sql_vulnerability_assessment_rule_baselines_operations import (
-    DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations,
-)
-from ._database_sql_vulnerability_assessment_scan_result_operations import (
-    DatabaseSqlVulnerabilityAssessmentScanResultOperations,
-)
-from ._database_sql_vulnerability_assessment_scans_operations import DatabaseSqlVulnerabilityAssessmentScansOperations
-from ._database_sql_vulnerability_assessments_settings_operations import (
-    DatabaseSqlVulnerabilityAssessmentsSettingsOperations,
-)
 from ._managed_database_advanced_threat_protection_settings_operations import (
     ManagedDatabaseAdvancedThreatProtectionSettingsOperations,
 )
@@ -160,15 +142,6 @@ from ._managed_instance_advanced_threat_protection_settings_operations import (
     ManagedInstanceAdvancedThreatProtectionSettingsOperations,
 )
 from ._replication_links_operations import ReplicationLinksOperations
-from ._sql_vulnerability_assessment_baseline_operations import SqlVulnerabilityAssessmentBaselineOperations
-from ._sql_vulnerability_assessment_baselines_operations import SqlVulnerabilityAssessmentBaselinesOperations
-from ._sql_vulnerability_assessment_execute_scan_operations import SqlVulnerabilityAssessmentExecuteScanOperations
-from ._sql_vulnerability_assessment_rule_baseline_operations import SqlVulnerabilityAssessmentRuleBaselineOperations
-from ._sql_vulnerability_assessment_rule_baselines_operations import SqlVulnerabilityAssessmentRuleBaselinesOperations
-from ._sql_vulnerability_assessment_scan_result_operations import SqlVulnerabilityAssessmentScanResultOperations
-from ._sql_vulnerability_assessment_scans_operations import SqlVulnerabilityAssessmentScansOperations
-from ._sql_vulnerability_assessments_settings_operations import SqlVulnerabilityAssessmentsSettingsOperations
-from ._sql_vulnerability_assessments_operations import SqlVulnerabilityAssessmentsOperations
 from ._managed_database_move_operations_operations import ManagedDatabaseMoveOperationsOperations
 from ._managed_instance_dtcs_operations import ManagedInstanceDtcsOperations
 from ._synapse_link_workspaces_operations import SynapseLinkWorkspacesOperations
@@ -185,6 +158,33 @@ from ._server_configuration_options_operations import ServerConfigurationOptions
 from ._servers_operations import ServersOperations
 from ._start_stop_managed_instance_schedules_operations import StartStopManagedInstanceSchedulesOperations
 from ._transparent_data_encryptions_operations import TransparentDataEncryptionsOperations
+from ._failover_groups_operations import FailoverGroupsOperations
+from ._ipv6_firewall_rules_operations import IPv6FirewallRulesOperations
+from ._sql_vulnerability_assessment_baseline_operations import SqlVulnerabilityAssessmentBaselineOperations
+from ._sql_vulnerability_assessment_baselines_operations import SqlVulnerabilityAssessmentBaselinesOperations
+from ._sql_vulnerability_assessment_execute_scan_operations import SqlVulnerabilityAssessmentExecuteScanOperations
+from ._sql_vulnerability_assessment_rule_baseline_operations import SqlVulnerabilityAssessmentRuleBaselineOperations
+from ._sql_vulnerability_assessment_rule_baselines_operations import SqlVulnerabilityAssessmentRuleBaselinesOperations
+from ._sql_vulnerability_assessment_scan_result_operations import SqlVulnerabilityAssessmentScanResultOperations
+from ._sql_vulnerability_assessment_scans_operations import SqlVulnerabilityAssessmentScansOperations
+from ._sql_vulnerability_assessments_settings_operations import SqlVulnerabilityAssessmentsSettingsOperations
+from ._sql_vulnerability_assessments_operations import SqlVulnerabilityAssessmentsOperations
+from ._database_sql_vulnerability_assessment_baselines_operations import (
+    DatabaseSqlVulnerabilityAssessmentBaselinesOperations,
+)
+from ._database_sql_vulnerability_assessment_execute_scan_operations import (
+    DatabaseSqlVulnerabilityAssessmentExecuteScanOperations,
+)
+from ._database_sql_vulnerability_assessment_rule_baselines_operations import (
+    DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations,
+)
+from ._database_sql_vulnerability_assessment_scan_result_operations import (
+    DatabaseSqlVulnerabilityAssessmentScanResultOperations,
+)
+from ._database_sql_vulnerability_assessment_scans_operations import DatabaseSqlVulnerabilityAssessmentScansOperations
+from ._database_sql_vulnerability_assessments_settings_operations import (
+    DatabaseSqlVulnerabilityAssessmentsSettingsOperations,
+)
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -215,7 +215,6 @@ __all__ = [
     "DeletedServersOperations",
     "ElasticPoolOperationsOperations",
     "EncryptionProtectorsOperations",
-    "FailoverGroupsOperations",
     "FirewallRulesOperations",
     "InstancePoolsOperations",
     "JobAgentsOperations",
@@ -293,7 +292,6 @@ __all__ = [
     "ServerConnectionPoliciesOperations",
     "DistributedAvailabilityGroupsOperations",
     "ServerTrustCertificatesOperations",
-    "IPv6FirewallRulesOperations",
     "EndpointCertificatesOperations",
     "ManagedDatabaseSensitivityLabelsOperations",
     "ManagedDatabaseRecommendedSensitivityLabelsOperations",
@@ -306,24 +304,9 @@ __all__ = [
     "DatabaseAdvancedThreatProtectionSettingsOperations",
     "ServerAdvancedThreatProtectionSettingsOperations",
     "ManagedServerDnsAliasesOperations",
-    "DatabaseSqlVulnerabilityAssessmentBaselinesOperations",
-    "DatabaseSqlVulnerabilityAssessmentExecuteScanOperations",
-    "DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations",
-    "DatabaseSqlVulnerabilityAssessmentScanResultOperations",
-    "DatabaseSqlVulnerabilityAssessmentScansOperations",
-    "DatabaseSqlVulnerabilityAssessmentsSettingsOperations",
     "ManagedDatabaseAdvancedThreatProtectionSettingsOperations",
     "ManagedInstanceAdvancedThreatProtectionSettingsOperations",
     "ReplicationLinksOperations",
-    "SqlVulnerabilityAssessmentBaselineOperations",
-    "SqlVulnerabilityAssessmentBaselinesOperations",
-    "SqlVulnerabilityAssessmentExecuteScanOperations",
-    "SqlVulnerabilityAssessmentRuleBaselineOperations",
-    "SqlVulnerabilityAssessmentRuleBaselinesOperations",
-    "SqlVulnerabilityAssessmentScanResultOperations",
-    "SqlVulnerabilityAssessmentScansOperations",
-    "SqlVulnerabilityAssessmentsSettingsOperations",
-    "SqlVulnerabilityAssessmentsOperations",
     "ManagedDatabaseMoveOperationsOperations",
     "ManagedInstanceDtcsOperations",
     "SynapseLinkWorkspacesOperations",
@@ -340,6 +323,23 @@ __all__ = [
     "ServersOperations",
     "StartStopManagedInstanceSchedulesOperations",
     "TransparentDataEncryptionsOperations",
+    "FailoverGroupsOperations",
+    "IPv6FirewallRulesOperations",
+    "SqlVulnerabilityAssessmentBaselineOperations",
+    "SqlVulnerabilityAssessmentBaselinesOperations",
+    "SqlVulnerabilityAssessmentExecuteScanOperations",
+    "SqlVulnerabilityAssessmentRuleBaselineOperations",
+    "SqlVulnerabilityAssessmentRuleBaselinesOperations",
+    "SqlVulnerabilityAssessmentScanResultOperations",
+    "SqlVulnerabilityAssessmentScansOperations",
+    "SqlVulnerabilityAssessmentsSettingsOperations",
+    "SqlVulnerabilityAssessmentsOperations",
+    "DatabaseSqlVulnerabilityAssessmentBaselinesOperations",
+    "DatabaseSqlVulnerabilityAssessmentExecuteScanOperations",
+    "DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations",
+    "DatabaseSqlVulnerabilityAssessmentScanResultOperations",
+    "DatabaseSqlVulnerabilityAssessmentScansOperations",
+    "DatabaseSqlVulnerabilityAssessmentsSettingsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

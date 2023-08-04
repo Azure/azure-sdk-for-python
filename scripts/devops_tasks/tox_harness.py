@@ -198,6 +198,25 @@ def collect_log_files(working_dir):
     for f in glob.glob(os.path.join(root_dir, "_tox_logs", "*")):
         logging.info("Log file: {}".format(f))
 
+def cleanup_tox_environments(tox_dir: str, command_array: str) -> None:
+    """The new .coverage formats are no longer readily amended in place. Because we can't amend them in place,
+    we can't amend the source location to remove the path ".tox/<envname>/site-packages/". Because of this, we will
+    need the source where it was generated to stick around. We can do that by being a bit more circumspect about which
+    files we actually delete/clean up!
+    """
+    if "--cov-append" in command_array:
+        folders = [folder for folder in os.listdir(tox_dir) if "whl" != folder]
+        for folder in folders:
+            try:
+                shutil.rmtree(folder)
+            except Exception as e:
+                # git has a permissions problem. one of the files it drops
+                # cannot be removed as no one has the permission to do so.
+                # lets log just in case, but this should really only affect windows machines.
+                logging.info(e)
+                pass
+    else:
+        shutil.rmtree(tox_dir)
 
 def execute_tox_serial(tox_command_tuples):
     return_code = 0
@@ -218,7 +237,8 @@ def execute_tox_serial(tox_command_tuples):
 
         if in_ci():
             collect_log_files(cmd_tuple[1])
-            shutil.rmtree(tox_dir)
+
+            cleanup_tox_environments(tox_dir, cmd_tuple[0])
 
             if os.path.exists(clone_dir):
                 try:
@@ -241,7 +261,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
     :param parsed_args: An argparse namespace object from setup_execute_tests.py. Not including it will effectively disable "customizations"
         of the tox invocation.
     :param options_array: When invoking tox, these additional options will be passed to the underlying tox invocations as arguments.
-        When invoking of "tox -e whl -c ../../../eng/tox/tox.ini -- --suppress-no-test-exit-code", "--suppress-no-test-exit-code" the "--" will be
+        When invoking of "tox run -e whl -c ../../../eng/tox/tox.ini -- --suppress-no-test-exit-code", "--suppress-no-test-exit-code" the "--" will be
         passed directly to the pytest invocation.
     """
     if parsed_args.wheel_dir:
@@ -260,11 +280,18 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
 
         tox_execution_array = [sys.executable, "-m", "tox"]
 
+        if parsed_args.tenvparallel:
+            tox_execution_array.extend(["run-parallel", "-p", "all"])
+        else:
+            tox_execution_array.append("run")
+
+        # Tox command is run in package root, make tox set package root as {toxinidir}
+        tox_execution_array += ["--root", "."]
         local_options_array = options_array[:]
 
         # Get code coverage params for current package
         package_name = os.path.basename(package_dir)
-        coverage_commands = create_code_coverage_params(parsed_args, package_name)
+        coverage_commands = create_code_coverage_params(parsed_args, package_dir)
         local_options_array.extend(coverage_commands)
 
         pkg_egg_info_name = "{}.egg-info".format(package_name.replace("-", "_"))
@@ -324,8 +351,6 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
 
             tox_execution_array.extend(["-e", filtered_tox_environment_set])
 
-        if parsed_args.tenvparallel:
-            tox_execution_array.extend(["-p", "all"])
 
         if parsed_args.tox_env == "apistub":
             local_options_array = []

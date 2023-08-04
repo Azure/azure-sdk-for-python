@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any
+from typing import Any, Union
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import AutoDeleteCondition
 from azure.ai.ml.entities._mixins import DictMixin
@@ -19,7 +19,12 @@ class AutoDeleteSetting(DictMixin):
     :type value: str
     """
 
-    def __init__(self, *, condition: AutoDeleteCondition = AutoDeleteCondition.CREATED_GREATER_THAN, value: str = None):
+    def __init__(
+        self,
+        *,
+        condition: AutoDeleteCondition = AutoDeleteCondition.CREATED_GREATER_THAN,
+        value: Union[str, None] = None
+    ):
         self.condition = condition
         self.value = value
 

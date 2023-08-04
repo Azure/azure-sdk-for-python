@@ -14,6 +14,7 @@ def _flatten_args(args: Union[List[Dict], List[List[Dict]]]) -> List[Dict]:
         return args[0]
     return args
 
+
 class IndexDocumentsBatch:
     """Represent a batch of update operations for documents in an Azure
     Search index.
@@ -45,9 +46,7 @@ class IndexDocumentsBatch:
         """
         return self._extend_batch(_flatten_args(documents), "upload")
 
-    def add_delete_actions(
-        self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any
-    ) -> List[IndexAction]:
+    def add_delete_actions(self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any) -> List[IndexAction]:
         # pylint: disable=unused-argument
         """Add documents to delete to the Azure search index.
 
@@ -68,9 +67,7 @@ class IndexDocumentsBatch:
         """
         return self._extend_batch(_flatten_args(documents), "delete")
 
-    def add_merge_actions(
-        self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any
-    ) -> List[IndexAction]:
+    def add_merge_actions(self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any) -> List[IndexAction]:
         # pylint: disable=unused-argument
         """Add documents to merge in to existing documents in the Azure search
         index.
@@ -119,6 +116,7 @@ class IndexDocumentsBatch:
     def dequeue_actions(self, **kwargs: Any) -> List[IndexAction]:  # pylint: disable=unused-argument
         """Get the list of currently configured index actions and clear it.
 
+        :return: the current actions
         :rtype: List[IndexAction]
         """
         with self._lock:
@@ -126,11 +124,13 @@ class IndexDocumentsBatch:
             self._actions = []
         return result
 
-    def enqueue_actions(
-            self, new_actions: Union[IndexAction, List[IndexAction]], **kwargs: Any
-    ) -> None:
+    def enqueue_actions(self, new_actions: Union[IndexAction, List[IndexAction]], **kwargs: Any) -> None:
         # pylint: disable=unused-argument
-        """Enqueue a list of index actions to index."""
+        """Enqueue a list of index actions to index.
+
+        :param new_actions: the actions to enqueue
+        :type new_actions: IndexAction or List[IndexAction]
+        """
         if isinstance(new_actions, IndexAction):
             with self._lock:
                 self._actions.append(new_actions)
@@ -139,10 +139,7 @@ class IndexDocumentsBatch:
                 self._actions.extend(new_actions)
 
     def _extend_batch(self, documents: List[Dict], action_type: str) -> List[IndexAction]:
-        new_actions = [
-            IndexAction(additional_properties=document, action_type=action_type)
-            for document in documents
-        ]
+        new_actions = [IndexAction(additional_properties=document, action_type=action_type) for document in documents]
         with self._lock:
             self._actions.extend(new_actions)
         return new_actions

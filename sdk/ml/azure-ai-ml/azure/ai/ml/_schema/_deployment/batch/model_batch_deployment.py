@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 import logging
 from typing import Any
@@ -14,6 +14,7 @@ from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurat
 from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentType
+from azure.ai.ml._schema import ExperimentalField
 from .model_batch_deployment_settings import ModelBatchDeploymentSettingsSchema
 
 
@@ -36,7 +37,7 @@ class ModelBatchDeploymentSchema(DeploymentSchema):
         allowed_values=[BatchDeploymentType.PIPELINE, BatchDeploymentType.MODEL], required=False
     )
 
-    settings = NestedField(ModelBatchDeploymentSettingsSchema)
+    settings = ExperimentalField(NestedField(ModelBatchDeploymentSettingsSchema))
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:

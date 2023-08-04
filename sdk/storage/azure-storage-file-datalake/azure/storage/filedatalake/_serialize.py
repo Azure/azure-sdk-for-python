@@ -37,7 +37,7 @@ def get_api_version(kwargs):
     api_version = kwargs.get('api_version', None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
-        raise ValueError("Unsupported API version '{}'. Please select from:\n{}".format(api_version, versions))
+        raise ValueError(f"Unsupported API version '{api_version}'. Please select from:\n{versions}")
     return api_version or _SUPPORTED_API_VERSIONS[-1]
 
 
@@ -49,15 +49,14 @@ def convert_datetime_to_rfc1123(date):
     weekday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][date.weekday()]
     month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
              "Oct", "Nov", "Dec"][date.month - 1]
-    return "%s, %02d %s %04d %02d:%02d:%02d GMT" % (weekday, date.day, month,
-                                                    date.year, date.hour, date.minute, date.second)
+    return f"{weekday}, {date.day:02} {month} {date.year:04} {date.hour:02}:{date.minute:02}:{date.second:02} GMT"
 
 
 def add_metadata_headers(metadata=None):
     # type: (Optional[Dict[str, str]]) -> str
     if not metadata:
         return None
-    headers = list()
+    headers = []
     if metadata:
         for key, value in metadata.items():
             headers.append(key + '=')

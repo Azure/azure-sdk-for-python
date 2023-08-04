@@ -23,9 +23,7 @@ namespace_name = PACKAGE_NAME.replace("-", ".")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
-    version = re.search(
-        r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
-    ).group(1)
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError("Cannot find version information")
@@ -41,7 +39,7 @@ exclude_packages = [
     "samples",
     # Exclude packages that will be covered by PEP420 or nspkg
     "azure",
-    "azure.appconfiguration"
+    "azure.appconfiguration",
 ]
 if sys.version_info < (3, 5, 3):
     exclude_packages.extend(["*.aio", "*.aio.*"])
@@ -74,7 +72,7 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "msrest>=0.6.21",
-        "azure-core<2.0.0,>=1.24.0",
+        "azure-core<2.0.0,>=1.25.0",
         "azure-appconfiguration<2.0.0,>=1.4.0",
         "azure-keyvault-secrets<5.0.0,>=4.3.0",
     ],

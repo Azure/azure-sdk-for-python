@@ -5,6 +5,7 @@
 
 import logging
 from pathlib import Path
+import os
 
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
@@ -79,12 +80,14 @@ class AzureMlImageContext(object):
                     }
                 }
             )
-            self._environment[
-                LocalEndpointConstants.ENVVAR_KEY_AML_APP_ROOT
-            ] = docker_code_mount_path  # ie. /var/azureml-app/onlinescoring
-            self._environment[
-                LocalEndpointConstants.ENVVAR_KEY_AZUREML_ENTRY_SCRIPT
-            ] = yaml_code_scoring_script_file_name  # ie. score.py
+            # Set the directory containing scoring script as AML_APP_ROOT/working directory
+            # ie. /var/azureml-app/onlinescoring
+            self._environment[LocalEndpointConstants.ENVVAR_KEY_AML_APP_ROOT] = os.path.join(
+                docker_code_mount_path, os.path.dirname(yaml_code_scoring_script_file_name)
+            )
+            self._environment[LocalEndpointConstants.ENVVAR_KEY_AZUREML_ENTRY_SCRIPT] = Path(
+                yaml_code_scoring_script_file_name
+            ).name  # ie. score.py
 
         self.ports = {"5001/tcp": 5001}
 

@@ -896,6 +896,11 @@ class CertificateListOptions(Model):
 class CertificateReference(Model):
     """A reference to a Certificate to be installed on Compute Nodes in a Pool.
 
+    Warning: This object is deprecated and will be removed after February,
+    2024. Please use the [Azure KeyVault
+    Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+    instead.
+
     All required parameters must be populated in order to send to Azure.
 
     :param thumbprint: Required.
@@ -1362,6 +1367,10 @@ class CloudPool(Model):
      location. For Certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
      /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February,
+     2024. Please use the [Azure KeyVault
+     Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+     instead.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
     :param application_package_references: Changes to Package references
@@ -1822,6 +1831,10 @@ class ComputeNode(Model):
      location. For Certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
      /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February,
+     2024. Please use the [Azure KeyVault
+     Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+     instead.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
     :param errors:
@@ -2580,13 +2593,11 @@ class ComputeNodeUser(Model):
 class ContainerConfiguration(Model):
     """The configuration for container-enabled Pools.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required.  Default value: "dockerCompatible" .
-    :vartype type: str
+    :param type: Required. Possible values include: 'dockerCompatible',
+     'criCompatible'
+    :type type: str or ~azure.batch.models.ContainerType
     :param container_image_names: This is the full Image reference, as would
      be specified to "docker pull". An Image will be sourced from the default
      Docker registry unless the Image is fully qualified with an alternative
@@ -2599,7 +2610,7 @@ class ContainerConfiguration(Model):
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
     }
 
     _attribute_map = {
@@ -2608,10 +2619,9 @@ class ContainerConfiguration(Model):
         'container_registries': {'key': 'containerRegistries', 'type': '[ContainerRegistry]'},
     }
 
-    type = "dockerCompatible"
-
     def __init__(self, **kwargs):
         super(ContainerConfiguration, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
         self.container_image_names = kwargs.get('container_image_names', None)
         self.container_registries = kwargs.get('container_registries', None)
 
@@ -3816,9 +3826,8 @@ class JobConstraints(Model):
      limit. For example, if the maximum retry count is 3, Batch tries a Task up
      to 4 times (one initial try and 3 retries). If the maximum retry count is
      0, the Batch service does not retry Tasks. If the maximum retry count is
-     -1, the Batch service retries the Task without limit, however this is not
-     recommended for a start task or any task. The default value is 0 (no
-     retries)
+     -1, the Batch service retries Tasks without limit. The default value is 0
+     (no retries).
     :type max_task_retry_count: int
     """
 
@@ -4097,40 +4106,6 @@ class JobExecutionInformation(Model):
         self.pool_id = kwargs.get('pool_id', None)
         self.scheduling_error = kwargs.get('scheduling_error', None)
         self.terminate_reason = kwargs.get('terminate_reason', None)
-
-
-class JobGetAllLifetimeStatisticsOptions(Model):
-    """Additional parameters for get_all_lifetime_statistics operation.
-
-    :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
-    :type timeout: int
-    :param client_request_id: The caller-generated request identity, in the
-     form of a GUID with no decoration such as curly braces, e.g.
-     9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
-    :type client_request_id: str
-    :param return_client_request_id: Whether the server should return the
-     client-request-id in the response. Default value: False .
-    :type return_client_request_id: bool
-    :param ocp_date: The time the request was issued. Client libraries
-     typically set this to the current system clock time; set it explicitly if
-     you are calling the REST API directly.
-    :type ocp_date: datetime
-    """
-
-    _attribute_map = {
-        'timeout': {'key': '', 'type': 'int'},
-        'client_request_id': {'key': '', 'type': 'str'},
-        'return_client_request_id': {'key': '', 'type': 'bool'},
-        'ocp_date': {'key': '', 'type': 'rfc-1123'},
-    }
-
-    def __init__(self, **kwargs):
-        super(JobGetAllLifetimeStatisticsOptions, self).__init__(**kwargs)
-        self.timeout = kwargs.get('timeout', 30)
-        self.client_request_id = kwargs.get('client_request_id', None)
-        self.return_client_request_id = kwargs.get('return_client_request_id', False)
-        self.ocp_date = kwargs.get('ocp_date', None)
 
 
 class JobGetOptions(Model):
@@ -6687,6 +6662,12 @@ class NetworkConfiguration(Model):
      only supported on Pools with the virtualMachineConfiguration property.
     :type public_ip_address_configuration:
      ~azure.batch.models.PublicIPAddressConfiguration
+    :param enable_accelerated_networking: Whether this pool should enable
+     accelerated networking. Accelerated networking enables single root I/O
+     virtualization (SR-IOV) to a VM, which may lead to improved networking
+     performance. For more details, see:
+     https://learn.microsoft.com/azure/virtual-network/accelerated-networking-overview.
+    :type enable_accelerated_networking: bool
     """
 
     _attribute_map = {
@@ -6694,6 +6675,7 @@ class NetworkConfiguration(Model):
         'dynamic_vnet_assignment_scope': {'key': 'dynamicVNetAssignmentScope', 'type': 'DynamicVNetAssignmentScope'},
         'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'PoolEndpointConfiguration'},
         'public_ip_address_configuration': {'key': 'publicIPAddressConfiguration', 'type': 'PublicIPAddressConfiguration'},
+        'enable_accelerated_networking': {'key': 'enableAcceleratedNetworking', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -6702,6 +6684,7 @@ class NetworkConfiguration(Model):
         self.dynamic_vnet_assignment_scope = kwargs.get('dynamic_vnet_assignment_scope', None)
         self.endpoint_configuration = kwargs.get('endpoint_configuration', None)
         self.public_ip_address_configuration = kwargs.get('public_ip_address_configuration', None)
+        self.enable_accelerated_networking = kwargs.get('enable_accelerated_networking', None)
 
 
 class NetworkSecurityGroupRule(Model):
@@ -7413,6 +7396,10 @@ class PoolAddParameter(Model):
      location. For Certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
      /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February,
+     2024. Please use the [Azure KeyVault
+     Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+     instead.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
     :param application_package_references: When creating a pool, the package's
@@ -7845,40 +7832,6 @@ class PoolExistsOptions(Model):
         self.if_unmodified_since = kwargs.get('if_unmodified_since', None)
 
 
-class PoolGetAllLifetimeStatisticsOptions(Model):
-    """Additional parameters for get_all_lifetime_statistics operation.
-
-    :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
-    :type timeout: int
-    :param client_request_id: The caller-generated request identity, in the
-     form of a GUID with no decoration such as curly braces, e.g.
-     9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
-    :type client_request_id: str
-    :param return_client_request_id: Whether the server should return the
-     client-request-id in the response. Default value: False .
-    :type return_client_request_id: bool
-    :param ocp_date: The time the request was issued. Client libraries
-     typically set this to the current system clock time; set it explicitly if
-     you are calling the REST API directly.
-    :type ocp_date: datetime
-    """
-
-    _attribute_map = {
-        'timeout': {'key': '', 'type': 'int'},
-        'client_request_id': {'key': '', 'type': 'str'},
-        'return_client_request_id': {'key': '', 'type': 'bool'},
-        'ocp_date': {'key': '', 'type': 'rfc-1123'},
-    }
-
-    def __init__(self, **kwargs):
-        super(PoolGetAllLifetimeStatisticsOptions, self).__init__(**kwargs)
-        self.timeout = kwargs.get('timeout', 30)
-        self.client_request_id = kwargs.get('client_request_id', None)
-        self.return_client_request_id = kwargs.get('return_client_request_id', False)
-        self.ocp_date = kwargs.get('ocp_date', None)
-
-
 class PoolGetOptions(Model):
     """Additional parameters for get operation.
 
@@ -8203,6 +8156,10 @@ class PoolPatchParameter(Model):
      location. For Certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
      /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February,
+     2024. Please use the [Azure KeyVault
+     Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+     instead.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
     :param application_package_references: Changes to Package references
@@ -8496,6 +8453,10 @@ class PoolSpecification(Model):
      location. For Certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
      /home/{user-name}/certs) and Certificates are placed in that directory.
+     Warning: This property is deprecated and will be removed after February,
+     2024. Please use the [Azure KeyVault
+     Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+     instead.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
     :param application_package_references: When creating a pool, the package's
@@ -8743,6 +8704,10 @@ class PoolUpdatePropertiesParameter(Model):
      'remoteUser', a 'certs' directory is created in the user's home directory
      (e.g., /home/{user-name}/certs) and Certificates are placed in that
      directory.
+     Warning: This property is deprecated and will be removed after February,
+     2024. Please use the [Azure KeyVault
+     Extension](https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide)
+     instead.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
     :param application_package_references: Required. The list replaces any
@@ -9184,7 +9149,7 @@ class StartTask(Model):
      the Batch service does not retry the Task. If the maximum retry count is
      -1, the Batch service retries the Task without limit, however this is not
      recommended for a start task or any task. The default value is 0 (no
-     retries)
+     retries).
     :type max_task_retry_count: int
     :param wait_for_success: Whether the Batch service should wait for the
      StartTask to complete successfully (that is, to exit with exit code 0)
@@ -9725,7 +9690,7 @@ class TaskConstraints(Model):
      does not retry the Task after the first attempt. If the maximum retry
      count is -1, the Batch service retries the Task without limit, however
      this is not recommended for a start task or any task. The default value is
-     0 (no retries)
+     0 (no retries).
     :type max_task_retry_count: int
     """
 
@@ -11035,6 +11000,10 @@ class VMExtension(Model):
      deployed, however, the extension will not upgrade minor versions unless
      redeployed, even with this property set to true.
     :type auto_upgrade_minor_version: bool
+    :param enable_automatic_upgrade: Indicates whether the extension should be
+     automatically upgraded by the platform if there is a newer version of the
+     extension available.
+    :type enable_automatic_upgrade: bool
     :param settings:
     :type settings: object
     :param protected_settings: The extension can contain either
@@ -11058,6 +11027,7 @@ class VMExtension(Model):
         'type': {'key': 'type', 'type': 'str'},
         'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
         'auto_upgrade_minor_version': {'key': 'autoUpgradeMinorVersion', 'type': 'bool'},
+        'enable_automatic_upgrade': {'key': 'enableAutomaticUpgrade', 'type': 'bool'},
         'settings': {'key': 'settings', 'type': 'object'},
         'protected_settings': {'key': 'protectedSettings', 'type': 'object'},
         'provision_after_extensions': {'key': 'provisionAfterExtensions', 'type': '[str]'},
@@ -11070,6 +11040,7 @@ class VMExtension(Model):
         self.type = kwargs.get('type', None)
         self.type_handler_version = kwargs.get('type_handler_version', None)
         self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
+        self.enable_automatic_upgrade = kwargs.get('enable_automatic_upgrade', None)
         self.settings = kwargs.get('settings', None)
         self.protected_settings = kwargs.get('protected_settings', None)
         self.provision_after_extensions = kwargs.get('provision_after_extensions', None)

@@ -4,7 +4,7 @@
 
 from typing import Any
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import IPProtectionLevel
+from azure.ai.ml.constants._assets import IPProtectionLevel
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._restclient.v2023_04_01_preview.models import IntellectualProperty as RestIntellectualProperty
 
@@ -15,7 +15,7 @@ class IntellectualProperty(RestTranslatableMixin):
     :param publisher: Publisher name
     :type publisher: str
     :param protection_level: Asset Protection Level. Allowed values: ALL, NONE
-    :type protection_level: IPProtectionLevel
+    :type protection_level: ~azure.ai.ml.constants.IPProtectionLevel
     """
 
     def __init__(self, *, publisher: str = None, protection_level: IPProtectionLevel = IPProtectionLevel.ALL):

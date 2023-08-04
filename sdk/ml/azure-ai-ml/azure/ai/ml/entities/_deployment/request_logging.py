@@ -7,8 +7,10 @@ from typing import Dict, List
 from azure.ai.ml._schema._deployment.online.request_logging_schema import RequestLoggingSchema
 from azure.ai.ml._restclient.v2023_04_01_preview.models import RequestLogging as RestRequestLogging
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class RequestLogging:
     """Request Logging deployment entity.
 

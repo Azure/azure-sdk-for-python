@@ -4,10 +4,9 @@ from pathlib import Path
 import pydash
 import pytest
 import yaml
+from dsl._util import get_predecessors
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
-
-from dsl._util import get_predecessors
 from test_utilities.utils import omit_with_wildcard, verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, dsl, load_component, load_job
@@ -18,7 +17,7 @@ from azure.ai.ml.automl import classification
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.entities import PipelineJob
-from azure.ai.ml.entities._builders import Spark, DataTransfer
+from azure.ai.ml.entities._builders import DataTransfer, Spark
 from azure.ai.ml.entities._job.automl.image import (
     ImageClassificationJob,
     ImageClassificationMultilabelJob,
@@ -1382,12 +1381,11 @@ class TestPipelineJobEntity:
         self,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_dynamic_allocation_disabled.yml"
-        job = load_job(test_path)
+        job: PipelineJob = load_job(test_path)
         result = job._validate()
         assert (
-            "jobs.hello_world" in result.error_messages
-            and "Should not specify min or max executors when dynamic allocation is disabled."
-            == result.error_messages["jobs.hello_world"]
+            result.error_messages["jobs.hello_world.conf"] == "Should not specify min or max executors when "
+            "dynamic allocation is disabled."
         )
 
     def test_spark_node_in_pipeline_with_invalid_code(
@@ -1441,38 +1439,46 @@ class TestPipelineJobEntity:
     @pytest.mark.parametrize(
         "test_path, error_messages",
         [
-            (
-                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_input_mode.yml",
-                "Input 'file_input1' is using 'None' mode, only 'direct' is supported for Spark job",
-            ),
-            (
-                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_component_input_mode.yml",
-                "Input 'input1' is using 'mount' mode, only 'direct' is supported for Spark job",
-            ),
-        ],
-    )
-    def test_spark_node_in_pipeline_with_invalid_input_mode(self, test_path, error_messages):
-        job = load_job(test_path)
-        result = job._validate()
-        assert error_messages == result.error_messages["jobs.hello_world"]
-
-    @pytest.mark.parametrize(
-        "test_path, error_messages",
-        [
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_output_mode.yml",
-                "Output 'output' is using 'None' mode, only 'direct' is supported for Spark job",
+                {
+                    "jobs.hello_world.outputs.output": "Output 'output' is using 'None' mode, "
+                    "only 'direct' is supported for Spark job"
+                },
+                id="none_mode_output",
             ),
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_component_output_mode.yml",
-                "Output 'output1' is using 'upload' mode, only 'direct' is supported for Spark job",
+                {
+                    "jobs.hello_world.outputs.output1": "Output 'output1' is using 'upload' mode, "
+                    "only 'direct' is supported for Spark job"
+                },
+                id="upload_mode_output",
+            ),
+            pytest.param(
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_input_mode.yml",
+                {
+                    "jobs.hello_world.inputs.file_input1": "Input 'file_input1' is using 'None' mode, "
+                    "only 'direct' is supported for Spark job",
+                },
+                id="none_mode_input",
+            ),
+            pytest.param(
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_component_input_mode.yml",
+                {
+                    "jobs.hello_world.inputs.input1": "Input 'input1' is using 'mount' mode, "
+                    "only 'direct' is supported for Spark job"
+                },
+                id="mount_mode_input",
             ),
         ],
     )
-    def test_spark_node_in_pipeline_with_invalid_output_mode(self, test_path, error_messages):
+    def test_spark_node_in_pipeline_with_invalid_input_outputs_mode(self, test_path: str, error_messages: dict):
         job = load_job(test_path)
         result = job._validate()
-        assert error_messages == result.error_messages["jobs.hello_world"]
+        for key, value in error_messages.items():
+            assert key in result.error_messages
+            assert result.error_messages[key] == value
 
     def test_infer_pipeline_output_type_as_node_type(
         self,

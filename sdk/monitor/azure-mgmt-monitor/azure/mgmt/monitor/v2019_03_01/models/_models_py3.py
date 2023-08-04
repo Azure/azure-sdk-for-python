@@ -21,7 +21,7 @@ class ActionGroupList(_serialization.Model):
     """A list of action groups.
 
     :ivar value: The list of action groups.
-    :vartype value: list[~$(python-base-namespace).v2019_03_01.models.ActionGroupResource]
+    :vartype value: list[~azure.mgmt.monitor.v2019_03_01.models.ActionGroupResource]
     :ivar next_link: Provides the link to retrieve the next set of elements.
     :vartype next_link: str
     """
@@ -40,7 +40,7 @@ class ActionGroupList(_serialization.Model):
     ) -> None:
         """
         :keyword value: The list of action groups.
-        :paramtype value: list[~$(python-base-namespace).v2019_03_01.models.ActionGroupResource]
+        :paramtype value: list[~azure.mgmt.monitor.v2019_03_01.models.ActionGroupResource]
         :keyword next_link: Provides the link to retrieve the next set of elements.
         :paramtype next_link: str
         """
@@ -149,33 +149,32 @@ class ActionGroupResource(AzureResource):  # pylint: disable=too-many-instance-a
      enabled, then none of its receivers will receive communications.
     :vartype enabled: bool
     :ivar email_receivers: The list of email receivers that are part of this action group.
-    :vartype email_receivers: list[~$(python-base-namespace).v2019_03_01.models.EmailReceiver]
+    :vartype email_receivers: list[~azure.mgmt.monitor.v2019_03_01.models.EmailReceiver]
     :ivar sms_receivers: The list of SMS receivers that are part of this action group.
-    :vartype sms_receivers: list[~$(python-base-namespace).v2019_03_01.models.SmsReceiver]
+    :vartype sms_receivers: list[~azure.mgmt.monitor.v2019_03_01.models.SmsReceiver]
     :ivar webhook_receivers: The list of webhook receivers that are part of this action group.
-    :vartype webhook_receivers: list[~$(python-base-namespace).v2019_03_01.models.WebhookReceiver]
+    :vartype webhook_receivers: list[~azure.mgmt.monitor.v2019_03_01.models.WebhookReceiver]
     :ivar itsm_receivers: The list of ITSM receivers that are part of this action group.
-    :vartype itsm_receivers: list[~$(python-base-namespace).v2019_03_01.models.ItsmReceiver]
+    :vartype itsm_receivers: list[~azure.mgmt.monitor.v2019_03_01.models.ItsmReceiver]
     :ivar azure_app_push_receivers: The list of AzureAppPush receivers that are part of this action
      group.
     :vartype azure_app_push_receivers:
-     list[~$(python-base-namespace).v2019_03_01.models.AzureAppPushReceiver]
+     list[~azure.mgmt.monitor.v2019_03_01.models.AzureAppPushReceiver]
     :ivar automation_runbook_receivers: The list of AutomationRunbook receivers that are part of
      this action group.
     :vartype automation_runbook_receivers:
-     list[~$(python-base-namespace).v2019_03_01.models.AutomationRunbookReceiver]
+     list[~azure.mgmt.monitor.v2019_03_01.models.AutomationRunbookReceiver]
     :ivar voice_receivers: The list of voice receivers that are part of this action group.
-    :vartype voice_receivers: list[~$(python-base-namespace).v2019_03_01.models.VoiceReceiver]
+    :vartype voice_receivers: list[~azure.mgmt.monitor.v2019_03_01.models.VoiceReceiver]
     :ivar logic_app_receivers: The list of logic app receivers that are part of this action group.
-    :vartype logic_app_receivers:
-     list[~$(python-base-namespace).v2019_03_01.models.LogicAppReceiver]
+    :vartype logic_app_receivers: list[~azure.mgmt.monitor.v2019_03_01.models.LogicAppReceiver]
     :ivar azure_function_receivers: The list of azure function receivers that are part of this
      action group.
     :vartype azure_function_receivers:
-     list[~$(python-base-namespace).v2019_03_01.models.AzureFunctionReceiver]
+     list[~azure.mgmt.monitor.v2019_03_01.models.AzureFunctionReceiver]
     :ivar arm_role_receivers: The list of ARM role receivers that are part of this action group.
      Roles are Azure RBAC roles and only built-in roles are supported.
-    :vartype arm_role_receivers: list[~$(python-base-namespace).v2019_03_01.models.ArmRoleReceiver]
+    :vartype arm_role_receivers: list[~azure.mgmt.monitor.v2019_03_01.models.ArmRoleReceiver]
     """
 
     _validation = {
@@ -240,36 +239,33 @@ class ActionGroupResource(AzureResource):  # pylint: disable=too-many-instance-a
          enabled, then none of its receivers will receive communications.
         :paramtype enabled: bool
         :keyword email_receivers: The list of email receivers that are part of this action group.
-        :paramtype email_receivers: list[~$(python-base-namespace).v2019_03_01.models.EmailReceiver]
+        :paramtype email_receivers: list[~azure.mgmt.monitor.v2019_03_01.models.EmailReceiver]
         :keyword sms_receivers: The list of SMS receivers that are part of this action group.
-        :paramtype sms_receivers: list[~$(python-base-namespace).v2019_03_01.models.SmsReceiver]
+        :paramtype sms_receivers: list[~azure.mgmt.monitor.v2019_03_01.models.SmsReceiver]
         :keyword webhook_receivers: The list of webhook receivers that are part of this action group.
-        :paramtype webhook_receivers:
-         list[~$(python-base-namespace).v2019_03_01.models.WebhookReceiver]
+        :paramtype webhook_receivers: list[~azure.mgmt.monitor.v2019_03_01.models.WebhookReceiver]
         :keyword itsm_receivers: The list of ITSM receivers that are part of this action group.
-        :paramtype itsm_receivers: list[~$(python-base-namespace).v2019_03_01.models.ItsmReceiver]
+        :paramtype itsm_receivers: list[~azure.mgmt.monitor.v2019_03_01.models.ItsmReceiver]
         :keyword azure_app_push_receivers: The list of AzureAppPush receivers that are part of this
          action group.
         :paramtype azure_app_push_receivers:
-         list[~$(python-base-namespace).v2019_03_01.models.AzureAppPushReceiver]
+         list[~azure.mgmt.monitor.v2019_03_01.models.AzureAppPushReceiver]
         :keyword automation_runbook_receivers: The list of AutomationRunbook receivers that are part of
          this action group.
         :paramtype automation_runbook_receivers:
-         list[~$(python-base-namespace).v2019_03_01.models.AutomationRunbookReceiver]
+         list[~azure.mgmt.monitor.v2019_03_01.models.AutomationRunbookReceiver]
         :keyword voice_receivers: The list of voice receivers that are part of this action group.
-        :paramtype voice_receivers: list[~$(python-base-namespace).v2019_03_01.models.VoiceReceiver]
+        :paramtype voice_receivers: list[~azure.mgmt.monitor.v2019_03_01.models.VoiceReceiver]
         :keyword logic_app_receivers: The list of logic app receivers that are part of this action
          group.
-        :paramtype logic_app_receivers:
-         list[~$(python-base-namespace).v2019_03_01.models.LogicAppReceiver]
+        :paramtype logic_app_receivers: list[~azure.mgmt.monitor.v2019_03_01.models.LogicAppReceiver]
         :keyword azure_function_receivers: The list of azure function receivers that are part of this
          action group.
         :paramtype azure_function_receivers:
-         list[~$(python-base-namespace).v2019_03_01.models.AzureFunctionReceiver]
+         list[~azure.mgmt.monitor.v2019_03_01.models.AzureFunctionReceiver]
         :keyword arm_role_receivers: The list of ARM role receivers that are part of this action group.
          Roles are Azure RBAC roles and only built-in roles are supported.
-        :paramtype arm_role_receivers:
-         list[~$(python-base-namespace).v2019_03_01.models.ArmRoleReceiver]
+        :paramtype arm_role_receivers: list[~azure.mgmt.monitor.v2019_03_01.models.ArmRoleReceiver]
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.group_short_name = group_short_name
@@ -553,7 +549,7 @@ class EmailReceiver(_serialization.Model):
     :vartype use_common_alert_schema: bool
     :ivar status: The receiver status of the e-mail. Known values are: "NotSpecified", "Enabled",
      and "Disabled".
-    :vartype status: str or ~$(python-base-namespace).v2019_03_01.models.ReceiverStatus
+    :vartype status: str or ~azure.mgmt.monitor.v2019_03_01.models.ReceiverStatus
     """
 
     _validation = {
@@ -758,7 +754,7 @@ class MetricBaselinesResponse(_serialization.Model):
     """A list of metric baselines.
 
     :ivar value: The list of metric baselines.
-    :vartype value: list[~$(python-base-namespace).v2019_03_01.models.SingleMetricBaseline]
+    :vartype value: list[~azure.mgmt.monitor.v2019_03_01.models.SingleMetricBaseline]
     """
 
     _attribute_map = {
@@ -768,7 +764,7 @@ class MetricBaselinesResponse(_serialization.Model):
     def __init__(self, *, value: Optional[List["_models.SingleMetricBaseline"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of metric baselines.
-        :paramtype value: list[~$(python-base-namespace).v2019_03_01.models.SingleMetricBaseline]
+        :paramtype value: list[~azure.mgmt.monitor.v2019_03_01.models.SingleMetricBaseline]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -814,7 +810,7 @@ class SingleBaseline(_serialization.Model):
 
     :ivar sensitivity: the sensitivity of the baseline. Required. Known values are: "Low",
      "Medium", and "High".
-    :vartype sensitivity: str or ~$(python-base-namespace).v2019_03_01.models.BaselineSensitivity
+    :vartype sensitivity: str or ~azure.mgmt.monitor.v2019_03_01.models.BaselineSensitivity
     :ivar low_thresholds: The low thresholds of the baseline. Required.
     :vartype low_thresholds: list[float]
     :ivar high_thresholds: The high thresholds of the baseline. Required.
@@ -844,7 +840,7 @@ class SingleBaseline(_serialization.Model):
         """
         :keyword sensitivity: the sensitivity of the baseline. Required. Known values are: "Low",
          "Medium", and "High".
-        :paramtype sensitivity: str or ~$(python-base-namespace).v2019_03_01.models.BaselineSensitivity
+        :paramtype sensitivity: str or ~azure.mgmt.monitor.v2019_03_01.models.BaselineSensitivity
         :keyword low_thresholds: The low thresholds of the baseline. Required.
         :paramtype low_thresholds: list[float]
         :keyword high_thresholds: The high thresholds of the baseline. Required.
@@ -878,7 +874,7 @@ class SingleMetricBaseline(_serialization.Model):
     :ivar namespace: The namespace of the metrics been queried.
     :vartype namespace: str
     :ivar baselines: The baseline for each time series that was queried. Required.
-    :vartype baselines: list[~$(python-base-namespace).v2019_03_01.models.TimeSeriesBaseline]
+    :vartype baselines: list[~azure.mgmt.monitor.v2019_03_01.models.TimeSeriesBaseline]
     """
 
     _validation = {
@@ -930,7 +926,7 @@ class SingleMetricBaseline(_serialization.Model):
         :keyword namespace: The namespace of the metrics been queried.
         :paramtype namespace: str
         :keyword baselines: The baseline for each time series that was queried. Required.
-        :paramtype baselines: list[~$(python-base-namespace).v2019_03_01.models.TimeSeriesBaseline]
+        :paramtype baselines: list[~azure.mgmt.monitor.v2019_03_01.models.TimeSeriesBaseline]
         """
         super().__init__(**kwargs)
         self.id = id
@@ -958,7 +954,7 @@ class SmsReceiver(_serialization.Model):
     :vartype phone_number: str
     :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled", and
      "Disabled".
-    :vartype status: str or ~$(python-base-namespace).v2019_03_01.models.ReceiverStatus
+    :vartype status: str or ~azure.mgmt.monitor.v2019_03_01.models.ReceiverStatus
     """
 
     _validation = {
@@ -1000,13 +996,13 @@ class TimeSeriesBaseline(_serialization.Model):
     :ivar aggregation: The aggregation type of the metric. Required.
     :vartype aggregation: str
     :ivar dimensions: The dimensions of this time series.
-    :vartype dimensions: list[~$(python-base-namespace).v2019_03_01.models.MetricSingleDimension]
+    :vartype dimensions: list[~azure.mgmt.monitor.v2019_03_01.models.MetricSingleDimension]
     :ivar timestamps: The list of timestamps of the baselines. Required.
     :vartype timestamps: list[~datetime.datetime]
     :ivar data: The baseline values for each sensitivity. Required.
-    :vartype data: list[~$(python-base-namespace).v2019_03_01.models.SingleBaseline]
+    :vartype data: list[~azure.mgmt.monitor.v2019_03_01.models.SingleBaseline]
     :ivar metadata_values: The baseline metadata values.
-    :vartype metadata_values: list[~$(python-base-namespace).v2019_03_01.models.BaselineMetadata]
+    :vartype metadata_values: list[~azure.mgmt.monitor.v2019_03_01.models.BaselineMetadata]
     """
 
     _validation = {
@@ -1037,13 +1033,13 @@ class TimeSeriesBaseline(_serialization.Model):
         :keyword aggregation: The aggregation type of the metric. Required.
         :paramtype aggregation: str
         :keyword dimensions: The dimensions of this time series.
-        :paramtype dimensions: list[~$(python-base-namespace).v2019_03_01.models.MetricSingleDimension]
+        :paramtype dimensions: list[~azure.mgmt.monitor.v2019_03_01.models.MetricSingleDimension]
         :keyword timestamps: The list of timestamps of the baselines. Required.
         :paramtype timestamps: list[~datetime.datetime]
         :keyword data: The baseline values for each sensitivity. Required.
-        :paramtype data: list[~$(python-base-namespace).v2019_03_01.models.SingleBaseline]
+        :paramtype data: list[~azure.mgmt.monitor.v2019_03_01.models.SingleBaseline]
         :keyword metadata_values: The baseline metadata values.
-        :paramtype metadata_values: list[~$(python-base-namespace).v2019_03_01.models.BaselineMetadata]
+        :paramtype metadata_values: list[~azure.mgmt.monitor.v2019_03_01.models.BaselineMetadata]
         """
         super().__init__(**kwargs)
         self.aggregation = aggregation

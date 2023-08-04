@@ -17,13 +17,12 @@ TIME_TO_SLEEP = 3
 
 
 class TestSearchIndexingBufferedSenderAsync(AzureRecordedTestCase):
-
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
     async def test_search_client_index_buffered_sender(self, endpoint, api_key, index_name):
-        client = SearchClient(endpoint, index_name, api_key)
-        batch_client = SearchIndexingBufferedSender(endpoint, index_name, api_key)
+        client = SearchClient(endpoint, index_name, api_key, retry_backoff_factor=60)
+        batch_client = SearchIndexingBufferedSender(endpoint, index_name, api_key, retry_backoff_factor=60)
         try:
             async with client:
                 async with batch_client:

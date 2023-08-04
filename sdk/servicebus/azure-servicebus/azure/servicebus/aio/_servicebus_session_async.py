@@ -77,7 +77,7 @@ class ServiceBusSession(BaseSession):
     ) -> None:
         """Set the session state.
 
-        :param state: The state value. Setting state to None will clear the current session.
+        :param state: The state value.
         :type state: Union[str, bytes, bytearray, None]
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.

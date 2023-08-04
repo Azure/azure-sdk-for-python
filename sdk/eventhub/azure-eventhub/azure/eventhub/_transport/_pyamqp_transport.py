@@ -46,6 +46,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     Class which defines uamqp-based methods used by the producer and consumer.
     """
 
+    KIND = "pyamqp"
+
     # define constants
     MAX_FRAME_SIZE_BYTES = constants.MAX_FRAME_SIZE_BYTES
     MAX_MESSAGE_LENGTH_BYTES = (
@@ -277,6 +279,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             connection_verify=config.connection_verify,
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
+            socket_timeout=config.socket_timeout,
             **kwargs,
         )
 
@@ -394,6 +397,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             transport_type=config.transport_type,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            socket_timeout=config.socket_timeout,
             **kwargs,
         )
 

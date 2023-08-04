@@ -1,5 +1,13 @@
 # Release History
 
+## 14.2.0 (2023-06-16)
+
+### Features Added
+
+  - Model ExportRDBParameters has a new parameter storage_subscription_id
+  - Model ImportRDBParameters has a new parameter storage_subscription_id
+  - Model RedisCommonPropertiesRedisConfiguration has a new parameter storage_subscription_id
+
 ## 14.1.0 (2022-10-28)
 
 ### Features Added

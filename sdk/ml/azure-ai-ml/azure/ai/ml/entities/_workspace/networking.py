@@ -4,13 +4,14 @@
 
 from typing import Any, Dict, Optional, List
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     ManagedNetworkSettings as RestManagedNetwork,
     FqdnOutboundRule as RestFqdnOutboundRule,
     PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
     PrivateEndpointDestination as RestPrivateEndpointOutboundRuleDestination,
     ServiceTagOutboundRule as RestServiceTagOutboundRule,
     ServiceTagDestination as RestServiceTagOutboundRuleDestination,
+    ManagedNetworkProvisionStatus as RestManagedNetworkProvisionStatus,
 )
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 
@@ -25,6 +26,8 @@ class OutboundRule:
     :type name: str
     :param type: Type of the outbound rule. Supported types are "FQDN", "PrivateEndpoint", "ServiceTag"
     :type type: str
+    :ivar type: Type of the outbound rule. Supported types are "FQDN", "PrivateEndpoint", "ServiceTag"
+    :vartype type: str
     """
 
     def __init__(
@@ -39,7 +42,7 @@ class OutboundRule:
         self.status = kwargs.pop("status", None)
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: Any, name: str) -> "OutboundRule":
+    def _from_rest_object(cls, rest_obj: Any, name: str) -> Optional["OutboundRule"]:
         if isinstance(rest_obj, RestFqdnOutboundRule):
             rule = FqdnDestination(destination=rest_obj.destination, name=name)
             rule.category = rest_obj.category
@@ -65,6 +68,8 @@ class OutboundRule:
             rule.category = rest_obj.category
             rule.status = rest_obj.status
             return rule
+
+        return None
 
 
 @experimental
@@ -206,4 +211,31 @@ class ManagedNetwork:
             outbound_rules=from_rest_outbound_rules,
             network_id=obj.network_id,
             status=obj.status,
+        )
+
+
+@experimental
+class ManagedNetworkProvisionStatus:
+    """ManagedNetworkProvisionStatus.
+
+    :param status: Status for managed network provision.
+    :type status: str
+    :param spark_ready: Bool value indicating if managed network is spark ready
+    :type spark_ready: bool
+    """
+
+    def __init__(
+        self,
+        *,
+        status: Optional[str] = None,
+        spark_ready: Optional[bool] = None,
+    ):
+        self.status = status
+        self.spark_ready = spark_ready
+
+    @classmethod
+    def _from_rest_object(cls, rest_obj: RestManagedNetworkProvisionStatus) -> "ManagedNetworkProvisionStatus":
+        return cls(
+            status=rest_obj.status,
+            spark_ready=rest_obj.spark_ready,
         )

@@ -64,7 +64,6 @@ setup(
         'azure',
     ]),
     install_requires=[
-        "uamqp>=1.6.3,<2.0.0",
         "azure-core<2.0.0,>=1.24.0",
         "isodate>=0.6.0",
         "typing-extensions>=4.0.1",

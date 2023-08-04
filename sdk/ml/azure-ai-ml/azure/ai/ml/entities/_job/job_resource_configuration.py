@@ -6,9 +6,7 @@ import json
 import logging
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    JobResourceConfiguration as RestJobResourceConfiguration,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -33,8 +31,9 @@ class BaseProperty(dict):
     def __getattr__(self, key: str) -> Any:
         if key.startswith("_"):
             super().__getattribute__(key)
-        else:
-            return self[key]
+            return None
+
+        return self[key]
 
     def __repr__(self) -> str:
         return json.dumps(self.as_dict())
@@ -88,24 +87,36 @@ class Properties(BaseProperty):
 class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     """Class for job resource, inherited and extended functionalities from ResourceConfiguration.
 
-    :param instance_count: Optional number of instances or nodes used by the compute target.
+    :param locations: A list of locations where the job can run.
+    :type locations: list[str]
+    :param instance_count: The number of instances or nodes used by the compute target.
     :type instance_count: int
-    :param locations: Optional list of locations where the job can run.
-    :vartype locations: List[str]
-    :param instance_type: Optional type of VM used as supported by the compute target.
+    :param instance_type: The type of VM to be used, as supported by the compute target.
     :type instance_type: str
-    :param max_instance_count: Optional maximum number of instances or nodes used by the compute target.
-    :type max_instance_count: int
-    :param properties: Additional properties bag.
-    :type properties: Dict[str, Any]
+    :param properties: A dictionary of properties for the job.
+    :type properties: dict[str, Any]
     :param docker_args: Extra arguments to pass to the Docker run command. This would override any
      parameters that have already been set by the system, or in this section. This parameter is only
      supported for Azure ML compute types.
     :type docker_args: str
-    :param shm_size: Size of the docker container's shared memory block. This should be in the
-     format of (number)(unit) where number as to be greater than 0 and the unit can be one of
+    :param shm_size: The size of the docker container's shared memory block. This should be in the
+     format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
      b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
     :type shm_size: str
+    :param max_instance_count: The maximum number of instances or nodes used by the compute target.
+    :type max_instance_count: int
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict[str, Any]
+
+    .. admonition:: Example:
+        :class: tip
+
+        .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
+            :start-after: [START command_job_resource_configuration]
+            :end-before: [END command_job_resource_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a CommandJob with a JobResourceConfiguration.
     """
 
     def __init__(
@@ -118,8 +129,8 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
         max_instance_count: Optional[int] = None,
-        **kwargs
-    ):  # pylint: disable=unused-argument
+        **kwargs  # pylint: disable=unused-argument
+    ) -> None:
         self.locations = locations
         self.instance_count = instance_count
         self.instance_type = instance_type
@@ -131,10 +142,20 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
 
     @property
     def properties(self) -> Properties:
+        """The properties of the job.
+
+        :rtype: ~azure.ai.ml.entities._job.job_resource_configuration.Properties
+        """
         return self._properties
 
     @properties.setter
     def properties(self, properties: Dict[str, Any]):
+        """Sets the properties of the job.
+
+        :param properties: A dictionary of properties for the job.
+        :type properties: Dict[str, Any]
+        :raises TypeError: Raised if properties is not a dictionary type.
+        """
         if properties is None:
             self._properties = Properties()
         elif isinstance(properties, dict):

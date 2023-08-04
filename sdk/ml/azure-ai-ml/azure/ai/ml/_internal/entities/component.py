@@ -6,9 +6,10 @@
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 from uuid import UUID
 
+import yaml
 from marshmallow import Schema
 
 from ... import Input, Output
@@ -16,23 +17,27 @@ from ..._restclient.v2022_10_01.models import ComponentVersion, ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils._asset_utils import IgnoreFile
+from ...constants._common import DefaultOpenEncoding
 from ...entities import Component
 from ...entities._assets import Code
+from ...entities._component._additional_includes import AdditionalIncludesMixin
 from ...entities._component.code import ComponentIgnoreFile
 from ...entities._job.distribution import DistributionConfiguration
 from ...entities._system_data import SystemData
 from ...entities._util import convert_ordered_dict_to_dict
 from ...entities._validation import MutableValidationResult
 from .._schema.component import InternalComponentSchema
-from ._additional_includes import ADDITIONAL_INCLUDES_SUFFIX, InternalAdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from ._merkle_tree import create_merkletree
 from .code import InternalCode
 from .environment import InternalEnvironment
 from .node import InternalBaseNode
 
+_ADDITIONAL_INCLUDES_CONFIG_KEY = "additional_includes"
+_ADDITIONAL_INCLUDES_SUFFIX = ".additional_includes"
 
-class InternalComponent(Component):
+
+class InternalComponent(Component, AdditionalIncludesMixin):
     # pylint: disable=too-many-instance-attributes, too-many-locals
     """Base class for internal component version, used to define an internal component. Recommended to create instance
     with component_factory.
@@ -99,12 +104,12 @@ class InternalComponent(Component):
         datatransfer: Optional[Dict] = None,
         **kwargs,
     ):
-        type, self._type_label = parse_name_label(type)
+        _type, self._type_label = parse_name_label(type)
         super().__init__(
             name=name,
             version=version,
             id=id,
-            type=type,
+            type=_type,
             description=description,
             tags=tags,
             properties=properties,
@@ -125,8 +130,6 @@ class InternalComponent(Component):
         self.code = code
         self.environment = InternalEnvironment(**environment) if isinstance(environment, dict) else environment
         self.environment_variables = environment_variables
-        self.__additional_includes = None
-        self.__ignore_file = None
         # TODO: remove these to keep it a general component class
         self.command = command
         self.scope = scope
@@ -148,39 +151,95 @@ class InternalComponent(Component):
                 component_io[name] = InternalOutput._from_base(port)
         return component_io
 
+    # region AdditionalIncludesMixin
+
+    @classmethod
+    def _read_additional_include_configs(cls, yaml_path) -> List:
+        """Read additional include configs from the additional includes file.
+        The name of the file is the same as the component spec file, with a suffix of ".additional_includes".
+        It can be either a yaml file or a text file:
+        1. If it is a yaml file, yaml format of additional_includes looks like below:
+        ```
+        additional_includes:
+         - your/local/path
+         - type: artifact
+           organization: devops_organization
+           project: devops_project
+           feed: artifacts_feed_name
+           name: universal_package_name
+           version: package_version
+           scope: scope_type
+        ```
+        2. If it is a text file, each line is a path to include. Note that artifact config is not supported
+        in this format.
+        """
+        additional_includes_config_path = yaml_path.with_suffix(_ADDITIONAL_INCLUDES_SUFFIX)
+        if additional_includes_config_path.is_file():
+            with open(additional_includes_config_path, encoding=DefaultOpenEncoding.READ) as f:
+                file_content = f.read()
+                try:
+                    configs = yaml.safe_load(file_content)
+                    if isinstance(configs, dict):
+                        return configs.get(_ADDITIONAL_INCLUDES_CONFIG_KEY, [])
+                except Exception:  # pylint: disable=broad-except
+                    # TODO: check if we should catch yaml.YamlError instead here
+                    pass
+                return [line.strip() for line in file_content.splitlines(keepends=False) if len(line.strip()) > 0]
+        return []
+
+    @classmethod
+    def _get_additional_includes_field_name(cls) -> str:
+        # additional includes for internal components are configured by a file, which is not a field in the yaml
+        # return '*' as diagnostics yaml paths and override _get_all_additional_includes_configs.
+        return "*"
+
+    def _get_all_additional_includes_configs(self) -> List:
+        # internal components must have a source path
+        return self._read_additional_include_configs(Path(self._source_path))
+
+    def _get_base_path_for_code(self) -> Path:
+        # internal components must have a source path
+        return Path(self._source_path).parent
+
+    def _get_origin_code_value(self) -> Union[str, PathLike, None]:
+        return self.code or Path(".").as_posix()
+
+    # endregion
+
     @property
     def _additional_includes(self):
-        if self.__additional_includes is None:
-            # use property as `self._source_path` is set after __init__ now
-            # `self._source_path` is not None when enter this function
-            self.__additional_includes = InternalAdditionalIncludes(
-                code_path=self.code,
-                yaml_path=self._source_path,
-            )
-        return self.__additional_includes
+        """This property is kept for compatibility with old mldesigner sdk."""
+        obj = self._generate_additional_includes_obj()
+        from azure.ai.ml._internal.entities._additional_includes import InternalAdditionalIncludes
 
+        obj.__class__ = InternalAdditionalIncludes
+        return obj
+
+    # region SchemaValidatableMixin
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return InternalComponentSchema(context=context)
 
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(InternalComponent, self)._customized_validate()
-        # if the code is not local path, no need for additional includes
-        code = Path(self.code) if self.code is not None else Path(self._source_path).parent
-        if code.exists() and self._additional_includes.with_includes:
-            validation_result.merge_with(self._additional_includes._validate())
-            # resolving additional includes & update self._base_path can be dangerous,
-            # so we just skip path validation if additional_includes is used
-            # note that there will still be runtime error in submission or execution
-            skip_path_validation = True
-        else:
-            skip_path_validation = False
+        skip_path_validation = not self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(
+            validation_result
+        )
+        # resolving additional includes & update self._base_path can be dangerous,
+        # so we just skip path validation if additional includes is provided.
+        # note that there will still be client-side error on job submission (after code is resolved)
+        # if paths in environment are invalid
         if isinstance(self.environment, InternalEnvironment):
             validation_result.merge_with(
-                self.environment._validate(self._base_path, skip_path_validation=skip_path_validation),
+                self.environment.validate(
+                    self._base_path,
+                    skip_path_validation=skip_path_validation,
+                ),
                 field_name="environment",
             )
         return validation_result
+
+    # endregion
 
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
@@ -226,62 +285,45 @@ class InternalComponent(Component):
         return snapshot_id
 
     @contextmanager
-    def _resolve_local_code(self) -> Optional[Code]:
-        """Try to create a Code object pointing to local code and yield it.
-
-        If there is no local code to upload, yield None. Otherwise, yield a Code object pointing to the code.
+    def _try_build_local_code(self) -> Optional[Code]:
+        """Build final code when origin code is a local code.
+        Will merge code path with additional includes into a temp folder if additional includes is specified.
+        For internal components, file dependencies in environment will be resolved based on the final code.
         """
-        # an internal component always has a default local code of its base path
-        # otherwise, if there is no local code, yield super()._resolve_local_code() and return early
-        if self.code is not None:
-            with super()._resolve_local_code() as code:
-                if not isinstance(code, Code) or code._is_remote:
-                    yield code
-                    return
+        # origin code value of internal component will never be None. check _get_origin_code_value for details
+        with self._generate_additional_includes_obj().merge_local_code_and_additional_includes() as tmp_code_dir:
+            # use absolute path in case temp folder & work dir are in different drive
+            tmp_code_dir = tmp_code_dir.absolute()
 
-        # This is forbidden by schema CodeFields for now so won't happen.
-        if isinstance(self.code, Code):
-            yield code
-            return
+            # file dependency in code will be read during internal environment resolution
+            # for example, docker file of the environment may be in additional includes;
+            # and it will be read then insert to the environment object during resolution.
+            # so we need to resolve environment based on the temporary code path
+            if isinstance(self.environment, InternalEnvironment):
+                self.environment.resolve(base_path=tmp_code_dir)
 
-        def get_additional_include_file_name():
-            if self._source_path is not None:
-                return Path(self._source_path).with_suffix(ADDITIONAL_INCLUDES_SUFFIX).name
-            return None
-
-        self._additional_includes.resolve()
-
-        # file dependency in code will be read during internal environment resolution
-        # for example, docker file of the environment may be in additional includes
-        # and it will be read then insert to the environment object during resolution
-        # so we need to resolve environment based on the temporary code path
-        if isinstance(self.environment, InternalEnvironment):
-            self.environment.resolve(self._additional_includes.code)
-        # use absolute path in case temp folder & work dir are in different drive
-        tmp_code_dir = self._additional_includes.code.absolute()
-        rebased_ignore_file = ComponentIgnoreFile(
-            tmp_code_dir,
-            additional_includes_file_name=get_additional_include_file_name(),
-        )
-        # Use the snapshot id in ml-components as code name to enable anonymous
-        # component reuse from ml-component runs.
-        # calculate snapshot id here instead of inside InternalCode to ensure that
-        # snapshot id is calculated based on the resolved code path
-        yield InternalCode(
-            name=self._get_snapshot_id(
-                # use absolute path in case temp folder & work dir are in different drive
-                self._additional_includes.code.absolute(),
-                # this ignore-file should be rebased to the resolved code path
-                rebased_ignore_file,
-            ),
-            version="1",
-            base_path=self._base_path,
-            path=tmp_code_dir,
-            is_anonymous=True,
-            ignore_file=rebased_ignore_file,
-        )
-
-        self._additional_includes.cleanup()
+            # additional includes config file itself should be ignored
+            rebased_ignore_file = ComponentIgnoreFile(
+                tmp_code_dir,
+                additional_includes_file_name=Path(self._source_path).with_suffix(_ADDITIONAL_INCLUDES_SUFFIX).name,
+            )
+            # Use the snapshot id in ml-components as code name to enable anonymous
+            # component reuse from ml-component runs.
+            # calculate snapshot id here instead of inside InternalCode to ensure that
+            # snapshot id is calculated based on the built code path
+            yield InternalCode(
+                name=self._get_snapshot_id(
+                    # use absolute path in case temp folder & work dir are in different drive
+                    tmp_code_dir,
+                    # this ignore-file should be rebased to the built code path
+                    rebased_ignore_file,
+                ),
+                version="1",
+                base_path=self._base_path,
+                path=tmp_code_dir,
+                is_anonymous=True,
+                ignore_file=rebased_ignore_file,
+            )
 
     def __call__(self, *args, **kwargs) -> InternalBaseNode:  # pylint: disable=useless-super-delegation
         return super(InternalComponent, self).__call__(*args, **kwargs)

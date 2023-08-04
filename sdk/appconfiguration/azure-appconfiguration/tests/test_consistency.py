@@ -21,42 +21,28 @@ class TestAppConfigurationConsistency(AppConfigTestCase):
         client = self.create_client(appconfiguration_connection_string)
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(
-            key,
-            enabled=True,
-            filters=[
-                {
-                    "name": FILTER_PERCENTAGE,
-                    "parameters": {
-                        "Value": 10,
-                        "User": "user1"
-                    }
-                }
-            ]
+            key, enabled=True, filters=[{"name": FILTER_PERCENTAGE, "parameters": {"Value": 10, "User": "user1"}}]
         )
         set_flag = client.set_configuration_setting(feature_flag)
 
-        set_flag.value = json.dumps({
-            'conditions': {
-                'client_filters': [
-                    {
-                        'name': 'Microsoft.Targeting',
-                        'parameters': {
-                            'name': 'Microsoft.Targeting',
-                            'parameters': {
-                                'Audience': {
-                                    'DefaultRolloutPercentage': 50,
-                                    'Groups': [],
-                                    'Users': []
-                                }
-                            }
+        set_flag.value = json.dumps(
+            {
+                "conditions": {
+                    "client_filters": [
+                        {
+                            "name": "Microsoft.Targeting",
+                            "parameters": {
+                                "name": "Microsoft.Targeting",
+                                "parameters": {"Audience": {"DefaultRolloutPercentage": 50, "Groups": [], "Users": []}},
+                            },
                         }
-                    }
-                ]
-            },
-            'description': '',
-            'enabled': False,
-            'id': key,
-        })
+                    ]
+                },
+                "description": "",
+                "enabled": False,
+                "id": key,
+            }
+        )
 
         set_flag = client.set_configuration_setting(set_flag)
         assert isinstance(set_flag, FeatureFlagConfigurationSetting)
@@ -111,41 +97,16 @@ class TestAppConfigurationConsistencyUnitTest(AppConfigTestCase):
     def test_feature_flag_set_value(self):
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(
-            key,
-            enabled=True,
-            filters=[
-                {
-                    "name": FILTER_PERCENTAGE,
-                    "parameters": {
-                        "Value": 10,
-                        "User": "user1"
-                    }
-                }
-            ]
+            key, enabled=True, filters=[{"name": FILTER_PERCENTAGE, "parameters": {"Value": 10, "User": "user1"}}]
         )
-        feature_flag.value = json.dumps({
-            "conditions": {
-                "client_filters": []
-            },
-            "enabled": False
-        })
+        feature_flag.value = json.dumps({"conditions": {"client_filters": []}, "enabled": False})
 
         assert feature_flag.enabled == False
 
     def test_feature_flag_set_enabled(self):
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(
-            key,
-            enabled=True,
-            filters=[
-                {
-                    "name": FILTER_PERCENTAGE,
-                    "parameters": {
-                        "Value": 10,
-                        "User": "user1"
-                    }
-                }
-            ]
+            key, enabled=True, filters=[{"name": FILTER_PERCENTAGE, "parameters": {"Value": 10, "User": "user1"}}]
         )
         feature_flag.enabled = False
 

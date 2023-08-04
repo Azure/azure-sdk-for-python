@@ -22,7 +22,9 @@ The Azure Monitor Query client library is used to execute read-only queries agai
 - Python 3.7 or later
 - An [Azure subscription][azure_subscription]
 - A [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential?view=azure-python) implementation, such as an [Azure Identity library credential type](https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#credential-classes).
-- To query Logs, you need an [Azure Log Analytics workspace][azure_monitor_create_using_portal].
+- To query Logs, you need one of the following things:
+  - An [Azure Log Analytics workspace][azure_monitor_create_using_portal]
+  - An Azure resource of any kind (Storage Account, Key Vault, Cosmos DB, etc.)
 - To query Metrics, you need an Azure resource of any kind (Storage Account, Key Vault, Cosmos DB, etc.).
 
 ### Install the package
@@ -379,9 +381,10 @@ The `statistics` field is a `dict` that corresponds to the raw JSON response, an
   }
 }
 ```
+
 #### Include visualization
 
-To get visualization data for logs queries using the [render operator](https://docs.microsoft.com/azure/data-explorer/kusto/query/renderoperator?pivots=azuremonitor):
+To get visualization data for logs queries using the [render operator](https://learn.microsoft.com/azure/data-explorer/kusto/query/renderoperator?pivots=azuremonitor):
 
 1. Set the `include_visualization` property to `True`.
 1. Access the `visualization` field inside the `LogsQueryResult` object.
@@ -429,6 +432,8 @@ The `visualization` field is a `dict` that corresponds to the raw JSON response,
   "anomalyColumns": None
 }
 ```
+
+Interpretation of the visualization data is left to the library consumer. To use this data with the [Plotly graphing library](https://plotly.com/python/), see the [synchronous](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/sample_logs_query_visualization.py) or [asynchronous](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/samples/async_samples/sample_logs_query_visualization_async.py) code samples.
 
 ### Metrics query
 

@@ -9,11 +9,18 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     NotificationSetting,
     EmailMonitoringAlertNotificationSettings,
+    EmailNotificationEnableType,
 )
 
 
 @experimental
 class AlertNotification(RestTranslatableMixin):
+    """Alert notification configuration for monitoring jobs
+
+    :param emails: A list of emails that will receive notifications for monitoring alerts
+    :type emails: List[str]
+    """
+
     def __init__(
         self,
         *,
@@ -25,7 +32,9 @@ class AlertNotification(RestTranslatableMixin):
         self,
     ) -> EmailMonitoringAlertNotificationSettings:
         return EmailMonitoringAlertNotificationSettings(
-            email_notification_setting=NotificationSetting(emails=self.emails)
+            email_notification_setting=NotificationSetting(
+                emails=self.emails, email_on=[EmailNotificationEnableType.JOB_FAILED]
+            )
         )
 
     @classmethod

@@ -192,7 +192,7 @@ class BlobStorageClient:
                     no_personal_data_message=msg,
                     target=ErrorTarget.ARTIFACT,
                     error_category=ErrorCategory.USER_ERROR,
-                )
+                ) from e
             raise e
 
     def _set_confirmation_metadata(self, name: str, version: str) -> None:
@@ -248,7 +248,7 @@ class BlobStorageClient:
                 target=ErrorTarget.ARTIFACT,
                 error_category=ErrorCategory.USER_ERROR,
                 error=e,
-            )
+            ) from e
 
     def list(self, starts_with: str) -> List[str]:
         """Lists all blob names in the specified container.
@@ -259,7 +259,7 @@ class BlobStorageClient:
         blobs = self.container_client.list_blobs(name_starts_with=starts_with)
         return [blob.name for blob in blobs]
 
-    def exists(self, blobpath: str, delimeter: str = "/") -> bool:
+    def exists(self, blobpath: str, delimiter: str = "/") -> bool:
         """Returns whether there exists a blob named `blobpath`, or if there exists a virtual directory given path
         delimeter `delimeter`
 
@@ -281,11 +281,11 @@ class BlobStorageClient:
         if self.container_client.get_blob_client(blobpath).exists():
             return True
 
-        ensure_delimeter = delimeter if not blobpath.endswith(delimeter) else ""
+        ensure_delimeter = delimiter if not blobpath.endswith(delimiter) else ""
 
         # Virtual directory only exists if there is atleast one blob with it
         result = next(
-            self.container_client.walk_blobs(name_starts_with=blobpath + ensure_delimeter, delimiter=delimeter),
+            self.container_client.walk_blobs(name_starts_with=blobpath + ensure_delimeter, delimiter=delimiter),
             None,
         )
         return result is not None

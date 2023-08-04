@@ -18,11 +18,13 @@ from azure.ai.ml.entities import BatchDeployment, Deployment
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._schema._deployment.batch.model_batch_deployment import ModelBatchDeploymentSchema
 from .model_batch_deployment_settings import ModelBatchDeploymentSettings
 from .code_configuration import CodeConfiguration
 
 
+@experimental
 class ModelBatchDeployment(Deployment):
     """Job Definition entity.
 
@@ -40,6 +42,8 @@ class ModelBatchDeployment(Deployment):
     :type description: str
     :param tags: Job tags
     :type tags: Dict[str, Any]
+    :param properties: The asset property dictionary.
+    :type properties: dict[str, str]
     """
 
     def __init__(
@@ -121,6 +125,7 @@ class ModelBatchDeployment(Deployment):
             max_concurrency_per_instance=deployment_settings.max_concurrency_per_instance,
             environment_variables=deployment_settings.environment_variables,
             compute=self.compute,
+            properties=self.properties,
         )
         return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
 

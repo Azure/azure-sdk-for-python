@@ -196,6 +196,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
         :param model_id: Model identifier.
         :type model_id: str
+        :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
 
@@ -437,7 +438,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                 **kwargs
             )
         except ValueError:
-            raise ValueError("Method 'begin_create_composed_model' is only available for API version V2_1 and up")
+            raise ValueError("Method 'begin_create_composed_model' is only available for API version V2_1 and up")  # pylint: disable=raise-missing-from
 
     def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:
         """Get an instance of a FormRecognizerClient from FormTrainingClient.

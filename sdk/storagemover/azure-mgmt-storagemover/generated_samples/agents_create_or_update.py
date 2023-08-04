@@ -26,7 +26,7 @@ from azure.mgmt.storagemover import StorageMoverMgmtClient
 def main():
     client = StorageMoverMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="11111111-2222-3333-4444-555555555555",
+        subscription_id="60bcfc77-6589-4da2-b7fd-f9ec9322cf95",
     )
 
     response = client.agents.create_or_update(
@@ -35,7 +35,7 @@ def main():
         agent_name="examples-agentName",
         agent={
             "properties": {
-                "arcResourceId": "/subscriptions/11111111-2222-3333-4444-555555555555/resourceGroups/examples-rg/providers/Microsoft.HybridCompute/machines/examples-hybridComputeName",
+                "arcResourceId": "/subscriptions/60bcfc77-6589-4da2-b7fd-f9ec9322cf95/resourceGroups/examples-rg/providers/Microsoft.HybridCompute/machines/examples-hybridComputeName",
                 "arcVmUuid": "3bb2c024-eba9-4d18-9e7a-1d772fcc5fe9",
                 "description": "Example Agent Description",
             }
@@ -44,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2023-03-01/examples/Agents_CreateOrUpdate.json
+# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/preview/2023-07-01-preview/examples/Agents_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

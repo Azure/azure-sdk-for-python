@@ -41,7 +41,8 @@ from .._list_blobs_helper import IgnoreListBlobsDeserializer
 from ._models import FilteredBlobPaged
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
     from .._models import ( # pylint: disable=unused-import
         AccessPolicy,
@@ -113,7 +114,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
     def __init__(
             self, account_url: str,
             container_name: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
@@ -212,7 +213,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             kwargs['source_lease_id'] = lease
         try:
             renamed_container = ContainerClient(
-                "{}://{}".format(self.scheme, self.primary_hostname), container_name=new_name,
+                f"{self.scheme}://{self.primary_hostname}", container_name=new_name,
                 credential=self.credential, api_version=self.api_version, _configuration=self._config,
                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
                 require_encryption=self.require_encryption, encryption_version=self.encryption_version,
@@ -413,6 +414,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: boolean
+        :rtype: bool
         """
         try:
             await self._client.container.get_properties(**kwargs)
@@ -510,7 +512,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         else:
             _pipeline = self._pipeline  # pylint: disable = protected-access
         return BlobServiceClient(
-            "{}://{}".format(self.scheme, self.primary_hostname),
+            f"{self.scheme}://{self.primary_hostname}",
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
             _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
             encryption_version=self.encryption_version, key_encryption_key=self.key_encryption_key,
@@ -1246,7 +1248,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
                 :caption: Deleting multiple blobs.
         """
         if len(blobs) == 0:
-            return iter(list())
+            return iter([])
 
         reqs, options = self._generate_delete_blobs_options(*blobs, **kwargs)
 

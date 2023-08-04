@@ -128,6 +128,7 @@
     "addinivalue",
     "adfs",
     "adls",
+    "aenter",
     "aiohttp",
     "alru",
     "amqp",
@@ -216,6 +217,7 @@
     "ints",
     "iohttp",
     "IOHTTP",
+    "IOLRO",
     "inprogress",
     "ipconfiguration",
     "ipconfigurations",
@@ -245,6 +247,8 @@
     "livekvtestgetkeyperfkey",
     "livekvtestsignperfkey",
     "livekvtestunwrapperfkey",
+    "lrobasepollingasynclrobasepolling",
+    "lropollerasynclropoller",
     "lmazuel",
     "logz",
     "LPCWSTR",
@@ -265,6 +269,7 @@
     "mydirectory",
     "myfile",
     "myvault",
+    "mytable",
     "nazsdk",
     "nbytes",
     "nbsp",
@@ -403,7 +408,8 @@
     "SDDL",
     "dacl",
     "whls",
-    "aiter"
+    "aiter",
+    "solft"
   ],
   "overrides": [
     {
@@ -416,6 +422,12 @@
       "filename": "doc/dev/test_proxy_migration_guide.md",
       "words": [
         "pytestmarkparametrize"
+      ]
+    },
+    {
+      "filename": "doc/dev/pylint_checking.md",
+      "words": [
+        "pylintrc"
       ]
     },
     {
@@ -557,7 +569,6 @@
         "fhir",
         "FHIR",
         "naam",
-        "aenter"
       ]
     },
     {
@@ -810,6 +821,7 @@
       "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*",
       "words": [
         "otel",
+        "OTELRESOURCE",
         "OTLP",
         "otlp",
         "grpc"
@@ -928,7 +940,9 @@
         "thead",
         "tbody",
         "racwdlmeop",
-        "newfs"
+        "newfs",
+        "adlsstorage",
+        "adlskey"
       ]
     },
     {
@@ -1330,6 +1344,13 @@
       ]
     },
     {
+      "filename": "sdk/purview/azure-purview-sharing/azure/purview/sharing/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
       "filename": "sdk/purview/azure-purview-catalog/azure/purview/catalog/operations/*.py",
       "words": [
         "struct",
@@ -1471,6 +1492,22 @@
       "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_client.py",
       "words": [
         "awps"
+      ]
+    },
+    {
+      "filename": "sdk/contentsafety/azure-ai-contentsafety/azure/ai/contentsafety/*.py",
+      "words": [
+        "mros",
+        "deserializers",
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
+      "filename": "sdk/iothub/azure-iot-deviceprovisioning/azure/iot/deviceprovisioning/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
       ]
     }
   ],

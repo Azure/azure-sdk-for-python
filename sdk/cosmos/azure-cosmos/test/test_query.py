@@ -267,13 +267,14 @@ class QueryTest(unittest.TestCase):
         )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
-    def query_change_feed(self, use_partition_key):
+
+    def test_query_change_feed(self, use_partition_key):
         created_collection = self.created_db.create_container_if_not_exists("change_feed_test_" + str(uuid.uuid4()),
                                                                             PartitionKey(path="/pk"))
         # The test targets partition #3
         partition_key = "pk"
         partition_key_range_id = 0
-        partitionParam = {"partition_key": partition_key} if use_partition_key else {
+        partition_param = {"partition_key": partition_key} if use_partition_key else {
             "partition_key_range_id": partition_key_range_id}
 
         # Read change feed without passing any options
@@ -282,7 +283,7 @@ class QueryTest(unittest.TestCase):
         self.assertEqual(len(iter_list), 0)
 
         # Read change feed from current should return an empty list
-        query_iterable = created_collection.query_items_change_feed(**partitionParam)
+        query_iterable = created_collection.query_items_change_feed(**partition_param)
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
@@ -291,7 +292,7 @@ class QueryTest(unittest.TestCase):
         # Read change feed from beginning should return an empty list
         query_iterable = created_collection.query_items_change_feed(
             is_start_from_beginning=True,
-            **partitionParam
+            **partition_param
         )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
@@ -304,7 +305,7 @@ class QueryTest(unittest.TestCase):
         created_collection.create_item(body=document_definition)
         query_iterable = created_collection.query_items_change_feed(
             is_start_from_beginning=True,
-            **partitionParam
+            **partition_param
         )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 1)
@@ -326,7 +327,7 @@ class QueryTest(unittest.TestCase):
             query_iterable = created_collection.query_items_change_feed(
                 continuation=continuation2,
                 max_item_count=pageSize,
-                **partitionParam
+                **partition_param
             )
             it = query_iterable.__iter__()
             expected_ids = 'doc2.doc3.'
@@ -340,7 +341,7 @@ class QueryTest(unittest.TestCase):
             query_iterable = created_collection.query_items_change_feed(
                 continuation=continuation2,
                 max_item_count=pageSize,
-                **partitionParam
+                **partition_param
             )
             count = 0
             expected_count = 2
@@ -359,7 +360,7 @@ class QueryTest(unittest.TestCase):
         # verify reading change feed from the beginning
         query_iterable = created_collection.query_items_change_feed(
             is_start_from_beginning=True,
-            **partitionParam
+            **partition_param
         )
         expected_ids = ['doc1', 'doc2', 'doc3']
         it = query_iterable.__iter__()
@@ -373,7 +374,7 @@ class QueryTest(unittest.TestCase):
         query_iterable = created_collection.query_items_change_feed(
             continuation=continuation3,
             is_start_from_beginning=True,
-            **partitionParam
+            **partition_param
         )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
@@ -789,19 +790,30 @@ class QueryTest(unittest.TestCase):
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
-    def test_cross_partition_query_with_continuation_token_fails(self):
+    def test_cross_partition_query_with_continuation_token(self):
         created_collection = self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID,
-            PartitionKey(path="/pk"))
+            self.config.TEST_COLLECTION_MULTI_PARTITION_ID,
+            PartitionKey(path="/id"))
+        document_definition = {'pk': 'pk1', 'id': '1'}
+        created_collection.create_item(body=document_definition)
+        document_definition = {'pk': 'pk2', 'id': '2'}
+        created_collection.create_item(body=document_definition)
+
         query = 'SELECT * from c'
         query_iterable = created_collection.query_items(
             query=query,
             enable_cross_partition_query=True,
             max_item_count=1,
         )
+        pager = query_iterable.by_page()
+        pager.next()
+        token = pager.continuation_token
+        second_page = list(pager.next())[0]
 
-        with self.assertRaises(ValueError):
-            pager = query_iterable.by_page("fake_continuation_token")
+        pager = query_iterable.by_page(token)
+        second_page_fetched_with_continuation_token = list(pager.next())[0]
+
+        self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
     def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results,
                                                                get_mock_result):
@@ -827,6 +839,26 @@ class QueryTest(unittest.TestCase):
         ], enable_cross_partition_query=True)
 
         self.assertListEqual(list(query_results), [None])
+
+    def test_continuation_token_size_limit_query(self):
+        container = self.created_db.create_container_if_not_exists(
+            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+        for i in range(1, 1000):
+            container.create_item(body=dict(pk='123', id=str(i), some_value=str(i % 3)))
+        query = "Select * from c where c.some_value='2'"
+        response_query = container.query_items(query, partition_key='123', max_item_count=100,
+                                               response_continuation_token_limit_in_kb=1)
+        pager = response_query.by_page()
+        pager.next()
+        token = pager.continuation_token
+        # Continuation token size should be below 1kb
+        self.assertLessEqual(len(token.encode('utf-8')), 1024)
+        pager.next()
+        token = pager.continuation_token
+
+        # verify a second time
+        self.assertLessEqual(len(token.encode('utf-8')), 1024)
+        self.created_db.delete_container(container)
 
     def _MockNextFunction(self):
         if self.count < len(self.payloads):

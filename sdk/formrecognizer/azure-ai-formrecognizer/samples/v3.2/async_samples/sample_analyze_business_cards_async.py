@@ -55,103 +55,69 @@ async def analyze_business_card_async():
         business_cards = await poller.result()
 
     for idx, business_card in enumerate(business_cards.documents):
-        print("--------Analyzing business card #{}--------".format(idx + 1))
+        print(f"--------Analyzing business card #{idx + 1}--------")
         contact_names = business_card.fields.get("ContactNames")
         if contact_names:
             for contact_name in contact_names.value:
                 print(
-                    "Contact First Name: {} has confidence: {}".format(
-                        contact_name.value["FirstName"].value,
-                        contact_name.value[
-                            "FirstName"
-                        ].confidence,
-                    )
+                    f"Contact First Name: {contact_name.value['FirstName'].value} "
+                    f"has confidence: {contact_name.value['FirstName'].confidence}"
                 )
                 print(
-                    "Contact Last Name: {} has confidence: {}".format(
-                        contact_name.value["LastName"].value,
-                        contact_name.value[
-                            "LastName"
-                        ].confidence,
-                    )
+                    f"Contact Last Name: {contact_name.value['LastName'].value} has"
+                    f" confidence: {contact_name.value['LastName'].confidence}"
                 )
         company_names = business_card.fields.get("CompanyNames")
         if company_names:
             for company_name in company_names.value:
                 print(
-                    "Company Name: {} has confidence: {}".format(
-                        company_name.value, company_name.confidence
-                    )
+                    f"Company Name: {company_name.value} has confidence: {company_name.confidence}"
                 )
         departments = business_card.fields.get("Departments")
         if departments:
             for department in departments.value:
                 print(
-                    "Department: {} has confidence: {}".format(
-                        department.value, department.confidence
-                    )
+                    f"Department: {department.value} has confidence: {department.confidence}"
                 )
         job_titles = business_card.fields.get("JobTitles")
         if job_titles:
             for job_title in job_titles.value:
                 print(
-                    "Job Title: {} has confidence: {}".format(
-                        job_title.value, job_title.confidence
-                    )
+                    f"Job Title: {job_title.value} has confidence: {job_title.confidence}"
                 )
         emails = business_card.fields.get("Emails")
         if emails:
             for email in emails.value:
-                print(
-                    "Email: {} has confidence: {}".format(email.value, email.confidence)
-                )
+                print(f"Email: {email.value} has confidence: {email.confidence}")
         websites = business_card.fields.get("Websites")
         if websites:
             for website in websites.value:
-                print(
-                    "Website: {} has confidence: {}".format(
-                        website.value, website.confidence
-                    )
-                )
+                print(f"Website: {website.value} has confidence: {website.confidence}")
         addresses = business_card.fields.get("Addresses")
         if addresses:
             for address in addresses.value:
-                print(
-                    "Address: {} has confidence: {}".format(
-                        address.value, address.confidence
-                    )
-                )
+                print(f"Address: {address.value} has confidence: {address.confidence}")
         mobile_phones = business_card.fields.get("MobilePhones")
         if mobile_phones:
             for phone in mobile_phones.value:
                 print(
-                    "Mobile phone number: {} has confidence: {}".format(
-                        phone.content, phone.confidence
-                    )
+                    f"Mobile phone number: {phone.content} has confidence: {phone.confidence}"
                 )
         faxes = business_card.fields.get("Faxes")
         if faxes:
             for fax in faxes.value:
-                print(
-                    "Fax number: {} has confidence: {}".format(
-                        fax.content, fax.confidence
-                    )
-                )
+                print(f"Fax number: {fax.content} has confidence: {fax.confidence}")
         work_phones = business_card.fields.get("WorkPhones")
         if work_phones:
             for work_phone in work_phones.value:
                 print(
-                    "Work phone number: {} has confidence: {}".format(
-                        work_phone.content, work_phone.confidence
-                    )
+                    f"Work phone number: {work_phone.content} has confidence: {work_phone.confidence}"
                 )
         other_phones = business_card.fields.get("OtherPhones")
         if other_phones:
             for other_phone in other_phones.value:
                 print(
-                    "Other phone number: {} has confidence: {}".format(
-                        other_phone.value, other_phone.confidence
-                    )
+                    f"Other phone number: {other_phone.value} has confidence: {other_phone.confidence}"
                 )
 
 
@@ -162,11 +128,14 @@ async def main():
 if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         asyncio.run(main())
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:
