@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "1192",
         "Content-Type": "application/json",
-        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.10 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Linux-5.15.90.1-microsoft-standard-WSL2-x86_64-with-debian-bookworm-sid)"
       },
       "RequestBody": {
         "properties": {
@@ -64,26 +64,26 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "2241",
+        "Content-Length": "2137",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 27 Mar 2023 02:58:01 GMT",
+        "Date": "Thu, 20 Apr 2023 22:07:13 GMT",
         "Expires": "-1",
         "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/54c3ce97-5d8b-e4c6-abe3-c836bbc413c9?api-version=2022-10-01",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-cfedac4a9850714508ee586e8b39a2fb-12f2be3f73decb09-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-2c7110e354318a65bc9349e8227b1b40-d03914e20d85e95e-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "int-01",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "2452ca76-6305-489e-9b6a-1034d3fb28de",
-        "x-ms-ratelimit-remaining-subscription-writes": "1169",
+        "x-ms-correlation-request-id": "56c40ec7-297f-4bfb-9716-35aeefbcc863",
+        "x-ms-ratelimit-remaining-subscription-writes": "1119",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20230327T025802Z:2452ca76-6305-489e-9b6a-1034d3fb28de",
-        "x-request-time": "0.323"
+        "x-ms-routing-request-id": "WESTUS2:20230420T220713Z:56c40ec7-297f-4bfb-9716-35aeefbcc863",
+        "x-request-time": "1.576"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/7eb58efa-d35a-4b04-8ead-b8105ea623ca",
-        "name": "7eb58efa-d35a-4b04-8ead-b8105ea623ca",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/d8647935-55a8-4a3e-a623-991099d2aca6",
+        "name": "d8647935-55a8-4a3e-a623-991099d2aca6",
         "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
         "properties": {
           "description": null,
@@ -126,7 +126,7 @@
                 "type": "uri_folder"
               }
             },
-            "environment": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/33",
+            "environment": "azureml://registries/azureml-dev/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/33",
             "resources": {
               "instance_count": "1"
             },
@@ -134,11 +134,11 @@
           }
         },
         "systemData": {
-          "createdAt": "2023-03-27T02:58:02.48851\u002B00:00",
-          "createdBy": "Xingzhi Zhang",
+          "createdAt": "2023-04-20T22:07:13.3637519\u002B00:00",
+          "createdBy": "Diondra Peck",
           "createdByType": "User",
-          "lastModifiedAt": "2023-03-27T02:58:02.48851\u002B00:00",
-          "lastModifiedBy": "Xingzhi Zhang",
+          "lastModifiedAt": "2023-04-20T22:07:13.3637519\u002B00:00",
+          "lastModifiedBy": "Diondra Peck",
           "lastModifiedByType": "User"
         }
       }

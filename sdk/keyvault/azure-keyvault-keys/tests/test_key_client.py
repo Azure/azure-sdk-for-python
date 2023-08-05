@@ -8,13 +8,13 @@ import json
 import logging
 import os
 import time
+from unittest.mock import Mock, patch
 
 import pytest
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
 from azure.keyvault.keys import (
-    ApiVersion,
     JsonWebKey,
     KeyClient,
     KeyReleasePolicy,
@@ -35,10 +35,9 @@ from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
-only_hsm_7_3 = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_3])
+only_hsm_latest = get_decorator(only_hsm=True, api_versions=[DEFAULT_VERSION])
 only_vault_latest = get_decorator(only_vault=True, api_versions=[DEFAULT_VERSION])
-only_vault_7_3 = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_3])
-only_7_3 = get_decorator(api_versions=[ApiVersion.V7_3])
+only_latest = get_decorator(api_versions=[DEFAULT_VERSION])
 logging_enabled = get_decorator(logging_enable=True)
 logging_disabled = get_decorator(logging_enable=False)
 
@@ -496,7 +495,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
 
         mock_handler.close()
 
-    @pytest.mark.parametrize("api_version,is_hsm",only_hsm_7_3)
+    @pytest.mark.parametrize("api_version,is_hsm",only_hsm_latest)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_get_random_bytes(self, client, **kwargs):
@@ -512,7 +511,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
             assert all(random_bytes != rb for rb in generated_random_bytes)
             generated_random_bytes.append(random_bytes)
 
-    @pytest.mark.parametrize("api_version,is_hsm",only_7_3)
+    @pytest.mark.parametrize("api_version,is_hsm",only_latest)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_key_release(self, client, **kwargs):
@@ -535,7 +534,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         release_result = client.release_key(rsa_key_name, attestation)
         assert release_result.value
 
-    @pytest.mark.parametrize("api_version,is_hsm",only_hsm_7_3)
+    @pytest.mark.parametrize("api_version,is_hsm",only_hsm_latest)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_imported_key_release(self, client, **kwargs):
@@ -555,7 +554,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         release_result = client.release_key(imported_key_name, attestation)
         assert release_result.value
 
-    @pytest.mark.parametrize("api_version,is_hsm",only_7_3)
+    @pytest.mark.parametrize("api_version,is_hsm",only_latest)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_update_release_policy(self, client, **kwargs):
@@ -600,7 +599,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         assert claim_condition is False
 
     #Immutable policies aren't currently supported on Managed HSM
-    @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_3)
+    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_immutable_release_policy(self, client, **kwargs):
@@ -637,7 +636,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         with pytest.raises(HttpResponseError):
             self._update_key_properties(client, key, new_release_policy)
 
-    @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_3)
+    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_key_rotation(self, client, **kwargs):
@@ -655,7 +654,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         assert key.key.n != rotated_key.key.n
 
     @pytest.mark.playback_test_only("Currently fails in live mode because of service regression; will be fixed soon.")
-    @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_3)
+    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_key_rotation_policy(self, client, **kwargs):
@@ -774,6 +773,23 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         )
         response = client.send_request(request)
         assert response.json()["key"]["kid"] == key.id
+
+    @pytest.mark.parametrize("api_version,is_hsm", only_vault_latest)
+    @KeysClientPreparer()
+    @recorded_by_proxy
+    def test_40x_handling(self, client, **kwargs):
+        """Ensure 404 and 409 responses are raised with azure-core exceptions instead of generated KV ones"""
+
+        # Test that 404 is raised correctly by fetching a nonexistent key
+        with pytest.raises(ResourceNotFoundError):
+            client.get_key("key-that-does-not-exist")
+
+        # Test that 409 is raised correctly (`create_key` shouldn't actually trigger this, but for raising behavior)
+        def run(*_, **__):
+            return Mock(http_response=Mock(status_code=409))
+        with patch.object(client._client._client._pipeline, "run", run):
+            with pytest.raises(ResourceExistsError):
+                client.create_key("...", "RSA")
 
 
 def test_positive_bytes_count_required():

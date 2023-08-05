@@ -29,9 +29,7 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.organizations.get_api_key(
-        resource_group_name="myResourceGroup",
-    )
+    response = client.organizations.get_api_key()
     print(response)
 
 

@@ -1,14 +1,21 @@
 # Release History
 
-## 12.11.1 (Unreleased)
+## 12.13.0b1 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
 
-### Bugs Fixed
+## 12.12.0 (2023-07-11)
 
-### Other Changes
+### Features Added
+- Stable release of features from 12.12.0b1
+
+## 12.12.0b1 (2023-05-30)
+
+### Features Added
+- Added support for service version 2023-01-03.
+- Added support for `encryption_context` to the `upload_data` API. Previously, `encryption_context` support was only on the `create_file` API.
+- Added `owner`, `group`, and `permission` properties to `DirectoryProperties` and `FileProperties`.
 
 ## 12.11.0 (2023-04-12)
 

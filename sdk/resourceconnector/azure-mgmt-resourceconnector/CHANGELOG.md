@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b4 (2023-04-24)
+
+### Breaking Changes
+
+  - Client name is changed from `Appliances` to `ResourceConnectorMgmtClient`
+
 ## 1.0.0b3 (2022-12-12)
 
 ### Features Added

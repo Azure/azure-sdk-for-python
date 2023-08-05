@@ -1,7 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
 display_name: AutoML with instance type - pipeline serverless compute
-experiment_name: Serverless in Pipeline
+experiment_name: Serverless-in-Pipeline
 settings:
   default_compute: azureml:serverless
 inputs:

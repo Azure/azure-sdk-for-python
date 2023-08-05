@@ -49,8 +49,8 @@ class KeyVaultResourceId():
 def parse_key_vault_id(source_id: str) -> KeyVaultResourceId:
     try:
         parsed_uri = parse.urlparse(source_id)
-    except Exception:  # pylint: disable=broad-except
-        raise ValueError(f"'{source_id}' is not a valid ID")
+    except Exception as exc:  # pylint: disable=broad-except
+        raise ValueError(f"'{source_id}' is not a valid ID") from exc
     if not (parsed_uri.scheme and parsed_uri.hostname):
         raise ValueError(f"'{source_id}' is not a valid ID")
 

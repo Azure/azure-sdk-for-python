@@ -15,7 +15,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
-from azure.ai.ml.entities._feature_set.feature_set_materialization_response import FeatureSetMaterializationResponse
+from azure.ai.ml.entities._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
 from azure.ai.ml.entities._feature_set.feature import Feature
 from azure.ai.ml.entities import FeatureSet, FeatureSetSpecification
 from azure.ai.ml.operations import DatastoreOperations
@@ -65,7 +65,7 @@ def mock_artifact_storage(_one, _two, _three, **kwargs) -> Mock:
 @patch("azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore", new=mock_artifact_storage)
 @patch.object(FeatureSet, "_from_rest_object", new=Mock())
 @patch.object(FeatureSet, "_from_container_rest_object", new=Mock())
-@patch.object(FeatureSetMaterializationResponse, "_from_rest_object", new=Mock())
+@patch.object(FeatureSetMaterializationMetadata, "_from_rest_object", new=Mock())
 @patch.object(Feature, "_from_rest_object", new=Mock())
 @pytest.mark.data_experiences_test
 class TestFeatureSetOperations:
@@ -107,7 +107,7 @@ class TestFeatureSetOperations:
         mock_feature_set_operations._operation.list_materialization_jobs.return_value = [
             Mock(FeaturesetJobArmPaginatedResult) for _ in range(10)
         ]
-        result = mock_feature_set_operations.list_materialization_operation(name="random_name", version="1")
+        result = mock_feature_set_operations.list_materialization_operations(name="random_name", version="1")
         assert isinstance(result, Iterable)
         mock_feature_set_operations._operation.list_materialization_jobs.assert_called_once()
 
@@ -125,10 +125,8 @@ class TestFeatureSetOperations:
 
     def test_archive_version(self, mock_feature_set_operations: FeatureSetOperations):
         name = "random_name"
-        featureset_version = Mock(
-            FeaturesetVersion(properties=Mock(FeaturesetVersionProperties(entities=["test"], is_archived=False)))
-        )
-        featureset_version.properties.is_archived = False
+        featureset_version = Mock(FeaturesetVersion(properties=Mock(FeaturesetVersionProperties(entities=["test"]))))
+        featureset_version.properties.stage = "Development"
         version = "1"
         mock_feature_set_operations._operation.get.return_value = featureset_version
         mock_feature_set_operations.archive(name=name, version=version)
@@ -143,6 +141,7 @@ class TestFeatureSetOperations:
     def test_restore_version(self, mock_feature_set_operations: FeatureSetOperations):
         name = "random_name"
         featureset_version = Mock(FeaturesetVersion(properties=Mock(FeaturesetVersionProperties(entities=["test"]))))
+        featureset_version.properties.stage = "Archived"
         version = "1"
         mock_feature_set_operations._operation.get.return_value = featureset_version
         mock_feature_set_operations.restore(name=name, version=version)

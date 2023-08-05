@@ -20,15 +20,15 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class MicrosoftResourceHealthConfiguration(Configuration):
-    """Configuration for MicrosoftResourceHealth.
+class ResourceHealthMgmtClientConfiguration(Configuration):
+    """Configuration for ResourceHealthMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     """
 
@@ -42,7 +42,7 @@ class MicrosoftResourceHealthConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        super(MicrosoftResourceHealthConfiguration, self).__init__(**kwargs)
+        super(ResourceHealthMgmtClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.subscription_id = subscription_id

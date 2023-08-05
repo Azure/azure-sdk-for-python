@@ -1,8 +1,62 @@
 # Release History
 
-## 1.7.0 (Unreleased)
+
+## 1.10.0 (Unreleased)
 
 ### Features Added
+- Added support of features that are known into the future/at forecast time for dnn in AutoML Forecasting jobs.
+
+### Bugs Fixed
+- Local job runs will no longer fail if Docker registry has no username/password
+
+- Fixed an issue that code asset doesn't work with relative symbol links.
+
+### Breaking Changes
+
+### Other Changes
+
+- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
+  (instead of the default behavior for python < 3.15, which uses locale specific encodings)
+
+## 1.9.0 (2023-07-25)
+
+### Features Added
+- Added support to enable gpu access (local_enable_gpu) for local deployment.
+
+### Other Changes
+
+- Improved the output when printing a workspace object to be more clean and readable.
+- Log level of unknown field notifications for pipeline nodes raised from INFO to WARNING.
+
+## 1.8.0 (2023-06-12)
+
+### Features Added
+- Added support to enable set workspace connection secret expiry time.
+- Added support for `stage` on model version
+
+### Bugs Fixed
+
+- Fixed an issue affecting authentication to registry-related services in sovereign regions.
+- Made job_tier and priority values case insensitive
+
+## 1.7.2 (2023-05-18)
+
+### Features Added
+- Public preview support for new schedule type `MonitorSchedule`
+
+
+## 1.7.1 (2023-05-17)
+
+### Bugs Fixed
+- Fixed an issue where `OnlineDeployment.provisioning_state` was incorrectly deserialized and set as `None`
+
+
+## 1.7.0 (2023-05-15)
+
+### Features Added
+- Added data import schedule. The class added is `ImportDataSchedule`.
+- Added support to enable data isolation feature at workspace creation stage.
+- Added auto_delete_setting support for asset version in data import job.
 
 ### Bugs Fixed
 
@@ -11,7 +65,7 @@
 ### Other Changes
 
 
-## 1.6.0 (05/01/2023)
+## 1.6.0 (2023-05-01)
 
 ### Features Added
 - Added experimental scatter gather node to DSL package. This node has a unique mldesigner dependency.

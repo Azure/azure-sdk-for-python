@@ -29,7 +29,7 @@ class AzureCommunicationJobRouterServiceConfiguration(Configuration):  # pylint:
 
     def __init__(self, endpoint: str, **kwargs: Any) -> None:
         super(AzureCommunicationJobRouterServiceConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-07-18-preview")  # type: str
+        api_version: str = kwargs.pop("api_version", "2022-07-18-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

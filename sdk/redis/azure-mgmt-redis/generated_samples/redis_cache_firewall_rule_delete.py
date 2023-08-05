@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.firewall_rules.delete(
+    client.firewall_rules.delete(
         resource_group_name="rg1",
         cache_name="cache1",
         rule_name="rule1",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2022-06-01/examples/RedisCacheFirewallRuleDelete.json
+# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2023-04-01/examples/RedisCacheFirewallRuleDelete.json
 if __name__ == "__main__":
     main()

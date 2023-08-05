@@ -10,9 +10,9 @@ from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 from devtools_testutils import AzureRecordedTestCase, is_live
 
 
-def get_decorator(**kwargs):
+def get_decorator(api_versions=None, **kwargs):
     """returns a test decorator for test parameterization"""
-    return [(api_version) for api_version in ApiVersion]
+    return [(api_version) for api_version in api_versions or ApiVersion]
 
 
 class SecretsClientPreparer(AzureRecordedTestCase):

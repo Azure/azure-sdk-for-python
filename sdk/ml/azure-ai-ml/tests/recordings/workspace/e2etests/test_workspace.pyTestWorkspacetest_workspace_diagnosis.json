@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/diagnose?api-version=2022-12-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/diagnose?api-version=2023-04-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "13",
         "Content-Type": "application/json",
-        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
         "value": {}
@@ -18,61 +18,61 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Fri, 17 Feb 2023 06:39:51 GMT",
+        "Date": "Tue, 25 Apr 2023 21:14:29 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus/workspaceOperationsStatus/df00e930-c4ba-45fa-891e-fa2a79cc6d76?api-version=2022-12-01-preview\u0026type=location",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus3/workspaceOperationsStatus/ee858220-ab28-4c1a-bc01-ec58c29e5302?api-version=2023-04-01-preview\u0026type=location",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-eastus-02",
+        "x-aml-cluster": "vienna-westus3-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "bfe8ee20-cdfe-4227-bbb9-80385f4476bd",
-        "x-ms-ratelimit-remaining-subscription-reads": "11960",
+        "x-ms-correlation-request-id": "b35f5bf8-3cd0-4402-92d7-e4186dd91434",
+        "x-ms-ratelimit-remaining-subscription-reads": "11957",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230217T063951Z:bfe8ee20-cdfe-4227-bbb9-80385f4476bd",
-        "x-request-time": "0.379"
+        "x-ms-routing-request-id": "WESTCENTRALUS:20230425T211429Z:b35f5bf8-3cd0-4402-92d7-e4186dd91434",
+        "x-request-time": "0.242"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus/workspaceOperationsStatus/df00e930-c4ba-45fa-891e-fa2a79cc6d76?api-version=2022-12-01-preview\u0026type=location",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus3/workspaceOperationsStatus/ee858220-ab28-4c1a-bc01-ec58c29e5302?api-version=2023-04-01-preview\u0026type=location",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus/workspaceOperationsStatus/df00e930-c4ba-45fa-891e-fa2a79cc6d76?api-version=2022-12-01-preview\u0026type=async",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus3/workspaceOperationsStatus/ee858220-ab28-4c1a-bc01-ec58c29e5302?api-version=2023-04-01-preview\u0026type=async",
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Fri, 17 Feb 2023 06:39:51 GMT",
+        "Date": "Tue, 25 Apr 2023 21:14:29 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus/workspaceOperationsStatus/df00e930-c4ba-45fa-891e-fa2a79cc6d76?api-version=2022-12-01-preview\u0026type=location",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus3/workspaceOperationsStatus/ee858220-ab28-4c1a-bc01-ec58c29e5302?api-version=2023-04-01-preview\u0026type=location",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-eastus-02",
+        "x-aml-cluster": "vienna-westus3-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "b1dbc247-ceb7-430f-84da-aab4c730467b",
-        "x-ms-ratelimit-remaining-subscription-reads": "11959",
+        "x-ms-correlation-request-id": "31a80d01-8592-4d1d-bd96-23df30cfd5a7",
+        "x-ms-ratelimit-remaining-subscription-reads": "11956",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230217T063951Z:b1dbc247-ceb7-430f-84da-aab4c730467b",
-        "x-request-time": "0.025"
+        "x-ms-routing-request-id": "WESTCENTRALUS:20230425T211429Z:31a80d01-8592-4d1d-bd96-23df30cfd5a7",
+        "x-request-time": "0.026"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus/workspaceOperationsStatus/df00e930-c4ba-45fa-891e-fa2a79cc6d76?api-version=2022-12-01-preview\u0026type=location",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2euap/workspaceOperationsStatus/6bcb977a-a805-42a6-9c31-d49197eb9ecb?api-version=2023-04-01-preview\u0026type=async",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.10 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -80,24 +80,59 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Feb 2023 06:40:21 GMT",
+        "Date": "Tue, 25 Apr 2023 21:14:55 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
+        "Server-Timing": "traceparent;desc=\u002200-793fb3e9abe203fd70d2b1e01fe8567a-ebeef1306d413290-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "x-aml-cluster": "vienna-eastus2euap-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "631c5dfd-162f-4688-9836-1a06127e9b47",
+        "x-ms-ratelimit-remaining-subscription-reads": "11955",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20230425T211456Z:631c5dfd-162f-4688-9836-1a06127e9b47",
+        "x-request-time": "0.016"
+      },
+      "ResponseBody": {
+        "status": "InProgress"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus3/workspaceOperationsStatus/ee858220-ab28-4c1a-bc01-ec58c29e5302?api-version=2023-04-01-preview\u0026type=location",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.19041-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 25 Apr 2023 21:14:58 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-dc2f11be71a8650a3db74c64520bfeb6-3ae08f81ff45c429-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-dd7015270bb42791b15903ec1c407f30-50e663ecde3cd66a-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-eastus-02",
+        "x-aml-cluster": "vienna-westus3-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "590daa57-5b07-437d-8043-9902b5ae64c2",
-        "x-ms-ratelimit-remaining-subscription-reads": "11958",
+        "x-ms-correlation-request-id": "542b86d7-46f9-4c50-96e8-b4df3344ab2a",
+        "x-ms-ratelimit-remaining-subscription-reads": "11954",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230217T064021Z:590daa57-5b07-437d-8043-9902b5ae64c2",
-        "x-request-time": "0.043"
+        "x-ms-routing-request-id": "WESTCENTRALUS:20230425T211459Z:542b86d7-46f9-4c50-96e8-b4df3344ab2a",
+        "x-request-time": "0.076"
       },
       "ResponseBody": {
         "value": {
@@ -105,10 +140,38 @@
           "networkSecurityRuleResults": [],
           "resourceLockResults": [],
           "dnsResolutionResults": [],
-          "storageAccountResults": [],
-          "keyVaultResults": [],
+          "storageAccountResults": [
+            {
+              "code": "DependencyResourceNotExist",
+              "level": "Error",
+              "message": "Resource /subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/wsmhee2etest8724221320 has been removed, which is an essential resource to use Azure Machine Learning. Please recover Resource /subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/wsmhee2etest8724221320."
+            },
+            {
+              "code": "UnableToCheckDependencyResource",
+              "level": "Warning",
+              "message": "Unable to check settings on resource \u0027/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/wsmhee2etest8724221320\u0027."
+            }
+          ],
+          "keyVaultResults": [
+            {
+              "code": "DependencyResourceNotExist",
+              "level": "Error",
+              "message": "Resource /subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/wsmhee2etest7826901913 has been removed, which is an essential resource to use Azure Machine Learning. Please recover Resource /subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/wsmhee2etest7826901913."
+            },
+            {
+              "code": "UnableToCheckDependencyResource",
+              "level": "Warning",
+              "message": "Unable to check settings on resource \u0027/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/wsmhee2etest7826901913\u0027."
+            }
+          ],
           "containerRegistryResults": [],
-          "applicationInsightsResults": [],
+          "applicationInsightsResults": [
+            {
+              "code": "DependencyResourceNotExist",
+              "level": "Error",
+              "message": "Resource /subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.insights/components/wsmhee2etest0558698191 has been removed, which is an essential resource to use Azure Machine Learning. Please recover Resource /subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.insights/components/wsmhee2etest0558698191."
+            }
+          ],
           "otherResults": []
         }
       }

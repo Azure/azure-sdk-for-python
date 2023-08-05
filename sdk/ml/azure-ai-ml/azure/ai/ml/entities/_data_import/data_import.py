@@ -7,11 +7,14 @@
 from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DataImport as RestDataImport
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DatabaseSource as RestDatabaseSource
+from azure.ai.ml._restclient.v2023_04_01_preview.models import FileSystemSource as RestFileSystemSource
 from azure.ai.ml._schema import DataImportSchema
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes
 from azure.ai.ml.entities._assets import Data
-from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
+from azure.ai.ml.data_transfer import Database, FileSystem
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -74,11 +77,53 @@ class DataImport(Data):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
+        return load_from_dict(DataImportSchema, data, context, **kwargs)
 
-        data_import = DataImport._load_from_dict(yaml_data=data, context=context, **kwargs)
+    def _to_rest_object(self) -> RestDataImport:
+        if isinstance(self.source, Database):
+            source = RestDatabaseSource(
+                connection=self.source.connection,
+                query=self.source.query,
+            )
+        else:
+            source = RestFileSystemSource(
+                connection=self.source.connection,
+                path=self.source.path,
+            )
 
-        return data_import
+        return RestDataImport(
+            description=self.description,
+            properties=self.properties,
+            tags=self.tags,
+            data_type=self.type,
+            data_uri=self.path,
+            asset_name=self.name,
+            source=source,
+        )
 
     @classmethod
-    def _load_from_dict(cls, yaml_data: Dict, context: Dict, **kwargs) -> "DataImport":
-        return DataImport(**load_from_dict(DataImportSchema, yaml_data, context, **kwargs))
+    def _from_rest_object(cls, data_rest_object: RestDataImport) -> "DataImport":
+        if isinstance(data_rest_object.source, RestDatabaseSource):
+            source = Database(
+                connection=data_rest_object.source.connection,
+                query=data_rest_object.source.query,
+            )
+            data_type = AssetTypes.MLTABLE
+        else:
+            source = FileSystem(
+                connection=data_rest_object.source.connection,
+                path=data_rest_object.source.path,
+            )
+            data_type = AssetTypes.URI_FOLDER
+
+        data_import = cls(
+            name=data_rest_object.asset_name,
+            path=data_rest_object.data_uri,
+            source=source,
+            description=data_rest_object.description,
+            tags=data_rest_object.tags,
+            properties=data_rest_object.properties,
+            type=data_type,
+            is_anonymous=data_rest_object.is_anonymous,
+        )
+        return data_import

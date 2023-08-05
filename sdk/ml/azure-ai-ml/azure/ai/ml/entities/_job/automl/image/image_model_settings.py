@@ -723,6 +723,8 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
 
     def _to_rest_object(self) -> RestImageModelSettingsObjectDetection:
         return RestImageModelSettingsObjectDetection(
+            # Temporary fix for https://msdata.visualstudio.com/Vienna/_workitems/edit/2385143
+            log_training_metrics="Disable",
             advanced_settings=self.advanced_settings,
             ams_gradient=self.ams_gradient,
             beta1=self.beta1,

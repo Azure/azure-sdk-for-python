@@ -24,7 +24,7 @@ from azure.ai.ml._utils._arm_id_utils import (
     parse_name_label,
     parse_prefixed_name_version,
 )
-from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
+from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset, get_storage_info_for_non_registry_asset
 from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
 from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
@@ -122,8 +122,6 @@ class OperationOrchestrator(object):
         :type register_asset: Optional[bool]
         :param sub_workspace_resource:
         :type sub_workspace_resource: Optional[bool]
-        :param arm_id_cache_dict: A dict to cache the ARM id of input asset.
-        :type arm_id_cache_dict: Optional[Dict[str, str]]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if asset's ID cannot be converted
             or asset cannot be successfully registered.
         :return: The ARM Id or entity object
@@ -255,7 +253,7 @@ class OperationOrchestrator(object):
                     no_personal_data_message=msg.format(azureml_type, ""),
                     error=e,
                     error_category=ErrorCategory.SYSTEM_ERROR,
-                )
+                ) from e
             return result
         msg = f"Error creating {azureml_type} asset: must be type Optional[Union[str, Asset]]"
         raise ValidationException(
@@ -272,11 +270,20 @@ class OperationOrchestrator(object):
             if register_asset:
                 code_asset = self._code_assets.create_or_update(code_asset)
                 return code_asset.id
+            sas_info = get_storage_info_for_non_registry_asset(
+                service_client=self._code_assets._service_client,
+                workspace_name=self._operation_scope.workspace_name,
+                name=code_asset.name,
+                version=code_asset.version,
+                resource_group=self._operation_scope.resource_group_name,
+            )
             uploaded_code_asset, _ = _check_and_upload_path(
                 artifact=code_asset,
                 asset_operations=self._code_assets,
                 artifact_type=ErrorTarget.CODE,
                 show_progress=self._operation_config.show_progress,
+                sas_uri=sas_info["sas_uri"],
+                blob_uri=sas_info["blob_uri"],
             )
             uploaded_code_asset._id = get_arm_id_with_version(
                 self._operation_scope,
@@ -294,7 +301,7 @@ class OperationOrchestrator(object):
                 no_personal_data_message="Error getting code asset",
                 error=e,
                 error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+            ) from e
 
     def _get_environment_arm_id(self, environment: Environment, register_asset: bool = True) -> Union[str, Environment]:
         if register_asset:
@@ -343,7 +350,7 @@ class OperationOrchestrator(object):
                 no_personal_data_message="Error getting model",
                 error=e,
                 error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+            ) from e
 
     def _get_data_arm_id(self, data_asset: Data, register_asset: bool = True) -> Union[str, Data]:
         self._validate_datastore_name(data_asset.path)
@@ -499,7 +506,7 @@ class OperationOrchestrator(object):
                     datastore_name = datastore_name[len(ARM_ID_PREFIX) :]
 
                 self._datastore_operation.get(datastore_name)
-            except ResourceNotFoundError:
+            except ResourceNotFoundError as e:
                 msg = "The datastore {} could not be found in this workspace."
                 raise ValidationException(
                     message=msg.format(datastore_name),
@@ -507,4 +514,4 @@ class OperationOrchestrator(object):
                     no_personal_data_message=msg.format(""),
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
-                )
+                ) from e

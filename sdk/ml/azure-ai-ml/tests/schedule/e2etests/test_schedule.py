@@ -2,7 +2,7 @@ from typing import Callable
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import LROConfigurations
@@ -14,7 +14,9 @@ from .._util import _SCHEDULE_TIMEOUT_SECOND, TRIGGER_ENDTIME, TRIGGER_ENDTIME_D
 
 @pytest.mark.timeout(_SCHEDULE_TIMEOUT_SECOND)
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test", "mock_code_hash", "mock_asset_name", "mock_component_hash")
+@pytest.mark.usefixtures(
+    "recorded_test", "mock_code_hash", "mock_asset_name", "mock_component_hash", "mock_anon_component_version"
+)
 @pytest.mark.pipeline_test
 class TestSchedule(AzureRecordedTestCase):
     def test_schedule_lifetime(self, client: MLClient, randstr: Callable[[], str]):
@@ -124,6 +126,7 @@ class TestSchedule(AzureRecordedTestCase):
         # assert rest_schedule.create_job.inputs["hello_string_top_level_input"] == "${{name}}"
         # assert rest_schedule.create_job.settings.continue_on_step_failure is True
 
+    @pytest.mark.usefixtures("snapshot_hash_sanitizer")
     def test_load_recurrence_schedule_no_pattern(self, client: MLClient, randstr: Callable[[], str]):
         params_override = [{"name": randstr("name")}]
         test_path = "./tests/test_configs/schedule/hello_recurrence_schedule_no_pattern.yml"
@@ -143,6 +146,7 @@ class TestSchedule(AzureRecordedTestCase):
             "schedule": {"hours": [], "minutes": []},
         }
 
+    @pytest.mark.usefixtures("snapshot_hash_sanitizer")
     def test_load_recurrence_schedule_with_pattern(self, client: MLClient, randstr: Callable[[], str]):
         params_override = [{"name": randstr("name")}]
         test_path = "./tests/test_configs/schedule/hello_recurrence_schedule_with_pattern.yml"
@@ -209,6 +213,10 @@ class TestSchedule(AzureRecordedTestCase):
         schedule_job_dict["inputs"]["hello_input"]["mode"] = "ro_mount"
         assert schedule_job_dict == rest_schedule_job_dict
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
+    )
     @pytest.mark.usefixtures(
         "enable_pipeline_private_preview_features",
     )

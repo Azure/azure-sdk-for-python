@@ -22,16 +22,18 @@ module_logger = logging.getLogger(__name__)
 class TriggerBase(RestTranslatableMixin, ABC):
     """Base class of Trigger.
 
-    :param type: Trigger Type
+    This class should not be instantiated directly. Instead, use one of its subclasses.
+
+    :keyword type: The type of trigger.
     :type type: str
-    :param start_time: Specifies start time of schedule in ISO 8601 format.
-    :type start_time: Union[str, datetime]
-    :param end_time: Specifies end time of schedule in ISO 8601 format.
+    :keyword start_time: Specifies the start time of the schedule in ISO 8601 format.
+    :type start_time: Optional[Union[str, datetime]]
+    :keyword end_time: Specifies the end time of the schedule in ISO 8601 format.
         Note that end_time is not supported for compute schedules.
-    :type end_time: Union[str, datetime]
-    :param time_zone: Time zone in which the schedule runs. Default to UTC(+00:00).
-        This does apply to the start_time and end_time.
-    :type time_zone: Optional[TimeZone]
+    :type end_time: Optional[Union[str, datetime]]
+    :keyword time_zone: The time zone where the schedule will run. Defaults to UTC(+00:00).
+        Note that this applies to the start_time and end_time.
+    :type time_zone: ~azure.ai.ml.constants.TimeZone
     """
 
     def __init__(
@@ -41,7 +43,7 @@ class TriggerBase(RestTranslatableMixin, ABC):
         start_time: Optional[Union[str, datetime]] = None,
         end_time: Optional[Union[str, datetime]] = None,
         time_zone: TimeZone = TimeZone.UTC,
-    ):
+    ) -> None:
         super().__init__()
         self.type = type
         self.start_time = start_time
@@ -49,25 +51,36 @@ class TriggerBase(RestTranslatableMixin, ABC):
         self.time_zone = time_zone
 
     @classmethod
-    def _from_rest_object(cls, obj: RestTriggerBase) -> Union["CronTrigger", "RecurrenceTrigger"]:
+    def _from_rest_object(cls, obj: RestTriggerBase) -> Optional[Union["CronTrigger", "RecurrenceTrigger"]]:
         if obj.trigger_type == RestTriggerType.RECURRENCE:
             return RecurrenceTrigger._from_rest_object(obj)
         if obj.trigger_type == RestTriggerType.CRON:
             return CronTrigger._from_rest_object(obj)
 
+        return None
+
 
 class RecurrencePattern(RestTranslatableMixin):
-    """Recurrence pattern.
+    """Recurrence pattern for a job schedule.
 
-    :param hours: List of hours for recurrence schedule pattern.
-    :type hours: Union[int, List[int]]
-    :param minutes: List of minutes for recurrence schedule pattern.
-    :type minutes: Union[int, List[int]]
-    :param week_days: List of weekdays for recurrence schedule pattern.
-        Possible values include: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
-    :type week_days: Union[str, List[str]]
-    :param month_days: List of month days for recurrence schedule pattern.
-    :type month_days: Union[int, List[int]]
+    :keyword hours: The number of hours for the recurrence schedule pattern.
+    :type hours: Union[int, list[int]]
+    :keyword minutes: The number of minutes for the recurrence schedule pattern.
+    :type minutes: Union[int, list[int]]
+    :keyword week_days: A list of days of the week for the recurrence schedule pattern.
+        Acceptable values include: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
+    :type week_days: Optional[Union[str, list[str]]]
+    :keyword month_days: A list of days of the month for the recurrence schedule pattern.
+    :type month_days: Optional[Union[int, list[int]]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+            :start-after: [START job_schedule_configuration]
+            :end-before: [END job_schedule_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a JobSchedule to use a RecurrencePattern.
     """
 
     def __init__(
@@ -77,7 +90,7 @@ class RecurrencePattern(RestTranslatableMixin):
         minutes: Union[int, List[int]],
         week_days: Optional[Union[str, List[str]]] = None,
         month_days: Optional[Union[int, List[int]]] = None,
-    ):
+    ) -> None:
         self.hours = hours
         self.minutes = minutes
         self.week_days = week_days
@@ -115,26 +128,33 @@ class RecurrencePattern(RestTranslatableMixin):
 
 
 class CronTrigger(TriggerBase):
-    """Cron Trigger.
+    """Cron Trigger for a job schedule.
 
-    :param expression: Specifies cron expression of schedule.
-        The expression should follow NCronTab format.
+    :keyword expression: The cron expression of schedule, following NCronTab format.
     :type expression: str
-    :param start_time: Accepts str or datetime object. The tzinfo should be none if a datetime object, use
-                       ``time_zone`` property to specify a time zone if needed. You can also specify this
-                       parameter as a string in this format: YYYY-MM-DDThh:mm:ss. If None is provided, the
-                       first workload is run instantly and the future workloads are run based on the schedule.
-                       If the start time is in the past, the first workload is run at the next calculated run time.
-    :type start_time: Union[str, datetime]
-    :param end_time: Accepts str or datetime object. The tzinfo should be none if a datetime object, use
-                     ``time_zone`` property to specify a time zone if needed. You can also specify this
-                     parameter as a string in this format: YYYY-MM-DDThh:mm:ss. End time in the past is invalid
-                     and will raise exception when creating schedule.
-                     Note that end_time is not supported for compute schedules.
-    :type end_time: Union[str, datetime]
-    :param time_zone: Time zone in which the schedule runs. Default to UTC(+00:00).
-        This does apply to the start_time and end_time.
-    :type time_zone: Optional[TimeZone]
+    :keyword start_time: The start time for the trigger. If using a datetime object, leave the tzinfo as None and use
+        the ``time_zone`` parameter to specify a time zone if needed. If using a string, use the format
+        YYYY-MM-DDThh:mm:ss. Defaults to running the first workload instantly and continuing future workloads
+        based on the schedule. If the start time is in the past, the first workload is run at the next calculated run
+        time.
+    :type start_time: Optional[Union[str, datetime]]
+    :keyword end_time: The start time for the trigger. If using a datetime object, leave the tzinfo as None and use
+        the ``time_zone`` parameter to specify a time zone if needed. If using a string, use the format
+        YYYY-MM-DDThh:mm:ss. Note that end_time is not supported for compute schedules.
+    :type end_time: Optional[Union[str, datetime]]
+    :keyword time_zone: The time zone where the schedule will run. Defaults to UTC(+00:00).
+        Note that this applies to the start_time and end_time.
+    :type time_zone: Union[str, ~azure.ai.ml.constants.TimeZone]
+    :raises Exception: Raised if end_time is in the past.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+            :start-after: [START cron_trigger_configuration]
+            :end-before: [END cron_trigger_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a CronTrigger.
     """
 
     def __init__(
@@ -144,7 +164,7 @@ class CronTrigger(TriggerBase):
         start_time: Optional[Union[str, datetime]] = None,
         end_time: Optional[Union[str, datetime]] = None,
         time_zone: Union[str, TimeZone] = TimeZone.UTC,
-    ):
+    ) -> None:
         super().__init__(
             type=RestTriggerType.CRON,
             start_time=start_time,
@@ -184,22 +204,33 @@ class CronTrigger(TriggerBase):
 
 
 class RecurrenceTrigger(TriggerBase):
-    """Recurrence trigger.
+    """Recurrence trigger for a job schedule.
 
-    :param start_time: Specifies start time of schedule in ISO 8601 format.
-    :type start_time: Union[str, datetime]
-    :param end_time: Specifies end time of schedule in ISO 8601 format.
+    :keyword start_time: Specifies the start time of the schedule in ISO 8601 format.
+    :type start_time: Optional[Union[str, datetime]]
+    :keyword end_time: Specifies the end time of the schedule in ISO 8601 format.
         Note that end_time is not supported for compute schedules.
-    :type end_time: Union[str, datetime]
-    :param time_zone: Time zone in which the schedule runs. Default to UTC(+00:00).
-        This does apply to the start_time and end_time.
-    :param frequency: Specifies frequency which to trigger schedule with.
+    :type end_time: Optional[Union[str, datetime]]
+    :keyword time_zone: The time zone where the schedule will run. Defaults to UTC(+00:00).
+        Note that this applies to the start_time and end_time.
+    :type time_zone: Union[str, ~azure.ai.ml.constants.TimeZone]
+    :keyword frequency: Specifies the frequency that the schedule should be triggered with.
      Possible values include: "minute", "hour", "day", "week", "month".
     :type frequency: str
-    :param interval: Specifies schedule interval in conjunction with frequency.
+    :keyword interval: Specifies the interval in conjunction with the frequency that the schedule should be triggered
+        with.
     :type interval: int
-    :param schedule: Specifies the recurrence schedule.
-    :type schedule: RecurrencePattern
+    :keyword schedule: Specifies the recurrence pattern.
+    :type schedule: Optional[~azure.ai.ml.entities.RecurrencePattern]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+            :start-after: [START job_schedule_configuration]
+            :end-before: [END job_schedule_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a JobSchedule to trigger recurrence every 4 weeks.
     """
 
     def __init__(
@@ -211,7 +242,7 @@ class RecurrenceTrigger(TriggerBase):
         start_time: Optional[Union[str, datetime]] = None,
         end_time: Optional[Union[str, datetime]] = None,
         time_zone: Union[str, TimeZone] = TimeZone.UTC,
-    ):
+    ) -> None:
         super().__init__(
             type=RestTriggerType.RECURRENCE,
             start_time=start_time,

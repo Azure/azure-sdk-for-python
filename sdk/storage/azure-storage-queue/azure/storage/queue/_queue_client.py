@@ -86,8 +86,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
         if not queue_name:
             raise ValueError("Please specify a queue name.")
@@ -109,9 +109,6 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
         queue_name = self.queue_name
         if isinstance(queue_name, str):
             queue_name = queue_name.encode('UTF-8')
@@ -137,14 +134,15 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
         """
         try:
             if not queue_url.lower().startswith('http'):
                 queue_url = "https://" + queue_url
-        except AttributeError:
-            raise ValueError("Queue URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Queue URL must be a string.") from exc
         parsed_url = urlparse(queue_url.rstrip('/'))
 
         if not parsed_url.netloc:
@@ -184,6 +182,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
 
@@ -316,11 +315,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         return response # type: ignore
 
     @distributed_trace
-    def set_queue_metadata(self,
-                           metadata=None,  # type: Optional[Dict[str, Any]]
-                           **kwargs  # type: Any
-                           ):
-        # type: (...) -> None
+    def set_queue_metadata(
+        self, metadata=None,  # type: Optional[Dict[str, Any]]
+        **kwargs  # type: Any
+     ):
+        # type: (...) -> Dict[str, Any]
         """Sets user-defined metadata on the specified queue.
 
         Metadata is associated with the queue as name-value pairs.
@@ -335,6 +334,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
             #other-client--per-operation-configuration>`_.
+
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -553,9 +555,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         decrypted before being returned.
 
         :keyword int visibility_timeout:
-            If not specified, the default value is 0. Specifies the
+            If not specified, the default value is 30. Specifies the
             new visibility timeout value, in seconds, relative to server time.
-            The value must be larger than or equal to 0, and cannot be
+            The value must be larger than or equal to 1, and cannot be
             larger than 7 days. The visibility timeout of a message cannot be
             set to a value later than the expiry time. visibility_timeout
             should be set to a value smaller than the time-to-live value.

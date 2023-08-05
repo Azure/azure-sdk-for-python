@@ -29,11 +29,10 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.vaults.delete(
+    client.vaults.delete(
         resource_group_name="sample-resource-group",
         vault_name="sample-vault",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/keyvault/resource-manager/Microsoft.KeyVault/stable/2023-02-01/examples/deleteVault.json

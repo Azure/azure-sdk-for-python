@@ -43,7 +43,8 @@ from ._upload_helpers import (
 )
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
     from .._models import (  # pylint: disable=unused-import
         ContentSettings,
@@ -120,7 +121,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             container_name: str,
             blob_name: str,
             snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
@@ -667,6 +668,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: boolean
+        :rtype: bool
         """
         try:
             await self._client.blob.get_properties(
@@ -919,7 +921,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
         return await self._client.blob.set_immutability_policy(cls=return_response_headers, **kwargs)
 
-    @distributed_trace_async()
+    @distributed_trace_async
     async def delete_immutability_policy(self, **kwargs):
         # type: (**Any) -> None
         """The Delete Immutability Policy operation deletes the immutability policy on the blob.
@@ -2722,7 +2724,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         except HttpResponseError as error:
             process_storage_error(error)
 
-    @distributed_trace_async()
+    @distributed_trace_async
     async def append_block_from_url(self, copy_source_url,  # type: str
                                     source_offset=None,  # type: Optional[int]
                                     source_length=None,  # type: Optional[int]
@@ -2831,7 +2833,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         except HttpResponseError as error:
             process_storage_error(error)
 
-    @distributed_trace_async()
+    @distributed_trace_async
     async def seal_append_blob(self, **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
         """The Seal operation seals the Append Blob to make it read-only.
@@ -2907,7 +2909,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         else:
             _pipeline = self._pipeline  # pylint: disable = protected-access
         return ContainerClient(
-            "{}://{}".format(self.scheme, self.primary_hostname), container_name=self.container_name,
+            f"{self.scheme}://{self.primary_hostname}", container_name=self.container_name,
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, encryption_version=self.encryption_version,

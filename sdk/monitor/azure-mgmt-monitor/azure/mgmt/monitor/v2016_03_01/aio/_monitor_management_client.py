@@ -32,15 +32,14 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
 
     :ivar alert_rule_incidents: AlertRuleIncidentsOperations operations
     :vartype alert_rule_incidents:
-     $(python-base-namespace).v2016_03_01.aio.operations.AlertRuleIncidentsOperations
+     azure.mgmt.monitor.v2016_03_01.aio.operations.AlertRuleIncidentsOperations
     :ivar alert_rules: AlertRulesOperations operations
-    :vartype alert_rules: $(python-base-namespace).v2016_03_01.aio.operations.AlertRulesOperations
+    :vartype alert_rules: azure.mgmt.monitor.v2016_03_01.aio.operations.AlertRulesOperations
     :ivar log_profiles: LogProfilesOperations operations
-    :vartype log_profiles:
-     $(python-base-namespace).v2016_03_01.aio.operations.LogProfilesOperations
+    :vartype log_profiles: azure.mgmt.monitor.v2016_03_01.aio.operations.LogProfilesOperations
     :ivar metric_definitions: MetricDefinitionsOperations operations
     :vartype metric_definitions:
-     $(python-base-namespace).v2016_03_01.aio.operations.MetricDefinitionsOperations
+     azure.mgmt.monitor.v2016_03_01.aio.operations.MetricDefinitionsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.

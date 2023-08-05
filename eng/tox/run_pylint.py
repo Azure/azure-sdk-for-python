@@ -70,6 +70,6 @@ if __name__ == "__main__":
         )
     except CalledProcessError as e:
         logging.error(
-            "{} exited with linting error {}".format(pkg_details.name, e.returncode)
+            "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(pkg_details.name, e.returncode)
         )
         exit(1)

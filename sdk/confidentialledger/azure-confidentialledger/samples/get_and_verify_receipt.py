@@ -123,9 +123,16 @@ def main():
         with open(ledger_cert_file, "r") as service_cert_file:
             service_cert_content = service_cert_file.read()
 
+        # Optionally read application claims, if any
+        application_claims = get_receipt_result.get("applicationClaims", None)
+
         try:
             # Verify the contents of the receipt.
-            verify_receipt(get_receipt_result["receipt"], service_cert_content)
+            verify_receipt(
+                get_receipt_result["receipt"],
+                service_cert_content,
+                application_claims=application_claims,
+            )
             print(f"Receipt for transaction id {transaction_id} successfully verified")
         except ValueError:
             print(f"Receipt verification for transaction id {transaction_id} failed")

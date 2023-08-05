@@ -30,11 +30,11 @@ class RouterClientAuthenticationSamplesAsync(object):
         connection_string = self.endpoint
 
         # [START auth_from_connection_string_async]
-        from azure.communication.jobrouter.aio import RouterClient
+        from azure.communication.jobrouter.aio import JobRouterClient
 
         # set `connection_string` to an existing ACS endpoint
-        router_client = RouterClient.from_connection_string(conn_str = connection_string)
-        print("RouterClient created successfully!")
+        router_client = JobRouterClient.from_connection_string(conn_str = connection_string)
+        print("JobRouterClient created successfully!")
 
         # [END auth_from_connection_string_async]
 
@@ -42,11 +42,11 @@ class RouterClientAuthenticationSamplesAsync(object):
         connection_string = self.endpoint
 
         # [START admin_auth_from_connection_string_async]
-        from azure.communication.jobrouter.aio import RouterAdministrationClient
+        from azure.communication.jobrouter.aio import JobRouterAdministrationClient
 
         # set `connection_string` to an existing ACS endpoint
-        router_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
-        print("RouterAdministrationClient created successfully!")
+        router_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        print("JobRouterAdministrationClient created successfully!")
 
         # [END admin_auth_from_connection_string_async]
 

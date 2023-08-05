@@ -130,6 +130,10 @@ def test_url_join(http_request):
     assert _urljoin("devstoreaccount1", "testdir/") == "devstoreaccount1/testdir/"
     assert _urljoin("devstoreaccount1/", "") == "devstoreaccount1/"
     assert _urljoin("devstoreaccount1/", "testdir/") == "devstoreaccount1/testdir/"
+    assert _urljoin("devstoreaccount1?a=1", "testdir/") == "devstoreaccount1/testdir/?a=1"
+    assert _urljoin("devstoreaccount1", "testdir/?b=2") == "devstoreaccount1/testdir/?b=2"
+    assert _urljoin("devstoreaccount1?a=1", "testdir/?b=2") == "devstoreaccount1/testdir/?a=1&b=2"
+    assert _urljoin("devstoreaccount1", "documentModels:build") == "devstoreaccount1/documentModels:build"
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_CLIENT_TRANSPORT_RESPONSES))

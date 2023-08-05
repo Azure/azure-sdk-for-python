@@ -7,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar, Union
 import urllib.parse
 
@@ -31,10 +30,6 @@ from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._baselines_operations import build_list_request
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -45,7 +40,7 @@ class BaselinesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2018_09_01.aio.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2018_09_01.aio.MonitorManagementClient`'s
         :attr:`baselines` attribute.
     """
 
@@ -109,18 +104,18 @@ class BaselinesOperations:
         :type filter: str
         :param result_type: Allows retrieving only metadata of the baseline. On data request all
          information is retrieved. Known values are: "Data" and "Metadata". Default value is None.
-        :type result_type: str or ~$(python-base-namespace).v2018_09_01.models.ResultType
+        :type result_type: str or ~azure.mgmt.monitor.v2018_09_01.models.ResultType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SingleMetricBaseline or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2018_09_01.models.SingleMetricBaseline]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitor.v2018_09_01.models.SingleMetricBaseline]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2018-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-09-01"))
         cls: ClsType[_models.MetricBaselinesResponse] = kwargs.pop("cls", None)
 
         error_map = {

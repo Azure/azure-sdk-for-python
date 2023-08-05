@@ -60,15 +60,6 @@ class AliasType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Alias value is secret."""
 
 
-class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource."""
-
-    USER = "User"
-    APPLICATION = "Application"
-    MANAGED_IDENTITY = "ManagedIdentity"
-    KEY = "Key"
-
-
 class EnforcementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The policy assignment enforcement mode. Possible values are Default and DoNotEnforce."""
 
@@ -76,16 +67,6 @@ class EnforcementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The policy effect is enforced during resource creation or update."""
     DO_NOT_ENFORCE = "DoNotEnforce"
     """The policy effect is not enforced during resource creation or update."""
-
-
-class ExemptionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The policy exemption category. Possible values are Waiver and Mitigated."""
-
-    WAIVER = "Waiver"
-    """This category of exemptions usually means the scope is not applicable for the policy."""
-    MITIGATED = "Mitigated"
-    """This category of exemptions usually means the mitigation actions have been applied to the
-    #: scope."""
 
 
 class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -70,6 +70,7 @@ from .._generated.models import (
     FreshnessScoringFunction,
     FreshnessScoringParameters,
     GetIndexStatisticsResult,
+    HnswParameters,
     ImageAnalysisSkill,
     ImageAnalysisSkillLanguage,
     ImageDetail,
@@ -169,6 +170,8 @@ from .._generated.models import (
     UniqueTokenFilter,
     WebApiSkill,
     VisualFeature,
+    VectorSearch,
+    VectorSearchAlgorithmConfiguration,
     WordDelimiterTokenFilter,
 )
 from ._models import (
@@ -188,19 +191,21 @@ from ._models import (
 
 SearchFieldDataType = _edm
 
+
 class KeywordTokenizer(KeywordTokenizerV2):
     pass
+
 
 class PathHierarchyTokenizer(PathHierarchyTokenizerV2):
     pass
 
+
 class SimilarityAlgorithm(Similarity):
     pass
 
+
 class SearchSuggester(Suggester):
     pass
-
-
 
 
 __all__ = (
@@ -245,6 +250,7 @@ __all__ = (
     "FreshnessScoringFunction",
     "FreshnessScoringParameters",
     "GetIndexStatisticsResult",
+    "HnswParameters",
     "ImageAnalysisSkill",
     "ImageAnalysisSkillLanguage",
     "ImageDetail",
@@ -356,6 +362,8 @@ __all__ = (
     "UaxUrlEmailTokenizer",
     "UniqueTokenFilter",
     "VisualFeature",
+    "VectorSearch",
+    "VectorSearchAlgorithmConfiguration",
     "WebApiSkill",
     "WordDelimiterTokenFilter",
     "SearchFieldDataType",

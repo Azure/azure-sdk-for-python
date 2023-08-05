@@ -105,6 +105,8 @@
     "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
     "tools/azure-sdk-tools/packaging_tools/**",
     "tools/azure-sdk-tools/setup.py",
+    "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_serialization.py",
+    "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_model_base.py",
     "tools/azure-sdk-tools/tests/test_servicemetadata.py"
   ],
   "words": [
@@ -126,6 +128,7 @@
     "addinivalue",
     "adfs",
     "adls",
+    "aenter",
     "aiohttp",
     "amqp",
     "amqps",
@@ -174,6 +177,7 @@
     "dont",
     "dotenv",
     "dowhile",
+    "DPAPI",
     "dpkg",
     "dtlk",
     "dtlksd",
@@ -212,6 +216,7 @@
     "ints",
     "iohttp",
     "IOHTTP",
+    "IOLRO",
     "inprogress",
     "ipconfiguration",
     "ipconfigurations",
@@ -241,6 +246,8 @@
     "livekvtestgetkeyperfkey",
     "livekvtestsignperfkey",
     "livekvtestunwrapperfkey",
+    "lrobasepollingasynclrobasepolling",
+    "lropollerasynclropoller",
     "lmazuel",
     "logz",
     "LPCWSTR",
@@ -261,6 +268,7 @@
     "mydirectory",
     "myfile",
     "myvault",
+    "mytable",
     "nazsdk",
     "nbytes",
     "nbsp",
@@ -398,13 +406,26 @@
     "SDDL",
     "dacl",
     "whls",
-    "aiter"
+    "aiter",
+    "solft"
   ],
   "overrides": [
+    {
+      "filename": "doc/sphinx/generate_doc.py",
+      "words": [
+        "undoc"
+      ]
+    },
     {
       "filename": "doc/dev/test_proxy_migration_guide.md",
       "words": [
         "pytestmarkparametrize"
+      ]
+    },
+    {
+      "filename": "doc/dev/pylint_checking.md",
+      "words": [
+        "pylintrc"
       ]
     },
     {
@@ -546,7 +567,6 @@
         "fhir",
         "FHIR",
         "naam",
-        "aenter"
       ]
     },
     {
@@ -604,7 +624,10 @@
     {
       "filename": "sdk/containerregistry/azure-containerregistry/**",
       "words": [
-        "udpated"
+        "udpated",
+        "cncf",
+        "oras",
+        "rootfs"
       ]
     },
     {
@@ -796,6 +819,7 @@
       "filename": "sdk/monitor/azure-monitor-opentelemetry-exporter/**/*",
       "words": [
         "otel",
+        "OTELRESOURCE",
         "OTLP",
         "otlp",
         "grpc"
@@ -916,7 +940,9 @@
         "thead",
         "tbody",
         "racwdlmeop",
-        "newfs"
+        "newfs",
+        "adlsstorage",
+        "adlskey"
       ]
     },
     {
@@ -1318,6 +1344,13 @@
       ]
     },
     {
+      "filename": "sdk/purview/azure-purview-sharing/azure/purview/sharing/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
       "filename": "sdk/purview/azure-purview-catalog/azure/purview/catalog/operations/*.py",
       "words": [
         "struct",
@@ -1453,6 +1486,28 @@
         "unflattened",
         "wday",
         "deseralize"
+      ]
+    },
+    {
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_client.py",
+      "words": [
+        "awps"
+      ]
+    },
+    {
+      "filename": "sdk/contentsafety/azure-ai-contentsafety/azure/ai/contentsafety/*.py",
+      "words": [
+        "mros",
+        "deserializers",
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
+      "filename": "sdk/iothub/azure-iot-deviceprovisioning/azure/iot/deviceprovisioning/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
       ]
     }
   ],

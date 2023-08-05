@@ -4,35 +4,35 @@
 
 # pylint: disable=redefined-builtin,disable=unused-argument
 
-from typing import Dict
+from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import IndexColumn, FeatureDataType
-
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._restclient.v2023_02_01_preview.models import FeatureDataType, IndexColumn
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .data_column_type import DataColumnType
 
 DataColumnTypeMap: Dict[DataColumnType, FeatureDataType] = {
-    DataColumnType.string: FeatureDataType.STRING,
-    DataColumnType.integer: FeatureDataType.INTEGER,
-    DataColumnType.long: FeatureDataType.LONG,
-    DataColumnType.float: FeatureDataType.FLOAT,
-    DataColumnType.double: FeatureDataType.DOUBLE,
-    DataColumnType.binary: FeatureDataType.BINARY,
-    DataColumnType.datetime: FeatureDataType.DATETIME,
-    DataColumnType.boolean: FeatureDataType.BOOLEAN,
+    DataColumnType.STRING: FeatureDataType.STRING,
+    DataColumnType.INTEGER: FeatureDataType.INTEGER,
+    DataColumnType.LONG: FeatureDataType.LONG,
+    DataColumnType.FLOAT: FeatureDataType.FLOAT,
+    DataColumnType.DOUBLE: FeatureDataType.DOUBLE,
+    DataColumnType.BINARY: FeatureDataType.BINARY,
+    DataColumnType.DATETIME: FeatureDataType.DATETIME,
+    DataColumnType.BOOLEAN: FeatureDataType.BOOLEAN,
 }
 
 FeatureDataTypeMap: Dict[str, DataColumnType] = {
-    "String": DataColumnType.string,
-    "Integer": DataColumnType.integer,
-    "Long": DataColumnType.long,
-    "Float": DataColumnType.float,
-    "Double": DataColumnType.double,
-    "Binary": DataColumnType.binary,
-    "Datetime": DataColumnType.datetime,
-    "Boolean": DataColumnType.boolean,
+    "String": DataColumnType.STRING,
+    "Integer": DataColumnType.INTEGER,
+    "Long": DataColumnType.LONG,
+    "Float": DataColumnType.FLOAT,
+    "Double": DataColumnType.DOUBLE,
+    "Binary": DataColumnType.BINARY,
+    "Datetime": DataColumnType.DATETIME,
+    "Boolean": DataColumnType.BOOLEAN,
 }
 
 
@@ -45,7 +45,19 @@ class DataColumn(RestTranslatableMixin):
     :type type: str, one of [string, integer, long, float, double, binary, datetime, boolean] or
     ~azure.ai.ml.entities.DataColumnType, optional"""
 
-    def __init__(self, *, name: str, type: DataColumnType = None, **kwargs):
+    def __init__(self, *, name: str, type: Optional[Union[str, DataColumnType]] = None, **kwargs):
+        if isinstance(type, str):
+            type = DataColumnType[type]
+        elif not isinstance(type, DataColumnType):
+            msg = f"Type should be DataColumnType enum string or enum type, found {type}"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                error_type=ValidationErrorType.INVALID_VALUE,
+                target=ErrorTarget.DATA,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
         self.name = name
         self.type = type
 

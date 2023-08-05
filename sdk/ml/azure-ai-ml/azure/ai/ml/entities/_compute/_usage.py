@@ -14,20 +14,36 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class UsageName:
-    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None):
-        """The Usage Names.
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None) -> None:
+        """The usage name.
 
         :param value: The name of the resource.
-        :type value: str
+        :type value: Optional[str]
         :param localized_value: The localized name of the resource.
-        :type localized_value: str
+        :type localized_value: Optional[str]
         """
         self.value = value
         self.localized_value = localized_value
 
 
 class Usage(RestTranslatableMixin):
-    """Describes AML Resource Usage."""
+    """AzureML resource usage.
+
+    :param id: The resource ID.
+    :type id: Optional[str]
+    :param aml_workspace_location: The region of the AzureML workspace specified by the ID.
+    :type aml_workspace_location: Optional[str]
+    :param type: The resource type.
+    :type type: Optional[str]
+    :param unit: The unit of measurement for usage. Accepted value is "Count".
+    :type unit: Optional[Union[str, ~azure.ai.ml.entities.UsageUnit]]
+    :param current_value: The current usage of the resource.
+    :type current_value: Optional[int]
+    :param limit: The maximum permitted usage for the resource.
+    :type limit: Optional[int]
+    :param name: The name of the usage type.
+    :type name: Optional[~azure.ai.ml.entities.UsageName]
+    """
 
     def __init__(
         self,
@@ -38,24 +54,8 @@ class Usage(RestTranslatableMixin):
         current_value: Optional[int] = None,
         limit: Optional[int] = None,
         name: Optional[UsageName] = None,
-    ):
-        """Describes AML Resource Usage.
+    ) -> None:
 
-        :param id: Specifies the resource ID.
-        :type id: str
-        :param aml_workspace_location: Region of the AML workspace in the id.
-        :type aml_workspace_location: str
-        :param type: Specifies the resource type.
-        :type type: str
-        :param unit: An enum describing the unit of usage measurement. Possible values include: "Count".
-        :type unit: str or ~azure.ai.ml.entities.UsageUnit
-        :param current_value: The current usage of the resource.
-        :type current_value: int
-        :param limit: The maximum permitted usage of the resource.
-        :type limit: int
-        :param name: The name of the type of usage.
-        :type name: ~azure.ai.ml.entities.UsageName
-        """
         self.id = id
         self.aml_workspace_location = aml_workspace_location
         self.type = type
@@ -71,15 +71,16 @@ class Usage(RestTranslatableMixin):
         return result
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
-        """Dump the resource usage content into a file in yaml format.
+        """Dumps the job content into a file in YAML format.
 
-        :param dest: The destination to receive this resource usage's content.
-            Must be either a path to a local file, or an already-open file stream.
-            If dest is a file path, a new file will be created,
-            and an exception is raised if the file exists.
-            If dest is an open file, the file will be written to directly,
-            and an exception will be raised if the file is not writable.
+        :param dest: The local path or file stream to write the YAML content to.
+            If dest is a file path, a new file will be created.
+            If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
+        :keyword kwargs: Additional arguments to pass to the YAML serializer.
+        :type kwargs: dict
+        :raises: FileExistsError if dest is a file path and the file already exists.
+        :raises: IOError if dest is an open file and the file is not writable.
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()

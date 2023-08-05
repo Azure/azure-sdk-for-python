@@ -12,7 +12,7 @@ from typing import Any, Awaitable, Optional
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .. import models
+from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import AzureAppConfigurationConfiguration
 from .operations import AzureAppConfigurationOperationsMixin
@@ -26,9 +26,11 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: di
     :param sync_token: Used to guarantee real-time consistency between requests. Default value is
      None.
     :type sync_token: str
-    :keyword api_version: Api Version. Default value is "1.0". Note that overriding this default
-     value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-11-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
@@ -36,9 +38,9 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: di
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = AzureAppConfigurationConfiguration(endpoint=endpoint, sync_token=sync_token, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -76,5 +78,5 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: di
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

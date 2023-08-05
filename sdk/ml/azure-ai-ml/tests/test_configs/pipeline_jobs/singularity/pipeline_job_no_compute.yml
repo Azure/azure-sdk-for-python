@@ -1,7 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
 display_name: enumerate Singularity priority value
-experiment_name: Singularity in pipeline
+experiment_name: Singularity-in-pipeline
 jobs:
   low_node:
     command: echo Low

@@ -31,8 +31,8 @@ _SERIALIZER.client_side_validation = False
 class ContentDownloader(object):
     def __init__(
             self,
-            call_recording_client,  # type: CallRecordingOperations
-        ): # type: (...) -> None
+            call_recording_client:CallRecordingOperations
+        ) -> None:
 
         self._call_recording_client = call_recording_client
 
@@ -70,7 +70,7 @@ class ContentDownloader(object):
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
-        request = build_call_recording_download_recording_request(
+        request = _build_call_recording_download_recording_request(
             source_location = source_location,
             headers =_headers,
             params =_params,
@@ -116,7 +116,7 @@ class ContentDownloader(object):
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
-        request = build_call_recording_delete_recording_request(
+        request = _build_call_recording_delete_recording_request(
             recording_location = recording_location,
             headers =_headers,
             params =_params,
@@ -136,7 +136,7 @@ class ContentDownloader(object):
             )
             raise HttpResponseError(response=response, model=error)
 
-def build_call_recording_delete_recording_request(recording_location: str, host: str, **kwargs: Any) -> HttpRequest:
+def _build_call_recording_delete_recording_request(recording_location: str, host: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -150,7 +150,7 @@ def build_call_recording_delete_recording_request(recording_location: str, host:
         **kwargs
     )
 
-def build_call_recording_download_recording_request(source_location: str,
+def _build_call_recording_download_recording_request(source_location: str,
                                                     start:int,
                                                     end:int,
                                                     host:str,

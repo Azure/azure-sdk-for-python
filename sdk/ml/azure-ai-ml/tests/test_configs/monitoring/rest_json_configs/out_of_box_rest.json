@@ -1,0 +1,187 @@
+{
+    "properties": {
+      "description": "Loan approval model monitoring setup with minimal configurations",
+      "properties": {},
+      "tags": {
+        "data-drift-signal.baselinedata.datarange.type": "Trailing",
+        "data-drift-signal.baselinedata.datarange.window_size": "P7D",
+        "prediction-drift-signal.baselinedata.datarange.type": "Trailing",
+        "prediction-drift-signal.baselinedata.datarange.window_size": "P7D",
+        "data-quality-signal.baselinedata.datarange.type": "Trailing",
+        "data-quality-signal.baselinedata.datarange.window_size": "P7D",
+        "compute.spark.resources.instance_type": "standard_e8s_v3",
+        "compute.spark.resources.runtime_version": "3.2"
+      },
+      "action": {
+        "actionType": "CreateMonitor",
+        "monitorDefinition": {
+          "computeId": "spark",
+          "monitoringTarget": "fake_endpoint_deployment_id",
+          "signals": {
+            "data-drift-signal": {
+              "lookbackPeriod": "P7D",
+              "mode": "Enabled",
+              "signalType": "DataDrift",
+              "baselineData": {
+                "asset": {
+                  "uri": "input_arm_id",
+                  "jobInputType": "uri_folder"
+                },
+                "dataContext": "modelInputs"
+              },
+              "features": {
+                "filterType": "AllFeatures"
+              },
+              "metricThresholds": [
+                {
+                  "dataType": "Numerical",
+                  "threshold": {
+                    "value": 0.1
+                  },
+                  "metric": "normalizedWassersteinDistance"
+                },
+                {
+                  "dataType": "Categorical",
+                  "threshold": {
+                    "value": 0.1
+                  },
+                  "metric": "jensenShannonDistance"
+                }
+              ],
+              "targetData": {
+                "asset": {
+                  "uri": "input_arm_id",
+                  "jobInputType": "uri_folder"
+                },
+                "dataContext": "modelInputs"
+              }
+            },
+            "prediction-drift-signal": {
+              "lookbackPeriod": "P7D",
+              "mode": "Enabled",
+              "signalType": "PredictionDrift",
+              "baselineData": {
+                "asset": {
+                  "uri": "output_arm_id",
+                  "jobInputType": "uri_folder"
+                },
+                "dataContext": "modelOutputs"
+              },
+              "metricThresholds": [
+                {
+                  "dataType": "Numerical",
+                  "threshold": {
+                    "value": 0.1
+                  },
+                  "metric": "normalizedWassersteinDistance"
+                },
+                {
+                  "dataType": "Categorical",
+                  "threshold": {
+                    "value": 0.1
+                  },
+                  "metric": "jensenShannonDistance"
+                }
+              ],
+              "modelType": "classification",
+              "targetData": {
+                "asset": {
+                  "uri": "output_arm_id",
+                  "jobInputType": "uri_folder"
+                },
+                "dataContext": "modelOutputs"
+              }
+            },
+            "data-quality-signal": {
+              "lookbackPeriod": "P7D",
+              "mode": "Enabled",
+              "signalType": "DataQuality",
+              "baselineData": {
+                "asset": {
+                  "uri": "input_arm_id",
+                  "jobInputType": "uri_folder"
+                },
+                "dataContext": "modelInputs"
+              },
+              "features": {
+                "filterType": "AllFeatures"
+              },
+              "metricThresholds": [
+                {
+                  "dataType": "Numerical",
+                  "threshold": {
+                    "value": 0.0
+                  },
+                  "metric": "nullValueRate"
+                },
+                {
+                  "dataType": "Numerical",
+                  "threshold": {
+                    "value": 0.0
+                  },
+                  "metric": "dataTypeErrorRate"
+                },
+                {
+                  "dataType": "Numerical",
+                  "threshold": {
+                    "value": 0.0
+                  },
+                  "metric": "outOfBoundsRate"
+                },
+                {
+                  "dataType": "Categorical",
+                  "threshold": {
+                    "value": 0.0
+                  },
+                  "metric": "nullValueRate"
+                },
+                {
+                  "dataType": "Categorical",
+                  "threshold": {
+                    "value": 0.0
+                  },
+                  "metric": "dataTypeErrorRate"
+                },
+                {
+                  "dataType": "Categorical",
+                  "threshold": {
+                    "value": 0.0
+                  },
+                  "metric": "outOfBoundsRate"
+                }
+              ],
+              "targetData": {
+                "asset": {
+                  "uri": "input_arm_id",
+                  "jobInputType": "uri_folder"
+                },
+                "dataContext": "modelInputs"
+              }
+            }
+          }
+        }
+      },
+      "displayName": "Loan Approval model monitoring",
+      "trigger": {
+        "triggerType": "Recurrence",
+        "timeZone": "utc",
+        "frequency": "week",
+        "interval": 1,
+        "schedule": {
+            "hours": [
+                22, 20
+            ],
+            "minutes": [
+                0, 30
+            ],
+            "weekDays": [
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday"
+            ]
+        }
+      }
+    }
+  }

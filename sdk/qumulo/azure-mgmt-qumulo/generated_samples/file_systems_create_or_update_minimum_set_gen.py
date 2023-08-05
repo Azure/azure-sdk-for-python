@@ -47,13 +47,13 @@ def main():
                 },
                 "provisioningState": "Accepted",
                 "storageSku": "Standard",
-                "userDetails": {"email": "aaaaaaaaaaaaaaaaaaaaaaa"},
+                "userDetails": {"email": "viptslwulnpaupfljvnjeq"},
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/liftrqumulo/resource-manager/Qumulo.Storage/preview/2022-10-12-preview/examples/FileSystems_CreateOrUpdate_MinimumSet_Gen.json
+# x-ms-original-file: specification/liftrqumulo/resource-manager/Qumulo.Storage/stable/2022-10-12/examples/FileSystems_CreateOrUpdate_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

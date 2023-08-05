@@ -42,7 +42,7 @@ class ComponentTranslatableMixin:
             )
         input_data = pipeline_job_inputs[_input_name]
         input_type = type(input_data)
-        if input_type in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+        if input_type in cls._PYTHON_SDK_TYPE_MAPPING:
             return cls._PYTHON_SDK_TYPE_MAPPING[input_type], None
         return getattr(input_data, "type", AssetTypes.URI_FOLDER), getattr(input_data, "mode", None)
 
@@ -63,7 +63,7 @@ class ComponentTranslatableMixin:
             )
         output_data = pipeline_job_outputs[_output_name]
         output_type = type(output_data)
-        if output_type in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+        if output_type in cls._PYTHON_SDK_TYPE_MAPPING:
             return cls._PYTHON_SDK_TYPE_MAPPING[output_type], None
         if isinstance(output_data, dict):
             if "type" in output_data:
@@ -125,14 +125,14 @@ class ComponentTranslatableMixin:
                         #  input/output type because we didn't get the component.
                         source_type, _ = cls._find_source_input_output_type(_source._data, pipeline_job_dict)
                 return source_type, source_mode
-            except AttributeError:
+            except AttributeError as e:
                 msg = "Failed to get referenced component type {}."
                 raise JobException(
                     message=msg.format(_input_regex),
                     no_personal_data_message=msg.format("[_input_regex]"),
                     target=ErrorTarget.PIPELINE,
                     error_category=ErrorCategory.USER_ERROR,
-                )
+                ) from e
         if isinstance(_input_job, (CommandJob, ParallelJob)):
             # If source has not parsed to Command yet, infer type
             _source = get(_input_job, f"{_io_type}.{_name}")
@@ -223,7 +223,7 @@ class ComponentTranslatableMixin:
                 input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[float]
 
             input_variable["optional"] = False
-        elif type(input) in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+        elif type(input) in cls._PYTHON_SDK_TYPE_MAPPING:
             input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(input)]
             input_variable["default"] = input
         elif isinstance(input, PipelineInput):
@@ -293,7 +293,7 @@ class ComponentTranslatableMixin:
         elif isinstance(output, PipelineOutput):
             output_variable = output._to_output()._to_dict()
 
-        elif type(output) in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+        elif type(output) in cls._PYTHON_SDK_TYPE_MAPPING:
             output_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(output)]
             output_variable["default"] = output
         else:
@@ -345,7 +345,7 @@ class ComponentTranslatableMixin:
     def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "BaseNode":
         """Translate to pipeline node.
 
-        :param kwargs:
+        :keyword kwargs:
         :return: Translated node.
         """
         # Note: Source of translated component should be same with Job

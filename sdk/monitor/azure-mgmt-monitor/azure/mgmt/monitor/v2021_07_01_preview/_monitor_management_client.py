@@ -33,19 +33,19 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
 
     :ivar private_link_scopes: PrivateLinkScopesOperations operations
     :vartype private_link_scopes:
-     $(python-base-namespace).v2021_07_01_preview.operations.PrivateLinkScopesOperations
+     azure.mgmt.monitor.v2021_07_01_preview.operations.PrivateLinkScopesOperations
     :ivar private_link_scope_operation_status: PrivateLinkScopeOperationStatusOperations operations
     :vartype private_link_scope_operation_status:
-     $(python-base-namespace).v2021_07_01_preview.operations.PrivateLinkScopeOperationStatusOperations
+     azure.mgmt.monitor.v2021_07_01_preview.operations.PrivateLinkScopeOperationStatusOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
-     $(python-base-namespace).v2021_07_01_preview.operations.PrivateLinkResourcesOperations
+     azure.mgmt.monitor.v2021_07_01_preview.operations.PrivateLinkResourcesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
-     $(python-base-namespace).v2021_07_01_preview.operations.PrivateEndpointConnectionsOperations
+     azure.mgmt.monitor.v2021_07_01_preview.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_scoped_resources: PrivateLinkScopedResourcesOperations operations
     :vartype private_link_scoped_resources:
-     $(python-base-namespace).v2021_07_01_preview.operations.PrivateLinkScopedResourcesOperations
+     azure.mgmt.monitor.v2021_07_01_preview.operations.PrivateLinkScopedResourcesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.

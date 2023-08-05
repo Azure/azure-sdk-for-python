@@ -4,10 +4,12 @@
 # ------------------------------------
 import asyncio
 from abc import abstractmethod
+from retry import retry
+import warnings
 from _shared.utils import get_http_logging_policy
 from azure.communication.jobrouter.aio import (
-    RouterClient,
-    RouterAdministrationClient,
+    JobRouterClient,
+    JobRouterAdministrationClient,
 )
 from azure.communication.jobrouter import (
     RouterJobStatus,
@@ -20,66 +22,80 @@ class AsyncRouterRecordedTestCase(AzureRecordedTestCase):
     async def clean_up(self):
         pass
 
-    def create_client(self) -> RouterClient:
-        return RouterClient.from_connection_string(
+    def create_client(self) -> JobRouterClient:
+        return JobRouterClient.from_connection_string(
             conn_str = self.connection_string,
             http_logging_policy=get_http_logging_policy())
 
-    def create_admin_client(self) -> RouterAdministrationClient:
-        return RouterAdministrationClient.from_connection_string(
+    def create_admin_client(self) -> JobRouterAdministrationClient:
+        return JobRouterAdministrationClient.from_connection_string(
             conn_str = self.connection_string,
             http_logging_policy=get_http_logging_policy())
 
+    @retry(Exception, delay=3, tries=3)
     async def clean_up_job(
             self,
             job_id,
             **kwargs
     ):
-        router_client: RouterClient = self.create_client()
+        router_client: JobRouterClient = self.create_client()
+        suppress_errors = kwargs.pop('suppress_errors', False)
 
-        async with router_client:
-            router_job = await router_client.get_job(job_id = job_id)
+        try:
+            async with router_client:
+                router_job = await router_client.get_job(job_id = job_id)
 
-            if router_job.job_status == RouterJobStatus.PENDING_CLASSIFICATION:
-                # cancel and delete job
-                await router_client.cancel_job(job_id = job_id, disposition_code = "JobCancelledAsPartOfTestCleanUp")
-                await router_client.delete_job(job_id = job_id)
-            elif router_job.job_status == RouterJobStatus.QUEUED:
-                # cancel and delete job
-                await router_client.cancel_job(job_id = job_id, disposition_code = "JobCancelledAsPartOfTestCleanUp")
-                await router_client.delete_job(job_id = job_id)
-            elif router_job.job_status == RouterJobStatus.ASSIGNED:
-                # complete, close and delete job
-                worker_assignments = router_job.assignments
+                if router_job.status == RouterJobStatus.PENDING_CLASSIFICATION:
+                    # cancel and delete job
+                    await router_client.cancel_job(job_id = job_id, disposition_code = "JobCancelledAsPartOfTestCleanUp")
+                    await router_client.delete_job(job_id = job_id)
+                elif router_job.status == RouterJobStatus.QUEUED:
+                    # cancel and delete job
+                    await router_client.cancel_job(job_id = job_id, disposition_code = "JobCancelledAsPartOfTestCleanUp")
+                    await router_client.delete_job(job_id = job_id)
+                elif router_job.status == RouterJobStatus.ASSIGNED:
+                    # complete, close and delete job
+                    worker_assignments = router_job.assignments
 
-                for assignment_id, job_assignment in worker_assignments.items():
-                    await router_client.complete_job(job_id = job_id, assignment_id = assignment_id)
-                    await router_client.close_job(job_id = job_id, assignment_id = assignment_id)
+                    for assignment_id, job_assignment in worker_assignments.items():
+                        await router_client.complete_job(job_id = job_id, assignment_id = assignment_id)
+                        await router_client.close_job(job_id = job_id, assignment_id = assignment_id)
 
-                await router_client.delete_job(job_id = job_id)
-            elif router_job.job_status == RouterJobStatus.COMPLETED:
-                # close and delete job
-                worker_assignments = router_job.assignments
+                    await router_client.delete_job(job_id = job_id)
+                elif router_job.status == RouterJobStatus.COMPLETED:
+                    # close and delete job
+                    worker_assignments = router_job.assignments
 
-                for assignment_id, job_assignment in worker_assignments.items():
-                    await router_client.close_job(job_id = job_id, assignment_id = assignment_id)
+                    for assignment_id, job_assignment in worker_assignments.items():
+                        await router_client.close_job(job_id = job_id, assignment_id = assignment_id)
 
-                await router_client.delete_job(job_id = job_id)
-            elif router_job.job_status == RouterJobStatus.CLOSED:
-                # delete job
-                await router_client.delete_job(job_id = job_id)
-            elif router_job.job_status == RouterJobStatus.CANCELLED:
-                # delete job
-                await router_client.delete_job(job_id = job_id)
-            elif router_job.job_status == RouterJobStatus.CLASSIFICATION_FAILED:
-                # delete job
-                await router_client.delete_job(job_id = job_id)
-            elif router_job.job_status == RouterJobStatus.CREATED:
-                # cancel and delete job
-                await router_client.cancel_job(job_id = job_id, disposition_code = "JobCancelledAsPartOfTestCleanUp")
-                await router_client.delete_job(job_id = job_id)
-            else:
-                pass
+                    await router_client.delete_job(job_id = job_id)
+                elif router_job.status == RouterJobStatus.CLOSED:
+                    # delete job
+                    await router_client.delete_job(job_id = job_id)
+                elif router_job.status == RouterJobStatus.CANCELLED:
+                    # delete job
+                    await router_client.delete_job(job_id = job_id)
+                elif router_job.status == RouterJobStatus.CLASSIFICATION_FAILED:
+                    # delete job
+                    await router_client.delete_job(job_id = job_id)
+                elif router_job.status == RouterJobStatus.CREATED:
+                    # cancel and delete job
+                    await router_client.cancel_job(job_id = job_id, disposition_code = "JobCancelledAsPartOfTestCleanUp")
+                    await router_client.delete_job(job_id = job_id)
+                elif router_job.status == RouterJobStatus.WAITING_FOR_ACTIVATION:
+                    # cancel and delete job
+                    await router_client.cancel_job(job_id = job_id,
+                                                   disposition_code = "JobCancelledAsPartOfTestCleanUp")
+                    await router_client.delete_job(job_id = job_id)
+                else:
+                    pass
+        except Exception as e:
+            msg = f"Deletion of job failed: {job_id}"
+            warnings.warn(UserWarning(msg))
+            print(e)
+            if not suppress_errors:
+                raise e
 
     async def _poll_until_no_exception(self, fn, expected_exception, *args, **kwargs):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""

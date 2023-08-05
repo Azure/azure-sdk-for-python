@@ -1,6 +1,6 @@
 # Azure Cognitive Services Health Insights Cancer Profiling client library for Python
 
-[Health Insights](https://review.learn.microsoft.com/azure/azure-health-insights/?branch=release-azure-health-insights) is an Azure Applied AI Service built with the Azure Cognitive Services Framework, that leverages multiple Cognitive Services, Healthcare API services and other Azure resources.
+[Health Insights][health_insights] is an Azure Applied AI Service built with the Azure Cognitive Services Framework, that leverages multiple Cognitive Services, Healthcare API services and other Azure resources.
 
 The [Cancer Profiling model][cancer_profiling_docs] receives clinical records of oncology patients and outputs cancer staging, such as clinical stage TNM categories and pathologic stage TNM categories as well as tumor site, histology.
 
@@ -108,8 +108,7 @@ cancer_profiling_client = CancerProfilingClient(endpoint=ENDPOINT,
 
 # Construct patient
 # <PatientConstructor>
-patient_info = models.PatientInfo(sex=models.PatientInfoSex.FEMALE, birth_date=datetime.date(1979, 10, 8))
-patient1 = models.PatientRecord(id="patient_id", info=patient_info)
+patient1 = models.PatientRecord(id="patient_id")
 # </PatientConstructor>
 
 # Add document list
@@ -289,15 +288,16 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 <!-- LINKS -->
+[health_insights]: https://learn.microsoft.com/azure/azure-health-insights/overview
 [azure_core]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html#module-azure.core.exceptions
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [azure_sub]: https://azure.microsoft.com/free/
 [azure_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesHealthInsights
 [azure_cli]: https://learn.microsoft.com/cli/azure/
-[cancer_profiling_docs]: https://review.learn.microsoft.com/azure/cognitive-services/health-decision-support/oncophenotype/overview?branch=main
-[cancer_profiling_api_documentation]: https://review.learn.microsoft.com/rest/api/cognitiveservices/healthinsights/onco-phenotype?branch=healthin202303
+[cancer_profiling_docs]: https://learn.microsoft.com/azure/azure-health-insights/oncophenotype/overview
+[cancer_profiling_api_documentation]: https://learn.microsoft.com/rest/api/cognitiveservices/healthinsights/onco-phenotype
 [hi_pypi]: https://pypi.org/project/azure-healthinsights-cancerprofiling/
 [hi_pypi]: https://pypi.org/
-[product_docs]:https://review.learn.microsoft.com/azure/cognitive-services/health-decision-support/oncophenotype/?branch=main
+[product_docs]: https://learn.microsoft.com/azure/azure-health-insights/oncophenotype/
 [hi_samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-cancerprofiling/samples
 [hi_source_code]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-cancerprofiling/azure/healthinsights/cancerprofiling

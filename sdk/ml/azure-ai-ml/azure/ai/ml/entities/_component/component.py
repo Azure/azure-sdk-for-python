@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 import re
 import uuid
-from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Tuple, Union
@@ -18,19 +17,16 @@ from ..._restclient.v2022_10_01.models import (
 )
 from ..._schema import PathAwareSchema
 from ..._schema.component import ComponentSchema
-from ..._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
-from ..._utils.utils import dump_yaml_to_file, hash_dict, is_private_preview_enabled
+from ..._utils.utils import dump_yaml_to_file, hash_dict
 from ...constants._common import (
     ANONYMOUS_COMPONENT_NAME,
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
     REGISTRY_URI_FORMAT,
     SOURCE_PATH_CONTEXT_KEY,
-    AzureMLResourceType,
     CommonYamlFields,
 )
 from ...constants._component import ComponentSource, IOConstants, NodeType
-from ...entities._assets import Code
 from ...entities._assets.asset import Asset
 from ...entities._inputs_outputs import Input, Output
 from ...entities._mixins import TelemetryMixin, YamlTranslatableMixin
@@ -38,7 +34,7 @@ from ...entities._system_data import SystemData
 from ...entities._util import find_type_in_override
 from ...entities._validation import MutableValidationResult, RemoteValidatableMixin, SchemaValidatableMixin
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
-from .code import ComponentIgnoreFile
+from .._inputs_outputs import GroupInput
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
@@ -60,10 +56,9 @@ class Component(
     :type name: str
     :param version: Version of the resource.
     :type version: str
-    :param id:  Global id of the resource, Azure Resource Manager ID.
+    :param id: Global ID of the resource, Azure Resource Manager ID.
     :type id: str
-    :param type:  Type of the command, supported is 'command'.
-    :param type:  Type of the command, supported is 'command'.
+    :param type: Type of the command, supported is 'command'.
     :type type: str
     :param description: Description of the resource.
     :type description: str
@@ -73,18 +68,19 @@ class Component(
     :type properties: dict
     :param display_name: Display name of the component.
     :type display_name: str
-    :param is_deterministic: Whether the component is deterministic.
+    :param is_deterministic: Whether the component is deterministic. Defaults to True.
     :type is_deterministic: bool
     :param inputs: Inputs of the component.
     :type inputs: dict
     :param outputs: Outputs of the component.
     :type outputs: dict
-    :param yaml_str: The yaml string of the component.
+    :param yaml_str: The YAML string of the component.
     :type yaml_str: str
     :param _schema: Schema of the component.
     :type _schema: str
     :param creation_context: Creation metadata of the component.
     :type creation_context: ~azure.ai.ml.entities.SystemData
+    :param kwargs: Additional parameters for the component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -108,7 +104,7 @@ class Component(
         _schema: Optional[str] = None,
         creation_context: Optional[SystemData] = None,
         **kwargs,
-    ):
+    ) -> None:
         self._intellectual_property = kwargs.pop("intellectual_property", None)
         # Setting this before super init because when asset init version, _auto_increment_version's value may change
         self._auto_increment_version = kwargs.pop("auto_increment", False)
@@ -214,10 +210,20 @@ class Component(
 
     @property
     def version(self) -> str:
+        """Version of the component.
+
+        :return: Version of the component.
+        :rtype: str
+        """
         return self._version
 
     @version.setter
     def version(self, value: str) -> None:
+        """Set the version of the component.
+
+        :param value: The version of the component.
+        :type value: str
+        """
         if value:
             if not isinstance(value, str):
                 msg = f"Component version must be a string, not type {type(value)}."
@@ -287,6 +293,10 @@ class Component(
                 component_io[name] = port if isinstance(port, Input) else Input(**port)
             else:
                 component_io[name] = port if isinstance(port, Output) else Output(**port)
+
+        if is_input:
+            # Restore flattened parameters to group
+            return GroupInput.restore_flattened_inputs(component_io)
         return component_io
 
     @classmethod
@@ -409,14 +419,14 @@ class Component(
         rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
         init_kwargs = cls._load_with_schema(rest_component_version.component_spec, unknown=INCLUDE)
         init_kwargs.update(
-            dict(
-                id=obj.id,
-                is_anonymous=rest_component_version.is_anonymous,
-                creation_context=obj.system_data,
-                inputs=inputs,
-                outputs=outputs,
-                name=origin_name,
-            )
+            {
+                "id": obj.id,
+                "is_anonymous": rest_component_version.is_anonymous,
+                "creation_context": obj.system_data,
+                "inputs": inputs,
+                "outputs": outputs,
+                "name": origin_name,
+            }
         )
 
         # remove empty values, because some property only works for specific component, eg: distribution for command
@@ -428,10 +438,14 @@ class Component(
 
         same anonymous component(same code and interface) will have same name.
         """
-        component_interface_dict = self._to_dict()
         # omit version since anonymous component's version is random guid
         # omit name since name doesn't impact component's uniqueness
-        return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
+        return self._get_component_hash(keys_to_omit=["name", "id", "version"])
+
+    def _get_component_hash(self, keys_to_omit=None) -> str:
+        """Return the hash of component."""
+        component_interface_dict = self._to_dict()
+        return hash_dict(component_interface_dict, keys_to_omit=keys_to_omit)
 
     @classmethod
     def _get_resource_type(cls) -> str:
@@ -456,30 +470,19 @@ class Component(
 
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(Component, self)._customized_validate()
-        # If private features are enable and component has code value of type str we need to check
-        # that it is a valid git path case. Otherwise we should throw a ValidationError
-        # saying that the code value is not valid
-        # pylint: disable=no-member
-        if (
-            hasattr(self, "code")
-            and self.code is not None
-            and isinstance(self.code, str)
-            and self.code.startswith("git+")
-            and not is_private_preview_enabled()
-        ):
-            validation_result.append_error(
-                message="Not a valid code value: git paths are not supported.",
-                yaml_path="code",
-            )
+
         # validate inputs names
         validation_result.merge_with(self._validate_io_names(self.inputs, raise_error=False))
         validation_result.merge_with(self._validate_io_names(self.outputs, raise_error=False))
 
         return validation_result
 
+    def _get_anonymous_component_name_version(self):
+        return ANONYMOUS_COMPONENT_NAME, self._get_anonymous_hash()
+
     def _get_rest_name_version(self):
         if self._is_anonymous:
-            return ANONYMOUS_COMPONENT_NAME, self._get_anonymous_hash()
+            return self._get_anonymous_component_name_version()
         return self.name, self.version
 
     def _to_rest_object(self) -> ComponentVersion:
@@ -507,7 +510,7 @@ class Component(
             component_spec=component,
             description=self.description,
             is_anonymous=self._is_anonymous,
-            properties=self.properties,
+            properties=dict(self.properties) if self.properties else {},
             tags=self.tags,
         )
         result = ComponentVersion(properties=properties)
@@ -515,6 +518,7 @@ class Component(
             result.name = ANONYMOUS_COMPONENT_NAME
         else:
             result.name = self.name
+            result.properties.properties["client_component_hash"] = self._get_component_hash(keys_to_omit=["version"])
         return result
 
     def _to_dict(self) -> Dict:
@@ -553,35 +557,3 @@ class Component(
                 error_category=ErrorCategory.USER_ERROR,
             )
         return self._func(*args, **kwargs)  # pylint: disable=not-callable
-
-    @contextmanager
-    def _resolve_local_code(self) -> Optional[Code]:
-        """Try to create a Code object pointing to local code and yield it.
-
-        If there is no local code to upload, yield None. Otherwise, yield a Code object pointing to the code.
-        """
-        if not hasattr(self, "code"):
-            yield None
-            return
-
-        code = getattr(self, "code")
-
-        if is_ARM_id_for_resource(code, AzureMLResourceType.CODE) or is_registry_id_for_resource(code):
-            # arm id can be passed directly
-            yield None
-        elif isinstance(code, Code):
-            # Code object & registry id need to be resolved into arm id
-            # note that:
-            # 1. Code & CodeOperation are not public for now
-            # 2. AnonymousCodeSchema is not supported in Component for now
-            # So isinstance(component.code, Code) will always be false, or an exception will be raised
-            # in validation stage.
-            yield code
-        elif isinstance(code, str) and code.startswith("git+"):
-            # git also need to be resolved into arm id
-            yield Code(path=code, is_remote=True)
-        elif code is None:
-            # server-side will handle how to run component without a code.
-            yield None
-        else:
-            yield Code(base_path=self._base_path, path=code, ignore_file=ComponentIgnoreFile(code))

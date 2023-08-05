@@ -21,12 +21,15 @@ module_logger = logging.getLogger(__name__)
 
 @experimental
 class QueueSettings(RestTranslatableMixin, DictMixin):
-    """QueueSettings.
-    :ivar job_tier: Enum to determine the job tier. Possible values include: "Spot", "Basic",
-     "Standard", "Premium".
-    :vartype job_tier: str or ~azure.mgmt.machinelearningservices.models.JobTier
-    :ivar priority: Controls the priority of the job on a compute.
-    :vartype priority: str
+    """Queue settings for a pipeline job.
+
+    :keyword job_tier: The job tier. Accepted values are "Spot", "Basic", "Standard", and "Premium".
+    :type job_tier: Optional[Literal]]
+    :keyword priority: The priority of the job on a compute. Accepted values are "low", "medium", and "high".
+        Defaults to "medium".
+    :type priority: Optional[Literal]
+    :keyword kwargs: Additional properties for QueueSettings.
+    :type kwargs: Optional[dict]
     """
 
     def __init__(
@@ -35,14 +38,14 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
         job_tier: Optional[Literal["spot", "basic", "standard", "premium"]] = None,
         priority: Optional[Literal["low", "medium", "high"]] = None,
         **kwargs,  # pylint: disable=unused-argument
-    ):
+    ) -> None:
         self.job_tier = job_tier
         self.priority = priority
 
     def _to_rest_object(self) -> RestQueueSettings:
         self._validate()
-        job_tier = JobTierNames.ENTITY_TO_REST.get(self.job_tier, None) if self.job_tier else None
-        priority = JobPriorityValues.ENTITY_TO_REST.get(self.priority, None) if self.priority else None
+        job_tier = JobTierNames.ENTITY_TO_REST.get(self.job_tier.lower(), None) if self.job_tier else None
+        priority = JobPriorityValues.ENTITY_TO_REST.get(self.priority.lower(), None) if self.priority else None
         return RestQueueSettings(job_tier=job_tier, priority=priority)
 
     @classmethod
@@ -72,7 +75,7 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
                     error_type=ValidationErrorType.INVALID_VALUE,
                 )
             valid_keys = list(enum_class.ENTITY_TO_REST.keys())
-            if value and value not in valid_keys:
+            if value and value.lower() not in valid_keys:
                 msg = f"{key} should be one of {valid_keys}, but received '{value}'."
                 raise ValidationException(
                     message=msg,

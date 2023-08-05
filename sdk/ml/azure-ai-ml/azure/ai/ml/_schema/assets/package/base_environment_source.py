@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 import logging
 from marshmallow import fields, post_load
@@ -18,6 +18,6 @@ class BaseEnvironmentSourceSchema(PathAwareSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import BaseEnvironmentId
+        from azure.ai.ml.entities import BaseEnvironment
 
-        return BaseEnvironmentId(**data)
+        return BaseEnvironment(**data)

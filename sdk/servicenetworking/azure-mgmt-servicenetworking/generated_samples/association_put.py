@@ -31,11 +31,16 @@ def main():
 
     response = client.associations_interface.begin_create_or_update(
         resource_group_name="rg1",
-        traffic_controller_name="TC1",
-        association_name="associatedvnet-1",
+        traffic_controller_name="tc1",
+        association_name="as1",
         resource={
-            "location": "West US",
-            "properties": {"associationType": "subnets", "subnet": {"id": "subnetFullRef"}},
+            "location": "NorthCentralUS",
+            "properties": {
+                "associationType": "subnets",
+                "subnet": {
+                    "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet-tc/subnets/tc-subnet"
+                },
+            },
         },
     ).result()
     print(response)

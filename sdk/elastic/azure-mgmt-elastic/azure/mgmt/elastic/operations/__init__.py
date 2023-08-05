@@ -8,6 +8,7 @@
 
 from ._operations import Operations
 from ._monitors_operations import MonitorsOperations
+from ._elastic_versions_operations import ElasticVersionsOperations
 from ._monitored_resources_operations import MonitoredResourcesOperations
 from ._deployment_info_operations import DeploymentInfoOperations
 from ._external_user_operations import ExternalUserOperations
@@ -34,6 +35,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "MonitorsOperations",
+    "ElasticVersionsOperations",
     "MonitoredResourcesOperations",
     "DeploymentInfoOperations",
     "ExternalUserOperations",

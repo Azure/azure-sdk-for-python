@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -31,7 +31,7 @@ class CheckTrafficManagerRelativeDnsNameAvailabilityParameters(_serialization.Mo
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the resource.
         :paramtype name: str
@@ -70,8 +70,8 @@ class CloudErrorBody(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -106,7 +106,7 @@ class DeleteOperationResult(_serialization.Model):
         "operation_result": {"key": "boolean", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.operation_result = None
@@ -140,7 +140,7 @@ class DnsConfig(_serialization.Model):
         "ttl": {"key": "ttl", "type": "int"},
     }
 
-    def __init__(self, *, relative_name: Optional[str] = None, ttl: Optional[int] = None, **kwargs):
+    def __init__(self, *, relative_name: Optional[str] = None, ttl: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword relative_name: The relative DNS name provided by this Traffic Manager profile. This
          value is combined with the DNS domain name used by Azure Traffic Manager to form the
@@ -180,8 +180,8 @@ class Resource(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified resource Id for the resource. Ex -
          /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}.
@@ -198,7 +198,8 @@ class Resource(_serialization.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+    """The resource model definition for a ARM proxy resource. It will have everything other than
+    required location and tags.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}.
@@ -221,8 +222,8 @@ class ProxyResource(Resource):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified resource Id for the resource. Ex -
          /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}.
@@ -267,7 +268,7 @@ class Endpoint(ProxyResource):  # pylint: disable=too-many-instance-attributes
      the 'Performance' traffic routing method.
     :vartype endpoint_location: str
     :ivar endpoint_monitor_status: The monitoring status of the endpoint. Known values are:
-     "CheckingEndpoint", "Online", "Degraded", "Disabled", "Inactive", and "Stopped".
+     "CheckingEndpoint", "Online", "Degraded", "Disabled", "Inactive", "Stopped", and "Unmonitored".
     :vartype endpoint_monitor_status: str or
      ~azure.mgmt.trafficmanager.models.EndpointMonitorStatus
     :ivar min_child_endpoints: The minimum number of endpoints that must be available in the child
@@ -339,8 +340,8 @@ class Endpoint(ProxyResource):  # pylint: disable=too-many-instance-attributes
         subnets: Optional[List["_models.EndpointPropertiesSubnetsItem"]] = None,
         custom_headers: Optional[List["_models.EndpointPropertiesCustomHeadersItem"]] = None,
         always_serve: Optional[Union[str, "_models.AlwaysServe"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified resource Id for the resource. Ex -
          /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}.
@@ -371,7 +372,7 @@ class Endpoint(ProxyResource):  # pylint: disable=too-many-instance-attributes
          using the 'Performance' traffic routing method.
         :paramtype endpoint_location: str
         :keyword endpoint_monitor_status: The monitoring status of the endpoint. Known values are:
-         "CheckingEndpoint", "Online", "Degraded", "Disabled", "Inactive", and "Stopped".
+         "CheckingEndpoint", "Online", "Degraded", "Disabled", "Inactive", "Stopped", and "Unmonitored".
         :paramtype endpoint_monitor_status: str or
          ~azure.mgmt.trafficmanager.models.EndpointMonitorStatus
         :keyword min_child_endpoints: The minimum number of endpoints that must be available in the
@@ -433,7 +434,7 @@ class EndpointPropertiesCustomHeadersItem(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Header name.
         :paramtype name: str
@@ -463,8 +464,8 @@ class EndpointPropertiesSubnetsItem(_serialization.Model):
     }
 
     def __init__(
-        self, *, first: Optional[str] = None, last: Optional[str] = None, scope: Optional[int] = None, **kwargs
-    ):
+        self, *, first: Optional[str] = None, last: Optional[str] = None, scope: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword first: First address in the subnet.
         :paramtype first: str
@@ -493,7 +494,7 @@ class HeatMapEndpoint(_serialization.Model):
         "endpoint_id": {"key": "endpointId", "type": "int"},
     }
 
-    def __init__(self, *, resource_id: Optional[str] = None, endpoint_id: Optional[int] = None, **kwargs):
+    def __init__(self, *, resource_id: Optional[str] = None, endpoint_id: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword resource_id: The ARM Resource ID of this Traffic Manager endpoint.
         :paramtype resource_id: str
@@ -545,8 +546,8 @@ class HeatMapModel(ProxyResource):
         end_time: Optional[datetime.datetime] = None,
         endpoints: Optional[List["_models.HeatMapEndpoint"]] = None,
         traffic_flows: Optional[List["_models.TrafficFlow"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified resource Id for the resource. Ex -
          /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}.
@@ -629,8 +630,8 @@ class MonitorConfig(_serialization.Model):
         tolerated_number_of_failures: Optional[int] = None,
         custom_headers: Optional[List["_models.MonitorConfigCustomHeadersItem"]] = None,
         expected_status_code_ranges: Optional[List["_models.MonitorConfigExpectedStatusCodeRangesItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword profile_monitor_status: The profile-level monitoring status of the Traffic Manager
          profile. Known values are: "CheckingEndpoints", "Online", "Degraded", "Disabled", and
@@ -687,7 +688,7 @@ class MonitorConfigCustomHeadersItem(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Header name.
         :paramtype name: str
@@ -718,8 +719,8 @@ class MonitorConfigExpectedStatusCodeRangesItem(_serialization.Model):
         *,
         min: Optional[int] = None,  # pylint: disable=redefined-builtin
         max: Optional[int] = None,  # pylint: disable=redefined-builtin
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword min: Min status code.
         :paramtype min: int
@@ -763,8 +764,8 @@ class TrackedResource(Resource):
         type: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified resource Id for the resource. Ex -
          /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}.
@@ -853,8 +854,8 @@ class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
         traffic_view_enrollment_status: Optional[Union[str, "_models.TrafficViewEnrollmentStatus"]] = None,
         allowed_endpoint_record_types: Optional[List[Union[str, "_models.AllowedEndpointRecordType"]]] = None,
         max_return: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified resource Id for the resource. Ex -
          /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}.
@@ -915,7 +916,7 @@ class ProfileListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Profile]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Profile"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Profile"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Gets the list of Traffic manager profiles.
         :paramtype value: list[~azure.mgmt.trafficmanager.models.Profile]
@@ -949,7 +950,7 @@ class QueryExperience(_serialization.Model):
         "latency": {"key": "latency", "type": "float"},
     }
 
-    def __init__(self, *, endpoint_id: int, query_count: int, latency: Optional[float] = None, **kwargs):
+    def __init__(self, *, endpoint_id: int, query_count: int, latency: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword endpoint_id: The id of the endpoint from the 'endpoints' array which these queries
          were routed to. Required.
@@ -966,7 +967,8 @@ class QueryExperience(_serialization.Model):
 
 
 class Region(_serialization.Model):
-    """Class representing a region in the Geographic hierarchy used with the Geographic traffic routing method.
+    """Class representing a region in the Geographic hierarchy used with the Geographic traffic
+    routing method.
 
     :ivar code: The code of the region.
     :vartype code: str
@@ -988,8 +990,8 @@ class Region(_serialization.Model):
         code: Optional[str] = None,
         name: Optional[str] = None,
         regions: Optional[List["_models.Region"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: The code of the region.
         :paramtype code: str
@@ -1031,8 +1033,8 @@ class TrafficFlow(_serialization.Model):
         latitude: Optional[float] = None,
         longitude: Optional[float] = None,
         query_experiences: Optional[List["_models.QueryExperience"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_ip: The IP address that this query experience originated from.
         :paramtype source_ip: str
@@ -1079,8 +1081,8 @@ class TrafficManagerGeographicHierarchy(ProxyResource):
         name: Optional[str] = None,
         type: Optional[str] = None,
         geographic_hierarchy: Optional["_models.Region"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified resource Id for the resource. Ex -
          /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}.
@@ -1129,8 +1131,8 @@ class TrafficManagerNameAvailability(_serialization.Model):
         name_available: Optional[bool] = None,
         reason: Optional[str] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The relative name.
         :paramtype name: str
@@ -1180,8 +1182,8 @@ class UserMetricsModel(ProxyResource):
         name: Optional[str] = None,
         type: Optional[str] = None,
         key: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified resource Id for the resource. Ex -
          /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}.

@@ -25,17 +25,16 @@ class AzureMonitorWorkspace(_serialization.Model):
     :ivar account_id: The immutable ID of the Azure Monitor workspace. This property is read-only.
     :vartype account_id: str
     :ivar metrics: Information about metrics for the Azure Monitor workspace.
-    :vartype metrics:
-     ~$(python-base-namespace).v2021_06_03_preview.models.AzureMonitorWorkspaceMetrics
+    :vartype metrics: ~azure.mgmt.monitor.v2021_06_03_preview.models.AzureMonitorWorkspaceMetrics
     :ivar provisioning_state: The provisioning state of the Azure Monitor workspace. Set to
      Succeeded if everything is healthy. Known values are: "Creating", "Succeeded", "Deleting",
      "Failed", and "Canceled".
     :vartype provisioning_state: str or
-     ~$(python-base-namespace).v2021_06_03_preview.models.ProvisioningState
+     ~azure.mgmt.monitor.v2021_06_03_preview.models.ProvisioningState
     :ivar default_ingestion_settings: The Data Collection Rule and Endpoint used for ingestion by
      default.
     :vartype default_ingestion_settings:
-     ~$(python-base-namespace).v2021_06_03_preview.models.AzureMonitorWorkspaceDefaultIngestionSettings
+     ~azure.mgmt.monitor.v2021_06_03_preview.models.AzureMonitorWorkspaceDefaultIngestionSettings
     """
 
     _validation = {
@@ -193,7 +192,7 @@ class Resource(_serialization.Model):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~$(python-base-namespace).v2021_06_03_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.monitor.v2021_06_03_preview.models.SystemData
     """
 
     _validation = {
@@ -237,7 +236,7 @@ class TrackedResource(Resource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~$(python-base-namespace).v2021_06_03_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.monitor.v2021_06_03_preview.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -290,7 +289,7 @@ class AzureMonitorWorkspaceResource(TrackedResource):  # pylint: disable=too-man
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~$(python-base-namespace).v2021_06_03_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.monitor.v2021_06_03_preview.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -300,17 +299,16 @@ class AzureMonitorWorkspaceResource(TrackedResource):  # pylint: disable=too-man
     :ivar account_id: The immutable ID of the Azure Monitor workspace. This property is read-only.
     :vartype account_id: str
     :ivar metrics: Information about metrics for the Azure Monitor workspace.
-    :vartype metrics:
-     ~$(python-base-namespace).v2021_06_03_preview.models.AzureMonitorWorkspaceMetrics
+    :vartype metrics: ~azure.mgmt.monitor.v2021_06_03_preview.models.AzureMonitorWorkspaceMetrics
     :ivar provisioning_state: The provisioning state of the Azure Monitor workspace. Set to
      Succeeded if everything is healthy. Known values are: "Creating", "Succeeded", "Deleting",
      "Failed", and "Canceled".
     :vartype provisioning_state: str or
-     ~$(python-base-namespace).v2021_06_03_preview.models.ProvisioningState
+     ~azure.mgmt.monitor.v2021_06_03_preview.models.ProvisioningState
     :ivar default_ingestion_settings: The Data Collection Rule and Endpoint used for ingestion by
      default.
     :vartype default_ingestion_settings:
-     ~$(python-base-namespace).v2021_06_03_preview.models.AzureMonitorWorkspaceDefaultIngestionSettings
+     ~azure.mgmt.monitor.v2021_06_03_preview.models.AzureMonitorWorkspaceDefaultIngestionSettings
     """
 
     _validation = {
@@ -385,7 +383,7 @@ class AzureMonitorWorkspaceResourceListResult(_serialization.Model):
 
     :ivar value: A list of resources. Required.
     :vartype value:
-     list[~$(python-base-namespace).v2021_06_03_preview.models.AzureMonitorWorkspaceResource]
+     list[~azure.mgmt.monitor.v2021_06_03_preview.models.AzureMonitorWorkspaceResource]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     """
@@ -405,7 +403,7 @@ class AzureMonitorWorkspaceResourceListResult(_serialization.Model):
         """
         :keyword value: A list of resources. Required.
         :paramtype value:
-         list[~$(python-base-namespace).v2021_06_03_preview.models.AzureMonitorWorkspaceResource]
+         list[~azure.mgmt.monitor.v2021_06_03_preview.models.AzureMonitorWorkspaceResource]
         :keyword next_link: The URL to use for getting the next set of results.
         :paramtype next_link: str
         """
@@ -422,17 +420,16 @@ class AzureMonitorWorkspaceResourceProperties(AzureMonitorWorkspace):
     :ivar account_id: The immutable ID of the Azure Monitor workspace. This property is read-only.
     :vartype account_id: str
     :ivar metrics: Information about metrics for the Azure Monitor workspace.
-    :vartype metrics:
-     ~$(python-base-namespace).v2021_06_03_preview.models.AzureMonitorWorkspaceMetrics
+    :vartype metrics: ~azure.mgmt.monitor.v2021_06_03_preview.models.AzureMonitorWorkspaceMetrics
     :ivar provisioning_state: The provisioning state of the Azure Monitor workspace. Set to
      Succeeded if everything is healthy. Known values are: "Creating", "Succeeded", "Deleting",
      "Failed", and "Canceled".
     :vartype provisioning_state: str or
-     ~$(python-base-namespace).v2021_06_03_preview.models.ProvisioningState
+     ~azure.mgmt.monitor.v2021_06_03_preview.models.ProvisioningState
     :ivar default_ingestion_settings: The Data Collection Rule and Endpoint used for ingestion by
      default.
     :vartype default_ingestion_settings:
-     ~$(python-base-namespace).v2021_06_03_preview.models.AzureMonitorWorkspaceDefaultIngestionSettings
+     ~azure.mgmt.monitor.v2021_06_03_preview.models.AzureMonitorWorkspaceDefaultIngestionSettings
     """
 
     _validation = {
@@ -497,10 +494,10 @@ class ErrorDetail(_serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~$(python-base-namespace).v2021_06_03_preview.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.monitor.v2021_06_03_preview.models.ErrorDetail]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
-     list[~$(python-base-namespace).v2021_06_03_preview.models.ErrorAdditionalInfo]
+     list[~azure.mgmt.monitor.v2021_06_03_preview.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -534,7 +531,7 @@ class ErrorResponse(_serialization.Model):
     operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
-    :vartype error: ~$(python-base-namespace).v2021_06_03_preview.models.ErrorDetail
+    :vartype error: ~azure.mgmt.monitor.v2021_06_03_preview.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -544,7 +541,7 @@ class ErrorResponse(_serialization.Model):
     def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
-        :paramtype error: ~$(python-base-namespace).v2021_06_03_preview.models.ErrorDetail
+        :paramtype error: ~azure.mgmt.monitor.v2021_06_03_preview.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.error = error
@@ -562,14 +559,14 @@ class Operation(_serialization.Model):
      data-plane operations and "false" for ARM/control-plane operations.
     :vartype is_data_action: bool
     :ivar display: Localized display information for this particular operation.
-    :vartype display: ~$(python-base-namespace).v2021_06_03_preview.models.OperationDisplay
+    :vartype display: ~azure.mgmt.monitor.v2021_06_03_preview.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
      (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
      and "user,system".
-    :vartype origin: str or ~$(python-base-namespace).v2021_06_03_preview.models.Origin
+    :vartype origin: str or ~azure.mgmt.monitor.v2021_06_03_preview.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
      internal only APIs. "Internal"
-    :vartype action_type: str or ~$(python-base-namespace).v2021_06_03_preview.models.ActionType
+    :vartype action_type: str or ~azure.mgmt.monitor.v2021_06_03_preview.models.ActionType
     """
 
     _validation = {
@@ -590,7 +587,7 @@ class Operation(_serialization.Model):
     def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Localized display information for this particular operation.
-        :paramtype display: ~$(python-base-namespace).v2021_06_03_preview.models.OperationDisplay
+        :paramtype display: ~azure.mgmt.monitor.v2021_06_03_preview.models.OperationDisplay
         """
         super().__init__(**kwargs)
         self.name = None
@@ -649,7 +646,7 @@ class OperationListResult(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of operations supported by the resource provider.
-    :vartype value: list[~$(python-base-namespace).v2021_06_03_preview.models.Operation]
+    :vartype value: list[~azure.mgmt.monitor.v2021_06_03_preview.models.Operation]
     :ivar next_link: URL to get the next set of operation list results (if there are any).
     :vartype next_link: str
     """
@@ -678,8 +675,7 @@ class SystemData(_serialization.Model):
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: str or
-     ~$(python-base-namespace).v2021_06_03_preview.models.CreatedByType
+    :vartype created_by_type: str or ~azure.mgmt.monitor.v2021_06_03_preview.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
@@ -687,7 +683,7 @@ class SystemData(_serialization.Model):
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or
-     ~$(python-base-namespace).v2021_06_03_preview.models.CreatedByType
+     ~azure.mgmt.monitor.v2021_06_03_preview.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
@@ -717,8 +713,7 @@ class SystemData(_serialization.Model):
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Known values are:
          "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype created_by_type: str or
-         ~$(python-base-namespace).v2021_06_03_preview.models.CreatedByType
+        :paramtype created_by_type: str or ~azure.mgmt.monitor.v2021_06_03_preview.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
@@ -726,7 +721,7 @@ class SystemData(_serialization.Model):
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
          values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
-         ~$(python-base-namespace).v2021_06_03_preview.models.CreatedByType
+         ~azure.mgmt.monitor.v2021_06_03_preview.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """

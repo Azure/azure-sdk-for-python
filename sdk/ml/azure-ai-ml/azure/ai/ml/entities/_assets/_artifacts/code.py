@@ -52,7 +52,6 @@ class Code(Artifact):
         ignore_file: Optional[IgnoreFile] = None,
         **kwargs,
     ):
-        self._is_remote = kwargs.pop("is_remote", False)
         super().__init__(
             name=name,
             version=version,
@@ -116,7 +115,7 @@ class Code(Artifact):
         return code_version_resource
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-        """Updates an an artifact with the remote path of a local upload."""
+        """Update an artifact with the remote path of a local upload."""
         if asset_artifact.is_file:
             # Code paths cannot be pointers to single files. It must be a pointer to a container
             # Skipping the setter to avoid being resolved as a local path

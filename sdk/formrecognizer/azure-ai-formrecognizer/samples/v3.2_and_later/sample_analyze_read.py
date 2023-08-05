@@ -23,15 +23,21 @@ USAGE:
 
 import os
 
+
 def format_bounding_region(bounding_regions):
     if not bounding_regions:
         return "N/A"
-    return ", ".join("Page #{}: {}".format(region.page_number, format_polygon(region.polygon)) for region in bounding_regions)
+    return ", ".join(
+        f"Page #{region.page_number}: {format_polygon(region.polygon)}"
+        for region in bounding_regions
+    )
+
 
 def format_polygon(polygon):
     if not polygon:
         return "N/A"
-    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in polygon])
+    return ", ".join([f"[{p.x}, {p.y}]" for p in polygon])
+
 
 def analyze_read():
     path_to_sample_documents = os.path.abspath(
@@ -54,63 +60,71 @@ def analyze_read():
     )
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-read", document=f, features=[AnalysisFeature.OCR_FONT]
+            "prebuilt-read", document=f, features=[AnalysisFeature.STYLE_FONT]
         )
     result = poller.result()
 
     print("----Languages detected in the document----")
     for language in result.languages:
-        print("Language code: '{}' with confidence {}".format(language.locale, language.confidence))
+        print(
+            f"Language code: '{language.locale}' with confidence {language.confidence}"
+        )
 
     print("----Styles detected in the document----")
     for style in result.styles:
         if style.is_handwritten:
             print("Found the following handwritten content: ")
-            print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
+            print(
+                ",".join(
+                    [
+                        result.content[span.offset : span.offset + span.length]
+                        for span in style.spans
+                    ]
+                )
+            )
         if style.font_style:
-            print(f"The document contains '{style.font_style}' font style, applied to the following text: ")
-            print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
+            print(
+                f"The document contains '{style.font_style}' font style, applied to the following text: "
+            )
+            print(
+                ",".join(
+                    [
+                        result.content[span.offset : span.offset + span.length]
+                        for span in style.spans
+                    ]
+                )
+            )
 
     for page in result.pages:
-        print("----Analyzing document from page #{}----".format(page.page_number))
+        print(f"----Analyzing document from page #{page.page_number}----")
         print(
-            "Page has width: {} and height: {}, measured with unit: {}".format(
-                page.width, page.height, page.unit
-            )
+            f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
         )
 
         for line_idx, line in enumerate(page.lines):
             words = line.get_words()
             print(
-                "...Line # {} has {} words and text '{}' within bounding polygon '{}'".format(
-                    line_idx,
-                    len(words),
-                    line.content,
-                    format_polygon(line.polygon),
-                )
+                f"...Line # {line_idx} has {len(words)} words and text '{line.content}' within bounding polygon '{format_polygon(line.polygon)}'"
             )
 
             for word in words:
                 print(
-                    "......Word '{}' has a confidence of {}".format(
-                        word.content, word.confidence
-                    )
+                    f"......Word '{word.content}' has a confidence of {word.confidence}"
                 )
 
         for selection_mark in page.selection_marks:
             print(
-                "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
-                    selection_mark.state,
-                    format_polygon(selection_mark.polygon),
-                    selection_mark.confidence,
-                )
+                f"...Selection mark is '{selection_mark.state}' within bounding polygon "
+                f"'{format_polygon(selection_mark.polygon)}' and has a confidence of {selection_mark.confidence}"
             )
 
     if len(result.paragraphs) > 0:
-        print("----Detected #{} paragraphs in the document----".format(len(result.paragraphs)))
+        print(f"----Detected #{len(result.paragraphs)} paragraphs in the document----")
         for paragraph in result.paragraphs:
-            print("Found paragraph with role: '{}' within {} bounding region".format(paragraph.role, format_bounding_region(paragraph.bounding_regions)))
-            print("...with content: '{}'".format(paragraph.content))
+            print(
+                f"Found paragraph with role: '{paragraph.role}' within {format_bounding_region(paragraph.bounding_regions)} bounding region"
+            )
+            print(f"...with content: '{paragraph.content}'")
 
     print("----------------------------------------")
 
@@ -118,11 +132,14 @@ def analyze_read():
 if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         analyze_read()
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

@@ -225,7 +225,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         kwargs["headers"] = kwargs.get("headers", {})
 
         async def _populate_header_within_kwargs(uri, header):
-            token = (await self._credential.get_token(uri)).token.decode()
+            token = (await self._credential.get_token(uri)).token
             if not isinstance(
                 self._credential,
                 (ServiceBusSASTokenCredential, ServiceBusSharedKeyCredential),
@@ -565,7 +565,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return topic_description
 
     async def get_topic_runtime_properties(
-        self, topic_name: str, **kwargs
+        self, topic_name: str, **kwargs: Any
     ) -> TopicRuntimeProperties:
         """Get the runtime information of a topic.
 
@@ -810,8 +810,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 )
             )
         subscription = SubscriptionProperties._from_internal_entity(
-            subscription_name,
-            entry.content.subscription_description
+            subscription_name, entry.content.subscription_description
         )
         return subscription
 
@@ -835,8 +834,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 )
             )
         subscription = SubscriptionRuntimeProperties._from_internal_entity(
-            subscription_name,
-            entry.content.subscription_description
+            subscription_name, entry.content.subscription_description
         )
         return subscription
 
@@ -957,8 +955,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         # since we know for certain that `entry.content` will not be None here.
         entry.content = cast(SubscriptionDescriptionEntryContent, entry.content)
         result = SubscriptionProperties._from_internal_entity(
-            subscription_name,
-            entry.content.subscription_description
+            subscription_name, entry.content.subscription_description
         )
         return result
 
@@ -1269,10 +1266,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         entry_el = await self._impl.namespace.get(**kwargs)
         namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
-        namespace_entry.content = cast(NamespacePropertiesEntryContent, namespace_entry.content)
+        namespace_entry.content = cast(
+            NamespacePropertiesEntryContent, namespace_entry.content
+        )
         return NamespaceProperties._from_internal_entity(
-            namespace_entry.title,
-            namespace_entry.content.namespace_properties
+            namespace_entry.title, namespace_entry.content.namespace_properties
         )
 
     async def close(self) -> None:

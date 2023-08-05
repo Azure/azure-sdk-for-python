@@ -60,22 +60,24 @@ def classify_document(classifier_id):
 
     print("----Classified documents----")
     for doc in result.documents:
-        print(f"Found document of type '{doc.doc_type or 'N/A'}' with a confidence of {doc.confidence} contained on "
-              f"the following pages: {[region.page_number for region in doc.bounding_regions]}")
+        print(
+            f"Found document of type '{doc.doc_type or 'N/A'}' with a confidence of {doc.confidence} contained on "
+            f"the following pages: {[region.page_number for region in doc.bounding_regions]}"
+        )
     # [END classify_document]
 
 
 if __name__ == "__main__":
     from azure.core.exceptions import HttpResponseError
+
     try:
         classifier_id = None
         if os.getenv("CLASSIFIER_CONTAINER_SAS_URL") and not os.getenv("CLASSIFIER_ID"):
-
             from azure.core.credentials import AzureKeyCredential
             from azure.ai.formrecognizer import (
                 DocumentModelAdministrationClient,
                 ClassifierDocumentTypeDetails,
-                AzureBlobContentSource
+                BlobSource,
             )
 
             endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
@@ -89,15 +91,15 @@ if __name__ == "__main__":
             poller = document_model_admin_client.begin_build_document_classifier(
                 doc_types={
                     "IRS-1040-A": ClassifierDocumentTypeDetails(
-                        azure_blob_source=AzureBlobContentSource(
+                        source=BlobSource(
                             container_url=blob_container_sas_url,
-                            prefix="IRS-1040-A/train"
+                            prefix="IRS-1040-A/train",
                         )
                     ),
                     "IRS-1040-D": ClassifierDocumentTypeDetails(
-                        azure_blob_source=AzureBlobContentSource(
+                        source=BlobSource(
                             container_url=blob_container_sas_url,
-                            prefix="IRS-1040-D/train"
+                            prefix="IRS-1040-D/train",
                         )
                     ),
                 },
@@ -106,8 +108,10 @@ if __name__ == "__main__":
             classifier_id = classifier.classifier_id
         classify_document(classifier_id)
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

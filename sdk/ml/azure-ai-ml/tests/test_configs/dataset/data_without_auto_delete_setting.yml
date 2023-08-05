@@ -1,0 +1,4 @@
+name: testDataAssetfolder
+version: 1
+description: "this is a test data asset without auto delete setting"
+path: azureml://datastores/workspacemanageddatastore/

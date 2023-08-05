@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import asyncio
 from uuid import uuid4
 from datetime import datetime
 
@@ -136,13 +135,13 @@ class _EventHubProcessorTest(EventPerfTest):
         parser.add_argument('--prefetch-count', nargs='?', type=int, help='Number of events to receive locally per request. Defaults to 300', default=300)
         parser.add_argument('--load-balancing-strategy', nargs='?', type=str, help="Event Processor load balancing strategy, 'greedy' or 'balanced'. Default is 'greedy'.", default='greedy')
         parser.add_argument('--checkpoint-interval', nargs='?', type=int, help='Interval between checkpoints (in number of events).  Default is no checkpoints.', default=None)
-        parser.add_argument('--max-wait-time', nargs='?', type=float, help='Maximum time to wait for an event to be received.', default=None)
+        parser.add_argument('--max-wait-time', nargs='?', type=float, help='Maximum time to wait for an event to be received.', default=0)
         parser.add_argument('--processing-delay', nargs='?', type=int, help='Delay when processing each event (in ms).', default=None)
         parser.add_argument('--processing-delay-strategy', nargs='?', type=str, help="Whether to 'sleep' or 'spin' during processing delay. Default is 'sleep'.", default='sleep')
         parser.add_argument('--preload', nargs='?', type=int, help='Ensure the specified number of events are available across all partitions. Default is 0.', default=0)
         parser.add_argument('--use-storage-checkpoint', action="store_true", help="Use Blob storage for checkpointing. Default is False (in-memory checkpointing).", default=False)
         parser.add_argument('--uamqp-transport', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
-        parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)        
+        parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)
         parser.add_argument('--event-extra', action="store_true", help="Add properties to the events to increase payload and serialization. Default is False.", default=False)
 
 
@@ -170,6 +169,22 @@ class _SendTest(BatchPerfTest):
             uamqp_transport=arguments.uamqp_transport
         )
 
+        self.data = get_random_bytes(self.args.event_size)
+
+    def _build_event(self):
+        event = EventData(self.data)
+        if self.args.event_extra:
+            event.raw_amqp_message.header.first_acquirer = True
+            event.raw_amqp_message.properties.subject = 'perf'
+            event.properties = {
+                "key1": b"data",
+                "key2": 42,
+                "key3": datetime.now(),
+                "key4": "foobar",
+                "key5": uuid4()
+            }
+        return event
+
     async def setup(self):
         await super().setup()
         # First time calling create_batch would communicate with the service to
@@ -189,5 +204,5 @@ class _SendTest(BatchPerfTest):
         parser.add_argument('--event-size', nargs='?', type=int, help='Size of event body (in bytes). Defaults to 100 bytes', default=100)
         parser.add_argument('--batch-size', nargs='?', type=int, help='The number of events that should be included in each batch. Defaults to 100', default=100)
         parser.add_argument('--uamqp-transport', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
-        parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)    
+        parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)
         parser.add_argument('--event-extra', action="store_true", help="Add properties to the events to increase payload and serialization. Default is False.", default=False)

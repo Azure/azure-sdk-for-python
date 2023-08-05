@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.virtual_network_rules.begin_delete(
+    client.virtual_network_rules.begin_delete(
         resource_group_name="Default",
         server_name="vnet-test-svr",
         virtual_network_rule_name="vnet-firewall-rule",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/VirtualNetworkRulesDelete.json

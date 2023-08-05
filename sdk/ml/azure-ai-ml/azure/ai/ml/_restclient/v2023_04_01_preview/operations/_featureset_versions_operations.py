@@ -1060,7 +1060,10 @@ class FeaturesetVersionsOperations(object):
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
-                request.method = "GET"
+                # ---------------------- PATCH ----------------------
+                # NOTE: List materialization jobs api does not support GET method, so we need to change it to POST
+                # It is temporary update, WIP: Update autorest client version and patch this method in patch.py file
+                request.method = "POST"
             return request
 
         def extract_data(pipeline_response):

@@ -101,8 +101,7 @@ async def examples_async():
         import json
 
         async for item in container.query_items(
-                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"',
-                enable_cross_partition_query=True,
+                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"'
         ):
             print(json.dumps(item, indent=True))
         # [END query_items]
@@ -167,12 +166,12 @@ async def examples_async():
             await container.upsert_item(
                 dict(id="item{}".format(i), productName="Gadget", productModel="Model {}".format(i))
             )
-        items = await container.read_all_items()
+        items = container.read_all_items()
         async for item in items:
             print(json.dumps(item, indent=True))
         await container.delete_all_items_by_partition_key("Gadget")
         print("All items in partition {} deleted.".format("Gadget"))
-        items = await container.read_all_items()
+        items = container.read_all_items()
         async for item in items:
             print(json.dumps(item, indent=True))
         # [END delete_all_items_by_partition_key]

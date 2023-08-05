@@ -3,19 +3,20 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
-from azure.keyvault.administration import ApiVersion, KeyVaultSetting, KeyVaultSettingType
+from azure.keyvault.administration import KeyVaultSetting, KeyVaultSettingType
 from azure.keyvault.administration.aio import KeyVaultSettingsClient
+from azure.keyvault.administration._internal.client_base import DEFAULT_VERSION
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from _async_test_case import KeyVaultSettingsClientPreparer, get_decorator
 from _shared.test_case_async import KeyVaultTestCase
 
-only_7_4 = get_decorator(api_versions=[ApiVersion.V7_4])
+only_latest = get_decorator(api_versions=[DEFAULT_VERSION])
 
 
 class TestSettings(KeyVaultTestCase):
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version", only_7_4)
+    @pytest.mark.parametrize("api_version", only_latest)
     @KeyVaultSettingsClientPreparer()
     @recorded_by_proxy_async
     async def test_list_settings(self, client: KeyVaultSettingsClient, **kwargs):
@@ -28,7 +29,7 @@ class TestSettings(KeyVaultTestCase):
             assert setting.name and setting.setting_type and setting.value is not None
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version", only_7_4)
+    @pytest.mark.parametrize("api_version", only_latest)
     @KeyVaultSettingsClientPreparer()
     @recorded_by_proxy_async
     async def test_update_settings(self, client: KeyVaultSettingsClient, **kwargs):

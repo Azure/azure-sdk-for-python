@@ -26,19 +26,19 @@ from azure.mgmt.databox import DataBoxManagementClient
 def main():
     client = DataBoxManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="fa68082f-8ff7-4a25-95c7-ce9da541242f",
+        subscription_id="YourSubscriptionId",
     )
 
     response = client.jobs.begin_update(
-        resource_group_name="SdkRg7937",
-        job_name="SdkJob1735",
+        resource_group_name="YourResourceGroupName",
+        job_name="TestJobName1",
         job_resource_update_parameter={
             "properties": {
                 "details": {
                     "keyEncryptionKey": {
                         "kekType": "CustomerManaged",
-                        "kekUrl": "https://sdkkeyvault.vault.azure.net/keys/SSDKEY/",
-                        "kekVaultResourceID": "/subscriptions/fa68082f-8ff7-4a25-95c7-ce9da541242f/resourceGroups/akvenkat/providers/Microsoft.KeyVault/vaults/SDKKeyVault",
+                        "kekUrl": "https://xxx.xxx.xx",
+                        "kekVaultResourceID": "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroupName/providers/Microsoft.KeyVault/vaults/YourKeyVaultName",
                     }
                 }
             }

@@ -27,7 +27,7 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
 
     :ivar activity_log_alerts: ActivityLogAlertsOperations operations
     :vartype activity_log_alerts:
-     $(python-base-namespace).v2020_10_01.operations.ActivityLogAlertsOperations
+     azure.mgmt.monitor.v2020_10_01.operations.ActivityLogAlertsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.

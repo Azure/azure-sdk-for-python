@@ -15,7 +15,14 @@ from ._generated._serialization import Serializer, Deserializer
 
 
 def get_authentication_policy(credential: TokenCredential, audience: str) -> BearerTokenCredentialPolicy:
-    """Returns the correct authentication policy"""
+    """Returns the correct authentication policy.
+
+    :param credential: The credential to use for authentication with the service.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param str audience: The audience for the token.
+    :returns: The correct authentication policy.
+    :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy
+    """
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     scope = audience.rstrip("/") + "/.default"
@@ -32,9 +39,7 @@ def order_results(request_order: List, mapping: Dict[str, Any], **kwargs: Any) -
         if not item["body"].get("error"):
             result_obj = kwargs.get("obj")
             if result_obj:
-                results.append(
-                    result_obj._from_generated(item["body"]) # pylint: disable=protected-access
-                )
+                results.append(result_obj._from_generated(item["body"]))  # pylint: disable=protected-access
         else:
             error = item["body"]["error"]
             if error.get("code") == "PartialError":
@@ -47,9 +52,7 @@ def order_results(request_order: List, mapping: Dict[str, Any], **kwargs: Any) -
             else:
                 err = kwargs.get("err")
                 if err:
-                    results.append(
-                        err._from_generated(error) # pylint: disable=protected-access
-                    )
+                    results.append(err._from_generated(error))  # pylint: disable=protected-access
     return results
 
 
@@ -60,22 +63,18 @@ def construct_iso8601(timespan=None) -> Optional[str]:
     try:
         if isinstance(timespan[1], datetime):  # we treat thi as start_time, end_time
             start, end = timespan[0], timespan[1]
-        elif isinstance(
-            timespan[1], timedelta
-        ):  # we treat this as start_time, duration
+        elif isinstance(timespan[1], timedelta):  # we treat this as start_time, duration
             start, duration = timespan[0], timespan[1]
         else:
-            raise ValueError(
-                "Tuple must be a start datetime with a timedelta or an end datetime."
-            )
+            raise ValueError("Tuple must be a start datetime with a timedelta or an end datetime.")
     except TypeError:
         duration = timespan  # it means only duration (timedelta) is provideds
     duration_str = ""
     if duration:
         try:
             duration_str = "PT{}S".format(duration.total_seconds())
-        except AttributeError:
-            raise ValueError("timespan must be a timedelta or a tuple.")
+        except AttributeError as e:
+            raise ValueError("timespan must be a timedelta or a tuple.") from e
     iso_str = None
     if start is not None:
         start = Serializer.serialize_iso(start)
@@ -85,9 +84,7 @@ def construct_iso8601(timespan=None) -> Optional[str]:
         elif duration_str:
             iso_str = f"{start}/{duration_str}"
         else:  # means that an invalid value None that is provided with start_time
-            raise ValueError(
-                "Duration or end_time cannot be None when provided with start_time."
-            )
+            raise ValueError("Duration or end_time cannot be None when provided with start_time.")
     else:
         iso_str = duration_str
     return iso_str
@@ -97,7 +94,7 @@ def native_col_type(col_type, value):
     if col_type == "datetime":
         try:
             value = Deserializer.deserialize_iso(value)
-        except Exception: # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             # if there is any exception in deserializing the iso,
             # return the value to the user
             pass
@@ -112,9 +109,7 @@ def process_row(col_types, row) -> List[Any]:
 
 def process_error(error, model):
     try:
-        model = model._from_generated( # pylint: disable=protected-access
-            error.model.error
-        )
+        model = model._from_generated(error.model.error)  # pylint: disable=protected-access
     except AttributeError:  # model can be none
         pass
     raise HttpResponseError(message=error.message, response=error.response, model=model)

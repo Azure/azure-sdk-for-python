@@ -1,115 +1,122 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+import warnings
+
 from ._version import VERSION
+from ._call_automation_client import CallAutomationClient
 from ._call_connection_client import CallConnectionClient
-from ._call_media_client import CallMediaClient
-from ._call_recording_client import CallRecordingClient
-from ._call_automation_client import (
-    CallAutomationClient,
-    AnswerCallResult,
-    CreateCallResult
-)
-from ._call_automation_event_parser import CallAutomationEventParser
 from ._models import (
-    RecordingStateResponse,
-    StartRecordingOptions,
-    ServerCallLocator,
-    GroupCallLocator,
-    CallInvite,
-    RecordingFormat,
-    RecordingContent,
-    RecordingStorage,
-    RecordingChannel,
-    PlaySource,
-    FileSource,
-    CallMediaRecognizeOptions,
     CallConnectionProperties,
+    FileSource,
+    TextSource,
+    SsmlSource,
     CallParticipant,
-    CallMediaRecognizeDtmfOptions,
-    Gender,
-    DtmfTone,
-    CallRejectReason
+    RecordingProperties,
+    AddParticipantResult,
+    RemoveParticipantResult,
+    TransferCallResult,
+    MediaStreamingConfiguration,
+    ChannelAffinity,
+    MuteParticipantsResult
 )
 from ._shared.models import (
     CommunicationIdentifier,
     PhoneNumberIdentifier,
     MicrosoftTeamsUserIdentifier,
-    CommunicationUserIdentifier
+    CommunicationUserIdentifier,
+    CommunicationIdentifierKind,
+    CommunicationCloudEnvironment,
+    MicrosoftBotIdentifier,
+    UnknownIdentifier,
 )
-from ._events import (
-    AddParticipantSucceeded,
-    AddParticipantFailed,
-    CallConnected,
-    CallDisconnected,
-    CallTransferAccepted,
-    CallTransferFailed,
-    ParticipantsUpdated,
-    RecordingStateChanged,
-    PlayCompleted,
-    PlayFailed,
-    PlayCanceled,
-    RecognizeCompleted,
-    RecognizeCanceled,
-    RecognizeFailed,
-    RemoveParticipantSucceeded,
-    RemoveParticipantFailed,
+from ._generated.models._enums import (
+    CallRejectReason,
+    RecordingContent,
+    RecordingChannel,
+    RecordingFormat,
+    RecordingStorage,
+    RecognizeInputType,
+    MediaStreamingAudioChannelType,
+    MediaStreamingContentType,
+    MediaStreamingTransportType,
+    DtmfTone,
+    CallConnectionState,
+    RecordingState,
+    Gender
 )
-from ._generated.models import (
-    GetParticipantsResponse,
-    TransferCallResponse,
-    AddParticipantResponse,
-    CustomContext,
-    RemoveParticipantResponse
-)
-
 __all__ = [
-    'CallAutomationClient',
-    'RecordingFormat',
-    'RecordingContent',
-    'RecordingStorage',
-    'RecordingChannel',
-    'CallConnectionClient',
-    'CallMediaClient',
-    'CallRecordingClient',
-    "StartRecordingOptions",
-    "RecordingStateResponse",
-    "ServerCallLocator",
-    "GroupCallLocator",
-    "CallAutomationEventParser",
-    "AddParticipantSucceeded",
-    "AddParticipantFailed",
-    "CallConnected",
-    "CallDisconnected",
-    "CallTransferAccepted",
-    "CallTransferFailed",
-    "ParticipantsUpdated",
-    "RecordingStateChanged",
-    "PlayCompleted",
-    "PlayFailed",
-    "PlayCanceled",
-    "RecognizeCompleted",
-    "RecognizeCanceled",
-    "RecognizeFailed",
-    "CallInvite",
-    "CommunicationIdentifier",
-    "CommunicationUserIdentifier",
-    "PhoneNumberIdentifier",
-    "MicrosoftTeamsUserIdentifier",
-    "PlaySource",
+    # clients
+    "CallAutomationClient",
+    "CallConnectionClient",
+
+    # models for input
     "FileSource",
-    "CallMediaRecognizeOptions",
-    "CallMediaRecognizeDtmfOptions",
-    "AnswerCallResult",
-    "CreateCallResult",
+    "TextSource",
+    "SsmlSource",
+    "ChannelAffinity",
+    "MediaStreamingConfiguration",
+
+    # models for output
     "CallConnectionProperties",
     "CallParticipant",
-    "GetParticipantsResponse",
-    "TransferCallResponse",
-    "AddParticipantResponse",
-    "CustomContext",
-    "RemoveParticipantResponse",
-    "Gender",
-    "DtmfTone",
+    "RecordingProperties",
+    "AddParticipantResult",
+    "RemoveParticipantResult",
+    "TransferCallResult",
+    "MuteParticipantsResult",
+
+    # common ACS communication identifier
+    "CommunicationIdentifier",
+    "PhoneNumberIdentifier",
+    "MicrosoftTeamsUserIdentifier",
+    "CommunicationUserIdentifier",
+    "CommunicationIdentifierKind",
+    "CommunicationCloudEnvironment",
+    "MicrosoftBotIdentifier",
+    "UnknownIdentifier",
+
+    # enums
     "CallRejectReason",
-    "RemoveParticipantSucceeded",
-    "RemoveParticipantFailed"
+    "RecordingContent",
+    "RecordingChannel",
+    "RecordingFormat",
+    "RecordingStorage",
+    "RecognizeInputType",
+    "MediaStreamingAudioChannelType",
+    "MediaStreamingContentType",
+    "MediaStreamingTransportType",
+    "DtmfTone",
+    "CallConnectionState",
+    "RecordingState",
+    "Gender"
 ]
 __version__ = VERSION
+
+
+def __getattr__(name):
+    if name == 'CallInvite':
+        warnings.warn(
+            "CallInvite is deprecated and should not be used. Please pass in keyword arguments directly.",
+            DeprecationWarning
+        )
+        from ._models import CallInvite
+        return CallInvite
+    if name == 'GroupCallLocator':
+        warnings.warn(
+            "GroupCallLocator is deprecated and should not be used. Please pass in 'group_call_id' directly.",
+            DeprecationWarning
+        )
+        from ._models import GroupCallLocator
+        return GroupCallLocator
+    if name == 'ServerCallLocator':
+        warnings.warn(
+            "ServerCallLocator is deprecated and should not be used. Please pass in 'server_call_id' directly.",
+            DeprecationWarning
+        )
+        from ._models import ServerCallLocator
+        return ServerCallLocator
+
+    raise AttributeError(f"module 'azure.communication.callautomation' has no attribute {name}")

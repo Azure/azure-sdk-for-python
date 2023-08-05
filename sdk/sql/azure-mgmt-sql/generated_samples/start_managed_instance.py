@@ -29,11 +29,10 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.managed_instances.begin_start(
+    client.managed_instances.begin_start(
         resource_group_name="startrg",
         managed_instance_name="mitostart",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/StartManagedInstance.json

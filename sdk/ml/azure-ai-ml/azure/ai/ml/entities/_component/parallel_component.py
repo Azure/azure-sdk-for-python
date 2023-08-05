@@ -21,65 +21,69 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 from ..._schema import PathAwareSchema
 from .._util import validate_attribute_type
+from .._validation import MutableValidationResult
+from .code import ComponentCodeMixin
 from .component import Component
 
 
-class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=too-many-instance-attributes
+class ParallelComponent(
+    Component, ParameterizedParallel, ComponentCodeMixin
+):  # pylint: disable=too-many-instance-attributes
     """Parallel component version, used to define a parallel component.
 
-    :param name: Name of the component.
-    :type name: str
-    :param version: Version of the component.
-    :type version: str
-    :param description: Description of the component.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict
-    :param display_name: Display name of the component.
-    :type display_name: str
-    :param retry_settings: parallel component run failed retry
+    :param name: Name of the component. Defaults to None
+    :type name: str , optional
+    :param version: Version of the component. Defaults to None
+    :type version: str, optional
+    :param description: Description of the component. Defaults to None
+    :type description: str, optional
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None
+    :type tags: dict, optional
+    :param display_name: Display name of the component. Defaults to None
+    :type display_name: str, optional
+    :param retry_settings: parallel component run failed retry. Defaults to None
     :type retry_settings: BatchRetrySettings
-    :param logging_level: A string of the logging level name
-    :type logging_level: str
-    :param max_concurrency_per_instance: The max parallellism that each compute instance has.
-    :type max_concurrency_per_instance: int
-    :param error_threshold: The number of item processing failures should be ignored.
-    :type error_threshold: int
-    :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored.
-    :type mini_batch_error_threshold: int
-    :param task: The parallel task.
-    :type task: ParallelTask
+    :param logging_level: A string of the logging level name. Defaults to None
+    :type logging_level: str, optional
+    :param max_concurrency_per_instance: The max parallellism that each compute instance has. Defaults to None
+    :type max_concurrency_per_instance: int, optional
+    :param error_threshold: The number of item processing failures should be ignored. Defaults to None
+    :type error_threshold: int, optional
+    :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored. Defaults to None
+    :type mini_batch_error_threshold: int, optional
+    :param task: The parallel task. Defaults to None
+    :type task: ParallelTask, optional
     :param mini_batch_size: For FileDataset input, this field is the number of files a user script can process
         in one run() call. For TabularDataset input, this field is the approximate size of data the user script
         can process in one run() call. Example values are 1024, 1024KB, 10MB, and 1GB.
         (optional, default value is 10 files for FileDataset and 1MB for TabularDataset.) This value could be set
         through PipelineParameter.
-    :type mini_batch_size: str
-    :param partition_keys:  The keys used to partition dataset into mini-batches.
+    :type mini_batch_size: str, optional
+    :param partition_keys:  The keys used to partition dataset into mini-batches. Defaults to None
         If specified, the data with the same key will be partitioned into the same mini-batch.
         If both partition_keys and mini_batch_size are specified, partition_keys will take effect.
         The input(s) must be partitioned dataset(s),
         and the partition_keys must be a subset of the keys of every input dataset for this to work.
-    :type partition_keys: list
-    :param input_data: The input data.
-    :type input_data: str
-    :param resources: Compute Resource configuration for the component.
-    :type resources: Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]
-    :param inputs: Inputs of the component.
-    :type inputs: dict
-    :param outputs: Outputs of the component.
-    :type outputs: dict
+    :type partition_keys: list, optional
+    :param input_data: The input data. Defaults to None
+    :type input_data: str, optional
+    :param resources: Compute Resource configuration for the component. Defaults to None
+    :type resources: Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration], optional
+    :param inputs: Inputs of the component. Defaults to None
+    :type inputs: dict, optional
+    :param outputs: Outputs of the component. Defaults to None
+    :type outputs: dict, optional
     :param code: promoted property from task.code
-    :type code: str
-    :param instance_count: promoted property from resources.instance_count
-    :type instance_count: int
-    :param is_deterministic: Whether the parallel component is deterministic.
-    :type is_deterministic: bool
+    :type code: str, optional
+    :param instance_count: promoted property from resources.instance_count. Defaults to None
+    :type instance_count: int, optional
+    :param is_deterministic: Whether the parallel component is deterministic. Defaults to True
+    :type is_deterministic: bool, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if ParallelComponent cannot be successfully validated.
         Details will be provided in the error message.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         name: Optional[str] = None,
@@ -154,7 +158,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
 
             try:
                 self.mini_batch_size = int(self.mini_batch_size)
-            except ValueError:
+            except ValueError as e:
                 unit = self.mini_batch_size[-2:].lower()
                 if unit == "kb":
                     self.mini_batch_size = int(self.mini_batch_size[0:-2]) * 1024
@@ -163,7 +167,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
                 elif unit == "gb":
                     self.mini_batch_size = int(self.mini_batch_size[0:-2]) * 1024 * 1024 * 1024
                 else:
-                    raise ValueError("mini_batch_size unit must be kb, mb or gb")
+                    raise ValueError("mini_batch_size unit must be kb, mb or gb") from e
 
     @property
     def instance_count(self) -> int:
@@ -176,6 +180,11 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
 
     @instance_count.setter
     def instance_count(self, value: int):
+        """Set the value of the promoted property resources.instance_count.
+
+        :param value: The value to set for resources.instance_count.
+        :type value: int
+        """
         if not value:
             return
         if not self.resources:
@@ -195,6 +204,11 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
 
     @code.setter
     def code(self, value: str):
+        """Set the value of the promoted property task.code.
+
+        :param value: The value to set for task.code.
+        :type value: str
+        """
         if not value:
             return
         if not self.task:
@@ -214,12 +228,22 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
 
     @environment.setter
     def environment(self, value: str):
+        """Set the value of the promoted property task.environment.
+
+        :param value: The value to set for task.environment.
+        :type value: str
+        """
         if not value:
             return
         if not self.task:
             self.task = ParallelTask(environment=value)
         else:
             self.task.environment = value
+
+    def _customized_validate(self) -> MutableValidationResult:
+        validation_result = super()._customized_validate()
+        self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(validation_result)
+        return validation_result
 
     @classmethod
     def _attr_type_map(cls) -> dict:

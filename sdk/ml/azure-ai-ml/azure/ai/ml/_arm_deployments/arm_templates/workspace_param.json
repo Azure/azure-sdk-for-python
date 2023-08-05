@@ -151,5 +151,17 @@
     },
     "online_store_connection_target" : {
         "value": ""
+    },
+    "workspace_hub_config" : {
+        "value": {}
+    },
+    "existing_workspaces" : {
+        "value": []
+    },
+    "workspace_hub" : {
+        "value": ""
+    },
+    "enable_data_isolation": {
+        "value": "false"
     }
 }

@@ -7,14 +7,14 @@ transaction receipts."""
 
 from base64 import b64decode
 from hashlib import sha256
-from typing import Dict, List, Any, cast
+from typing import Dict, List, Any, cast, Optional
 
 from cryptography.x509 import load_pem_x509_certificate, Certificate
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec, utils
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
-from azure.confidentialledger.receipt._models import (
+from azure.confidentialledger.receipt._receipt_models import (
     LeafComponents,
     ProofElement,
     Receipt,
@@ -22,11 +22,19 @@ from azure.confidentialledger.receipt._models import (
 
 from azure.confidentialledger.receipt._utils import (
     _convert_dict_to_camel_case,
-    _validate_receipt_content,
+)
+
+from azure.confidentialledger.receipt._claims_digest_computation import (
+    compute_claims_digest,
 )
 
 
-def verify_receipt(receipt: Dict[str, Any], service_cert: str) -> None:
+def verify_receipt(
+    receipt: Dict[str, Any],
+    service_cert: str,
+    *,
+    application_claims: Optional[List[Dict[str, Any]]] = None,
+) -> None:
     """Verify that a given Azure Confidential Ledger write transaction receipt
     is valid from its content and the Confidential Ledger service identity
     certificate.
@@ -39,11 +47,22 @@ def verify_receipt(receipt: Dict[str, Any], service_cert: str) -> None:
      certificate of the Confidential Ledger service identity.
     :type service_cert: str
 
+    :keyword application_claims: List of application claims to be verified against the receipt.
+    :paramtype application_claims: Optional[List[Dict[str, Any]]]
+
     :raises ValueError: If the receipt verification has failed.
     """
 
     # Validate receipt content and convert it into a Receipt model
     receipt_obj = _preprocess_input_receipt(receipt)
+
+    # Validate application claims provided by the user, if any
+    if application_claims:
+        computed_claims_digest = compute_claims_digest(application_claims)
+        if computed_claims_digest != receipt_obj.leafComponents.claimsDigest:
+            raise ValueError(
+                "The computed claims digest from application claims does not match the receipt claims digest."
+            )
 
     # Load node PEM certificate
     node_cert = _load_and_verify_pem_certificate(receipt_obj.cert)
@@ -84,6 +103,55 @@ def _preprocess_input_receipt(receipt_dict: Dict[str, Any]) -> Receipt:
     return Receipt.from_dict(receipt_dict)
 
 
+def _validate_receipt_content(receipt: Dict[str, Any]):
+    """Validate the content of a write transaction receipt."""
+
+    try:
+        assert "cert" in receipt
+        assert isinstance(receipt["cert"], str)
+
+        assert "leafComponents" in receipt
+        assert isinstance(receipt["leafComponents"], dict)
+
+        assert "claimsDigest" in receipt["leafComponents"]
+        assert isinstance(receipt["leafComponents"]["claimsDigest"], str)
+
+        assert "commitEvidence" in receipt["leafComponents"]
+        assert isinstance(receipt["leafComponents"]["commitEvidence"], str)
+
+        assert "writeSetDigest" in receipt["leafComponents"]
+        assert isinstance(receipt["leafComponents"]["writeSetDigest"], str)
+
+        assert "proof" in receipt
+        assert isinstance(receipt["proof"], list)
+
+        # Validate elements in proof
+        for elem in receipt["proof"]:
+            assert "left" in elem or "right" in elem
+            if "left" in elem:
+                assert isinstance(elem["left"], str)
+            if "right" in elem:
+                assert isinstance(elem["right"], str)
+
+        assert "signature" in receipt
+        assert isinstance(receipt["signature"], str)
+
+        # Validate nodeId, if present
+        if "nodeId" in receipt:
+            assert isinstance(receipt["nodeId"], str)
+
+        # Validate serviceEndorsements, if present
+        if "serviceEndorsements" in receipt:
+            assert isinstance(receipt["serviceEndorsements"], list)
+
+            # Validate elements in serviceEndorsements
+            for elem in receipt["serviceEndorsements"]:
+                assert isinstance(elem, str)
+
+    except Exception as exception:
+        raise ValueError("The receipt content is invalid.") from exception
+
+
 def _verify_signature_over_root_node_hash(
     signature: str, node_cert: Certificate, node_id: str, root_node_hash: bytes
 ) -> None:
@@ -101,7 +169,10 @@ def _verify_signature_over_root_node_hash(
 
         # Verify signature over root node hash using node certificate public key
         _verify_ec_signature(
-            node_cert, b64decode(signature), root_node_hash, hashes.SHA256()
+            node_cert,
+            b64decode(signature, validate=True),
+            root_node_hash,
+            hashes.SHA256(),
         )
 
     except Exception as exception:
@@ -152,7 +223,6 @@ def _compute_root_node_hash(leaf_hash: bytes, proof: List[ProofElement]) -> byte
 
         # Iterate through all the elements in proof list
         for element in proof:
-
             # Check that the current element only contains either one left or right node hash
             if (
                 element is None
@@ -244,7 +314,6 @@ def _verify_node_cert_endorsed_by_service_cert(
 
     # Iterate through all the endorsements certificates
     for endorsement in endorsements_certs:
-
         # Load endorsement PEM certificate
         endorsement_cert = _load_and_verify_pem_certificate(endorsement)
 
