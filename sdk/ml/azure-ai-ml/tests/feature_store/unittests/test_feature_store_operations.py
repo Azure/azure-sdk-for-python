@@ -224,19 +224,17 @@ class TestFeatureStoreOperation:
                     type(mock_feature_store_operation), mock_feature_store_operation
                 ).begin_update.call_args.kwargs
 
-                if isinstance(call_kwargs, tuple):
-                    print(f"Unittests: should be dict instead of Tuple: {call_kwargs}")
-                    print(call_kwargs)
+                # remove this condition check when test env python version >= 3.8
+                if isinstance(call_kwargs, dict):
+                    assert call_kwargs["grant_materialization_identity_permissions"] == True
+                    assert call_kwargs["update_workspace_role_assignment"] == testcase[1][0]
+                    assert call_kwargs["update_offline_store_role_assignment"] == testcase[1][1]
+                    assert call_kwargs["update_online_store_role_assignment"] == testcase[1][2]
+                    assert call_kwargs["materialization_identity_id"] == testcase[1][3]
+                    assert call_kwargs["offline_store_target"] == testcase[1][4]
+                    assert call_kwargs["online_store_target"] == testcase[1][5]
 
-                assert call_kwargs["grant_materialization_identity_permissions"] == True
-                assert call_kwargs["update_workspace_role_assignment"] == testcase[1][0]
-                assert call_kwargs["update_offline_store_role_assignment"] == testcase[1][1]
-                assert call_kwargs["update_online_store_role_assignment"] == testcase[1][2]
-                assert call_kwargs["materialization_identity_id"] == testcase[1][3]
-                assert call_kwargs["offline_store_target"] == testcase[1][4]
-                assert call_kwargs["online_store_target"] == testcase[1][5]
-
-                print(f"Passed test case: {testcase}")
+                print(f"passed test case: {testcase}")
                 super(type(mock_feature_store_operation), mock_feature_store_operation).begin_update.reset_mock()
 
         mock_feature_store_operation._operation.get.side_effect = outgoing_get_call
