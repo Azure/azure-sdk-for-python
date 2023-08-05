@@ -564,15 +564,12 @@ class WorkspaceOperationsBase:
         _set_val(param["resource_group_name"], resource_group)
 
         update_workspace_role_assignment = kwargs.get("update_workspace_role_assignment", None)
-        print(f"update_workspace_role_assignment: {update_workspace_role_assignment}")
         if update_workspace_role_assignment:
             _set_val(param["update_workspace_role_assignment"], "true")
         update_offline_store_role_assignment = kwargs.get("update_offline_store_role_assignment", None)
-        print(f"update_offline_store_role_assignment: {update_offline_store_role_assignment}")
         if update_offline_store_role_assignment:
             _set_val(param["update_offline_store_role_assignment"], "true")
         update_online_store_role_assignment = kwargs.get("update_online_store_role_assignment", None)
-        print(f"update_online_store_role_assignment: {update_online_store_role_assignment}")
         if update_online_store_role_assignment:
             _set_val(param["update_online_store_role_assignment"], "true")
 
