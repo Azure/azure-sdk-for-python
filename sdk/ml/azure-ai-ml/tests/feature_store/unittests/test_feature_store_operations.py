@@ -224,6 +224,9 @@ class TestFeatureStoreOperation:
                     type(mock_feature_store_operation), mock_feature_store_operation
                 ).begin_update.call_args.kwargs
 
+                if isinstance(kwargs, tuple):
+                    print(f"Unittests: should be dict instead of Tuple: {kwargs}")
+
                 assert kwargs["grant_materialization_identity_permissions"] == True
                 assert kwargs["update_workspace_role_assignment"] == testcase[1][0]
                 assert kwargs["update_offline_store_role_assignment"] == testcase[1][1]
