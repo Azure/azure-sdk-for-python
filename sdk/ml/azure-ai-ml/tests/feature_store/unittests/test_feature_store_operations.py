@@ -220,20 +220,21 @@ class TestFeatureStoreOperation:
                 super(
                     type(mock_feature_store_operation), mock_feature_store_operation
                 ).begin_update.assert_called_once()
-                kwargs = super(
+                call_kwargs = super(
                     type(mock_feature_store_operation), mock_feature_store_operation
                 ).begin_update.call_args.kwargs
 
-                if isinstance(kwargs, tuple):
-                    print(f"Unittests: should be dict instead of Tuple: {kwargs}")
+                if isinstance(call_kwargs, tuple):
+                    print(f"Unittests: should be dict instead of Tuple: {call_kwargs}")
+                    print(call_kwargs)
 
-                assert kwargs["grant_materialization_identity_permissions"] == True
-                assert kwargs["update_workspace_role_assignment"] == testcase[1][0]
-                assert kwargs["update_offline_store_role_assignment"] == testcase[1][1]
-                assert kwargs["update_online_store_role_assignment"] == testcase[1][2]
-                assert kwargs["materialization_identity_id"] == testcase[1][3]
-                assert kwargs["offline_store_target"] == testcase[1][4]
-                assert kwargs["online_store_target"] == testcase[1][5]
+                assert call_kwargs["grant_materialization_identity_permissions"] == True
+                assert call_kwargs["update_workspace_role_assignment"] == testcase[1][0]
+                assert call_kwargs["update_offline_store_role_assignment"] == testcase[1][1]
+                assert call_kwargs["update_online_store_role_assignment"] == testcase[1][2]
+                assert call_kwargs["materialization_identity_id"] == testcase[1][3]
+                assert call_kwargs["offline_store_target"] == testcase[1][4]
+                assert call_kwargs["online_store_target"] == testcase[1][5]
 
                 print(f"Passed test case: {testcase}")
                 super(type(mock_feature_store_operation), mock_feature_store_operation).begin_update.reset_mock()
