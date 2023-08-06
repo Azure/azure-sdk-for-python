@@ -491,13 +491,13 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             self.optional = self._simple_parse(getattr(self, "optional", "false"), _type="boolean")
 
     @classmethod
-    def _get_input_by_type(cls, t: type, optional=None):
+    def _get_input_by_type(cls, t: type, optional=None) -> Optional["Input"]:
         if t in IOConstants.PRIMITIVE_TYPE_2_STR:
             return cls(type=IOConstants.PRIMITIVE_TYPE_2_STR[t], optional=optional)
         return None
 
     @classmethod
-    def _get_default_unknown_input(cls, optional=None):
+    def _get_default_unknown_input(cls, optional=None) -> "Input":
         # Set type as None here to avoid schema validation failed
         return cls(type=None, optional=optional)
 
