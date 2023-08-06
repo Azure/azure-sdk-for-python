@@ -407,7 +407,7 @@ def _update_io_from_mldesigner(annotations: Dict[str, Annotation]) -> Dict[str, 
 T = TypeVar("T")
 
 
-def _remove_empty_values(data: T, ignore_keys=None) -> T:
+def _remove_empty_values(data: T) -> T:
     """Recursively removes None values from a dict
 
     :param data: The value to remove None from
@@ -419,9 +419,4 @@ def _remove_empty_values(data: T, ignore_keys=None) -> T:
     """
     if not isinstance(data, dict):
         return data
-    ignore_keys = ignore_keys or {}
-    return {
-        k: v if k in ignore_keys else _remove_empty_values(v)
-        for k, v in data.items()
-        if v is not None or k in ignore_keys
-    }
+    return {k: _remove_empty_values(v) for k, v in data.items() if v is not None}

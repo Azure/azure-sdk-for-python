@@ -109,7 +109,7 @@ class InputOutputBase(ABC):
         super(InputOutputBase, self).__init__(**kwargs)
 
     @abstractmethod
-    def _build_data(self, data: T, key=None) -> Union[T, str, Input, "InputOutputBase"]:  # pylint: disable=unused-argument
+    def _build_data(self, data: T) -> Union[T, str, Input, "InputOutputBase"]:
         """Validate if data matches type and translate it to Input/Output acceptable type.
 
         :return: The built data
@@ -286,7 +286,7 @@ class NodeInput(InputOutputBase):
         if self._data is None:
             self._data = Input()
 
-    def _build_data(self, data: T, key=None) -> Union[T, str, Input, InputOutputBase]:  # pylint: disable=unused-argument
+    def _build_data(self, data: T) -> Union[T, str, Input, InputOutputBase]:
         """Build input data according to assigned input
 
         eg: node.inputs.key = data
@@ -566,7 +566,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             # so we just leave the type inference work to backend
             self._data = Output(type=None)
 
-    def _build_data(self, data: T, key=None) -> T:
+    def _build_data(self, data: T) -> T:
         """Build output data according to assigned input, eg: node.outputs.key = data
 
         :return: `data`
@@ -676,7 +676,7 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
     def __str__(self) -> str:
         return self._data_binding()
 
-    def _build_data(self, data: T, key=None) -> Union[Input, T]:  # pylint: disable=unused-argument
+    def _build_data(self, data: T) -> Union[Input, T]:
         """Build data according to input type.
 
         :return:
