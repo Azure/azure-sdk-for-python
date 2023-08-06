@@ -85,11 +85,11 @@ class InputOutputBase(ABC):
         :param meta: Metadata of this input/output, eg: type, min, max, etc.
         :type meta: Union[Input, Output]
         :param data: Actual value of input/output, None means un-configured data.
-        :type data: Union[None, int, bool, float, str
+        :type data: Union[None, int, bool, float, str,
                           azure.ai.ml.Input,
                           azure.ai.ml.Output]
         :param default_data: default value of input/output, None means un-configured data.
-        :type default_data: Union[None, int, bool, float, str
+        :type default_data: Union[None, int, bool, float, str,
                           azure.ai.ml.Input,
                           azure.ai.ml.Output]
         """
