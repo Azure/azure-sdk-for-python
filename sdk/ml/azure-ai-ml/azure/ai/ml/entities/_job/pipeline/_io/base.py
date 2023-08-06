@@ -654,13 +654,17 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
 
         :return: The original value of pipeline input
         :rtype: Any
+
+        Example:
+
+        .. code-block:: python
+
+           @pipeline
+           def pipeline_func(param1):
+             # node1's param1 will get actual value of param1 instead of a input binding.
+             node1 = component_func(param1=param1.result())
         """
-        # example:
-        #
-        # @pipeline
-        # def pipeline_func(param1):
-        #   node1 = component_func(param1=param1.result())
-        #   # node1's param1 will get actual value of param1 instead of a input binding.
+
         # use this to break self loop
         original_data_cache = set()
         original_data = self._original_data
