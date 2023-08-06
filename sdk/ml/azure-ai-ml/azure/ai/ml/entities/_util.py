@@ -6,7 +6,7 @@ import hashlib
 import json
 import os
 import shutil
-from typing import Any, Dict, Iterable, List, Optional, Type, Union
+from typing import Any, Dict, Iterable, List, Optional, Type, TypeVar, Union
 from unittest import mock
 
 import msrest
@@ -377,18 +377,22 @@ def resolve_pipeline_parameters(pipeline_parameters: dict, remove_empty=False):
     return pipeline_parameters
 
 
-def resolve_pipeline_parameter(data):
+T = TypeVar("T")
+
+
+def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
     from azure.ai.ml.entities._builders.base_node import BaseNode
     from azure.ai.ml.entities._builders.pipeline import Pipeline
     from azure.ai.ml.entities._job.pipeline._io import OutputsAttrDict
     from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
+    from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
     if isinstance(data, PipelineExpression):
-        data = data.resolve()
+        data: Union[str, BaseNode] = data.resolve()
     if isinstance(data, (BaseNode, Pipeline)):
         # For the case use a node/pipeline node as the input, we use its only one output as the real input.
         # Here we set node = node.outputs, then the following logic will get the output object.
-        data = data.outputs
+        data: OutputsAttrDict = data.outputs
     if isinstance(data, OutputsAttrDict):
         # For the case that use the outputs of another component as the input,
         # we use the only one output as the real input,
@@ -400,7 +404,7 @@ def resolve_pipeline_parameter(data):
                 no_personal_data_message="multiple output(s) found of specified outputs, exactly 1 output required.",
                 target=ErrorTarget.PIPELINE,
             )
-        data = list(data.values())[0]
+        data: NodeOutput = list(data.values())[0]
     return data
 
 

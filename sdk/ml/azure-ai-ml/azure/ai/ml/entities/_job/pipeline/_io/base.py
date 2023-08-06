@@ -584,7 +584,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             )
         return data
 
-    def _to_job_output(self):
+    def _to_job_output(self) -> Output:
         """Convert the output to Output, this logic will change if backend contract changes."""
         if self._data is None:
             # None data means this output is not configured.
@@ -707,7 +707,7 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
             return _data_to_input(data)
         return data
 
-    def _data_binding(self):
+    def _data_binding(self) -> str:
         full_name = "%s.%s" % (".".join(self._group_names), self._port_name) if self._group_names else self._port_name
         return f"${{{{parent.inputs.{full_name}}}}}"
 

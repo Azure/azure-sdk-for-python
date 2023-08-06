@@ -783,7 +783,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         return silo_agg_map, agg_silo_map
 
     @staticmethod
-    def _get_merge_component(output_type):
+    def _get_merge_component(output_type: str):
         """Gets the merge component to be used based on type of output
 
         :return: The merge component

@@ -461,7 +461,7 @@ class PipelineComponentBuilder:
             output_annotations[key] = val._to_dict()
         return output_annotations
 
-    def _validate_inferred_outputs(self, output_meta_dict: dict, output_dict: dict):
+    def _validate_inferred_outputs(self, output_meta_dict: dict, output_dict: Dict[str, PipelineOutput]):
         """Validate inferred output dict against annotation."""
         if not self.output_annotation:
             return

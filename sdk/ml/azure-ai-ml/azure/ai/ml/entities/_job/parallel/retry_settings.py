@@ -64,7 +64,7 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
         return load_from_dict(RetrySettingsSchema, data, context, **kwargs)
 
     @classmethod
-    def _from_dict(cls, dct: dict):
+    def _from_dict(cls, dct: dict) -> "RetrySettings":
         """Convert a dict to an Input object."""
         obj = cls(**dict(dct.items()))
         return obj

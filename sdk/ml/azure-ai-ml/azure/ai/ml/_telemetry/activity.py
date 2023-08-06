@@ -59,11 +59,11 @@ class ActivityLoggerAdapter(logging.LoggerAdapter):
     :type activity_info: str
     """
 
-    def __init__(self, logger, activity_info):
+    def __init__(self, logger: logging.Logger, activity_info: str):
         """Initialize a new instance of the class.
 
         :param logger: The activity logger.
-        :type logger: logger
+        :type logger: logging.Logger
         :param activity_info: The info to write to the logger.
         :type activity_info: str
         """

@@ -5,8 +5,7 @@ import re
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, TYPE_CHECKING, Tuple, Union
-
+from typing import AnyStr, Dict, Callable, IO, Optional, TYPE_CHECKING, Tuple, Union
 from typing_extensions import Literal
 from marshmallow import INCLUDE
 
@@ -152,7 +151,7 @@ class Component(
         self._other_parameter = kwargs
 
     @property
-    def _func(self):
+    def _func(self) -> Callable[..., "BaseNode"]:
         from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
 
         # validate input/output names before creating component function
@@ -571,7 +570,7 @@ class Component(
         is_anonymous = self.name is None or ANONYMOUS_COMPONENT_NAME in self.name
         return {"type": self.type, "source": self._source, "is_anonymous": is_anonymous}
 
-    def __call__(self, *args, **kwargs) -> BaseNode:
+    def __call__(self, *args, **kwargs) -> "BaseNode":
         """Call ComponentVersion as a function and get a Component object.
 
         :return: The component object
