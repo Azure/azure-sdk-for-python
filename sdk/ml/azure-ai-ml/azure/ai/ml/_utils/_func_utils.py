@@ -6,7 +6,7 @@ import logging
 import sys
 from contextlib import contextmanager
 from types import CodeType, FrameType, FunctionType, MethodType
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 
@@ -64,7 +64,7 @@ class PersistentLocalsFunctionBuilder(abc.ABC):
 class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
     @staticmethod
     @contextmanager
-    def _replace_sys_profiler(profiler):
+    def _replace_sys_profiler(profiler) -> Iterable[None]:
         """A context manager which replaces sys profiler to given profiler."""
         original_profiler = sys.getprofile()
         sys.setprofile(profiler)

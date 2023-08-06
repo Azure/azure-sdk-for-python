@@ -9,7 +9,7 @@ import os
 import re
 import sys
 from pathlib import Path
-from typing import Optional, Union
+from typing import Iterable, Optional, Union
 
 from azure.ai.ml.dsl._constants import VALID_NAME_CHARS
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget
@@ -128,7 +128,7 @@ def _force_reload_module(module):
 
 
 @contextlib.contextmanager
-def _change_working_dir(path, mkdir=True):
+def _change_working_dir(path, mkdir=True) -> Iterable[None]:
     """Context manager for changing the current working directory."""
 
     saved_path = os.getcwd()

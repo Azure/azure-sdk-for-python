@@ -18,7 +18,7 @@ import logging
 import os
 import uuid
 from datetime import datetime
-from typing import Dict, Tuple
+from typing import Dict, Iterable, Tuple
 from uuid import uuid4
 
 from marshmallow import ValidationError
@@ -158,7 +158,7 @@ def log_activity(
     activity_name,
     activity_type=ActivityType.INTERNALCALL,
     custom_dimensions=None,
-):
+) -> Iterable[ActivityLoggerAdapter]:
     """Log an activity.
 
     An activity is a logical block of code that consumers want to monitor.
@@ -174,6 +174,8 @@ def log_activity(
     :type activity_type: str
     :param custom_dimensions: The custom properties of the activity.
     :type custom_dimensions: dict
+    :return: An activity logger
+    :rtype: Iterable[ActivityLoggerAdapter]
     """
     activity_info = {
         "activity_id": str(uuid.uuid4()),

@@ -5,7 +5,7 @@ import os
 from contextlib import contextmanager
 from enum import Enum
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Iterable, List, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._asset_utils import IgnoreFile, get_ignore_file
@@ -232,11 +232,12 @@ class ComponentCodeMixin:
         return code_type == CodeType.LOCAL
 
     @contextmanager
-    def _build_code(self) -> Optional[Code]:
+    def _build_code(self) -> Iterable[Optional[Code]]:
         """Create a Code object if necessary based on origin code value and yield it.
 
-        If built code is the same as its origin value, do nothing and yield None.
-        Otherwise, yield a Code object pointing to the code.
+        :return: If built code is the same as its origin value, do nothing and yield None.
+           Otherwise, yield a Code object pointing to the code.
+        :rtype: Iterable[Optional[Code]]
         """
         origin_code_value = self._get_origin_code_in_str()
         code_type = _get_code_type(origin_code_value)
@@ -252,8 +253,12 @@ class ComponentCodeMixin:
             yield None
 
     @contextmanager
-    def _try_build_local_code(self):
-        """Extract the logic of _build_code for local code for further override."""
+    def _try_build_local_code(self) -> Iterable[Optional[Code]]:
+        """Extract the logic of _build_code for local code for further override.
+
+        :return: The Code object if could be constructed, None otherwise
+        :rtype: Iterable[Optional[Code]]
+        """
         origin_code_value = self._get_origin_code_in_str()
         if origin_code_value is None:
             yield None

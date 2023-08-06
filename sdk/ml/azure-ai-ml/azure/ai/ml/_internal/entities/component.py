@@ -6,7 +6,7 @@
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, Iterable, List, Optional, Union
 from uuid import UUID
 
 import yaml
@@ -304,10 +304,13 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         return snapshot_id
 
     @contextmanager
-    def _try_build_local_code(self) -> Optional[Code]:
+    def _try_build_local_code(self) -> Iterable[Code]:
         """Build final code when origin code is a local code.
         Will merge code path with additional includes into a temp folder if additional includes is specified.
         For internal components, file dependencies in environment will be resolved based on the final code.
+
+        :return: The code instance
+        :rtype: Iterable[Code]
         """
         # origin code value of internal component will never be None. check _get_origin_code_value for details
         with self._generate_additional_includes_obj().merge_local_code_and_additional_includes() as tmp_code_dir:

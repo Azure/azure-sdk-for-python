@@ -427,7 +427,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             return self.create_or_update(environment_ref)
 
     @contextmanager
-    def _set_registry_client(self, registry_name: str) -> None:
+    def _set_registry_client(self, registry_name: str) -> Iterable[None]:
         """Sets the registry client for the environment operations.
 
         :param registry_name: Name of the registry.
