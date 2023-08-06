@@ -115,15 +115,19 @@ class NodeIOMixin:
         return InputsAttrDict(input_dict)
 
     def _build_outputs_dict(
-        self, outputs: Dict[str, Output], *, output_definition_dict: dict = None, none_data=False
+        self, outputs: Dict[str, Output], *, output_definition_dict: dict = None, none_data: bool = False
     ) -> OutputsAttrDict:
         """Build an output attribute dict so user can get/set outputs by
         accessing attribute, eg: node1.outputs.xxx.
 
-        : param outputs: Provided kwargs when parameterizing component func.
-        : param output_definition_dict: Static output definition dict.
-        : param none_data: If True, will set output data to None.
-        : return: Built dynamic output attribute dict.
+        :param outputs: Provided kwargs when parameterizing component func.
+        :type outputs: Dict[str, Output]
+        :keyword output_definition_dict: Static output definition dict.
+        :type output_definition_dict: Dict
+        :keyword none_data: If True, will set output data to None.
+        :type none_data: bool
+        :return: Built dynamic output attribute dict.
+        :rtype: OutputsAttrDict
         """
         if output_definition_dict is not None:
             # TODO: check if we need another way to mark a un-configured output instead of just set None.

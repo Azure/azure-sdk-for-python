@@ -529,8 +529,12 @@ class _ValidationResultBuilder:
     ):
         """Create a validation result with only 1 diagnostic.
 
-        param singular_error_message: diagnostic.message. param yaml_path: diagnostic.yaml_path. param data: serialized
-        validation target.
+        :param singular_error_message: diagnostic.message.
+        :type singular_error_message: Optional[str]
+        :param yaml_path: diagnostic.yaml_path.
+        :type yaml_path: str
+        :param data: serializedvalidation target.
+        :type data: Optional[Dict]
         :return: The validation result
         :rtype: MutableValidationResult
         """
@@ -546,9 +550,10 @@ class _ValidationResultBuilder:
         """Create a validation result from a ValidationError, which will be raised in marshmallow.Schema.load. Please
         use this function only for exception in loading file.
 
-        param error: ValidationError raised by marshmallow.Schema.load. type error: ValidationError param
-        error_on_unknown_field: whether to raise error if there are unknown field diagnostics. type
-        error_on_unknown_field: bool
+        :param error: ValidationError raised by marshmallow.Schema.load.
+        :type error: ValidationError
+        :param error_on_unknown_field: whether to raise error if there are unknown field diagnostics.
+        :type error_on_unknown_field: bool
         :return: The validation result
         :rtype: MutableValidationResult
         """
@@ -565,9 +570,12 @@ class _ValidationResultBuilder:
     ) -> MutableValidationResult:
         """Create a validation result from error messages, which will be returned by marshmallow.Schema.validate.
 
-        param errors: error message returned by marshmallow.Schema.validate. type errors: dict param data: serialized
-        data to validate type data: dict param error_on_unknown_field: whether to raise error if there are unknown field
-        diagnostics. type error_on_unknown_field: bool
+        :param errors: error message returned by marshmallow.Schema.validate.
+        :type errors: dict
+        :param data: serialized data to validate
+        :type data: dict
+        :param error_on_unknown_field: whether to raise error if there are unknown field diagnostics.
+        :type error_on_unknown_field: bool
         :return: The validation result
         :rtype: MutableValidationResult
         """

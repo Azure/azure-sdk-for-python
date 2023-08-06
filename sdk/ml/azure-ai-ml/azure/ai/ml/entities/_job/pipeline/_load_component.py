@@ -142,7 +142,8 @@ class _PipelineNodeFactory:
     def get_create_instance_func(self, _type: str) -> Callable[..., BaseNode]:
         """Get the function to create a new instance of the node.
 
-        param _type: The type of the node. type _type: str
+        :param _type: The type of the node.
+        :type _type: str
         :return: The create instance function
         :rtype: Callable[..., BaseNode]
         """
@@ -153,7 +154,8 @@ class _PipelineNodeFactory:
     ) -> Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]]:
         """Get the function to load a node from a rest object.
 
-        param _type: The type of the node. type _type: str
+        :param _type: The type of the node.
+        :type _type: str
         :return: The `_load_from_rest_object` function
         :rtype: Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]]
         """

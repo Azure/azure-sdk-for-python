@@ -136,9 +136,10 @@ def list_logs_in_datastore(
     """Returns a dictionary of file name to blob or data lake uri with SAS token, matching the structure of
     RunDetails.logFiles.
 
-    legacy_log_folder_name: the name of the folder in the datastore that contains the logs
-        /azureml-logs/*.txt is the legacy log structure for commandJob and sweepJob
-        /logs/azureml/*.txt is the legacy log structure for pipeline parent Job
+    :param legacy_log_folder_name: the name of the folder in the datastore that contains the logs
+        * /azureml-logs/*.txt is the legacy log structure for commandJob and sweepJob
+        * /logs/azureml/*.txt is the legacy log structure for pipeline parent Job
+    :type legacy_log_folder_name: str
     :return: A mapping of log file name to the remote URI
     :rtype: Dict[str, str]
     """
@@ -251,7 +252,8 @@ def download_artifact(
     :param DatastoreOperations datastore_operation: Datastore operations
     :param Optional[str] datastore_name: name of datastore
     :param Dict datastore_info: the return value of invoking get_datastore_info
-    :return str: Path that files were written to
+    :return: Path that files were written to
+    :rtype: str
     """
     starts_with = starts_with.as_posix() if isinstance(starts_with, Path) else starts_with
     datastore_name = _get_datastore_name(datastore_name=datastore_name)
@@ -418,11 +420,15 @@ def _check_and_upload_path(
 ) -> Tuple[T, Optional[str]]:
     """Checks whether `artifact` is a path or a uri and uploads it to the datastore if necessary.
 
-    param T artifact: artifact to check and upload param
-    Union["DataOperations", "ModelOperations", "CodeOperations"]
-    asset_operations:     the asset operations to use for uploading
-    param str datastore_name: the name of the datastore to upload to
-    param str sas_uri: the sas uri to use for uploading
+    :param artifact: artifact to check and upload param
+    :type artifact: T
+    :param asset_operations: The asset operations to use for uploading
+    :type asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations"]
+    :param artifact_type: The artifact type
+    :param datastore_name: the name of the datastore to upload to
+    :type datastore_name: str
+    :param sas_uri: the sas uri to use for uploading
+    :type sas_uri: str
     :return: A 2-tuple of the uploaded artifact, and the indicator file.
     :rtype: Tuple[T, Optional[str]]
     """
