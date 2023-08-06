@@ -169,9 +169,10 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             computes/datstores according to this node's silo configs. The outputs of these
             silo components are then merged by an internal helper component. The merged values
             are then inputted into the user-provided aggregation component. Returns the executed aggregation component.
-            Args:
-                silo_inputs (dict): A dictionary of names and Inputs to be injected into each executed silo step.
+
+            :param silo_inputs: A dictionary of names and Inputs to be injected into each executed silo step.
                     This dictionary is merged with silo-specific inputs before each executed.
+            :type silo_inputs: dict
             """
 
             silo_outputs = []
@@ -273,17 +274,19 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """Construct a path string using the inputted values. The important aspect is that this produces a
         path with a specified datastore.
 
-        Args:
-            datastore_name (str): The datastore to use in the constructed path.
-            output_name (str): The name of the output value that this path is assumed to belong to. Is injected into
-                the path.
-            unique_id (str): An additional string to inject if needed.
-                Defaults to ${{name}}, which is the output name again.
-            iteration_num: optional[int]: The iteration number of the current scatter-gather iteration.
-                If set, inject this into the resulting path string.
-
-        Returns:
-            data_path: A data path string containing the various aforementioned inputs.
+        :param datastore_name: The datastore to use in the constructed path.
+        :type datastore_name: str
+        :param output_name: The name of the output value that this path is assumed to belong to.
+            Is injected into the path.
+        :type output_name: str
+        :param unique_id: An additional string to inject if needed. Defaults to ${{name}}, which is the
+            output name again.
+        :type unique_id: str
+        :param iteration_num: The iteration number of the current scatter-gather iteration.
+            If set, inject this into the resulting path string.
+        :type iteration_num: Optional[int]
+        :return: A data path string containing the various aforementioned inputs.
+        :rtype: str
 
         """
         data_path = f"azureml://datastores/{datastore_name}/paths/federated_learning/{output_name}/{unique_id}/"
@@ -296,11 +299,13 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """Perform a simple regex check to try determine if the datastore in the inputted path string
         matches the expected_datastore.
 
-        Args:
-            path (str): An output pathstring.
-            expected_datastore (str): A datastore name.
-        Returns:
-            nameless bool: Whether or not the expected_datastore was found in the path at the expected location.
+
+        :param path: An output pathstring.
+        :type path: str
+        :param expected_datastore: A datastore name.
+        :type expected_datastore: str
+        :return: Whether or not the expected_datastore was found in the path at the expected location.
+        :rtype: bool
         """
         match = re.match("(.*datastore/)([^/]*)(/.*)", path)
         if match:
@@ -320,16 +325,18 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """Tries to assign output.path to a value which includes the target_datastore if it's not already
         set. If the output's path is already set, return a warning if it doesn't match the target_datastore.
 
-        Args:
-            name (str): The name of the output to modify
-            output (Output): The output object to examine and potentially change the datastore of.
-            target_datastore (str): The name of the datastore to try applying to the output
-            iteration_num (optional[int]): the current iteration in the scatter gather loop.
-                If set, include this in the generated path.
-        Returns:
-            validation_result (MutableValidationResult): A validation result containing any problems that arose.
-            Contains a warning if the examined output already contains a datastore that does not match
-            'target_datastore'.
+        :param name: The name of the output to modify
+        :type name: str
+        :param output: The output object to examine and potentially change the datastore of.
+        :type output: Output
+        :param target_datastore: The name of the datastore to try applying to the output
+        :type target_datastore: str
+        :param iteration_num: the current iteration in the scatter gather loop. If set, include this in the generated
+            path.
+        :type iteration_num: Optional[int]
+        :return: A validation result containing any problems that arose. Contains a warning if the examined output
+            already contains a datastore that does not match 'target_datastore'.
+        :rtype: MutableValidationResult
         """
         validation_result = cls._create_empty_validation_result()
         if not hasattr(output, "path") or not output.path:
@@ -356,18 +363,21 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         _path="root",
     ) -> MutableValidationResult:
         """Take a pipeline step and recursively enforces the right compute/datastore config.
-        Args:
-            pipeline_step (PipelineStep, CommandComponent): a step to anchor
-            compute (str): name of the compute target
-            internal_datastore (str): The name of the datastore that should be used for internal
-                output anchoring.
-            orchestrator_datastore (str): The name of the orchestrator/aggregation datastore that
-                should be used for 'real' output anchoring.
-            _path (str): for recursive anchoring, codes the "path" inside the pipeline for messaging
-        Returns:
-            validation_result (MutableValidationResult): A validation result containing any issues
-                that were uncovered during anchoring. This function adds warnings when outputs already have
-                assigned paths which don't contain the expected datastore.
+
+        :param pipeline_step: a step to anchor
+        :type pipeline_step: Union[PipelineStep, CommandComponent]
+        :param compute: name of the compute target
+        :type compute: str
+        :param internal_datastore: The name of the datastore that should be used for internal output anchoring.
+        :type internal_datastore: str
+        :param orchestrator_datastore: The name of the orchestrator/aggregation datastore that should be used for
+            'real' output anchoring.
+        :type orchestrator_datastore: str
+        :param _path: for recursive anchoring, codes the "path" inside the pipeline for messaging
+        :type _path: str
+        :return: A validation result containing any issues that were uncovered during anchoring. This function adds
+            warnings when outputs already have assigned paths which don't contain the expected datastore.
+        :rtype: MutableValidationResult
         """
 
         validation_result = cls._create_empty_validation_result()
@@ -700,15 +710,19 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         output_name,
         unique_id="${{name}}",
         iteration_num="${{iteration_num}}",
-    ):
+    ) -> str:
         """Produces a path to store the data during FL training.
-        Args:
-            datastore_name (str): name of the Azure ML datastore
-            output_name (str): a name unique to this output
-            unique_id (str): a unique id for the run (default: inject run id with ${{name}})
-            iteration_num (str): an iteration number if relevant
-        Returns:
-            data_path (str): direct url to the data path to store the data
+
+        :param datastore_name: name of the Azure ML datastore
+        :type datastore_name: str
+        :param output_name: a name unique to this output
+        :type output_name: str
+        :param unique_id: a unique id for the run (default: inject run id with ${{name}})
+        :type unique_id: str
+        :param iteration_num: an iteration number if relevant
+        :type iteration_num: str
+        :return: direct url to the data path to store the data
+        :rtype: str
         """
         data_path = f"azureml://datastores/{datastore_name}/paths/federated_learning/{output_name}/{unique_id}/"
         if iteration_num is not None:
@@ -781,11 +795,10 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             These merge components act as a mediator between the user silo and aggregation steps, reducing
             the variable number of silo outputs into a single input for the aggergation step.
 
-        Args:
-            executed_silo_components: A list of executed silo steps to extract outputs from.
-        Returns:
-            merge_comp_mapping (dict): A mapping from silo output names to the corresponding newly
-                created and executed merge component
+        :param executed_silo_components: A list of executed silo steps to extract outputs from.
+        :type executed_silo_components:
+        :return: A mapping from silo output names to the corresponding newly created and executed merge component
+        :rtype: dict
         """
         executed_component = executed_silo_components[0]
 
