@@ -103,7 +103,6 @@ class ParallelTask(RestTranslatableMixin, DictMixin):
 
     @classmethod
     def _from_dict(cls, dct: dict) -> "ParallelTask":
-        """Convert a dict to an Input object."""
         obj = cls(**dict(dct.items()))
         return obj
 

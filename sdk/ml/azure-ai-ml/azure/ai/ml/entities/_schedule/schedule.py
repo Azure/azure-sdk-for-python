@@ -146,7 +146,6 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
         return self._type
 
     def _to_dict(self) -> Dict:
-        """Convert the resource to a dictionary."""
         return self._dump_for_validation()
 
     @classmethod

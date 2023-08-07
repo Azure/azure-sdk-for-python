@@ -172,7 +172,6 @@ class SparkComponent(
         return validation_result
 
     def _to_dict(self) -> Dict:
-        """Dump the spark component content into a dictionary."""
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(SparkComponent, self)._to_dict()})
 
     def _to_ordered_dict_for_yaml_dump(self) -> Dict:

@@ -75,7 +75,6 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         return self._task
 
     def _to_dict(self) -> Dict:
-        """Dump the data transfer component content into a dictionary."""
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(DataTransferComponent, self)._to_dict()})
 
     def __str__(self):

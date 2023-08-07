@@ -546,8 +546,6 @@ class Component(
         return result
 
     def _to_dict(self) -> Dict:
-        """Dump the command component content into a dictionary."""
-
         # Replace the name of $schema to schema.
         component_schema_dict = self._dump_for_validation()
         component_schema_dict.pop("base_path", None)

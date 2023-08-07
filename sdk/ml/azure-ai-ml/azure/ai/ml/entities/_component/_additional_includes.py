@@ -451,7 +451,6 @@ class AdditionalIncludesMixin(ComponentCodeMixin):
         return "additional_includes"
 
     def _get_all_additional_includes_configs(self) -> List:
-        """Get all additional include configs."""
         return getattr(self, self._get_additional_includes_field_name(), [])
 
     def _append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(
