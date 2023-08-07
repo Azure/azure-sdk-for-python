@@ -2,6 +2,8 @@
 
 ## 5.11.4 (2023-08-08)
 
+- A new float keyword argument `socket_timeout` has been added to the sync and async `EventHubConsumerClient` and `EventHubProducerClient`.
+
 ### Bugs Fixed
 
 - Fixed bug [#31258](https://github.com/Azure/azure-sdk-for-python/issues/31258) where async `BlobCheckpointStore` was reprocessing old events after an error.
