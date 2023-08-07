@@ -228,7 +228,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         try:
             initial_response = await operation()
         except ResourceNotFoundError:
-            if polling is False and polling is None:
+            if polling is False or polling is None:
                 raise
 
             # This method allows for temporary resource not found errors, which may occur if session
