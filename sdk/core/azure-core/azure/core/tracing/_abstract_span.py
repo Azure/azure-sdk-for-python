@@ -86,7 +86,7 @@ class AbstractSpan(Protocol):
         :type value: SpanKind
         """
 
-    def __enter__(self) -> "AbstractSpan":
+    def __enter__(self) -> AbstractSpan:
         """Start a span."""
 
     def __exit__(
