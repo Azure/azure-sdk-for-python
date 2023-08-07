@@ -19,7 +19,7 @@ USAGE:
     3) AZURE_CLIENT_SECRET - Required for use of the credential. One of the service principal's client secrets.
     4) SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
      which should follow the format: `<your-namespace>.servicebus.windows.net`
-    5) SCHEMAREGISTRY_GROUP - The name of the schema group.
+    5) SCHEMAREGISTRY_GROUP - The name of the JSON schema group.
     6) EVENT_HUB_CONN_STR - The connection string of the Event Hubs namespace to receive events from.
     7) EVENT_HUB_NAME - The name of the Event Hub in the Event Hubs namespace to receive events from.
 
@@ -31,7 +31,7 @@ import os
 from azure.eventhub import EventHubConsumerClient
 from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder, JsonSchemaDraftIdentifier
 
 EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
@@ -67,8 +67,7 @@ json_schema_encoder = JsonSchemaEncoder(
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=DefaultAzureCredential()
     ),
-    group_name=GROUP_NAME,
-    auto_register=True
+    validate=JsonSchemaDraftIdentifier.DRAFT2020_12
 )
 
 

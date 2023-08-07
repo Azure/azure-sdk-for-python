@@ -28,19 +28,19 @@ FILE: encode_and_decode_with_message_content.py
 DESCRIPTION:
     This sample demonstrates the following:
      - Authenticating a sync SchemaRegistryClient to be used by the JsonSchemaEncoder.
-     - Passing in content and schema to the JsonSchemaEncoder, which will return a dict containing
-      encoded content and corresponding content type.
-     - Passing in a dict containing Json-encoded content and corresponding content type to
-      the JsonSchemaEncoder, which will return the decoded content.
+     - Passing in content, schema_id, and EventData class to the JsonSchemaEncoder, which will return an
+      EventData object containing validated and encoded content and corresponding content type.
+     - Passing in a dict containing encoded content and content type set to JSON Schema Format MIME and
+      schema ID to the JsonSchemaEncoder, which will return the decoded content.
 USAGE:
     python encode_and_decode_with_message_content.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_TENANT_ID - The ID of the service principal's tenant. Also called its 'directory' ID.
     2) AZURE_CLIENT_ID - The service principal's client ID. Also called its 'application' ID.
     3) AZURE_CLIENT_SECRET - One of the service principal's client secrets.
-    4) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+    4) SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
      which should follow the format: `<your-namespace>.servicebus.windows.net`
-    5) SCHEMAREGISTRY_GROUP - The name of the schema group.
+    5) SCHEMAREGISTRY_GROUP - The name of the JSON schema group.
 
 This example uses ClientSecretCredential, which requests a token from Azure Active Directory.
 For more information on ClientSecretCredential, see:
@@ -50,8 +50,8 @@ import os
 import json
 
 from azure.identity import ClientSecretCredential
-from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder, MessageContent
+from azure.schemaregistry import SchemaRegistryClient, MessageContent
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder, JsonSchemaDraftIdentifier
 from azure.eventhub import EventData
 
 TENANT_ID = os.environ["AZURE_TENANT_ID"]
@@ -90,7 +90,7 @@ token_credential = ClientSecretCredential(
 )
 
 
-def encode_message_content_dict(encoder):
+def encode_message_content_dict(encoder: JsonSchemaEncoder):
     dict_content_ben = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
     encoded_message_content_ben = encoder.encode(dict_content_ben, schema=SCHEMA_STRING)
 
@@ -100,7 +100,7 @@ def encode_message_content_dict(encoder):
         encoded_message_content_ben["content_type"],
     )
 
-def decode_with_content_and_content_type(encoder, event_data):
+def decode_with_content_and_content_type(encoder: JsonSchemaEncoder, event_data: EventData):
     # get content as bytes
     content = bytearray()
     for c in event_data.body:
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         credential=token_credential,
     )
     encoder = JsonSchemaEncoder(
-        client=schema_registry, group_name=GROUP_NAME, auto_register=True
+        client=schema_registry, group_name=GROUP_NAME, validate=JsonSchemaDraftIdentifier.DRAFT2020_12
     )
     event_data = encode_message_content_dict(encoder)
     decoded_content = decode_with_content_and_content_type(encoder, event_data)

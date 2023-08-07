@@ -17,9 +17,9 @@ USAGE:
     2) AZURE_CLIENT_ID - Required for use of the credential. The service principal's client ID.
      Also called its 'application' ID.
     3) AZURE_CLIENT_SECRET - Required for use of the credential. One of the service principal's client secrets.
-    4) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+    4) SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
      which should follow the format: `<your-namespace>.servicebus.windows.net`
-    5) SCHEMAREGISTRY_GROUP - The name of the schema group.
+    5) SCHEMAREGISTRY_GROUP - The name of the JSON schema group.
     6) EVENT_HUB_CONN_STR - The connection string of the Event Hubs namespace to send events to.
     7) EVENT_HUB_NAME - The name of the Event Hub in the Event Hubs namespace to send events to.
 
@@ -33,7 +33,7 @@ import json
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder, JsonSchemaDraftIdentifier
 
 EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
@@ -63,13 +63,22 @@ SCHEMA_JSON = {
 }
 SCHEMA_STRING = json.dumps(SCHEMA_JSON)
 
-def send_event_data_batch(producer, encoder):
+def pre_register_schema(schema_registry: SchemaRegistryClient):
+    schema_properties = schema_registry.register_schema(
+        group_name=GROUP_NAME,
+        name=SCHEMA_JSON['title'],
+        definition=SCHEMA_STRING,
+        format="Json"
+    )
+    return schema_properties.id
+
+def send_event_data_batch(producer, encoder, schema_id):
     event_data_batch = producer.create_batch()
     dict_content = {"name": "Bob", "favorite_number": 7, "favorite_color": "red"}
     # Use the encode method to convert dict object to bytes with the given json schema and set body of EventData.
     # The encode method will automatically register the schema into the Schema Registry Service and
     # schema will be cached locally for future usage.
-    event_data = encoder.encode(content=dict_content, schema=SCHEMA_STRING, message_type=EventData)
+    event_data = encoder.encode(content=dict_content, schema_id=schema_id, message_type=EventData)
     print(f'The bytes of encoded dict content is {next(event_data.body)}.')
 
     event_data_batch.add(event_data)
@@ -83,15 +92,18 @@ eventhub_producer = EventHubProducerClient.from_connection_string(
     eventhub_name=EVENTHUB_NAME
 )
 
+# pre-register the schema
+client = SchemaRegistryClient(
+    fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
+    credential=DefaultAzureCredential()
+)
+schema_id = pre_register_schema(client)
+
 # create a JsonSchemaEncoder instance
 json_schema_encoder = JsonSchemaEncoder(
-    client=SchemaRegistryClient(
-        fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
-        credential=DefaultAzureCredential()
-    ),
-    group_name=GROUP_NAME,
-    auto_register=True
+    client=client,
+    validate=JsonSchemaDraftIdentifier.DRAFT2020_12
 )
 
 with eventhub_producer, json_schema_encoder:
-    send_event_data_batch(eventhub_producer, json_schema_encoder)
+    send_event_data_batch(eventhub_producer, json_schema_encoder, schema_id)

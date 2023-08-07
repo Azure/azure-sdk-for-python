@@ -28,7 +28,8 @@ FILE: encode_and_decode_event_data_message.py
 DESCRIPTION:
     This sample demonstrates the following:
      - Authenticating a sync SchemaRegistryClient to be used by the JsonSchemaEncoder.
-     - Passing in content, schema, and EventData class to the JsonSchemaEncoder, which will return an
+     - Registering a schema with the SchemaRegistryClient.
+     - Passing in content, schema_id, and EventData class to the JsonSchemaEncoder, which will return an
       EventData object containing validated and encoded content and corresponding content type.
      - Passing in an `EventData` object with `body` set to encoded content and `content_type`
       set to JSON Schema Format MIME type and schema ID to the JsonSchemaEncoder for decoding content.
@@ -38,9 +39,9 @@ USAGE:
     1) AZURE_TENANT_ID - The ID of the service principal's tenant. Also called its 'directory' ID.
     2) AZURE_CLIENT_ID - The service principal's client ID. Also called its 'application' ID.
     3) AZURE_CLIENT_SECRET - One of the service principal's client secrets.
-    4) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+    4) SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
      which should follow the format: `<your-namespace>.servicebus.windows.net`
-    5) SCHEMAREGISTRY_GROUP - The name of the schema group.
+    5) SCHEMAREGISTRY_GROUP - The name of the JSON schema group.
 
 This example uses ClientSecretCredential, which requests a token from Azure Active Directory.
 For more information on ClientSecretCredential, see:
@@ -51,7 +52,7 @@ import json
 
 from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder, JsonSchemaDraftIdentifier
 from azure.eventhub import EventData
 
 TENANT_ID = os.environ["AZURE_TENANT_ID"]
@@ -119,7 +120,7 @@ def encode_to_event_data_message(encoder: JsonSchemaEncoder, schema_id: str):
     return [event_data_ben, event_data_alice]
 
 
-def decode_event_data_message(encoder, event_data):
+def decode_event_data_message(encoder: JsonSchemaEncoder, event_data: EventData):
     # encoder.decode would extract the schema id from the content_type,
     # retrieve schema from Schema Registry and cache the schema locally.
     # If the schema id is in the local cache, the call won't trigger a service call.
@@ -135,7 +136,9 @@ if __name__ == "__main__":
         credential=token_credential,
     )
     schema_id = pre_register_schema(schema_registry)
-    encoder = JsonSchemaEncoder(client=schema_registry)
+    encoder = JsonSchemaEncoder(
+        client=schema_registry, validate=JsonSchemaDraftIdentifier.DRAFT2020_12
+    )
     event_data_ben, event_data_alice = encode_to_event_data_message(encoder, schema_id)
     decoded_content_ben = decode_event_data_message(encoder, event_data_ben)
     decoded_content_alice = decode_event_data_message(encoder, event_data_alice)

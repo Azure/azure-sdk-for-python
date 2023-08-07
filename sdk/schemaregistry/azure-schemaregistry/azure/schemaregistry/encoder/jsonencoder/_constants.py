@@ -27,16 +27,16 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class JsonSchemaDraftVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class JsonSchemaDraftIdentifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
-    The JSON schema draft versions available for validation.
+    The JSON schema draft identifiers available for validation.
     """
 
-    DRAFT2020_12 = 'draft2020-12'
-    DRAFT2019_09 = 'draft2019-09'
-    DRAFT_07 = 'draft-07'
-    DRAFT_06 = 'draft-06'
-    DRAFT_04 = 'draft-04'
-    DRAFT_03 = 'draft-03'
+    DRAFT2020_12 = "https://json-schema.org/draft/2020-12/schema"
+    DRAFT2019_09 = "https://json-schema.org/draft/2019-09/schema"
+    DRAFT_07 = "https://json-schema.org/draft-07/schema"
+    DRAFT_06 = "https://json-schema.org/draft-06/schema"
+    DRAFT_04 = "https://json-schema.org/draft-04/schema"
+    DRAFT_03 = "https://json-schema.org/draft-03/schema"
 
 JSON_MIME_TYPE = "application/json;serialization=Json"

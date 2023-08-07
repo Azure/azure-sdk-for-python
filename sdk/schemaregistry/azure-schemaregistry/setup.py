@@ -72,7 +72,7 @@ setup(
     ],
     extras_require={
         "jsonencoder": [
-            "jsonschema<5.0.0,>=4.0.0",
+            "jsonschema<5.0.0,>=4.10.3",
         ],
     },
 )
