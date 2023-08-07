@@ -41,6 +41,7 @@ setup(
             "sdk_generator=packaging_tools.sdk_generator:generate_main",
             "sdk_package=packaging_tools.sdk_package:generate_main",
             "sdk_build=ci_tools.build:build",
+            "sdk_build_conda=ci_tools.conda:entrypoint",
             "sdk_set_dev_version=ci_tools.versioning.version_set_dev:version_set_dev_main",
             "sdk_set_version=ci_tools.versioning.version_set:version_set_main",
             "sdk_increment_version=ci_tools.versioning.version_increment:version_increment_main",

@@ -14,9 +14,14 @@ import os
 import shutil
 import re
 import json
+from typing import List, Any
+from .CondaConfiguration import CondaConfiguration
 
 from subprocess import check_call
 from distutils.dir_util import copy_tree
+
+# from package pyyaml
+import yaml
 
 VERSION_REGEX = re.compile(r"\s*AZURESDK_CONDA_VERSION\s*:\s*[\'](.*)[\']\s*")
 
@@ -249,9 +254,13 @@ def get_summary(ci_yml, artifact_name):
     return SUMMARY_TEMPLATE.format(", ".join(pkg_list))
 
 
-def output_workload(json_config):
+def output_workload(json_config: List[Any]) -> None:
     """Show all packages and what order they will be built in."""
-    breakpoint()
+    print("The following packages will be built:")
+
+    for config in json_config:
+        pass
+    print("\t")
 
 def assemble_source(json_config):
     """If given a common root/package, this function will be used to clone slices of the azure-sdk-for-python repo and to download packages as they were at release.
@@ -264,7 +273,7 @@ def build_conda_packages(json_config):
     pass
 
 
-if __name__ == "__main__":
+def entrypoint():
     parser = argparse.ArgumentParser(
         description="Build a set of conda packages based on a json configuration bundle."
     )
@@ -286,15 +295,11 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    json_configs = json.loads(args.config)
 
-    print(args.config)
+    run_configurations = [CondaConfiguration.from_json(json_config) for json_config in json_configs]
 
-    json_config = json.loads(args.config)
-
-
-    # print(json_config[0]["name"])
-
-
+    breakpoint()
     output_workload(json_config)
 
     assemble_source(json_config)
