@@ -129,7 +129,7 @@ def _urljoin(base_url: str, stub_url: str) -> str:
     return parsed_base_url.geturl()
 
 
-class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
+class HttpTransport(AbstractContextManager["HttpTransport"], abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An http sender ABC."""
 
     @abc.abstractmethod
@@ -622,7 +622,7 @@ class PipelineClientBase:
 
         return request
 
-    def format_url(self, url_template: str, **kwargs) -> str:
+    def format_url(self, url_template: str, **kwargs: Any) -> str:
         """Format request URL with the client base URL, unless the
         supplied URL is already absolute.
 
@@ -816,7 +816,7 @@ class PipelineClientBase:
         return request
 
     def options(
-        self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs
+        self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> HttpRequest:
         """Create a OPTIONS request object.
 

@@ -96,7 +96,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
             self._token = self._credential.get_token(*self._scopes, enable_cae=self._enable_cae)
         self._update_headers(request.http_request.headers, self._token.token)
 
-    def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs) -> None:
+    def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
 
         Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
@@ -192,12 +192,12 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         credential: "AzureKeyCredential",
         name: str,
         *,
         prefix: Optional[str] = None,
-        **kwargs,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         super().__init__()
         if not hasattr(credential, "key"):
@@ -222,7 +222,7 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     :raises: ValueError or TypeError
     """
 
-    def __init__(self, credential: "AzureSasCredential", **kwargs) -> None:  # pylint: disable=unused-argument
+    def __init__(self, credential: "AzureSasCredential", **kwargs: Any) -> None:  # pylint: disable=unused-argument
         super(AzureSasCredentialPolicy, self).__init__()
         if not credential:
             raise ValueError("credential can not be None")

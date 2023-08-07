@@ -27,7 +27,8 @@
 import logging
 import sys
 import urllib
-from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union
+from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type
+from types import TracebackType
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -43,6 +44,8 @@ if TYPE_CHECKING:
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
+ExcInfo = Tuple[Type[BaseException], BaseException, TracebackType]
+OptExcInfo = Union[ExcInfo, Tuple[None, None, None]]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -74,7 +77,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     _REQUEST_ID = "x-ms-client-request-id"
     _RESPONSE_ID = "x-ms-request-id"
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         self._network_span_namer = kwargs.get("network_span_namer", _default_network_span_namer)
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
 
@@ -104,7 +107,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         self,
         request: PipelineRequest[HTTPRequestType],
         response: Optional[HTTPResponseType] = None,
-        exc_info: Optional[Tuple] = None,
+        exc_info: OptExcInfo = None,
     ) -> None:
         """Ends the span that is tracing the network and updates its status.
 

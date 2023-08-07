@@ -26,7 +26,7 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, Dict, Any, Union, Generic
 import logging
 from urllib.parse import urlparse
 
@@ -37,8 +37,10 @@ from azure.core.rest import HttpResponse, HttpRequest
 from ._base import HTTPPolicy, RequestHistory
 from ._utils import get_domain
 
+GenericHttpResponseType = TypeVar("GenericHttpResponseType")
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
+ClsRedirectPolicy = TypeVar("ClsRedirectPolicy", bound="RedirectPolicyBase")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,13 +60,13 @@ def domain_changed(original_domain: Optional[str], url: str) -> bool:
     return True
 
 
-class RedirectPolicyBase:
+class RedirectPolicyBase(Generic[GenericHttpResponseType]):
 
     REDIRECT_STATUSES = frozenset([300, 301, 302, 303, 307, 308])
 
     REDIRECT_HEADERS_BLACKLIST = frozenset(["Authorization"])
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         self.allow: bool = kwargs.get("permit_redirects", True)
         self.max_redirects: int = kwargs.get("redirect_max", 30)
 
@@ -75,7 +77,7 @@ class RedirectPolicyBase:
         super(RedirectPolicyBase, self).__init__()
 
     @classmethod
-    def no_redirects(cls):
+    def no_redirects(cls: ClsRedirectPolicy) -> ClsRedirectPolicy:
         """Disable redirects.
 
         :return: A redirect policy with redirects disabled.
@@ -83,7 +85,7 @@ class RedirectPolicyBase:
         """
         return cls(permit_redirects=False)
 
-    def configure_redirects(self, options):
+    def configure_redirects(self, options: Dict[str, Any]) -> None:
         """Configures the redirect settings.
 
         :param options: Keyword arguments from context.
@@ -97,7 +99,7 @@ class RedirectPolicyBase:
             "history": [],
         }
 
-    def get_redirect_location(self, response):
+    def get_redirect_location(self, response: GenericHttpResponseType) -> Optional[Union[str, bool]]:
         """Checks for redirect status code and gets redirect location.
 
         :param response: The PipelineResponse object
@@ -119,7 +121,7 @@ class RedirectPolicyBase:
 
         return False
 
-    def increment(self, settings, response, redirect_location):
+    def increment(self, settings: Dict[str, Any], response: GenericHttpResponseType, redirect_location: str) -> bool:
         """Increment the redirect attempts for this request.
 
         :param dict settings: The redirect settings
@@ -149,7 +151,7 @@ class RedirectPolicyBase:
         return settings["redirects"] >= 0
 
 
-class RedirectPolicy(RedirectPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
+class RedirectPolicy(RedirectPolicyBase[HTTPResponseType], HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """A redirect policy.
 
     A redirect policy in the pipeline can be configured directly or per operation.

@@ -23,8 +23,9 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from __future__ import annotations
 from typing import Any, Union, Generic, TypeVar, List, Dict, Optional, Iterable
-from contextlib import AbstractAsyncContextManager
+from typing_extensions import AsyncContextManager
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
@@ -34,7 +35,6 @@ from .transport import AsyncHttpTransport
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-AsyncPoliciesType = Iterable[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 
 class _SansIOAsyncHTTPPolicyRunner(
@@ -107,7 +107,7 @@ class _AsyncTransportRunner(
         )
 
 
-class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncHTTPResponseType]):
+class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestType, AsyncHTTPResponseType]):
     """Async pipeline implementation.
 
     This is implemented as a context manager, that will activate the context
@@ -130,7 +130,14 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
     def __init__(
         self,
         transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
-        policies: Optional[AsyncPoliciesType] = None,
+        policies: Optional[
+            Iterable[
+                Union[
+                    AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType],
+                    SansIOHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType],
+                ]
+            ]
+        ] = None,
     ) -> None:
         self._impl_policies: List[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]] = []
         self._transport = transport
@@ -145,11 +152,11 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         if self._impl_policies:
             self._impl_policies[-1].next = _AsyncTransportRunner(self._transport)
 
-    async def __aenter__(self) -> "AsyncPipeline":
+    async def __aenter__(self) -> AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]:
         await self._transport.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
+    async def __aexit__(self, *exc_details: Any) -> None:  # pylint: disable=arguments-differ
         await self._transport.__aexit__(*exc_details)
 
     async def _prepare_multipart_mixed_request(self, request: HTTPRequestType) -> None:

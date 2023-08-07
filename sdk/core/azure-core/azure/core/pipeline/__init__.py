@@ -24,10 +24,15 @@
 #
 # --------------------------------------------------------------------------
 
-from typing import TypeVar, Generic, Dict, Any, Tuple, List, Optional, overload
+from typing import TypeVar, Generic, Dict, Any, Tuple, List, Optional, overload, TYPE_CHECKING, Union
 
 HTTPResponseType = TypeVar("HTTPResponseType", covariant=True)  # pylint: disable=typevar-name-incorrect-variance
 HTTPRequestType = TypeVar("HTTPRequestType", covariant=True)  # pylint: disable=typevar-name-incorrect-variance
+
+if TYPE_CHECKING:
+    from .transport import HttpTransport, AsyncHttpTransport
+
+    TransportType = Union[HttpTransport[Any, Any], AsyncHttpTransport[Any, Any]]
 
 
 class PipelineContext(Dict[str, Any]):
@@ -45,8 +50,8 @@ class PipelineContext(Dict[str, Any]):
 
     _PICKLE_CONTEXT = {"deserialized_data"}
 
-    def __init__(self, transport: Any, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
-        self.transport: Optional[Any] = transport
+    def __init__(self, transport: "TransportType", **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+        self.transport: Optional["TransportType"] = transport
         self.options = kwargs
         self._protected = ["transport", "options"]
 

@@ -23,13 +23,17 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar
+from typing import TypeVar, Any, Dict, Generic, Optional
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
 from enum import Enum
-from azure.core.pipeline import PipelineResponse, PipelineRequest
-from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.pipeline import PipelineResponse, PipelineRequest, PipelineContext
+from azure.core.pipeline.transport import (
+    HttpResponse as LegacyHttpResponse,
+    HttpRequest as LegacyHttpRequest,
+    HttpTransport,
+)
 from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.exceptions import (
     AzureError,
@@ -44,8 +48,11 @@ from ._base import HTTPPolicy, RequestHistory
 from . import _utils
 from ..._enum_meta import CaseInsensitiveEnumMeta
 
+GenericHttpRequestType = TypeVar("GenericHttpRequestType")
+GenericHttpResponseType = TypeVar("GenericHttpResponseType")
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
+ClsRetryPolicy = TypeVar("ClsRetryPolicy", bound="RetryPolicyBase")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -56,22 +63,22 @@ class RetryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Fixed = "fixed"
 
 
-class RetryPolicyBase:
+class RetryPolicyBase(Generic[GenericHttpRequestType, GenericHttpResponseType]):
     # pylint: disable=too-many-instance-attributes
     #: Maximum backoff time.
     BACKOFF_MAX = 120
     _SAFE_CODES = set(range(506)) - set([408, 429, 500, 502, 503, 504])
     _RETRY_CODES = set(range(999)) - _SAFE_CODES
 
-    def __init__(self, **kwargs):
-        self.total_retries = kwargs.pop("retry_total", 10)
-        self.connect_retries = kwargs.pop("retry_connect", 3)
-        self.read_retries = kwargs.pop("retry_read", 3)
-        self.status_retries = kwargs.pop("retry_status", 3)
-        self.backoff_factor = kwargs.pop("retry_backoff_factor", 0.8)
-        self.backoff_max = kwargs.pop("retry_backoff_max", self.BACKOFF_MAX)
-        self.retry_mode = kwargs.pop("retry_mode", RetryMode.Exponential)
-        self.timeout = kwargs.pop("timeout", 604800)
+    def __init__(self, **kwargs: Any) -> None:
+        self.total_retries: int = kwargs.pop("retry_total", 10)
+        self.connect_retries: int = kwargs.pop("retry_connect", 3)
+        self.read_retries: int = kwargs.pop("retry_read", 3)
+        self.status_retries: int = kwargs.pop("retry_status", 3)
+        self.backoff_factor: float = kwargs.pop("retry_backoff_factor", 0.8)
+        self.backoff_max: int = kwargs.pop("retry_backoff_max", self.BACKOFF_MAX)
+        self.retry_mode: RetryMode = kwargs.pop("retry_mode", RetryMode.Exponential)
+        self.timeout: int = kwargs.pop("timeout", 604800)
 
         retry_codes = self._RETRY_CODES
         status_codes = kwargs.pop("retry_on_status_codes", [])
@@ -81,7 +88,7 @@ class RetryPolicyBase:
         super(RetryPolicyBase, self).__init__()
 
     @classmethod
-    def no_retries(cls):
+    def no_retries(cls: ClsRetryPolicy) -> ClsRetryPolicy:
         """Disable retries.
 
         :return: A retry policy with retries disabled.
@@ -89,7 +96,7 @@ class RetryPolicyBase:
         """
         return cls(retry_total=0)
 
-    def configure_retries(self, options):
+    def configure_retries(self, options: Dict[str, Any]) -> Dict[str, Any]:
         """Configures the retry settings.
 
         :param options: keyword arguments from context.
@@ -109,7 +116,7 @@ class RetryPolicyBase:
             "history": [],
         }
 
-    def get_backoff_time(self, settings):
+    def get_backoff_time(self, settings: Dict[str, Any]) -> float:
         """Returns the current backoff time.
 
         :param dict settings: The retry settings.
@@ -136,7 +143,7 @@ class RetryPolicyBase:
         """
         return _utils.parse_retry_after(retry_after)
 
-    def get_retry_after(self, response):
+    def get_retry_after(self, response: GenericHttpResponseType) -> Optional[float]:
         """Get the value of Retry-After in seconds.
 
         :param response: The PipelineResponse object
@@ -146,7 +153,7 @@ class RetryPolicyBase:
         """
         return _utils.get_retry_after(response)
 
-    def _is_connection_error(self, err):
+    def _is_connection_error(self, err: Exception) -> bool:
         """Errors when we're fairly sure that the server did not receive the
         request, so it should be safe to retry.
 
@@ -157,7 +164,7 @@ class RetryPolicyBase:
         """
         return isinstance(err, ServiceRequestError)
 
-    def _is_read_error(self, err):
+    def _is_read_error(self, err: Exception) -> bool:
         """Errors that occur after the request has been started, so we should
         assume that the server began processing it.
 
@@ -168,15 +175,20 @@ class RetryPolicyBase:
         """
         return isinstance(err, ServiceResponseError)
 
-    def _is_method_retryable(self, settings, request, response=None):
+    def _is_method_retryable(
+        self,
+        settings: Dict[str, Any],
+        request: GenericHttpRequestType,
+        response: Optional[GenericHttpResponseType] = None,
+    ):
         """Checks if a given HTTP method should be retried upon, depending if
         it is included on the method allowlist.
 
         :param dict settings: The retry settings.
-        :param request: The PipelineRequest object.
-        :type request: ~azure.core.pipeline.PipelineRequest
-        :param response: The PipelineResponse object.
-        :type response: ~azure.core.pipeline.PipelineResponse
+        :param request: The HTTP request object.
+        :type request: ~azure.core.rest.HttpRequest
+        :param response: The HTTP response object.
+        :type response: ~azure.core.rest.HttpResponse or ~azure.core.rest.AsyncHttpResponse
         :return: True if method should be retried upon. False if not in method allowlist.
         :rtype: bool
         """
@@ -187,7 +199,7 @@ class RetryPolicyBase:
 
         return True
 
-    def is_retry(self, settings, response):
+    def is_retry(self, settings: Dict[str, Any], response: GenericHttpResponseType) -> bool:
         """Checks if method/status code is retryable.
 
         Based on allowlists and control variables such as the number of
@@ -217,7 +229,7 @@ class RetryPolicyBase:
             return False
         return settings["total"] and response.http_response.status_code in self._retry_on_status_codes
 
-    def is_exhausted(self, settings):
+    def is_exhausted(self, settings: Dict[str, Any]) -> bool:
         """Checks if any retries left.
 
         :param dict settings: the retry settings
@@ -236,7 +248,12 @@ class RetryPolicyBase:
 
         return min(retry_counts) < 0
 
-    def increment(self, settings, response=None, error=None):
+    def increment(
+        self,
+        settings: Dict[str, Any],
+        response: Optional[GenericHttpResponseType] = None,
+        error: Optional[Exception] = None,
+    ) -> bool:
         """Increment the retry counters.
 
         :param settings: The retry settings.
@@ -301,7 +318,7 @@ class RetryPolicyBase:
                 return False
         return True
 
-    def update_context(self, context, retry_settings):
+    def update_context(self, context: PipelineContext, retry_settings: Dict[str, Any]) -> None:
         """Updates retry history in pipeline context.
 
         :param context: The pipeline context.
@@ -312,7 +329,9 @@ class RetryPolicyBase:
         if retry_settings["history"]:
             context["history"] = retry_settings["history"]
 
-    def _configure_timeout(self, request, absolute_timeout, is_response_error):
+    def _configure_timeout(
+        self, request: GenericHttpRequestType, absolute_timeout: float, is_response_error: bool
+    ) -> None:
         if absolute_timeout <= 0:
             if is_response_error:
                 raise ServiceResponseTimeoutError("Response timeout")
@@ -334,7 +353,7 @@ class RetryPolicyBase:
                 # transport.connection_config.timeout is something unexpected (not a number)
                 pass
 
-    def _configure_positions(self, request, retry_settings):
+    def _configure_positions(self, request: GenericHttpRequestType, retry_settings: Dict[str, Any]) -> None:
         body_position = None
         file_positions = None
         if request.http_request.body and hasattr(request.http_request.body, "read"):
@@ -359,7 +378,7 @@ class RetryPolicyBase:
         retry_settings["file_positions"] = file_positions
 
 
-class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
+class RetryPolicy(RetryPolicyBase[HTTPRequestType, HTTPResponseType], HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """A retry policy.
 
     The retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
@@ -400,7 +419,9 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
             :caption: Configuring a retry policy.
     """
 
-    def _sleep_for_retry(self, response, transport):
+    def _sleep_for_retry(
+        self, response: HTTPResponseType, transport: HttpTransport[HTTPRequestType, HTTPResponseType]
+    ) -> bool:
         """Sleep based on the Retry-After response header value.
 
         :param response: The PipelineResponse object.
@@ -416,7 +437,9 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
             return True
         return False
 
-    def _sleep_backoff(self, settings, transport):
+    def _sleep_backoff(
+        self, settings: Dict[str, Any], transport: HttpTransport[HTTPRequestType, HTTPResponseType]
+    ) -> None:
         """Sleep using exponential backoff. Immediately returns if backoff is 0.
 
         :param dict settings: The retry settings.
@@ -428,7 +451,12 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
             return
         transport.sleep(backoff)
 
-    def sleep(self, settings, transport, response=None):
+    def sleep(
+        self,
+        settings: Dict[str, Any],
+        transport: HttpTransport[HTTPRequestType, HTTPResponseType],
+        response: Optional[HTTPResponseType] = None,
+    ) -> None:
         """Sleep between retry attempts.
 
         This method will respect a server's ``Retry-After`` response header

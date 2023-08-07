@@ -26,11 +26,15 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
-from typing import TypeVar
+from typing import TypeVar, Dict, Any, Optional
 import logging
 import time
 from azure.core.pipeline import PipelineRequest, PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse as LegacyAsyncHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.pipeline.transport import (
+    AsyncHttpResponse as LegacyAsyncHttpResponse,
+    HttpRequest as LegacyHttpRequest,
+    AsyncHttpTransport,
+)
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.exceptions import (
     AzureError,
@@ -46,7 +50,9 @@ HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 _LOGGER = logging.getLogger(__name__)
 
 
-class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
+class AsyncRetryPolicy(
+    RetryPolicyBase[HTTPRequestType, AsyncHTTPResponseType], AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
+):
     """Async flavor of the retry policy.
 
     The async retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
@@ -82,7 +88,9 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
             :caption: Configuring an async retry policy.
     """
 
-    async def _sleep_for_retry(self, response, transport):
+    async def _sleep_for_retry(
+        self, response: AsyncHTTPResponseType, transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]
+    ) -> bool:
         """Sleep based on the Retry-After response header value.
 
         :param response: The PipelineResponse object.
@@ -98,7 +106,9 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
             return True
         return False
 
-    async def _sleep_backoff(self, settings, transport):
+    async def _sleep_backoff(
+        self, settings: Dict[str, Any], transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]
+    ) -> None:
         """Sleep using exponential backoff. Immediately returns if backoff is 0.
 
         :param dict settings: The retry settings.
@@ -110,7 +120,12 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
             return
         await transport.sleep(backoff)
 
-    async def sleep(self, settings, transport, response=None):
+    async def sleep(
+        self,
+        settings: Dict[str, Any],
+        transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
+        response: Optional[AsyncHTTPResponseType] = None,
+    ) -> None:
         """Sleep between retry attempts.
 
         This method will respect a server's ``Retry-After`` response header

@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+from __future__ import annotations
 import logging
 import collections.abc
 from typing import (
@@ -150,26 +150,32 @@ class AsyncPipelineClient(
         base_url: str,
         *,
         pipeline: Optional[AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]] = None,
-        config: Optional[Configuration] = None,
-        **kwargs
+        config: Optional[Configuration[HTTPRequestType, AsyncHTTPResponseType]] = None,
+        **kwargs: Any,
     ):
         super(AsyncPipelineClient, self).__init__(base_url)
-        self._config: Configuration = config or Configuration(**kwargs)
+        self._config: Configuration[HTTPRequestType, AsyncHTTPResponseType] = config or Configuration(**kwargs)
         self._base_url = base_url
         self._pipeline = pipeline or self._build_pipeline(self._config, **kwargs)
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> AsyncPipelineClient[HTTPRequestType, AsyncHTTPResponseType]:
         await self._pipeline.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self.close()
 
-    async def close(self):
+    async def close(self) -> None:
         await self._pipeline.__aexit__()
 
     def _build_pipeline(
-        self, config: Configuration, *, policies=None, per_call_policies=None, per_retry_policies=None, **kwargs
+        self,
+        config: Configuration[HTTPRequestType, AsyncHTTPResponseType],
+        *,
+        policies=None,
+        per_call_policies=None,
+        per_retry_policies=None,
+        **kwargs,
     ) -> AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]:
         transport = kwargs.get("transport")
         per_call_policies = per_call_policies or []
