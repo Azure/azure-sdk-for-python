@@ -4,4 +4,5 @@
 -e ../../identity/azure-identity
 jsonschema>=4.10.3    # lowest version that supports validator_for(default=False)
 aiohttp>=3.0
+genson
 azure-eventhub

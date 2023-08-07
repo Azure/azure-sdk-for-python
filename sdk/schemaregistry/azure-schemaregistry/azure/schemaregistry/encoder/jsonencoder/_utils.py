@@ -128,7 +128,7 @@ def create_message_content(
     ) from exc
 
     try:
-        content_bytes = json.dumps(content).encode()
+        content_bytes = json.dumps(content, separators=(',', ':')).encode()
     except Exception as exc:
         raise InvalidContentError(
             f"Cannot encode value '{content}' for the following schema with schema ID {schema_id}:"
