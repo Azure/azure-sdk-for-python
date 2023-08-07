@@ -420,7 +420,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                 if isinstance(config, FeatureFlagConfigurationSetting):
                     feature_management = self._dict.get(FEATURE_MANAGEMENT_KEY, {})
                     feature_management[key] = value
-                    if FEATURE_MANAGEMENT_KEY not in self.keys():
+                    if FEATURE_MANAGEMENT_KEY not in self._dict.keys():
                         configuration_settings[FEATURE_MANAGEMENT_KEY] = feature_management
                 else:
                     configuration_settings[key] = value
