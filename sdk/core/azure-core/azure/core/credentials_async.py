@@ -3,14 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from __future__ import annotations
-from types import TracebackType
-from typing import Any, Optional, Type
+from typing import Any, Optional, AsyncContextManager
 from typing_extensions import Protocol, runtime_checkable
 from .credentials import AccessToken as _AccessToken
 
 
 @runtime_checkable
-class AsyncTokenCredential(Protocol):
+class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]):
     """Protocol for classes able to provide OAuth tokens."""
 
     async def get_token(
@@ -31,15 +30,4 @@ class AsyncTokenCredential(Protocol):
         """
 
     async def close(self) -> None:
-        pass
-
-    async def __aenter__(self) -> AsyncTokenCredential:
-        pass
-
-    async def __aexit__(
-        self,
-        exception_type: Optional[Type[BaseException]],
-        exception_value: Optional[BaseException],
-        traceback: TracebackType,
-    ) -> None:
         pass
