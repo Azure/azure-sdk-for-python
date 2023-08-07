@@ -3,19 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Protocol that defines what functions wrappers of tracing libraries should implement."""
+from __future__ import annotations
 from enum import Enum
 from urllib.parse import urlparse
 
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Sequence,
-    Optional,
-    Union,
-    Callable,
-    ContextManager,
-    Dict,
-)
+from typing import TYPE_CHECKING, Any, Sequence, Optional, Union, Callable, ContextManager, Dict, Type
+from types import TracebackType
+from typing_extensions import Protocol, ContextManager
 from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse
 from azure.core.rest import (
     HttpResponse as RestHttpResponse,
@@ -26,23 +20,17 @@ from azure.core.rest import (
 HttpResponseType = Union[HttpResponse, AsyncHttpResponse, RestHttpResponse, AsyncRestHttpResponse]
 HttpRequestType = Union[HttpRequest, RestHttpRequest]
 
-if TYPE_CHECKING:
-    AttributeValue = Union[
-        str,
-        bool,
-        int,
-        float,
-        Sequence[str],
-        Sequence[bool],
-        Sequence[int],
-        Sequence[float],
-    ]
-    Attributes = Optional[Dict[str, AttributeValue]]
-
-try:
-    from typing_extensions import Protocol
-except ImportError:
-    Protocol = object  # type: ignore
+AttributeValue = Union[
+    str,
+    bool,
+    int,
+    float,
+    Sequence[str],
+    Sequence[bool],
+    Sequence[int],
+    Sequence[float],
+]
+Attributes = Optional[Dict[str, AttributeValue]]
 
 
 class SpanKind(Enum):
@@ -67,11 +55,11 @@ class AbstractSpan(Protocol):
     """
 
     def __init__(  # pylint: disable=super-init-not-called
-        self, span: Optional[Any] = None, name: Optional[str] = None, **kwargs
+        self, span: Optional[Any] = None, name: Optional[str] = None, **kwargs: Any
     ) -> None:
         pass
 
-    def span(self, name: str = "child_span", **kwargs) -> "AbstractSpan":
+    def span(self, name: str = "child_span", **kwargs: Any) -> AbstractSpan:
         """
         Create a child span for the current span and append it to the child spans list.
         The child span must be wrapped by an implementation of AbstractSpan
@@ -98,10 +86,15 @@ class AbstractSpan(Protocol):
         :type value: SpanKind
         """
 
-    def __enter__(self):
+    def __enter__(self) -> "AbstractSpan":
         """Start a span."""
 
-    def __exit__(self, exception_type, exception_value, traceback):
+    def __exit__(
+        self,
+        exception_type: Optional[Type[BaseException]],
+        exception_value: Optional[BaseException],
+        traceback: TracebackType,
+    ) -> None:
         """Finish a span.
 
         :param exception_type: The type of the exception
@@ -159,7 +152,7 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
-    def link(cls, traceparent: str, attributes: Optional["Attributes"] = None) -> None:
+    def link(cls, traceparent: str, attributes: Optional[Attributes] = None) -> None:
         """
         Given a traceparent, extracts the context and links the context to the current tracer.
 
@@ -170,7 +163,7 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
-    def link_from_headers(cls, headers: Dict[str, str], attributes: Optional["Attributes"] = None) -> None:
+    def link_from_headers(cls, headers: Dict[str, str], attributes: Optional[Attributes] = None) -> None:
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
 
@@ -215,7 +208,7 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
-    def change_context(cls, span: "AbstractSpan") -> ContextManager:
+    def change_context(cls, span: AbstractSpan) -> ContextManager[AbstractSpan]:
         """Change the context for the life of this context manager.
 
         :param span: The span to run in the new context
