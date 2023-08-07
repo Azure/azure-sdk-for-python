@@ -469,7 +469,7 @@ def classifier_document_type_details(blob_source):
     model = _models.ClassifierDocumentTypeDetails(
             source=blob_source[0],
     )
-    model_repr = f"ClassifierDocumentTypeDetails(source_kind='azureBlob', source={blob_source[1]})"
+    model_repr = f"ClassifierDocumentTypeDetails(source_kind={'azureBlob'}, source={blob_source[1]})"
 
     assert repr(model) == model_repr
     return model, model_repr
@@ -480,7 +480,7 @@ def classifier_document_type_details_file_list(blob_file_list_source):
     model = _models.ClassifierDocumentTypeDetails(
             source=blob_file_list_source[0],
     )
-    model_repr = f"ClassifierDocumentTypeDetails(source_kind='azureBlobFileList', source={blob_file_list_source[1]})"
+    model_repr = f"ClassifierDocumentTypeDetails(source_kind={'azureBlobFileList'}, source={blob_file_list_source[1]})"
 
     assert repr(model) == model_repr
     return model, model_repr
