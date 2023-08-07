@@ -1,5 +1,11 @@
 # Release History
 
+## 1.3.0 (2023-08-18)
+
+### Features Added
+
+  - Model NetworkProfile has a new parameter outbound_type
+
 ## 1.3.0b1 (2023-02-16)
 
 ### Other Changes
