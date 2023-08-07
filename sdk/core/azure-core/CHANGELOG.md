@@ -1,6 +1,6 @@
 # Release History
 
-## 1.29.0 (2023-08-03)
+## 1.29.0 (2023-08-08)
 
 ### Features Added
 
