@@ -80,18 +80,23 @@ def jsonschema_validate(
     validator(schema).validate(content)
 
 def get_loaded_schema(
-    schema: Union[str, Callable],
+    schema: Union[str, Callable],   # TODO: check for next beta if we want to allow schema generation
     content: Mapping[str, Any],
 ) -> Tuple[str, str, Mapping[str, Any]]:
     """Returns the tuple: (schema name, schema string, schema dict).
     """
     # get schema string
+    schema_dict: Mapping[str, Any]
+    schema_str: str
+    schema_fullname: str
     try:
-        # str or bytes
+        # str
+        schema = cast(str, schema)
         schema_dict = json.loads(schema)
         schema_str = schema
     except TypeError:
         # callable
+        schema = cast(Callable, schema)
         try:
             schema_dict = schema(content)
         except Exception as exc:
@@ -206,7 +211,10 @@ def decode_content(
             },
         ) from exc
     try:
-        validate(schema=json.loads(schema_definition), content=content)
+        validate(
+            schema=json.loads(schema_definition),
+            content=cast(Mapping[str, Any], content)
+        )
     except Exception as exc:
         error_message = (
             f"Invalid content value '{content!r}' for schema with schema ID {schema_id}: {schema_definition}"

@@ -30,6 +30,7 @@ from functools import lru_cache
 from typing import (
     TYPE_CHECKING,
     Any,
+    cast,
     Dict,
     Mapping,
     Optional,
@@ -114,7 +115,11 @@ class JsonSchemaEncoder(object):
         :rtype: str
         """
         schema_id = self._schema_registry_client.get_schema_properties(
-            self._schema_group, schema_name, schema_str, SchemaFormat.JSON.value, **kwargs
+            cast(str, self._schema_group),
+            schema_name,
+            schema_str,
+            SchemaFormat.JSON.value,
+            **kwargs
         ).id
         return schema_id
 
@@ -162,9 +167,10 @@ class JsonSchemaEncoder(object):
         :paramtype message_type: type[MessageType]
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
-        :rtype: MessageContent
+        :returns: The MessageType object with encoded content and content type.
+        :rtype: MessageType
         :raises ~azure.schemaregistry.encoder.InvalidContentError:
-            Indicates an issue with encoding content with schema.
+            Indicates an issue with encoding content or validating it with the schema.
         """
 
     @overload
@@ -197,9 +203,10 @@ class JsonSchemaEncoder(object):
         :paramtype message_type: type[MessageType]
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
-        :rtype: MessageContent
+        :returns: The MessageType object with encoded content and content type.
+        :rtype: MessageType
         :raises ~azure.schemaregistry.encoder.InvalidContentError:
-            Indicates an issue with encoding content with schema.
+            Indicates an issue with encoding content or validating it with the schema.
         """
 
     @overload
@@ -227,9 +234,10 @@ class JsonSchemaEncoder(object):
         :paramtype message_type: None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
+        :returns: TypedDict of encoded content and content type.
         :rtype: MessageContent
         :raises ~azure.schemaregistry.encoder.InvalidContentError:
-            Indicates an issue with encoding content with schema.
+            Indicates an issue with encoding content or validating it with the schema.
         """
 
     @overload
@@ -258,9 +266,10 @@ class JsonSchemaEncoder(object):
         :paramtype message_type: None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
+        :returns: TypedDict of encoded content and content type.
         :rtype: MessageContent
         :raises ~azure.schemaregistry.encoder.InvalidContentError:
-            Indicates an issue with encoding content with schema.
+            Indicates an issue with encoding content or validating it with the schema.
         """
 
     def encode(
@@ -294,9 +303,11 @@ class JsonSchemaEncoder(object):
         :paramtype message_type: type[MessageType] or None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
+        :returns: The encoded content and content type if `message_type` is not set, otherwise the
+         constructed message object.
         :rtype: MessageType or MessageContent
         :raises ~azure.schemaregistry.encoder.InvalidContentError:
-            Indicates an issue with encoding content with schema.
+            Indicates an issue with encoding content or validating it with the schema.
         """
         request_options = request_options or {}
 
@@ -356,7 +367,7 @@ class JsonSchemaEncoder(object):
         self,
         message: Union["MessageContent", MessageType],
         *,
-        request_options: Dict[str, Any] = None,
+        request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> Dict[str, Any]:
         """Decode bytes content using schema ID in the content type field.
@@ -365,10 +376,11 @@ class JsonSchemaEncoder(object):
          containing the schema ID.
         :type message: MessageType or MessageContent
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
-        :paramtype request_options: dict[str, any]
+        :paramtype request_options: dict[str, any] or None
+        :returns: The decoded content.
         :rtype: dict[str, any]
         :raises ~azure.schemaregistry.encoder.jsonencoder.InvalidContentError:
-            Indicates an issue with decoding content.
+            Indicates an issue with decoding content or validating it with the schema.
         """
         schema_id, content = parse_message(message)
         cache_misses = (

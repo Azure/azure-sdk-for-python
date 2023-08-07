@@ -45,7 +45,8 @@ class SchemaEncoder(Protocol):
         :paramtype message_type: type[MessageType]
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
-        :rtype: MessageContent
+        :returns: The MessageType object with encoded content and content type.
+        :rtype: MessageType
         """
 
     @overload
@@ -78,7 +79,8 @@ class SchemaEncoder(Protocol):
         :paramtype message_type: type[MessageType]
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
-        :rtype: MessageContent
+        :returns: The MessageType object with encoded content and content type.
+        :rtype: MessageType
         """
 
     @overload
@@ -106,6 +108,7 @@ class SchemaEncoder(Protocol):
         :paramtype message_type: None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
+        :returns: TypedDict of encoded content and content type.
         :rtype: MessageContent
         """
 
@@ -135,6 +138,7 @@ class SchemaEncoder(Protocol):
         :paramtype message_type: None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
+        :returns: TypedDict of encoded content and content type.
         :rtype: MessageContent
         """
 
@@ -170,20 +174,27 @@ class SchemaEncoder(Protocol):
         :paramtype message_type: type[MessageType] or None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
+        :returns: The encoded content and content type if `message_type` is not set, otherwise the
+         constructed message object.
         :rtype: MessageType or MessageContent
-        :raises ~azure.schemaregistry.encoder.InvalidContentError:
-            Indicates an issue with encoding content with schema.
         """
 
     async def decode(
         self,  # pylint: disable=unused-argument
-        message: "MessageType",
+        message: Union["MessageType", "MessageContent"],
         *,
-        request_options: Dict[str, Any] = None,
+        request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> Dict[str, Any]:
         """
         Returns the decoded data with the schema format specified by the `content-type` property.
          If `validate` callable was passed to constructor, will validate content against schema retrieved 
          from the registry after decoding.
+        :param message: The message object which holds the content to be decoded and content type
+         containing the schema ID.
+        :type message: MessageType or MessageContent
+        :keyword request_options: The keyword arguments for http requests to be passed to the client.
+        :paramtype request_options: dict[str, any] or None
+        :returns: The decoded content.
+        :rtype: dict[str, any]
         """
