@@ -1,14 +1,10 @@
 # Release History
 
-## 5.11.4 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 5.11.4 (2023-08-07)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed bug [#31258](https://github.com/Azure/azure-sdk-for-python/issues/31258) where async `BlobCheckpointStore` was reprocessing old events after an error.
 
 ## 5.11.3 (2023-07-12)
 
