@@ -608,8 +608,8 @@ function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSou
     }
     # TODO : the == is probably right here?
     $result = ValidatePackage `
-      -packageName $item['Name'] `
-      -packageVersion "==$($item['Version'])" `
+      -packageName $item.Name `
+      -packageVersion "==$($item.Version)" `
       -PackageSourceOverride $PackageSourceOverride `
       -DocValidationImageId $DocValidationImageId
 
