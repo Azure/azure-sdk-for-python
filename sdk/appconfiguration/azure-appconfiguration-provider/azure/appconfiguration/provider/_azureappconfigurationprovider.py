@@ -304,7 +304,7 @@ class _RefreshTimer:
         self._min_backoff: int = (
             kwargs.pop("min_backoff", 30) if kwargs.get("min_backoff", 30) <= self._interval else self._interval
         )
-        self._max_backoff: int = 600
+        self._max_backoff: int = 600 if 600 <= self._interval else self._interval
 
     def reset(self) -> None:
         self._next_refresh_time = time.time() + self._interval

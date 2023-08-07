@@ -107,14 +107,11 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @app_config_decorator
     def test_backoff_missmatch_settings(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         min_backoff = 30000
-        max_backoff = 100
-        microsecond = 1000  # 1 Second in milliseconds
         client = self.create_client(
             appconfiguration_connection_string, keyvault_secret_url=appconfiguration_keyvault_secret_url
         )
 
         # When attempts is < 1 then it acts as if it was 1
-        attempts = 0
-        client._refresh_timer.attempts = attempts
+        client._refresh_timer.attempts = 0
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff == min_backoff
