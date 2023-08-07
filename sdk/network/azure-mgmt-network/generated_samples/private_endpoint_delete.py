@@ -29,13 +29,12 @@ def main():
         subscription_id="subId",
     )
 
-    response = client.private_endpoints.begin_delete(
+    client.private_endpoints.begin_delete(
         resource_group_name="rg1",
         private_endpoint_name="testPe",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/PrivateEndpointDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/PrivateEndpointDelete.json
 if __name__ == "__main__":
     main()

@@ -13,7 +13,6 @@ except ImportError:
     pass
 
 
-
 @pytest.mark.asyncio
 async def test_managed_identity_live(live_managed_identity_config):
     credential = ManagedIdentityCredential(client_id=live_managed_identity_config["client_id"])

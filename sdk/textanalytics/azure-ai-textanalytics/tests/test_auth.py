@@ -12,7 +12,6 @@ import os
 
 class TestAuth(TextAnalyticsTest):
 
-    @pytest.mark.skip("AAD not enabled for 2023-04-01 yet")
     @pytest.mark.live_test_only
     @TextAnalyticsPreparer()
     def test_active_directory_auth(self, **kwargs):
@@ -29,7 +28,6 @@ class TestAuth(TextAnalyticsTest):
 
         response = text_analytics.detect_language(docs)
 
-    @pytest.mark.skip("AAD not enabled for 2023-04-01 yet")
     @pytest.mark.live_test_only
     @TextAnalyticsPreparer()
     def test_analyze_active_directory_auth(self, **kwargs):

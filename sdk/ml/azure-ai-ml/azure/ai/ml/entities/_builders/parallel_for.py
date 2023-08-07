@@ -5,7 +5,7 @@ import json
 import os
 from typing import Dict, Union
 
-from azure.ai.ml import Output, Input
+from azure.ai.ml import Input, Output
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.control_flow_job import ParallelForSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
@@ -26,12 +26,13 @@ class ParallelFor(LoopNode, NodeIOMixin):
     pipeline yml containing parallel_for node. Please do not manually initialize this class.
 
     :param body: Pipeline job for the parallel for loop body.
-    :type body: Pipeline
+    :type body: ~azure.ai.ml.entities.Pipeline
     :param items: The loop body's input which will bind to the loop node.
-    :type items: typing.Union[list, dict, str, NodeOutput, PipelineInput]
+    :type items: typing.Union[list, dict, str, ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
+        ~azure.ai.ml.entities._job.pipeline._io.PipelineInput]
     :param max_concurrency: Maximum number of concurrent iterations to run. All loop body nodes will be executed
         in parallel if not specified.
-    :type max_concurrency: int
+    :type max_concurrency: int, optional
     """
 
     OUT_TYPE_MAPPING = {
@@ -56,7 +57,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         items,
         max_concurrency=None,
         **kwargs,
-    ):
+    ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
@@ -75,11 +76,11 @@ class ParallelFor(LoopNode, NodeIOMixin):
             outputs = self.body._component.outputs
             # transform body outputs to aggregate types when available
             self._outputs = self._build_outputs_dict(
-                output_definition_dict=self._convert_output_meta(outputs), outputs=actual_outputs
+                outputs=actual_outputs, output_definition_dict=self._convert_output_meta(outputs)
             )
         except AttributeError:
             # when body output not available, create default output builder without meta
-            self._outputs = self._build_outputs_dict_without_meta(outputs=actual_outputs)
+            self._outputs = self._build_outputs_dict(outputs=actual_outputs)
 
         self._items = items
 
@@ -87,11 +88,19 @@ class ParallelFor(LoopNode, NodeIOMixin):
 
     @property
     def outputs(self) -> Dict[str, Union[str, Output]]:
+        """Get the outputs of the parallel for loop.
+
+        :return: The dictionary containing the outputs of the parallel for loop.
+        :rtype: dict[str, Union[str, ~azure.ai.ml.Output]]
+        """
         return self._outputs
 
     @property
     def items(self):
-        """The loop body's input which will bind to the loop node."""
+        """Get the loop body's input which will bind to the loop node.
+
+        :return: The input for the loop body.
+        """
         return self._items
 
     @classmethod

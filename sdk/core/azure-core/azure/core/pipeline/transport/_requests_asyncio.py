@@ -210,7 +210,9 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
     """Streams the response body data.
 
     :param pipeline: The pipeline object
+    :type pipeline: ~azure.core.pipeline.AsyncPipeline
     :param response: The response object.
+    :type response: ~azure.core.pipeline.transport.AsyncHttpResponse
     :keyword bool decompress: If True which is default, will attempt to decode the body based
             on the *content-encoding* header.
     """
@@ -247,7 +249,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
             return chunk
         except _ResponseStopIteration:
             internal_response.close()
-            raise StopAsyncIteration()
+            raise StopAsyncIteration()  # pylint: disable=raise-missing-from
         except requests.exceptions.StreamConsumedError:
             raise
         except requests.exceptions.ChunkedEncodingError as err:
@@ -255,10 +257,10 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
             if "IncompleteRead" in msg:
                 _LOGGER.warning("Incomplete download: %s", err)
                 internal_response.close()
-                raise IncompleteReadError(err, error=err)
+                raise IncompleteReadError(err, error=err) from err
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
-            raise HttpResponseError(err, error=err)
+            raise HttpResponseError(err, error=err) from err
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
@@ -269,5 +271,11 @@ class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportRespo
     """Asynchronous streaming of data from the response."""
 
     def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:  # type: ignore
-        """Generator for streaming request body data."""
+        """Generator for streaming request body data.
+
+        :param pipeline: The pipeline object
+        :type pipeline: ~azure.core.pipeline.AsyncPipeline
+        :rtype: AsyncIterator[bytes]
+        :return: An async iterator of bytes chunks
+        """
         return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs)

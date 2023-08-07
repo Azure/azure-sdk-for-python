@@ -521,7 +521,6 @@ from ._sql_management_client_enums import RestorePointType
 from ._sql_management_client_enums import RuleSeverity
 from ._sql_management_client_enums import RuleStatus
 from ._sql_management_client_enums import RuleType
-from ._sql_management_client_enums import SQLVulnerabilityAssessmentName
 from ._sql_management_client_enums import SampleName
 from ._sql_management_client_enums import SecondaryInstanceType
 from ._sql_management_client_enums import SecondaryType
@@ -1086,7 +1085,6 @@ __all__ = [
     "RuleSeverity",
     "RuleStatus",
     "RuleType",
-    "SQLVulnerabilityAssessmentName",
     "SampleName",
     "SecondaryInstanceType",
     "SecondaryType",

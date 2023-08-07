@@ -19,10 +19,6 @@ from azure.core.exceptions import (
 from azure.core.pipeline.policies import ContentDecodePolicy
 
 
-def _to_str(value):
-    return str(value) if value is not None else None
-
-
 _ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service: {0}."
 _ERROR_VALUE_TOO_LARGE = "{0} is too large to be cast to type {1}."
 _ERROR_UNKNOWN = "Unknown error ({0})"
@@ -41,6 +37,7 @@ _STORAGE_VALID_TABLE = re.compile(r"^[a-zA-Z]{1}[a-zA-Z0-9]{2,62}$")
 # [^ /\#?]{1} Match any character that is not /\#? or a space for exactly 1 character.
 # $ End of string
 _COSMOS_VALID_TABLE = re.compile(r"^[^/\\#?]{0,253}[^ /\\#?]{1}$")
+
 
 def _validate_not_none(param_name, param):
     if param is None:
@@ -70,43 +67,51 @@ def _validate_cosmos_tablename(table_name):
 
 
 def _validate_tablename_error(decoded_error, table_name):
-    if (decoded_error.error_code == 'InvalidResourceName' and
-        'The specified resource name contains invalid characters' in decoded_error.message):
+    if (
+        decoded_error.error_code == "InvalidResourceName"
+        and "The specified resource name contains invalid characters" in decoded_error.message
+    ):
         # This error is raised by Storage for any table/entity operations where the table name contains
         # forbidden characters.
         _validate_storage_tablename(table_name)
-    elif (decoded_error.error_code == 'InvalidResourceName' and
-        'The specifed resource name contains invalid characters' in decoded_error.message):
+    elif (
+        decoded_error.error_code == "InvalidResourceName"
+        and "The specifed resource name contains invalid characters" in decoded_error.message
+    ):
         # This error is raised by Storage for any table/entity operations where the table name contains
         # forbidden characters.
         _validate_storage_tablename(table_name)
-    elif (decoded_error.error_code == 'OutOfRangeInput' and
-          'The specified resource name length is not within the permissible limits' in decoded_error.message):
+    elif (
+        decoded_error.error_code == "OutOfRangeInput"
+        and "The specified resource name length is not within the permissible limits" in decoded_error.message
+    ):
         # This error is raised by Storage for any table/entity operations where the table name is < 3 or > 63
         # characters long
         _validate_storage_tablename(table_name)
-    elif (decoded_error.error_code == 'InternalServerError' and
-          ('The resource name presented contains invalid character' in decoded_error.message or
-           'The resource name can\'t end with space'in decoded_error.message)):
+    elif decoded_error.error_code == "InternalServerError" and (
+        "The resource name presented contains invalid character" in decoded_error.message
+        or "The resource name can't end with space" in decoded_error.message
+    ):
         # This error is raised by Cosmos during create_table if the table name contains forbidden
         # characters or ends in a space.
         _validate_cosmos_tablename(table_name)
-    elif (decoded_error.error_code == 'BadRequest' and
-          'The input name is invalid.' in decoded_error.message):
+    elif decoded_error.error_code == "BadRequest" and "The input name is invalid." in decoded_error.message:
         # This error is raised by Cosmos specifically during create_table if the table name is 255 or more
         # characters. Entity operations on a too-long-table name simply result in a ResourceNotFoundError.
         _validate_cosmos_tablename(table_name)
-    elif (decoded_error.error_code == 'InvalidInput' and
-          ('Request url is invalid.' in decoded_error.message or
-           'One of the input values is invalid.' in decoded_error.message or
-           'The table name contains an invalid character' in decoded_error.message or
-           'Table name cannot end with a space.' in decoded_error.message)):
+    elif decoded_error.error_code == "InvalidInput" and (
+        "Request url is invalid." in decoded_error.message
+        or "One of the input values is invalid." in decoded_error.message
+        or "The table name contains an invalid character" in decoded_error.message
+        or "Table name cannot end with a space." in decoded_error.message
+    ):
         # This error is raised by Cosmos for any entity operations or delete_table if the table name contains
         # forbidden characters (except in the case of trailing space and backslash).
         _validate_cosmos_tablename(table_name)
-    elif (decoded_error.error_code == 'Unauthorized' and
-          ('The input authorization token can\'t serve the request.' in decoded_error.message or
-           'The MAC signature found in the HTTP request' in decoded_error.message)):
+    elif decoded_error.error_code == "Unauthorized" and (
+        "The input authorization token can't serve the request." in decoded_error.message
+        or "The MAC signature found in the HTTP request" in decoded_error.message
+    ):
         # This error is raised by Cosmos specifically on entity operations where the table name contains
         # some forbidden characters, and seems to be a bug in the service authentication.
         _validate_cosmos_tablename(table_name)
@@ -140,10 +145,7 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):  # p
     try:
         if not error_type:
             error_code = TableErrorCode(error_code)
-            if error_code in [
-                TableErrorCode.condition_not_met,
-                TableErrorCode.update_condition_not_satisfied
-            ]:
+            if error_code in [TableErrorCode.condition_not_met, TableErrorCode.update_condition_not_satisfied]:
                 error_type = ResourceModifiedError
             elif error_code in [
                 TableErrorCode.invalid_authentication_info,
@@ -172,11 +174,11 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):  # p
         error_type = HttpResponseError
 
     try:
-        error_message += "\nErrorCode:{}".format(error_code.value)
+        error_message += f"\nErrorCode:{error_code.value}"
     except AttributeError:
-        error_message += "\nErrorCode:{}".format(error_code)
+        error_message += f"\nErrorCode:{error_code}"
     for name, info in additional_data.items():
-        error_message += "\n{}:{}".format(name, info)
+        error_message += f"\n{name}:{info}"
 
     error = error_type(message=error_message, response=response, **kwargs)
     error.error_code = error_code
@@ -188,16 +190,16 @@ def _reraise_error(decoded_error):
     _, _, exc_traceback = sys.exc_info()
     try:
         raise decoded_error.with_traceback(exc_traceback)
-    except AttributeError:
+    except AttributeError as exc:
         decoded_error.__traceback__ = exc_traceback
-        raise decoded_error
+        raise decoded_error from exc
 
 
 def _process_table_error(storage_error, table_name=None):
     try:
         decoded_error = _decode_error(storage_error.response, storage_error.message)
-    except AttributeError:
-        raise storage_error
+    except AttributeError as exc:
+        raise storage_error from exc
     if table_name:
         _validate_tablename_error(decoded_error, table_name)
     _reraise_error(decoded_error)
@@ -208,31 +210,35 @@ def _reprocess_error(decoded_error, identifiers=None):
         error_code = decoded_error.error_code
         message = decoded_error.message
         authentication_failed = "Server failed to authenticate the request"
-        invalid_input = "The number of keys specified in the URI does not match number of key properties "\
-            "for the resource"
+        invalid_input = (
+            "The number of keys specified in the URI does not match number of key properties for the resource"
+        )
         invalid_query_parameter_value = "Value for one of the query parameters specified in the request URI is invalid"
         invalid_url = "Request url is invalid"
         properties_need_value = "The values are not specified for all properties in the entity"
         table_does_not_exist = "The table specified does not exist"
-        if (error_code == "AuthenticationFailed" and authentication_failed in message or # pylint: disable=too-many-boolean-expressions
-            error_code == "InvalidInput" and invalid_input in message or
-            error_code == "InvalidInput" and invalid_url in message or
-            error_code == "InvalidQueryParameterValue" and invalid_query_parameter_value in message or
-            error_code == "PropertiesNeedValue" and properties_need_value in message or
-            error_code =="TableNotFound" and table_does_not_exist in message
-            ):
+        if (  # pylint: disable=too-many-boolean-expressions
+            (error_code == "AuthenticationFailed" and authentication_failed in message)
+            or (error_code == "InvalidInput" and invalid_input in message)
+            or (error_code == "InvalidInput" and invalid_url in message)
+            or (error_code == "InvalidQueryParameterValue" and invalid_query_parameter_value in message)
+            or (error_code == "PropertiesNeedValue" and properties_need_value in message)
+            or (error_code == "TableNotFound" and table_does_not_exist in message)
+        ):
             args_list = list(decoded_error.args)
-            args_list[0] += "\nA possible cause of this error could be that the account URL used to"\
+            args_list[0] += (
+                "\nA possible cause of this error could be that the account URL used to"
                 "create the Client includes an invalid path, for example the table name. Please check your account URL."
+            )
             decoded_error.args = tuple(args_list)
 
-        if (identifiers is not None and error_code == "InvalidXmlDocument" and len(identifiers) > 5):
+        if identifiers is not None and error_code == "InvalidXmlDocument" and len(identifiers) > 5:
             raise ValueError(
-                "Too many access policies provided. The server does not support setting more than 5 access policies"\
-                    "on a single resource."
-                )
-    except AttributeError:
-        raise decoded_error
+                "Too many access policies provided. The server does not support setting more than 5 access policies"
+                "on a single resource."
+            )
+    except AttributeError as exc:
+        raise decoded_error from exc
 
 
 class TableTransactionError(HttpResponseError):
@@ -248,11 +254,11 @@ class TableTransactionError(HttpResponseError):
 
     def __init__(self, **kwargs):
         super(TableTransactionError, self).__init__(**kwargs)
-        self.index = kwargs.get('index', self._extract_index())
+        self.index = kwargs.get("index", self._extract_index())
 
     def _extract_index(self):
         try:
-            message_sections = self.message.split(':', 1)
+            message_sections = self.message.split(":", 1)
             return int(message_sections[0])
         except:  # pylint: disable=bare-except
             return 0

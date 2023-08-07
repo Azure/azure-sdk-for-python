@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.public_ip_addresses.begin_delete(
+    client.public_ip_addresses.begin_delete(
         resource_group_name="rg1",
         public_ip_address_name="test-ip",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/PublicIpAddressDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/PublicIpAddressDelete.json
 if __name__ == "__main__":
     main()

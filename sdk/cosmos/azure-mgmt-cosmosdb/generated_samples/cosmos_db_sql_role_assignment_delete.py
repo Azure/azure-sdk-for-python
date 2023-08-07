@@ -29,14 +29,13 @@ def main():
         subscription_id="mySubscriptionId",
     )
 
-    response = client.sql_resources.begin_delete_sql_role_assignment(
+    client.sql_resources.begin_delete_sql_role_assignment(
         role_assignment_id="myRoleAssignmentId",
         resource_group_name="myResourceGroupName",
         account_name="myAccountName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBSqlRoleAssignmentDelete.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBSqlRoleAssignmentDelete.json
 if __name__ == "__main__":
     main()

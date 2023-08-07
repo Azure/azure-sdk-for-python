@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.web_application_firewall_policies.begin_delete(
+    client.web_application_firewall_policies.begin_delete(
         resource_group_name="rg1",
         policy_name="Policy1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/WafPolicyDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/WafPolicyDelete.json
 if __name__ == "__main__":
     main()

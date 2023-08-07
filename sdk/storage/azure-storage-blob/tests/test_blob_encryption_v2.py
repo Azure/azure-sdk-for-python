@@ -394,6 +394,35 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
     @BlobPreparer()
     @recorded_by_proxy
     @mock.patch('os.urandom', mock_urandom)
+    def test_case_insensitive_metadata_key(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'Hello World Encrypted!'
+
+        # Upload blob with encryption V2
+        blob.upload_blob(content, overwrite=True)
+
+        # Change the case of the metadata key
+        metadata = blob.get_blob_properties().metadata
+        encryption_data = metadata['encryptiondata']
+        metadata = {'Encryptiondata': encryption_data}
+        blob.set_blob_metadata(metadata)
+
+        # Act
+        data = blob.download_blob().readall()
+
+        # Assert
+        assert data == content
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    @mock.patch('os.urandom', mock_urandom)
     def test_put_blob_empty(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

@@ -29,16 +29,15 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.admin_rules.begin_delete(
+    client.admin_rules.begin_delete(
         resource_group_name="rg1",
         network_manager_name="testNetworkManager",
         configuration_name="myTestSecurityConfig",
         rule_collection_name="testRuleCollection",
         rule_name="SampleAdminRule",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkManagerAdminRuleDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/NetworkManagerAdminRuleDelete.json
 if __name__ == "__main__":
     main()

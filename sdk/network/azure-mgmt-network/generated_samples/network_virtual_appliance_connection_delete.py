@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.network_virtual_appliance_connections.begin_delete(
+    client.network_virtual_appliance_connections.begin_delete(
         resource_group_name="rg1",
         network_virtual_appliance_name="nva1",
         connection_name="connection1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkVirtualApplianceConnectionDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/NetworkVirtualApplianceConnectionDelete.json
 if __name__ == "__main__":
     main()

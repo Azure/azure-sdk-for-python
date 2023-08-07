@@ -19,7 +19,7 @@ from .models import (
     SearchIndexerSkillset,
     EntityRecognitionSkillVersion,
     SearchIndexerDataSourceConnection,
-    SentimentSkillVersion
+    SentimentSkillVersion,
 )
 from .._api_versions import DEFAULT_VERSION
 from .._headers_mixin import HeadersMixin
@@ -50,10 +50,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
             self._client: _SearchServiceClient = _SearchServiceClient(
-                endpoint=endpoint,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
+                endpoint=endpoint, sdk_moniker=SDK_MONIKER, api_version=self._api_version, **kwargs
             )
         else:
             self._aad = True
@@ -66,11 +63,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 **kwargs
             )
 
-    def __enter__(self):
+    def __enter__(self) -> "SearchIndexerClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:
         return self._client.__exit__(*args)
 
     def close(self) -> None:
@@ -101,11 +98,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     @distributed_trace
     def create_or_update_indexer(
-            self,
-            indexer: SearchIndexer,
-            *,
-            match_condition: MatchConditions = MatchConditions.Unconditionally,
-            **kwargs: Any
+        self,
+        indexer: SearchIndexer,
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
     ) -> SearchIndexer:
         """Creates a new indexer or updates an indexer if it already exists.
 
@@ -174,7 +171,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:
-            kwargs['select'] = ','.join(select)
+            kwargs["select"] = ",".join(select)
         result = self._client.indexers.list(**kwargs)
         return result.indexers
 
@@ -200,11 +197,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     @distributed_trace
     def delete_indexer(
-            self,
-            indexer: Union[str, SearchIndexer],
-            *,
-            match_condition: MatchConditions = MatchConditions.Unconditionally,
-            **kwargs: Any
+        self,
+        indexer: Union[str, SearchIndexer],
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
     ) -> None:
         """Deletes an indexer. To use access conditions, the SearchIndexer model
         must be provided instead of the name. It is enough to provide
@@ -282,7 +279,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     @distributed_trace
     def reset_documents(
-            self, indexer: Union[str, SearchIndexer], keys_or_ids: DocumentKeysOrIds, **kwargs: Any
+        self, indexer: Union[str, SearchIndexer], keys_or_ids: DocumentKeysOrIds, **kwargs: Any
     ) -> None:
         """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
 
@@ -329,7 +326,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     @distributed_trace
     def create_data_source_connection(
-            self, data_source_connection: SearchIndexerDataSourceConnection, **kwargs: Any
+        self, data_source_connection: SearchIndexerDataSourceConnection, **kwargs: Any
     ) -> SearchIndexerDataSourceConnection:
         """Creates a new data source connection.
 
@@ -355,11 +352,12 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     @distributed_trace
     def create_or_update_data_source_connection(
-            self,
-            data_source_connection: SearchIndexerDataSourceConnection,
-            *,
-            match_condition: MatchConditions = MatchConditions.Unconditionally,
-            **kwargs: Any) -> SearchIndexerDataSourceConnection:
+        self,
+        data_source_connection: SearchIndexerDataSourceConnection,
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> SearchIndexerDataSourceConnection:
         """Creates a new data source connection or updates a data source connection if it already exists.
         :param data_source_connection: The definition of the data source connection to create or update.
         :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
@@ -372,15 +370,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(
-            data_source_connection,
-            match_condition
-        )
+        error_map, access_condition = get_access_conditions(data_source_connection, match_condition)
         kwargs.update(access_condition)
         name = data_source_connection.name
-        packed_data_source = (
-            data_source_connection._to_generated()  # pylint:disable=protected-access
-        )
+        packed_data_source = data_source_connection._to_generated()  # pylint:disable=protected-access
         result = self._client.data_sources.create_or_update(
             data_source_name=name,
             data_source=packed_data_source,
@@ -411,13 +404,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.data_sources.get(name, **kwargs)
-        return SearchIndexerDataSourceConnection._from_generated(  # pylint:disable=protected-access
-            result
-        )
+        return SearchIndexerDataSourceConnection._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace
     def get_data_source_connections(
-            self, *, select: Optional[List[str]] = None, **kwargs: Any
+        self, *, select: Optional[List[str]] = None, **kwargs: Any
     ) -> Sequence[SearchIndexerDataSourceConnection]:
         """Lists all data source connections available for a search service.
 
@@ -439,13 +430,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:
-            kwargs['select'] = ','.join(select)
+            kwargs["select"] = ",".join(select)
         result = self._client.data_sources.list(**kwargs)
         # pylint:disable=protected-access
-        return [
-            SearchIndexerDataSourceConnection._from_generated(x)
-            for x in result.data_sources
-        ]
+        return [SearchIndexerDataSourceConnection._from_generated(x) for x in result.data_sources]
 
     @distributed_trace
     def get_data_source_connection_names(self, **kwargs: Any) -> Sequence[str]:
@@ -461,11 +449,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     @distributed_trace
     def delete_data_source_connection(
-            self,
-            data_source_connection: Union[str, SearchIndexerDataSourceConnection],
-            *,
-            match_condition: MatchConditions = MatchConditions.Unconditionally,
-            **kwargs: Any
+        self,
+        data_source_connection: Union[str, SearchIndexerDataSourceConnection],
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
     ) -> None:
         """Deletes a data source connection. To use access conditions, the SearchIndexerDataSourceConnection
         model must be provided instead of the name. It is enough to provide the name of the data source connection
@@ -488,21 +476,17 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Delete a SearchIndexerDataSourceConnection
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(
-            data_source_connection,
-            match_condition
-        )
+        error_map, access_condition = get_access_conditions(data_source_connection, match_condition)
         kwargs.update(access_condition)
         try:
             name = data_source_connection.name
         except AttributeError:
             name = data_source_connection
-        self._client.data_sources.delete(
-            data_source_name=name, error_map=error_map, **kwargs
-        )
+        self._client.data_sources.delete(data_source_name=name, error_map=error_map, **kwargs)
 
     @distributed_trace
     def get_skillsets(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> List[SearchIndexerSkillset]:
+        # pylint:disable=protected-access
         """List the SearchIndexerSkillsets in an Azure Search service.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
@@ -525,9 +509,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:
-            kwargs['select'] = ','.join(select)
+            kwargs["select"] = ",".join(select)
         result = self._client.skillsets.list(**kwargs)
-        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets]  # pylint:disable=protected-access
+        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets]
 
     @distributed_trace
     def get_skillset_names(self, **kwargs: Any) -> List[str]:
@@ -568,11 +552,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     @distributed_trace
     def delete_skillset(
-            self,
-            skillset: Union[str, SearchIndexerSkillset],
-            *,
-            match_condition: MatchConditions = MatchConditions.Unconditionally,
-            **kwargs: Any
+        self,
+        skillset: Union[str, SearchIndexerSkillset],
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
     ) -> None:
         """Delete a named SearchIndexerSkillset in an Azure Search service. To use access conditions,
         the SearchIndexerSkillset model must be provided instead of the name. It is enough to provide
@@ -594,9 +578,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(
-            skillset, match_condition
-        )
+        error_map, access_condition = get_access_conditions(skillset, match_condition)
         kwargs.update(access_condition)
         try:
             name = skillset.name
@@ -606,6 +588,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     @distributed_trace
     def create_skillset(self, skillset: SearchIndexerSkillset, **kwargs: Any) -> SearchIndexerSkillset:
+        # pylint:disable=protected-access
         """Create a new SearchIndexerSkillset in an Azure Search service
 
         :param skillset: The SearchIndexerSkillset object to create
@@ -625,19 +608,20 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         _validate_skillset(skillset)
-        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset  # pylint:disable=protected-access
+        skillset = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
 
         result = self._client.skillsets.create(skillset, **kwargs)
         return SearchIndexerSkillset._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace
     def create_or_update_skillset(
-            self,
-            skillset: SearchIndexerSkillset,
-            *,
-            match_condition: MatchConditions = MatchConditions.Unconditionally,
-            **kwargs: Any
+        self,
+        skillset: SearchIndexerSkillset,
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
     ) -> SearchIndexerSkillset:
+        # pylint:disable=protected-access
         """Create a new SearchIndexerSkillset in an Azure Search service, or update an
         existing one.
 
@@ -655,12 +639,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(
-            skillset, match_condition
-        )
+        error_map, access_condition = get_access_conditions(skillset, match_condition)
         kwargs.update(access_condition)
         _validate_skillset(skillset)
-        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset  # pylint:disable=protected-access
+        skillset = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
 
         result = self._client.skillsets.create_or_update(
             skillset_name=skillset.name,
@@ -672,9 +654,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return SearchIndexerSkillset._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace
-    def reset_skills(
-            self, skillset: Union[str, SearchIndexerSkillset], skill_names: List[str], **kwargs: Any
-    ) -> None:
+    def reset_skills(self, skillset: Union[str, SearchIndexerSkillset], skill_names: List[str], **kwargs: Any) -> None:
         """Reset an existing skillset in a search service.
 
         :param skillset: The SearchIndexerSkillset to reset
@@ -694,31 +674,29 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return self._client.skillsets.reset_skills(skillset_name=name, skill_names=names, **kwargs)
 
 
-def _validate_skillset(skillset):
+def _validate_skillset(skillset: SearchIndexerSkillset):
     """Validates any multi-version skills in the skillset to verify that unsupported
-    parameters are not supplied by the user.
+       parameters are not supplied by the user.
+
+    :param skillset: The skillset to validate
+    :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
     """
-    skills = getattr(skillset, 'skills', None)
+    skills = getattr(skillset, "skills", None)
     if not skills:
         return
 
     error_strings = []
     for skill in skills:
         try:
-            skill_version = skill.get('skill_version')
+            skill_version = skill.get("skill_version")
         except AttributeError:
-            skill_version = getattr(skill, 'skill_version', None)
+            skill_version = getattr(skill, "skill_version", None)
         if not skill_version:
             continue
-
-        if skill_version == SentimentSkillVersion.V1:
-            unsupported = ['model_version', 'include_opinion_mining']
-        elif skill_version == SentimentSkillVersion.V3:
+        if skill_version == SentimentSkillVersion.V3:
             unsupported = []
-        elif skill_version == EntityRecognitionSkillVersion.V1:
-            unsupported = ['model_version']
         elif skill_version == EntityRecognitionSkillVersion.V3:
-            unsupported = ['include_typeless_entities']
+            unsupported = ["include_typeless_entities"]
 
         errors = []
         for item in unsupported:
@@ -729,8 +707,8 @@ def _validate_skillset(skillset):
                 if skill.__dict__.get(item, None):
                     errors.append(item)
         if errors:
-            error_strings.append("Unsupported parameters for skill version {}: {}".format(
-                skill_version, ", ".join(errors))
+            error_strings.append(
+                "Unsupported parameters for skill version {}: {}".format(skill_version, ", ".join(errors))
             )
     if error_strings:
         raise ValueError("\n".join(error_strings))

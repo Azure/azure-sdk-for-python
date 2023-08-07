@@ -7,14 +7,18 @@ from azure.core.pipeline.transport import (
     AsyncHttpResponse as PipelineTransportAsyncHttpResponse,
     AsyncHttpTransport,
     AioHttpTransport,
+    HttpRequest,
+    AioHttpTransportResponse,
 )
+from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl as RestAsyncHttpResponse
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import AsyncPipeline
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ServiceResponseError
 from utils import HTTP_REQUESTS, request_and_responses_product
 import pytest
 import sys
+import aiohttp
 
 
 # transport = mock.MagicMock(spec=AsyncHttpTransport)
@@ -79,7 +83,6 @@ MOCK_RESPONSES = [PipelineTransportMockResponse, RestMockResponse]
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_basic_options_aiohttp(port, http_request):
-
     request = http_request("OPTIONS", "http://localhost:{}/basic/string".format(port))
     async with AsyncPipeline(AioHttpTransport(), policies=[]) as pipeline:
         response = await pipeline.run(request)
@@ -138,7 +141,6 @@ async def test_multipart_send(http_request):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_multipart_send_with_context(http_request):
-
     transport = MockAsyncHttpTransport()
     header_policy = HeadersPolicy()
 
@@ -583,7 +585,6 @@ async def test_multipart_receive_with_one_changeset(http_request, mock_response)
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
 async def test_multipart_receive_with_multiple_changesets(http_request, mock_response):
-
     changeset1 = http_request("", "")
     changeset1.set_multipart_mixed(
         http_request("DELETE", "/container0/blob0"), http_request("DELETE", "/container1/blob1")
@@ -666,7 +667,6 @@ async def test_multipart_receive_with_multiple_changesets(http_request, mock_res
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
 async def test_multipart_receive_with_combination_changeset_first(http_request, mock_response):
-
     changeset = http_request("", "")
     changeset.set_multipart_mixed(
         http_request("DELETE", "/container0/blob0"), http_request("DELETE", "/container1/blob1")
@@ -744,7 +744,6 @@ def test_raise_for_status_good_response(mock_response):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
 async def test_multipart_receive_with_combination_changeset_middle(http_request, mock_response):
-
     changeset = http_request("", "")
     changeset.set_multipart_mixed(http_request("DELETE", "/container1/blob1"))
 
@@ -807,7 +806,6 @@ async def test_multipart_receive_with_combination_changeset_middle(http_request,
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
 async def test_multipart_receive_with_combination_changeset_last(http_request, mock_response):
-
     changeset = http_request("", "")
     changeset.set_multipart_mixed(
         http_request("DELETE", "/container1/blob1"), http_request("DELETE", "/container2/blob2")
@@ -871,7 +869,6 @@ async def test_multipart_receive_with_combination_changeset_last(http_request, m
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
 async def test_multipart_receive_with_bom(http_request, mock_response):
-
     req0 = http_request("DELETE", "/container0/blob0")
 
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
@@ -971,3 +968,32 @@ def test_aiohttp_loop():
     loop = asyncio.get_event_loop()
     with pytest.raises(ValueError):
         transport = AioHttpTransport(loop=loop)
+
+
+class MockAiohttpResponse:
+    def __init__(self):
+        self.status = 200
+        self.reason = "OK"
+        self.headers = {"content-type": "application/json"}
+        self.content = MockAiohttpContent()
+
+    def read(self):
+        request_info = aiohttp.RequestInfo("http://example.org", "GET", {})
+        raise aiohttp.client_exceptions.ClientResponseError(request_info, None)
+
+
+class MockAiohttpContent:
+    async def read(self, block_size):
+        request_info = aiohttp.RequestInfo("http://example.org", "GET", {})
+        raise aiohttp.client_exceptions.ClientResponseError(request_info, None)
+
+
+async def test_aiohttp_errors():
+    request = HttpRequest("GET", "http://example.org")
+    response = AioHttpTransportResponse(request, MockAiohttpResponse())
+    with pytest.raises(ServiceResponseError):
+        await response.load_body()
+
+    generator = AioHttpStreamDownloadGenerator(None, response)
+    with pytest.raises(ServiceResponseError):
+        await generator.__anext__()

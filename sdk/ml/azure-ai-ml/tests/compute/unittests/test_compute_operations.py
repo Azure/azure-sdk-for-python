@@ -4,6 +4,7 @@ from unittest.mock import Mock
 
 import pytest
 import vcr
+from azure.identity import DefaultAzureCredential
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_compute
@@ -16,7 +17,7 @@ from azure.ai.ml.entities import (
     ManagedIdentityConfiguration,
 )
 from azure.ai.ml.operations import ComputeOperations
-from azure.identity import DefaultAzureCredential
+from azure.ai.ml.operations._local_job_invoker import CommonRuntimeHelper
 
 
 @pytest.fixture
@@ -117,3 +118,13 @@ class TestComputeOperation:
             action="Detach",
         )
         mock_compute_operation._operation.begin_delete.assert_called_once()
+
+    @pytest.mark.skip(
+        reason="Irrevelant until CommonRuntime re-enabled (2578431)",
+    )
+    def test_local_compute_no_registry_info(self) -> None:
+        # Confirm that we can create a docker client without registry username and password
+        cr_helper = CommonRuntimeHelper("myjobname")
+        registry = {"url": None}
+        docker_client = cr_helper.get_docker_client(registry)
+        assert docker_client is not None

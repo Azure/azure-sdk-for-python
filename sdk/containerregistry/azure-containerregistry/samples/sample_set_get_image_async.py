@@ -17,24 +17,15 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT - The URL of your Container Registry account for anonymous access
-
-    This sample assumes your registry has a repository "library/hello-world", run load_registry() if you don't have.
-    Set the environment variables with your own values before running load_registry():
-    1) CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT - The URL of your Container Registry account for anonymous access
-    2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
-    3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
-    4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
-    5) CONTAINERREGISTRY_RESOURCE_GROUP - The resource group name
-    6) CONTAINERREGISTRY_REGISTRY_NAME - The registry name
 """
 import asyncio
 import os
 import json
 from io import BytesIO
 from dotenv import find_dotenv, load_dotenv
-from azure.containerregistry import ArtifactArchitecture, ArtifactOperatingSystem, DigestValidationError
+from azure.containerregistry import DigestValidationError
 from azure.containerregistry.aio import ContainerRegistryClient
-from utilities import load_registry, get_authority, get_credential
+from utilities import get_authority, get_credential
 
 
 class SetGetImageAsync(object):
@@ -47,10 +38,13 @@ class SetGetImageAsync(object):
     async def set_get_oci_image(self):
         repository_name = "sample-oci-image-async"
         layer = BytesIO(b"Sample layer")
-        config = BytesIO(json.dumps(
-            {
-                "sample config": "content",
-            }).encode())
+        config = BytesIO(
+            json.dumps(
+                {
+                    "sample config": "content",
+                }
+            ).encode()
+        )
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Upload a layer
             layer_digest, layer_size = await client.upload_blob(repository_name, layer)
@@ -119,32 +113,42 @@ class SetGetImageAsync(object):
                 await client.delete_blob(repository_name, layer["digest"])
             # Delete the config
             await client.delete_blob(repository_name, received_manifest["config"]["digest"])
-            
+
             # Delete the image
             await client.delete_manifest(repository_name, get_manifest_result.digest)
 
     async def set_get_docker_image(self):
-        load_registry()
-        repository_name = "library/hello-world"
-        # create a Docker image object in Docker v2 Manifest List format
-        manifest_list = {
-            "schemaVersion": 2,
-            "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
-            "manifests": [
-                {
-                    "digest": "sha256:7e9b6e7ba2842c91cf49f3e214d04a7a496f8214356f41d81a6e6dcad11f11e3",
-                    "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
-                    "platform": {
-                        "architecture": ArtifactArchitecture.AMD64,
-                        "os": ArtifactOperatingSystem.LINUX
-                    },
-                    "size": 525
-                }
-            ]
-        }
+        repository_name = "sample-docker-image"
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
+            # Upload a layer
+            layer = BytesIO(b"Sample layer")
+            layer_digest, layer_size = await client.upload_blob(repository_name, layer)
+            print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
+            # Upload a config
+            config = BytesIO(json.dumps({"sample config": "content"}).encode())
+            config_digest, config_size = await client.upload_blob(repository_name, config)
+            print(f"Uploaded config: digest - {config_digest}, size - {config_size}")
+            # create a Docker image object in Docker v2 Manifest format
+            docker_manifest = {
+                "config": {
+                    "digest": config_digest,
+                    "mediaType": "application/vnd.docker.container.image.v1+json",
+                    "size": config_size,
+                },
+                "layers": [
+                    {
+                        "digest": layer_digest,
+                        "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
+                        "size": layer_size,
+                    }
+                ],
+                "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+                "schemaVersion": 2,
+            }
             # Set the image with one custom media type
-            await client.set_manifest(repository_name, manifest_list, tag="sample", media_type=manifest_list["mediaType"])
+            await client.set_manifest(
+                repository_name, docker_manifest, tag="sample", media_type=docker_manifest["mediaType"]
+            )
 
             # Get the image
             get_manifest_result = await client.get_manifest(repository_name, "sample")
@@ -152,6 +156,9 @@ class SetGetImageAsync(object):
             print(received_manifest)
             received_manifest_media_type = get_manifest_result.media_type
             print(received_manifest_media_type)
+
+            # Delete the image
+            client.delete_manifest(repository_name, get_manifest_result.digest)
 
 
 async def main():

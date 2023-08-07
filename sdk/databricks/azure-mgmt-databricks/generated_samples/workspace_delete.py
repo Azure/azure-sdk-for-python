@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.workspaces.begin_delete(
+    client.workspaces.begin_delete(
         resource_group_name="rg",
         workspace_name="myWorkspace",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/databricks/resource-manager/Microsoft.Databricks/preview/2022-04-01-preview/examples/WorkspaceDelete.json
+# x-ms-original-file: specification/databricks/resource-manager/Microsoft.Databricks/stable/2023-02-01/examples/WorkspaceDelete.json
 if __name__ == "__main__":
     main()

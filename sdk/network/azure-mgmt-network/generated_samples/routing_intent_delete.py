@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.routing_intent.begin_delete(
+    client.routing_intent.begin_delete(
         resource_group_name="rg1",
         virtual_hub_name="virtualHub1",
         routing_intent_name="Intent1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/RoutingIntentDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/RoutingIntentDelete.json
 if __name__ == "__main__":
     main()

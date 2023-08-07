@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.application_gateways.begin_stop(
+    client.application_gateways.begin_stop(
         resource_group_name="rg1",
         application_gateway_name="appgw",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/ApplicationGatewayStop.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/ApplicationGatewayStop.json
 if __name__ == "__main__":
     main()

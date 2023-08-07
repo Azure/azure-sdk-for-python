@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.bastion_hosts.begin_delete(
+    client.bastion_hosts.begin_delete(
         resource_group_name="rg1",
         bastion_host_name="bastionhosttenant",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/BastionHostDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/BastionHostDelete.json
 if __name__ == "__main__":
     main()

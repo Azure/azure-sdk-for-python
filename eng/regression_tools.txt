@@ -15,6 +15,7 @@ pip==20.3.3
 wrapt==1.12.1; python_version <= '3.10'
 wrapt==1.14.1; python_version >= '3.11'
 markupsafe==2.0.1
+typing-extensions<=4.6.3
 
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
 pytoml==0.1.21

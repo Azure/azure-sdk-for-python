@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.virtual_network_gateways.begin_reset_vpn_client_shared_key(
+    client.virtual_network_gateways.begin_reset_vpn_client_shared_key(
         resource_group_name="rg1",
         virtual_network_gateway_name="vpngw",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/VirtualNetworkGatewayResetVpnClientSharedKey.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/VirtualNetworkGatewayResetVpnClientSharedKey.json
 if __name__ == "__main__":
     main()

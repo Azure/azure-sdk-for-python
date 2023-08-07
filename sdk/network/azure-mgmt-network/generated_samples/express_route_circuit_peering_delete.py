@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.express_route_circuit_peerings.begin_delete(
+    client.express_route_circuit_peerings.begin_delete(
         resource_group_name="rg1",
         circuit_name="circuitName",
         peering_name="peeringName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/ExpressRouteCircuitPeeringDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/ExpressRouteCircuitPeeringDelete.json
 if __name__ == "__main__":
     main()

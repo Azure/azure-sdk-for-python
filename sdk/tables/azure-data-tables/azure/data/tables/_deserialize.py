@@ -7,12 +7,10 @@ from typing import Union, Dict, Any, Optional
 
 from uuid import UUID
 import logging
-import datetime
-
-import six
+from datetime import datetime, timezone
 
 from ._entity import EntityProperty, EdmType, TableEntity
-from ._common_conversion import _decode_base64_to_bytes, TZ_UTC
+from ._common_conversion import _decode_base64_to_bytes
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -23,8 +21,7 @@ except ImportError:
     from urllib2 import quote  # type: ignore
 
 
-class TablesEntityDatetime(datetime.datetime):
-
+class TablesEntityDatetime(datetime):
     @property
     def tables_service_value(self):
         try:
@@ -62,14 +59,10 @@ def _from_entity_datetime(value):
     # Cosmos returns this with a decimal point that throws an error on deserialization
     cleaned_value = clean_up_dotnet_timestamps(value)
     try:
-        dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
-            tzinfo=TZ_UTC
-        )
+        dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
     except ValueError:
-        dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(
-            tzinfo=TZ_UTC
-        )
-    dt_obj._service_value = value  # pylint:disable=protected-access
+        dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    dt_obj._service_value = value  # pylint:disable=protected-access,assigning-non-slot
     return dt_obj
 
 
@@ -99,8 +92,8 @@ def _from_entity_guid(value):
 
 
 def _from_entity_str(value: Union[str, bytes]) -> str:
-    if isinstance(value, six.binary_type):
-        return value.decode('utf-8')
+    if isinstance(value, bytes):
+        return value.decode("utf-8")
     return value
 
 
@@ -143,6 +136,11 @@ def _convert_to_entity(entry_element):
        "PartitionKey":"my_partition_key",
        "RowKey":"my_row_key"
     }
+
+    :param entry_element: The entity in response.
+    :type entry_element: Mapping[str, Any]
+    :return: An entity dict with additional metadata.
+    :rtype: dict[str, Any]
     """
     entity = TableEntity()
 
@@ -178,7 +176,7 @@ def _convert_to_entity(entry_element):
         if isinstance(value, int) and mtype is None:
             mtype = EdmType.INT32
 
-            if value >= 2 ** 31 or value < (-(2 ** 31)):
+            if value >= 2**31 or value < (-(2**31)):
                 mtype = EdmType.INT64
 
         # Add type for String
@@ -209,13 +207,19 @@ def _convert_to_entity(entry_element):
         if not etag:
             etag = "W/\"datetime'" + url_quote(timestamp) + "'\""
         timestamp = _from_entity_datetime(timestamp)
-    odata.update({'etag': etag, 'timestamp': timestamp})
+    odata.update({"etag": etag, "timestamp": timestamp})
     entity._metadata = odata  # pylint: disable=protected-access
     return entity
 
 
 def _extract_etag(response):
-    """ Extracts the etag from the response headers. """
+    """Extracts the etag from the response headers.
+
+    :param response: The PipelineResponse object.
+    :type response: ~azure.core.pipeline.PipelineResponse
+    :return: The etag from the response headers
+    :rtype: str or None
+    """
     if response and response.headers:
         return response.headers.get("etag")
 
@@ -233,8 +237,8 @@ def _extract_continuation_token(continuation_token):
         return None, None
     try:
         return continuation_token.get("PartitionKey"), continuation_token.get("RowKey")
-    except AttributeError:
-        raise ValueError("Invalid continuation token format.")
+    except AttributeError as exc:
+        raise ValueError("Invalid continuation token format.") from exc
 
 
 def _normalize_headers(headers):
@@ -246,16 +250,12 @@ def _normalize_headers(headers):
     return normalized
 
 
-def _return_headers_and_deserialized(
-    response, deserialized, response_headers
-):  # pylint: disable=unused-argument
+def _return_headers_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return _normalize_headers(response_headers), deserialized
 
 
-def _return_context_and_deserialized(
-    response, deserialized, response_headers
-):  # pylint: disable=unused-argument
-    return response.context['location_mode'], deserialized, response_headers
+def _return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+    return response.context["location_mode"], deserialized, response_headers
 
 
 def _trim_service_metadata(metadata: Dict[str, str], content: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
@@ -264,7 +264,7 @@ def _trim_service_metadata(metadata: Dict[str, str], content: Optional[Dict[str,
         "etag": metadata.pop("etag", None),
         "version": metadata.pop("version", None),
     }
-    preference = metadata.pop('preference_applied', None)
+    preference = metadata.pop("preference_applied", None)
     if preference:
         result["preference_applied"] = preference
         result["content"] = content  # type: ignore

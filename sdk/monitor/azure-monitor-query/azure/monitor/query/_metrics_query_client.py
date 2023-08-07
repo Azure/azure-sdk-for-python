@@ -24,19 +24,19 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
     supporting near real-time scenarios, making them particularly useful for alerting and
     fast detection of issues.
 
-    .. admonition:: Example:
-
-    .. literalinclude:: ../samples/sample_metrics_query.py
-        :start-after: [START metrics_client_auth_with_token_cred]
-        :end-before: [END metrics_client_auth_with_token_cred]
-        :language: python
-        :dedent: 0
-        :caption: Creating the MetricsQueryClient with a TokenCredential.
-
     :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://management.azure.com'.
     :paramtype endpoint: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_metrics_query_client]
+            :end-before: [END create_metrics_query_client]
+            :language: python
+            :dedent: 4
+            :caption: Creating the MetricsQueryClient with a TokenCredential.
     """
 
     def __init__(self, credential: TokenCredential, **kwargs: Any) -> None:
@@ -102,12 +102,12 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
 
         .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_metrics_query_client.py
-            :start-after: [START send_metrics_query]
-            :end-before: [END send_metrics_query]
-            :language: python
-            :dedent: 0
-            :caption: Get a response for a single Metrics Query
+            .. literalinclude:: ../samples/sample_metrics_query.py
+                :start-after: [START send_metrics_query]
+                :end-before: [END send_metrics_query]
+                :language: python
+                :dedent: 0
+                :caption: Get a response for a single metrics query.
         """
 
         aggregations = kwargs.pop("aggregations", None)
@@ -137,6 +137,15 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         :return: An iterator like instance of either MetricNamespace or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespace]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_metric_namespaces.py
+                :start-after: [START send_metric_namespaces_query]
+                :end-before: [END send_metric_namespaces_query]
+                :language: python
+                :dedent: 0
+                :caption: Get a response for a single metric namespaces query.
         """
         start_time = kwargs.pop("start_time", None)
         if start_time:
@@ -163,6 +172,15 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         :return: An iterator like instance of either MetricDefinition or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_metric_definitions.py
+                :start-after: [START send_metric_definitions_query]
+                :end-before: [END send_metric_definitions_query]
+                :language: python
+                :dedent: 0
+                :caption: Get a response for a single metric definitions query.
         """
         metric_namespace = kwargs.pop("namespace", None)
         res = self._definitions_op.list(

@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.nat_gateways.begin_delete(
+    client.nat_gateways.begin_delete(
         resource_group_name="rg1",
         nat_gateway_name="test-natGateway",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NatGatewayDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/NatGatewayDelete.json
 if __name__ == "__main__":
     main()

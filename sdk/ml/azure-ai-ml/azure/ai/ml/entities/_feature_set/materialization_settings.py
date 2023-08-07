@@ -15,6 +15,32 @@ from azure.ai.ml.entities._schedule.trigger import RecurrenceTrigger
 
 @experimental
 class MaterializationSettings(RestTranslatableMixin):
+    """Defines materialization settings.
+
+    :keyword schedule: The schedule details.
+    :type schedule: Optional[~azure.ai.ml.entities.RecurrenceTrigger]
+    :keyword offline_enabled: Specifies if offline store is enabled.
+    :type offline_enabled: Optional[bool]
+    :keyword online_enabled: Specifies if online store is enabled.
+    :type online_enabled: Optional[bool]
+    :keyword notification: The notification details.
+    :type notification: Optional[~azure.ai.ml.entities.Notification]
+    :keyword resource: The compute resource settings.
+    :type resource: Optional[~azure.ai.ml.entities.MaterializationComputeResource]
+    :keyword spark_configuration: The spark compute settings.
+    :type spark_configuration: Optional[dict[str, str]]
+
+    .. admonition:: Example:
+
+
+        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
+            :start-after: [START materialization_setting_configuration]
+            :end-before: [END materialization_setting_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring MaterializationSettings.
+    """
+
     def __init__(
         self,
         *,
@@ -25,23 +51,7 @@ class MaterializationSettings(RestTranslatableMixin):
         resource: Optional[MaterializationComputeResource] = None,
         spark_configuration: Optional[Dict[str, str]] = None,
         **kwargs  # pylint: disable=unused-argument
-    ):
-        """MaterializationSettings.
-
-        :param schedule: Specifies the schedule details.
-        :type schedule: ~azure.ai.ml.entities.RecurrenceTrigger
-        :param offline_enabled: Specifies if offline store is enabled.
-        :type offline_enabled: bool
-        :param online_enabled: Specifies if online store is enabled.
-        :type online_enabled: bool
-        :param notification: Specifies the notification details.
-        :type notification: ~azure.ai.ml.entities.Notification
-        :param resource: Specifies the compute resource settings.
-        :type resource: ~azure.ai.ml.entities.MaterializationComputeResource
-        :param spark_configuration: Specifies the spark compute settings.
-        :type spark_configuration: dict[str, str]
-        """
-
+    ) -> None:
         self.schedule = schedule
         self.offline_enabled = offline_enabled
         self.online_enabled = online_enabled
@@ -81,8 +91,8 @@ class MaterializationSettings(RestTranslatableMixin):
             notification=Notification._from_rest_object(obj.notification),  # pylint: disable=protected-access
             resource=MaterializationComputeResource._from_rest_object(obj.resource),  # pylint: disable=protected-access
             spark_configuration=obj.spark_configuration,
-            offline_enabled=obj.store_type == MaterializationStoreType.OFFLINE
-            or obj.store_type == MaterializationStoreType.ONLINE_AND_OFFLINE,
-            online_enabled=obj.store_type == MaterializationStoreType.ONLINE
-            or obj.store_type == MaterializationStoreType.ONLINE_AND_OFFLINE,
+            offline_enabled=obj.store_type
+            in {MaterializationStoreType.OFFLINE, MaterializationStoreType.ONLINE_AND_OFFLINE},
+            online_enabled=obj.store_type
+            in {MaterializationStoreType.ONLINE, MaterializationStoreType.ONLINE_AND_OFFLINE},
         )

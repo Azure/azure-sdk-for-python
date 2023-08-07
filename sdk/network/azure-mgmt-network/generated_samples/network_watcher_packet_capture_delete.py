@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.packet_captures.begin_delete(
+    client.packet_captures.begin_delete(
         resource_group_name="rg1",
         network_watcher_name="nw1",
         packet_capture_name="pc1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/NetworkWatcherPacketCaptureDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/NetworkWatcherPacketCaptureDelete.json
 if __name__ == "__main__":
     main()

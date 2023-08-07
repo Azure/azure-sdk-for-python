@@ -5,6 +5,4 @@
 import platform
 from ._version import VERSION
 
-USER_AGENT = "azsdk-python-appconfiguration/{} Python/{} ({})".format(
-    VERSION, platform.python_version(), platform.platform()
-)
+USER_AGENT = f"azsdk-python-appconfiguration/{VERSION} Python/{platform.python_version()} ({platform.platform()})"

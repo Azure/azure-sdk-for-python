@@ -730,7 +730,7 @@ class ZoneDeleteResult(_serialization.Model):
      "LengthRequired", "PreconditionFailed", "RequestEntityTooLarge", "RequestUriTooLong",
      "UnsupportedMediaType", "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired",
      "InternalServerError", "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
-     and "HttpVersionNotSupported".
+     "HttpVersionNotSupported", and "Continue".
     :vartype status_code: str or ~azure.mgmt.dns.v2016_04_01.models.HttpStatusCode
     :ivar request_id:
     :vartype request_id: str
@@ -767,7 +767,7 @@ class ZoneDeleteResult(_serialization.Model):
          "LengthRequired", "PreconditionFailed", "RequestEntityTooLarge", "RequestUriTooLong",
          "UnsupportedMediaType", "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired",
          "InternalServerError", "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
-         and "HttpVersionNotSupported".
+         "HttpVersionNotSupported", and "Continue".
         :paramtype status_code: str or ~azure.mgmt.dns.v2016_04_01.models.HttpStatusCode
         :keyword request_id:
         :paramtype request_id: str

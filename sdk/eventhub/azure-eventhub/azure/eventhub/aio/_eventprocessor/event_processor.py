@@ -241,14 +241,18 @@ class EventProcessor(
                 partition_context._last_received_event = event[-1]  # type: ignore  #pylint:disable=protected-access
             except TypeError:
                 partition_context._last_received_event = event  # type: ignore  # pylint:disable=protected-access
+
             links = []
+            is_batch = False
             if is_tracing_enabled():
                 links = get_span_links_from_received_events(event)
+                if isinstance(event, list):
+                    is_batch = True
 
             with receive_context_manager(self._eventhub_client, links=links, start_time=self._last_received_time):
                 self._last_received_time = time.time_ns()
 
-            with process_context_manager(self._eventhub_client, links=links):
+            with process_context_manager(self._eventhub_client, links=links, is_batch=is_batch):
                 await self._event_handler(partition_context, event)
         else:
             await self._event_handler(partition_context, event)

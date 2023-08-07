@@ -90,6 +90,6 @@ what you can do with the Azure Document Translation client library.
 [sample_list_translations_with_filters_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_list_translations_with_filters_async.py
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/
-[azure_document_translation_account]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=python
+[azure_document_translation_account]: https://learn.microsoft.com/azure/ai-services/translator/document-translation/overview
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [api_reference_documentation]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview

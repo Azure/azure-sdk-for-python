@@ -304,6 +304,7 @@ class FleetsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace
     def list(self, **kwargs: Any) -> Iterable["_models.Fleet"]:
@@ -320,7 +321,9 @@ class FleetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-02-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-09-02-preview")
+        )
         cls: ClsType[_models.FleetListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -407,7 +410,9 @@ class FleetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-02-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-09-02-preview")
+        )
         cls: ClsType[_models.FleetListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -506,7 +511,9 @@ class FleetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-02-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-09-02-preview")
+        )
         cls: ClsType[_models.Fleet] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -564,7 +571,9 @@ class FleetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-02-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-09-02-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Fleet] = kwargs.pop("cls", None)
 
@@ -765,7 +774,9 @@ class FleetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-02-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-09-02-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Fleet] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -928,7 +939,9 @@ class FleetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-02-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-09-02-preview")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Fleet] = kwargs.pop("cls", None)
 
@@ -996,7 +1009,9 @@ class FleetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-02-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-09-02-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
@@ -1067,7 +1082,9 @@ class FleetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-02-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-09-02-preview")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1139,7 +1156,9 @@ class FleetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-02-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-09-02-preview")
+        )
         cls: ClsType[_models.FleetCredentialResults] = kwargs.pop("cls", None)
 
         request = build_list_credentials_request(

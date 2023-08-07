@@ -1,6 +1,6 @@
 ## **AzureML v2 Reference Documentation Guide**
 
-When updating the codebase, please note the following guidelines for creating user-friendly docstrings.
+When updating the codebase, please note the following guidelines for creating user-friendly docstrings. These are in alignment with the [Azure SDK for Python documentation guidelines](https://azure.github.io/azure-sdk/python_documentation.html#docstrings).
  
 #### Principles 
 
@@ -23,7 +23,7 @@ When updating the codebase, please note the following guidelines for creating us
  
 ##### Completeness 
 
-- Be sure to warn of any edge cases or note special circumstances, if applicable. This can be done using an admonition in the docstring. In addition to the “tip” class we use for examples, Sphinx provides classes for other types of messages that you should feel free to use if appropriate: 
+- Be sure to warn of any edge cases or note special circumstances, if applicable. This can be done using an admonition in the docstring. Sphinx provides classes for other types of messages that you should feel free to use if appropriate: 
 
     ```markdown
     .. admonition:: Additional Note 
@@ -46,8 +46,8 @@ When updating the codebase, please note the following guidelines for creating us
 
 ##### Clarity 
 
- - Use Union/Optional when appropriate in function declaration, but not in docstring. Instead, note the default value in the docstring (e.g. “Defaults to 0.”).
- - For classes, include summary in definition only. If you include in both class definition and constructor (init method) docstrings, it will show up twice in the reference docs.
+ - Use Union/Optional when appropriate in function declaration, and note the default value in the docstring (e.g. “Defaults to 0.”).
+ - For classes, include docstring in definition only. If you include a docstring in both the class definition and the constructor (init method) docstrings, it will show up twice in the reference docs.
  - When referencing an AzureML v2 class as a type in a docstring, use the full path to the class and prepend it with a "~". This will create a link when the documentation is rendered on learn.microsoft.com that will take the user to the class reference documentation for more information.
 
 ```python

@@ -1,14 +1,23 @@
 ## Release History
 
-### 4.4.1 (Unreleased)
+### 4.4.1b2 (Unreleased)
 
 #### Features Added
+* Added support for continuation tokens for streamable cross partition queries. See [PR 31189](https://github.com/Azure/azure-sdk-for-python/pull/31189).
 
 #### Breaking Changes
 
 #### Bugs Fixed
 
 #### Other Changes
+
+### 4.4.1b1 (2023-07-25)
+
+#### Features Added
+* Added ability to limit continuation token size when querying for items. See [PR 30731](https://github.com/Azure/azure-sdk-for-python/pull/30731)
+
+#### Bugs Fixed
+* Fixed bug with async patch_item method. See [PR 30804](https://github.com/Azure/azure-sdk-for-python/pull/30804).
 
 ### 4.4.0 (2023-06-09)
 

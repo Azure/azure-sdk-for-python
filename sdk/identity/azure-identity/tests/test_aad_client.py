@@ -23,11 +23,11 @@ except ImportError:  # python < 3.3
 
 BASE_CLASS_METHODS = [
     ("_get_auth_code_request", ("code", "redirect_uri")),
-    ("_get_client_secret_request", ("secret", )),
-    ("_get_jwt_assertion_request", ("assertion", )),
-    ("_get_refresh_token_request", ("refresh_token", )),
+    ("_get_client_secret_request", ("secret",)),
+    ("_get_jwt_assertion_request", ("assertion",)),
+    ("_get_refresh_token_request", ("refresh_token",)),
     ("_get_on_behalf_of_request", ("client_credential", "user_assertion")),
-    ("_get_refresh_token_on_behalf_of_request", ("client_credential", "refresh_token"))
+    ("_get_refresh_token_on_behalf_of_request", ("client_credential", "refresh_token")),
 ]
 
 
@@ -53,6 +53,7 @@ def test_error_reporting():
         assert error_name in message and error_description in message
         assert transport.send.call_count == 1
         transport.send.reset_mock()
+
 
 @pytest.mark.skip(reason="Adding body to HttpResponseError str. Not an issue bc we don't automatically log errors")
 def test_exceptions_do_not_expose_secrets():
@@ -316,7 +317,7 @@ def test_multitenant_cache():
     assert client_b.get_cached_access_token([scope]) is None
 
     # but C allows multitenant auth and should therefore return the token from tenant_a when appropriate
-    client_c = AadClient(tenant_id=tenant_c, additionally_allowed_tenants=['*'], **common_args)
+    client_c = AadClient(tenant_id=tenant_c, additionally_allowed_tenants=["*"], **common_args)
     assert client_c.get_cached_access_token([scope]) is None
     token = client_c.get_cached_access_token([scope], tenant_id=tenant_a)
     assert token.token == expected_token
@@ -336,7 +337,7 @@ def test_claims(method, args):
 
     client = AadClient("tenant_id", "client_id")
 
-    expected_merged_claims = '{"access_token": {"essential": "true", "xms_cc": {"values": ["CP1"]}}}'
+    cae_merged_claims = '{"access_token": {"essential": "true", "xms_cc": {"values": ["CP1"]}}}'
 
     with patch.object(AadClient, "_post") as post_mock:
         func = getattr(client, method)
@@ -345,22 +346,9 @@ def test_claims(method, args):
         assert post_mock.call_count == 1
         data, _ = post_mock.call_args
         assert len(data) == 1
-        assert data[0]["claims"] == expected_merged_claims
+        assert data[0]["claims"] == claims
 
-
-@pytest.mark.parametrize("method,args", BASE_CLASS_METHODS)
-def test_claims_disable_capabilities(method, args):
-    scopes = ["scope"]
-    claims = '{"access_token": {"essential": "true"}}'
-
-    with patch.dict("os.environ", {"AZURE_IDENTITY_DISABLE_CP1": "true"}):
-        client = AadClient("tenant_id", "client_id")
-
-        with patch.object(AadClient, "_post") as post_mock:
-            func = getattr(client, method)
-            func(scopes, *args, claims=claims)
-
-            assert post_mock.call_count == 1
-            data, _ = post_mock.call_args
-            assert len(data) == 1
-            assert data[0]["claims"] == claims
+        func(scopes, *args, claims=claims, enable_cae=True)
+        assert post_mock.call_count == 2
+        data, _ = post_mock.call_args
+        assert data[0]["claims"] == cae_merged_claims

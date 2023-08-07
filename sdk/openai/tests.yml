@@ -7,11 +7,10 @@ stages:
       MatrixFilters:
         - PythonVersion=3.11.*
       EnvVars:
-        AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-        AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-        AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-        AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+        AZURE_CLIENT_ID: $(python-openai-client-id)
+        AZURE_CLIENT_SECRET: $(python-openai-client-secret)
+        AZURE_TENANT_ID: $(python-openai-tenant-id)
         AZURE_OPENAI_ENDPOINT: $(python-openai-endpoint)
         AZURE_OPENAI_KEY: $(python-openai-key)
-        TEST_MODE: 'RunLiveNoRecord' # use when allowing preparers to create the rgs for you
+        OPENAI_KEY: $(python-nonazure-openai-key)
         AZURE_TEST_RUN_LIVE: 'true' # use when utilizing the New-TestResources Script

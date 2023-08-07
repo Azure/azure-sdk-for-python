@@ -15,7 +15,7 @@ from preparers import FormRecognizerPreparer
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from conftest import skip_flaky_test
-from azure.ai.formrecognizer._generated.models import ClassifierDocumentTypeDetails, AzureBlobContentSource, AzureBlobFileListSource, DocumentClassifierDetails
+from azure.ai.formrecognizer import ClassifierDocumentTypeDetails, BlobSource, BlobFileListSource, DocumentClassifierDetails
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
@@ -31,31 +31,31 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_document_classifier(
                 doc_types={
                     "IRS-1040-A": ClassifierDocumentTypeDetails(
-                        azure_blob_source=AzureBlobContentSource(
+                        source=BlobSource(
                             container_url=formrecognizer_training_data_classifier,
                             prefix="IRS-1040-A/train"
                         )
                     ),
                     "IRS-1040-B": ClassifierDocumentTypeDetails(
-                        azure_blob_source=AzureBlobContentSource(
+                        source=BlobSource(
                             container_url=formrecognizer_training_data_classifier,
                             prefix="IRS-1040-B/train"
                         )
                     ),
                     "IRS-1040-C": ClassifierDocumentTypeDetails(
-                        azure_blob_source=AzureBlobContentSource(
+                        source=BlobSource(
                             container_url=formrecognizer_training_data_classifier,
                             prefix="IRS-1040-C/train"
                         )
                     ),
                     "IRS-1040-D": ClassifierDocumentTypeDetails(
-                        azure_blob_source=AzureBlobContentSource(
+                        source=BlobSource(
                             container_url=formrecognizer_training_data_classifier,
                             prefix="IRS-1040-D/train"
                         )
                     ),
                     "IRS-1040-E": ClassifierDocumentTypeDetails(
-                        azure_blob_source=AzureBlobContentSource(
+                        source=BlobSource(
                             container_url=formrecognizer_training_data_classifier,
                             prefix="IRS-1040-E/train"
                         )
@@ -71,9 +71,8 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
             assert result.description == "IRS document classifier"
             for doc_type, source in result.doc_types.items():
                 assert doc_type
-                assert source.azure_blob_source.container_url.endswith("training-data-classifier")
-                assert source.azure_blob_source.prefix
-                assert source.azure_blob_file_list_source is None
+                assert source.source.container_url.endswith("training-data-classifier")
+                assert source.source.prefix
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -85,31 +84,31 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_document_classifier(
                 doc_types={
                     "IRS-1040-A": ClassifierDocumentTypeDetails(
-                        azure_blob_file_list_source=AzureBlobFileListSource(
+                        source=BlobFileListSource(
                             container_url=formrecognizer_training_data_classifier,
                             file_list="IRS-1040-A.jsonl"
                         )
                     ),
                     "IRS-1040-B": ClassifierDocumentTypeDetails(
-                        azure_blob_file_list_source=AzureBlobFileListSource(
+                        source=BlobFileListSource(
                             container_url=formrecognizer_training_data_classifier,
                             file_list="IRS-1040-B.jsonl"
                         )
                     ),
                     "IRS-1040-C": ClassifierDocumentTypeDetails(
-                        azure_blob_file_list_source=AzureBlobFileListSource(
+                        source=BlobFileListSource(
                             container_url=formrecognizer_training_data_classifier,
                             file_list="IRS-1040-C.jsonl"
                         )
                     ),
                     "IRS-1040-D": ClassifierDocumentTypeDetails(
-                        azure_blob_file_list_source=AzureBlobFileListSource(
+                        source=BlobFileListSource(
                             container_url=formrecognizer_training_data_classifier,
                             file_list="IRS-1040-D.jsonl"
                         )
                     ),
                     "IRS-1040-E": ClassifierDocumentTypeDetails(
-                        azure_blob_file_list_source=AzureBlobFileListSource(
+                        source=BlobFileListSource(
                             container_url=formrecognizer_training_data_classifier,
                             file_list="IRS-1040-E.jsonl"
                         )
@@ -128,9 +127,8 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
             assert result.description is None
             for doc_type, source in result.doc_types.items():
                 assert doc_type
-                assert source.azure_blob_file_list_source.container_url.endswith("training-data-classifier")
-                assert source.azure_blob_file_list_source.file_list
-                assert source.azure_blob_source is None
+                assert source.source.container_url.endswith("training-data-classifier")
+                assert source.source.file_list
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -141,13 +139,13 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_document_classifier(
                 doc_types={
                     "IRS-1040-A": ClassifierDocumentTypeDetails(
-                        azure_blob_source=AzureBlobContentSource(
+                        source=BlobSource(
                             container_url=formrecognizer_training_data_classifier,
                             prefix="IRS-1040-A/train"
                         )
                     ),
                     "IRS-1040-B": ClassifierDocumentTypeDetails(
-                        azure_blob_source=AzureBlobContentSource(
+                        source=BlobSource(
                             container_url=formrecognizer_training_data_classifier,
                             prefix="IRS-1040-B/train"
                         )
@@ -175,13 +173,13 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_document_classifier(
                 doc_types={
                     "IRS-1040-A": ClassifierDocumentTypeDetails(
-                        azure_blob_source=AzureBlobContentSource(
+                        source=BlobSource(
                             container_url=formrecognizer_training_data_classifier,
                             prefix="IRS-1040-A/train"
                         )
                     ),
                     "IRS-1040-B": ClassifierDocumentTypeDetails(
-                        azure_blob_source=AzureBlobContentSource(
+                        source=BlobSource(
                             container_url=formrecognizer_training_data_classifier,
                             prefix="IRS-1040-B/train"
                         )
@@ -200,8 +198,8 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
             assert result.expires_on == classifier.expires_on
             for doc_type, source in result.doc_types.items():
                 assert doc_type in classifier.doc_types
-                assert source.azure_blob_source.container_url == classifier.doc_types[doc_type].azure_blob_source.container_url
-                assert source.azure_blob_source.prefix == classifier.doc_types[doc_type].azure_blob_source.prefix
+                assert source.source.container_url == classifier.doc_types[doc_type].source.container_url
+                assert source.source.prefix == classifier.doc_types[doc_type].source.prefix
 
             classifiers_list = client.list_document_classifiers()
             async for classifier in classifiers_list:

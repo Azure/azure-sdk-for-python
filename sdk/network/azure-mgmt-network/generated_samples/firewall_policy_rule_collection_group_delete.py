@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.firewall_policy_rule_collection_groups.begin_delete(
+    client.firewall_policy_rule_collection_groups.begin_delete(
         resource_group_name="rg1",
         firewall_policy_name="firewallPolicy",
         rule_collection_group_name="ruleCollectionGroup1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2022-11-01/examples/FirewallPolicyRuleCollectionGroupDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2023-02-01/examples/FirewallPolicyRuleCollectionGroupDelete.json
 if __name__ == "__main__":
     main()

@@ -11,6 +11,7 @@ trigger:
     include:
     - sdk/ml/
     - scripts/
+    - sdk/core/    
 
 pr:
   branches:
@@ -23,6 +24,7 @@ pr:
   paths:
     include:
     - sdk/ml/
+    - sdk/core/    
 
 extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml

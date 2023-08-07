@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines,no-self-use
+# pylint: disable=too-many-lines
 
 from functools import partial
 from io import BytesIO
@@ -159,14 +159,14 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
 
         if not (container_name and blob_name):
             raise ValueError("Please specify a container name and blob name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         path_snapshot, sas_token = parse_query(parsed_url.query)
 
@@ -192,12 +192,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         container_name = self.container_name
         if isinstance(container_name, str):
             container_name = container_name.encode('UTF-8')
-        return "{}://{}/{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(container_name),
-            quote(self.blob_name, safe='~/'),
-            self._query_str)
+        return f"{self.scheme}://{hostname}/{quote(container_name)}/{quote(self.blob_name, safe='~/')}{self._query_str}"
 
     def _encode_source_url(self, source_url):
         parsed_source_url = urlparse(source_url)
@@ -205,7 +200,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         source_hostname = parsed_source_url.netloc.rstrip('/')
         source_path = unquote(parsed_source_url.path)
         source_query = parsed_source_url.query
-        result = ["{}://{}{}".format(source_scheme, source_hostname, quote(source_path, safe='~/'))]
+        result = [f"{source_scheme}://{source_hostname}{quote(source_path, safe='~/')}"]
         if source_query:
             result.append(source_query)
         return '?'.join(result)
@@ -233,6 +228,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override
@@ -243,12 +239,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         try:
             if not blob_url.lower().startswith('http'):
                 blob_url = "https://" + blob_url
-        except AttributeError:
-            raise ValueError("Blob URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Blob URL must be a string.") from exc
         parsed_url = urlparse(blob_url.rstrip('/'))
 
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(blob_url))
+            raise ValueError(f"Invalid URL: {blob_url}")
 
         account_path = ""
         if ".core." in parsed_url.netloc:
@@ -263,11 +259,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             if len(path_blob) > 2:
                 account_path = "/" + "/".join(path_blob[:-2])
 
-        account_url = "{}://{}{}?{}".format(
-            parsed_url.scheme,
-            parsed_url.netloc.rstrip('/'),
-            account_path,
-            parsed_url.query)
+        account_url = f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}{account_path}?{parsed_url.query}"
 
         msg_invalid_url = "Invalid URL. Provide a blob_url with a valid blob and container name."
         if len(path_blob) <= 1:
@@ -320,6 +312,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
 
@@ -389,7 +382,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         elif hasattr(data, '__aiter__'):
             stream = AsyncIterStreamer(data, encoding=encoding)
         else:
-            raise TypeError("Unsupported data type: {}".format(type(data)))
+            raise TypeError(f"Unsupported data type: {type(data)}")
 
         validate_content = kwargs.pop('validate_content', False)
         content_settings = kwargs.pop('content_settings', None)
@@ -440,7 +433,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
             kwargs['client'] = self._client.append_blob
         else:
-            raise ValueError("Unsupported BlobType: {}".format(blob_type))
+            raise ValueError(f"Unsupported BlobType: {blob_type}")
         return kwargs
 
     def _upload_blob_from_url_options(self, source_url, **kwargs):
@@ -929,9 +922,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             except AttributeError:
                 try:
                     delimiter = input_format.delimiter
-                except AttributeError:
+                except AttributeError as exc:
                     raise ValueError("The Type of blob_format can only be DelimitedTextDialect or "
-                                     "DelimitedJsonDialect or ParquetDialect")
+                                     "DelimitedJsonDialect or ParquetDialect") from exc
         output_format = kwargs.pop('output_format', None)
         if output_format == QuickQueryDialect.DelimitedJson:
             output_format = DelimitedJsonDialect()
@@ -1210,7 +1203,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         except HttpResponseError as error:
             process_storage_error(error)
 
-    @distributed_trace()
+    @distributed_trace
     def exists(self, **kwargs):
         # type: (**Any) -> bool
         """
@@ -1227,6 +1220,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
         :returns: boolean
+        :rtype: bool
         """
         try:
             self._client.blob.get_properties(
@@ -3469,7 +3463,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         if length is None or length % 512 != 0:
             raise ValueError("length must be an integer that aligns with 512 page size")
         end_range = offset + length - 1  # Reformat to an inclusive range index
-        content_range = 'bytes={0}-{1}'.format(offset, end_range) # type: ignore
+        content_range = f'bytes={offset}-{end_range}' # type: ignore
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         seq_conditions = SequenceNumberAccessConditions(
             if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
@@ -3622,8 +3616,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         # Format range
         end_range = offset + length - 1
-        destination_range = 'bytes={0}-{1}'.format(offset, end_range)
-        source_range = 'bytes={0}-{1}'.format(source_offset, source_offset + length - 1)  # should subtract 1 here?
+        destination_range = f'bytes={offset}-{end_range}'
+        source_range = f'bytes={source_offset}-{source_offset + length - 1}'  # should subtract 1 here?
 
         seq_conditions = SequenceNumberAccessConditions(
             if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
@@ -3796,7 +3790,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         if length is None or length % 512 != 0:
             raise ValueError("length must be an integer that aligns with 512 page size")
         end_range = length + offset - 1  # Reformat to an inclusive range index
-        content_range = 'bytes={0}-{1}'.format(offset, end_range)
+        content_range = f'bytes={offset}-{end_range}'
 
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -4054,9 +4048,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         source_range = None
         if source_length is not None:
             end_range = source_offset + source_length - 1
-            source_range = 'bytes={0}-{1}'.format(source_offset, end_range)
+            source_range = f'bytes={source_offset}-{end_range}'
         elif source_offset is not None:
-            source_range = "bytes={0}-".format(source_offset)
+            source_range = f"bytes={source_offset}-"
 
         appendpos_condition = kwargs.pop('appendpos_condition', None)
         maxsize_condition = kwargs.pop('maxsize_condition', None)
@@ -4307,7 +4301,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         else:
             _pipeline = self._pipeline   # pylint: disable = protected-access
         return ContainerClient(
-            "{}://{}".format(self.scheme, self.primary_hostname), container_name=self.container_name,
+            f"{self.scheme}://{self.primary_hostname}", container_name=self.container_name,
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, encryption_version=self.encryption_version,

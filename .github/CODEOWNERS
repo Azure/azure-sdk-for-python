@@ -44,7 +44,7 @@
 /sdk/agrifood/azure-agrifood-farming/                                @bhargav-kansagara
 
 # PRLabel: %Azure.Identity
-/sdk/identity/                                                       @pvaneck @schaabs @xiangyan99
+/sdk/identity/                                                       @pvaneck @xiangyan99 @Azure/azsdk-identity
 
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
@@ -92,7 +92,7 @@
 /sdk/communication/azure-communication-rooms/                        @shirleyqin-msft @minnieliu @paolamvhz @alexokun @Mrayyan @shwali-msft @allchiang-msft @mikehang-msft
 
 # PRLabel: %Communication - SMS
-/sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
+/sdk/communication/azure-communication-sms/                           @DimaKolomiiets @ozgurcivi-msft @gfeitosa-msft @besh2014 @phermanov-msft @ilyapaliakou-msft
 
 # PRLabel: %Communication - Identity
 /sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @AikoBB @maximrytych-ms @mjafferi-msft
@@ -262,8 +262,8 @@
 /sdk/maps/                                                           @alextts627
 
 # PRLabel: %Mixed Reality
-/sdk/mixedreality/azure-mixedreality-authentication/                 @crtreasu
-/sdk/remoterendering/                                                @rikogeln
+/sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
+/sdk/remoterendering/                                                @FlorianBorn71
 
 # PRLabel: %Open AI
 /sdk/openai                                                          @kristapratico @glecaros
@@ -296,7 +296,7 @@
 /sdk/template/                                                       @scbedd @weshaggard @benbp
 
 # PRLabel: %Cognitive - Text Analytics
-/sdk/textanalytics/                                                  @kristapratico @iscai-msft
+/sdk/textanalytics/                                                  @kristapratico @quentinRobinson @wangyuantao
 
 # PRLabel: %Cognitive - Form Recognizer
 /sdk/formrecognizer/                                                 @kristapratico @iscai-msft @catalinaperalta
@@ -308,16 +308,17 @@
 /sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
 
 # PRLabel: %Cognitive - Translator
-/sdk/translation/                                                    @kristapratico @mohamedshabanofficial
+/sdk/translation/                                                    @kristapratico
+/sdk/translation/azure-ai-translation-text/                          @MikeyMCZ
 
 # PRLabel: %Cognitive - Language
-/sdk/cognitivelanguage/                                              @kristapratico @mohamedshabanofficial
+/sdk/cognitivelanguage/                                              @kristapratico @quentinRobinson @wangyuantao
 
 # PRLabel: %Cognitive - Personalizer
 /sdk/personalizer/                                                   @sharathmalladi
 
 # PRLabel: %Graph
-/sdk/graphrbac/                                                      @msyyc @Wzb123456789
+/sdk/graphrbac/                                                      @msyyc @ChenxiJiang333
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @annatisch @YalinLi0312
@@ -342,6 +343,9 @@
 
 # ServiceLabel: %AAD %Service Attention
 #/<NotInRepo>/          @adamedx
+
+# ServiceLabel: %AgriFood
+#/<NotInRepo>/          @bhargav-kansagara
 
 # ServiceLabel: %AKS %Service Attention
 #/<NotInRepo>/          @Azure/aks-pm
@@ -421,6 +425,9 @@
 # ServiceLabel: %Bot Service %Service Attention
 #/<NotInRepo>/          @sgellock
 
+# ServiceLabel: %Client
+#/<NotInRepo>/          @simorenoh @gahl-levy @bambriz
+
 # ServiceLabel: %Cloud Shell %Service Attention
 #/<NotInRepo>/          @maertendMSFT
 
@@ -496,6 +503,9 @@
 # ServiceLabel: %Compute - VMSS %Service Attention
 #/<NotInRepo>/          @Drewm3 @avirishuv
 
+# ServiceLabel: %Confidential Ledger
+#/<NotInRepo>/          @lynshi
+
 # ServiceLabel: %Connected Kubernetes %Service Attention
 #/<NotInRepo>/          @akashkeshari
 
@@ -565,6 +575,9 @@
 # ServiceLabel: %Device Provisioning Service %Service Attention
 #/<NotInRepo>/          @nberdy
 
+# ServiceLabel: %Device Update
+#/<NotInRepo>/          @dpokluda @sedols
+
 # ServiceLabel: %Digital Twins %Service Attention
 #/<NotInRepo>/          @sourabhguha @inesk-vt
 
@@ -625,6 +638,9 @@
 # ServiceLabel: %Managed Services %Service Attention
 #/<NotInRepo>/          @Lighthouse-Azure
 
+# ServiceLabel: %Maps
+#/<NotInRepo>/          @alextts627
+
 # ServiceLabel: %MariaDB %Service Attention
 #/<NotInRepo>/          @ambhatna @savjani
 
@@ -636,6 +652,9 @@
 
 # ServiceLabel: %Migrate %Service Attention
 #/<NotInRepo>/          @shijojoy
+
+# ServiceLabel: %Mixed Reality
+#/<NotInRepo>/          @crtreasu @rikogeln
 
 # ServiceLabel: %Mobile Engagement %Service Attention
 #/<NotInRepo>/          @kpiteira
@@ -844,7 +863,7 @@
 # ServiceLabel: %SecurityInsights %Service Attention
 #/<NotInRepo>/          @amirkeren
 
-# ServiceLabel: %IoT/CLI %Service Attention
+# ServiceLabel: %IoT - CLI %Service Attention
 #/<NotInRepo>/          @Azure/azure-iot-cli-triage
 
 # ServiceLabel: %Communication %Service Attention
@@ -873,6 +892,12 @@
 
 # ServiceLabel: %ML-Inference %Service Attention
 #/<NotInRepo>/          @shivanissambare
+
+# ServiceLabel: %ML-Jobs
+#/<NotInRepo>/          @DouglasXiaoMS @TonyJ1 @wangchao1230
+
+# ServiceLabel: %ML-Local Endpoints
+#/<NotInRepo>/          @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
 
 # ServiceLabel: %ML-MLOps %Service Attention
 #/<NotInRepo>/          @lostmygithubaccount
@@ -927,7 +952,7 @@
 
 
 # Management Plane
-/**/*mgmt*/                                                          @Wzb123456789 @msyyc
+/**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
 
 
 ###########

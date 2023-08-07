@@ -19,7 +19,6 @@ from .operations import (
     DataPolicyManifestsOperations,
     PolicyAssignmentsOperations,
     PolicyDefinitionsOperations,
-    PolicyExemptionsOperations,
     PolicySetDefinitionsOperations,
 )
 
@@ -44,15 +43,15 @@ class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar policy_set_definitions: PolicySetDefinitionsOperations operations
     :vartype policy_set_definitions:
      azure.mgmt.resource.policy.v2020_09_01.operations.PolicySetDefinitionsOperations
-    :ivar policy_exemptions: PolicyExemptionsOperations operations
-    :vartype policy_exemptions:
-     azure.mgmt.resource.policy.v2020_09_01.operations.PolicyExemptionsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2020-09-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -79,9 +78,6 @@ class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword
             self._client, self._config, self._serialize, self._deserialize
         )
         self.policy_set_definitions = PolicySetDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.policy_exemptions = PolicyExemptionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

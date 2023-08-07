@@ -21,6 +21,7 @@ from ._constants import (
 )
 
 if TYPE_CHECKING:
+    from ._transport._base import AmqpTransport
     from ._pyamqp import types
     from ._pyamqp.message import Message
     from ._pyamqp.authentication import JWTTokenAuth
@@ -95,7 +96,7 @@ class EventHubConsumer(
         self.stop = False  # used by event processor
         self.handler_ready = False
 
-        self._amqp_transport = kwargs.pop("amqp_transport")
+        self._amqp_transport: "AmqpTransport" = kwargs.pop("amqp_transport")
         self._on_event_received: Callable[[EventData], None] = kwargs[
             "on_event_received"
         ]
@@ -183,8 +184,8 @@ class EventHubConsumer(
         # pylint:disable=protected-access
         message = self._message_buffer.popleft()
         event_data = EventData._from_message(message)
-        if self._amqp_transport != PyamqpTransport:
-            event_data._uamqp_message == message    # pylint: disable=pointless-statement
+        if self._amqp_transport.KIND == "uamqp":
+            event_data._uamqp_message = message
         self._last_received_event = event_data
         return event_data
 
