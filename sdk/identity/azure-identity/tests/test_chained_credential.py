@@ -102,7 +102,7 @@ def test_raises_for_unexpected_error():
 
 def test_returns_first_token():
     expected_token = Mock()
-    first_credential = Mock(get_token=lambda _: expected_token)
+    first_credential = Mock(get_token=lambda _, **__: expected_token)
     second_credential = Mock(get_token=Mock())
 
     aggregate = ChainedTokenCredential(first_credential, second_credential)

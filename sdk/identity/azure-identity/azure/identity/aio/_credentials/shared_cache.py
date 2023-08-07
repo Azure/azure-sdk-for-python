@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any
+from typing import Any, Optional
 from azure.core.credentials import AccessToken
 from ..._internal.aad_client import AadClientBase
 from ... import CredentialUnavailableError
@@ -42,7 +42,9 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
             await self._client.__aexit__()  # type: ignore
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
+    async def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Get an access token for `scopes` from the shared cache.
 
         If no access token is cached, attempt to acquire one using a cached refresh token.
@@ -52,9 +54,12 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
         :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
             token. Defaults to False.
+
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
@@ -88,7 +93,9 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
 
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account, is_cae=is_cae):
-            token = await self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)
+            token = await self._client.obtain_token_by_refresh_token(
+                scopes, refresh_token, claims=claims, tenant_id=tenant_id, **kwargs
+            )
             return token
 
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))

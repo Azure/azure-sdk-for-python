@@ -1,6 +1,6 @@
 # Release History
 
-## 1.14.0b3 (Unreleased)
+## 1.14.0 (Unreleased)
 
 ### Features Added
 
@@ -13,6 +13,8 @@
   - Since CAE is no longer always enabled for user-credentials, the `AZURE_IDENTITY_DISABLE_CP1` environment variable is no longer supported.
 
 ### Bugs Fixed
+
+- Credential types correctly implement `azure-core`'s `TokenCredential` protocol.  ([#25175](https://github.com/Azure/azure-sdk-for-python/issues/25175))
 
 ### Other Changes
 
