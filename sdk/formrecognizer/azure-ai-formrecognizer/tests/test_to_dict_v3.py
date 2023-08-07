@@ -2220,13 +2220,16 @@ class TestToDict(FormRecognizerTest):
             "doc_types": {
                 "form-A": {
                     "source": {
-                        "container_url": "https://myaccount.blob.core.windows.net/blob-sas-url"
+                        "container_url": "https://myaccount.blob.core.windows.net/blob-sas-url",
+                        "prefix": None,
+                        "source_kind": "azureBlob",
                     },
                 },
                 "form-B": {
                     "source": {
                         "container_url": "https://myaccount.blob.core.windows.net/blob-sas-url",
-                        "file_list": "filelist.jsonl"
+                        "file_list": "filelist.jsonl",
+                        "source_kind": "azureBlobFileList",
                     },
                 },
             },
