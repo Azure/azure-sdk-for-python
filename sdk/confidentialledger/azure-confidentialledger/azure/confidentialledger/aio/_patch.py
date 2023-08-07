@@ -97,7 +97,7 @@ class ConfidentialLedgerClient(GeneratedClient):
             # The async version of the client seems to expect a sequence of filenames.
             # azure/core/pipeline/transport/_aiohttp.py:163
             # > ssl_ctx.load_cert_chain(*cert)
-            kwargs["connection_cert"] = (credential.certificate_path,)
+            kwargs["connection_cert"] = kwargs.get("connection_cert", (credential.certificate_path,))
 
         # The auto-generated client has authentication disabled so we can customize authentication.
         # If the credential is the typical TokenCredential, then construct the authentication policy
