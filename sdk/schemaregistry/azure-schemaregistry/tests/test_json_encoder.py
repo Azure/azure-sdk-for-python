@@ -315,6 +315,11 @@ class TestJsonSchemaEncoder(AzureRecordedTestCase):
         with pytest.raises(TypeError):
             sr_json_encoder = JsonSchemaEncoder(client=sr_client, group_name=schemaregistry_group)
 
+        # invalid draft identifier raises error
+        with pytest.raises(ValueError) as exc:
+            sr_json_encoder = JsonSchemaEncoder(client=sr_client, group_name=schemaregistry_group, validate="http://json-schema.org/draft-01/schema")
+        assert "not a supported identifier" in str(exc.value)
+
         # Draft 3/4 do not accept float for integer type
         dict_content = {"name": u"Ben", "favorite_number": 1.0, "favorite_color": u"red"}
         sr_json_encoder_d3 = JsonSchemaEncoder(client=sr_client, group_name=schemaregistry_group, validate=JsonSchemaDraftIdentifier.DRAFT_03)
@@ -328,8 +333,8 @@ class TestJsonSchemaEncoder(AzureRecordedTestCase):
         assert isinstance(exc.value.__cause__, jsonschema.exceptions.ValidationError)
         assert exc.value.__cause__.message == "1.0 is not of type 'integer'"
 
-        # Draft 6+ does accept float for integer type
-        sr_json_encoder_d6 = JsonSchemaEncoder(client=sr_client, group_name=schemaregistry_group, validate=JsonSchemaDraftIdentifier.DRAFT_06)
+        # Draft 6+ does accept float for integer type + test passing str value
+        sr_json_encoder_d6 = JsonSchemaEncoder(client=sr_client, group_name=schemaregistry_group, validate=JsonSchemaDraftIdentifier.DRAFT_06.value)
         encoded_message_content = sr_json_encoder_d6.encode(dict_content, schema=DRAFT2020_12_SCHEMA_STR)
         content_type = encoded_message_content["content_type"]
         assert content_type.split("+")[0] == 'application/json;serialization=Json'
