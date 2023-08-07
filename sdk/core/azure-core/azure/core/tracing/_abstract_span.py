@@ -284,6 +284,6 @@ class Link:
     :type attributes: dict
     """
 
-    def __init__(self, headers: Dict[str, str], attributes: Optional["Attributes"] = None) -> None:
+    def __init__(self, headers: Dict[str, str], attributes: Optional[Attributes] = None) -> None:
         self.headers = headers
         self.attributes = attributes
