@@ -756,6 +756,8 @@ from ._models import (
     VpnServerConfigurationPolicyGroup,
     VpnServerConfigurationPolicyGroupMember,
     WebApplicationFirewallScrubbingRules,
+    MigrateLoadBalancerToIpBasedRequest,
+    MigratedPools,
 )
 
 from ._enums import (
@@ -997,6 +999,7 @@ from ._enums import (
     VpnPolicyMemberAttributeType,
     WebApplicationFirewallScrubbingState,
     WebApplicationFirewallState,
+    SyncMode,
 )
 
 from ._patch import __all__ as _patch_all
@@ -1754,6 +1757,8 @@ __all__ = [
     "VpnServerConfigurationPolicyGroup",
     "VpnServerConfigurationPolicyGroupMember",
     "WebApplicationFirewallScrubbingRules",
+    "MigrateLoadBalancerToIpBasedRequest",
+    "MigratedPools",
     "ApplicationGatewayCookieBasedAffinity",
     "ApplicationGatewayOperationalState",
     "ApplicationGatewayProtocol",
@@ -1992,6 +1997,7 @@ __all__ = [
     "VpnPolicyMemberAttributeType",
     "WebApplicationFirewallScrubbingState",
     "WebApplicationFirewallState",
+    "SyncMode",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
