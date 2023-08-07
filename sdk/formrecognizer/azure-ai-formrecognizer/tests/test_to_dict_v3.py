@@ -2219,17 +2219,17 @@ class TestToDict(FormRecognizerTest):
             "api_version": "2023-07-31",
             "doc_types": {
                 "form-A": {
+                    "source_kind": "azureBlob",
                     "source": {
                         "container_url": "https://myaccount.blob.core.windows.net/blob-sas-url",
                         "prefix": None,
-                        "source_kind": "azureBlob",
                     },
                 },
                 "form-B": {
+                    "source_kind": "azureBlobFileList",
                     "source": {
                         "container_url": "https://myaccount.blob.core.windows.net/blob-sas-url",
                         "file_list": "filelist.jsonl",
-                        "source_kind": "azureBlobFileList",
                     },
                 },
             },

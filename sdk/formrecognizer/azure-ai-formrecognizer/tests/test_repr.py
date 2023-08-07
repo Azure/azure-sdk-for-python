@@ -499,7 +499,7 @@ def document_classifier_details(classifier_document_type_details, classifier_doc
                 "form-B": classifier_document_type_details_file_list[0],
             }
     )
-    model_repr = f"DocumentClassifierDetails(classifier_id={'custom-classifier'}, description={'my description'}, created_on={datetime.datetime(2021, 9, 16, 10, 10, 59, 342380)}, api_version={'2023-07-31'}, doc_types={{'form-A': {classifier_document_type_details[1]}, 'form-B': {classifier_document_type_details_file_list[1]}}}, expires_on={datetime.datetime(2024, 9, 16, 10, 10, 59, 342380)})"
+    model_repr = f"DocumentClassifierDetails(classifier_id={'custom-classifier'}, description={'my description'}, created_on={datetime.datetime(2021, 9, 16, 10, 10, 59, 342380)}, expires_on={datetime.datetime(2024, 9, 16, 10, 10, 59, 342380)}, api_version={'2023-07-31'}, doc_types={{'form-A': {classifier_document_type_details[1]}, 'form-B': {classifier_document_type_details_file_list[1]}}})"
     assert repr(model) == model_repr
     return model, model_repr
 
