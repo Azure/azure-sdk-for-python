@@ -34,9 +34,9 @@ class JsonSchemaDraftIdentifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DRAFT2020_12 = "https://json-schema.org/draft/2020-12/schema"
     DRAFT2019_09 = "https://json-schema.org/draft/2019-09/schema"
-    DRAFT_07 = "https://json-schema.org/draft-07/schema"
-    DRAFT_06 = "https://json-schema.org/draft-06/schema"
-    DRAFT_04 = "https://json-schema.org/draft-04/schema"
-    DRAFT_03 = "https://json-schema.org/draft-03/schema"
+    DRAFT_07 = "http://json-schema.org/draft-07/schema"
+    DRAFT_06 = "http://json-schema.org/draft-06/schema"
+    DRAFT_04 = "http://json-schema.org/draft-04/schema"
+    DRAFT_03 = "http://json-schema.org/draft-03/schema"
 
 JSON_MIME_TYPE = "application/json;serialization=Json"
