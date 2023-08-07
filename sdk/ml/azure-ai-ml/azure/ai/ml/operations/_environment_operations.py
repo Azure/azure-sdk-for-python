@@ -48,6 +48,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
     You should not instantiate this class directly. Instead, you should
     create an MLClient instance that instantiates it for you and
     attaches it as an attribute.
+
+    :param operation_scope: Scope variables for the operations classes of an MLClient object.
+    :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
+    :param operation_config: Common configuration for operations classes of an MLClient object.
+    :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
+    :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace resources (ServiceClient042023Preview or ServiceClient102021Dataplane).
+    :type service_client: typing.Union[~azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces, ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces]
+    :param all_operations: All operations classes of an MLClient object.
+    :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     """
 
     def __init__(
@@ -82,6 +91,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Created or updated Environment object
         :rtype: ~azure.ai.ml.entities.Environment
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START env_operations_create_or_update]
+                :end-before: [END env_operations_create_or_update]
+                :language: python
+                :dedent: 8
+                :caption: Create environment.
         """
         try:
             if not environment.version and environment._auto_increment_version:
@@ -225,6 +243,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
             Details will be provided in the error message.
         :return: Environment object
         :rtype: ~azure.ai.ml.entities.Environment
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START env_operations_get]
+                :end-before: [END env_operations_get]
+                :language: python
+                :dedent: 8
+                :caption: Get example.
         """
         if version and label:
             msg = "Cannot specify both version and label."
@@ -269,6 +296,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Environment objects.
         :rtype: ~azure.core.paging.ItemPaged[Environment]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START env_operations_list]
+                :end-before: [END env_operations_list]
+                :language: python
+                :dedent: 8
+                :caption: List example.
         """
         if name:
             return (
@@ -322,6 +358,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the environment. (mutually exclusive with version)
         :type label: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START env_operations_archive]
+                :end-before: [END env_operations_archive]
+                :language: python
+                :dedent: 8
+                :caption: Archive example.
         """
         name = _preprocess_environment_name(name)
         _archive_or_restore(
@@ -350,6 +395,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the environment. (mutually exclusive with version)
         :type label: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START env_operations_restore]
+                :end-before: [END env_operations_restore]
+                :language: python
+                :dedent: 8
+                :caption: Restore example.
         """
         name = _preprocess_environment_name(name)
         _archive_or_restore(
