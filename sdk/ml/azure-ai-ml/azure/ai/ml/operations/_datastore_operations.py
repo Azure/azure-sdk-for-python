@@ -180,6 +180,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         mount_point: str = "/home/azureuser/mount/data",
         mode: str = "ro_mount",
         debug: bool = False,
+        persistent: bool = False,
         **kwargs,
     ) -> None:
         """Mount a datastore to a local path.
@@ -195,10 +196,17 @@ class DatastoreOperations(_ScopeDependentOperations):
         assert mode in ["ro_mount", "rw_mount"], "mode should be either `ro_mount` or `rw_mount`"
         read_only = mode == "ro_mount"
 
+        import os
+        ci_name = os.environ.get("CI_NAME")
+        assert not persistent or (persistent and ci_name is not None), "persistent mount is only supported on Compute Instance"
+
         # cspell:ignore rslex
         from azureml.dataprep import rslex_fuse_subprocess_wrapper
 
         uri = rslex_fuse_subprocess_wrapper.build_datastore_uri(
             self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path
         )
-        rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(uri, mount_point, read_only, debug)
+        if persistent and ci_name is not None:
+            raise NotImplementedError("TODO")
+        else:
+            rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(uri, mount_point, read_only, debug)
