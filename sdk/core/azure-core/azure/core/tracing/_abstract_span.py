@@ -30,7 +30,7 @@ AttributeValue = Union[
     Sequence[int],
     Sequence[float],
 ]
-Attributes = Optional[Dict[str, AttributeValue]]
+Attributes = Dict[str, AttributeValue]
 
 
 class SpanKind(Enum):
