@@ -7,7 +7,7 @@ from __future__ import annotations
 from enum import Enum
 from urllib.parse import urlparse
 
-from typing import TYPE_CHECKING, Any, Sequence, Optional, Union, Callable, ContextManager, Dict, Type
+from typing import Any, Sequence, Optional, Union, Callable, Dict, Type
 from types import TracebackType
 from typing_extensions import Protocol, ContextManager
 from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse
@@ -228,14 +228,7 @@ class AbstractSpan(Protocol):
         """
 
 
-# https://github.com/python/mypy/issues/5837
-if TYPE_CHECKING:
-    _MIXIN_BASE = AbstractSpan
-else:
-    _MIXIN_BASE = object
-
-
-class HttpSpanMixin(_MIXIN_BASE):
+class HttpSpanMixin:
     """Can be used to get HTTP span attributes settings for free."""
 
     _SPAN_COMPONENT = "component"
@@ -246,7 +239,9 @@ class HttpSpanMixin(_MIXIN_BASE):
     _NET_PEER_NAME = "net.peer.name"
     _NET_PEER_PORT = "net.peer.port"
 
-    def set_http_attributes(self, request: HttpRequestType, response: Optional[HttpResponseType] = None) -> None:
+    def set_http_attributes(
+        self: AbstractSpan, request: HttpRequestType, response: Optional[HttpResponseType] = None
+    ) -> None:
         """
         Add correct attributes for a http client span.
 
@@ -255,24 +250,25 @@ class HttpSpanMixin(_MIXIN_BASE):
         :param response: The response received from the server. Is None if no response received.
         :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
         """
+        # Also see https://github.com/python/mypy/issues/5837
         self.kind = SpanKind.CLIENT
-        self.add_attribute(self._SPAN_COMPONENT, "http")
-        self.add_attribute(self._HTTP_METHOD, request.method)
-        self.add_attribute(self._HTTP_URL, request.url)
+        self.add_attribute(HttpSpanMixin._SPAN_COMPONENT, "http")
+        self.add_attribute(HttpSpanMixin._HTTP_METHOD, request.method)
+        self.add_attribute(HttpSpanMixin._HTTP_URL, request.url)
 
         parsed_url = urlparse(request.url)
         if parsed_url.hostname:
-            self.add_attribute(self._NET_PEER_NAME, parsed_url.hostname)
+            self.add_attribute(HttpSpanMixin._NET_PEER_NAME, parsed_url.hostname)
         if parsed_url.port and parsed_url.port not in [80, 443]:
-            self.add_attribute(self._NET_PEER_PORT, parsed_url.port)
+            self.add_attribute(HttpSpanMixin._NET_PEER_PORT, parsed_url.port)
 
         user_agent = request.headers.get("User-Agent")
         if user_agent:
-            self.add_attribute(self._HTTP_USER_AGENT, user_agent)
+            self.add_attribute(HttpSpanMixin._HTTP_USER_AGENT, user_agent)
         if response and response.status_code:
-            self.add_attribute(self._HTTP_STATUS_CODE, response.status_code)
+            self.add_attribute(HttpSpanMixin._HTTP_STATUS_CODE, response.status_code)
         else:
-            self.add_attribute(self._HTTP_STATUS_CODE, 504)
+            self.add_attribute(HttpSpanMixin._HTTP_STATUS_CODE, 504)
 
 
 class Link:
