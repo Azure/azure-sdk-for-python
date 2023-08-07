@@ -347,6 +347,33 @@ class MiscConfigurationOptions(object):
         )
         # [END ssh_job_service_configuration]
 
+        # [START env_operations_create_or_update]
+        from azure.ai.ml.entities import BuildContext, Environment
+
+        env_docker_context = Environment(
+            build=BuildContext(path="azureml-environment"),
+            name="create-environment",
+            description="Environment created from a Docker context.",
+        )
+        ml_client.environments.create_or_update(env_docker_context)
+        # [END env_operations_create_or_update]
+
+        # [START env_operations_archive]
+        ml_client.environments.archive("archive-example", "1.0", None)
+        # [END env_operations_archive]
+
+        # [START env_operations_restore]
+        ml_client.environments.restore("restore-example", "2.0", "label1")
+        # [END env_operations_restore]
+
+        # [START env_operations_list]
+        ml_client.environments.list("list-example")
+        # [END env_operations_list]
+
+        # [START env_operations_get]
+        ml_client.environments.get("get-example", "1.0", None)
+        # [END env_operations_get]
+
         # [START validation_result]
         """For example, if repr(self) is:
         ```python
