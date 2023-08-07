@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_get_elements_with_spans_async.py
+FILE: sample_get_elements_with_spans.py
 
 DESCRIPTION:
     This sample demonstrates how to get elements that are contained in the spans of another element.
@@ -16,7 +16,7 @@ DESCRIPTION:
     that are within the same span area as other elements.
 
 USAGE:
-    python sample_get_elements_with_spans_async.py
+    python sample_get_elements_with_spans.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
@@ -24,7 +24,6 @@ USAGE:
 """
 
 import os
-import asyncio
 
 
 def get_styles(element_spans, styles):
@@ -58,11 +57,10 @@ def get_page(page_number, pages):
     raise ValueError("could not find the requested page")
 
 
-async def get_elements_with_spans_async():
+def get_elements_with_spans():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
-            "..",
             "..",
             "..",
             "./sample_forms/forms/Form_1.jpg",
@@ -70,7 +68,7 @@ async def get_elements_with_spans_async():
     )
 
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer.aio import DocumentAnalysisClient
+    from azure.ai.formrecognizer import DocumentAnalysisClient
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -78,18 +76,17 @@ async def get_elements_with_spans_async():
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
-    async with document_analysis_client:
-        with open(path_to_sample_documents, "rb") as f:
-            poller = await document_analysis_client.begin_analyze_document(
-                "prebuilt-document", document=f
-            )
-        result = await poller.result()
+    with open(path_to_sample_documents, "rb") as f:
+        poller = document_analysis_client.begin_analyze_document(
+            "prebuilt-document", document=f
+        )
+    result = poller.result()
 
     # Below is a method to search for the lines of a particular element by using spans.
     # This example uses DocumentTable, but other elements that also have a `spans` or `span` field
     # can also be used to search for related elements, such as lines in this case.
     # To see an example for searching for words which have a `span` field, see
-    # `sample_get_words_on_document_line.py` under the samples v3.2 directory.
+    # `sample_get_words_on_document_line.py` under the samples v3.2_and_later directory.
     if result.tables is not None:
         for table_idx, table in enumerate(result.tables):
             print(
@@ -128,16 +125,12 @@ async def get_elements_with_spans_async():
     print("----------------------------------------")
 
 
-async def main():
-    await get_elements_with_spans_async()
-
-
 if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
 
     try:
-        asyncio.run(main())
+        get_elements_with_spans()
     except HttpResponseError as error:
         print(
             "For more information about troubleshooting errors, see the following guide: "
