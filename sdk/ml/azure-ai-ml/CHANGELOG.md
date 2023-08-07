@@ -18,7 +18,7 @@
 - `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
   (instead of the default behavior for python < 3.15, which uses locale specific encodings)
 
-## 1.9.0 (Unreleased)
+## 1.9.0 (2023-07-25)
 
 ### Features Added
 - Added support to enable gpu access (local_enable_gpu) for local deployment.

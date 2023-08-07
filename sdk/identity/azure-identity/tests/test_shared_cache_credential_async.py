@@ -42,7 +42,10 @@ async def test_no_scopes():
 
 @pytest.mark.asyncio
 async def test_close():
-    async def send(*_, **__):
+    async def send(*_, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         return mock_response(json_payload=build_aad_response(access_token="**"))
 
     transport = AsyncMockTransport(send=send)
@@ -60,7 +63,10 @@ async def test_close():
 
 @pytest.mark.asyncio
 async def test_context_manager():
-    async def send(*_, **__):
+    async def send(*_, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         return mock_response(json_payload=build_aad_response(access_token="**"))
 
     transport = AsyncMockTransport(send=send)
@@ -102,7 +108,10 @@ async def test_context_manager_no_cache():
 async def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
-    async def send(*_, **__):
+    async def send(*_, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         return mock_response(json_payload=build_aad_response(access_token="**"))
 
     credential = SharedTokenCacheCredential(
@@ -643,7 +652,10 @@ async def test_multitenant_authentication():
     second_tenant = "second-tenant"
     second_token = first_token * 2
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant_id = parsed.path.split("/")[1]
         return mock_response(
@@ -681,7 +693,10 @@ async def test_multitenant_authentication_not_allowed():
     default_tenant = "organizations"
     expected_token = "***"
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant_id = parsed.path.split("/")[1]
         assert tenant_id == default_tenant
