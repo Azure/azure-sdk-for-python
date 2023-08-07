@@ -28,10 +28,11 @@ FILE: encode_and_decode_with_message_content.py
 DESCRIPTION:
     This sample demonstrates the following:
      - Authenticating a sync SchemaRegistryClient to be used by the JsonSchemaEncoder.
-     - Passing in content, schema_id, and EventData class to the JsonSchemaEncoder, which will return an
-      EventData object containing validated and encoded content and corresponding content type.
-     - Passing in a dict containing encoded content and content type set to JSON Schema Format MIME and
-      schema ID to the JsonSchemaEncoder, which will return the decoded content.
+     - Passing in content and schema to the JsonSchemaEncoder, which will return a TypedDict containing
+      encoded and validated content and corresponding content type.
+     - Manually setting the content and content type on a MessageType object, specifically EventData.
+     - Manually retrieving the content and content type from a MessageType object, and passing it to the
+      JsonSchemaEncoder, which will return the decoded and validated content.
 USAGE:
     python encode_and_decode_with_message_content.py
     Set the environment variables with your own values before running the sample:

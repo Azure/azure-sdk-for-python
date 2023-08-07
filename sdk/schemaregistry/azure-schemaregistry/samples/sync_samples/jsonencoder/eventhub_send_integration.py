@@ -25,7 +25,7 @@ USAGE:
 
 This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
 For more information on DefaultAzureCredential, see
- https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
+    https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python
 """
 import os
 import json
@@ -72,7 +72,9 @@ def pre_register_schema(schema_registry: SchemaRegistryClient):
     )
     return schema_properties.id
 
-def send_event_data_batch(producer, encoder, schema_id):
+def send_event_data_batch(
+    producer: EventHubProducerClient, encoder: JsonSchemaEncoder, schema_id: str
+):
     event_data_batch = producer.create_batch()
     dict_content = {"name": "Bob", "favorite_number": 7, "favorite_color": "red"}
     # Use the encode method to convert dict object to bytes with the given json schema and set body of EventData.

@@ -17,21 +17,22 @@ USAGE:
     2) AZURE_CLIENT_ID - Required for use of the credential. The service principal's client ID.
      Also called its 'application' ID.
     3) AZURE_CLIENT_SECRET - Required for use of the credential. One of the service principal's client secrets.
-    4) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+    4) SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
      which should follow the format: `<your-namespace>.servicebus.windows.net`
-    5) SCHEMAREGISTRY_GROUP - The name of the schema group.
+    5) SCHEMAREGISTRY_GROUP - The name of the JSON schema group.
     6) EVENT_HUB_CONN_STR - The connection string of the Event Hubs namespace to receive events from.
     7) EVENT_HUB_NAME - The name of the Event Hub in the Event Hubs namespace to receive events from.
 
 This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
 For more information on DefaultAzureCredential, see
- https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
+    https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.aio.defaultazurecredential?view=azure-python
 """
 import os
 import asyncio
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaDraftIdentifier
 from azure.schemaregistry.encoder.jsonencoder.aio import JsonSchemaEncoder
 
 EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
@@ -54,8 +55,7 @@ json_schema_encoder = JsonSchemaEncoder(
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=azure_credential
     ),
-    group_name=GROUP_NAME,
-    auto_register=True
+    validate=JsonSchemaDraftIdentifier.DRAFT2020_12
 )
 
 async def on_event(partition_context, event):

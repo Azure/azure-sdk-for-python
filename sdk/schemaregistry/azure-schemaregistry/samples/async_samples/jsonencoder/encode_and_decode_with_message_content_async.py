@@ -28,31 +28,33 @@ FILE: encode_and_decode_with_message_content_async.py
 DESCRIPTION:
     This sample demonstrates the following:
      - Authenticating an async SchemaRegistryClient to be used by the JsonSchemaEncoder.
-     - Passing in content and schema to the JsonSchemaEncoder, which will return a dict containing
-      encoded content and corresponding content type.
-     - Passing in a dict containing Json-encoded content and corresponding content type to
-      the JsonSchemaEncoder, which will return the decoded content.
+     - Passing in content and schema to the JsonSchemaEncoder, which will return a TypedDict containing
+      encoded and validated content and corresponding content type.
+     - Manually setting the content and content type on a MessageType object, specifically EventData.
+     - Manually retrieving the content and content type from a MessageType object, and passing it to the
+      JsonSchemaEncoder, which will return the decoded and validated content.
 USAGE:
     python encode_and_decode_with_message_content_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_TENANT_ID - The ID of the service principal's tenant. Also called its 'directory' ID.
     2) AZURE_CLIENT_ID - The service principal's client ID. Also called its 'application' ID.
     3) AZURE_CLIENT_SECRET - One of the service principal's client secrets.
-    4) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+    4) SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
      which should follow the format: `<your-namespace>.servicebus.windows.net`
-    5) SCHEMAREGISTRY_GROUP - The name of the schema group.
+    5) SCHEMAREGISTRY_GROUP - The name of the JSON schema group.
 
 This example uses ClientSecretCredential, which requests a token from Azure Active Directory.
 For more information on ClientSecretCredential, see:
-    https://docs.microsoft.com/python/api/azure-identity/azure.identity.clientsecretcredential?view=azure-python
+    https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.aio.clientsecretcredential?view=azure-python
 """
 import os
 import asyncio
 import json
 
 from azure.identity.aio import ClientSecretCredential
+from azure.schemaregistry import MessageContent
 from azure.schemaregistry.aio import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import MessageContent
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaDraftIdentifier
 from azure.schemaregistry.encoder.jsonencoder.aio import JsonSchemaEncoder
 from azure.eventhub import EventData
 
@@ -91,7 +93,7 @@ token_credential = ClientSecretCredential(
 )
 
 
-async def encode_message_content_dict(encoder):
+async def encode_message_content_dict(encoder: JsonSchemaEncoder):
     dict_content_ben = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
     encoded_message_content_ben = await encoder.encode(dict_content_ben, schema=SCHEMA_STRING)
 
@@ -101,7 +103,7 @@ async def encode_message_content_dict(encoder):
         encoded_message_content_ben["content_type"],
     )
 
-async def decode_with_content_and_content_type(encoder, event_data):
+async def decode_with_content_and_content_type(encoder: JsonSchemaEncoder, event_data: EventData):
     # get content as bytes
     content = bytearray()
     for d in event_data.body:
@@ -120,7 +122,7 @@ async def main():
         credential=token_credential,
     )
     encoder = JsonSchemaEncoder(
-        client=schema_registry, group_name=GROUP_NAME, auto_register=True
+        client=schema_registry, group_name=GROUP_NAME, validate=JsonSchemaDraftIdentifier.DRAFT2020_12
     )
     event_data = await encode_message_content_dict(encoder)
     decoded_content = await decode_with_content_and_content_type(encoder, event_data)

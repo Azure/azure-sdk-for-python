@@ -29,7 +29,7 @@ DESCRIPTION:
     This sample demonstrates the following:
      - Authenticating a sync SchemaRegistryClient to be used by the JsonSchemaEncoder.
      - Registering a schema with the SchemaRegistryClient.
-     - Passing in content, schema_id, and EventData class to the JsonSchemaEncoder, which will return an
+     - Passing in content, schema ID, and EventData class to the JsonSchemaEncoder, which will return an
       EventData object containing validated and encoded content and corresponding content type.
      - Passing in an `EventData` object with `body` set to encoded content and `content_type`
       set to JSON Schema Format MIME type and schema ID to the JsonSchemaEncoder for decoding content.

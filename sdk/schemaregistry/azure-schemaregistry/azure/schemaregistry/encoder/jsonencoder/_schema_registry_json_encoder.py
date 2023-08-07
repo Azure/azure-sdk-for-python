@@ -353,7 +353,7 @@ class JsonSchemaEncoder(object):
         )
 
     def decode(
-        self,  # pylint: disable=unused-argument
+        self,
         message: Union["MessageContent", MessageType],
         *,
         request_options: Dict[str, Any] = None,
@@ -365,8 +365,8 @@ class JsonSchemaEncoder(object):
          containing the schema ID.
         :type message: MessageType or MessageContent
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
-        :paramtype request_options: Dict[str, Any]
-        :rtype: Dict[str, Any]
+        :paramtype request_options: dict[str, any]
+        :rtype: dict[str, any]
         :raises ~azure.schemaregistry.encoder.jsonencoder.InvalidContentError:
             Indicates an issue with decoding content.
         """

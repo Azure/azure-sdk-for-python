@@ -4,57 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Any, Dict, Mapping, Union, TYPE_CHECKING, overload, Optional, Type
-from typing_extensions import Protocol, TypedDict  # type: ignore
+from typing_extensions import Protocol  # type: ignore
 
-
-class SchemaContentValidate(Protocol):
-    def __call__(self, schema: Mapping[str, Any], content: Mapping[str, Any]) -> None:
-        """
-        Validates content against provided schema. If invalid, raises Exception.
-         Else, returns None.
-        
-        :param mapping[str, any] schema: The schema to validate against.
-        :param mapping[str, any] content: The content to validate.
-
-        :rtype: None
-        :returns: None if valid.
-        :raises: Exception if content is invalid against provided schema.
-        """
-
-
-class MessageContent(TypedDict):
-    """A dict with required keys:
-    - `content`: bytes
-    - `content_type`: str
-    """
-
-    content: bytes
-    content_type: str
-
-
-class MessageType(Protocol):
-    """Message Types that set and get content and content type values internally."""
-
-    @classmethod
-    def from_message_content(
-        cls, content: bytes, content_type: str, **kwargs: Any
-    ) -> "MessageType":
-        """Creates an object that is a subtype of MessageType, given content type and
-         a content value to be set on the object.
-
-        :param bytes content: The content value to be set as the body of the message.
-        :param str content_type: The content type to be set on the message.
-        :rtype: ~azure.schemaregistry.encoder.jsonencoder.MessageType
-        :returns: The MessageType object with encoded content and content type.
-        """
-
-    def __message_content__(self) -> MessageContent:
-        """A MessageContent object, with `content` and `content_type` set to
-         the values of their respective properties on the MessageType object.
-
-        :rtype: ~azure.schemaregistry.encoder.jsonencoder.MessageContent
-        :returns: TypedDict of the content and content type from the MessageType object.
-        """
+if TYPE_CHECKING:
+    from .._encoder_protocols import MessageType, MessageContent
 
 
 class SchemaEncoder(Protocol):
@@ -64,16 +17,16 @@ class SchemaEncoder(Protocol):
     """
 
     @overload
-    def encode(
+    async def encode(
         self,
         content: Mapping[str, Any],
         *,
         schema: str,
         schema_id: None = None,
-        message_type: Type[MessageType],
+        message_type: Type["MessageType"],
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> MessageType:
+    ) -> "MessageType":
         """Encodes content after validating against the pre-registered schema. Encoded content and content
          type will be passed to the provided MessageType callback to create message object.
 
@@ -96,16 +49,16 @@ class SchemaEncoder(Protocol):
         """
 
     @overload
-    def encode(
+    async def encode(
         self,
         content: Mapping[str, Any],
         *,
         schema_id: str,
         schema: None = None,
-        message_type: Type[MessageType],
+        message_type: Type["MessageType"],
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> MessageType:
+    ) -> "MessageType":
         """Encodes content after validating against the pre-registered schema corresponding to
          the provided schema ID. Encoded content and content type will be passed to the provided
          MessageType callback to create message object.
@@ -129,7 +82,7 @@ class SchemaEncoder(Protocol):
         """
 
     @overload
-    def encode(
+    async def encode(
         self,
         content: Mapping[str, Any],
         *,
@@ -138,7 +91,7 @@ class SchemaEncoder(Protocol):
         message_type: None = None,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> MessageContent:
+    ) -> "MessageContent":
         """Encodes content after validating against the pre-registered schema. The following dict will be returned:
          {"content": encoded value, "content_type": schema format mime type string + schema ID}.
 
@@ -157,7 +110,7 @@ class SchemaEncoder(Protocol):
         """
 
     @overload
-    def encode(
+    async def encode(
         self,
         content: Mapping[str, Any],
         *,
@@ -166,7 +119,7 @@ class SchemaEncoder(Protocol):
         message_type: None = None,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> MessageContent:
+    ) -> "MessageContent":
         """Encodes content after validating against the pre-registered schema corresponding to
          the provided schema ID. The following dict will be returned:
          {"content": encoded value, "content_type": schema format mime type string + schema ID}.
@@ -186,7 +139,7 @@ class SchemaEncoder(Protocol):
         """
 
 
-    def encode(
+    async def encode(
         self,
         content: Mapping[str, Any],
         *,
@@ -222,7 +175,7 @@ class SchemaEncoder(Protocol):
             Indicates an issue with encoding content with schema.
         """
 
-    def decode(
+    async def decode(
         self,  # pylint: disable=unused-argument
         message: "MessageType",
         *,

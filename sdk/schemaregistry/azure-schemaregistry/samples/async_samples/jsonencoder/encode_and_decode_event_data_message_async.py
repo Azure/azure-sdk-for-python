@@ -28,23 +28,24 @@ FILE: encode_and_decode_event_data_message_async.py
 DESCRIPTION:
     This sample demonstrates the following:
      - Authenticating an async SchemaRegistryClient to be used by the JsonSchemaEncoder.
-     - Passing in content, schema, and EventData class to the JsonSchemaEncoder, which will return an
+     - Registering a schema with the SchemaRegistryClient.
+     - Passing in content, schema ID, and EventData class to the JsonSchemaEncoder, which will return an
       EventData object containing encoded content and corresponding content type.
-     - Passing in an `EventData` object with `body` set to Json-encoded content and `content_type`
-      set to corresponding content type to the JsonSchemaEncoder, which will return the decoded content.
+     - Passing in an `EventData` object with `body` set to encoded content and `content_type`
+      set to JSON Schema Format MIME type and schema ID to the JsonSchemaEncoder for decoding content.
 USAGE:
     python encode_and_decode_event_data_message_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_TENANT_ID - The ID of the service principal's tenant. Also called its 'directory' ID.
     2) AZURE_CLIENT_ID - The service principal's client ID. Also called its 'application' ID.
     3) AZURE_CLIENT_SECRET - One of the service principal's client secrets.
-    4) SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
+    4) SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE - The schema registry fully qualified namespace,
      which should follow the format: `<your-namespace>.servicebus.windows.net`
-    5) SCHEMAREGISTRY_GROUP - The name of the schema group.
+    5) SCHEMAREGISTRY_GROUP - The name of the JSON schema group.
 
 This example uses ClientSecretCredential, which requests a token from Azure Active Directory.
 For more information on ClientSecretCredential, see:
-    https://docs.microsoft.com/python/api/azure-identity/azure.identity.clientsecretcredential?view=azure-python
+    https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.aio.clientsecretcredential?view=azure-python
 """
 import os
 import asyncio
@@ -53,6 +54,7 @@ import json
 from azure.identity.aio import ClientSecretCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry.encoder.jsonencoder.aio import JsonSchemaEncoder
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaDraftIdentifier
 from azure.eventhub import EventData
 
 TENANT_ID=os.environ['AZURE_TENANT_ID']
@@ -91,19 +93,27 @@ token_credential = ClientSecretCredential(
     client_secret=CLIENT_SECRET
 )
 
+async def pre_register_schema(schema_registry: SchemaRegistryClient):
+    schema_properties = await schema_registry.register_schema(
+        group_name=GROUP_NAME,
+        name=SCHEMA_JSON['title'],
+        definition=SCHEMA_STRING,
+        format="Json"
+    )
+    return schema_properties.id
 
-async def encode_to_event_data_message(encoder):
+async def encode_to_event_data_message(encoder: JsonSchemaEncoder, schema_id: str):
     dict_content_ben = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
     dict_content_alice = {"name": "Alice", "favorite_number": 15, "favorite_color": "green"}
 
     # Schema would be automatically registered into Schema Registry and cached locally.
     event_data_ben = await encoder.encode(
-        dict_content_ben, schema=SCHEMA_STRING, message_type=EventData
+        dict_content_ben, schema_id=schema_id, message_type=EventData
     )
 
     # The second call won't trigger a service call.
     event_data_alice = await encoder.encode(
-        dict_content_alice, schema=SCHEMA_STRING, message_type=EventData
+        dict_content_alice, schema_id=schema_id, message_type=EventData
     )
 
     print("Encoded content is: ", next(event_data_ben.body))
@@ -130,9 +140,10 @@ async def main():
         credential=token_credential,
     )
     encoder = JsonSchemaEncoder(
-        client=schema_registry, group_name=GROUP_NAME, auto_register=True
+        client=schema_registry, validate=JsonSchemaDraftIdentifier.DRAFT2020_12
     )
-    event_data_ben, event_data_alice = await encode_to_event_data_message(encoder)
+    schema_id = await pre_register_schema(schema_registry)
+    event_data_ben, event_data_alice = await encode_to_event_data_message(encoder, schema_id)
     decoded_content_ben = await decode_event_data_message(encoder, event_data_ben)
     decoded_content_alice = await decode_event_data_message(encoder, event_data_alice)
     await encoder.close()
