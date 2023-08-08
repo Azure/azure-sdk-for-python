@@ -398,7 +398,7 @@ class CallConnectionClient:
     @distributed_trace_async
     async def play_media_to_all(
         self,
-        play_source: Union['MediaSources', List['MediaSources']],
+        play_source: Union['FileSource', List['FileSource']],
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -408,11 +408,7 @@ class CallConnectionClient:
 
         :param play_source: A PlaySource representing the source to play.
         :type play_source: ~azure.communication.callautomation.FileSource or
-         ~azure.communication.callautomation.TextSource or
-         ~azure.communication.callautomation.SsmlSource or
-         list[~azure.communication.callautomation.FileSource or
-          ~azure.communication.callautomation.TextSource or
-          ~azure.communication.callautomation.SsmlSource]
+         list[~azure.communication.callautomation.FileSource]
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
