@@ -50,9 +50,7 @@ HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 _LOGGER = logging.getLogger(__name__)
 
 
-class AsyncRetryPolicy(
-    RetryPolicyBase[HTTPRequestType, AsyncHTTPResponseType], AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-):
+class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """Async flavor of the retry policy.
 
     The async retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
@@ -89,7 +87,9 @@ class AsyncRetryPolicy(
     """
 
     async def _sleep_for_retry(
-        self, response: AsyncHTTPResponseType, transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]
+        self,
+        response: PipelineResponse[HTTPRequestType, AsyncHTTPResponseType],
+        transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
     ) -> bool:
         """Sleep based on the Retry-After response header value.
 
@@ -124,7 +124,7 @@ class AsyncRetryPolicy(
         self,
         settings: Dict[str, Any],
         transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
-        response: Optional[AsyncHTTPResponseType] = None,
+        response: Optional[PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]] = None,
     ) -> None:
         """Sleep between retry attempts.
 

@@ -399,6 +399,7 @@ class _HttpResponseBase:
     :type request: ~azure.core.pipeline.transport.HttpRequest
     :param internal_response: The object returned from the HTTP library.
     :type internal_response: any
+    :param int status_code: The status code of the response.
     :param int block_size: Defaults to 4096 bytes.
     """
 
@@ -406,11 +407,12 @@ class _HttpResponseBase:
         self,
         request: HttpRequest,
         internal_response: Any,
+        status_code: int,
         block_size: Optional[int] = None,
     ) -> None:
         self.request: HttpRequest = request
         self.internal_response = internal_response
-        self.status_code: Optional[int] = None
+        self.status_code: int = status_code
         self.headers: MutableMapping[str, str] = {}
         self.reason: Optional[str] = None
         self.content_type: Optional[str] = None

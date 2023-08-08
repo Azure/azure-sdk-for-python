@@ -101,8 +101,9 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
     """
 
     def __init__(self, request, requests_response, block_size=None):
-        super(_RequestsTransportResponseBase, self).__init__(request, requests_response, block_size=block_size)
-        self.status_code = requests_response.status_code
+        super(_RequestsTransportResponseBase, self).__init__(
+            request, requests_response, requests_response.status_code, block_size=block_size
+        )
         self.headers = requests_response.headers
         self.reason = requests_response.reason
         self.content_type = requests_response.headers.get("content-type")

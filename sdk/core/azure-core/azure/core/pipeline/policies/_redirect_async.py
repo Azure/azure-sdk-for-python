@@ -36,9 +36,7 @@ AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, Lega
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
-class AsyncRedirectPolicy(
-    RedirectPolicyBase[AsyncHTTPResponseType], AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-):
+class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """An async redirect policy.
 
     An async redirect policy in the pipeline can be configured directly or per operation.

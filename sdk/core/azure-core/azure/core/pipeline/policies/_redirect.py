@@ -26,19 +26,25 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
-from typing import Optional, TypeVar, Dict, Any, Union, Generic, Type
+from typing import Optional, TypeVar, Dict, Any, Union, Type
 import logging
 from urllib.parse import urlparse
 
 from azure.core.exceptions import TooManyRedirectsError
 from azure.core.pipeline import PipelineResponse, PipelineRequest
-from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
-from azure.core.rest import HttpResponse, HttpRequest
+from azure.core.pipeline.transport import (
+    HttpResponse as LegacyHttpResponse,
+    HttpRequest as LegacyHttpRequest,
+    AsyncHttpResponse as LegacyAsyncHttpResponse,
+)
+from azure.core.rest import HttpResponse, HttpRequest, AsyncHttpResponse
 from ._base import HTTPPolicy, RequestHistory
 from ._utils import get_domain
 
-GenericHttpResponseType = TypeVar("GenericHttpResponseType")
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
+AllHttpResponseType = TypeVar(
+    "AllHttpResponseType", HttpResponse, LegacyHttpResponse, AsyncHttpResponse, LegacyAsyncHttpResponse
+)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 ClsRedirectPolicy = TypeVar("ClsRedirectPolicy", bound="RedirectPolicyBase")
 
@@ -60,7 +66,7 @@ def domain_changed(original_domain: Optional[str], url: str) -> bool:
     return True
 
 
-class RedirectPolicyBase(Generic[GenericHttpResponseType]):
+class RedirectPolicyBase:
 
     REDIRECT_STATUSES = frozenset([300, 301, 302, 303, 307, 308])
 
@@ -99,7 +105,7 @@ class RedirectPolicyBase(Generic[GenericHttpResponseType]):
             "history": [],
         }
 
-    def get_redirect_location(self, response: PipelineResponse[Any, GenericHttpResponseType]) -> Optional[Union[str, bool]]:
+    def get_redirect_location(self, response: PipelineResponse[Any, AllHttpResponseType]) -> Optional[Union[str, bool]]:
         """Checks for redirect status code and gets redirect location.
 
         :param response: The PipelineResponse object
@@ -121,7 +127,9 @@ class RedirectPolicyBase(Generic[GenericHttpResponseType]):
 
         return False
 
-    def increment(self, settings: Dict[str, Any], response: PipelineResponse[Any, GenericHttpResponseType], redirect_location: str) -> bool:
+    def increment(
+        self, settings: Dict[str, Any], response: PipelineResponse[Any, AllHttpResponseType], redirect_location: str
+    ) -> bool:
         """Increment the redirect attempts for this request.
 
         :param dict settings: The redirect settings
@@ -151,7 +159,7 @@ class RedirectPolicyBase(Generic[GenericHttpResponseType]):
         return settings["redirects"] >= 0
 
 
-class RedirectPolicy(RedirectPolicyBase[HTTPResponseType], HTTPPolicy[HTTPRequestType, HTTPResponseType]):
+class RedirectPolicy(RedirectPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """A redirect policy.
 
     A redirect policy in the pipeline can be configured directly or per operation.
@@ -179,7 +187,7 @@ class RedirectPolicy(RedirectPolicyBase[HTTPResponseType], HTTPPolicy[HTTPReques
         :rtype: ~azure.core.pipeline.PipelineResponse
         :raises: ~azure.core.exceptions.TooManyRedirectsError if maximum redirects exceeded.
         """
-        retryable = True
+        retryable: bool = True
         redirect_settings = self.configure_redirects(request.context.options)
         original_domain = get_domain(request.http_request.url) if redirect_settings["allow"] else None
         while retryable:
