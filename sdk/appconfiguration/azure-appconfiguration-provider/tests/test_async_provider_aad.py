@@ -22,7 +22,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert client.get("message") == "hi"
             assert client["my_json"]["key"] == "value"
             assert (
-                client["FeatureManagementFeatureFlags"]["Alpha"]
+                client["FeatureManagement"]["Alpha"]
                 == '{"enabled": false, "conditions": {"client_filters": []}}'
             )
 
@@ -41,7 +41,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert client["trimmed"] == "key"
             assert "test.trimmed" not in client
             assert (
-                client["FeatureManagementFeatureFlags"]["Alpha"]
+                client["FeatureManagement"]["Alpha"]
                 == '{"enabled": false, "conditions": {"client_filters": []}}'
             )
 
@@ -55,4 +55,4 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         ) as client:
             assert client["message"] == "test"
             assert "test.trimmed" not in client
-            assert "FeatureManagementFeatureFlags" not in client
+            assert "FeatureManagement" not in client
