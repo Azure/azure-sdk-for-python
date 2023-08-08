@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Exposed `HnswVectorSearchAlgorithmConfiguration`
+
 ### Breaking Changes
 
 ### Bugs Fixed
