@@ -147,14 +147,13 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         raise ValueError("Please pass either endpoint and credential, or a connection string.")
 
     # Removing use of AzureAppConfigurationKeyVaultOptions
-    if "key_vault_options" in kwargs:
-        if not "key_vault_credentials" in kwargs:
-            kwargs["key_vault_credentials"] = kwargs["key_vault_options"].credential
-        if not "secret_resolver" in kwargs:
-            kwargs["secret_resolver"] = kwargs["key_vault_options"].secret_resolver
-        if not "key_vault_client_configs" in kwargs:
-            kwargs["key_vault_client_configs"] = kwargs["key_vault_options"].client_options
-        kwargs.pop("key_vault_options")
+    if key_vault_options:
+        if "key_vault_credentials" not in kwargs:
+            kwargs["key_vault_credentials"] = key_vault_options.credential
+        if "secret_resolver" not in kwargs:
+            kwargs["secret_resolver"] = key_vault_options.secret_resolver
+        if "key_vault_client_configs" not in kwargs:
+            kwargs["key_vault_client_configs"] = key_vault_options.client_options
 
     provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
     provider._load_all()

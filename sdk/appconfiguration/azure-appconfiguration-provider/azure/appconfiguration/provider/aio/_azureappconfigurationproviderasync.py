@@ -78,6 +78,9 @@ async def load(
 
 async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
+    # Will remove when merged with Refresh Async PR
+    # pylint:disable=too-many-statements
+    # pylint:disable=too-many-branches
 
     # Start by parsing kwargs
     endpoint: Optional[str] = kwargs.pop("endpoint", None)
@@ -105,14 +108,13 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         raise ValueError("Please pass either endpoint and credential, or a connection string.")
 
     # Removing use of AzureAppConfigurationKeyVaultOptions
-    if "key_vault_options" in kwargs:
-        if not "key_vault_credentials" in kwargs:
-            kwargs["key_vault_credentials"] = kwargs["key_vault_options"].credential
-        if not "secret_resolver" in kwargs:
-            kwargs["secret_resolver"] = kwargs["key_vault_options"].secret_resolver
-        if not "key_vault_client_configs" in kwargs:
-            kwargs["key_vault_client_configs"] = kwargs["key_vault_options"].client_options
-        kwargs.pop("key_vault_options")
+    if key_vault_options:
+        if "key_vault_credentials" not in kwargs:
+            kwargs["key_vault_credentials"] = key_vault_options.credential
+        if "secret_resolver" not in kwargs:
+            kwargs["secret_resolver"] = key_vault_options.secret_resolver
+        if "key_vault_client_configs" not in kwargs:
+            kwargs["key_vault_client_configs"] = key_vault_options.client_options
 
     provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
 
@@ -131,7 +133,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                     break
 
             if isinstance(config, SecretReferenceConfigurationSetting):
-                secret = await _resolve_keyvault_reference(config, provider, kwargs)
+                secret = await _resolve_keyvault_reference(config, provider, **kwargs)
                 provider._dict[trimmed_key] = secret
             elif isinstance(config, FeatureFlagConfigurationSetting):
                 feature_management = provider._dict.get(FEATURE_MANAGEMENT_KEY, {})
