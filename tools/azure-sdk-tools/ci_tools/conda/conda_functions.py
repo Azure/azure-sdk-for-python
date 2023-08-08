@@ -90,20 +90,27 @@ def create_package(pkg_directory, output_directory):
             output_directory,
         ],
         cwd=pkg_directory,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.STDOUT
     )
 
 
-def create_namespace_extension(target_directory):
+def create_namespace_extension(target_directory: str):
     with open(os.path.join(target_directory, "__init__.py"), "w") as f:
         f.write(NAMESPACE_EXTENSION_TEMPLATE)
 
 
-def get_pkgs_from_build_directory(build_directory, artifact_name):
+def get_pkgs_from_build_directory(build_directory: str, artifact_name: str):
     return [os.path.join(build_directory, p) for p in os.listdir(build_directory) if p != artifact_name]
 
 
 def error_handler_git_access(func, path, exc):
-    # Is the error an access error?
+    """
+    This function exists because the git idx file is written with strange permissions that prevent it from being
+    deleted. Due to this, we need to register an error handler that attempts to fix the file permissions before 
+    re-attempting the delete operations.
+    """
+
     if not os.access(path, os.W_OK):
         os.chmod(path, stat.S_IWUSR)
         func(path)
@@ -112,6 +119,11 @@ def error_handler_git_access(func, path, exc):
 
 
 def create_sdist_skeleton(build_directory, artifact_name, common_root):
+    """
+    Given a properly formatted input directory, set up the skeleton for a combined package
+    and transfer source code into it from the individual source packages that have been
+    previously downloaded.
+    """
     sdist_directory = os.path.join(build_directory, artifact_name)
 
     if os.path.exists(sdist_directory):
@@ -147,23 +159,11 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
                 dest = os.path.join(ns_dir, directory)
                 shutil.copytree(src, dest)
 
-        # if os.path.exists(pkg_till_common_root):
-        #     directories_for_copy = [
-        #         file
-        #         for file in os.listdir(pkg_till_common_root)
-        #         if os.path.isdir(os.path.join(pkg_till_common_root, file))
-        #     ]
-
-        #     for directory in directories_for_copy:
-        #         src = os.path.join(pkg_till_common_root, directory)
-        #         srcs = [os.path.join(src, f) for f in os.listdir(src) if f != "__init__.py"]
-
-        #         for src in srcs:
-        #             dest = os.path.join(ns_dir, directory, os.path.basename(src))
-        #             shutil.copytree(src, dest)
-
 
 def get_version_from_config(environment_config):
+    """
+    Given the conda_env.yml, get the target conda version.
+    """
     with open(os.path.abspath((environment_config)), "r") as f:
         lines = f.readlines()
     for line in lines:
@@ -174,6 +174,9 @@ def get_version_from_config(environment_config):
 
 
 def get_manifest_includes(common_root):
+    """
+    Given a common root, generate the folder structure and __init__.py necessary to support it.
+    """
     levels = common_root.split("/")
     breadcrumbs = []
     breadcrumb_string = ""
@@ -186,8 +189,15 @@ def get_manifest_includes(common_root):
 
 
 def create_setup_files(
-    build_directory: str, common_root: str, artifact_name: str, service: str, meta_yaml: str, environment_config: str
+    build_directory: str, common_root: str, artifact_name: str, service: str, environment_config: str
 ) -> None:
+    """
+    Drop all the necessary files to create a properly formatted python package. This includes:
+
+     - setup.py
+     - setup.cfg
+     - MANIFEST.in
+    """
     sdist_directory = os.path.join(build_directory, artifact_name)
     setup_location = os.path.join(sdist_directory, "setup.py")
     manifest_location = os.path.join(sdist_directory, "MANIFEST.in")
@@ -217,6 +227,11 @@ def create_setup_files(
 def create_combined_sdist(
     conda_build: CondaConfiguration, config_assembly_folder: str, config_assembled_folder: str
 ) -> str:
+    """
+    Given a single conda package config which has already been assembled, create a combined source distribution that combines
+    all the downloaded code, then actually create that source distribution and make it available within the assembled folder.
+    """
+
     # get the meta.yml from the conda-recipes folder for this package name
     repo_root = discover_repo_root()
     meta_yml = os.path.join(repo_root, "conda", "conda-recipes", conda_build.name, "meta.yaml")
@@ -235,7 +250,6 @@ def create_combined_sdist(
             conda_build.common_root,
             conda_build.name,
             conda_build.service,
-            meta_yml,
             environment_config,
         )
 
@@ -248,7 +262,7 @@ def create_combined_sdist(
     print(f"Generated Sdist for artifact {conda_build.name} is present at {conda_build.created_sdist_path}")
 
 
-def get_summary(ci_yml, artifact_name):
+def get_summary(ci_yml: str, artifact_name: str):
     pkg_list = []
     with open(ci_yml, "r") as f:
         data = f.read()
@@ -330,7 +344,7 @@ def get_package_source(checkout_config: CheckoutConfiguration, download_folder: 
     """
     if checkout_config.download_uri:
         # we need to download from pypi
-        print("Must download")
+        raise NotImplementedError("Need to implement PyPI download.")
 
     elif checkout_config.checkout_path:
         get_git_source(
@@ -357,6 +371,7 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
     sdist_download_area = prep_directory(os.path.join(repo_root, "conda", "downloaded"))
 
     for conda_build in conda_configurations:
+        print(f"Beginning processing for {conda_build.name}.")
         config_download_folder = prep_directory(os.path.join(sdist_download_area, conda_build.name))
         config_assembly_folder = prep_directory(os.path.join(sdist_assembly_area, conda_build.name))
         config_assembled_folder = prep_directory(os.path.join(sdist_output_dir, conda_build.name))
@@ -365,7 +380,7 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
         # <Code Location 2> -> /conda/downloaded/run_configuration_package/<downloaded-package-name-2>/
         # ...
         for checkout_config in conda_build.checkout:
-            print(f"Getting package code for {checkout_config.package}.")
+            print(f" - getting code for {checkout_config.package}.")
             get_package_source(checkout_config, config_download_folder, config_assembly_folder)
 
         # the output of above workload is the following folder structure:
@@ -383,7 +398,7 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
         )
 
 
-def build_conda_packages(conda_configurations):
+def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_root: str):
     """Conda builds each individually assembled conda package folder."""
     pass
 
@@ -430,4 +445,5 @@ def entrypoint():
     # download all necessary source code to create source distributions
     assemble_source(run_configurations, repo_root)
 
-    # build_conda_packages(json_config)
+    # now build the conda packages
+    build_conda_packages(run_configurations, repo_root)
