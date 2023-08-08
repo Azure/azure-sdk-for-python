@@ -36,6 +36,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-06-01/examples/MaintenanceConfigurationsDelete_MaintenanceWindow.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-07-01/examples/MaintenanceConfigurationsDelete_MaintenanceWindow.json
 if __name__ == "__main__":
     main()
