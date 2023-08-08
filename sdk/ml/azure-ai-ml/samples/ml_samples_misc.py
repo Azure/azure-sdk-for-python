@@ -377,8 +377,8 @@ class MiscConfigurationOptions(object):
         # [START batch_deployment_operations_begin_create_or_update]
         from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 
-        deployment_sample = BatchDeployment()
-        ml_client.batch_deployments.begin_create_or_update(deployment_sample, True)
+        deployment_example = BatchDeployment("new-deployment")
+        ml_client.batch_deployments.begin_create_or_update(deployment_example, True)
         # [END batch_deployment_operations_begin_create_or_update]
 
         # [START batch_deployment_operations_get]
@@ -396,6 +396,33 @@ class MiscConfigurationOptions(object):
         # [START batch_deployment_operations_list_jobs]
         ml_client.batch_deployments.list_jobs("endpoint-example", "name-example")
         # [END batch_deployment_operations_list_jobs]
+
+        # [START batch_endpoint_operations_list]
+        ml_client.batch_endpoints.list()
+        # [END batch_endpoint_operations_list]
+
+        # [START batch_endpoint_operations_get]
+        ml_client.batch_endpoints.get("endpoint-example")
+        # [END batch_endpoint_operations_get]
+
+        # [START batch_endpoint_operations_delete]
+        ml_client.batch_endpoints.begin_delete("endpoint-example")
+        # [END batch_endpoint_operations_delete]
+
+        # [START batch_endpoint_operations_create_or_update]
+        from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
+
+        endpoint_example = BatchEndpoint("new-endpoint")
+        ml_client.batch_endpoints.begin_create_or_update(endpoint_example)
+        # [END batch_endpoint_operations_create_or_update]
+
+        # [START batch_endpoint_operations_invoke]
+        ml_client.batch_endpoints.invoke("endpoint-example")
+        # [END batch_endpoint_operations_invoke]
+
+        # [START batch_endpoint_operations_list_jobs]
+        ml_client.batch_endpoints.list_jobs("endpoint-example")
+        # [END batch_endpoint_operations_list_jobs]
 
         # [START validation_result]
         """For example, if repr(self) is:
