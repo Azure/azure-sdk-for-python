@@ -24,7 +24,13 @@ from .._constants import (
     FEATURE_FLAG_PREFIX,
     EMPTY_LABEL,
 )
-from .._azureappconfigurationprovider import _is_json_content_type, _get_headers, _RefreshTimer, _build_sentinel
+from .._azureappconfigurationprovider import (
+    _is_json_content_type,
+    _get_headers,
+    _RefreshTimer,
+    _build_sentinel,
+    _is_retryable_error,
+)
 from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -169,9 +175,7 @@ def _buildprovider(
     return provider
 
 
-async def _resolve_keyvault_reference(
-    config, key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions], provider: "AzureAppConfigurationProvider"
-) -> str:
+async def _resolve_keyvault_reference(config, provider: "AzureAppConfigurationProvider") -> str:
     if key_vault_options is None:
         raise ValueError("Key Vault options must be set to resolve Key Vault references.")
 
@@ -185,8 +189,8 @@ async def _resolve_keyvault_reference(
     # pylint:disable=protected-access
     referenced_client = provider._secret_clients.get(vault_url, None)
 
-    vault_config = key_vault_options.client_configs.get(vault_url, {})
-    credential = vault_config.pop("credential", key_vault_options.credential)
+    vault_config = provider._key_vault_options.client_configs.get(vault_url, {})
+    credential = vault_config.pop("credential", provider._key_vault_options.credential)
 
     if referenced_client is None and credential is not None:
         referenced_client = SecretClient(vault_url=vault_url, credential=credential, **vault_config)
