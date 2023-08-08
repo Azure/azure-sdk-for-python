@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, Any, Dict, Generic, Optional
+from typing import TypeVar, Any, Dict, Generic, Optional, Type
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
@@ -88,7 +88,7 @@ class RetryPolicyBase(Generic[GenericHttpRequestType, GenericHttpResponseType]):
         super(RetryPolicyBase, self).__init__()
 
     @classmethod
-    def no_retries(cls: ClsRetryPolicy) -> ClsRetryPolicy:
+    def no_retries(cls: Type[ClsRetryPolicy]) -> ClsRetryPolicy:
         """Disable retries.
 
         :return: A retry policy with retries disabled.
@@ -143,7 +143,7 @@ class RetryPolicyBase(Generic[GenericHttpRequestType, GenericHttpResponseType]):
         """
         return _utils.parse_retry_after(retry_after)
 
-    def get_retry_after(self, response: GenericHttpResponseType) -> Optional[float]:
+    def get_retry_after(self, response: PipelineResponse[Any, GenericHttpResponseType]) -> Optional[float]:
         """Get the value of Retry-After in seconds.
 
         :param response: The PipelineResponse object

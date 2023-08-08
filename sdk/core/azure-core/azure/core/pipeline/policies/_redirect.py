@@ -26,7 +26,7 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
-from typing import Optional, TypeVar, Dict, Any, Union, Generic
+from typing import Optional, TypeVar, Dict, Any, Union, Generic, Type
 import logging
 from urllib.parse import urlparse
 
@@ -77,7 +77,7 @@ class RedirectPolicyBase(Generic[GenericHttpResponseType]):
         super(RedirectPolicyBase, self).__init__()
 
     @classmethod
-    def no_redirects(cls: ClsRedirectPolicy) -> ClsRedirectPolicy:
+    def no_redirects(cls: Type[ClsRedirectPolicy]) -> ClsRedirectPolicy:
         """Disable redirects.
 
         :return: A redirect policy with redirects disabled.
@@ -85,7 +85,7 @@ class RedirectPolicyBase(Generic[GenericHttpResponseType]):
         """
         return cls(permit_redirects=False)
 
-    def configure_redirects(self, options: Dict[str, Any]) -> None:
+    def configure_redirects(self, options: Dict[str, Any]) -> Dict[str, Any]:
         """Configures the redirect settings.
 
         :param options: Keyword arguments from context.
@@ -99,7 +99,7 @@ class RedirectPolicyBase(Generic[GenericHttpResponseType]):
             "history": [],
         }
 
-    def get_redirect_location(self, response: GenericHttpResponseType) -> Optional[Union[str, bool]]:
+    def get_redirect_location(self, response: PipelineResponse[Any, GenericHttpResponseType]) -> Optional[Union[str, bool]]:
         """Checks for redirect status code and gets redirect location.
 
         :param response: The PipelineResponse object
@@ -121,7 +121,7 @@ class RedirectPolicyBase(Generic[GenericHttpResponseType]):
 
         return False
 
-    def increment(self, settings: Dict[str, Any], response: GenericHttpResponseType, redirect_location: str) -> bool:
+    def increment(self, settings: Dict[str, Any], response: PipelineResponse[Any, GenericHttpResponseType], redirect_location: str) -> bool:
         """Increment the redirect attempts for this request.
 
         :param dict settings: The redirect settings

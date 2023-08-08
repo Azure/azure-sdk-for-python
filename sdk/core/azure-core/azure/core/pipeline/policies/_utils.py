@@ -29,6 +29,7 @@ from typing import Optional, cast
 
 from urllib.parse import urlparse
 from ...utils._utils import _FixedOffset, case_insensitive_dict
+from .. import PipelineResponse
 
 
 def _parse_http_date(text: str) -> datetime.datetime:
@@ -62,7 +63,7 @@ def parse_retry_after(retry_after: str) -> float:
     return max(0, delay)
 
 
-def get_retry_after(response) -> Optional[float]:
+def get_retry_after(response: PipelineResponse) -> Optional[float]:
     """Get the value of Retry-After in seconds.
 
     :param response: The PipelineResponse object

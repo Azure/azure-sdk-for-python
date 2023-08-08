@@ -52,55 +52,54 @@ def __dir__() -> List[str]:
     return __all__
 
 
-def __getattr__(name: str) -> Union[Type[HttpTransport[Any, Any]], Type[AsyncHttpTransport[Any, Any]]]:
-    transport = None
+def __getattr__(name: str) -> Type[Any]:  # There is no point to be specific on the type here
     if name == "AsyncioRequestsTransport":
         try:
             from ._requests_asyncio import AsyncioRequestsTransport
 
-            transport = AsyncioRequestsTransport
+            return AsyncioRequestsTransport
         except ImportError as err:
             raise ImportError("requests package is not installed") from err
     if name == "AsyncioRequestsTransportResponse":
         try:
             from ._requests_asyncio import AsyncioRequestsTransportResponse
 
-            transport = AsyncioRequestsTransportResponse
+            return AsyncioRequestsTransportResponse
         except ImportError as err:
             raise ImportError("requests package is not installed") from err
     if name == "RequestsTransport":
         try:
             from ._requests_basic import RequestsTransport
 
-            transport = RequestsTransport
+            return RequestsTransport
         except ImportError as err:
             raise ImportError("requests package is not installed") from err
     if name == "RequestsTransportResponse":
         try:
             from ._requests_basic import RequestsTransportResponse
 
-            transport = RequestsTransportResponse
+            return RequestsTransportResponse
         except ImportError as err:
             raise ImportError("requests package is not installed") from err
     if name == "AioHttpTransport":
         try:
             from ._aiohttp import AioHttpTransport
 
-            transport = AioHttpTransport
+            return AioHttpTransport
         except ImportError as err:
             raise ImportError("aiohttp package is not installed") from err
     if name == "AioHttpTransportResponse":
         try:
             from ._aiohttp import AioHttpTransportResponse
 
-            transport = AioHttpTransportResponse
+            return AioHttpTransportResponse
         except ImportError as err:
             raise ImportError("aiohttp package is not installed") from err
     if name == "TrioRequestsTransport":
         try:
             from ._requests_trio import TrioRequestsTransport
 
-            transport = TrioRequestsTransport
+            return TrioRequestsTransport
         except ImportError as ex:
             if ex.msg.endswith("'requests'"):
                 raise ImportError("requests package is not installed") from ex
@@ -109,9 +108,7 @@ def __getattr__(name: str) -> Union[Type[HttpTransport[Any, Any]], Type[AsyncHtt
         try:
             from ._requests_trio import TrioRequestsTransportResponse
 
-            transport = TrioRequestsTransportResponse
+            return TrioRequestsTransportResponse
         except ImportError as err:
             raise ImportError("trio package is not installed") from err
-    if transport:
-        return transport
     raise AttributeError(f"module 'azure.core.pipeline.transport' has no attribute {name}")

@@ -107,7 +107,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         self,
         request: PipelineRequest[HTTPRequestType],
         response: Optional[HTTPResponseType] = None,
-        exc_info: OptExcInfo = None,
+        exc_info: Optional[OptExcInfo] = None,
     ) -> None:
         """Ends the span that is tracing the network and updates its status.
 
