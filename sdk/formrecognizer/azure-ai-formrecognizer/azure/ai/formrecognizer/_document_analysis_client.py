@@ -15,7 +15,7 @@ from ._models import AnalyzeResult
 
 
 class DocumentAnalysisClient(FormRecognizerClientBase):
-    """DocumentAnalysisClient analyzes information from documents and images.
+    """DocumentAnalysisClient analyzes information from documents and images, and classifies documents.
     It is the interface to use for analyzing with prebuilt models (receipts, business cards,
     invoices, identity documents, among others), analyzing layout from documents, analyzing general
     document types, and analyzing custom documents with built models (to see a full list of models
@@ -43,14 +43,14 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/v3.2/sample_authentication.py
+        .. literalinclude:: ../samples/v3.2_and_later/sample_authentication.py
             :start-after: [START create_da_client_with_key]
             :end-before: [END create_da_client_with_key]
             :language: python
             :dedent: 4
             :caption: Creating the DocumentAnalysisClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/v3.2/sample_authentication.py
+        .. literalinclude:: ../samples/v3.2_and_later/sample_authentication.py
             :start-after: [START create_da_client_with_aad]
             :end-before: [END create_da_client_with_aad]
             :language: python
@@ -97,14 +97,14 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_analyze_invoices.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_analyze_invoices.py
                 :start-after: [START analyze_invoices]
                 :end-before: [END analyze_invoices]
                 :language: python
                 :dedent: 4
                 :caption: Analyze an invoice. For more samples see the `samples` folder.
 
-            .. literalinclude:: ../samples/v3.2/sample_analyze_custom_documents.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_analyze_custom_documents.py
                 :start-after: [START analyze_custom_documents]
                 :end-before: [END analyze_custom_documents]
                 :language: python
@@ -166,7 +166,7 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_analyze_receipts_from_url.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_analyze_receipts_from_url.py
                 :start-after: [START analyze_receipts_from_url]
                 :end-before: [END analyze_receipts_from_url]
                 :language: python
@@ -225,7 +225,7 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_classify_document.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_classify_document.py
                 :start-after: [START classify_document]
                 :end-before: [END classify_document]
                 :language: python
@@ -275,7 +275,7 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_classify_document_from_url.py
+            .. literalinclude:: ../samples/v3.2_and_later/sample_classify_document_from_url.py
                 :start-after: [START classify_document_from_url]
                 :end-before: [END classify_document_from_url]
                 :language: python

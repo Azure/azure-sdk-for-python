@@ -62,7 +62,10 @@ def test_unexpected_error():
 
     for code in range(401, 600):
 
-        def send(request, **_):
+        def send(request, **kwargs):
+            # ensure the `claims` and `tenant_id` kwargs from credential's `get_token` method don't make it to transport
+            assert "claims" not in kwargs
+            assert "tenant_id" not in kwargs
             if "resource" not in request.query:
                 # availability probe
                 return mock_response(status_code=400, json_payload={})

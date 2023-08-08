@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional
+from __future__ import annotations
+from typing import Any, Optional, AsyncContextManager
 from typing_extensions import Protocol, runtime_checkable
 from .credentials import AccessToken as _AccessToken
 
 
 @runtime_checkable
-class AsyncTokenCredential(Protocol):
+class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]):
     """Protocol for classes able to provide OAuth tokens."""
 
     async def get_token(
@@ -29,10 +30,4 @@ class AsyncTokenCredential(Protocol):
         """
 
     async def close(self) -> None:
-        pass
-
-    async def __aenter__(self):
-        pass
-
-    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
         pass

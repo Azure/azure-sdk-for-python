@@ -44,9 +44,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
     """DocumentModelAdministrationClient is the Form Recognizer interface to use for building
     and managing models.
 
-    It provides methods for building models, as well as methods for viewing and deleting models,
-    viewing model operations, accessing account information, copying models to another
-    Form Recognizer resource, and composing a new model from a collection of existing models.
+    It provides methods for building models and classifiers, as well as methods for viewing and
+    deleting models and classifiers, viewing model and classifier operations, accessing account
+    information, copying models to another Form Recognizer resource, and composing a new model
+    from a collection of existing models.
 
     .. note:: DocumentModelAdministrationClient should be used with API versions
         2022-08-31 and up. To use API versions <=v2.1, instantiate a FormTrainingClient.
@@ -69,14 +70,14 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/v3.2/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_authentication_async.py
             :start-after: [START create_dt_client_with_key_async]
             :end-before: [END create_dt_client_with_key_async]
             :language: python
             :dedent: 4
             :caption: Creating the DocumentModelAdministrationClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/v3.2/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_authentication_async.py
             :start-after: [START create_dt_client_with_aad_async]
             :end-before: [END create_dt_client_with_aad_async]
             :language: python
@@ -215,7 +216,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_build_model_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_build_model_async.py
                 :start-after: [START build_model_async]
                 :end-before: [END build_model_async]
                 :language: python
@@ -307,7 +308,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_compose_model_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_compose_model_async.py
                 :start-after: [START composed_model_async]
                 :end-before: [END composed_model_async]
                 :language: python
@@ -412,7 +413,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_copy_model_to_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_copy_model_to_async.py
                 :start-after: [START begin_copy_document_model_to_async]
                 :end-before: [END begin_copy_document_model_to_async]
                 :language: python
@@ -467,7 +468,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_models_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_manage_models_async.py
                 :start-after: [START delete_document_model_async]
                 :end-before: [END delete_document_model_async]
                 :language: python
@@ -495,7 +496,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_models_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_manage_models_async.py
                 :start-after: [START list_document_models_async]
                 :end-before: [END list_document_models_async]
                 :language: python
@@ -525,7 +526,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_models_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_manage_models_async.py
                 :start-after: [START get_resource_details_async]
                 :end-before: [END get_resource_details_async]
                 :language: python
@@ -551,7 +552,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_models_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_manage_models_async.py
                 :start-after: [START get_document_model_async]
                 :end-before: [END get_document_model_async]
                 :language: python
@@ -583,7 +584,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_get_operations_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_get_operations_async.py
                 :start-after: [START list_operations_async]
                 :end-before: [END list_operations_async]
                 :language: python
@@ -618,7 +619,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_get_operations_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_get_operations_async.py
                 :start-after: [START get_operation_async]
                 :end-before: [END get_operation_async]
                 :language: python
@@ -651,7 +652,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         a custom classifier model, see https://aka.ms/azsdk/formrecognizer/buildclassifiermodel.
 
         :param doc_types: Mapping of document types to classify against.
-        :paramtype doc_types: Mapping[str, ~azure.ai.formrecognizer.ClassifierDocumentTypeDetails]
+        :type doc_types: Mapping[str, ~azure.ai.formrecognizer.ClassifierDocumentTypeDetails]
         :keyword str classifier_id: Unique document classifier name.
             If not specified, a classifier ID will be created for you.
         :keyword str description: Document classifier description.
@@ -665,7 +666,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_build_classifier_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_build_classifier_async.py
                 :start-after: [START build_classifier_async]
                 :end-before: [END build_classifier_async]
                 :language: python
@@ -717,7 +718,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_classifiers_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_manage_classifiers_async.py
                 :start-after: [START get_document_classifier_async]
                 :end-before: [END get_document_classifier_async]
                 :language: python
@@ -748,7 +749,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_classifiers_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_manage_classifiers_async.py
                 :start-after: [START list_document_classifiers_async]
                 :end-before: [END list_document_classifiers_async]
                 :language: python
@@ -781,7 +782,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_classifiers_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_manage_classifiers_async.py
                 :start-after: [START delete_document_classifier_async]
                 :end-before: [END delete_document_classifier_async]
                 :language: python
