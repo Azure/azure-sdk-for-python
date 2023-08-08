@@ -456,6 +456,13 @@
       ]
     },
     {
+      "filename": "tools/azure-sdk-tools/gh_tools/**",
+      "words": [
+        "JOBID",
+        "vnext"
+      ]
+    },
+    {
       "filename": "doc/esrp_release.md",
       "words": [
         "ESRP"
