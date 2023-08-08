@@ -520,8 +520,7 @@ class _HttpClientTransportResponse(_HttpResponseBase):
     """
 
     def __init__(self, request, httpclient_response):
-        super(_HttpClientTransportResponse, self).__init__(request, httpclient_response)
-        self.status_code = httpclient_response.status
+        super(_HttpClientTransportResponse, self).__init__(request, httpclient_response, httpclient_response.status)
         self.headers = case_insensitive_dict(httpclient_response.getheaders())
         self.reason = httpclient_response.reason
         self.content_type = self.headers.get("Content-Type")

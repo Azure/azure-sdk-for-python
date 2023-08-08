@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import List
+from typing import List, Optional, Any
 from ._base import HttpTransport, HttpRequest, HttpResponse
 from ._base_async import AsyncHttpTransport, AsyncHttpResponse
 
@@ -56,53 +56,54 @@ def __dir__() -> List[str]:
 
 
 def __getattr__(name: str):
+    transport: Optional[Any] = None
     if name == "AsyncioRequestsTransport":
         try:
             from ._requests_asyncio import AsyncioRequestsTransport
 
-            return AsyncioRequestsTransport
+            transport = AsyncioRequestsTransport
         except ImportError as err:
             raise ImportError("requests package is not installed") from err
     if name == "AsyncioRequestsTransportResponse":
         try:
             from ._requests_asyncio import AsyncioRequestsTransportResponse
 
-            return AsyncioRequestsTransportResponse
+            transport = AsyncioRequestsTransportResponse
         except ImportError as err:
             raise ImportError("requests package is not installed") from err
     if name == "RequestsTransport":
         try:
             from ._requests_basic import RequestsTransport
 
-            return RequestsTransport
+            transport = RequestsTransport
         except ImportError as err:
             raise ImportError("requests package is not installed") from err
     if name == "RequestsTransportResponse":
         try:
             from ._requests_basic import RequestsTransportResponse
 
-            return RequestsTransportResponse
+            transport = RequestsTransportResponse
         except ImportError as err:
             raise ImportError("requests package is not installed") from err
     if name == "AioHttpTransport":
         try:
             from ._aiohttp import AioHttpTransport
 
-            return AioHttpTransport
+            transport = AioHttpTransport
         except ImportError as err:
             raise ImportError("aiohttp package is not installed") from err
     if name == "AioHttpTransportResponse":
         try:
             from ._aiohttp import AioHttpTransportResponse
 
-            return AioHttpTransportResponse
+            transport = AioHttpTransportResponse
         except ImportError as err:
             raise ImportError("aiohttp package is not installed") from err
     if name == "TrioRequestsTransport":
         try:
             from ._requests_trio import TrioRequestsTransport
 
-            return TrioRequestsTransport
+            transport = TrioRequestsTransport
         except ImportError as ex:
             if ex.msg.endswith("'requests'"):
                 raise ImportError("requests package is not installed") from ex
@@ -111,7 +112,9 @@ def __getattr__(name: str):
         try:
             from ._requests_trio import TrioRequestsTransportResponse
 
-            return TrioRequestsTransportResponse
+            transport = TrioRequestsTransportResponse
         except ImportError as err:
             raise ImportError("trio package is not installed") from err
+    if transport:
+        return transport
     raise AttributeError(f"module 'azure.core.pipeline.transport' has no attribute {name}")

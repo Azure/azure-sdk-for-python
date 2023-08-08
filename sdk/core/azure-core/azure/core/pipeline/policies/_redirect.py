@@ -26,10 +26,10 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
-from typing import Optional, TypeVar, Dict, Any, Union, Type
-from typing_extensions import Literal
 import logging
 from urllib.parse import urlparse
+from typing import Optional, TypeVar, Dict, Any, Union, Type
+from typing_extensions import Literal
 
 from azure.core.exceptions import TooManyRedirectsError
 from azure.core.pipeline import PipelineResponse, PipelineRequest
