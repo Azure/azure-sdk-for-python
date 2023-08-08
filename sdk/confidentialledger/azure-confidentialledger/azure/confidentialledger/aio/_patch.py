@@ -106,6 +106,6 @@ class ConfidentialLedgerClient(GeneratedClient):
             kwargs["authentication_policy"] = auth_policy
 
         # Customize the underlying client to use a self-signed TLS certificate.
-        kwargs["connection_verify"] = ledger_certificate_path
+        kwargs["connection_verify"] = kwargs.get("connection_verify", ledger_certificate_path)
 
         super().__init__(endpoint, **kwargs)
