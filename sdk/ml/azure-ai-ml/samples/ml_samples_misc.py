@@ -424,6 +424,17 @@ class MiscConfigurationOptions(object):
         ml_client.batch_endpoints.list_jobs("endpoint-example")
         # [END batch_endpoint_operations_list_jobs]
 
+        # [START code_operations_create_or_update]
+        from azure.ai.ml.entities._assets._artifacts.code import Code
+
+        code_example = Code("resource-name")
+        ml_client._code.create_or_update(code_example)
+        # [END code_operations_create_or_update]
+
+        # [START code_operations_get]
+        ml_client._code.get("code-example")
+        # [END code_operations_get]
+
         # [START validation_result]
         """For example, if repr(self) is:
         ```python
