@@ -26,7 +26,7 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
-from typing import TypeVar, Dict, Any, Optional
+from typing import TypeVar, Dict, Any, Optional, cast
 import logging
 import time
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -167,13 +167,24 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
 
         while retry_active:
             start_time = time.time()
+            # PipelineContext types transport as a Union of HttpTransport and AsyncHttpTransport, but
+            # here we know that this is an AsyncTransport.
+            # The correct fix is to make PipelineContext generic, but that's a breaking change and a lot of
+            # generic to update in Pipeline, PipelineClient, PipelineRequest, PipelineResponse, etc.
+            transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType] = cast(
+                AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType], request.context.transport
+            )
             try:
                 self._configure_timeout(request, absolute_timeout, is_response_error)
                 response = await self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
-                        await self.sleep(retry_settings, request.context.transport, response=response)
+                        await self.sleep(
+                            retry_settings,
+                            transport,
+                            response=response,
+                        )
                         is_response_error = True
                         continue
                 break
@@ -185,7 +196,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
                 if absolute_timeout > 0 and self._is_method_retryable(retry_settings, request.http_request):
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
-                        await self.sleep(retry_settings, request.context.transport)
+                        await self.sleep(retry_settings, transport)
                         if isinstance(err, ServiceRequestError):
                             is_response_error = False
                         else:

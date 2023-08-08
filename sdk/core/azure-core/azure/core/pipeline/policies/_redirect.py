@@ -27,6 +27,7 @@
 This module is the requests implementation of Pipeline ABC
 """
 from typing import Optional, TypeVar, Dict, Any, Union, Type
+from typing_extensions import Literal
 import logging
 from urllib.parse import urlparse
 
@@ -105,7 +106,9 @@ class RedirectPolicyBase:
             "history": [],
         }
 
-    def get_redirect_location(self, response: PipelineResponse[Any, AllHttpResponseType]) -> Optional[Union[str, bool]]:
+    def get_redirect_location(
+        self, response: PipelineResponse[Any, AllHttpResponseType]
+    ) -> Union[str, None, Literal[False]]:
         """Checks for redirect status code and gets redirect location.
 
         :param response: The PipelineResponse object

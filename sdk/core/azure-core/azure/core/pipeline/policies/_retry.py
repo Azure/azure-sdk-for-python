@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, Any, Dict, Optional, Type, List, Union
+from typing import TypeVar, Any, Dict, Optional, Type, List, Union, cast, IO
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
@@ -201,7 +201,9 @@ class RetryPolicyBase:
 
         return True
 
-    def is_retry(self, settings: Dict[str, Any], response: PipelineResponse[HTTPRequestType, AllHttpResponseType]) -> bool:
+    def is_retry(
+        self, settings: Dict[str, Any], response: PipelineResponse[HTTPRequestType, AllHttpResponseType]
+    ) -> bool:
         """Checks if method/status code is retryable.
 
         Based on allowlists and control variables such as the number of
@@ -271,6 +273,11 @@ class RetryPolicyBase:
          True if more retry attempts available, False otherwise
         :rtype: bool
         """
+        # FIXME This code is not None safe: https://github.com/Azure/azure-sdk-for-python/issues/31528
+        response = cast(
+            Union[PipelineRequest[HTTPRequestType], PipelineResponse[HTTPRequestType, AllHttpResponseType]], response
+        )
+
         settings["total"] -= 1
 
         if isinstance(response, PipelineResponse) and response.http_response.status_code == 202:
@@ -305,7 +312,8 @@ class RetryPolicyBase:
                 return False
             try:
                 # attempt to rewind the body to the initial position
-                response.http_request.body.seek(settings["body_position"], SEEK_SET)
+                # If it has "read", it has "seek", so casting for mypy
+                cast(IO[bytes], response.http_request.body).seek(settings["body_position"], SEEK_SET)
             except (UnsupportedOperation, ValueError, AttributeError):
                 # if body is not seekable, then retry would not work
                 return False
