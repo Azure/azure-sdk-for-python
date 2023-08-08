@@ -202,9 +202,21 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         return Path(self._source_path).parent
 
     def _get_origin_code_value(self) -> Union[str, PathLike, None]:
-        return self.code or "."
+        return super()._get_origin_code_value() or "."
 
     # endregion
+
+    def _to_ordered_dict_for_yaml_dump(self) -> Dict:
+        """Dump the component content into a sorted yaml string."""
+
+        obj = super()._to_ordered_dict_for_yaml_dump()
+        # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
+        if "code" in obj:
+            if not self.code:
+                del obj["code"]
+            else:
+                obj["code"] = self.code
+        return obj
 
     @property
     def _additional_includes(self):

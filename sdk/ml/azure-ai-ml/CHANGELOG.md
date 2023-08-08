@@ -5,6 +5,7 @@
 
 ### Features Added
 - Added support of features that are known into the future/at forecast time for dnn in AutoML Forecasting jobs.
+- Added support of `download` for component operations.
 
 ### Bugs Fixed
 - Local job runs will no longer fail if Docker registry has no username/password

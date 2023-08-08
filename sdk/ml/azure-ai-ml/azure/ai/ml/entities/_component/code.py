@@ -244,10 +244,13 @@ class ComponentCodeMixin:
         if origin_code_value is None:
             yield None
         else:
+            base_path = self._get_base_path_for_code()
+            absolute_path = origin_code_value if os.path.isabs(origin_code_value) else base_path / origin_code_value
+
             yield Code(
-                base_path=self._get_base_path_for_code(),
+                base_path=base_path,
                 path=origin_code_value,
-                ignore_file=ComponentIgnoreFile(origin_code_value),
+                ignore_file=ComponentIgnoreFile(absolute_path),
             )
 
     def _with_local_code(self):

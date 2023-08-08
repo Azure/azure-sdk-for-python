@@ -159,6 +159,15 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         self.instance_count = instance_count
         self.additional_includes = additional_includes or []
 
+    def _to_ordered_dict_for_yaml_dump(self) -> Dict:
+        """Dump the component content into a sorted yaml string."""
+
+        obj = super()._to_ordered_dict_for_yaml_dump()
+        # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
+        if self.code and isinstance(self.code, str):
+            obj["code"] = self.code
+        return obj
+
     @property
     def instance_count(self) -> int:
         """The number of instances or nodes to be used by the compute target.
