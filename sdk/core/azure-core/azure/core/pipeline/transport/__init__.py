@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import List, Union, Type
+from typing import List, Union, Type, Any
 from ._base import HttpTransport, HttpRequest, HttpResponse
 from ._base_async import AsyncHttpTransport, AsyncHttpResponse
 
@@ -52,7 +52,7 @@ def __dir__() -> List[str]:
     return __all__
 
 
-def __getattr__(name: str) -> Union[Type[HttpTransport], Type[AsyncHttpTransport]]:
+def __getattr__(name: str) -> Union[Type[HttpTransport[Any, Any]], Type[AsyncHttpTransport[Any, Any]]]:
     transport = None
     if name == "AsyncioRequestsTransport":
         try:
