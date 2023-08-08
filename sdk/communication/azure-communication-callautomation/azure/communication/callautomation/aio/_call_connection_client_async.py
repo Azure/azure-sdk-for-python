@@ -507,9 +507,6 @@ class CallConnectionClient:
         else:
             play_source_single = play_prompt
 
-        if not isinstance(input_type, RecognizeInputType):
-            input_type = RecognizeInputType[input_type.upper()]
-
         if input_type == RecognizeInputType.DTMF:
             dtmf_options = DtmfOptions(
                 inter_tone_timeout_in_seconds=dtmf_inter_tone_timeout,

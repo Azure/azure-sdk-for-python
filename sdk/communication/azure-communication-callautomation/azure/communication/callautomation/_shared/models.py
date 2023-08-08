@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint: skip-file
 from enum import Enum
 from six import with_metaclass
 from typing import Mapping, Optional, Union, Any

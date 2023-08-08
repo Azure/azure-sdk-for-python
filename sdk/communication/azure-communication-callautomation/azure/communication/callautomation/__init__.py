@@ -114,4 +114,3 @@ def __getattr__(name):
         return ServerCallLocator
 
     raise AttributeError(f"module 'azure.communication.callautomation' has no attribute {name}")
-

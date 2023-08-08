@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING, Dict, Any, List, Optional, Union
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 from ._shared.models import (
     CommunicationIdentifier,
     CommunicationUserIdentifier,
