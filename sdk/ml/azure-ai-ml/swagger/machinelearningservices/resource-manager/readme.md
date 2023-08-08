@@ -109,7 +109,7 @@ These settings apply only when `--tag=workspace-dataplane` is specified on the c
 ```yaml $(tag) == 'workspace-dataplane'
 input-file:
   - Microsoft.MachineLearningServices/preview/workspace-dataplane/swagger.json
-output-folder: $(python-sdks-folder)/workspace-dataplane
+output-folder: $(python-sdks-folder)/workspace_dataplane
 ```
 
 ### Tag: registry-discovery

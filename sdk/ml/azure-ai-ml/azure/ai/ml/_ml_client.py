@@ -27,6 +27,9 @@ from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
+from azure.ai.ml._restclient.workspace_dataplane import (
+    AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
+)
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
@@ -239,6 +242,13 @@ class MLClient:
             ops_kwargs["enforce_https"] = _is_https_url(base_url)
 
         self._service_client_09_2020_dataplanepreview = ServiceClient092020DataplanePreview(
+            subscription_id=self._operation_scope._subscription_id,
+            credential=self._credential,
+            base_url=base_url,
+            **kwargs,
+        )
+
+        self._service_client_workspace_dataplane = ServiceClientWorkspaceDataplane(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
             base_url=base_url,
@@ -510,6 +520,8 @@ class MLClient:
             self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
+            requests_pipeline=self._requests_pipeline,
+            dataplane_client=self._service_client_workspace_dataplane,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs)

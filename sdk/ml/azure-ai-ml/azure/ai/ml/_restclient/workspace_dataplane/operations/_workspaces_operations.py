@@ -40,7 +40,7 @@ def build_hub_join_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "1.0.0")  # type: str
+    api_version = kwargs.pop('api_version', "2023-06-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -111,7 +111,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "1.0.0")  # type: str
+        api_version = kwargs.pop('api_version', "2023-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'Workspace')
@@ -192,7 +192,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.Workspace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "1.0.0")  # type: str
+        api_version = kwargs.pop('api_version', "2023-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workspace"]

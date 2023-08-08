@@ -59,7 +59,7 @@ class WorkspacesOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "1.0.0")  # type: str
+        api_version = kwargs.pop('api_version', "2023-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'Workspace')
@@ -141,7 +141,7 @@ class WorkspacesOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.Workspace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "1.0.0")  # type: str
+        api_version = kwargs.pop('api_version', "2023-06-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workspace"]

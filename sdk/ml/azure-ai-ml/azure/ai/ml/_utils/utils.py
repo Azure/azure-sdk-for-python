@@ -565,6 +565,18 @@ def _get_mfe_base_url_from_registry_discovery_service(
     return all_urls[API_URL_KEY]
 
 
+def _get_workspace_base_url(workspace_operations: Any, workspace_name: str, requests_pipeline: HttpPipeline) -> str:
+    discovery_url = workspace_operations.get(workspace_name).discovery_url
+
+    all_urls = json.loads(
+        download_text_from_url(
+            discovery_url,
+            create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline),
+        )
+    )
+    return all_urls[API_URL_KEY]
+
+
 def _get_mfe_base_url_from_batch_endpoint(endpoint: "BatchEndpoint") -> str:
     return endpoint.scoring_uri.split("/subscriptions/")[0]
 

@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
       "title": "Azure Machine Learning Service",
-      "version": "1.0.0"
+      "version": "2023-06-01-preview"
     },
     "paths": {
         "/rp/workspaces/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/join/{projectWorkspaceName}": {

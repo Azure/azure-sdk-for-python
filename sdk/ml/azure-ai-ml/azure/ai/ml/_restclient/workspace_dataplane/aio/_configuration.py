@@ -29,8 +29,8 @@ class AzureMachineLearningWorkspacesConfiguration(Configuration):  # pylint: dis
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :keyword api_version: Api Version. The default value is "1.0.0". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. The default value is "2023-06-01-preview". Note that
+     overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -41,7 +41,7 @@ class AzureMachineLearningWorkspacesConfiguration(Configuration):  # pylint: dis
         **kwargs: Any
     ) -> None:
         super(AzureMachineLearningWorkspacesConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "1.0.0")  # type: str
+        api_version = kwargs.pop('api_version', "2023-06-01-preview")  # type: str
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
