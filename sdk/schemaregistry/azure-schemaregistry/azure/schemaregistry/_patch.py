@@ -184,6 +184,10 @@ def get_case_insensitive_format(
 
 
 ###### Wrapper Class ######
+
+# TODO: inherit from AzureSchemaRegistry and overload
+# TODO: register_schema + get_schema_id_by_content will be auto generated once multiple content type bug is fixed in python generator.
+# they are currently not being generated when multiple content types are included in the request.
 class SchemaRegistryClient(object):
     """
     SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema Registry service.
