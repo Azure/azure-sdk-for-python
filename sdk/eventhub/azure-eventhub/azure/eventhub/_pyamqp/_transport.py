@@ -562,44 +562,48 @@ class SSLTransport(_AbstractTransport):
         # Setup the right SSL version; default to optimal versions across
         # ssl implementations
         if ssl_version is None:
-            ssl_version = ssl.PROTOCOL_TLS
+            ssl_version = ssl.PROTOCOL_TLS_SERVER if server_side else ssl.PROTOCOL_TLS_CLIENT
 
         opts = {
             "sock": sock,
-            "keyfile": keyfile,
-            "certfile": certfile,
             "server_side": server_side,
-            "cert_reqs": cert_reqs,
-            "ca_certs": ca_certs,
             "do_handshake_on_connect": do_handshake_on_connect,
             "suppress_ragged_eofs": suppress_ragged_eofs,
-            "ciphers": ciphers,
-            #'ssl_version': ssl_version
+            "server_hostname": server_hostname,
         }
 
-        # TODO: We need to refactor this.
-        try:
-            sock = ssl.wrap_socket(**opts)  # pylint: disable=deprecated-method
-        except FileNotFoundError as exc:
-            # FileNotFoundError does not have missing filename info, so adding it below.
-            # Assuming that this must be ca_certs, since this is the only file path that
-            # users can pass in (`connection_verify` in the EH/SB clients) through opts above.
-            # For uamqp exception parity. Remove later when resolving issue #27128.
-            exc.filename = {"ca_certs": ca_certs}
-            raise exc
+        context = ssl.SSLContext(ssl_version)
+
+        if certfile is not None:
+            context.load_cert_chain(certfile, keyfile)
+
+        if ca_certs is not None:
+            try:
+                context.load_verify_locations(ca_certs)
+            except FileNotFoundError as exc:
+                # FileNotFoundError does not have missing filename info, so adding it below.
+                # since this is the only file path that users can pass in
+                # (`connection_verify` in the EH/SB clients) through opts above.
+                exc.filename = {"ca_certs": ca_certs}
+                raise exc from None
+
+        if ciphers is not None:
+            context.set_ciphers(ciphers)
+
         # Set SNI headers if supported
-        if (
-            (server_hostname is not None)
-            and (hasattr(ssl, "HAS_SNI") and ssl.HAS_SNI)
-            and (hasattr(ssl, "SSLContext"))
-        ):
-            context = ssl.SSLContext(opts["ssl_version"])
+        try:
+            context.check_hostname = ssl.HAS_SNI and server_hostname is not None
+        except AttributeError:
+            pass
+
+        if cert_reqs is not None:
             context.verify_mode = cert_reqs
-            if cert_reqs != ssl.CERT_NONE:
-                context.check_hostname = True
-            if (certfile is not None) and (keyfile is not None):
-                context.load_cert_chain(certfile, keyfile)
-            sock = context.wrap_socket(sock, server_hostname=server_hostname)
+
+        if ca_certs is None and context.verify_mode != ssl.CERT_NONE:
+            purpose = ssl.Purpose.CLIENT_AUTH if server_side else ssl.Purpose.SERVER_AUTH
+            context.load_default_certs(purpose=purpose)
+
+        sock = context.wrap_socket(**opts)
         return sock
 
     def _shutdown_transport(self):
