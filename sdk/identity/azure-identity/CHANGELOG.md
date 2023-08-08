@@ -1,6 +1,6 @@
 # Release History
 
-## 1.14.0b3 (Unreleased)
+## 1.14.0 (2023-08-08)
 
 ### Features Added
 
@@ -14,7 +14,7 @@
 
 ### Bugs Fixed
 
-### Other Changes
+- Credential types correctly implement `azure-core`'s `TokenCredential` protocol.  ([#25175](https://github.com/Azure/azure-sdk-for-python/issues/25175))
 
 ## 1.14.0b2 (2023-07-11)
 

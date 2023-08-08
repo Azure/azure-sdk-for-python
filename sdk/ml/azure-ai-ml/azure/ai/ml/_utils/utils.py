@@ -1011,3 +1011,21 @@ def get_resource_group_name_from_resource_group_id(armstr: str) -> str:
         return armstr
     else:
         return armstr.split("/")[-1]
+
+def extract_name_and_version(azureml_id: str) -> Dict[str, str]:
+    """Extract name and version from azureml id.
+
+    :param azureml_id: AzureML id.
+    :type azureml_id: str
+    :return: A dict of name and version.
+    :rtype: Dict[str, str]
+    """
+    if not isinstance(azureml_id, str):
+        raise ValueError("azureml_id should be a string but got {}: {}.".format(type(azureml_id), azureml_id))
+    if azureml_id.count(":") != 1:
+        raise ValueError("azureml_id should be in the format of name:version but got {}.".format(azureml_id))
+    name, version = azureml_id.split(":")
+    return {
+        "name": name,
+        "version": version,
+    }

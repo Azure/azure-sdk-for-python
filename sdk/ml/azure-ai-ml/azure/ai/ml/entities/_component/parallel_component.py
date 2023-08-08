@@ -216,6 +216,15 @@ class ParallelComponent(
         else:
             self.task.code = value
 
+    def _to_ordered_dict_for_yaml_dump(self) -> Dict:
+        """Dump the component content into a sorted yaml string."""
+
+        obj = super()._to_ordered_dict_for_yaml_dump()
+        # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
+        if self.code and isinstance(self.code, str):
+            obj["task"]["code"] = self.code
+        return obj
+
     @property
     def environment(self) -> str:
         """Return value of promoted property task.environment, indicate the
