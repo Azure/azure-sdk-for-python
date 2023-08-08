@@ -999,3 +999,15 @@ def get_versioned_base_directory_for_cache() -> Path:
     from azure.ai.ml._version import VERSION
 
     return get_base_directory_for_cache().joinpath(VERSION)
+
+def get_resource_and_group_name_from_resource_id(armstr: str) -> str:
+    if armstr.find("/") == -1:
+        return armstr, None
+    else:
+        return armstr.split("/")[-1], armstr.split("/")[-5]
+    
+def get_resource_group_name_from_resource_group_id(armstr: str) -> str:
+    if armstr.find("/") == -1:
+        return armstr
+    else:
+        return armstr.split("/")[-1]

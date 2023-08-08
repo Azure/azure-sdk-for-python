@@ -320,6 +320,8 @@ class MLClient:
             self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
+            requests_pipeline=self._requests_pipeline,
+            dataplane_client=self._service_client_workspace_dataplane,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)
@@ -520,8 +522,6 @@ class MLClient:
             self._service_client_06_2023_preview,
             self._operation_container,
             self._credential,
-            requests_pipeline=self._requests_pipeline,
-            dataplane_client=self._service_client_workspace_dataplane,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.WORKSPACE_HUB, self._workspace_hubs)

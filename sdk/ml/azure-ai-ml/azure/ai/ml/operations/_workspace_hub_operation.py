@@ -16,17 +16,10 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._workspace_utils import delete_resource_by_arm_id
-from azure.ai.ml._utils.utils import (
-    _get_workspace_base_url,
-    modified_operation_client,
-)
 
-from azure.ai.ml.constants._common import Scope, ArmConstants, AzureMLResourceType
-from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml.constants._common import Scope, ArmConstants
 from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
-from azure.ai.ml.entities import Workspace
 from azure.ai.ml.entities._workspace_hub._constants import WORKSPACE_HUB_KIND
 from ._workspace_operations_base import WorkspaceOperationsBase
 
@@ -50,8 +43,6 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-        self.dataplane_workspace_operations = kwargs.pop("dataplane_client").workspaces
-        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
         ops_logger.update_info(kwargs)
         super().__init__(
             operation_scope=operation_scope,
@@ -213,43 +204,3 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             permanently_delete=permanently_delete,
             **kwargs,
         )
-
-    # @monitor_with_activity(logger, "Hub.BeginDelete", ActivityType.PUBLICAPI)
-    @distributed_trace
-    def begin_join(self, workspace: Workspace, workspace_hub_name: str, **kwargs: Dict) -> LROPoller[Workspace]:
-        """Join a WorkspaceHub by creating a project workspace under workspaceHub's default resource group.
-
-        :param workspace: Project workspace definition to create
-        :type workspace: Workspace
-        :param workspace_hub_name: Name of the workspaceHub to join
-        :type workspace_hub_name: str
-        :return: An instance of LROPoller that returns a project Workspace.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
-        """
-        resource_group = kwargs.get("resource_group") or self._resource_group_name
-        rest_workspace_obj = self._operation.get(resource_group, workspace_hub_name)
-        if not (
-            rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
-        ):
-            raise ValidationError(
-                "{0} is not a WorkspaceHub, join operation can only perform on workspaceHub".format(workspace_hub_name)
-            )
-
-        # override the location to the same as the workspaceHub
-        workspace.location = rest_workspace_obj.location
-
-        if not hasattr(workspace, "identity") or not workspace.identity:
-            workspace.identity = IdentityConfiguration(type="system_assigned")
-
-        workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
-        workspace_base_uri = _get_workspace_base_url(workspace_operations, workspace_hub_name, self._requests_pipeline)
-
-        with modified_operation_client(self.dataplane_workspace_operations, workspace_base_uri):
-            result = self.dataplane_workspace_operations.begin_hub_join(
-                resource_group_name=self._resource_group_name,
-                workspace_name=workspace_hub_name,
-                project_workspace_name=workspace.name,
-                body=workspace._to_rest_object(),
-                **self._init_kwargs,
-            )
-            return result
