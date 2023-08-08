@@ -590,18 +590,18 @@ class SSLTransport(_AbstractTransport):
         if ciphers is not None:
             context.set_ciphers(ciphers)
 
+        if ca_certs is None and context.verify_mode != ssl.CERT_NONE:
+            # attempt to load the system wide CA certs
+            # we want to load certs for server authentication on the client side. 
+            # https://docs.python.org/3/library/ssl.html#ssl.SSLContext.load_default_certs
+            purpose = ssl.Purpose.CLIENT_AUTH if server_side else ssl.Purpose.SERVER_AUTH
+            context.load_default_certs(purpose=purpose)
+
         # Set SNI headers if supported
         try:
             context.check_hostname = ssl.HAS_SNI and server_hostname is not None
         except AttributeError:
             pass
-
-        if cert_reqs is not None:
-            context.verify_mode = cert_reqs
-
-        if ca_certs is None and context.verify_mode != ssl.CERT_NONE:
-            purpose = ssl.Purpose.CLIENT_AUTH if server_side else ssl.Purpose.SERVER_AUTH
-            context.load_default_certs(purpose=purpose)
 
         sock = context.wrap_socket(**opts)
         return sock
