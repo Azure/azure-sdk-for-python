@@ -15,15 +15,16 @@ import shutil
 import re
 import json
 import shlex
+import errno
+import stat
+
+from shutil import rmtree
 from typing import List, Any
 from subprocess import check_call
 from ci_tools.variables import discover_repo_root, get_artifact_directory
-
-from .CondaConfiguration import CondaConfiguration, CheckoutConfiguration
 from subprocess import check_call, CalledProcessError
 
-from shutil import rmtree
-
+from .CondaConfiguration import CondaConfiguration, CheckoutConfiguration
 
 # from package disutils
 from distutils.dir_util import copy_tree
@@ -100,12 +101,20 @@ def create_namespace_extension(target_directory):
 def get_pkgs_from_build_directory(build_directory, artifact_name):
     return [os.path.join(build_directory, p) for p in os.listdir(build_directory) if p != artifact_name]
 
+def error_handler_git_access(func, path, exc):
+    # Is the error an access error?
+    if not os.access(path, os.W_OK):
+        os.chmod(path, stat.S_IWUSR)
+        func(path)
+    else:
+        raise
 
 def create_sdist_skeleton(build_directory, artifact_name, common_root):
     sdist_directory = os.path.join(build_directory, artifact_name)
 
     if os.path.exists(sdist_directory):
-        shutil.rmtree(sdist_directory)
+        shutil.rmtree(sdist_directory, ignore_errors=False, onerror=error_handler_git_access)
+
     os.makedirs(sdist_directory)
     namespaces = common_root.split("/")
 
@@ -257,7 +266,7 @@ def output_workload(run_configurations: List[CondaConfiguration], excluded_confi
 
 def prep_directory(path: str) -> str:
     if os.path.exists(path):
-        rmtree(path)
+        rmtree(path, ignore_errors=False, onerror=error_handler_git_access)
 
     os.makedirs(path)
     return path
@@ -270,8 +279,11 @@ def invoke_command(command: str, working_directory: str) -> None:
         
         
 
-def get_git_source(assembly_area: str, target_package: str, checkout_path: str, target_version: str) -> None:
+def get_git_source(assembly_area: str, assembled_code_area: str, target_package: str, checkout_path: str, target_version: str) -> None:
     clone_folder = prep_directory(os.path.join(assembly_area, target_package))
+    code_destination = os.path.join(assembled_code_area, target_package)
+    code_source = os.path.join(clone_folder, checkout_path, target_package)
+
     invoke_command(f'git clone --no-checkout --filter=tree:0 https://github.com/Azure/azure-sdk-for-python .', clone_folder)
     invoke_command(f'git config gc.auto 0', clone_folder)
     invoke_command(f'git sparse-checkout init', clone_folder)
@@ -279,16 +291,20 @@ def get_git_source(assembly_area: str, target_package: str, checkout_path: str, 
     invoke_command(f'git sparse-checkout add "{checkout_path}"', clone_folder)
     invoke_command(f'git -c advice.detachedHead=false checkout {target_package}_{target_version}', clone_folder)
 
+    shutil.move(code_source, code_destination)
+
+
+
 def download_pypi_source() -> None:
     pass
 
-def get_package_source(checkout_config: CheckoutConfiguration, assembly_area: str) -> None:
+def get_package_source(checkout_config: CheckoutConfiguration, assembly_area: str, assembled_code_area: str) -> None:
     if checkout_config.download_uri:
         # we need to download from pypi
         print("Must download")
 
     elif checkout_config.checkout_path:
-        get_git_source(assembly_area, checkout_config.package, checkout_config.checkout_path, checkout_config.version)
+        get_git_source(assembly_area, assembled_code_area, checkout_config.package, checkout_config.checkout_path, checkout_config.version)
     else:
         raise ValueError("Unable to handle a checkoutConfiguraiton that doesn't git clone OR download from pypi for sdist code.")
 
@@ -305,11 +321,7 @@ def assemble_source(run_configurations: List[CondaConfiguration], repo_root: str
     for conda_build in run_configurations:
         for checkout_config in conda_build.checkout:
             print(f"Getting package code for {checkout_config.package}.")
-            get_package_source(checkout_config, sdist_assembly_area)
-        
-        # build here, output to sdist_output_dir
-
-
+            get_package_source(checkout_config, sdist_assembly_area, sdist_output_dir)
 
 
 def build_conda_packages(run_configurations):
