@@ -159,17 +159,6 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         self.instance_count = instance_count
         self.additional_includes = additional_includes or []
 
-    # region AdditionalIncludesMixin
-    def _get_origin_code_value(self) -> Union[str, os.PathLike, None]:
-        if self.code is not None and isinstance(self.code, str):
-            # directly return code given it will be validated in self._validate_additional_includes
-            return self.code
-
-        # self.code won't be a Code object, or it will fail schema validation according to CodeFields
-        return None
-
-    # endregion
-
     @property
     def instance_count(self) -> int:
         """The number of instances or nodes to be used by the compute target.
