@@ -77,8 +77,6 @@ def create_package(pkg_directory, output_directory):
             sys.executable,
             "setup.py",
             "sdist",
-            "--format",
-            "zip",
             "-d",
             output_directory,
         ],
@@ -114,9 +112,6 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
 
     # get all the directories in the build folder, we will pull in all of them
     pkgs_for_consumption = get_pkgs_from_build_directory(build_directory, artifact_name)
-
-    print("I see the following packages in the build directory")
-    print(pkgs_for_consumption)
 
     for pkg in pkgs_for_consumption:
         pkg_till_common_root = os.path.join(pkg, common_root)
@@ -282,7 +277,6 @@ def entrypoint():
 
     run_configurations = [CondaConfiguration.from_json(json_config) for json_config in json_configs]
 
-    breakpoint()
     output_workload(run_configurations)
 
     # assemble_source(json_config)

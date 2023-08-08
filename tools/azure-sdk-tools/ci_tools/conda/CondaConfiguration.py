@@ -63,12 +63,12 @@ class CheckoutConfiguration:
 
     def __str__(self) -> str:
         if self.download_path:
-            return f""" - {self.package}
-   {self.download_path}"""
+            return f"""- {self.package} downloaded from pypi
+  {self.download_path}"""
         else:
-            return f""" - {self.package}
-   {self.checkout_path}
-   {self.version}"""
+            return f"""- {self.package} from cloned source
+  {self.checkout_path}
+  {self.version}"""
 
 
 def parse_checkout_config(checkout_configs: List[Any]) -> List[CheckoutConfiguration]:
@@ -98,7 +98,12 @@ class CondaConfiguration:
     def __str__(self) -> str:
         checkout = f"{os.linesep}".join([str(c_config) for c_config in self.checkout])
 
-        return f"""Name: {self.name}
-Checkout Configuration: 
+        return f"""====================================
+\"{self.name}\" generated from:
 {checkout}
+====================================
+
         """
+
+    def prepare_local_folder(self) -> None:
+        pass

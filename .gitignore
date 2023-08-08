@@ -54,6 +54,7 @@ _azci_*.log
 .tmp_whl_dir
 .logs
 .proxy
+conda/output
 
 # tox environment folders
 .tox/
