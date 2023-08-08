@@ -465,6 +465,63 @@ class MiscConfigurationOptions(object):
         ml_client.components.restore("component-name")
         # [END component_operations_restore]
 
+        # [START compute_operations_list]
+        ml_client.compute.list()
+        # [END compute_operations_list]
+
+        # [START compute_operations_get]
+        ml_client.compute.get("compute-resource-name")
+        # [END compute_operations_get]
+
+        # [START compute_operations_list_nodes]
+        ml_client.compute.list_nodes("compute-resource-name")
+        # [END compute_operations_list_nodes]
+
+        # [START compute_operations_create_or_update]
+        from azure.ai.ml.entities._compute.compute import Compute
+
+        compute_example = Compute("new-compute")
+        ml_client.compute.begin_create_or_update(compute_example)
+        # [END compute_operations_create_or_update]
+
+        # [START compute_operations_attach]
+        from azure.ai.ml.entities._compute.compute import Compute
+
+        compute_example = Compute("new-compute")
+        ml_client.compute.begin_attach(compute_example)
+        # [END compute_operations_attach]
+
+        # [START compute_operations_update]
+        from azure.ai.ml.entities._compute.compute import Compute
+
+        compute_example = Compute("existed-compute")
+        ml_client.compute.begin_update(compute_example)
+        # [END compute_operations_update]
+
+        # [START compute_operations_delete]
+        ml_client.compute.begin_delete("compute-name")
+        # [END compute_operations_delete]
+
+        # [START compute_operations_start]
+        ml_client.compute.begin_start("new-compute-name")
+        # [END compute_operations_start]
+
+        # [START compute_operations_stop]
+        ml_client.compute.begin_stop("compute-name")
+        # [END compute_operations_stop]
+
+        # [START compute_operations_restart]
+        ml_client.compute.begin_restart("compute-name")
+        # [END compute_operations_restart]
+
+        # [START compute_operations_list_usage]
+        ml_client.compute.list_usage("US-West")
+        # [END compute_operations_list_usage]
+
+        # [START compute_operations_list_sizes]
+        ml_client.compute.list_sizes("US-West")
+        # [END compute_operations_list_sizes]
+
         # [START validation_result]
         """For example, if repr(self) is:
         ```python
