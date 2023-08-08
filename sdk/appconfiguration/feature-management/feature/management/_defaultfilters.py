@@ -33,10 +33,11 @@ class TimeWindowFilter(FeatureFilter):
 
 
 class TargetingFilter(FeatureFilter):
+    @staticmethod
     def _is_targeted(contextId, rollout_percentage):
         """Determine if the user is targeted for the given context"""
         # Alway return true if rollout percentage is 100
-        if group_rollout_percentage == 100:
+        if rollout_percentage == 100:
             return True
 
         hashed_contextId = hashlib.sha256(contextId.encode()).hexdigest()
@@ -49,7 +50,7 @@ class TargetingFilter(FeatureFilter):
         group_rollout_percentage = group.get("RolloutPercentage", 0)
         audienceContextId = target_user + "\n" + feature_flag_name + "\n" + group.get("Name", "")
 
-        return _is_targeted(audienceContextId, group_rollout_percentage)
+        return self._is_targeted(audienceContextId, group_rollout_percentage)
 
     def evaluate(self, context, **kwargs):
         """Determain if the feature flag is enabled for the given context"""
@@ -98,12 +99,14 @@ class TargetingFilter(FeatureFilter):
         # Check if the user is in a targeted group
         for group in groups:
             for target_group in target_groups:
+                group_name = group.get("Name", "")
                 if ignore_case:
                     target_group = target_group.lower()
-                if group.get("Name", "").lower() == target_group:
-                    if _target_group(target_user, target_group, group, feature_flag_name):
+                    group_name = group_name.lower()
+                if group_name == target_group:
+                    if self._target_group(target_user, target_group, group, feature_flag_name):
                         return True
 
         # Check if the user is in the default rollout
         contextId = target_user + "\n" + feature_flag_name
-        return TargetingFilter._is_targeted(contextId, default_rollout_percentage)
+        return self._is_targeted(contextId, default_rollout_percentage)

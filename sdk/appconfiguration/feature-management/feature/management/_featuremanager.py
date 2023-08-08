@@ -30,13 +30,13 @@ class FeatureManager:
             # Unknown feature flags are disabled by default
             return False
 
-        if not feature_flag.get("enabled", False):
+        if not _check_is_true(feature_flag["enabled"]):
             # Feature flags that are disabled are always disabled
             return False
 
         if len(feature_flag.get("conditions", {"client_filters": []})["client_filters"]) == 0:
             # Feature flags without any filters return evaluate
-            return feature_flag["enabled"]
+            return True
 
         if feature_flag.get("requirement_type", "Any") == "All":
             for feature_filter in feature_flag["conditions"]["client_filters"]:
@@ -53,3 +53,11 @@ class FeatureManager:
 
     def list_feature_flag_names(self):
         return self._feature_flags.keys()
+
+
+def _check_is_true(enabled):
+    if enabled.lower() == "true":
+        return True
+    if enabled.lower() == "false":
+        return False
+    return enabled
