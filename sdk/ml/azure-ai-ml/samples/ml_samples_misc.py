@@ -435,6 +435,36 @@ class MiscConfigurationOptions(object):
         ml_client._code.get("code-example")
         # [END code_operations_get]
 
+        # [START component_operations_list]
+        ml_client.components.list("component-name")
+        # [END component_operations_list]
+
+        # [START component_operations_get]
+        ml_client.components.get("component-name", "2.0")
+        # [END component_operations_get]
+
+        # [START component_operations_validate]
+        from azure.ai.ml.entities._component.component import Component
+
+        component_example = Component("new-component")
+        ml_client.components.validate(component_example)
+        # [END component_operations_validate]
+
+        # [START component_operations_create_or_update]
+        from azure.ai.ml.entities._component.component import Component
+
+        component_example = Component("new-component")
+        ml_client.components.create_or_update(component_example)
+        # [END component_operations_create_or_update]
+
+        # [START component_operations_archive]
+        ml_client.components.archive("component-name")
+        # [END component_operations_archive]
+
+        # [START component_operations_restore]
+        ml_client.components.restore("component-name")
+        # [END component_operations_restore]
+
         # [START validation_result]
         """For example, if repr(self) is:
         ```python
