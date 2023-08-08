@@ -4,16 +4,41 @@
 
 # pylint: disable=protected-access,no-member
 
+from abc import ABC
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import OneLakeDatastore as RestOneLakeDatastore, Datastore as DatastoreData, DatastoreType, OneLakeArtifact
+from azure.ai.ml._restclient.v2023_04_01_preview.models import OneLakeDatastore as RestOneLakeDatastore, Datastore as DatastoreData, DatastoreType, OneLakeArtifact as RestOneLakeArtifact, LakeHouseArtifact as RestLakeHouseArtifact
 from azure.ai.ml._schema._datastore.one_lake import OneLakeSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration, ServicePrincipalConfiguration
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
+from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import load_from_dict
+
+
+class OneLakeArtifact(RestTranslatableMixin, DictMixin, ABC):
+    def __init__(
+        self,
+        artifact_name: str,
+        artifact_type: Optional[str] = None
+    ):
+        super().__init__()
+        self.artifact_name = artifact_name
+        self.artifact_type = artifact_type
+
+
+class LakeHouseArtifact(OneLakeArtifact):
+    def __init__(
+        self,
+        artifact_name: str
+    ):
+        self.artifact_name = artifact_name
+        self.artifact_type = "LakeHouse"
+
+    def _to_datastore_rest_object(self) -> RestLakeHouseArtifact:
+        return RestLakeHouseArtifact(artifact_name=self.artifact_name)
 
 
 class OneLakeDatastore(Datastore):
@@ -35,8 +60,7 @@ class OneLakeDatastore(Datastore):
     :type properties: dict[str, str]
     :param credentials: Credentials to use to authenticate against OneLake.
     :type credentials: Union[
-        ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.NoneCredentialConfiguration
-        ]
+        ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.NoneCredentialConfiguration]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -65,7 +89,7 @@ class OneLakeDatastore(Datastore):
     def _to_rest_object(self) -> DatastoreData:
         one_lake_ds = RestOneLakeDatastore(
             credentials=self.credentials._to_datastore_rest_object(),
-            artifact=self.artifact,
+            artifact=RestLakeHouseArtifact(artifact_name=self.artifact["artifact_name"]),
             one_lake_workspace_name=self.one_lake_workspace_name,
             endpoint=self.endpoint,
             description=self.description,
