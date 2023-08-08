@@ -92,11 +92,7 @@ def create_namespace_extension(target_directory):
 
 
 def get_pkgs_from_build_directory(build_directory, artifact_name):
-    return [
-        os.path.join(build_directory, p)
-        for p in os.listdir(build_directory)
-        if p != artifact_name
-    ]
+    return [os.path.join(build_directory, p) for p in os.listdir(build_directory) if p != artifact_name]
 
 
 def create_sdist_skeleton(build_directory, artifact_name, common_root):
@@ -160,9 +156,7 @@ def get_manifest_includes(common_root):
     return breadcrumbs
 
 
-def create_setup_files(
-    build_directory, common_root, artifact_name, service, meta_yaml, environment_config
-):
+def create_setup_files(build_directory, common_root, artifact_name, service, meta_yaml, environment_config):
     sdist_directory = os.path.join(build_directory, artifact_name)
     setup_location = os.path.join(sdist_directory, "setup.py")
     manifest_location = os.path.join(sdist_directory, "MANIFEST.in")
@@ -179,9 +173,7 @@ def create_setup_files(
         f.write(setup_template)
 
     manifest_template = MANIFEST_TEMPLATE.format(
-        namespace_includes="\n".join(
-            ["include " + ns for ns in get_manifest_includes(common_root)]
-        )
+        namespace_includes="\n".join(["include " + ns for ns in get_manifest_includes(common_root)])
     )
 
     with open(manifest_location, "w") as f:
@@ -200,9 +192,7 @@ def create_combined_sdist(
     meta_yaml,
     environment_config,
 ):
-    singular_dependency = (
-        len(get_pkgs_from_build_directory(build_directory, artifact_name)) == 0
-    )
+    singular_dependency = len(get_pkgs_from_build_directory(build_directory, artifact_name)) == 0
 
     if not singular_dependency:
         create_sdist_skeleton(build_directory, artifact_name, common_root)
@@ -220,15 +210,9 @@ def create_combined_sdist(
     output_sdist_location = os.path.join(output_directory, "sdist", artifact_name)
 
     create_package(sdist_location, output_sdist_location)
-    output_location = os.path.join(
-        output_sdist_location, os.listdir(output_sdist_location)[0]
-    )
+    output_location = os.path.join(output_sdist_location, os.listdir(output_sdist_location)[0])
 
-    print(
-        "Generated Sdist for artifact {} is present at {}".format(
-            artifact_name, output_location
-        )
-    )
+    print("Generated Sdist for artifact {} is present at {}".format(artifact_name, output_location))
     return output_location
 
 
@@ -261,11 +245,13 @@ def output_workload(conda_configs: List[CondaConfiguration]) -> None:
     for config in [config for config in conda_configs if config.in_batch]:
         print(config)
 
+
 def assemble_source(json_config):
     """If given a common root/package, this function will be used to clone slices of the azure-sdk-for-python repo and to download packages as they were at release.
     If given an https:// url, will instead attempt to download and unzip a package tar.gz.
     """
     pass
+
 
 def build_conda_packages(json_config):
     """Conda builds each individually assembled conda package folder."""
@@ -273,9 +259,7 @@ def build_conda_packages(json_config):
 
 
 def entrypoint():
-    parser = argparse.ArgumentParser(
-        description="Build a set of conda packages based on a json configuration bundle."
-    )
+    parser = argparse.ArgumentParser(description="Build a set of conda packages based on a json configuration bundle.")
 
     parser.add_argument(
         "-c",

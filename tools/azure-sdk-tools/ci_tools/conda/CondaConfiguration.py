@@ -4,7 +4,7 @@ import os
 # arguments: |
 #       -c "${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}"
 #       -w "$(Build.SourcesDirectory)/conda/conda-recipes"
-# 
+#
 # Sample configuration yaml. This is converted to json before being passed a blob to the invoking script. (see directly above for conversion)
 #   - name: azure-core
 #     common_root: azure
@@ -30,7 +30,8 @@ import os
 #         checkout_path: sdk/storage
 #         version: 12.7.0
 
-class CheckoutConfiguration():
+
+class CheckoutConfiguration:
     def __init__(self, raw_json: dict):
         # we should always have a package name
 
@@ -43,7 +44,7 @@ class CheckoutConfiguration():
             self.checkout_path = raw_json["checkout_path"]
         else:
             self.checkout_path = None
-        
+
         if "version" in raw_json:
             self.version = raw_json["version"]
         else:
@@ -55,8 +56,10 @@ class CheckoutConfiguration():
             self.download_path = None
 
         if not self.checkout_path and not self.download_path:
-            raise ValueError("When defining a checkout configuration, one must either have a valid PyPI download url"
-                             " (download_path) or a path and version in the repo (checkout_path, version).")
+            raise ValueError(
+                "When defining a checkout configuration, one must either have a valid PyPI download url"
+                " (download_path) or a path and version in the repo (checkout_path, version)."
+            )
 
     def __str__(self) -> str:
         if self.download_path:
@@ -67,6 +70,7 @@ class CheckoutConfiguration():
    {self.checkout_path}
    {self.version}"""
 
+
 def parse_checkout_config(checkout_configs: List[Any]) -> List[CheckoutConfiguration]:
     configs = []
     for checkout_config in checkout_configs:
@@ -75,7 +79,7 @@ def parse_checkout_config(checkout_configs: List[Any]) -> List[CheckoutConfigura
     return configs
 
 
-class CondaConfiguration():
+class CondaConfiguration:
     def __init__(self, name: str, common_root: str, in_batch: bool, checkout: List[CheckoutConfiguration]):
         self.name = name
         self.common_root = common_root
@@ -90,7 +94,7 @@ class CondaConfiguration():
         checkout_config = parse_checkout_config(raw_json_blob["checkout"])
 
         return cls(name, common_root, in_batch, checkout_config)
-    
+
     def __str__(self) -> str:
         checkout = f"{os.linesep}".join([str(c_config) for c_config in self.checkout])
 
