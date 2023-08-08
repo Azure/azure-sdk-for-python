@@ -15,9 +15,15 @@ import shutil
 import re
 import json
 from typing import List, Any
+from subprocess import check_call
+from ci_tools.variables import discover_repo_root, get_artifact_directory
+
 from .CondaConfiguration import CondaConfiguration
 
-from subprocess import check_call
+from shutil import rmtree
+
+
+# from package disutils
 from distutils.dir_util import copy_tree
 
 # from package pyyaml
@@ -233,28 +239,50 @@ def get_summary(ci_yml, artifact_name):
     return SUMMARY_TEMPLATE.format(", ".join(pkg_list))
 
 
-def output_workload(conda_configs: List[CondaConfiguration]) -> None:
+def output_workload(run_configurations: List[CondaConfiguration], excluded_configurations: List[CondaConfiguration]) -> None:
     """Show all packages and what order they will be built in."""
     print("This build run is generating the following package configurations: ")
 
-    for config in [config for config in conda_configs if config.in_batch]:
+    for config in run_configurations:
         print(config)
 
+    if excluded_configurations:
+        print("These packages have been EXCLUDED:")
 
-def assemble_source(json_config):
+        for config in excluded_configurations:
+            print(config)
+
+
+def prep_directory(path: str) -> str:
+    if os.path.exists(path):
+        rmtree(path)
+
+    os.mkdir(path)
+    return path
+
+
+def assemble_source(run_configurations: List[CondaConfiguration], repo_root: str) -> None:
     """If given a common root/package, this function will be used to clone slices of the azure-sdk-for-python repo and to download packages as they were at release.
     If given an https:// url, will instead attempt to download and unzip a package tar.gz.
     """
-    pass
+    sdist_output_dir = prep_directory(os.path.join(repo_root, "conda", "assembled"))
+    sdist_assembly_area = prep_directory(os.path.join(repo_root, "conda", "assembly_area"))
+
+    for conda_build in run_configurations:
+        breakpoint()
 
 
-def build_conda_packages(json_config):
+
+
+def build_conda_packages(run_configurations):
     """Conda builds each individually assembled conda package folder."""
     pass
 
 
 def entrypoint():
     parser = argparse.ArgumentParser(description="Build a set of conda packages based on a json configuration bundle.")
+
+    repo_root = discover_repo_root()
 
     parser.add_argument(
         "-c",
@@ -275,11 +303,18 @@ def entrypoint():
     args = parser.parse_args()
     json_configs = json.loads(args.config)
 
-    run_configurations = [CondaConfiguration.from_json(json_config) for json_config in json_configs]
+    run_configurations = []
+    excluded_configurations = []
 
-    output_workload(run_configurations)
+    for config in [CondaConfiguration.from_json(json_config) for json_config in json_configs]:
+        if config.in_batch:
+            run_configurations.append(config)
+        else:
+            excluded_configurations.append(config)
 
-    # assemble_source(json_config)
+    output_workload(run_configurations, excluded_configurations)
+
+    assemble_source(run_configurations, repo_root)
 
     # build_conda_packages(json_config)
 
