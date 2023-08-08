@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import List, Union, Type, Any
+from typing import List
 from ._base import HttpTransport, HttpRequest, HttpResponse
 from ._base_async import AsyncHttpTransport, AsyncHttpResponse
 
@@ -52,7 +52,10 @@ def __dir__() -> List[str]:
     return __all__
 
 
-def __getattr__(name: str) -> Type[Any]:  # There is no point to be specific on the type here
+# To do nice overloads, need https://github.com/python/mypy/issues/8203
+
+
+def __getattr__(name: str):
     if name == "AsyncioRequestsTransport":
         try:
             from ._requests_asyncio import AsyncioRequestsTransport

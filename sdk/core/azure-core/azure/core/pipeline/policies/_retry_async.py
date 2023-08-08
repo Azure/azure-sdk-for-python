@@ -168,7 +168,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
         while retry_active:
             start_time = time.time()
             # PipelineContext types transport as a Union of HttpTransport and AsyncHttpTransport, but
-            # here we know that this is an AsyncTransport.
+            # here we know that this is an AsyncHttpTransport.
             # The correct fix is to make PipelineContext generic, but that's a breaking change and a lot of
             # generic to update in Pipeline, PipelineClient, PipelineRequest, PipelineResponse, etc.
             transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType] = cast(

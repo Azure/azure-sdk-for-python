@@ -28,6 +28,7 @@ from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
 from enum import Enum
+from azure.core.configuration import ConnectionConfiguration
 from azure.core.pipeline import PipelineResponse, PipelineRequest, PipelineContext
 from azure.core.pipeline.transport import (
     HttpResponse as LegacyHttpResponse,
@@ -357,7 +358,13 @@ class RetryPolicyBase:
         # otherwise, try to ensure the transport's configured connection_timeout doesn't exceed absolute_timeout
         # ("connection_config" isn't defined on Async/HttpTransport but all implementations in this library have it)
         elif hasattr(request.context.transport, "connection_config"):
-            default_timeout = getattr(request.context.transport.connection_config, "timeout", absolute_timeout)
+            # FIXME This is fragile, should be refactored. Casting my way for mypy
+            # https://github.com/Azure/azure-sdk-for-python/issues/31530
+            connection_config: ConnectionConfiguration = cast(
+                ConnectionConfiguration, request.context.transport.connection_config  # type: ignore
+            )
+
+            default_timeout = getattr(connection_config, "timeout", absolute_timeout)
             try:
                 if absolute_timeout < default_timeout:
                     request.context.options["connection_timeout"] = absolute_timeout
@@ -367,10 +374,11 @@ class RetryPolicyBase:
 
     def _configure_positions(self, request: PipelineRequest[HTTPRequestType], retry_settings: Dict[str, Any]) -> None:
         body_position = None
-        file_positions = None
+        file_positions: Optional[Dict[str, int]] = None
         if request.http_request.body and hasattr(request.http_request.body, "read"):
             try:
-                body_position = request.http_request.body.tell()
+                # If it has "read", it has "tell", so casting for mypy
+                body_position = cast(IO[bytes], request.http_request.body).tell()
             except (AttributeError, UnsupportedOperation):
                 # if body position cannot be obtained, then retries will not work
                 pass
@@ -381,7 +389,8 @@ class RetryPolicyBase:
                     for value in request.http_request.files.values():
                         name, body = value[0], value[1]
                         if name and body and hasattr(body, "read"):
-                            position = body.tell()
+                            # If it has "read", it has "tell", so casting for mypy
+                            position = cast(IO[bytes], body).tell()
                             file_positions[name] = position
                 except (AttributeError, UnsupportedOperation):
                     file_positions = None
@@ -510,13 +519,20 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
 
         while retry_active:
             start_time = time.time()
+            # PipelineContext types transport as a Union of HttpTransport and AsyncHttpTransport, but
+            # here we know that this is an HttpTransport.
+            # The correct fix is to make PipelineContext generic, but that's a breaking change and a lot of
+            # generic to update in Pipeline, PipelineClient, PipelineRequest, PipelineResponse, etc.
+            transport: HttpTransport[HTTPRequestType, HTTPResponseType] = cast(
+                HttpTransport[HTTPRequestType, HTTPResponseType], request.context.transport
+            )
             try:
                 self._configure_timeout(request, absolute_timeout, is_response_error)
                 response = self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
-                        self.sleep(retry_settings, request.context.transport, response=response)
+                        self.sleep(retry_settings, transport, response=response)
                         is_response_error = True
                         continue
                 break
@@ -528,7 +544,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
                 if absolute_timeout > 0 and self._is_method_retryable(retry_settings, request.http_request):
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
-                        self.sleep(retry_settings, request.context.transport)
+                        self.sleep(retry_settings, transport)
                         if isinstance(err, ServiceRequestError):
                             is_response_error = False
                         else:
