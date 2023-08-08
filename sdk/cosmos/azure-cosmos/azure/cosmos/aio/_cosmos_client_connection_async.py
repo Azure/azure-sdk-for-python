@@ -1244,18 +1244,18 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         for batch in batches:
             if len(batch.get("operations")) > 100:
                 raise ValueError("Cannot run bulk request with more than 100 operations per partition.")
-            try:
-                result = await self._Bulk(
-                    batch.get("operations"),
-                    batch.get("range_id"),
-                    path,
-                    collection_id,
-                    options,
-                    **kwargs)
-                response.append(result)
-            except Exception as e:
-                # Leaving this here while I figure out 410s for batch within Python
-                print(e)
+            # try:
+            result = await self._Bulk(
+                batch.get("operations"),
+                batch.get("range_id"),
+                path,
+                collection_id,
+                options,
+                **kwargs)
+            response.append(result)
+            # except Exception as e:
+            #     # Leaving this here while I figure out 410s for batch within Python
+            #     print(e)
 
         return response
 

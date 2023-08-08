@@ -187,14 +187,14 @@ def bulk_items(database):
                              "resourceBody": get_sales_order("upsert_item"),
                              "partitionKey": "upsert_item"}
     read_item_operation = {"operationType": "Read",
-                             "id": get_sales_order("read_item"),
-                             "partitionKey": "read_item"}
+                           "id": get_sales_order("read_item"),
+                           "partitionKey": "read_item"}
     delete_item_operation = {"operationType": "Delete",
                              "id": get_sales_order("delete_item"),
                              "partitionKey": "delete_item"}
     replace_item_operation = {"operationType": "Replace",
-                             "id": "replace_item",
-                             "partitionKey": "replace_item",
+                              "id": "replace_item",
+                              "partitionKey": "replace_item",
                               "resourceBody": {"id": "replace_item", "message": "item was replaced"}}
 
     # Put our operations into a list
@@ -210,6 +210,7 @@ def bulk_items(database):
     # The bulk response is a list containing each batch of requests that ran.
     # In this case all our results will be in the first batch index.
     print("\nResult for the bulk operations: {}\n".format(bulk_response[0]))
+
 
 def delete_item(container, doc_id):
     print('\n1.11 Deleting Item by Id\n')
