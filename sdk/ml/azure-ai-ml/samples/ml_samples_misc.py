@@ -374,6 +374,29 @@ class MiscConfigurationOptions(object):
         ml_client.environments.get("get-example", "1.0", None)
         # [END env_operations_get]
 
+        # [START batch_deployment_operations_begin_create_or_update]
+        from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
+
+        deployment_sample = BatchDeployment()
+        ml_client.batch_deployments.begin_create_or_update(deployment_sample, True)
+        # [END batch_deployment_operations_begin_create_or_update]
+
+        # [START batch_deployment_operations_get]
+        ml_client.batch_deployments.get("get-example", "endpoint-example")
+        # [END batch_deployment_operations_get]
+
+        # [START batch_deployment_operations_delete]
+        ml_client.batch_deployments.begin_delete("delete-example", "endpoint-example")
+        # [END batch_deployment_operations_delete]
+
+        # [START batch_deployment_operations_list]
+        ml_client.batch_deployments.list("endpoint-example")
+        # [END batch_deployment_operations_list]
+
+        # [START batch_deployment_operations_list_jobs]
+        ml_client.batch_deployments.list_jobs("endpoint-example", "name-example")
+        # [END batch_deployment_operations_list_jobs]
+
         # [START validation_result]
         """For example, if repr(self) is:
         ```python
