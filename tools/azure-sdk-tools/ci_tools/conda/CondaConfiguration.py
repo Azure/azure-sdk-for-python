@@ -1,4 +1,5 @@
 from typing import List, Any
+import os
 
 # arguments: |
 #       -c "${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}"
@@ -40,17 +41,31 @@ class CheckoutConfiguration():
 
         if "checkout_path" in raw_json:
             self.checkout_path = raw_json["checkout_path"]
+        else:
+            self.checkout_path = None
         
         if "version" in raw_json:
             self.version = raw_json["version"]
+        else:
+            self.version = None
 
         if "download_path" in raw_json:
             self.download_path = raw_json["download_path"]
+        else:
+            self.download_path = None
 
         if not self.checkout_path and not self.download_path:
             raise ValueError("When defining a checkout configuration, one must either have a valid PyPI download url"
                              " (download_path) or a path and version in the repo (checkout_path, version).")
 
+    def __str__(self) -> str:
+        if self.download_path:
+            return f""" - {self.package}
+   {self.download_path}"""
+        else:
+            return f""" - {self.package}
+   {self.checkout_path}
+   {self.version}"""
 
 def parse_checkout_config(checkout_configs: List[Any]) -> List[CheckoutConfiguration]:
     configs = []
@@ -76,3 +91,10 @@ class CondaConfiguration():
 
         return cls(name, common_root, in_batch, checkout_config)
     
+    def __str__(self) -> str:
+        checkout = f"{os.linesep}".join([str(c_config) for c_config in self.checkout])
+
+        return f"""Name: {self.name}
+Checkout Configuration: 
+{checkout}
+        """

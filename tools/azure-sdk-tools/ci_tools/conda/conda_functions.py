@@ -254,13 +254,12 @@ def get_summary(ci_yml, artifact_name):
     return SUMMARY_TEMPLATE.format(", ".join(pkg_list))
 
 
-def output_workload(json_config: List[Any]) -> None:
+def output_workload(conda_configs: List[CondaConfiguration]) -> None:
     """Show all packages and what order they will be built in."""
-    print("The following packages will be built:")
+    print("This build run is generating the following package configurations: ")
 
-    for config in json_config:
-        pass
-    print("\t")
+    for config in [config for config in conda_configs if config.in_batch]:
+        print(config)
 
 def assemble_source(json_config):
     """If given a common root/package, this function will be used to clone slices of the azure-sdk-for-python repo and to download packages as they were at release.
@@ -300,11 +299,11 @@ def entrypoint():
     run_configurations = [CondaConfiguration.from_json(json_config) for json_config in json_configs]
 
     breakpoint()
-    output_workload(json_config)
+    output_workload(run_configurations)
 
-    assemble_source(json_config)
+    # assemble_source(json_config)
 
-    build_conda_packages(json_config)
+    # build_conda_packages(json_config)
 
     # output_source_location = create_combined_sdist(
     #     args.distribution_directory,
