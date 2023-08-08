@@ -1,5 +1,18 @@
 # Release History
 
+## 26.0.0 (2023-08-18)
+
+### Features Added
+
+  - Model IstioServiceMesh has a new parameter certificate_authority
+  - Model IstioServiceMesh has a new parameter revisions
+  - Model ManagedCluster has a new parameter upgrade_settings
+  - Model UpgradeOverrideSettings has a new parameter force_upgrade
+
+### Breaking Changes
+
+  - Model UpgradeOverrideSettings no longer has parameter control_plane_overrides
+
 ## 25.0.0 (2023-07-26)
 
 ### Features Added
