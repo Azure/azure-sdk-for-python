@@ -36,7 +36,8 @@ from devtools_testutils import (
     AzureMgmtRecordedTestCase, recorded_by_proxy,
     ResourceGroupPreparer,
     StorageAccountPreparer,
-    CachedResourceGroupPreparer
+    CachedResourceGroupPreparer,
+    set_custom_default_matcher
 )
 from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
 from azure_devtools.scenario_tests.recording_processors import GeneralNameReplacer, RecordingProcessor
@@ -678,6 +679,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         config = models.UploadBatchServiceLogsConfiguration(
             container_url = "https://computecontainer.blob.core.windows.net/", 
             start_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=6))
+        set_custom_default_matcher(compare_bodies=False, ignored_headers="Accept, ocp-date")
         result = client.batch_nodes.upload_batch_service_logs(batch_pool.name, nodes[0].id, config)
         assert result is not None
         assert result.number_of_files_uploaded > 0
