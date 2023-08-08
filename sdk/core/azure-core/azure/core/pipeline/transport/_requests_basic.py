@@ -31,6 +31,8 @@ from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
     ReadTimeoutError,
     ProtocolError,
+    NewConnectionError,
+    ConnectTimeoutError,
 )
 import requests
 
@@ -351,14 +353,14 @@ class RequestsTransport(HttpTransport):
             response.raw.enforce_content_length = True
 
         except (
-            urllib3.exceptions.NewConnectionError,
-            urllib3.exceptions.ConnectTimeoutError,
+            NewConnectionError,
+            ConnectTimeoutError,
         ) as err:
             error = ServiceRequestError(err, error=err)
         except requests.exceptions.ReadTimeout as err:
             error = ServiceResponseError(err, error=err)
         except requests.exceptions.ConnectionError as err:
-            if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
+            if err.args and isinstance(err.args[0], ProtocolError):
                 error = ServiceResponseError(err, error=err)
             else:
                 error = ServiceRequestError(err, error=err)
