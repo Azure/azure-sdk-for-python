@@ -176,7 +176,7 @@ def _buildprovider(
 
 
 async def _resolve_keyvault_reference(config, provider: "AzureAppConfigurationProvider") -> str:
-    if key_vault_options is None:
+    if provider._key_vault_options is None:
         raise ValueError("Key Vault options must be set to resolve Key Vault references.")
 
     if config.secret_id is None:
@@ -201,8 +201,8 @@ async def _resolve_keyvault_reference(config, provider: "AzureAppConfigurationPr
             await referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version)
         ).value
 
-    if key_vault_options.secret_resolver is not None:
-        resolved = key_vault_options.secret_resolver(config.secret_id)
+    if provider._key_vault_options.secret_resolver is not None:
+        resolved = provider._key_vault_options.secret_resolver(config.secret_id)
         try:
             # Secret resolver was async
             return await resolved
