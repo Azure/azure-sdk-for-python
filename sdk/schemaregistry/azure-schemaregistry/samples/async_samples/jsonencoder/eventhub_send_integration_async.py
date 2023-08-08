@@ -30,7 +30,7 @@ For more information on DefaultAzureCredential, see
 import os
 import asyncio
 import json
-from typing import cast
+from typing import cast, Iterator
 
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubProducerClient
@@ -86,7 +86,7 @@ async def send_event_data_batch(
     # The encode method will automatically register the schema into the Schema Registry Service and
     # schema will be cached locally for future usage.
     event_data = await encoder.encode(content=dict_content, schema_id=schema_id, message_type=EventData)
-    print(f'The bytes of encoded dict content is {next(event_data.body)}.')
+    print(f'The bytes of encoded dict content is {next(cast(Iterator[bytes], event_data.body))!r}.')
 
     event_data_batch.add(event_data)
     await producer.send_batch(event_data_batch)

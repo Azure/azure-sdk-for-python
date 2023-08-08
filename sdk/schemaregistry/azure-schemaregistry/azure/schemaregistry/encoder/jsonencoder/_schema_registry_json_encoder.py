@@ -146,10 +146,10 @@ class JsonSchemaEncoder(object):
         *,
         schema: str,
         schema_id: None = None,
-        message_type: Type["MessageType"],
+        message_type: Type[MessageType],
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> "MessageType":
+    ) -> MessageType:
         """Encodes content after validating against the pre-registered JSON schema. Encoded content and content
          type will be passed to the provided MessageType callback to create message object.
 
@@ -181,10 +181,10 @@ class JsonSchemaEncoder(object):
         *,
         schema_id: str,
         schema: None = None,
-        message_type: Type["MessageType"],
+        message_type: Type[MessageType],
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> "MessageType":
+    ) -> MessageType:
         """Encodes content after validating against the pre-registered JSON schema corresponding to
          the provided schema ID. Encoded content and content type will be passed to the provided
          MessageType callback to create message object.
@@ -279,10 +279,10 @@ class JsonSchemaEncoder(object):
         *,
         schema: Optional[str] = None,
         schema_id: Optional[str] = None,
-        message_type: Optional[Type["MessageType"]] = None,
+        message_type: Optional[Type[MessageType]] = None,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> Union["MessageType", "MessageContent"]:
+    ) -> Union[MessageType, "MessageContent"]:
         """Encodes content after validating against the provided pre-registered schema or the one corresponding to
          the provided schema ID. If provided with a MessageType subtype, encoded content and content type will be
          passed to create message object. If not provided, the following dict will be returned:

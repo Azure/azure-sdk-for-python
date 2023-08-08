@@ -29,7 +29,7 @@ For more information on DefaultAzureCredential, see
 """
 import os
 import json
-from typing import cast
+from typing import cast, Iterator
 
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.identity import DefaultAzureCredential
@@ -82,7 +82,7 @@ def send_event_data_batch(
     # The encode method will automatically register the schema into the Schema Registry Service and
     # schema will be cached locally for future usage.
     event_data = encoder.encode(content=dict_content, schema_id=schema_id, message_type=EventData)
-    print(f'The bytes of encoded dict content is {next(event_data.body)}.')
+    print(f'The bytes of encoded dict content is {next(cast(Iterator[bytes], event_data.body))!r}.')
 
     event_data_batch.add(event_data)
     producer.send_batch(event_data_batch)

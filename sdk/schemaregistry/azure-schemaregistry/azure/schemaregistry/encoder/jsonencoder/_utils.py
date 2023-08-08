@@ -13,7 +13,8 @@ from typing import (
     Mapping,
     TYPE_CHECKING,
     Tuple,
-    TypeVar
+    TypeVar,
+    overload
 )
 import json
 try:
@@ -39,7 +40,7 @@ if TYPE_CHECKING:
     except ImportError:
         pass
     from ._constants import JsonSchemaDraftIdentifier
-    from ... import MessageType, SchemaContentValidate
+    from ... import SchemaContentValidate
 
 # TypeVar ties the return type to the exact MessageType class, rather than the "MessageType" Protocol
 # Otherwise, mypy will complain that the return type is not compatible with the type annotation when
@@ -127,14 +128,35 @@ def get_loaded_schema(
 
     return schema_fullname, schema_str, schema_dict
 
+@overload
+def create_message_content(
+    content: Mapping[str, Any],
+    schema: Mapping[str, Any],
+    schema_id: str,
+    validate: "Validator",
+    message_type: Type[MessageType],
+    **kwargs: Any,
+) -> MessageType:
+    ...
+
+@overload
+def create_message_content(
+    content: Mapping[str, Any],
+    schema: Mapping[str, Any],
+    schema_id: str,
+    validate: "Validator",
+    message_type: None = None,
+) -> MessageContent:
+    ...
+
 def create_message_content(
     content: Mapping[str, Any],
     schema: Mapping[str, Any],
     schema_id: str,
     validate: Union["Validator", "SchemaContentValidate"],
-    message_type: Optional[Type["MessageType"]] = None,
+    message_type: Optional[Type[MessageType]] = None,
     **kwargs: Any,
-) -> Union["MessageType", MessageContent]:
+) -> Union[MessageType, MessageContent]:
     content_type = f"{JSON_MIME_TYPE}+{schema_id}"
     try:
         # validate content
@@ -157,7 +179,10 @@ def create_message_content(
 
     if message_type:
         try:
-            return message_type.from_message_content(content_bytes, content_type, **kwargs)
+            return cast(
+                MessageType,
+                message_type.from_message_content(content_bytes, content_type, **kwargs)
+            )
         except AttributeError as exc:
             raise TypeError(
                 f"""Cannot set content and content type on model object. The content model
@@ -171,7 +196,7 @@ def create_message_content(
 
 
 def parse_message(
-    message: Union["MessageType", MessageContent]
+    message: Union[MessageType, MessageContent]
 ):
     try:
         message = cast("MessageType", message)

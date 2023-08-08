@@ -49,7 +49,7 @@ For more information on ClientSecretCredential, see:
 """
 import os
 import json
-from typing import cast
+from typing import cast, Iterator
 
 from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient
@@ -113,8 +113,8 @@ def encode_to_event_data_message(encoder: JsonSchemaEncoder, schema_id: str):
         dict_content_alice, schema_id=schema_id, message_type=EventData
     )
 
-    print("Encoded content is: ", next(event_data_ben.body))
-    print("Encoded content is: ", next(event_data_alice.body))
+    print("Encoded content is: ", next(cast(Iterator[bytes], event_data_ben.body)))
+    print("Encoded content is: ", next(cast(Iterator[bytes], event_data_alice.body)))
 
     print("Encoded content type is: ", event_data_ben.content_type)
     print("Encoded content type is: ", event_data_alice.content_type)
