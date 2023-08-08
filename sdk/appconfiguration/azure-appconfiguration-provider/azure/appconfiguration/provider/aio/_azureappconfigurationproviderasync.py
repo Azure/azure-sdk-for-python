@@ -176,6 +176,7 @@ def _buildprovider(
 
 
 async def _resolve_keyvault_reference(config, provider: "AzureAppConfigurationProvider") -> str:
+    # pylint:disable=protected-access
     if provider._key_vault_options is None:
         raise ValueError("Key Vault options must be set to resolve Key Vault references.")
 
