@@ -104,7 +104,17 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     if (endpoint or credential) and connection_string:
         raise ValueError("Please pass either endpoint and credential, or a connection string.")
 
-    provider = _buildprovider(connection_string, endpoint, credential, key_vault_options)
+    # Removing use of AzureAppConfigurationKeyVaultOptions
+    if "key_vault_options" in kwargs:
+        if not "key_vault_credentials" in kwargs:
+            kwargs["key_vault_credentials"] = kwargs["key_vault_options"].credential
+        if not "secret_resolver" in kwargs:
+            kwargs["secret_resolver"] = kwargs["key_vault_options"].secret_resolver
+        if not "key_vault_client_configs" in kwargs:
+            kwargs["key_vault_client_configs"] = kwargs["key_vault_options"].client_options
+        kwargs.pop("key_vault_options")
+
+    provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
 
     provider._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
 
@@ -121,7 +131,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                     break
 
             if isinstance(config, SecretReferenceConfigurationSetting):
-                secret = await _resolve_keyvault_reference(config, key_vault_options, provider)
+                secret = await _resolve_keyvault_reference(config, provider, kwargs)
                 provider._dict[trimmed_key] = secret
             elif isinstance(config, FeatureFlagConfigurationSetting):
                 feature_management = provider._dict.get(FEATURE_MANAGEMENT_KEY, {})
@@ -144,15 +154,11 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
 
 def _buildprovider(
-    connection_string: Optional[str],
-    endpoint: Optional[str],
-    credential: Optional["AsyncTokenCredential"],
-    key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions],
-    **kwargs
+    connection_string: Optional[str], endpoint: Optional[str], credential: Optional["AsyncTokenCredential"], **kwargs
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
     provider = AzureAppConfigurationProvider()
-    headers = _get_headers(key_vault_options, **kwargs)
+    headers = _get_headers(**kwargs)
 
     retry_total = kwargs.pop("retry_total", 2)
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
@@ -179,10 +185,8 @@ def _buildprovider(
     return provider
 
 
-async def _resolve_keyvault_reference(
-    config, key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions], provider: "AzureAppConfigurationProvider"
-) -> str:
-    if key_vault_options is None:
+async def _resolve_keyvault_reference(config, provider: "AzureAppConfigurationProvider", **kwargs) -> str:
+    if not ("key_vault_credential" in kwargs or "key_vault_client_configs" in kwargs or "secret_resolver" in kwargs):
         raise ValueError("Key Vault options must be set to resolve Key Vault references.")
 
     if config.secret_id is None:
@@ -195,8 +199,8 @@ async def _resolve_keyvault_reference(
     # pylint:disable=protected-access
     referenced_client = provider._secret_clients.get(vault_url, None)
 
-    vault_config = key_vault_options.client_configs.get(vault_url, {})
-    credential = vault_config.pop("credential", key_vault_options.credential)
+    vault_config = kwargs.get("key_vault_client_configs", {}).get(vault_url, {})
+    credential = vault_config.pop("credential", kwargs.get("key_vault_credential", None))
 
     if referenced_client is None and credential is not None:
         referenced_client = SecretClient(vault_url=vault_url, credential=credential, **vault_config)
@@ -207,8 +211,8 @@ async def _resolve_keyvault_reference(
             await referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version)
         ).value
 
-    if key_vault_options.secret_resolver is not None:
-        resolved = key_vault_options.secret_resolver(config.secret_id)
+    if "secret_resolver" in kwargs:
+        resolved = kwargs["secret_resolver"](config.secret_id)
         try:
             # Secret resolver was async
             return await resolved
