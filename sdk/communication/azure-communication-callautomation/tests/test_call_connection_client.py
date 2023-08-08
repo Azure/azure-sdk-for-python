@@ -14,6 +14,7 @@ from azure.communication.callautomation import (
     CallParticipant,
     TransferCallResult
 )
+from azure.core.paging import ItemPaged
 
 from unittest_helpers import mock_response
 
@@ -92,9 +93,7 @@ class TestCallConnectionClient(unittest.TestCase):
             transport=Mock(send=mock_send))
 
         response = call_connection.list_participants()
-        participants = [p for p in response]
-        for p in participants:
-            assert isinstance(p, CallParticipant)
+        assert isinstance(response, ItemPaged)
 
     def test_get_participants(self):
         def mock_send(_, **kwargs):
