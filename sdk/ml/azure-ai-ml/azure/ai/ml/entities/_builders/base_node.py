@@ -35,7 +35,7 @@ module_logger = logging.getLogger(__name__)
 def parse_inputs_outputs(data: dict) -> dict:
     """Parse inputs and outputs from data. If data is a list, parse each item in the list.
 
-    :return: parsed data
+    :return: Dict with parsed "inputs" and "outputs" keys
     :rtype: Dict
     """
 
