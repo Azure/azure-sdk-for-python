@@ -201,7 +201,7 @@ class RetryPolicyBase:
 
         return True
 
-    def is_retry(self, settings: Dict[str, Any], response: PipelineResponse[HttpRequest, AllHttpResponseType]) -> bool:
+    def is_retry(self, settings: Dict[str, Any], response: PipelineResponse[HTTPRequestType, AllHttpResponseType]) -> bool:
         """Checks if method/status code is retryable.
 
         Based on allowlists and control variables such as the number of
