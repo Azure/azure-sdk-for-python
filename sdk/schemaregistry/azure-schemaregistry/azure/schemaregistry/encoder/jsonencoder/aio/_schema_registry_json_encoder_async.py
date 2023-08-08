@@ -36,14 +36,15 @@ from .._utils import (
     parse_message,
     decode_content,
     get_loaded_schema,
-    get_jsonschema_validator
+    get_jsonschema_validator,
+    MessageType
 )
 from .._constants import JsonSchemaDraftIdentifier
 from ._async_lru import alru_cache  # pylint: disable=import-error
 
 if TYPE_CHECKING:
     from ....aio._schema_registry_client_async import SchemaRegistryClient
-    from ...._encoder_protocols import MessageContent, MessageType, SchemaContentValidate
+    from ...._encoder_protocols import MessageContent, SchemaContentValidate
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -123,6 +124,7 @@ class JsonSchemaEncoder(object):
 
         :param str schema_id: Schema id
         :return: Schema definition
+        :rtype: str
         """
         schema = await self._schema_registry_client.get_schema(schema_id, **kwargs)
         return schema.definition

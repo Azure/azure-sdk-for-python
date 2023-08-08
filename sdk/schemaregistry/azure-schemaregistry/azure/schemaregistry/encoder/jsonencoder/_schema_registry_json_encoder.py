@@ -46,12 +46,13 @@ from ._utils import (  # pylint: disable=import-error
     parse_message,
     decode_content,
     get_loaded_schema,
-    get_jsonschema_validator
+    get_jsonschema_validator,
+    MessageType
 )
 
 if TYPE_CHECKING:
     from ..._schema_registry_client import SchemaRegistryClient
-    from ..._encoder_protocols import MessageContent, MessageType, SchemaContentValidate
+    from ..._encoder_protocols import MessageContent, SchemaContentValidate
 
 _LOGGER = logging.getLogger(__name__)
 

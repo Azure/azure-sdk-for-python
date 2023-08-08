@@ -29,6 +29,7 @@ For more information on DefaultAzureCredential, see
 """
 import os
 import json
+from typing import cast
 
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.identity import DefaultAzureCredential
@@ -66,7 +67,7 @@ SCHEMA_STRING = json.dumps(SCHEMA_JSON)
 def pre_register_schema(schema_registry: SchemaRegistryClient):
     schema_properties = schema_registry.register_schema(
         group_name=GROUP_NAME,
-        name=SCHEMA_JSON['title'],
+        name=cast(str, SCHEMA_JSON['title']),
         definition=SCHEMA_STRING,
         format="Json"
     )

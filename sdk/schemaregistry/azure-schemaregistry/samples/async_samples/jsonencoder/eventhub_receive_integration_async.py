@@ -62,7 +62,7 @@ async def on_event(partition_context, event):
     print(f"Received event from partition: {partition_context.partition_id}.")
 
     bytes_payload = b"".join(b for b in event.body)
-    print(f'The received bytes of the EventData is {bytes_payload}.')
+    print(f'The received bytes of the EventData is {bytes_payload!r}.')
 
     # Use the decode method to decode the payload of the event.
     # The decode method will extract the schema id from the content_type, and automatically retrieve the Json Schema

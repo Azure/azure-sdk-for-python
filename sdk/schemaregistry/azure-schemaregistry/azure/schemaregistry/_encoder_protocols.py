@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Dict, Mapping, Union, TYPE_CHECKING, overload, Optional, Type
+from typing import Any, Dict, Mapping, Union, overload, Optional, Type
 from typing_extensions import Protocol, TypedDict  # type: ignore
 
 
@@ -12,7 +12,7 @@ class SchemaContentValidate(Protocol):
         """
         Validates content against provided schema. If invalid, raises Exception.
          Else, returns None.
-        
+
         :param mapping[str, any] schema: The schema to validate against.
         :param mapping[str, any] content: The content to validate.
 
@@ -235,7 +235,7 @@ class SchemaEncoder(Protocol):
     ) -> Dict[str, Any]:
         """
         Returns the decoded data with the schema format specified by the `content-type` property.
-         If `validate` callable was passed to constructor, will validate content against schema retrieved 
+         If `validate` callable was passed to constructor, will validate content against schema retrieved
          from the registry after decoding.
         :param message: The message object which holds the content to be decoded and content type
          containing the schema ID.

@@ -49,6 +49,7 @@ For more information on ClientSecretCredential, see:
 """
 import os
 import json
+from typing import cast
 
 from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient
@@ -92,7 +93,7 @@ token_credential = ClientSecretCredential(
 def pre_register_schema(schema_registry: SchemaRegistryClient):
     schema_properties = schema_registry.register_schema(
         group_name=GROUP_NAME,
-        name=SCHEMA_JSON['title'],
+        name=cast(str, SCHEMA_JSON['title']),
         definition=SCHEMA_STRING,
         format="Json"
     )

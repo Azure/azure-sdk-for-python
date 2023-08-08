@@ -12,7 +12,8 @@ from typing import (
     cast,
     Mapping,
     TYPE_CHECKING,
-    Tuple
+    Tuple,
+    TypeVar
 )
 import json
 try:
@@ -25,6 +26,7 @@ from functools import partial
 
 from ... import (  # pylint: disable=import-error
     MessageContent,
+    MessageType as MessageTypeProtocol,
 )
 from ._exceptions import (  # pylint: disable=import-error
     InvalidContentError,
@@ -38,6 +40,11 @@ if TYPE_CHECKING:
         pass
     from ._constants import JsonSchemaDraftIdentifier
     from ... import MessageType, SchemaContentValidate
+
+# TypeVar ties the return type to the exact MessageType class, rather than the "MessageType" Protocol
+# Otherwise, mypy will complain that the return type is not compatible with the type annotation when
+# the MessageType object is returned and passed around.
+MessageType = TypeVar("MessageType", bound=MessageTypeProtocol)
 
 def get_jsonschema_validator(
     draft_identifier: Union[str, "JsonSchemaDraftIdentifier"]
@@ -74,16 +81,23 @@ def jsonschema_validate(
     Validates content against provided schema using `jsonschema.Draft4Validator`.
      If invalid, raises Exception. Else, returns None.
      If jsonschema is not installed, raises ValueError.
+     :param jsonschema.protocols.Validator validator: The validator to use.
      :param mapping[str, any] schema: The schema to validate against.
      :param mapping[str, any] content: The content to validate.
+     :return: None
+     :rtype: None
     """
     validator(schema).validate(content)
 
 def get_loaded_schema(
-    schema: Union[str, Callable],   # TODO: check for next beta if we want to allow schema generation
+    schema: Union[str, Callable],   # TODO: for next beta: check if we want to allow schema generation
     content: Mapping[str, Any],
 ) -> Tuple[str, str, Mapping[str, Any]]:
     """Returns the tuple: (schema name, schema string, schema dict).
+    :param str or callable schema: The schema to load.
+    :param mapping[str, any] content: The content to validate.
+    :return: The schema name, schema string, and schema dict.
+    :rtype: tuple[str, str, mapping[str, any]]
     """
     # get schema string
     schema_dict: Mapping[str, Any]

@@ -49,6 +49,7 @@ For more information on ClientSecretCredential, see:
 """
 import os
 import json
+from typing import List, cast
 
 from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient, MessageContent
@@ -104,10 +105,10 @@ def encode_message_content_dict(encoder: JsonSchemaEncoder):
 def decode_with_content_and_content_type(encoder: JsonSchemaEncoder, event_data: EventData):
     # get content as bytes
     content = bytearray()
-    for c in event_data.body:
+    for c in cast(List[bytes], event_data.body):
         content += c
     content_bytes = bytes(content)
-    message_content = MessageContent({"content": content_bytes, "content_type": event_data.content_type})
+    message_content = MessageContent({"content": content_bytes, "content_type": cast(str, event_data.content_type)})
     decoded_content = encoder.decode(message_content)
 
     print("Decoded content is: ", decoded_content)

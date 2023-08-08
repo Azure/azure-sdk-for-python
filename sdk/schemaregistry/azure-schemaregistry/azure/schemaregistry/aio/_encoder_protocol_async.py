@@ -188,7 +188,7 @@ class SchemaEncoder(Protocol):
     ) -> Dict[str, Any]:
         """
         Returns the decoded data with the schema format specified by the `content-type` property.
-         If `validate` callable was passed to constructor, will validate content against schema retrieved 
+         If `validate` callable was passed to constructor, will validate content against schema retrieved
          from the registry after decoding.
         :param message: The message object which holds the content to be decoded and content type
          containing the schema ID.

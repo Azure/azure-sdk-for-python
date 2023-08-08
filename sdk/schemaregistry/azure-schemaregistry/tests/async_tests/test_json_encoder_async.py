@@ -253,7 +253,7 @@ class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
         await sr_json_encoder.close()
 
 
-    #@pytest.mark.skip('not allowing schema generation callable for now')
+    @pytest.mark.skip('not allowing schema generation callable for now')
     @pytest.mark.asyncio
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy_async

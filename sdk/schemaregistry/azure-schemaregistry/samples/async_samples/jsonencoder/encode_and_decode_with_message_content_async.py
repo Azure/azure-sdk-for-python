@@ -50,6 +50,7 @@ For more information on ClientSecretCredential, see:
 import os
 import asyncio
 import json
+from typing import cast, List
 
 from azure.identity.aio import ClientSecretCredential
 from azure.schemaregistry import MessageContent
@@ -106,10 +107,10 @@ async def encode_message_content_dict(encoder: JsonSchemaEncoder):
 async def decode_with_content_and_content_type(encoder: JsonSchemaEncoder, event_data: EventData):
     # get content as bytes
     content = bytearray()
-    for d in event_data.body:
+    for d in cast(List[bytes], event_data.body):
         content += d
     content_bytes = bytes(content)
-    message_content = MessageContent({"content": content_bytes, "content_type": event_data.content_type})
+    message_content = MessageContent({"content": content_bytes, "content_type": cast(str, event_data.content_type)})
     decoded_content = await encoder.decode(message_content)
 
     print("Decoded content is: ", decoded_content)
