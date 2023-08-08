@@ -280,8 +280,9 @@ class ServiceBusReceiver(
          if the client fails to process the message.
          The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
-        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
-         receiver will automatically stop receiving. The default value is None, meaning no timeout.
+        :keyword Optional[float] max_wait_time: The timeout in seconds to wait for the first message to arrive.
+         If no messages arrive, and no timeout is specified, this call will not return
+         until the connection is closed. The default value is None, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
