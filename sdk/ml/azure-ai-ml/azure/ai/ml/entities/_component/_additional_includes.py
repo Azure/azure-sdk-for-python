@@ -30,7 +30,7 @@ class AdditionalIncludes:
     """Initialize the AdditionalIncludes object.
 
     :param origin_code_value: The origin code value.
-    :type origin_code_value: Union[None, str]
+    :type origin_code_value: Optional[str]
     :param base_path: The base path for origin code path and additional include configs.
     :type base_path: Path
     :param configs: The additional include configs.

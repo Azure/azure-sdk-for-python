@@ -346,6 +346,8 @@ def traverse_directory(
     *,
     prefix: str,
     ignore_file: IgnoreFile = IgnoreFile(),
+    # keep this for backward compatibility
+    **kwargs: Any,
 ) -> Iterable[Tuple[str, Union[str, Any]]]:
     """Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage.
     e.g.
@@ -1003,7 +1005,8 @@ class DirectoryUploadProgressBar(tqdm):
 def get_storage_info_for_non_registry_asset(
     service_client, workspace_name, name, version, resource_group
 ) -> Dict[str, str]:
-    """Get SAS uri and blob uri for non-registry asset.
+    """Get SAS uri and blob uri for non-registry asset. Note that this function won't return the same
+    SAS uri and blob uri for the same asset. It will return a new SAS uri and blob uri every time it is called.
     :param service_client: Service client
     :type service_client: AzureMachineLearningWorkspaces
     :param name: Asset name
