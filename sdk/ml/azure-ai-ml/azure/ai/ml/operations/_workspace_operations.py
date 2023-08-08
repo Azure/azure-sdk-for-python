@@ -191,15 +191,18 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             return super().begin_create(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
         except HttpResponseError as error:
             if error.status_code == 403 and workspace._kind == PROJECT_WORKSPACE_KIND:
-                    resource_group = kwargs.get("resource_group") or self._resource_group_name
-                    hub_name, hub_rg = get_resource_and_group_name_from_resource_id(workspace.workspace_hub)
-                    rest_workspace_obj = self._operation.get(resource_group, hub_name)
-                    hub_default_workspace_resource_group = get_resource_group_name_from_resource_group_id(rest_workspace_obj.workspace_hub_config.default_workspace_resource_group)
-                    if hub_default_workspace_resource_group == resource_group:
-                        module_logger.info("User don't have enough permission to create project workspace, trying to join the workspaceHub default resource group")
-                        return self.begin_join(workspace, **kwargs)
+                resource_group = kwargs.get("resource_group") or self._resource_group_name
+                hub_name, hub_rg = get_resource_and_group_name_from_resource_id(workspace.workspace_hub)
+                rest_workspace_obj = self._operation.get(resource_group, hub_name)
+                hub_default_workspace_resource_group = get_resource_group_name_from_resource_group_id(
+                    rest_workspace_obj.workspace_hub_config.default_workspace_resource_group
+                )
+                if hub_default_workspace_resource_group == resource_group:
+                    module_logger.info(
+                        "User don't have enough permission to create project workspace, trying to join the workspaceHub default resource group"
+                    )
+                    return self.begin_join(workspace, **kwargs)
             raise error
-            
 
     @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
     @distributed_trace
@@ -264,7 +267,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         poller = self._operation.begin_diagnose(resource_group, name, parameters, polling=True, cls=callback)
         module_logger.info("Diagnose request initiated for workspace: %s\n", name)
         return poller
-    
+
     @distributed_trace
     def begin_join(self, workspace: Workspace, **kwargs: Dict) -> LROPoller[Workspace]:
         """Join a WorkspaceHub by creating a project workspace under workspaceHub's default resource group.
@@ -275,8 +278,12 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
         if not workspace.workspace_hub:
-            raise ValidationError("{0} is not a Project workspace, join operation can only perform with workspaceHub provided".format(workspace.name))
-        
+            raise ValidationError(
+                "{0} is not a Project workspace, join operation can only perform with workspaceHub provided".format(
+                    workspace.name
+                )
+            )
+
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         workspace_hub_name, hub_rg = get_resource_and_group_name_from_resource_id(workspace.workspace_hub)
         rest_workspace_obj = self._operation.get(resource_group, workspace_hub_name)
