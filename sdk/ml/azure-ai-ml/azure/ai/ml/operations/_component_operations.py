@@ -721,13 +721,13 @@ class ComponentOperations(_ScopeDependentOperations):
     @classmethod
     def _resolve_binding_on_supported_fields_for_node(cls, node):
         """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
-        from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+        from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
         from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
         # compute binding to pipeline input is supported on node.
         supported_fields = ["compute", "compute_name"]
         for field_name in supported_fields:
-            val = try_get_non_arbitrary_attr_for_potential_attr_dict(node, field_name)
+            val = try_get_non_arbitrary_attr(node, field_name)
             if isinstance(val, PipelineInput):
                 # Put binding string to field
                 setattr(node, field_name, val._data_binding())

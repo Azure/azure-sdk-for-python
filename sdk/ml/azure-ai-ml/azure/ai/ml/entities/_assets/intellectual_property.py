@@ -3,22 +3,34 @@
 # ---------------------------------------------------------
 
 from typing import Any
+
+from azure.ai.ml._restclient.v2023_04_01_preview.models import IntellectualProperty as RestIntellectualProperty
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._assets import IPProtectionLevel
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml._restclient.v2023_04_01_preview.models import IntellectualProperty as RestIntellectualProperty
 
 
 @experimental
 class IntellectualProperty(RestTranslatableMixin):
-    """Class which defines the intellectual property settings.
-    :param publisher: Publisher name
-    :type publisher: str
-    :param protection_level: Asset Protection Level. Allowed values: ALL, NONE
-    :type protection_level: ~azure.ai.ml.constants.IPProtectionLevel
+    """Intellectual property settings definition.
+
+    :keyword publisher: The publisher's name.
+    :type publisher: Optional[str]
+    :keyword protection_level: Asset Protection Level. Accepted values are IPProtectionLevel.ALL ("all") and
+        IPProtectionLevel.NONE ("none"). Defaults to IPProtectionLevel.ALL ("all").
+    :type protection_level: Optional[Union[str, ~azure.ai.ml.constants.IPProtectionLevel]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+            :start-after: [START intellectual_property_configuration]
+            :end-before: [END intellectual_property_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring intellectual property settings on a CommandComponent.
     """
 
-    def __init__(self, *, publisher: str = None, protection_level: IPProtectionLevel = IPProtectionLevel.ALL):
+    def __init__(self, *, publisher: str = None, protection_level: IPProtectionLevel = IPProtectionLevel.ALL) -> None:
         self.publisher = publisher
         self.protection_level = protection_level
 

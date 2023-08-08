@@ -26,37 +26,47 @@ from .utils import _get_param_with_standard_annotation, _remove_empty_values
 
 
 class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
-    """Define an input of a Component or Job.
+    """Initialize an Input object.
 
-    Default to be a uri_folder Input.
-
-    :param type: The type of the data input. Possible values include:
-        'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', 'integer', 'number', 'string', 'boolean'
-    :type type: str
-    :param path: The path to which the input is pointing. Default to None.
-        Could be pointing to local data, cloud data, a registered name, etc.
-    :type path: str, optional
-    :param mode: The mode of the data input. Possible values are:
-        'ro_mount': Read-only mount the data,
-        'download': Download the data to the compute target,
-        'direct': Pass in the URI as a string
-    :type mode: str, optional
-    :param default: The default value of this input. When a `default` is set, the input will be optional
-    :type default: Union[str, int, float, bool], optional
-    :param min: The min value -- if a smaller value is passed to a job, the job execution will fail
-    :type min: Union[int, float], optional
-    :param max: The max value -- if a larger value is passed to a job, the job execution will fail
-    :type max: Union[int, float], optional
-    :param optional: Determine if this input is optional.
-    :type optional: bool, optional
-    :param description: Description of the input
-    :type description: str, optional
-    :param datastore: The datastore to upload local files to.
+    :keyword type: The type of the data input. Accepted values are
+        'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', 'integer', 'number', 'string', and
+        'boolean'.
+    :type type: str, optional
+    :keyword path: The path to the input data. Paths can be local paths, remote data uris, or a registered AzureML asset
+        ID.
+    :type path: Optional[str]
+    :keyword mode: The access mode of the data input. Accepted values are:
+        * 'ro_mount': Mount the data to the compute target as read-only,
+        * 'download': Download the data to the compute target,
+        * 'direct': Pass in the URI as a string to be accessed at runtime
+    :type mode: Optional[str]
+    :keyword default: The default value of the input. If a default is set, the input data will be optional.
+    :type default: Union[str, int, float, bool]
+    :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
+        execution will fail.
+    :type min: Union[int, float]
+    :keyword max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
+        execution will fail.
+    :type max: Union[integer, float]
+    :keyword optional: Specifies if the input is optional.
+    :type optional: Optional[bool]
+    :keyword description: Description of the input
+    :type description: Optional[str]
+    :keyword datastore: The datastore to upload local files to.
     :type datastore: str, optional
-    :param intellectual_property: Intellectual property for the input.
+    :keyword intellectual_property: Intellectual property for the input.
     :type intellectual_property: IntellectualProperty, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
         Details will be provided in the error message.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+            :start-after: [START create_inputs_outputs]
+            :end-before: [END create_inputs_outputs]
+            :language: python
+            :dedent: 8
+            :caption: Creating a CommandJob with two inputs.
     """
 
     _EMPTY = Parameter.empty
@@ -73,26 +83,22 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         **kwargs,
     ) -> None:
-        """Initialize an input.
+        """Initialize a uri_folder input.
 
-        :param type: The type of the data input. Possible values include:
-            'uri_folder', 'uri_file', 'mltable', 'mlflow_model', 'custom_model', and user-defined types.
-            Defaults to 'uri_folder'.
+        :param type: The type of the data input. Can only be set to "uri_folder".
         :type type: str
-        :param path: The path to which the input is pointing.
-            Could be pointing to local data, cloud data, a registered name, etc.
-        :type path: str, optional
-        :param mode: The mode of the data input. Possible values are:
-            'ro_mount': Read-only mount the data,
-            'download': Download the data to the compute target,
-            'direct': Pass in the URI as a string.
-        :type mode: str, optional
-        :param optional: Determine if this input is optional.
-        :type optional: bool, optional
-        :param description: Description of the input.
-        :type description: str, optional
-        :param datastore: The datastore to upload local files to.
-        :type datastore: str, optional
+        :param path: The path to the input data. Paths can be local paths, remote data uris, or a registered AzureML
+            asset id.
+        :type path: str
+        :param mode: The mode of the data input. Accepted values are:
+            * 'ro_mount': Mount the data to the compute target as read-only,
+            * 'download': Download the data to the compute target,
+            * 'direct': Pass in the URI as a string to be accessed at runtime
+        :type mode: str
+        :param optional: Specifies if the input is optional.
+        :type optional: bool
+        :param description: Description of the input
+        :type description: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
             Details will be provided in the error message.
         """
@@ -113,16 +119,18 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
         :param type: The type of the data input. Can only be set to "number".
         :type type: str
-        :param default: The default value of this input. When a `default` is set, the input will be optional.
-        :type default: float, optional
-        :param min: The min value -- if a smaller value is passed to a job, the job execution will fail.
-        :type min: float, optional
-        :param max: The max value -- if a larger value is passed to a job, the job execution will fail.
-        :type max: float, optional
-        :param optional: Determine if this input is optional.
-        :type optional: bool, optional
-        :param description: Description of the input.
-        :type description: str, optional
+        :param default: The default value of the input. If a default is set, the input data will be optional.
+        :type default: Union[str, int, float, bool]
+        :param min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
+            execution will fail.
+        :type min: Union[int, float]
+        :param max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
+            execution will fail.
+        :type max: Union[integer, float]
+        :param optional: Specifies if the input is optional.
+        :type optional: bool
+        :param description: Description of the input
+        :type description: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
             Details will be provided in the error message.
         """
@@ -143,19 +151,18 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
         :param type: The type of the data input. Can only be set to "integer".
         :type type: str
-        :param default: The default value of this input. When a `default` is set,
-                        the input will be optional.
-        :type default: int, optional
-        :param min: The min value -- if a smaller value is passed to a job, the job execution will fail.
-        :type min: int, optional
-        :param max: The max value -- if a larger value is passed to a job, the job execution will fail.
-        :type max: int, optional
-        :param optional: Determine if this input is optional.
-        :type optional: bool, optional
-        :param description: Description of the input.
-        :type description: str, optional
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
-            Details will be provided in the error message.
+        :param default: The default value of the input. If a default is set, the input data will be optional.
+        :type default: Union[str, int, float, bool]
+        :param min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
+            execution will fail.
+        :type min: Union[int, float]
+        :param max: The maximum value for the input. If a value larger than the maximum is passed to a job, the job
+            execution will fail.
+        :type max: Union[integer, float]
+        :param optional: Specifies if the input is optional.
+        :type optional: bool
+        :param description: Description of the input
+        :type description: str
         """
 
     @overload
@@ -196,12 +203,15 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
         :param type: The type of the data input. Can only be set to "boolean".
         :type type: str
-        :param default: The default value of this input. When a `default` is set, the input will be optional.
-        :type default: bool, optional
-        :param optional: Determine if this input is optional.
-        :type optional: bool, optional
-        :param description: Description of the input.
-        :type description: str, optional
+        :param path: The path to the input data. Paths can be local paths, remote data uris, or a registered AzureML
+            asset id.
+        :type path: str
+        :param default: The default value of the input. If a default is set, the input data will be optional.
+        :type default: Union[str, int, float, bool]
+        :param optional: Specifies if the input is optional.
+        :type optional: bool
+        :param description: Description of the input
+        :type description: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
             Details will be provided in the error message.
         """

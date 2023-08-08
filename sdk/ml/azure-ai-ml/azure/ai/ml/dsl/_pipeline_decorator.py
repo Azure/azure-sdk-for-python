@@ -83,7 +83,7 @@ def pipeline(
     :type kwargs: dict
 
     .. admonition:: Example:
-        :class: tip
+
         .. literalinclude:: ../../../../samples/ml_samples_pipeline_job_configurations.py
             :start-after: [START configure_pipeline]
             :end-before: [END configure_pipeline]

@@ -9,8 +9,8 @@
 
 ### Bugs Fixed
 - Local job runs will no longer fail if Docker registry has no username/password
-
 - Fixed an issue that code asset doesn't work with relative symbol links.
+- Fixed [Issue 31319](https://github.com/Azure/azure-sdk-for-python/issues/31319): can't accept `PathLike` for `CommandComponent.code`.
 
 ### Breaking Changes
 
@@ -19,7 +19,7 @@
 - `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
   (instead of the default behavior for python < 3.15, which uses locale specific encodings)
 
-## 1.9.0 (Unreleased)
+## 1.9.0 (2023-07-25)
 
 ### Features Added
 - Added support to enable gpu access (local_enable_gpu) for local deployment.
