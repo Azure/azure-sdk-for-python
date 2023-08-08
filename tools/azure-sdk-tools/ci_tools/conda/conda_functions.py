@@ -101,6 +101,7 @@ def create_namespace_extension(target_directory):
 def get_pkgs_from_build_directory(build_directory, artifact_name):
     return [os.path.join(build_directory, p) for p in os.listdir(build_directory) if p != artifact_name]
 
+
 def error_handler_git_access(func, path, exc):
     # Is the error an access error?
     if not os.access(path, os.W_OK):
@@ -108,6 +109,7 @@ def error_handler_git_access(func, path, exc):
         func(path)
     else:
         raise
+
 
 def create_sdist_skeleton(build_directory, artifact_name, common_root):
     sdist_directory = os.path.join(build_directory, artifact_name)
@@ -250,7 +252,9 @@ def get_summary(ci_yml, artifact_name):
     return SUMMARY_TEMPLATE.format(", ".join(pkg_list))
 
 
-def output_workload(run_configurations: List[CondaConfiguration], excluded_configurations: List[CondaConfiguration]) -> None:
+def output_workload(
+    run_configurations: List[CondaConfiguration], excluded_configurations: List[CondaConfiguration]
+) -> None:
     """Show all packages and what order they will be built in."""
     print("This build run is generating the following package configurations: ")
 
@@ -271,32 +275,36 @@ def prep_directory(path: str) -> str:
     os.makedirs(path)
     return path
 
+
 def invoke_command(command: str, working_directory: str) -> None:
     try:
         check_call(shlex.split(command), cwd=working_directory)
     except CalledProcessError as e:
         raise
-        
-        
 
-def get_git_source(assembly_area: str, assembled_code_area: str, target_package: str, checkout_path: str, target_version: str) -> None:
+
+def get_git_source(
+    assembly_area: str, assembled_code_area: str, target_package: str, checkout_path: str, target_version: str
+) -> None:
     clone_folder = prep_directory(os.path.join(assembly_area, target_package))
     code_destination = os.path.join(assembled_code_area, target_package)
     code_source = os.path.join(clone_folder, checkout_path, target_package)
 
-    invoke_command(f'git clone --no-checkout --filter=tree:0 https://github.com/Azure/azure-sdk-for-python .', clone_folder)
-    invoke_command(f'git config gc.auto 0', clone_folder)
-    invoke_command(f'git sparse-checkout init', clone_folder)
+    invoke_command(
+        f"git clone --no-checkout --filter=tree:0 https://github.com/Azure/azure-sdk-for-python .", clone_folder
+    )
+    invoke_command(f"git config gc.auto 0", clone_folder)
+    invoke_command(f"git sparse-checkout init", clone_folder)
     invoke_command(f"git sparse-checkout set --no-cone '/*' '!/*/' '/eng'", clone_folder)
     invoke_command(f'git sparse-checkout add "{checkout_path}"', clone_folder)
-    invoke_command(f'git -c advice.detachedHead=false checkout {target_package}_{target_version}', clone_folder)
+    invoke_command(f"git -c advice.detachedHead=false checkout {target_package}_{target_version}", clone_folder)
 
     shutil.move(code_source, code_destination)
 
 
-
 def download_pypi_source() -> None:
     pass
+
 
 def get_package_source(checkout_config: CheckoutConfiguration, assembly_area: str, assembled_code_area: str) -> None:
     if checkout_config.download_uri:
@@ -304,9 +312,17 @@ def get_package_source(checkout_config: CheckoutConfiguration, assembly_area: st
         print("Must download")
 
     elif checkout_config.checkout_path:
-        get_git_source(assembly_area, assembled_code_area, checkout_config.package, checkout_config.checkout_path, checkout_config.version)
+        get_git_source(
+            assembly_area,
+            assembled_code_area,
+            checkout_config.package,
+            checkout_config.checkout_path,
+            checkout_config.version,
+        )
     else:
-        raise ValueError("Unable to handle a checkoutConfiguraiton that doesn't git clone OR download from pypi for sdist code.")
+        raise ValueError(
+            "Unable to handle a checkoutConfiguraiton that doesn't git clone OR download from pypi for sdist code."
+        )
 
     pass
 

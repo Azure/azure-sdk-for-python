@@ -80,7 +80,14 @@ def parse_checkout_config(checkout_configs: List[Any]) -> List[CheckoutConfigura
 
 
 class CondaConfiguration:
-    def __init__(self, name: str, common_root: str, in_batch: bool, checkout: List[CheckoutConfiguration], created_sdist_path: str = ""):
+    def __init__(
+        self,
+        name: str,
+        common_root: str,
+        in_batch: bool,
+        checkout: List[CheckoutConfiguration],
+        created_sdist_path: str = "",
+    ):
         self.name = name
         self.common_root = common_root
         self.in_batch = in_batch
