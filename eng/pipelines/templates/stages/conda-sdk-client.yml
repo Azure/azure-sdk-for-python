@@ -34,7 +34,7 @@ stages:
                   checkout_path: sdk/core
                   version: 1.24.0
               - name: azure-storage
-                common_root: azure
+                common_root: azure/storage
                 in_batch: ${{ parameters.release_azure_storage }}
                 checkout:
                 - package: azure-storage-blob

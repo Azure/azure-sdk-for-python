@@ -85,13 +85,15 @@ class CondaConfiguration:
         common_root: str,
         in_batch: bool,
         checkout: List[CheckoutConfiguration],
-        created_sdist_path: str = "",
+        created_sdist_path: str = None,
+        service: str = "",
     ):
         self.name: str = name
         self.common_root: str = common_root
         self.in_batch: bool = in_batch
         self.checkout: List[CheckoutConfiguration] = checkout
         self.created_sdist_path: str = created_sdist_path
+        self.service: str = service
 
     @classmethod
     def from_json(cls, raw_json_blob: dict):
@@ -99,8 +101,23 @@ class CondaConfiguration:
         common_root = raw_json_blob["common_root"] if raw_json_blob["common_root"] else "azure"
         in_batch = str_to_bool(raw_json_blob["in_batch"])
         checkout_config = parse_checkout_config(raw_json_blob["checkout"])
+        service = None
 
-        return cls(name, common_root, in_batch, checkout_config)
+        if "service" in raw_json_blob:
+            service = raw_json_blob["service"]
+
+        # default the service
+        if any([a.checkout_path for a in checkout_config]) and not service:
+            valid_checkout_config = next((x for x in checkout_config if x.checkout_path is not None), None)
+            if valid_checkout_config:
+                service = valid_checkout_config.checkout_path.split("/")[1].strip()
+
+        if not service and name.startswith("azure"):
+            raise ValueError(
+                f"Tooling cannot auto-detect targeted service for conda package {name}, nor is there a checkout_path that we can parse the service from. Please correct and retry."
+            )
+
+        return cls(name, common_root, in_batch, checkout_config, None, service)
 
     def __str__(self) -> str:
         checkout = f"{os.linesep}".join([str(c_config) for c_config in self.checkout])

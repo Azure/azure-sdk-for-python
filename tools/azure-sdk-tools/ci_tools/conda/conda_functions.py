@@ -15,7 +15,7 @@ import shutil
 import re
 import json
 import shlex
-import errno
+import subprocess
 import stat
 
 from shutil import rmtree
@@ -147,6 +147,21 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
                 dest = os.path.join(ns_dir, directory)
                 shutil.copytree(src, dest)
 
+        # if os.path.exists(pkg_till_common_root):
+        #     directories_for_copy = [
+        #         file
+        #         for file in os.listdir(pkg_till_common_root)
+        #         if os.path.isdir(os.path.join(pkg_till_common_root, file))
+        #     ]
+
+        #     for directory in directories_for_copy:
+        #         src = os.path.join(pkg_till_common_root, directory)
+        #         srcs = [os.path.join(src, f) for f in os.listdir(src) if f != "__init__.py"]
+
+        #         for src in srcs:
+        #             dest = os.path.join(ns_dir, directory, os.path.basename(src))
+        #             shutil.copytree(src, dest)
+
 
 def get_version_from_config(environment_config):
     with open(os.path.abspath((environment_config)), "r") as f:
@@ -170,7 +185,9 @@ def get_manifest_includes(common_root):
     return breadcrumbs
 
 
-def create_setup_files(build_directory, common_root, artifact_name, service, meta_yaml, environment_config):
+def create_setup_files(
+    build_directory: str, common_root: str, artifact_name: str, service: str, meta_yaml: str, environment_config: str
+) -> None:
     sdist_directory = os.path.join(build_directory, artifact_name)
     setup_location = os.path.join(sdist_directory, "setup.py")
     manifest_location = os.path.join(sdist_directory, "MANIFEST.in")
@@ -198,36 +215,37 @@ def create_setup_files(build_directory, common_root, artifact_name, service, met
 
 
 def create_combined_sdist(
-    output_directory,
-    build_directory,
-    artifact_name,
-    common_root,
-    service,
-    meta_yaml,
-    environment_config,
-):
-    singular_dependency = len(get_pkgs_from_build_directory(build_directory, artifact_name)) == 0
+    conda_build: CondaConfiguration, config_assembly_folder: str, config_assembled_folder: str
+) -> str:
+    # get the meta.yml from the conda-recipes folder for this package name
+    repo_root = discover_repo_root()
+    meta_yml = os.path.join(repo_root, "conda", "conda-recipes", conda_build.name, "meta.yaml")
+    environment_config = os.path.join(repo_root, "conda", "conda-recipes", "conda_env.yml")
 
+    if not os.path.exists(meta_yml):
+        raise ValueError(
+            f"Unable to handle a targeted conda assembly which has no defined meta.yml within conda/conda-recipes/{conda_build.name}."
+        )
+
+    singular_dependency = len(get_pkgs_from_build_directory(config_assembly_folder, conda_build.name)) == 0
     if not singular_dependency:
-        create_sdist_skeleton(build_directory, artifact_name, common_root)
+        create_sdist_skeleton(config_assembly_folder, conda_build.name, conda_build.common_root)
         create_setup_files(
-            build_directory,
-            common_root,
-            artifact_name,
-            service,
-            meta_yaml,
+            config_assembly_folder,
+            conda_build.common_root,
+            conda_build.name,
+            conda_build.service,
+            meta_yml,
             environment_config,
         )
 
-    sdist_location = os.path.join(build_directory, artifact_name)
+    targeted_folder_for_assembly = os.path.join(config_assembly_folder, conda_build.name)
 
-    output_sdist_location = os.path.join(output_directory, "sdist", artifact_name)
+    create_package(targeted_folder_for_assembly, config_assembled_folder)
 
-    create_package(sdist_location, output_sdist_location)
-    output_location = os.path.join(output_sdist_location, os.listdir(output_sdist_location)[0])
+    conda_build.created_sdist_path = os.path.join(config_assembled_folder, os.listdir(config_assembled_folder)[0])
 
-    print("Generated Sdist for artifact {} is present at {}".format(artifact_name, output_location))
-    return output_location
+    print(f"Generated Sdist for artifact {conda_build.name} is present at {conda_build.created_sdist_path}")
 
 
 def get_summary(ci_yml, artifact_name):
@@ -278,7 +296,7 @@ def prep_directory(path: str) -> str:
 
 def invoke_command(command: str, working_directory: str) -> None:
     try:
-        check_call(shlex.split(command), cwd=working_directory)
+        check_call(shlex.split(command), cwd=working_directory, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
     except CalledProcessError as e:
         raise
 
@@ -303,7 +321,7 @@ def get_git_source(
 
 
 def download_pypi_source() -> None:
-    pass
+    raise NotImplementedError("")
 
 
 def get_package_source(checkout_config: CheckoutConfiguration, download_folder: str, assembly_location: str) -> None:
@@ -338,18 +356,19 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
     sdist_assembly_area = prep_directory(os.path.join(repo_root, "conda", "assembly"))
     sdist_download_area = prep_directory(os.path.join(repo_root, "conda", "downloaded"))
 
-    # <Code Location 1> -> /conda/downloaded/run_configuration_package/<downloaded-package-name-1>/
-    # <Code Location 2> -> /conda/downloaded/run_configuration_package/<downloaded-package-name-2>/
     for conda_build in conda_configurations:
+        config_download_folder = prep_directory(os.path.join(sdist_download_area, conda_build.name))
+        config_assembly_folder = prep_directory(os.path.join(sdist_assembly_area, conda_build.name))
+        config_assembled_folder = prep_directory(os.path.join(sdist_output_dir, conda_build.name))
+
+        # <Code Location 1> -> /conda/downloaded/run_configuration_package/<downloaded-package-name-1>/
+        # <Code Location 2> -> /conda/downloaded/run_configuration_package/<downloaded-package-name-2>/
+        # ...
         for checkout_config in conda_build.checkout:
-            checkout_download_location = prep_directory(os.path.join(sdist_download_area, checkout_config.package))
-            checkout_assembly_location = prep_directory(os.path.join(sdist_assembly_area, checkout_config.package))
             print(f"Getting package code for {checkout_config.package}.")
-            get_package_source(checkout_config, checkout_download_location, checkout_assembly_location)
+            get_package_source(checkout_config, config_download_folder, config_assembly_folder)
 
         # the output of above workload is the following folder structure:
-
-        breakpoint()
         #   <sdist_assembly_area>/<conda_configuration_name>
         #       /azure-storage-blob <-- package folder from tag/pypi release download
         #           /setup.py
@@ -358,17 +377,10 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
         #       /azure-storage-file-datalake
         #       /azure-storage-fileshare
 
-        # once we've prepped the source, we can create a combined sdist and create a meta.yml output
-
-        # output_source_location = create_combined_sdist(
-        #     args.distribution_directory,
-        #     args.build_directory,
-        #     args.artifact_name,
-        #     args.common_root,
-        #     args.service,
-        #     args.meta_yml,
-        #     args.environment_config,
-        # )
+        # once we've prepped the source, we can create a combined sdist and meta.yml in the target assembled location
+        conda_build.created_sdist_path = create_combined_sdist(
+            conda_build, config_assembly_folder, config_assembled_folder
+        )
 
 
 def build_conda_packages(conda_configurations):
