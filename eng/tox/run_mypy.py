@@ -17,7 +17,7 @@ from ci_tools.environment_exclusions import (
     is_check_enabled, is_typing_ignored
 )
 from ci_tools.variables import in_ci
-from vnext_issue_creator import create_vnext_issue
+from gh_tools.vnext_issue_creator import create_vnext_issue
 
 
 logging.getLogger().setLevel(logging.INFO)
