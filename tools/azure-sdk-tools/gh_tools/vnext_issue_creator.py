@@ -54,7 +54,7 @@ def get_build_link(check_type: Literal["mypy", "pylint", "pyright"]) -> str:
 
 def get_merge_dates(year: str) -> typing.List[datetime.datetime]:
     """We'll merge the latest version of the type checker/linter quarterly
-    on the Monday after code complete. This function returns those 4 Mondays
+    on the Monday after release week. This function returns those 4 Mondays
     for the given year.
     """
     c = calendar.Calendar(firstweekday=calendar.FRIDAY)
@@ -119,7 +119,7 @@ def create_vnext_issue(package_name: str, check_type: Literal["mypy", "pylint", 
         f"See the {guide_link} for more information."
     )
 
-    # create an issue for the library failing the nvext check
+    # create an issue for the library failing the vnext check
     if not vnext_issue:
         logging.info(f"Issue does not exist for {package_name} with {check_type} version {version}. Creating...")
         repo.create_issue(
