@@ -14,11 +14,13 @@ import os
 import shutil
 import re
 import json
+import shlex
 from typing import List, Any
 from subprocess import check_call
 from ci_tools.variables import discover_repo_root, get_artifact_directory
 
-from .CondaConfiguration import CondaConfiguration
+from .CondaConfiguration import CondaConfiguration, CheckoutConfiguration
+from subprocess import check_call, CalledProcessError
 
 from shutil import rmtree
 
@@ -257,8 +259,40 @@ def prep_directory(path: str) -> str:
     if os.path.exists(path):
         rmtree(path)
 
-    os.mkdir(path)
+    os.makedirs(path)
     return path
+
+def invoke_command(command: str, working_directory: str) -> None:
+    try:
+        check_call(shlex.split(command), cwd=working_directory)
+    except CalledProcessError as e:
+        raise
+        
+        
+
+def get_git_source(assembly_area: str, target_package: str, checkout_path: str, target_version: str) -> None:
+    clone_folder = prep_directory(os.path.join(assembly_area, target_package))
+    invoke_command(f'git clone --no-checkout --filter=tree:0 https://github.com/Azure/azure-sdk-for-python .', clone_folder)
+    invoke_command(f'git config gc.auto 0', clone_folder)
+    invoke_command(f'git sparse-checkout init', clone_folder)
+    invoke_command(f"git sparse-checkout set --no-cone '/*' '!/*/' '/eng'", clone_folder)
+    invoke_command(f'git sparse-checkout add "{checkout_path}"', clone_folder)
+    invoke_command(f'git -c advice.detachedHead=false checkout {target_package}_{target_version}', clone_folder)
+
+def download_pypi_source() -> None:
+    pass
+
+def get_package_source(checkout_config: CheckoutConfiguration, assembly_area: str) -> None:
+    if checkout_config.download_uri:
+        # we need to download from pypi
+        print("Must download")
+
+    elif checkout_config.checkout_path:
+        get_git_source(assembly_area, checkout_config.package, checkout_config.checkout_path, checkout_config.version)
+    else:
+        raise ValueError("Unable to handle a checkoutConfiguraiton that doesn't git clone OR download from pypi for sdist code.")
+
+    pass
 
 
 def assemble_source(run_configurations: List[CondaConfiguration], repo_root: str) -> None:
@@ -269,7 +303,11 @@ def assemble_source(run_configurations: List[CondaConfiguration], repo_root: str
     sdist_assembly_area = prep_directory(os.path.join(repo_root, "conda", "assembly_area"))
 
     for conda_build in run_configurations:
-        breakpoint()
+        for checkout_config in conda_build.checkout:
+            print(f"Getting package code for {checkout_config.package}.")
+            get_package_source(checkout_config, sdist_assembly_area)
+        
+        # build here, output to sdist_output_dir
 
 
 

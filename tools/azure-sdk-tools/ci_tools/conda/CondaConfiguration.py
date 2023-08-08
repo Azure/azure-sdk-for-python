@@ -50,21 +50,21 @@ class CheckoutConfiguration:
         else:
             self.version = None
 
-        if "download_path" in raw_json:
-            self.download_path = raw_json["download_path"]
+        if "download_uri" in raw_json:
+            self.download_uri = raw_json["download_uri"]
         else:
-            self.download_path = None
+            self.download_uri = None
 
-        if not self.checkout_path and not self.download_path:
+        if not self.checkout_path and not self.download_uri:
             raise ValueError(
                 "When defining a checkout configuration, one must either have a valid PyPI download url"
-                " (download_path) or a path and version in the repo (checkout_path, version)."
+                " (download_uri) or a path and version in the repo (checkout_path, version)."
             )
 
     def __str__(self) -> str:
-        if self.download_path:
+        if self.download_uri:
             return f"""- {self.package} downloaded from pypi
-  {self.download_path}"""
+  {self.download_uri}"""
         else:
             return f"""- {self.package} from cloned source
   {self.checkout_path}
@@ -80,11 +80,12 @@ def parse_checkout_config(checkout_configs: List[Any]) -> List[CheckoutConfigura
 
 
 class CondaConfiguration:
-    def __init__(self, name: str, common_root: str, in_batch: bool, checkout: List[CheckoutConfiguration]):
+    def __init__(self, name: str, common_root: str, in_batch: bool, checkout: List[CheckoutConfiguration], created_sdist_path: str = ""):
         self.name = name
         self.common_root = common_root
         self.in_batch = in_batch
         self.checkout = checkout
+        self.created_sdist_path = created_sdist_path
 
     @classmethod
     def from_json(cls, raw_json_blob: dict):
