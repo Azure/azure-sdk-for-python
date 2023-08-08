@@ -55,7 +55,8 @@ _azci_*.log
 .logs
 .proxy
 conda/output/
-conda/assembly_area/
+conda/download/
+conda/assembly/
 conda/assembled/
 
 # tox environment folders

@@ -1,5 +1,6 @@
 from typing import List, Any
 import os
+from ci_tools.functions import str_to_bool
 
 # arguments: |
 #       -c "${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}"
@@ -66,9 +67,7 @@ class CheckoutConfiguration:
             return f"""- {self.package} downloaded from pypi
   {self.download_uri}"""
         else:
-            return f"""- {self.package} from cloned source
-  {self.checkout_path}
-  {self.version}"""
+            return f"""- {self.checkout_path}/{self.package} from git @ {self.version}"""
 
 
 def parse_checkout_config(checkout_configs: List[Any]) -> List[CheckoutConfiguration]:
@@ -88,17 +87,17 @@ class CondaConfiguration:
         checkout: List[CheckoutConfiguration],
         created_sdist_path: str = "",
     ):
-        self.name = name
-        self.common_root = common_root
-        self.in_batch = in_batch
-        self.checkout = checkout
-        self.created_sdist_path = created_sdist_path
+        self.name: str = name
+        self.common_root: str = common_root
+        self.in_batch: bool = in_batch
+        self.checkout: List[CheckoutConfiguration] = checkout
+        self.created_sdist_path: str = created_sdist_path
 
     @classmethod
     def from_json(cls, raw_json_blob: dict):
         name = raw_json_blob["name"]
         common_root = raw_json_blob["common_root"] if raw_json_blob["common_root"] else "azure"
-        in_batch = raw_json_blob["in_batch"]
+        in_batch = str_to_bool(raw_json_blob["in_batch"])
         checkout_config = parse_checkout_config(raw_json_blob["checkout"])
 
         return cls(name, common_root, in_batch, checkout_config)
@@ -110,8 +109,7 @@ class CondaConfiguration:
 \"{self.name}\" generated from:
 {checkout}
 ====================================
-
-        """
+"""
 
     def prepare_local_folder(self) -> None:
         pass

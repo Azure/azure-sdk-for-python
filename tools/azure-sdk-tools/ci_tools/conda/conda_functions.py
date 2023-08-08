@@ -21,7 +21,7 @@ import stat
 from shutil import rmtree
 from typing import List, Any
 from subprocess import check_call
-from ci_tools.variables import discover_repo_root, get_artifact_directory
+from ci_tools.variables import discover_repo_root, get_artifact_directory, in_ci
 from subprocess import check_call, CalledProcessError
 
 from .CondaConfiguration import CondaConfiguration, CheckoutConfiguration
@@ -265,7 +265,7 @@ def output_workload(
         print("These packages have been EXCLUDED:")
 
         for config in excluded_configurations:
-            print(config)
+            print(f"- {config.name}")
 
 
 def prep_directory(path: str) -> str:
@@ -306,15 +306,18 @@ def download_pypi_source() -> None:
     pass
 
 
-def get_package_source(checkout_config: CheckoutConfiguration, assembly_area: str, assembled_code_area: str) -> None:
+def get_package_source(checkout_config: CheckoutConfiguration, download_folder: str, assembly_location: str) -> None:
+    """
+    To create a source distribution of
+    """
     if checkout_config.download_uri:
         # we need to download from pypi
         print("Must download")
 
     elif checkout_config.checkout_path:
         get_git_source(
-            assembly_area,
-            assembled_code_area,
+            download_folder,
+            assembly_location,
             checkout_config.package,
             checkout_config.checkout_path,
             checkout_config.version,
@@ -327,20 +330,48 @@ def get_package_source(checkout_config: CheckoutConfiguration, assembly_area: st
     pass
 
 
-def assemble_source(run_configurations: List[CondaConfiguration], repo_root: str) -> None:
+def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: str) -> None:
     """If given a common root/package, this function will be used to clone slices of the azure-sdk-for-python repo and to download packages as they were at release.
     If given an https:// url, will instead attempt to download and unzip a package tar.gz.
     """
     sdist_output_dir = prep_directory(os.path.join(repo_root, "conda", "assembled"))
-    sdist_assembly_area = prep_directory(os.path.join(repo_root, "conda", "assembly_area"))
+    sdist_assembly_area = prep_directory(os.path.join(repo_root, "conda", "assembly"))
+    sdist_download_area = prep_directory(os.path.join(repo_root, "conda", "downloaded"))
 
-    for conda_build in run_configurations:
+    # <Code Location 1> -> /conda/downloaded/run_configuration_package/<downloaded-package-name-1>/
+    # <Code Location 2> -> /conda/downloaded/run_configuration_package/<downloaded-package-name-2>/
+    for conda_build in conda_configurations:
         for checkout_config in conda_build.checkout:
+            checkout_download_location = prep_directory(os.path.join(sdist_download_area, checkout_config.package))
+            checkout_assembly_location = prep_directory(os.path.join(sdist_assembly_area, checkout_config.package))
             print(f"Getting package code for {checkout_config.package}.")
-            get_package_source(checkout_config, sdist_assembly_area, sdist_output_dir)
+            get_package_source(checkout_config, checkout_download_location, checkout_assembly_location)
+
+        # the output of above workload is the following folder structure:
+
+        breakpoint()
+        #   <sdist_assembly_area>/<conda_configuration_name>
+        #       /azure-storage-blob <-- package folder from tag/pypi release download
+        #           /setup.py
+        #           /...
+        #       /azure-storage-queue
+        #       /azure-storage-file-datalake
+        #       /azure-storage-fileshare
+
+        # once we've prepped the source, we can create a combined sdist and create a meta.yml output
+
+        # output_source_location = create_combined_sdist(
+        #     args.distribution_directory,
+        #     args.build_directory,
+        #     args.artifact_name,
+        #     args.common_root,
+        #     args.service,
+        #     args.meta_yml,
+        #     args.environment_config,
+        # )
 
 
-def build_conda_packages(run_configurations):
+def build_conda_packages(conda_configurations):
     """Conda builds each individually assembled conda package folder."""
     pass
 
@@ -378,18 +409,13 @@ def entrypoint():
         else:
             excluded_configurations.append(config)
 
+    # dump our configuration for viewing in CI
     output_workload(run_configurations, excluded_configurations)
 
+    if not in_ci():
+        input("Press any key to continue building the above packages.")
+
+    # download all necessary source code to create source distributions
     assemble_source(run_configurations, repo_root)
 
     # build_conda_packages(json_config)
-
-    # output_source_location = create_combined_sdist(
-    #     args.distribution_directory,
-    #     args.build_directory,
-    #     args.artifact_name,
-    #     args.common_root,
-    #     args.service,
-    #     args.meta_yml,
-    #     args.environment_config,
-    # )
