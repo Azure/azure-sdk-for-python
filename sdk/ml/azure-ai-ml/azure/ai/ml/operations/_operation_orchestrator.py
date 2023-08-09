@@ -419,7 +419,8 @@ class OperationOrchestrator(object):
         :type aml_id: str
         :param azureml_type: The AzureML resource type. Defined in AzureMLResourceType.
         :type azureml_type: str
-        :returns: Returns tuple (name, version) on success, (name@label, None) if resolution fails
+        :return: Returns tuple (name, version) on success, (name@label, None) if resolution fails
+        :rtype: Tuple[str, Optional[str]]
         """
         name, label = parse_name_label(aml_id)
         if (

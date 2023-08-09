@@ -298,7 +298,8 @@ class BlobStorageClient:
 
         :param str blobpath: prefix matched against blob names
         :param str delimiter: The path delimeter (defaults to /)
-        :return bool: True if file or virtual directory exists, False otherwise
+        :return: True if file or virtual directory exists, False otherwise
+        :rtype: bool
         """
         if self.container_client.get_blob_client(blobpath).exists():
             return True
@@ -321,7 +322,8 @@ def _blob_is_hdi_folder(blob: "BlobProperties") -> bool:
     specifying that it is actually a folder.
 
     :param BlobProperties blob: Blob to check
-    :return bool: True if blob represents a folder, False otherwise
+    :return: True if blob represents a folder, False otherwise
+    :rtype: bool
     """
 
     # Metadata isn't always a populated field, and may need to be explicitly

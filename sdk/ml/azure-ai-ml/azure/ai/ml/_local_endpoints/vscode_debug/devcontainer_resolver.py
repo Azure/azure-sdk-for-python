@@ -5,7 +5,7 @@
 
 import json
 from pathlib import Path
-from typing import Optional
+from typing import Dict, List, Optional
 
 from azure.ai.ml._local_endpoints.utilities.wsl_utility import get_wsl_path, in_wsl
 from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_properties import (
@@ -127,20 +127,24 @@ class DevContainerResolver:
             f.write(f"{json.dumps(self._properties, indent=4)}\n")
 
 
-def _reformat_mounts(mounts: dict) -> list:
+def _reformat_mounts(mounts: Dict[str, Dict[str, Dict[str, str]]]) -> List[str]:
     """Reformat mounts from Docker format to DevContainer format.
 
-    :param mounts: Dictionary with mount information for Docker container. For example,
-        {
-            "<unique mount key>": {
-                "<local_source>": {
-                    "<mount type i.e. bind>": "<container_dest>"
+    :param mounts: Dictionary with mount information for Docker container. For example:
+        .. code-block:: python
+
+            {
+                "<unique mount key>": {
+                    "<local_source>": {
+                        "<mount type i.e. bind>": "<container_dest>"
+                    }
                 }
             }
-        }
+
     :type mounts: dict
-    :returns dict: "mounts": ["source=${localWorkspaceFolder}/app-scripts,
-        target=/usr/local/share/app-scripts,type=bind,consistency=cached"]
+    :return:
+       ["source=${localWorkspaceFolder}/app-scripts, target=/usr/local/share/app-scripts,type=bind,consistency=cached"]
+    :rtype: List[str]
     """
     devcontainer_mounts = []
     for mount_dict in mounts.values():
@@ -150,16 +154,20 @@ def _reformat_mounts(mounts: dict) -> list:
     return devcontainer_mounts
 
 
-def _reformat_labels(labels: dict) -> list:
+def _reformat_labels(labels: Dict[str, str]) -> List[str]:
     """Reformat labels from Docker format to DevContainer format.
 
-    :param labels: Dictionary with label information for Docker container. For example,
-        {
-            "key": "value",
-            "key1": "value1"
-        }
-    :type labels: dict
-    :returns dict: ["--label=key=value", "--label=key1=value1"]
+    :param labels: Dictionary with label information for Docker container. For example:
+        .. code-block:: python
+
+            {
+                "key": "value",
+                "key1": "value1"
+            }
+
+    :type labels: Dict[str, str]
+    :return: ["--label=key=value", "--label=key1=value1"]
+    :rtype: List[str]
     """
     devcontainer_labels = []
     for key, value in labels.items():

@@ -351,7 +351,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :param raise_on_failure: Whether to raise exception on validation error. Defaults to False
         :type raise_on_failure: bool, optional
         :return: All validation errors
-        :type: ~azure.ai.ml.entities.ValidationResult
+        :rtype: ~azure.ai.ml.entities.ValidationResult
         """
         return self._validate(
             component,

@@ -111,7 +111,8 @@ class _LocalDeploymentHelper(object):
         :type deployment_name: str
         :param lines: Number of most recent lines from container logs.
         :type lines: int
-        :return: str
+        :return: The deployment logs
+        :rtype: str
         """
         return self._docker_client.logs(endpoint_name=endpoint_name, deployment_name=deployment_name, lines=lines)
 
@@ -122,7 +123,8 @@ class _LocalDeploymentHelper(object):
         :type endpoint_name: str
         :param deployment_name: Name of deployment.
         :type deployment_name: str
-        :return OnlineDeployment:
+        :return: The deployment
+        :rtype: OnlineDeployment
         """
         container = self._docker_client.get_endpoint_container(
             endpoint_name=endpoint_name,
@@ -310,7 +312,8 @@ def _convert_container_to_deployment(container: "docker.models.containers.Contai
 
     :param container: Container for a local deployment.
     :type container: docker.models.containers.Container
-    :returns OnlineDeployment entity:
+    :return: The OnlineDeployment entity
+    :rtype: OnlineDeployment
     """
     deployment_json = get_deployment_json_from_container(container=container)
     provisioning_state = get_status_from_container(container=container)
@@ -347,7 +350,8 @@ def _convert_json_to_deployment(deployment_json: dict, **kwargs) -> OnlineDeploy
 
     :param deployment_json: dictionary representation of OnlineDeployment entity.
     :type deployment_json: dict
-    :returns OnlineDeployment entity:
+    :returns: The OnlineDeployment entity
+    :rtype: OnlineDeployment
     """
     params_override = []
     for k, v in kwargs.items():

@@ -87,8 +87,8 @@ class VirtualMachineCompute(Compute):
     def public_key_data(self) -> str:
         """Public key data.
 
-        return: Public key data.
-        rtype: str
+        :return: Public key data.
+        :rtype: str
         """
         return self._public_key_data
 

@@ -51,7 +51,8 @@ def _request_function(f: Callable[["HttpPipeline"], None]):
             All other kwargs are forwarded to azure.core.Pipeline.run
 
             :keyword bool stream: Whether to stream the response, defaults to False
-            :return HttpResponse:
+            :return: The request response
+            :rtype: HttpResponse
             """
             request = HttpRequest(
                 f.__name__.upper(),

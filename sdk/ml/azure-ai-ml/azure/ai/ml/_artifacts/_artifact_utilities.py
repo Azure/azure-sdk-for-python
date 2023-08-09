@@ -326,13 +326,14 @@ def download_artifact_from_storage_url(
     )
 
 
-def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operation: DatastoreOperations):
+def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operation: DatastoreOperations) -> str:
     """Downloads artifact pointed to by URI of the form `azureml://...` to destination.
 
     :param str uri: AzureML uri of artifact to download
     :param str destination: Path to download artifact to
     :param DatastoreOperations datastore_operation: datastore operations
-    :return str: Path that files were downloaded to
+    :return: Path that files were downloaded to
+    :rtype: str
     """
     parsed_uri = AzureMLDatastorePathUri(uri)
     return download_artifact(

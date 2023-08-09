@@ -406,7 +406,8 @@ def _deserialize(
     :type input: Union[str, os.PathLike, Dict[str, str]]
     :param is_conda: If file is conda file, it will be returned as dictionary
     :type is_conda: bool
-    :return: Union[str, Dict]
+    :return: The deserialized data
+    :rtype: Union[str, Dict]
     """
 
     if input:

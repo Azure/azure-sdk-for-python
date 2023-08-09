@@ -78,7 +78,8 @@ class _LocalEndpointHelper(object):
         :type data: dict
         :param deployment_name: Name of specific deployment to invoke.
         :type deployment_name: (str, optional)
-        :return: str
+        :return: The text response
+        :rtype: str
         """
         # get_scoring_uri will throw user error if there are multiple deployments and no deployment_name is specified
         scoring_uri = self._docker_client.get_scoring_uri(endpoint_name=endpoint_name, deployment_name=deployment_name)
@@ -194,7 +195,8 @@ def _convert_json_to_endpoint(endpoint_json: dict, **kwargs) -> OnlineEndpoint:
 
     :param endpoint_json: dictionary representation of OnlineEndpoint entity.
     :type endpoint_json: dict
-    :returns OnlineEndpoint entity:
+    :return: The OnlineEndpoint entity
+    :rtype: OnlineEndpoint
     """
     params_override = []
     for k, v in kwargs.items():

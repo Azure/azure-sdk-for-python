@@ -71,7 +71,8 @@ class DockerfileResolver(object):
     def __str__(self) -> str:
         """Override DockerfileResolver str() built-in func to return the Dockerfile contents as a string.
 
-        :return: str
+        :return: Dockerfile Contents
+        :rtype: str
         """
         return "" if len(self._instructions) == 0 else "\n".join([str(instr) for instr in self._instructions])
 

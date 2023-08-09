@@ -390,8 +390,8 @@ class SchemaValidatableMixin:
     def _create_schema_for_validation(cls, context) -> PathAwareSchema:
         """Create a schema of the resource with specific context. Should be overridden by subclass.
 
-        :return: The schema of the resource.
-        :return type: PathAwareSchema. PathAwareSchema will add marshmallow.Schema as super class on runtime.
+        :return: The schema of the resource. PathAwareSchema will add marshmallow.Schema as super class on runtime.
+        :rtype: PathAwareSchema.
         """
         raise NotImplementedError()
 
