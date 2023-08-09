@@ -35,7 +35,7 @@ class LakeHouseArtifact(OneLakeArtifact):
         artifact_name: str
     ):
         self.artifact_name = artifact_name
-        self.artifact_type = "LakeHouse"
+        self.artifact_type = "lake_house"
 
     def _to_datastore_rest_object(self) -> RestLakeHouseArtifact:
         return RestLakeHouseArtifact(artifact_name=self.artifact_name)
@@ -109,7 +109,7 @@ class OneLakeDatastore(Datastore):
         return OneLakeDatastore(
             name=datastore_resource.name,
             id=datastore_resource.id,
-            artifact=properties.artifact,
+            artifact=LakeHouseArtifact(artifact_name=properties.artifact.artifact_name),
             one_lake_workspace_name=properties.one_lake_workspace_name,
             endpoint=properties.endpoint,
             credentials=from_rest_datastore_credentials(properties.credentials),
@@ -121,7 +121,8 @@ class OneLakeDatastore(Datastore):
         return (
             super().__eq__(other)
             and self.one_lake_workspace_name == other.one_lake_workspace_name
-            and self.artifact == other.artifact
+            and self.artifact.artifact_type == other.artifact['artifact_type']
+            and self.artifact.artifact_name == other.artifact['artifact_name']
             and self.endpoint == other.endpoint
         )
 
