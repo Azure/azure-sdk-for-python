@@ -40,9 +40,20 @@ After customer finalized a flow in prompt-flow, they may want to integrate it wi
   
   @dsl.pipeline
   def pipeline_with_flow(job_input):
+      # you can use it as an anonymous component in dsl component directly
       flow_node = flow_component(data=job_input)
+      flow_node.compute = "cpu-cluster"
       flow_node.logging_level = "DEBUG"
       return {"job_output": flow_node.outputs.flow_outputs}
+
+  pipeline_job = pipeline_with_flow(job_input=Input(path="../data/flow_input"))
+  ml_client.jobs.create_or_update(pipeline_job)
+
+  # you can also register this component with specific name & version
+  # if name is not found in source files, it must be set before registration and will be validated
+  flow_component.name = "basic-standard-flow"
+  # version must be provided in registration
+  ml_client.components.create_or_update(flow_component, version="2")
   ```
 
   - CLI experience
@@ -78,29 +89,33 @@ After customer finalized a flow in prompt-flow, they may want to integrate it wi
 1. the table cell will be the dot key of corresponding attribute; will fill with `-` if not supported
 2. fields will always load wit priority: `load_component` > `run.yaml` > `flag.dag.yaml` > `default value`
 
-| Field Name                                                   | load_component                   | run.yaml                                           | flow.dag.yaml                                            | default value                                                | comment                                                      |
-| ------------------------------------------------------------ | -------------------------------- | -------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| **Run Blocker**                                              |                                  |                                                    |                                                          |                                                              |                                                              |
-| type                                                         | type                             | -                                                  | -                                                        | parallel                                                     | can be inferred from `node.type` in `pipeline.yaml`; **`type` is not a valid param for `load_component` on regular components** |
-| additional_includes                                          | -                                | -                                                  | additional_includes                                      | -                                                            | **v2 sdk need to understand the addtional_includes in dag.yaml to build code snapshot** |
-| variant                                                      | -                                | variant                                            | -                                                        | -                                                            |                                                              |
-|                                                              |                                  |                                                    |                                                          |                                                              |                                                              |
-| task.environment/environment                                 | -                                | -                                                  | environment                                              | latest public prompt-flow runtime image                      |                                                              |
-| is_deterministic                                             | params_override.is_deterministic | -                                                  | -                                                        | True                                                         |                                                              |
-| code                                                         | -                                | -                                                  | -                                                        | parent of `flow.dag.yaml`                                    |                                                              |
-| **Better to have**                                           |                                  |                                                    |                                                          |                                                              |                                                              |
-| name (display on UX)                                         | name                             | name                                               | name                                                     | azureml_anonymous                                            |                                                              |
-| version                                                      | version                          | -                                                  | -                                                        | hash value if name is not provided; auto-increment if name is provided; raise exception if auto-increment failed | `version` must be provided along with `name`                 |
-| display_name                                                 | params_override.display_name     | display_name                                       | display_name                                             | -                                                            |                                                              |
-| description                                                  | params_override.description      | description                                        | description                                              | -                                                            |                                                              |
-| properties                                                   | params_override.properties       | properties                                         | properties                                               | -                                                            |                                                              |
-| tags                                                         | params_override.tags             | tags                                               | tags                                                     | -                                                            |                                                              |
-| inputs.<input_name>.default                                  | -                                | columns_mapping.<input_name>                       | inputs.<input_name>.default                              | -                                                            |                                                              |
-| inputs.<input_name>.description                              | -                                | -                                                  | inputs.<input_name>.description                          | -                                                            |                                                              |
-| inputs.connections.<node_name>.connection/deployment_name.default | -                                | connections.<node_name>.connection/deployment_name | nodes.<node_name>.connection/deployment_name.default     | -                                                            |                                                              |
-| inputs.connections.<node_name>.connection/deployment_name.description | -                                | -                                                  | nodes.<node_name>.connection/deployment_name.description | -                                                            |                                                              |
-| **Need to discuss**                                          |                                  |                                                    |                                                          |                                                              |                                                              |
-| runtime                                                      | -                                | runtime                                            | -                                                        | -                                                            | will raise exception if runtime is not provided and no `flow.tools.json` is under flow directory |
+| Field Name                                                   | load_component                   | run.yaml                                           | flow.dag.yaml                                            | default value             |
+| ------------------------------------------------------------ | -------------------------------- | -------------------------------------------------- | -------------------------------------------------------- | ------------------------- |
+| **Run Blocker**                                              |                                  |                                                    |                                                          |                           |
+| type                                                         | type                             | -                                                  | -                                                        | parallel                  |
+| additional_includes                                          | -                                | -                                                  | additional_includes                                      | -                         |
+| variant                                                      | -                                | variant                                            | -                                                        | -                         |
+| task.environment/environment                                 | -                                | -                                                  | environment                                              | latest                    |
+| is_deterministic                                             | params_override.is_deterministic | -                                                  | -                                                        | True                      |
+| code                                                         | -                                | -                                                  | -                                                        | parent of `flow.dag.yaml` |
+| **Better to have**                                           |                                  |                                                    |                                                          |                           |
+| name (display on UX)                                         | name                             | name                                               | name                                                     | azureml_anonymous_flow    |
+| version                                                      | version                          | -                                                  | -                                                        | hash value/-              |
+| display_name                                                 | params_override.display_name     | display_name                                       | display_name                                             | -                         |
+| description                                                  | params_override.description      | description                                        | description                                              | -                         |
+| properties                                                   | params_override.properties       | properties                                         | properties                                               | -                         |
+| tags                                                         | params_override.tags             | tags                                               | tags                                                     | -                         |
+| inputs.<input_name>.default                                  | -                                | columns_mapping.<input_name>                       | inputs.<input_name>.default                              | -                         |
+| inputs.<input_name>.description                              | -                                | -                                                  | inputs.<input_name>.description                          | -                         |
+| inputs.connections.<node_name>.connection/deployment_name.default | -                                | connections.<node_name>.connection/deployment_name | nodes.<node_name>.connection/deployment_name.default     | -                         |
+| inputs.connections.<node_name>.connection/deployment_name.description | -                                | -                                                  | nodes.<node_name>.connection/deployment_name.description | -                         |
+| **Need to discuss**                                          |                                  |                                                    |                                                          |                           |
+| runtime                                                      | -                                | runtime                                            | -                                                        | -                         |
+
++ component type can be inferred from `node.type` in `pipeline.yaml`; **`type` is not a valid param for `load_component` on regular components**
++ **v2 sdk need to understand the addtional_includes in dag.yaml to build code snapshot**
++ will raise exception if runtime is not provided and no `flow.tools.json` is under flow directory
++ in consumption, `name` will be fixed and `version` will be a hash value; in registration, both `name` and `version` must be provided
 
 ### Changes Needed
 
@@ -122,3 +137,5 @@ After customer finalized a flow in prompt-flow, they may want to integrate it wi
    2. option 2: display `name` provided by `flow.dag.yaml` or `run.yaml` in UX, but only use them to register the component when explicitly calling `ml_client.components.create_or_update` or `az ml component create`; Use anonymous name and hash version for component registration in other cases
       1. this is more align with behavior of v2 regular components
       2. this required a MT change
+2. `version` management for registered flow components
+   1. in current design, user must specify `version` in component registration. They can use `skip_if_no_diff` to avoid duplicate component registration; but they still need to maintain the version by themselves as auto-increment is not supported for now.
