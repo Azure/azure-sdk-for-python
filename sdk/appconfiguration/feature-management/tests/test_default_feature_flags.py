@@ -14,7 +14,6 @@ class TestDefaultFeatureFlags(AzureRecordedTestCase):
             "FeatureFlags": [
                 {
                     "id": "Target",
-                    "description": "",
                     "enabled": "true",
                     "conditions": {
                         "client_filters": [
