@@ -21,10 +21,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         ) as client:
             assert client.get("message") == "hi"
             assert client["my_json"]["key"] == "value"
-            assert (
-                client["FeatureManagement"]["Alpha"]
-                == '{"enabled": false, "conditions": {"client_filters": []}}'
-            )
+            assert client["FeatureManagement"]["Alpha"] == '{"enabled": false, "conditions": {"client_filters": []}}'
 
     # method: provider_trim_prefixes
     @app_config_decorator_async
@@ -40,10 +37,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert client["my_json"]["key"] == "value"
             assert client["trimmed"] == "key"
             assert "test.trimmed" not in client
-            assert (
-                client["FeatureManagement"]["Alpha"]
-                == '{"enabled": false, "conditions": {"client_filters": []}}'
-            )
+            assert client["FeatureManagement"]["Alpha"] == '{"enabled": false, "conditions": {"client_filters": []}}'
 
     # method: provider_selectors
     @app_config_decorator_async

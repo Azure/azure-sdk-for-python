@@ -25,10 +25,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         )
         assert client["refresh_message"] == "original value"
         assert client["my_json"]["key"] == "value"
-        assert (
-            client["FeatureManagement"]["Alpha"]
-            == '{"enabled": false, "conditions": {"client_filters": []}}'
-        )
+        assert client["FeatureManagement"]["Alpha"] == '{"enabled": false, "conditions": {"client_filters": []}}'
         setting = client._client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"
         client._client.set_configuration_setting(setting)
@@ -71,10 +68,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         assert client["refresh_message"] == "original value"
         assert client["non_refreshed_message"] == "Static"
         assert client["my_json"]["key"] == "value"
-        assert (
-            client["FeatureManagement"]["Alpha"]
-            == '{"enabled": false, "conditions": {"client_filters": []}}'
-        )
+        assert client["FeatureManagement"]["Alpha"] == '{"enabled": false, "conditions": {"client_filters": []}}'
         setting = client._client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"
         client._client.set_configuration_setting(setting)
