@@ -347,6 +347,44 @@ class MiscConfigurationOptions(object):
         )
         # [END ssh_job_service_configuration]
 
+        # [START model_operations_create_or_update]
+        from azure.ai.ml.entities._assets._artifacts.model import Model
+
+        model_example = Model("new-model")
+        ml_client.models.create_or_update(model_example)
+        # [END model_operations_create_or_update]
+
+        # [START model_operations_get]
+        ml_client.models.get("model-name", "2.0")
+        # [END model_operations_get]
+
+        # [START model_operations_download]
+        ml_client.models.download("model-name", "2.0", "/path/to/files")
+        # [END model_operations_download]
+
+        # [START model_operations_archive]
+        ml_client.models.archive("model-name", "2.0")
+        # [END model_operations_archive]
+
+        # [START model_operations_restore]
+        ml_client.models.restore("model-name", "2.0")
+        # [END model_operations_restore]
+
+        # [START model_operations_list]
+        ml_client.models.list("model-name", "model-stage")
+        # [END model_operations_list]
+
+        # [START model_operations_share]
+        ml_client.models.share("model-name", "2.0")
+        # [END model_operations_share]
+
+        # [START model_operations_package]
+        from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackage
+
+        model_package_example = ModelPackage("target-environment-name")
+        ml_client.models.package(model_package_example)
+        # [END model_operations_package]
+
         # [START validation_result]
         """For example, if repr(self) is:
         ```python
