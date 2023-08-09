@@ -5,9 +5,6 @@ parameters:
   - name: Artifacts
     type: object
     default: []
-  - name: CondaArtifacts
-    type: object
-    default: []
   - name: TestPipeline
     type: boolean
     default: false

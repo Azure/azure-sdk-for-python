@@ -7,6 +7,7 @@ parameters:
   displayName: 'azure-storage'
   type: boolean
   default: true
+  # continue to add for each of the possible packages
 
 variables:
   - template: /eng/pipelines/templates/variables/globals.yml
