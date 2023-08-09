@@ -9,6 +9,8 @@ import re
 from os import PathLike
 from typing import Any, Optional, Tuple, Union
 
+from typing_extensions import Protocol
+
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context, _check_and_upload_path
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._utils._arm_id_utils import (
@@ -523,3 +525,36 @@ class OperationOrchestrator(object):
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
                 ) from e
+
+
+class _AssetResolver(Protocol):
+    """Describes the type of a function used by operation classes like :py:class:`JobOperations` and
+    :py:class:`ComponentOperations` to resolve Assets
+
+    .. see-also:: methods :py:method:`OperationOrchestrator.get_asset_arm_id`,
+            :py:method:`OperationOrchestrator.resolve_azureml_id`
+
+    """
+
+    def __call__(
+        self,
+        asset: Optional[Union[str, Asset]],
+        azureml_type: str,
+        register_asset: bool = True,
+        sub_workspace_resource: bool = True,
+    ) -> Optional[Union[str, Asset]]:
+        """Resolver function
+
+        :param asset: The asset to resolve/register. It can be a ARM id or a entity's object.
+        :type asset: Optional[Union[str, Asset]]
+        :param azureml_type: The AzureML resource type. Defined in AzureMLResourceType.
+        :type azureml_type: str
+        :param register_asset: Indicates if the asset should be registered, defaults to True.
+        :type register_asset: Optional[bool]
+        :param sub_workspace_resource:
+        :type sub_workspace_resource: Optional[bool]
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if asset's ID cannot be converted
+            or asset cannot be successfully registered.
+        :return: The ARM Id or entity object
+        :rtype: Optional[Union[str, ~azure.ai.ml.entities.Asset]]
+        """

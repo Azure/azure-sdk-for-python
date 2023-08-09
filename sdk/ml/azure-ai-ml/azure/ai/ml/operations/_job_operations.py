@@ -7,7 +7,7 @@ import json
 import os.path
 from os import PathLike
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Union
 
 import jwt
 from azure.core.credentials import TokenCredential
@@ -106,6 +106,7 @@ from ._job_ops_helper import get_git_properties, get_job_output_uris_from_datapl
 from ._local_job_invoker import is_local_run, start_run_if_local
 from ._model_dataplane_operations import ModelDataplaneOperations
 from ._operation_orchestrator import (
+    _AssetResolver,
     OperationOrchestrator,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
@@ -1066,7 +1067,7 @@ class JobOperations(_ScopeDependentOperations):
         self._resolve_job_inputs_arm_id(job)
         return self._resolve_arm_id_or_azureml_id(job, self._orchestrators.resolve_azureml_id)
 
-    def _resolve_compute_id(self, resolver: Callable, target: Any) -> Any:
+    def _resolve_compute_id(self, resolver: _AssetResolver, target: Any) -> Any:
         # special case for local runs
         if target is not None and target.lower() == LOCAL_COMPUTE_TARGET:
             return LOCAL_COMPUTE_TARGET
@@ -1241,10 +1242,14 @@ class JobOperations(_ScopeDependentOperations):
             # If the job object doesn't have "inputs" attribute, we don't need to resolve. E.g. AutoML jobs
             pass
 
-    def _resolve_arm_id_or_azureml_id(self, job: Job, resolver: Callable) -> Job:
+    def _resolve_arm_id_or_azureml_id(self, job: Job, resolver: _AssetResolver) -> Job:
         """Resolve arm_id for a given job.
 
 
+        :param job: The job
+        :type job: Job
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
         :return: The provided job, with fields resolved to full ARM IDs
         :rtype: Job
         """
@@ -1278,10 +1283,14 @@ class JobOperations(_ScopeDependentOperations):
             )
         return job
 
-    def _resolve_arm_id_for_command_job(self, job: Command, resolver: Callable) -> Command:
+    def _resolve_arm_id_for_command_job(self, job: Command, resolver: _AssetResolver) -> Command:
         """Resolve arm_id for CommandJob.
 
 
+        :param job: The Command job
+        :type job: Command
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
         :return: The provided Command job, with resolved fields
         :rtype: Command
         """
@@ -1304,9 +1313,13 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_spark_job(self, job: Spark, resolver: Callable) -> Spark:
+    def _resolve_arm_id_for_spark_job(self, job: Spark, resolver: _AssetResolver) -> Spark:
         """Resolve arm_id for SparkJob.
 
+        :param job: The Spark job
+        :type job: Spark
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
         :return: The provided SparkJob, with resolved fields
         :rtype: Spark
         """
@@ -1328,9 +1341,13 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_import_job(self, job: ImportJob, resolver: Callable) -> ImportJob:
+    def _resolve_arm_id_for_import_job(self, job: ImportJob, resolver: _AssetResolver) -> ImportJob:
         """Resolve arm_id for ImportJob.
 
+        :param job: The Import job
+        :type job: ImportJob
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
         :return: The provided ImportJob, with resolved fields
         :rtype: ImportJob
         """
@@ -1342,9 +1359,13 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, ComputeType.ADF)
         return job
 
-    def _resolve_arm_id_for_parallel_job(self, job: ParallelJob, resolver: Callable) -> ParallelJob:
+    def _resolve_arm_id_for_parallel_job(self, job: ParallelJob, resolver: _AssetResolver) -> ParallelJob:
         """Resolve arm_id for ParallelJob.
 
+        :param job: The Parallel job
+        :type job: ParallelJob
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
         :return: The provided ParallelJob, with resolved fields
         :rtype: ParallelJob
         """
@@ -1357,9 +1378,13 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_sweep_job(self, job: SweepJob, resolver: Callable) -> SweepJob:
+    def _resolve_arm_id_for_sweep_job(self, job: SweepJob, resolver: _AssetResolver) -> SweepJob:
         """Resolve arm_id for SweepJob.
 
+        :param job: The Sweep job
+        :type job: SweepJob
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
         :return: The provided SweepJob, with resolved fields
         :rtype: SweepJob
         """
@@ -1372,9 +1397,17 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, job.compute)
         return job
 
-    def _resolve_arm_id_for_automl_job(self, job: AutoMLJob, resolver: Callable, inside_pipeline: bool) -> AutoMLJob:
+    def _resolve_arm_id_for_automl_job(
+        self, job: AutoMLJob, resolver: _AssetResolver, inside_pipeline: bool
+    ) -> AutoMLJob:
         """Resolve arm_id for AutoMLJob.
 
+        :param job: The AutoML job
+        :type job: AutoMLJob
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
+        :param inside_pipeline: Whether the job is within a pipeline
+        :type inside_pipeline: bool
         :return: The provided AutoMLJob, with resolved fields
         :rtype: AutoMLJob
         """
@@ -1386,9 +1419,13 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = resolver(job.compute, azureml_type=AzureMLResourceType.COMPUTE)
         return job
 
-    def _resolve_arm_id_for_pipeline_job(self, pipeline_job: PipelineJob, resolver: Callable) -> PipelineJob:
+    def _resolve_arm_id_for_pipeline_job(self, pipeline_job: PipelineJob, resolver: _AssetResolver) -> PipelineJob:
         """Resolve arm_id for pipeline_job.
 
+        :param pipeline_job: The pipeline job
+        :type pipeline_job: PipelineJob
+        :param resolver: The asset resolver function
+        :type resolver: _AssetResolver
         :return: The provided PipelineJob, with resolved fields
         :rtype: PipelineJob
         """
@@ -1483,5 +1520,5 @@ class JobOperations(_ScopeDependentOperations):
         kwargs["headers"] = headers
 
 
-def _get_job_compute_id(job: Union[Job, Command], resolver: Callable) -> None:
+def _get_job_compute_id(job: Union[Job, Command], resolver: _AssetResolver) -> None:
     job.compute = resolver(job.compute, azureml_type=AzureMLResourceType.COMPUTE)

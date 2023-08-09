@@ -58,7 +58,7 @@ from ..entities._component.pipeline_component import PipelineComponent
 from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
-from ._operation_orchestrator import OperationOrchestrator
+from ._operation_orchestrator import _AssetResolver, OperationOrchestrator
 from ._workspace_operations import WorkspaceOperations
 
 ops_logger = OpsLogger(__name__)
@@ -633,7 +633,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return Component._from_rest_object(result)
 
     @classmethod
-    def _try_resolve_environment_for_component(cls, component, _: str, resolver: Callable):
+    def _try_resolve_environment_for_component(cls, component, _: str, resolver: _AssetResolver):
         if isinstance(component, BaseNode):
             component = component._component  # pylint: disable=protected-access
 
@@ -751,7 +751,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 setattr(node, field_name, val._data_binding())
 
     @classmethod
-    def _try_resolve_node_level_task_for_parallel_node(cls, node: BaseNode, _: str, resolver: Callable):
+    def _try_resolve_node_level_task_for_parallel_node(cls, node: BaseNode, _: str, resolver: _AssetResolver):
         """Resolve node.task.code for parallel node if it's a reference to node.component.task.code.
 
         This is a hack operation.
@@ -824,8 +824,16 @@ class ComponentOperations(_ScopeDependentOperations):
             component.display_name = default_name
 
     @classmethod
-    def _try_resolve_compute_for_node(cls, node: BaseNode, _: str, resolver):
-        """Resolve compute for base node."""
+    def _try_resolve_compute_for_node(cls, node: BaseNode, _: str, resolver: _AssetResolver):
+        """Resolve compute for base node.
+
+        :param node: The node
+        :type node: BaseNode
+        :param _: The node name
+        :type _: str
+        :param resolver: The resolver function
+        :type resolver: _AssetResolver
+        """
         if not isinstance(node, BaseNode):
             return
         if not isinstance(node._component, PipelineComponent):
@@ -943,7 +951,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return self._client_key
 
     def _resolve_dependencies_for_pipeline_component_jobs(
-        self, component: Union[Component, str], resolver: Callable, *, resolve_inputs: bool = True
+        self, component: Union[Component, str], resolver: _AssetResolver, *, resolve_inputs: bool = True
     ):
         """Resolve dependencies for pipeline component jobs.
         Will directly return if component is not a pipeline component.
@@ -951,7 +959,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :param component: The pipeline component to resolve.
         :type component: Union[Component, str]
         :param resolver: The resolver to resolve the dependencies.
-        :type resolver: Callable
+        :type resolver: _AssetResolver
         :keyword resolve_inputs: Whether to resolve inputs.
         :type resolve_inputs: bool
         """
@@ -1088,7 +1096,7 @@ def _refine_component(component_func: types.FunctionType) -> Component:
     )
 
 
-def _try_resolve_code_for_component(component: Component, resolver: Callable) -> None:
+def _try_resolve_code_for_component(component: Component, resolver: _AssetResolver) -> None:
     if isinstance(component, ComponentCodeMixin):
         with component._build_code() as code:
             if code is None:
