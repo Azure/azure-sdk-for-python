@@ -23,23 +23,20 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._version import VERSION
 
-__version__ = VERSION
 
-from ._schema_registry_client import SchemaRegistryClient
-from ._common._constants import SchemaFormat, ApiVersion
-from ._common._schema import Schema, SchemaProperties
-from ._encoder_protocols import SchemaContentValidate, MessageContent, MessageType, SchemaEncoder
+class InvalidContentError(ValueError):
+    """Error during encoding or decoding content with a schema.
 
-__all__ = [
-    "ApiVersion",
-    "SchemaRegistryClient",
-    "SchemaFormat",
-    "Schema",
-    "SchemaProperties",
-    "SchemaContentValidate",
-    "MessageContent",
-    "MessageType",
-    "SchemaEncoder"
-]
+    :param str message: The message object stringified as 'message' attribute
+    :keyword error: The original exception, if any.
+
+    :ivar str message: A stringified version of the message parameter
+    :ivar dict details: The error details. Depending on the error, this may include information like:
+        `schema_id`, `schema_definition`, `message_content`.
+    """
+
+    def __init__(self, message, *args, **kwargs):
+        self.message = str(message)
+        self.details = kwargs.pop("details", {})
+        super(InvalidContentError, self).__init__(self.message, *args)
