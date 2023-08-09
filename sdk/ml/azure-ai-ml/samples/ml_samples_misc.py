@@ -522,6 +522,46 @@ class MiscConfigurationOptions(object):
         ml_client.compute.list_sizes("US-West")
         # [END compute_operations_list_sizes]
 
+        # [START data_operations_list]
+        ml_client.data.list("data-asset-name")
+        # [END data_operations_list]
+
+        # [START data_operations_get]
+        ml_client.data.get("data-asset-name", "2.0")
+        # [END data_operations_get]
+
+        # [START data_operations_create_or_update]
+        from azure.ai.ml.entities._assets._artifacts.data import Data
+
+        data_example = Data("new-data")
+        ml_client.data.create_or_update(data_example)
+        # [END data_operations_create_or_update]
+
+        # [START data_operations_import_data]
+        from azure.ai.ml.entities._data_import.data_import import DataImport
+        from azure.ai.ml.entities._inputs_outputs.external_data import Database
+
+        database_example = Database("SELECT ID FROM DataTable")
+        data_import_example = DataImport("data-asset-name", "/path/to/data-asset", database_example)
+        ml_client.data.import_data(data_import_example)
+        # [END data_operations_import_data]
+
+        # [START data_operations_list_materialization_status]
+        ml_client.data.list_materialization_status("data-asset-name")
+        # [END data_operations_list_materialization_status]
+
+        # [START data_operations_archive]
+        ml_client.data.archive("data-asset-name")
+        # [END data_operations_archive]
+
+        # [START data_operations_restore]
+        ml_client.data.restore("data-asset-name")
+        # [END data_operations_restore]
+
+        # [START data_operations_share]
+        ml_client.data.share("data-asset-name", "2.0")
+        # [END data_operations_share]
+
         # [START validation_result]
         """For example, if repr(self) is:
         ```python
