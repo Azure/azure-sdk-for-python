@@ -14,13 +14,10 @@ steps:
       pip install disutils
     displayName: Install build script requirements
 
-  - task: PythonScript@0
-    displayName: 'Invoke build script against argument'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/build_conda_artifacts.py'
-      arguments: |
-        -c "${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}"
+  - pwsh: |
+      sdk_conda_build -c "${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}" `
         -w "$(Build.SourcesDirectory)/conda/conda-recipes"
+    displayName: Assemble Conda Packages
   
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
