@@ -20,7 +20,7 @@ from ..._utils._asset_utils import IgnoreFile
 from ...constants._common import DefaultOpenEncoding
 from ...entities import Component
 from ...entities._assets import Code
-from ...entities._component._additional_includes import AdditionalIncludesMixin
+from ...entities._component._additional_includes import AdditionalIncludesMixin, AdditionalIncludes
 from ...entities._component.code import ComponentIgnoreFile
 from ...entities._job.distribution import DistributionConfiguration
 from ...entities._system_data import SystemData
@@ -228,8 +228,12 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         return obj
 
     @property
-    def _additional_includes(self):
-        """This property is kept for compatibility with old mldesigner sdk."""
+    def _additional_includes(self) -> AdditionalIncludes:
+        """This property is kept for compatibility with old mldesigner sdk.
+
+        :return: The additional includes
+        :rtype: AdditionalIncludes
+        """
         obj = self._generate_additional_includes_obj()
         from azure.ai.ml._internal.entities._additional_includes import InternalAdditionalIncludes
 

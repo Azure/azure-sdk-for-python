@@ -299,8 +299,12 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         """
         return not self._multiple_types and super(Input, self)._is_literal()
 
-    def _is_enum(self):
-        """returns true if the input is enum."""
+    def _is_enum(self) -> bool:
+        """Whether input is an enum
+
+        :return: True if the input is enum.
+        :rtype: bool
+        """
         return self.type == ComponentParameterTypes.STRING and self.enum
 
     def _to_dict(self):

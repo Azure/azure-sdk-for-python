@@ -97,10 +97,12 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return self._outputs
 
     @property
-    def items(self):
+    def items(self) -> Union[list, dict, str, PipelineInput, NodeOutput]:
         """Get the loop body's input which will bind to the loop node.
 
         :return: The input for the loop body.
+        :rtype: typing.Union[list, dict, str, ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
+            ~azure.ai.ml.entities._job.pipeline._io.PipelineInput]
         """
         return self._items
 

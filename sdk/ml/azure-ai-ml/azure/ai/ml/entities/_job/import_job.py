@@ -224,13 +224,14 @@ class ImportJob(Job, JobIOMixin):
         )
         return import_job
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "ImportComponent":
         """Translate a import job to component.
 
         :param context: Context of import job YAML file.
         :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated import component.
+        :rtype: ImportComponent
         """
         from azure.ai.ml.entities._component.import_component import ImportComponent
 
@@ -249,13 +250,14 @@ class ImportJob(Job, JobIOMixin):
             output=self._to_outputs(outputs={"output": self.output}, pipeline_job_dict=pipeline_job_dict)["output"],
         )
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "Import":
         """Translate a import job to a pipeline node.
 
         :param context: Context of import job YAML file.
         :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated import node.
+        :rtype: Import
         """
         from azure.ai.ml.entities._builders import Import
 

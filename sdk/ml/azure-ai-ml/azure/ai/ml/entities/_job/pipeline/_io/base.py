@@ -509,8 +509,12 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         return self._port_name
 
     @property
-    def name(self):
-        """Used in registering output data."""
+    def name(self) -> str:
+        """Used in registering output data.
+
+        :return: The output name
+        :rtype: str
+        """
         return self._name
 
     @name.setter

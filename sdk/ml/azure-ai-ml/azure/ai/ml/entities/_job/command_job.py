@@ -232,13 +232,14 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             command_job.resources.properties.pop(LOCAL_COMPUTE_PROPERTY)
         return command_job
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "CommandComponent":
         """Translate a command job to component.
 
         :param context: Context of command job YAML file.
         :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated command component.
+        :rtype: CommandComponent
         """
         from azure.ai.ml.entities import CommandComponent
 
@@ -260,13 +261,14 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             distribution=self.distribution if self.distribution else None,
         )
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "Command":
         """Translate a command job to a pipeline node.
 
         :param context: Context of command job YAML file.
         :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated command component.
+        :rtype: Command
         """
         from azure.ai.ml.entities._builders import Command
 

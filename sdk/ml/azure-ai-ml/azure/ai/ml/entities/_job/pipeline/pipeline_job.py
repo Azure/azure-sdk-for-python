@@ -456,7 +456,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
                     msg = error_msg.format("Import job in pipeline")
                     raise UserErrorException(message=msg, no_personal_data_message=msg)
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "Pipeline":
         """Translate a command job to a pipeline node when load schema.
 
         (Write a pipeline job as node in yaml is not supported presently.)
@@ -465,6 +465,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated command component.
+        :rtype: Pipeline
         """
         component = self._to_component(context, **kwargs)
 
@@ -657,13 +658,14 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         telemetry_values.pop("is_anonymous")
         return telemetry_values
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "PipelineComponent":
         """Translate a pipeline job to pipeline component.
 
         :param context: Context of pipeline job YAML file.
         :type context: dict, optional
         :keyword kwargs: Extra arguments.
         :return: Translated pipeline component.
+        :rtype: PipelineComponent
         """
         ignored_keys = PipelineComponent._check_ignored_keys(self)
         if ignored_keys:

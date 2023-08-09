@@ -10,7 +10,7 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import (
@@ -309,12 +309,13 @@ class CachedNodeResolver(object):
         else:
             list(map(_map_func, cache_contents_to_resolve))
 
-    def _prepare_items_to_resolve(self):
+    def _prepare_items_to_resolve(self) -> Tuple[Dict[str, List[BaseNode]], List[_CacheContent]]:
         """Pop all nodes in self._nodes_to_resolve to prepare cache contents to resolve and nodes to resolve. Nodes in
         self._nodes_to_resolve will be grouped by component hash and saved to a dict of list. Distinct dependent
         components not in current cache will be saved to a list.
 
         :return: a tuple of (dict of nodes to resolve, list of cache contents to resolve)
+        :rtype: Tuple[Dict[str, List[BaseNode]],  List[_CacheContent]]
         """
         _components = list(map(lambda x: x._component, self._nodes_to_resolve))  # pylint: disable=protected-access
         # we can do concurrent component in-memory hash calculation here
