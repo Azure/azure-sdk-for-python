@@ -29,6 +29,19 @@ from .CondaConfiguration import CondaConfiguration, CheckoutConfiguration
 # from package disutils
 from distutils.dir_util import copy_tree
 
+CONDA_ENV_NAME = "azure-build-env"
+
+CONDA_ENV_FILE = """name: azure-build-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - conda-build
+  - conda-verify
+  - typing-extensions
+"""
+
 VERSION_REGEX = re.compile(r"\s*AZURESDK_CONDA_VERSION\s*:\s*[\'](.*)[\']\s*")
 
 SUMMARY_TEMPLATE = " - Generated from {}."
@@ -392,12 +405,23 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
             f.write(meta_yml_content)
 
 
+def prep_and_create_environment(environment_dir: str) -> None:
+    prep_directory(environment_dir)
+    
+    with open(os.path.join(environment_dir, 'environment.yml'), 'w', encoding='utf-8') as f:
+        f.write(CONDA_ENV_FILE)
+
+    invoke_command(f"conda env create --prefix \"{environment_dir}\" python=3.10", environment_dir)
+    invoke_command(f"conda install --yes --quiet --prefix \"{environment_dir}\" conda-build conda-verify typing-extensions", environment_dir)
+
+
 def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_root: str):
     """Conda builds each individually assembled conda package folder."""
     conda_output_dir = prep_directory(os.path.join(repo_root, "conda", "output"))
     conda_env_dir = prep_directory(os.path.join(repo_root, "conda", "conda-env"))
 
-    prep_directory(conda_env_dir)
+    prep_and_create_environment(conda_env_dir)
+
     #   - bash: |
     #       conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/conda_env.yml
     #       conda install --yes --quiet --name ${{ artifact.name }} conda-build conda-verify typing-extensions
@@ -405,7 +429,7 @@ def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_ro
 
     #   - bash: |
     #       source activate ${{ artifact.name }}
-    #       conda-build . --output-folder "$(Agent.BuildDirectory)/conda/output/${{ artifact.name }}" -c $(AzureSDKCondaChannel)
+    #       conda-build . --output-folder "$(Agent.BuildDirectory)/conda/output/${{ artifact.name }}" -c "file:<path-to-output-dir>"
     #     displayName: 'Activate Conda Environment and Build ${{ artifact.name }}'
     #     workingDirectory: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/conda-recipe
 
