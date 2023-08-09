@@ -118,7 +118,8 @@ def convert_azure_cloud(value: Union[str, AzureClouds]) -> AzureClouds:
 
     :param value: the value to convert
     :type value: string
-    :returns: AzureClouds
+    :returns: An AzureClouds enum value
+    :rtype: AzureClouds
     :raises ValueError: If conversion to AzureClouds fails
 
     """
@@ -502,7 +503,7 @@ class Settings:
         default=None,
     )
 
-    azure_cloud = PrioritizedSetting(
+    azure_cloud: PrioritizedSetting[Union[str, AzureClouds], AzureClouds] = PrioritizedSetting(
         "azure_cloud",
         env_var="AZURE_CLOUD",
         convert=convert_azure_cloud,
