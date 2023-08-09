@@ -284,16 +284,20 @@ class Component(
         )
 
     @classmethod
-    def _validate_io_names(cls, io_dict: Dict, raise_error=False) -> MutableValidationResult:
+    def _validate_io_names(cls, io_names: Iterable[str], raise_error: bool = False) -> MutableValidationResult:
         """Validate input/output names, raise exception if invalid.
 
+        :param io_names: The names to validate
+        :type io_names: Iterable[str]
+        :param raise_error: Whether to raise if validation fails. Defaults to False
+        :type raise_error: bool, optional
         :return: The validation result
         :rtype: MutableValidationResult
         """
         validation_result = cls._create_empty_validation_result()
         lower2original_kwargs = {}
 
-        for name in io_dict.keys():
+        for name in io_names:
             if re.match(IOConstants.VALID_KEY_PATTERN, name) is None:
                 msg = "{!r} is not a valid parameter name, must be composed letters, numbers, and underscores."
                 validation_result.append_error(message=msg.format(name), yaml_path=f"inputs.{name}")

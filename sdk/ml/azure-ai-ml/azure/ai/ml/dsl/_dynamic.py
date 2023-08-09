@@ -92,7 +92,7 @@ def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
     """Assert the arg keys are all in keys."""
     # pylint: disable=protected-access
     # validate component input names
-    Component._validate_io_names(io_dict=kwargs, raise_error=True)
+    Component._validate_io_names(kwargs, raise_error=True)
     lower2original_parameter_names = {x.lower(): x for x in keys}
     kwargs_need_to_update = []
     for key in kwargs:
