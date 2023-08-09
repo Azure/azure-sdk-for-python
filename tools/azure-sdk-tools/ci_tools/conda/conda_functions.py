@@ -234,13 +234,7 @@ def create_combined_sdist(
 
     # get the meta.yml from the conda-recipes folder for this package name
     repo_root = discover_repo_root()
-    meta_yml = os.path.join(repo_root, "conda", "conda-recipes", conda_build.name, "meta.yaml")
     environment_config = os.path.join(repo_root, "conda", "conda-recipes", "conda_env.yml")
-
-    if not os.path.exists(meta_yml):
-        raise ValueError(
-            f"Unable to handle a targeted conda assembly which has no defined meta.yml within conda/conda-recipes/{conda_build.name}."
-        )
 
     singular_dependency = len(get_pkgs_from_build_directory(config_assembly_folder, conda_build.name)) == 0
     if not singular_dependency:
@@ -256,30 +250,12 @@ def create_combined_sdist(
     targeted_folder_for_assembly = os.path.join(config_assembly_folder, conda_build.name)
 
     create_package(targeted_folder_for_assembly, config_assembled_folder)
-
-    conda_build.created_sdist_path = os.path.join(config_assembled_folder, os.listdir(config_assembled_folder)[0])
-
-    print(f"Generated Sdist for artifact {conda_build.name} is present at {conda_build.created_sdist_path}")
+    
+    return os.path.join(config_assembled_folder, os.listdir(config_assembled_folder)[0])
 
 
-def get_summary(ci_yml: str, artifact_name: str):
-    pkg_list = []
-    with open(ci_yml, "r") as f:
-        data = f.read()
-
-    config = yaml.safe_load(data)
-
-    conda_artifact = [
-        conda_artifact
-        for conda_artifact in config["extends"]["parameters"]["CondaArtifacts"]
-        if conda_artifact["name"] == artifact_name
-    ]
-
-    if conda_artifact:
-        dependencies = conda_artifact[0]["checkout"]
-
-    for dep in dependencies:
-        pkg_list.append("{}=={}".format(dep["package"], dep["version"]))
+def get_summary(conda_config: CondaConfiguration):
+    pkg_list = [f"{checkout_config.package}=={checkout_config.version}" for checkout_config in conda_config.checkout]
 
     return SUMMARY_TEMPLATE.format(", ".join(pkg_list))
 
@@ -369,12 +345,21 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
     sdist_output_dir = prep_directory(os.path.join(repo_root, "conda", "assembled"))
     sdist_assembly_area = prep_directory(os.path.join(repo_root, "conda", "assembly"))
     sdist_download_area = prep_directory(os.path.join(repo_root, "conda", "downloaded"))
+    environment_config = os.path.join(repo_root, "conda", "conda-recipes", "conda_env.yml")
+    version = get_version_from_config(environment_config)
 
     for conda_build in conda_configurations:
         print(f"Beginning processing for {conda_build.name}.")
+        meta_yml = os.path.join(repo_root, "conda", "conda-recipes", conda_build.name, "meta.yaml")
+        if not os.path.exists(meta_yml):
+            raise ValueError(
+                f"Unable to handle a targeted conda assembly which has no defined meta.yml within conda/conda-recipes/{conda_build.name}."
+            )
+
         config_download_folder = prep_directory(os.path.join(sdist_download_area, conda_build.name))
         config_assembly_folder = prep_directory(os.path.join(sdist_assembly_area, conda_build.name))
         config_assembled_folder = prep_directory(os.path.join(sdist_output_dir, conda_build.name))
+        generated_yml = os.path.join(sdist_output_dir, conda_build.name, "meta.yaml")
 
         # <Code Location 1> -> /conda/downloaded/run_configuration_package/<downloaded-package-name-1>/
         # <Code Location 2> -> /conda/downloaded/run_configuration_package/<downloaded-package-name-2>/
@@ -391,11 +376,24 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
         #       /azure-storage-queue
         #       /azure-storage-file-datalake
         #       /azure-storage-fileshare
-
-        # once we've prepped the source, we can create a combined sdist and meta.yml in the target assembled location
         conda_build.created_sdist_path = create_combined_sdist(
             conda_build, config_assembly_folder, config_assembled_folder
-        )
+        ).replace("\\", "/")
+        print(f"Generated Sdist for artifact {conda_build.name} is present at {conda_build.created_sdist_path}")
+
+        # generate a meta.yml for each one!
+        with open(meta_yml, 'r', encoding='utf-8') as f:
+            meta_yml_content = f.read()
+
+        summary = get_summary(conda_build)
+
+        breakpoint()
+        meta_yml_content = re.sub(r"^\s*version\:.*", f"  version: \"{version}\"", meta_yml_content, flags=re.MULTILINE)
+        meta_yml_content = re.sub(r"^\s*url\:.*", f"  url: \"{conda_build.created_sdist_path}\"", meta_yml_content, flags=re.MULTILINE)
+        meta_yml_content = re.sub(r"\{\{\senviron\.get\(\'.*_SUMMARY\'\,\s\'\'\)\s*\}\}", f"{summary}", meta_yml_content, flags=re.MULTILINE)
+
+        with open(generated_yml, 'w', encoding='utf-8') as f:
+            f.write(meta_yml_content)
 
 
 def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_root: str):
