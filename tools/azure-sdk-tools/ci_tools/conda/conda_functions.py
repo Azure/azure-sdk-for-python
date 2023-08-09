@@ -387,7 +387,6 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
 
         summary = get_summary(conda_build)
 
-        breakpoint()
         meta_yml_content = re.sub(r"^\s*version\:.*", f"  version: \"{version}\"", meta_yml_content, flags=re.MULTILINE)
         meta_yml_content = re.sub(r"^\s*url\:.*", f"  url: \"{conda_build.created_sdist_path}\"", meta_yml_content, flags=re.MULTILINE)
         meta_yml_content = re.sub(r"\{\{\senviron\.get\(\'.*_SUMMARY\'\,\s\'\'\)\s*\}\}", f"{summary}", meta_yml_content, flags=re.MULTILINE)
