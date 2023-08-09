@@ -255,6 +255,7 @@ def pipeline(
     return pipeline_decorator
 
 
+# pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
 def _validate_args(func, args, kwargs, non_pipeline_inputs):
     """Validate customer function args and convert them to kwargs."""
     if not isinstance(non_pipeline_inputs, List) or any(not isinstance(param, str) for param in non_pipeline_inputs):

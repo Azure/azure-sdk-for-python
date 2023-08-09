@@ -450,6 +450,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         except BaseException:  # pylint: disable=broad-except
             return super(JobSchedule, self).__str__()
 
+    # pylint: disable-next=docstring-missing-param
     def _get_telemetry_values(self, *args, **kwargs) -> Dict[Literal["trigger_type"], str]:
         """Return the telemetry values of schedule.
 

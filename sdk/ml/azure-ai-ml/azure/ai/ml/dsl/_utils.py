@@ -143,6 +143,7 @@ def _force_reload_module(module):
 
 
 @contextlib.contextmanager
+# pylint: disable-next=docstring-missing-return,docstring-missing-rtype
 def _change_working_dir(path: Union[str, os.PathLike], mkdir: bool = True) -> Iterable[None]:
     """Context manager for changing the current working directory.
 

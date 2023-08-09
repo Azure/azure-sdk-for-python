@@ -162,6 +162,7 @@ class Import(BaseNode):
 
         return ImportSchema(context=context)
 
+    # pylint: disable-next=docstring-missing-param
     def __call__(self, *args, **kwargs) -> "Import":
         """Call Import as a function will return a new instance each time.
 

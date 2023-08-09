@@ -260,6 +260,7 @@ class DataTransferCopy(DataTransfer):
             data_copy_mode=self.data_copy_mode,
         )
 
+    # pylint: disable-next=docstring-missing-param
     def __call__(self, *args, **kwargs) -> "DataTransferCopy":
         """Call DataTransferCopy as a function will return a new instance each time.
 

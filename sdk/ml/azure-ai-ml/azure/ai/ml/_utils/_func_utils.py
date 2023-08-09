@@ -66,6 +66,7 @@ class PersistentLocalsFunctionBuilder(abc.ABC):
 class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
     @staticmethod
     @contextmanager
+    # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
     def _replace_sys_profiler(profiler: Callable[[FrameType, str, Any], None]) -> Iterable[None]:
         """A context manager which replaces sys profiler to given profiler.
 

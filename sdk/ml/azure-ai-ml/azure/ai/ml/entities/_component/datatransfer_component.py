@@ -258,6 +258,7 @@ class DataTransferImportComponent(DataTransferComponent):
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferImportComponentSchema(context=context)
 
+    # pylint: disable-next=docstring-missing-param
     def __call__(self, *args, **kwargs) -> NoReturn:
         """Call ComponentVersion as a function and get a Component object."""
 
@@ -303,6 +304,7 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferExportComponentSchema(context=context)
 
+    # pylint: disable-next=docstring-missing-param
     def __call__(self, *args, **kwargs) -> NoReturn:
         """Call ComponentVersion as a function and get a Component object."""
 

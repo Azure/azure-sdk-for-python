@@ -585,6 +585,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 validation_result.append_error(message=str(e), yaml_path="args")
         return validation_result
 
+    # pylint: disable-next=docstring-missing-param
     def __call__(self, *args, **kwargs) -> "Spark":
         """Call Spark as a function will return a new instance each time.
 

@@ -844,6 +844,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
 
         return CommandSchema(context=context)
 
+    # pylint: disable-next=docstring-missing-param
     def __call__(self, *args, **kwargs) -> "Command":
         """Call Command as a function will return a new instance each time.
 

@@ -44,6 +44,7 @@ def _request_function(f: Callable[["HttpPipeline"], None]):
 
     def _(_: Callable[Concatenate[str, P], Any] = HttpRequest):
         @wraps(f)
+        # pylint: disable-next=docstring-missing-param
         def decorated(self: "HttpPipeline", *args: P.args, **kwargs: P.kwargs) -> HttpResponse:
             """A function that sends an HTTP request and returns the response.
 

@@ -310,6 +310,7 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
             ) from e
 
 
+# pylint: disable-next=docstring-missing-param
 def dump_yaml(*args, **kwargs):
     """A thin wrapper over yaml.dump which forces `OrderedDict`s to be serialized as mappings.
 

@@ -54,6 +54,7 @@ class AutoMLNodeMixin(PathAwareSchema):
         return result
 
     @post_dump(pass_original=True)
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def resolve_nested_data(self, job_dict: dict, job: "AutoMLJob", **kwargs):
         """Resolve nested data into flatten format."""
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob

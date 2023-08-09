@@ -532,6 +532,7 @@ class ModelOperations(_ScopeDependentOperations):
         return Model._from_rest_object(result)
 
     @contextmanager
+    # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
     def _set_registry_client(self, registry_name: str) -> Iterable[None]:
         """Sets the registry client for the model operations.
 

@@ -583,6 +583,7 @@ class Component(
         is_anonymous = self.name is None or ANONYMOUS_COMPONENT_NAME in self.name
         return {"type": self.type, "source": self._source, "is_anonymous": is_anonymous}
 
+    # pylint: disable-next=docstring-missing-param
     def __call__(self, *args, **kwargs) -> "BaseNode":
         """Call ComponentVersion as a function and get a Component object.
 

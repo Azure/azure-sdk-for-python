@@ -88,6 +88,7 @@ def _replace_function_name(func: types.FunctionType, new_name: str) -> types.Fun
         return func
 
 
+# pylint: disable-next=docstring-missing-param
 def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
     """Assert the arg keys are all in keys."""
     # pylint: disable=protected-access

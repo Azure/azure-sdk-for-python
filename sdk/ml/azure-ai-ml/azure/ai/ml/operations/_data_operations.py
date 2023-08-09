@@ -633,6 +633,7 @@ class DataOperations(_ScopeDependentOperations):
             return self.create_or_update(data_ref)
 
     @contextmanager
+    # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
     def _set_registry_client(self, registry_name: str) -> Iterable[None]:
         """Sets the registry client for the data operations.
 

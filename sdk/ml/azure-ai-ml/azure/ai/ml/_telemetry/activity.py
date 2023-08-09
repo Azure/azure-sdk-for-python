@@ -243,6 +243,7 @@ def log_activity(
             return  # pylint: disable=lost-exception
 
 
+# pylint: disable-next=docstring-missing-rtype
 def monitor_with_activity(
     logger,
     activity_name,
@@ -278,6 +279,7 @@ def monitor_with_activity(
     return monitor
 
 
+# pylint: disable-next=docstring-missing-rtype
 def monitor_with_telemetry_mixin(
     logger,
     activity_name,

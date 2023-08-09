@@ -387,6 +387,7 @@ class SchemaValidatableMixin:
             ) from e
 
     @classmethod
+    # pylint: disable-next=docstring-missing-param
     def _create_schema_for_validation(cls, context) -> PathAwareSchema:
         """Create a schema of the resource with specific context. Should be overridden by subclass.
 

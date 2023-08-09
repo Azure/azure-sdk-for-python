@@ -165,6 +165,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             name="Scatter gather",
             description="It includes all steps that need to be executed in silo and aggregation",
         )
+        # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
         def scatter_gather_iteration_body(**silo_inputs):
             """
                 Performs a scatter-gather iteration by running copies of the silo step on different
@@ -233,6 +234,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             return executed_aggregation_component.outputs
 
         @pipeline(name="Scatter gather graph")
+        # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
         def create_scatter_gather_graph():
             """
             Creates a scatter-gather graph by executing the scatter_gather_iteration_body
@@ -796,6 +798,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         return silo_agg_map, agg_silo_map
 
     @staticmethod
+    # pylint: disable-next=docstring-missing-rtype
     def _get_merge_component(output_type: str):
         """Gets the merge component to be used based on type of output
 

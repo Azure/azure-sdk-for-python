@@ -29,6 +29,7 @@ _SCHEDULED_JOB_UPDATES_KEY = "scheduled_job_updates"
 
 
 class CreateJobFileRefField(FileRefField):
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def _serialize(self, value, attr, obj, **kwargs):
         """FileRefField does not support serialize.
 
@@ -65,6 +66,7 @@ class BaseCreateJobSchema(BaseJobSchema):
         required=True,
     )
 
+    # pylint: disable-next=docstring-missing-param
     def _get_job_instance_for_remote_job(
         self, id: Optional[str], data: Optional[dict], **kwargs
     ) -> "Job":  # pylint: disable=redefined-builtin

@@ -118,6 +118,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         }
 
     @classmethod
+    # pylint: disable-next=docstring-missing-param
     def _to_rest_item(cls, item: dict) -> dict:
         """Convert item to rest object.
 
@@ -144,6 +145,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         }
 
     @classmethod
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def _to_rest_items(cls, items: Union[list, dict, str, NodeOutput, PipelineInput]) -> str:
         """Convert items to rest object."""
         # validate items.
@@ -176,6 +178,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return convert_ordered_dict_to_dict(rest_node)
 
     @classmethod
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def _from_rest_item(cls, rest_item):
         """Convert rest item to item."""
         primitive_inputs, asset_inputs = {}, {}
@@ -187,6 +190,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return {**cls._from_rest_inputs(inputs=asset_inputs), **primitive_inputs}
 
     @classmethod
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def _from_rest_items(cls, rest_items: str) -> Union[dict, list, str]:
         """Convert items from rest object."""
         try:
