@@ -360,7 +360,7 @@ class RetryPolicyBase:
         elif hasattr(request.context.transport, "connection_config"):
             # FIXME This is fragile, should be refactored. Casting my way for mypy
             # https://github.com/Azure/azure-sdk-for-python/issues/31530
-            connection_config: ConnectionConfiguration = cast(
+            connection_config = cast(
                 ConnectionConfiguration, request.context.transport.connection_config  # type: ignore
             )
 
