@@ -358,6 +358,18 @@ class MiscConfigurationOptions(object):
         ml_client.environments.create_or_update(env_docker_context)
         # [END env_operations_create_or_update]
 
+        # [START env_entities_validate]
+        from azure.ai.ml.entities import BuildContext, Environment
+
+        env_docker_context = Environment(
+            build=BuildContext(path="azureml-environment"),
+            name="create-environment",
+            description="Environment created from a Docker context.",
+        )
+
+        env_docker_context.validate()
+        # [END env_entities_validate]
+
         # [START env_operations_archive]
         ml_client.environments.archive("archive-example", "1.0", None)
         # [END env_operations_archive]

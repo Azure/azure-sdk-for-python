@@ -79,7 +79,7 @@ class Environment(Asset, LocalizableMixin):
     :param build: Docker build context to create the environment. Mutually exclusive with "image"
     :type build: BuildContext
     :param conda_file: Path to configuration file listing conda packages to install.
-    :type conda_file: Optional[str, os.Pathlike]
+    :type conda_file: typing.Union[str, os.PathLike]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
@@ -277,6 +277,18 @@ class Environment(Asset, LocalizableMixin):
         return EnvironmentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     def validate(self):
+        """Validate the environment by checking its name, image and build
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+                :start-after: [START env_entities_validate]
+                :end-before: [END env_entities_validate]
+                :language: python
+                :dedent: 8
+                :caption: Validate environment example.
+        """
+
         if self.name is None:
             msg = "Environment name is required"
             err = ValidationException(
