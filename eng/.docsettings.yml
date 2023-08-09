@@ -36,6 +36,9 @@ known_presence_issues:
   - ['sdk/servicebus/azure-servicebus/README.md', '#4554']
 
 known_content_issues:
+  # not an "azure" package
+  - ['sdk/appconfiguration/feature-management/README.md', 'N/A']
+
   # data plane. common issue filed to azure-sdk-for-python
   - ['README.rst', '#4554']
   - ['sdk/synapse/azure-synapse/README.md', '#4554']
