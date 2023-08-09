@@ -71,14 +71,18 @@ def _resolve_source_file() -> Optional[Path]:
     return None
 
 
-def _assert_frame_package_name(pattern, frame):
-    """Check the package name of frame is match pattern."""
+def _assert_frame_package_name(pattern, frame) -> bool:
+    """Check the package name of frame is match pattern.
+
+    :return: True if the package name of the frame matches pattern, False otherwise
+    :rtype: bool
+    """
     # f_globals records the function's module globals of the frame. And __package__ of module must be set.
     # https://docs.python.org/3/reference/import.html#__package__
     # Although __package__ is set when importing, it may happen __package__ does not exist in globals
     # when using exec to execute.
     package_name = frame.f_globals.get("__package__", "")
-    return package_name and re.match(pattern, package_name)
+    return bool(package_name and re.match(pattern, package_name))
 
 
 def _relative_to(path, basedir, raises_if_impossible=False) -> Optional[Path]:
