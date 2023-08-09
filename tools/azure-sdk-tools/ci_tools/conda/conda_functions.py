@@ -394,13 +394,10 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
 
 def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_root: str):
     """Conda builds each individually assembled conda package folder."""
-    pass
-    # this is the equivalent build yaml to what this function needs to do for each built artifact
+    conda_output_dir = prep_directory(os.path.join(repo_root, "conda", "output"))
+    conda_env_dir = prep_directory(os.path.join(repo_root, "conda", "conda-env"))
 
-    #   - bash: |
-    #       echo "##vso[task.prependpath]$CONDA/bin"
-    #     displayName: 'Prepend PATH with Conda and INIT'
-
+    prep_directory(conda_env_dir)
     #   - bash: |
     #       conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/conda_env.yml
     #       conda install --yes --quiet --name ${{ artifact.name }} conda-build conda-verify typing-extensions
@@ -415,7 +412,7 @@ def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_ro
 
 def check_conda_config():
     try:
-        invoke_command("conda --version")
+        invoke_command("conda --version", discover_repo_root())
     except CalledProcessError as err:
         print("Before invoking sdk_build_conda, a user must ensure that conda is available on the PATH for the current machine.")
         exit(1)

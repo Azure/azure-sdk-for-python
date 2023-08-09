@@ -58,6 +58,7 @@ conda/output/
 conda/assembly/
 conda/assembled/
 conda/downloaded/
+conda/build-env/
 
 # tox environment folders
 .tox/
