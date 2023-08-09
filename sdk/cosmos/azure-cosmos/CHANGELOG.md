@@ -1,11 +1,9 @@
 ## Release History
 
-### 4.4.1b2 (Unreleased)
+### 4.5.0 (2023-08-09)
 
 #### Features Added
 * Added support for continuation tokens for streamable cross partition queries. See [PR 31189](https://github.com/Azure/azure-sdk-for-python/pull/31189).
-
-#### Breaking Changes
 
 #### Bugs Fixed
 * Fixed bug with async `create_database_if_not_exists` method not working when passing `offer_throughput` as an option. See [PR 31478](https://github.com/Azure/azure-sdk-for-python/pull/31478).
