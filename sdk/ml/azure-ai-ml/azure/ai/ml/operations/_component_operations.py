@@ -348,8 +348,8 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param component: The component object or a mldesigner component function that generates component object
         :type component: Union[Component, types.FunctionType]
-        :param raise_on_failure: whether to raise exception on validation error, defaults to False
-        :type raise_on_failure: bool
+        :param raise_on_failure: Whether to raise exception on validation error. Defaults to False
+        :type raise_on_failure: bool, optional
         :return: All validation errors
         :type: ~azure.ai.ml.entities.ValidationResult
         """
@@ -714,8 +714,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         :param jobs: A dict of nodes in a pipeline component.
         :type jobs: Dict[str, Any]
-        :param base_path: The base path used to resolve inputs. Usually it's
-        the base path of the pipeline component.
+        :param base_path: The base path used to resolve inputs. Usually it's the base path of the pipeline component.
         :type base_path: str
         """
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
