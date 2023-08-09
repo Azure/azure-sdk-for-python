@@ -1,0 +1,3464 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Azure Machine Learning MachineLearningCompute Service",
+        "description": "These APIs allow end users to operate on Machine Learning Compute resources.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://management.azure.com"
+        }
+    ],
+    "paths": {
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeId}": {
+            "delete": {
+                "tags": [
+                    "MachineLearningComputes"
+                ],
+                "summary": "Deletes specified Machine Learning compute.",
+                "operationId": "Compute_Delete",
+                "parameters": [
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/workspaceNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/computeIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/underlyingResourceActionParameter"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response when operation is complete",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Compute deletion initiated.",
+                        "headers": {
+                            "Azure-AsyncOperation": {
+                                "description": "URI to poll for asynchronous operation status.",
+                                "Type": "string"
+                            },
+                            "Location": {
+                                "description": "URI to poll for asynchronous operation result.",
+                                "Type": "string"
+                            }
+                        },
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "No content; The target compute does not exist.",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-ms-examples": {
+                    "Delete Compute": {
+                        "$ref": "./examples/Compute/delete.json"
+                    }
+                },
+                "x-ms-long-running-operation": true
+            },
+            "get": {
+                "tags": [
+                    "MachineLearningComputes"
+                ],
+                "summary": "Gets compute definition by its name. Any secrets (storage keys, service credentials, etc) are not returned - use 'keys' nested resource to get them.",
+                "operationId": "Compute_Get",
+                "parameters": [
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/workspaceNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/computeIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The response includes a paginated array of Machine Learning computes and a URI to the next set of results, if any. For the more information the limits of the number of items in a resource group, see https://azure.microsoft.com/en-us/documentation/articles/azure-subscription-service-limits/.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MlcComputeResource"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-ms-examples": {
+                    "Get a AKS Compute": {
+                        "$ref": "./examples/Compute/get/AKSCompute.json"
+                    },
+                    "Get a AML Compute": {
+                        "$ref": "./examples/Compute/get/AmlCompute.json"
+                    },
+                    "Get an ComputeInstance": {
+                        "$ref": "./examples/Compute/get/ComputeInstance.json"
+                    },
+                    "Get a Kubernetes Compute": {
+                        "$ref": "./examples/Compute/get/KubernetesCompute.json"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "MachineLearningComputes"
+                ],
+                "summary": "Updates properties of a compute. This call will overwrite a compute if it exists. This is a nonrecoverable operation.",
+                "operationId": "Compute_Update",
+                "parameters": [
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/workspaceNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/computeIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response when operation is complete",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MlcComputeResource"
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "Compute update accepted.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MlcComputeResource"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-ms-examples": {
+                    "Update a AmlCompute Compute": {
+                        "$ref": "./examples/Compute/patch.json"
+                    }
+                },
+                "x-ms-long-running-operation": true
+            },
+            "put": {
+                "tags": [
+                    "MachineLearningComputes"
+                ],
+                "summary": "Creates or updates compute. This call will overwrite a compute if it exists. This is a nonrecoverable operation. If your intent is to create a new compute, do a GET first to verify that it does not exist yet.",
+                "operationId": "Compute_CreateOrUpdate",
+                "parameters": [
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/workspaceNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/computeIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response when operation is complete",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MlcComputeResource"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Compute creation or update initiated.",
+                        "headers": {
+                            "Azure-AsyncOperation": {
+                                "description": "URI to poll for asynchronous operation status.",
+                                "Type": "string"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MlcComputeResource"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-ms-examples": {
+                    "Create a AML Compute": {
+                        "$ref": "./examples/Compute/createOrUpdate/BasicAmlCompute.json"
+                    },
+                    "Create an ComputeInstance Compute with minimal inputs": {
+                        "$ref": "./examples/Compute/createOrUpdate/ComputeInstanceMinimal.json"
+                    },
+                    "Create an ComputeInstance Compute": {
+                        "$ref": "./examples/Compute/createOrUpdate/ComputeInstance.json"
+                    },
+                    "Create an AKS Compute": {
+                        "$ref": "./examples/Compute/createOrUpdate/BasicAKSCompute.json"
+                    },
+                    "Create a DataFactory Compute": {
+                        "$ref": "./examples/Compute/createOrUpdate/BasicDataFactoryCompute.json"
+                    },
+                    "Update a AML Compute": {
+                        "$ref": "./examples/Compute/createOrUpdate/AmlCompute.json"
+                    },
+                    "Update an AKS Compute": {
+                        "$ref": "./examples/Compute/createOrUpdate/AKSCompute.json"
+                    },
+                    "Attach a Kubernetes Compute": {
+                        "$ref": "./examples/Compute/createOrUpdate/KubernetesCompute.json"
+                    }
+                },
+                "x-ms-long-running-operation": true
+            }
+        },
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes": {
+            "get": {
+                "tags": [
+                    "MachineLearningComputes"
+                ],
+                "summary": "Gets computes in specified workspace.",
+                "operationId": "Compute_List",
+                "parameters": [
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/workspaceNameParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/$skipTokenParameter"
+                    },
+                    {
+                        "name": "withDetails",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The response includes a paginated array of Machine Learning computes and a URI to the next set of results, if any. For the more information the limits of the number of items in a resource group, see https://azure.microsoft.com/en-us/documentation/articles/azure-subscription-service-limits/.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedMlcComputeResourceList"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-ms-examples": {
+                    "Get Computes": {
+                        "$ref": "./examples/Compute/list.json"
+                    }
+                },
+                "x-ms-pageable": {
+                    "nextLinkName": "nextLink"
+                }
+            }
+        },
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeId}/listnodes": {
+            "post": {
+                "tags": [
+                    "MachineLearningComputes"
+                ],
+                "summary": "Get the details (e.g IP address, port etc) of all the compute nodes in the compute.",
+                "operationId": "Compute_ListNodes",
+                "parameters": [
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/workspaceNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/computeIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The operation was successful. The response contains the list of IP addresses.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AmlComputeNodeInformationPaginateList"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-ms-examples": {
+                    "Get compute nodes information for a compute": {
+                        "$ref": "./examples/Compute/listNodes.json"
+                    }
+                },
+                "x-ms-pageable": {
+                    "nextLinkName": "nextLink",
+                    "itemName": "nodes"
+                }
+            }
+        },
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeId}/listkeys": {
+            "post": {
+                "tags": [
+                    "MachineLearningComputes"
+                ],
+                "summary": "Gets secrets related to Machine Learning compute (storage keys, service credentials, etc).",
+                "operationId": "Compute_ListKeys",
+                "parameters": [
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/workspaceNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/computeIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IComputeSecrets"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-ms-examples": {
+                    "List AKS Compute Keys": {
+                        "$ref": "./examples/Compute/listKeys.json"
+                    }
+                }
+            }
+        },
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeId}/{computeAction}": {
+            "post": {
+                "tags": [
+                    "MachineLearningComputes"
+                ],
+                "summary": "Posts a start/stop/restart action to a compute instance.",
+                "operationId": "Compute_PowerOpAction",
+                "parameters": [
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/workspaceNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/computeIdParameter"
+                    },
+                    {
+                        "name": "computeAction",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "pattern": "^(?i)(start|stop|restart)$",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response when operation is complete",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IActionResult"
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-ms-examples": {
+                    "Start ComputeInstance Compute": {
+                        "$ref": "./examples/Compute/start.json"
+                    },
+                    "Stop ComputeInstance Compute": {
+                        "$ref": "./examples/Compute/stop.json"
+                    },
+                    "Restart ComputeInstance Compute": {
+                        "$ref": "./examples/Compute/restart.json"
+                    }
+                },
+                "x-ms-long-running-operation": true
+            }
+        },
+        "/machinelearningcompute/snapshot/shapshotcomputes": {
+            "post": {
+                "tags": [
+                    "SnapshotComputes"
+                ],
+                "parameters": [
+                    {
+                        "name": "computeType",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeId}/updateDataMounts": {
+            "post": {
+                "tags": [
+                    "MachineLearningComputes"
+                ],
+                "summary": "Update Data Mounts of a Machine Learning compute.",
+                "operationId": "Compute_UpdateDataMounts",
+                "parameters": [
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/workspaceNameParameter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/computeIdParameter"
+                    },
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IComputeSecrets"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-ms-examples": {
+                    "Update Data Mounts": {
+                        "$ref": "./examples/Compute/updateDataMounts.json"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AKSProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ],
+                "properties": {
+                    "clusterFqdn": {
+                        "type": "string",
+                        "description": "Gets or sets gets the FQDN of the cluster.",
+                        "nullable": true
+                    },
+                    "systemServices": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ComputeSystemService"
+                        },
+                        "description": "Gets or sets the system services deployed to the cluster.",
+                        "nullable": true,
+                        "readOnly": true,
+                        "x-ms-identifiers": [
+                            "publicIpAddress"
+                        ]
+                    },
+                    "agentCount": {
+                        "type": "integer",
+                        "description": "Gets or sets the number of agent nodes in the Container Service.\r\nThis can be changed to scale the cluster.",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "agentVmSize": {
+                        "type": "string",
+                        "description": "Gets or sets the Azure VM size of the agent VM nodes. This cannot\r\nbe changed once the cluster is created.",
+                        "nullable": true
+                    },
+                    "clusterPurpose": {
+                        "$ref": "#/components/schemas/ClusterPurpose"
+                    },
+                    "sslConfiguration": {
+                        "$ref": "#/components/schemas/SslConfiguration"
+                    },
+                    "aksNetworkingConfiguration": {
+                        "$ref": "#/components/schemas/AksNetworkingConfiguration"
+                    },
+                    "loadBalancerType": {
+                        "$ref": "#/components/schemas/LoadBalancerType"
+                    },
+                    "loadBalancerSubnet": {
+                        "type": "string",
+                        "description": "Load Balancer Subnet",
+                        "nullable": true
+                    }
+                }
+            },
+            "AiscProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ]
+            },
+            "AksNetworkingConfiguration": {
+                "type": "object",
+                "properties": {
+                    "subnetId": {
+                        "type": "string",
+                        "description": "Virtual network subnet resource ID the compute nodes belong to",
+                        "nullable": true
+                    },
+                    "serviceCidr": {
+                        "pattern": "^([0-9]{1,3}\\\\.){3}[0-9]{1,3}(\\\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
+                        "type": "string",
+                        "description": "A CIDR notation IP range from which to assign service cluster IPs. It must not overlap with any Subnet IP ranges.",
+                        "nullable": true
+                    },
+                    "dnsServiceIP": {
+                        "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+                        "type": "string",
+                        "description": "An IP address assigned to the Kubernetes DNS service. It must be within the Kubernetes service address range specified in serviceCidr.",
+                        "nullable": true
+                    },
+                    "dockerBridgeCidr": {
+                        "pattern": "^([0-9]{1,3}\\\\.){3}[0-9]{1,3}(\\\\/([0-9]|[1-2][0-9]|3[0-2]))?$",
+                        "type": "string",
+                        "description": "A CIDR notation IP range assigned to the Docker bridge network. It must not overlap with any Subnet IP ranges or the Kubernetes service address range.",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Advance configuration for AKS networking"
+            },
+            "AmlComputeNodeInformation": {
+                "type": "object",
+                "properties": {
+                    "nodeId": {
+                        "type": "string",
+                        "description": "ID of the compute node.",
+                        "nullable": true,
+                        "readOnly": true,
+                        "title": "Node ID."
+                    },
+                    "ipAddress": {
+                        "type": "string",
+                        "description": "IP address of the compute node.",
+                        "nullable": true,
+                        "readOnly": true,
+                        "title": "IP address."
+                    },
+                    "port": {
+                        "type": "integer",
+                        "description": "SSH port number of the node.",
+                        "format": "int32",
+                        "nullable": true,
+                        "readOnly": true,
+                        "title": "Port."
+                    },
+                    "publicIpAddress": {
+                        "type": "string",
+                        "description": "Public IP address of the compute node.",
+                        "nullable": true,
+                        "readOnly": true,
+                        "title": "Public IP address."
+                    },
+                    "privateIpAddress": {
+                        "type": "string",
+                        "description": "Private IP address of the compute node.",
+                        "nullable": true,
+                        "readOnly": true,
+                        "title": "Private IP address."
+                    },
+                    "nodeState": {
+                        "type": "string",
+                        "description": "State of the compute node. Values are idle, running, preparing, unusable, leaving and preempted.",
+                        "nullable": true,
+                        "readOnly": true
+                    },
+                    "runId": {
+                        "type": "string",
+                        "description": "ID of the Experiment running on the node, if any else null.",
+                        "nullable": true,
+                        "readOnly": true,
+                        "title": "Run ID."
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Compute node information related to a AmlCompute."
+            },
+            "AmlComputeNodeInformationPaginateList": {
+                "type": "object",
+                "properties": {
+                    "nodes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AmlComputeNodeInformation"
+                        },
+                        "description": "The collection of returned AmlCompute nodes details.",
+                        "nullable": true,
+                        "readOnly": true,
+                        "x-ms-identifiers": [
+                            "nodeId"
+                        ]
+                    },
+                    "continuationToken": {
+                        "type": "string",
+                        "description": "The token used in retrieving the next page. If null, there are no additional pages.",
+                        "nullable": true
+                    },
+                    "nextLink": {
+                        "type": "string",
+                        "description": "The link to the next page constructed using the continuationToken.  If null, there are no additional pages.",
+                        "nullable": true,
+                        "readOnly": true
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Result of AmlCompute Nodes"
+            },
+            "AmlComputeProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ],
+                "properties": {
+                    "vmSize": {
+                        "type": "string",
+                        "description": "Virtual Machine Size",
+                        "nullable": true
+                    },
+                    "vmPriority": {
+                        "type": "string",
+                        "description": "Virtual Machine priority",
+                        "nullable": true
+                    },
+                    "scaleSettings": {
+                        "$ref": "#/components/schemas/AmlComputeScaleSettings"
+                    },
+                    "userAccountCredentials": {
+                        "$ref": "#/components/schemas/UserAccountCredentials"
+                    },
+                    "subnet": {
+                        "$ref": "#/components/schemas/ResourceId"
+                    },
+                    "currentNodeCount": {
+                        "type": "integer",
+                        "description": "The number of compute nodes currently assigned to the compute.",
+                        "format": "int32",
+                        "nullable": true,
+                        "title": "Current node count."
+                    },
+                    "targetNodeCount": {
+                        "type": "integer",
+                        "description": "The target number of compute nodes for the compute. If the allocationState is resizing, this property denotes the target node count for the ongoing resize operation. If the allocationState is steady, this property denotes the target node count for the previous resize operation.",
+                        "format": "int32",
+                        "nullable": true,
+                        "title": "Target node count."
+                    },
+                    "nodeStateCounts": {
+                        "$ref": "#/components/schemas/NodeStateCounts"
+                    },
+                    "allocationState": {
+                        "type": "string",
+                        "description": "Allocation state of the compute. Possible values are: steady - Indicates that the compute is not resizing. There are no changes to the number of compute nodes in the compute in progress. A compute enters this state when it is created and when no operations are being performed on the compute to change the number of compute nodes. resizing - Indicates that the compute is resizing; that is, compute nodes are being added to or removed from the compute.",
+                        "nullable": true,
+                        "title": "Allocation state."
+                    },
+                    "allocationStateTransitionTime": {
+                        "type": "string",
+                        "description": "The time at which the compute entered its current allocation state.",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "title": "Allocation state transition time."
+                    },
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ODataErrorResponse"
+                        },
+                        "description": "Collection of errors encountered by various compute nodes during node setup.",
+                        "nullable": true,
+                        "x-ms-identifiers": [
+                            "/error/code"
+                        ],
+                        "title": "Errors."
+                    },
+                    "remoteLoginPortPublicAccess": {
+                        "type": "string",
+                        "description": "State of the public SSH port. Possible values are: Disabled - Indicates that the public ssh port is closed on all nodes of the cluster. Enabled - Indicates that the public ssh port is open on all nodes of the cluster. NotSpecified - Indicates that the public ssh port is closed on all nodes of the cluster if VNet is defined, else is open all public nodes. It can be default only during cluster creation time, after creation it will be either enabled or disabled.",
+                        "nullable": true,
+                        "title": "Close remote Login Access Port"
+                    },
+                    "osType": {
+                        "type": "string",
+                        "description": "Compute OS Type",
+                        "nullable": true
+                    },
+                    "virtualMachineImage": {
+                        "$ref": "#/components/schemas/ResourceId"
+                    },
+                    "isolatedNetwork": {
+                        "type": "boolean",
+                        "nullable": true
+                    },
+                    "enableNodePublicIp": {
+                        "type": "boolean",
+                        "description": "Enable or disable node public IP address provisioning. Possible values are: Possible values are: true - Indicates that the compute nodes will have public IPs provisioned. false - Indicates that the compute nodes will have a private endpoint and no public IPs.",
+                        "nullable": true,
+                        "title": "Enable node public IP."
+                    },
+                    "enableBatchPrivateLink": {
+                        "type": "boolean",
+                        "title": "Enable Batch Private Link"
+                    },
+                    "jobSchedulePolicy": {
+                        "$ref": "#/components/schemas/SchedulingPolicy"
+                    },
+                    "propertyBag": {
+                        "description": "A property bag containing additional properties.",
+                        "nullable": true
+                    }
+                }
+            },
+            "AmlComputeScaleSettings": {
+                "required": [
+                    "minNodeCount"
+                ],
+                "type": "object",
+                "properties": {
+                    "maxNodeCount": {
+                        "type": "integer",
+                        "description": "Gets or sets and sets the maximum node count.",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "minNodeCount": {
+                        "type": "integer",
+                        "description": "Gets or sets and sets the minimum node count.",
+                        "format": "int32"
+                    },
+                    "nodeIdleTimeBeforeScaleDown": {
+                        "type": "string",
+                        "description": "Gets or sets the time span for node idle time before scaling down.\r\nNote: This string should conform to the W3C XML Schema Part for duration.",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Class for settings regarding the scaling of Aml Compute."
+            },
+            "AmlSparkComputeProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ],
+                "properties": {
+                    "vmSize": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "nodeCount": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "scaleSettings": {
+                        "$ref": "#/components/schemas/AmlSparkComputeScaleSettings"
+                    },
+                    "sparkVersion": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "allowSessionLevelPackages": {
+                        "type": "boolean",
+                        "nullable": true
+                    }
+                }
+            },
+            "AmlSparkComputeScaleSettings": {
+                "type": "object",
+                "properties": {
+                    "maxNodeCount": {
+                        "type": "integer",
+                        "description": "Gets or sets and sets the maximum node count.",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "minNodeCount": {
+                        "type": "integer",
+                        "description": "Gets or sets and sets the minimum node count.",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "idleTimeBeforePause": {
+                        "type": "string",
+                        "description": "Gets or sets the time span for node idle time before pause.\r\nNote: This string should conform to the W3C XML Schema Part for duration.",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Class for settings regarding the scaling of Aml Compute."
+            },
+            "ArmErrorResponseV2": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "$ref": "#/components/schemas/ErrorDetail"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "AssignedUser": {
+                "type": "object",
+                "properties": {
+                    "objectId": {
+                        "type": "string",
+                        "description": "Gets or sets user�s AAD Object Id.",
+                        "nullable": true
+                    },
+                    "tenantId": {
+                        "type": "string",
+                        "description": "Gets or sets user�s AAD Tenant Id.",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false,
+                "description": "A user that can be assigned to a compute instance."
+            },
+            "AutoPauseProperties": {
+                "type": "object",
+                "properties": {
+                    "delayInMinutes": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "enabled": {
+                        "type": "boolean",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Auto pause properties"
+            },
+            "AutoScaleProperties": {
+                "type": "object",
+                "properties": {
+                    "minNodeCount": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "enabled": {
+                        "type": "boolean",
+                        "nullable": true
+                    },
+                    "maxNodeCount": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Auto scale properties"
+            },
+            "AutologgerSettings": {
+                "type": "object",
+                "properties": {
+                    "mlflowAutologger": {
+                        "$ref": "#/components/schemas/MLFlowAutologgerState"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "AutosaveType": {
+                "enum": [
+                    "None",
+                    "Local",
+                    "Remote"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "AutosaveType",
+                    "modelAsString": true
+                }
+            },
+            "BatchAIProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ],
+                "properties": {
+                    "vmSize": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "vmPriority": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "scaleSettings": {
+                        "$ref": "#/components/schemas/ScaleSettings"
+                    }
+                }
+            },
+            "BatchProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ]
+            },
+            "BindOptions": {
+                "type": "object",
+                "properties": {
+                    "propagation": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "createHostPath": {
+                        "type": "boolean",
+                        "nullable": true
+                    },
+                    "selinux": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ClusterPurpose": {
+                "enum": [
+                    "FastProd",
+                    "DenseProd",
+                    "DevTest"
+                ],
+                "type": "string",
+                "description": "Intended usage of the cluster",
+                "x-ms-enum": {
+                    "name": "ClusterPurpose",
+                    "modelAsString": true
+                }
+            },
+            "Cmk8sProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ],
+                "properties": {
+                    "connectionString": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "ComputeDetails": {
+                "type": "object",
+                "description": "Represents the base class for all compute properties."
+            },
+            "ComputeIdentity": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "Gets or sets Identity type\r\nOnly \"SystemAssigned\" supported for now.",
+                        "nullable": true
+                    },
+                    "systemIdentityUrl": {
+                        "type": "string",
+                        "description": "Gets or sets Data plane Identity Url to retreive credentials.",
+                        "nullable": true
+                    },
+                    "principalId": {
+                        "type": "string",
+                        "description": "Gets or sets Oid of this Identity. This Id helps the user give permissions to this Identity.",
+                        "nullable": true
+                    },
+                    "tenantId": {
+                        "type": "string",
+                        "description": "Gets or sets AAD Tenant where this identity lives.",
+                        "nullable": true
+                    },
+                    "clientId": {
+                        "type": "string",
+                        "description": "Gets or sets the AAD client id for the system assigned identity.",
+                        "nullable": true
+                    },
+                    "clientSecretUrl": {
+                        "type": "string",
+                        "description": "Gets or sets a refreshed version of the URL used to retrieve credentials.",
+                        "nullable": true
+                    },
+                    "userAssignedIdentities": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/UserAssignedIdentity"
+                        },
+                        "description": "Gets or sets dictionary of user-assigned managed identities associated with the resource. Key is the Azure resource Id of the managed identity.",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ComputeIdentityContract": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeIdentity"
+                    }
+                ],
+                "additionalProperties": false
+            },
+            "ComputePowerAction": {
+                "enum": [
+                    "Start",
+                    "Stop"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "ComputePowerAction",
+                    "modelAsString": true
+                }
+            },
+            "ComputeProperties": {
+                "required": [
+                    "computeType"
+                ],
+                "type": "object",
+                "properties": {
+                    "createdOn": {
+                        "type": "string",
+                        "description": "The time at which the compute was created.",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "modifiedOn": {
+                        "type": "string",
+                        "description": "The time at which the compute was last modified.",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "disableLocalAuth": {
+                        "type": "boolean",
+                        "description": "Gets or sets a value indicating whether ssh to be enabled on the compute.\r\nJEDI requirement.\r\n https://microsoft.sharepoint-df.com/:w:/r/teams/AzureGlobalOnePagers/_layouts/15/guestaccess.aspx?e=MZZsl7&share=EQ2hm0hqzOxPpSWsg0CjuHsBCSDvd6jwMwI4TYD_ku4XXA",
+                        "x-ms-mutability": [
+                            "read",
+                            "create"
+                        ]
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "The description of the Machine Learning compute.",
+                        "nullable": true
+                    },
+                    "resourceId": {
+                        "type": "string",
+                        "description": "ARM resource id of the underlying compute",
+                        "nullable": true
+                    },
+                    "computeType": {
+                        "minLength": 1,
+                        "pattern": "[a-zA-Z0-9_]",
+                        "type": "string",
+                        "description": "Gets or sets the compute type that describes the\r\nschema used by the Microsoft.MachineLearning.ComputeRP.Contracts.ComputeWireContracts.ComputeProperties.Properties object.\r\nDo NOT make decisions based on this property value, but\r\ninstead use the Microsoft.MachineLearning.ComputeRP.Contracts.ComputeWireContracts.ComputeProperties.Properties type."
+                    },
+                    "computeLocation": {
+                        "type": "string",
+                        "description": "Location for the underlying compute",
+                        "nullable": true,
+                        "x-ms-mutability": [
+                            "read",
+                            "create"
+                        ]
+                    },
+                    "provisioningState": {
+                        "$ref": "#/components/schemas/ProvisioningState"
+                    },
+                    "provisioningErrors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ODataErrorResponse"
+                        },
+                        "description": "Gets or sets gets the provisioning errors for the cluster.\r\nThis is returned in GET if there were errors during create or update.",
+                        "nullable": true,
+                        "readOnly": true,
+                        "x-ms-identifiers": [
+                            "/error/code"
+                        ]
+                    },
+                    "provisioningWarnings": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "description": "Gets or sets gets the provisioning warnings for the cluster.\r\nThis is returned in GET if there were warnings during create or update.",
+                        "nullable": true,
+                        "readOnly": true
+                    },
+                    "isAttachedCompute": {
+                        "type": "boolean",
+                        "description": "Gets or sets a value indicating whether the compute was provisioned by user and brought from outside\r\n(if true), or MLC provisioned it (if false).",
+                        "readOnly": true
+                    },
+                    "properties": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/ComputeDetails"
+                            },
+                            {
+                                "$ref": "#/components/schemas/AiscProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/AKSProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/AmlComputeProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/AmlSparkComputeProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BatchAIProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BatchProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/Cmk8sProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/DatabricksWireContractProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/DataFactoryProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/DataLakeAnalyticsProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/DsiComputeProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/DsvmProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/HDInsightProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/IotHubProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/ItpProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/KubernetesWireProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/KustoProperties"
+                            },
+                            {
+                                "$ref": "#/components/schemas/SynapseSparkPoolProperties"
+                            }
+                        ],
+                        "description": "Represents the base class for all compute properties.",
+                        "nullable": true
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/ComputeStatus"
+                    },
+                    "warnings": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ComputeWarning"
+                        },
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Machine Learning compute object."
+            },
+            "ComputeSchedules": {
+                "type": "object",
+                "properties": {
+                    "computeStartStop": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ComputeStartStopSchedule"
+                        },
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ComputeStartStopSchedule": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ScheduleBase"
+                    }
+                ],
+                "properties": {
+                    "triggerType": {
+                        "$ref": "#/components/schemas/ComputeStartStopTriggerType"
+                    },
+                    "recurrence": {
+                        "$ref": "#/components/schemas/Recurrence"
+                    },
+                    "cron": {
+                        "$ref": "#/components/schemas/Cron"
+                    },
+                    "action": {
+                        "$ref": "#/components/schemas/ComputePowerAction"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ComputeStartStopTriggerType": {
+                "enum": [
+                    "Recurrence",
+                    "Cron"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "ComputeStartStopTriggerType",
+                    "modelAsString": true
+                }
+            },
+            "ComputeStatus": {
+                "type": "object",
+                "properties": {
+                    "isStatusAvailable": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "detailedStatus": {
+                        "nullable": true
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/ODataError"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ComputeSystemService": {
+                "type": "object",
+                "properties": {
+                    "systemServiceType": {
+                        "$ref": "#/components/schemas/ComputeSystemServiceType"
+                    },
+                    "publicIpAddress": {
+                        "type": "string",
+                        "description": "Gets or sets gets the public IP address of the system service.",
+                        "nullable": true
+                    },
+                    "version": {
+                        "type": "string",
+                        "description": "Gets or sets gets the version of the system service.",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Information about a system service deployed in the cluster."
+            },
+            "ComputeSystemServiceType": {
+                "enum": [
+                    "None",
+                    "ScoringFrontEnd",
+                    "BatchFrontEnd"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "ComputeSystemServiceType",
+                    "modelAsString": true
+                }
+            },
+            "ComputeType": {
+                "enum": [
+                    "BatchAI",
+                    "AKS",
+                    "DataFactory",
+                    "VirtualMachine",
+                    "DataLakeAnalytics",
+                    "HDInsight",
+                    "Databricks",
+                    "AmlCompute",
+                    "Batch",
+                    "IotHub",
+                    "SynapseSpark",
+                    "ComputeInstance",
+                    "Cmk8s",
+                    "Itp",
+                    "CmAks",
+                    "Aisc",
+                    "Kusto",
+                    "ArcKubernetes",
+                    "Kubernetes",
+                    "AmlSpark"
+                ],
+                "type": "string",
+                "description": "Kept for backwards compatibility and will be removed in future.\r\nDO NOT USE.",
+                "x-ms-enum": {
+                    "name": "ComputeType",
+                    "modelAsString": true
+                }
+            },
+            "ComputeWarning": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "code": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "severity": {
+                        "$ref": "#/components/schemas/SeverityLevel"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ConnectivityEndpoints": {
+                "type": "object",
+                "properties": {
+                    "publicIpAddress": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "privateIpAddress": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ContainerInfo": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "autosave": {
+                        "$ref": "#/components/schemas/AutosaveType"
+                    },
+                    "gpu": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "network": {
+                        "$ref": "#/components/schemas/NetworkType"
+                    },
+                    "environment": {
+                        "$ref": "#/components/schemas/EnvironmentInfo"
+                    },
+                    "services": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ContainerService"
+                        },
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ContainerService": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/ContainerServiceType"
+                    }
+                }
+            },
+            "ContainerServiceType": {
+                "enum": [
+                    "JupyterKernel",
+                    "Jupyter",
+                    "JupyterLab"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "ContainerServiceType",
+                    "modelAsString": true
+                }
+            },
+            "CreatedBy": {
+                "type": "object",
+                "properties": {
+                    "userName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "userOrgId": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "userId": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "Cron": {
+                "type": "object",
+                "properties": {
+                    "expression": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "startTime": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "timeZone": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "CustomService": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "$ref": "#/components/schemas/CustomServiceType"
+                    },
+                    "name": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "image": {
+                        "$ref": "#/components/schemas/Image"
+                    },
+                    "environmentVariables": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/EnvironmentVariable"
+                        },
+                        "nullable": true
+                    },
+                    "docker": {
+                        "$ref": "#/components/schemas/Docker"
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Endpoint"
+                        },
+                        "nullable": true
+                    },
+                    "volumes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VolumeDefinition"
+                        },
+                        "nullable": true
+                    }
+                }
+            },
+            "CustomServiceType": {
+                "enum": [
+                    "DOCKER",
+                    "KERNEL"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "CustomServiceType",
+                    "modelAsString": true
+                }
+            },
+            "DataDisk": {
+                "type": "object",
+                "properties": {
+                    "caching": {
+                        "$ref": "#/components/schemas/DataDisksCachingType"
+                    },
+                    "diskSizeGB": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "lun": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "storageAccountType": {
+                        "$ref": "#/components/schemas/StorageAccountType"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "DataDisksCachingType": {
+                "enum": [
+                    "None",
+                    "ReadOnly",
+                    "ReadWrite"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "DataDisksCachingType",
+                    "modelAsString": true
+                }
+            },
+            "DataFactoryProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ]
+            },
+            "DataLakeAnalyticsProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ],
+                "properties": {
+                    "dataLakeStoreAccountName": {
+                        "type": "string",
+                        "description": "DataLake Store Account Name",
+                        "nullable": true
+                    }
+                }
+            },
+            "DataMounts": {
+                "type": "object",
+                "properties": {
+                    "source": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "sourceType": {
+                        "$ref": "#/components/schemas/DataSourceType"
+                    },
+                    "mountName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "mountAction": {
+                        "$ref": "#/components/schemas/MountAction"
+                    },
+                    "createdBy": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "mountPath": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "mountState": {
+                        "$ref": "#/components/schemas/MountState"
+                    },
+                    "mountedOn": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "error": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "DataSourceType": {
+                "enum": [
+                    "Dataset",
+                    "Datastore",
+                    "URI"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "DataSourceType",
+                    "modelAsString": true
+                }
+            },
+            "DatabricksWireContractProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ],
+                "properties": {
+                    "databricksAccessToken": {
+                        "type": "string",
+                        "description": "Databricks access token",
+                        "nullable": true
+                    },
+                    "workspaceUrl": {
+                        "type": "string",
+                        "description": "Workspace Url",
+                        "nullable": true
+                    }
+                },
+                "description": "Properties of Databricks"
+            },
+            "Docker": {
+                "type": "object",
+                "properties": {
+                    "privileged": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "DsiApplicationUri": {
+                "type": "object",
+                "properties": {
+                    "displayName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "endpointUri": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "DsiComputeOperation": {
+                "type": "object",
+                "properties": {
+                    "operationName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "operationTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "operationStatus": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "operationTrigger": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "DsiComputeProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ],
+                "properties": {
+                    "vmSize": {
+                        "type": "string",
+                        "description": "Virtual Machine Size",
+                        "nullable": true
+                    },
+                    "imageVersion": {
+                        "type": "string",
+                        "description": "Compute instance image version",
+                        "nullable": true
+                    },
+                    "subnet": {
+                        "$ref": "#/components/schemas/ResourceId"
+                    },
+                    "sshSettings": {
+                        "$ref": "#/components/schemas/SshSettings"
+                    },
+                    "autologgerSettings": {
+                        "$ref": "#/components/schemas/AutologgerSettings"
+                    },
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ODataErrorResponse"
+                        },
+                        "description": "Collection of errors encountered on this ComputeInstance.",
+                        "nullable": true,
+                        "readOnly": true,
+                        "x-ms-identifiers": [
+                            "/error/code"
+                        ],
+                        "title": "Errors."
+                    },
+                    "connectivityEndpoints": {
+                        "$ref": "#/components/schemas/ConnectivityEndpoints"
+                    },
+                    "applications": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DsiApplicationUri"
+                        },
+                        "description": "Describes available applications and their endpoints on this ComputeInstance.",
+                        "nullable": true,
+                        "readOnly": true,
+                        "x-ms-identifiers": [
+                            "displayName"
+                        ]
+                    },
+                    "state": {
+                        "type": "string",
+                        "description": "The current state of this ComputeInstance.",
+                        "nullable": true,
+                        "readOnly": true
+                    },
+                    "rootAccess": {
+                        "type": "boolean",
+                        "nullable": true
+                    },
+                    "lastOperation": {
+                        "$ref": "#/components/schemas/DsiComputeOperation"
+                    },
+                    "createdBy": {
+                        "$ref": "#/components/schemas/CreatedBy"
+                    },
+                    "applicationSharingPolicy": {
+                        "type": "string",
+                        "description": "Policy for sharing applications on this compute instance among users of parent workspace. If Personal, only the creator can access applications on this compute instance. When Shared, any workspace user can access applications on this instance depending on his/her assigned role.",
+                        "nullable": true,
+                        "title": "Sharing policy for applications on this compute instance"
+                    },
+                    "computeInstanceAuthorizationType": {
+                        "type": "string",
+                        "description": "The Compute Instance Authorization type. Available values are personal (default).",
+                        "nullable": true,
+                        "title": "Compute Instance Authorization type."
+                    },
+                    "personalComputeInstanceSettings": {
+                        "$ref": "#/components/schemas/PersonalComputeInstanceSettings"
+                    },
+                    "setupScripts": {
+                        "$ref": "#/components/schemas/SetupScripts"
+                    },
+                    "idleTimeBeforeShutdown": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "schedules": {
+                        "$ref": "#/components/schemas/ComputeSchedules"
+                    },
+                    "enableNodePublicIp": {
+                        "type": "boolean",
+                        "description": "Enable or disable node public IP address provisioning. Possible values are: Possible values are: true - Indicates that the compute nodes will have public IPs provisioned. false - Indicates that the compute nodes will have a private endpoint and no public IPs.",
+                        "nullable": true,
+                        "title": "Enable node public IP."
+                    },
+                    "enableBatchPrivateLink": {
+                        "type": "boolean",
+                        "title": "Enable Batch Private Link"
+                    },
+                    "enableOSPatching": {
+                        "type": "boolean",
+                        "title": "Enable Auto OS Patching"
+                    },
+                    "releaseQuotaOnStop": {
+                        "type": "boolean",
+                        "title": "Release Quota On Stop"
+                    },
+                    "dataMounts": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DataMounts"
+                        },
+                        "description": "Describes informations of dataMounts on this ComputeInstance.",
+                        "nullable": true
+                    },
+                    "dataDisks": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DataDisk"
+                        },
+                        "description": "Describes informations of dataDisks on this ComputeInstance.",
+                        "nullable": true
+                    },
+                    "containers": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ContainerInfo"
+                        },
+                        "description": "Describes informations of containers on this ComputeInstance.",
+                        "nullable": true,
+                        "x-ms-identifiers": [
+                            "name"
+                        ]
+                    },
+                    "updateStatus": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "versions": {
+                        "$ref": "#/components/schemas/Versions"
+                    },
+                    "customServices": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CustomService"
+                        },
+                        "nullable": true
+                    },
+                    "osImageMetadata": {
+                        "$ref": "#/components/schemas/ImageMetadata"
+                    }
+                },
+                "description": "Compute Instance properties"
+            },
+            "DsvmProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ],
+                "properties": {
+                    "virtualMachineSize": {
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Gets or sets size of virtual machine.",
+                        "nullable": true
+                    },
+                    "sshPort": {
+                        "maximum": 65535,
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "Gets or sets the port open for ssh connections.",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "notebookServerPort": {
+                        "maximum": 65535,
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "Gets or sets the port open for notebook connections.",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "address": {
+                        "type": "string",
+                        "description": "Gets or sets Address of a virtual machine.",
+                        "nullable": true
+                    },
+                    "ipAddress": {
+                        "type": "string",
+                        "description": "Gets or sets IpAddress of a virtual machine.\r\nThis will be removed, only here for retro compatibility.",
+                        "nullable": true
+                    },
+                    "administratorAccount": {
+                        "$ref": "#/components/schemas/SshCredentials"
+                    },
+                    "imageVersion": {
+                        "type": "string",
+                        "description": "Gets or sets image version to be used for creating Virtual machine compute.\r\nDefault is set to 'latest'.",
+                        "nullable": true
+                    },
+                    "applicationUris": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DsiApplicationUri"
+                        },
+                        "description": "Gets or sets the uris for applications running in this Virtual Machine compute.",
+                        "nullable": true
+                    },
+                    "createdBy": {
+                        "$ref": "#/components/schemas/User"
+                    }
+                },
+                "description": "Properties specific to DSVM computes."
+            },
+            "Endpoint": {
+                "type": "object",
+                "properties": {
+                    "protocol": {
+                        "$ref": "#/components/schemas/ProtocolType"
+                    },
+                    "name": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "target": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "published": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "hostIp": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "EnvironmentInfo": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "version": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "EnvironmentVariable": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "$ref": "#/components/schemas/EnvironmentVariableType"
+                    },
+                    "value": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "EnvironmentVariableType": {
+                "enum": [
+                    "Local",
+                    "Azureml"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "EnvironmentVariableType",
+                    "modelAsString": true
+                }
+            },
+            "ErrorAdditionalInfo": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "nullable": true,
+                        "readOnly": true
+                    },
+                    "info": {
+                        "nullable": true,
+                        "readOnly": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ErrorDetail": {
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "target": {
+                        "type": "string",
+                        "nullable": true,
+                        "readOnly": true
+                    },
+                    "details": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ErrorDetail"
+                        },
+                        "nullable": true,
+                        "readOnly": true
+                    },
+                    "additionalInfo": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ErrorAdditionalInfo"
+                        },
+                        "nullable": true,
+                        "readOnly": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "Frequency": {
+                "enum": [
+                    "Month",
+                    "Week",
+                    "Day",
+                    "Hour",
+                    "Minute"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "Frequency",
+                    "modelAsString": true
+                }
+            },
+            "HDInsightProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ],
+                "properties": {
+                    "sshPort": {
+                        "maximum": 65535,
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "Gets or sets the port open for ssh connections.",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "ipAddress": {
+                        "type": "string",
+                        "description": "Gets or sets IpAddress of a virtual machine.\r\nThis will be removed, only here for retro compatibility.",
+                        "nullable": true
+                    },
+                    "address": {
+                        "type": "string",
+                        "description": "Gets or sets Address of a virtual machine.",
+                        "nullable": true
+                    },
+                    "administratorAccount": {
+                        "$ref": "#/components/schemas/SshCredentials"
+                    },
+                    "servicePrincipalCredentials": {
+                        "$ref": "#/components/schemas/ServicePrincipalCredentials"
+                    },
+                    "accessResource": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "description": "Properties specific to HDInsight clusters."
+            },
+            "IActionResult": {
+                "type": "object",
+                "additionalProperties": false
+            },
+            "IComputeSecrets": {
+                "required": [
+                    "computeType"
+                ],
+                "type": "object",
+                "properties": {
+                    "computeType": {
+                        "$ref": "#/components/schemas/ComputeType"
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Secrets related to a Machine Learning compute. Might differ for every type of compute."
+            },
+            "Image": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "$ref": "#/components/schemas/ImageType"
+                    },
+                    "reference": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "ImageMetadata": {
+                "type": "object",
+                "properties": {
+                    "currentImageVersion": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "latestImageVersion": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "isLatestOsImageVersion": {
+                        "type": "boolean"
+                    },
+                    "osPatchingStatus": {
+                        "$ref": "#/components/schemas/OsPatchingStatus"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ImageType": {
+                "enum": [
+                    "Docker",
+                    "Azureml"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "ImageType",
+                    "modelAsString": true
+                }
+            },
+            "InstanceTypeUpdateMode": {
+                "enum": [
+                    "Merge",
+                    "Replace"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "InstanceTypeUpdateMode",
+                    "modelAsString": true
+                }
+            },
+            "IotHubProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ],
+                "properties": {
+                    "connectionString": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "ItpProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ],
+                "properties": {
+                    "connectionString": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "KubernetesClusterInfo": {
+                "type": "object",
+                "properties": {
+                    "isAvailable": {
+                        "type": "boolean"
+                    },
+                    "enableTraining": {
+                        "type": "boolean"
+                    },
+                    "enableInference": {
+                        "type": "boolean"
+                    },
+                    "allowInsecureConnections": {
+                        "type": "boolean"
+                    },
+                    "inferenceRouterServiceType": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "extensionVersion": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "KubernetesInstanceType": {
+                "type": "object",
+                "properties": {
+                    "nodeSelector": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "description": "Node Selector",
+                        "nullable": true
+                    },
+                    "resources": {
+                        "$ref": "#/components/schemas/KubernetesResources"
+                    }
+                }
+            },
+            "KubernetesResources": {
+                "type": "object",
+                "properties": {
+                    "requests": {
+                        "$ref": "#/components/schemas/KubernetesResourcesSection"
+                    },
+                    "limits": {
+                        "$ref": "#/components/schemas/KubernetesResourcesSection"
+                    }
+                },
+                "description": "Resource requests/limits for this instance type"
+            },
+            "KubernetesResourcesSection": {
+                "type": "object",
+                "properties": {
+                    "cpu": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "memory": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "nvidia.com/gpu": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    }
+                }
+            },
+            "KubernetesWireProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ],
+                "properties": {
+                    "relayConnectionString": {
+                        "type": "string",
+                        "description": "The relayConnectionString property should not be returned via the wire properties (secret)",
+                        "nullable": true,
+                        "x-ms-secret": true
+                    },
+                    "serviceBusConnectionString": {
+                        "type": "string",
+                        "description": "ServiceBus connection string.",
+                        "nullable": true,
+                        "x-ms-secret": true
+                    },
+                    "extensionPrincipalId": {
+                        "type": "string",
+                        "description": "Extension principal-id.",
+                        "nullable": true
+                    },
+                    "extensionInstanceReleaseTrain": {
+                        "type": "string",
+                        "description": "Extension instance release train.",
+                        "nullable": true
+                    },
+                    "underlyingClusterType": {
+                        "type": "string",
+                        "description": "Underlying cluster type.",
+                        "nullable": true
+                    },
+                    "vcName": {
+                        "type": "string",
+                        "description": "VC name.",
+                        "nullable": true
+                    },
+                    "namespace": {
+                        "type": "string",
+                        "description": "Compute namespace",
+                        "nullable": true
+                    },
+                    "defaultInstanceType": {
+                        "type": "string",
+                        "description": "Default instance type",
+                        "nullable": true
+                    },
+                    "instanceTypes": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/KubernetesInstanceType"
+                        },
+                        "nullable": true
+                    },
+                    "clusterInfo": {
+                        "$ref": "#/components/schemas/KubernetesClusterInfo"
+                    },
+                    "controlPlaneFqdn": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "controlPlaneCompute": {
+                        "type": "boolean"
+                    },
+                    "instanceTypeUpdateMode": {
+                        "$ref": "#/components/schemas/InstanceTypeUpdateMode"
+                    }
+                },
+                "description": "Kubernetes properties"
+            },
+            "KustoProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ],
+                "properties": {
+                    "servicePrincipalCredentials": {
+                        "$ref": "#/components/schemas/ServicePrincipalCredentials"
+                    },
+                    "kustoConnectionString": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "LoadBalancerType": {
+                "enum": [
+                    "PublicIp",
+                    "InternalLoadBalancer"
+                ],
+                "type": "string",
+                "description": "Load Balancer Type",
+                "x-ms-enum": {
+                    "name": "LoadBalancerType",
+                    "modelAsString": true
+                }
+            },
+            "MLFlowAutologgerState": {
+                "enum": [
+                    "Enabled",
+                    "Disabled"
+                ],
+                "type": "string",
+                "description": "Enum to determine the state of mlflow autologger.",
+                "x-ms-enum": {
+                    "name": "MLFlowAutologgerState",
+                    "modelAsString": true
+                }
+            },
+            "MlcComputeResource": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Resource"
+                    }
+                ],
+                "properties": {
+                    "location": {
+                        "type": "string",
+                        "description": "Specifies the location of the resource.",
+                        "nullable": true
+                    },
+                    "tags": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "description": "Contains resource tags defined as key/value pairs.",
+                        "nullable": true
+                    },
+                    "identity": {
+                        "$ref": "../../../../../common-types/resource-management/v3/managedidentity.json#/definitions/ManagedServiceIdentity"
+                    },
+                    "properties": {
+                        "$ref": "#/components/schemas/ComputeProperties"
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Machine Learning compute object wrapped into ARM resource envelope."
+            },
+            "MountAction": {
+                "enum": [
+                    "Mount",
+                    "Unmount"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "MountAction",
+                    "modelAsString": true
+                }
+            },
+            "MountState": {
+                "enum": [
+                    "MountRequested",
+                    "Mounted",
+                    "MountFailed",
+                    "UnmountRequested",
+                    "UnmountFailed",
+                    "Unmounted"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "MountState",
+                    "modelAsString": true
+                }
+            },
+            "NetworkType": {
+                "enum": [
+                    "Bridge",
+                    "Host"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "NetworkType",
+                    "modelAsString": true
+                }
+            },
+            "NodeStateCounts": {
+                "type": "object",
+                "properties": {
+                    "preparingNodeCount": {
+                        "type": "integer",
+                        "description": "Number of compute nodes which are being prepared.",
+                        "format": "int32",
+                        "title": "Preparing node count."
+                    },
+                    "runningNodeCount": {
+                        "type": "integer",
+                        "description": "Number of compute nodes which are running jobs.",
+                        "format": "int32",
+                        "title": "Running node count."
+                    },
+                    "idleNodeCount": {
+                        "type": "integer",
+                        "description": "Number of compute nodes in idle state.",
+                        "format": "int32",
+                        "title": "Idle node count."
+                    },
+                    "unusableNodeCount": {
+                        "type": "integer",
+                        "description": "Number of compute nodes which are in unusable state.",
+                        "format": "int32",
+                        "title": "Unusable node count."
+                    },
+                    "leavingNodeCount": {
+                        "type": "integer",
+                        "description": "Number of compute nodes which are leaving the amlCompute.",
+                        "format": "int32",
+                        "title": "Leaving node count."
+                    },
+                    "preemptedNodeCount": {
+                        "type": "integer",
+                        "description": "Number of compute nodes which are in preempted state.",
+                        "format": "int32",
+                        "title": "Preempted node count."
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Counts of various compute node states on the amlCompute."
+            },
+            "ODataError": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "target": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "details": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ODataErrorDetail"
+                        },
+                        "nullable": true
+                    },
+                    "innererror": {
+                        "$ref": "#/components/schemas/ODataInnerError"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ODataErrorDetail": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "target": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ODataErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "$ref": "#/components/schemas/ODataError"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ODataInnerError": {
+                "type": "object",
+                "properties": {
+                    "clientRequestId": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "serviceRequestId": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "trace": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "context": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "OsPatchingStatus": {
+                "type": "object",
+                "properties": {
+                    "patchStatus": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "latestPatchTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "rebootPending": {
+                        "type": "boolean"
+                    },
+                    "scheduledRebootTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "PaginatedMlcComputeResourceList": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MlcComputeResource"
+                        },
+                        "nullable": true
+                    },
+                    "continuationToken": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "nextLink": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "PersonalComputeInstanceSettings": {
+                "type": "object",
+                "properties": {
+                    "assignedUser": {
+                        "$ref": "#/components/schemas/AssignedUser"
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Settings for a personal compute instance."
+            },
+            "ProtocolType": {
+                "enum": [
+                    "TCP",
+                    "UDP",
+                    "HTTP"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "ProtocolType",
+                    "modelAsString": true
+                }
+            },
+            "ProvisioningState": {
+                "enum": [
+                    "Unknown",
+                    "Updating",
+                    "Creating",
+                    "Deleting",
+                    "Accepted",
+                    "Succeeded",
+                    "Failed",
+                    "Canceled"
+                ],
+                "type": "string",
+                "description": "Defines values for ProvisioningState.",
+                "x-ms-enum": {
+                    "name": "ProvisioningState",
+                    "modelAsString": true
+                }
+            },
+            "Recurrence": {
+                "type": "object",
+                "properties": {
+                    "frequency": {
+                        "$ref": "#/components/schemas/Frequency"
+                    },
+                    "interval": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "startTime": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "timeZone": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "schedule": {
+                        "$ref": "#/components/schemas/RecurrenceSchedule"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "RecurrenceSchedule": {
+                "type": "object",
+                "properties": {
+                    "hours": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "format": "int32"
+                        },
+                        "nullable": true
+                    },
+                    "minutes": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "format": "int32"
+                        },
+                        "nullable": true
+                    },
+                    "weekDays": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WeekDay"
+                        },
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ResourceId": {
+                "required": [
+                    "id"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "minLength": 1,
+                        "pattern": "[a-zA-Z0-9_]",
+                        "type": "string",
+                        "description": "Gets or sets the ID of the resource."
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Represents a resource ID. For example, for a subnet, it is the resource\r\nURL for the subnet."
+            },
+            "ScaleSettings": {
+                "type": "object",
+                "properties": {
+                    "maxNodeCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "minNodeCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "autoScaleEnabled": {
+                        "type": "boolean"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ScheduleBase": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/ScheduleStatus"
+                    },
+                    "provisioningStatus": {
+                        "$ref": "#/components/schemas/ScheduleProvisioningState"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ScheduleProvisioningState": {
+                "enum": [
+                    "Completed",
+                    "Provisioning",
+                    "Failed"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "ScheduleProvisioningState",
+                    "modelAsString": true
+                }
+            },
+            "ScheduleStatus": {
+                "enum": [
+                    "Enabled",
+                    "Disabled"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "ScheduleStatus",
+                    "modelAsString": true
+                }
+            },
+            "SchedulingPolicy": {
+                "enum": [
+                    "Fifo",
+                    "Priority",
+                    "MaxUtilization",
+                    "PriorityFirstFit"
+                ],
+                "type": "string",
+                "description": "Defines values for SchedulingPolicy.\r\nPossible values include: 'Fifo', 'Priority', 'MaxUtilization', 'PriorityFirstFit'.",
+                "x-ms-enum": {
+                    "name": "SchedulingPolicy",
+                    "modelAsString": true
+                }
+            },
+            "ScriptReference": {
+                "type": "object",
+                "properties": {
+                    "scriptSource": {
+                        "type": "string",
+                        "description": "Gets or sets the storage source of the script: inline, workspace.",
+                        "nullable": true
+                    },
+                    "scriptData": {
+                        "type": "string",
+                        "description": "Gets or sets the location of scripts in the mounted volume.",
+                        "nullable": true
+                    },
+                    "scriptArguments": {
+                        "type": "string",
+                        "description": "Gets or sets the command line arguments passed to the script to run.",
+                        "nullable": true
+                    },
+                    "timeout": {
+                        "type": "string",
+                        "description": "Gets or sets timeout.",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ScriptsToExecute": {
+                "type": "object",
+                "properties": {
+                    "startupScript": {
+                        "$ref": "#/components/schemas/ScriptReference"
+                    },
+                    "creationScript": {
+                        "$ref": "#/components/schemas/ScriptReference"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ServicePrincipalCredentials": {
+                "type": "object",
+                "properties": {
+                    "clientId": {
+                        "type": "string",
+                        "description": "Gets or sets the service principal client ID.",
+                        "nullable": true
+                    },
+                    "secret": {
+                        "type": "string",
+                        "description": "Gets or sets the service principal secret. This is not returned in\r\nresponse of GET/PUT on the resource. To see this please call\r\nlistKeys.",
+                        "nullable": true
+                    },
+                    "tenantId": {
+                        "type": "string",
+                        "description": "Gets or sets the tenant ID where service principal was created from.",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "SetupScripts": {
+                "type": "object",
+                "properties": {
+                    "scripts": {
+                        "$ref": "#/components/schemas/ScriptsToExecute"
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Details of customized scripts to execute for setting up the cluster."
+            },
+            "SeverityLevel": {
+                "enum": [
+                    "Critical",
+                    "Error",
+                    "Warning",
+                    "Info"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "SeverityLevel",
+                    "modelAsString": true
+                }
+            },
+            "SshCredentials": {
+                "required": [
+                    "username"
+                ],
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "maxLength": 32,
+                        "minLength": 1,
+                        "pattern": "[a-zA-Z0-9_]",
+                        "type": "string",
+                        "description": "Gets or sets account username."
+                    },
+                    "password": {
+                        "maxLength": 72,
+                        "minLength": 6,
+                        "type": "string",
+                        "description": "Gets or sets SSH password. Ignored if Microsoft.MachineLearning.ComputeRP.Contracts.ComputeWireContracts.SshCredentials.PublicKeyData and\r\nMicrosoft.MachineLearning.ComputeRP.Contracts.ComputeWireContracts.SshCredentials.PrivateKeyData are supplied.",
+                        "nullable": true
+                    },
+                    "passphrase": {
+                        "type": "string",
+                        "description": "Gets or sets SSH passphrase.",
+                        "nullable": true
+                    },
+                    "publicKeyData": {
+                        "pattern": "^ssh-rsa ",
+                        "type": "string",
+                        "description": "Gets or sets SSH public key certificate used to authenticate through SSH.\r\nThe key needs to be in ssh-rsa format. If supplied, Microsoft.MachineLearning.ComputeRP.Contracts.ComputeWireContracts.SshCredentials.Password will be ignored.",
+                        "nullable": true,
+                        "x-ms-secret": true
+                    },
+                    "privateKeyData": {
+                        "pattern": "^ssh-rsa ",
+                        "type": "string",
+                        "description": "Gets or sets SSH private key certificate used to authenticate through SSH.\r\nThe key needs to be in ssh-rsa format. If supplied, Microsoft.MachineLearning.ComputeRP.Contracts.ComputeWireContracts.SshCredentials.Password will be ignored.",
+                        "nullable": true,
+                        "x-ms-secret": true
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Credentials for authentication via SSH."
+            },
+            "SshSettings": {
+                "type": "object",
+                "properties": {
+                    "sshPublicAccess": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "adminUserName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "sshPort": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "adminPublicKey": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "SslConfiguration": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "$ref": "#/components/schemas/SslMode"
+                    },
+                    "cert": {
+                        "type": "string",
+                        "description": "Gets or sets the SSL cert data in PEM format encoded as base64\r\nstring.",
+                        "nullable": true,
+                        "x-ms-secret": true
+                    },
+                    "key": {
+                        "type": "string",
+                        "description": "Gets or sets the SSL key data in PEM format encoded as base64\r\nstring. This is not returned in response of GET/PUT on the\r\nresource.. To see this please call listKeys API.",
+                        "nullable": true,
+                        "x-ms-secret": true
+                    },
+                    "cname": {
+                        "type": "string",
+                        "description": "Gets or sets the CName of the cert.\r\nThis is used by MMS to return the correct hostname in the scoring URL.\r\nCustomer should set this to the DNS name they will use to call scoring API.\r\nThe cert CN or one of the SANs should match this.",
+                        "nullable": true
+                    },
+                    "leafDomainLabel": {
+                        "type": "string",
+                        "description": "Gets or sets the leaf domain label of public endpoint.",
+                        "nullable": true
+                    },
+                    "overwriteExistingDomain": {
+                        "type": "boolean",
+                        "description": "Gets or sets a value indicating whether to overwrite existing domain label."
+                    },
+                    "renew": {
+                        "type": "boolean",
+                        "description": "Gets or sets a value indicating whether to renew certificate."
+                    }
+                },
+                "additionalProperties": false,
+                "description": "SSL configuration. If configured data-plane calls to user services will be exposed over SSL only."
+            },
+            "SslMode": {
+                "enum": [
+                    "Disabled",
+                    "Enabled",
+                    "Auto"
+                ],
+                "type": "string",
+                "description": "Defines values for Ssl Status.",
+                "x-ms-enum": {
+                    "name": "SslMode",
+                    "modelAsString": true
+                }
+            },
+            "StorageAccountType": {
+                "enum": [
+                    "Standard_LRS",
+                    "Premium_LRS"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "StorageAccountType",
+                    "modelAsString": true
+                }
+            },
+            "SynapseSparkPoolProperties": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ComputeDetails"
+                    }
+                ],
+                "properties": {
+                    "autoScaleProperties": {
+                        "$ref": "#/components/schemas/AutoScaleProperties"
+                    },
+                    "autoPauseProperties": {
+                        "$ref": "#/components/schemas/AutoPauseProperties"
+                    },
+                    "sparkVersion": {
+                        "type": "string",
+                        "description": "Spark version.",
+                        "nullable": true
+                    },
+                    "nodeCount": {
+                        "type": "integer",
+                        "description": "The number of compute nodes currently assigned to the compute.",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "nodeSize": {
+                        "type": "string",
+                        "description": "Node size.",
+                        "nullable": true
+                    },
+                    "nodeSizeFamily": {
+                        "type": "string",
+                        "description": "Node size family.",
+                        "nullable": true
+                    },
+                    "subscriptionId": {
+                        "type": "string",
+                        "description": "Azure subscription identifier.",
+                        "nullable": true
+                    },
+                    "resourceGroup": {
+                        "type": "string",
+                        "description": "Name of the resource group in which workspace is located.",
+                        "nullable": true
+                    },
+                    "workspaceName": {
+                        "type": "string",
+                        "description": "Name of Azure Machine Learning workspace.",
+                        "nullable": true
+                    },
+                    "poolName": {
+                        "type": "string",
+                        "description": "Pool name.",
+                        "nullable": true
+                    }
+                },
+                "description": "Properties specific to Synapse Spark pools."
+            },
+            "TmpfsOptions": {
+                "type": "object",
+                "properties": {
+                    "size": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "userObjectId": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "userPuId": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "userIdp": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "userAltSecId": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "userIss": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "userTenantId": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "userName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "upn": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "UserAccountCredentials": {
+                "required": [
+                    "adminUserName"
+                ],
+                "type": "object",
+                "properties": {
+                    "adminUserName": {
+                        "minLength": 1,
+                        "pattern": "[a-zA-Z0-9_]",
+                        "type": "string",
+                        "description": "Name of the administrator user account which can be used to SSH to nodes.",
+                        "title": "User name."
+                    },
+                    "adminUserPassword": {
+                        "type": "string",
+                        "description": "SSH public key of the administrator user account.",
+                        "nullable": true,
+                        "x-ms-secret": true,
+                        "title": "SSH public key."
+                    },
+                    "adminUserSshPublicKey": {
+                        "type": "string",
+                        "description": "Password of the administrator user account.",
+                        "nullable": true,
+                        "x-ms-secret": true,
+                        "title": "Password."
+                    }
+                },
+                "additionalProperties": false,
+                "description": "Settings for user account that gets created on each on the nodes of a compute."
+            },
+            "UserAssignedIdentity": {
+                "type": "object",
+                "properties": {
+                    "principalId": {
+                        "type": "string",
+                        "description": "Gets or sets Oid of this Identity. This Id helps the user assign permissions to this Identity.",
+                        "nullable": true
+                    },
+                    "tenantId": {
+                        "type": "string",
+                        "description": "Gets or sets AAD Tenant where this identity lives.",
+                        "nullable": true
+                    },
+                    "clientId": {
+                        "type": "string",
+                        "description": "Gets or sets the AAD client id for the user assigned identity.",
+                        "nullable": true
+                    },
+                    "clientSecretUrl": {
+                        "type": "string",
+                        "description": "Gets or sets a refreshed version of the URL used to retrieve credentials.",
+                        "nullable": true
+                    },
+                    "resourceId": {
+                        "type": "string",
+                        "description": "Gets or sets the ARM resource id of the user assigned identity.",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "Versions": {
+                "type": "object",
+                "properties": {
+                    "runtime": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "VolumeDefinition": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "$ref": "#/components/schemas/VolumeType"
+                    },
+                    "readOnly": {
+                        "type": "boolean",
+                        "nullable": true
+                    },
+                    "source": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "target": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "consistency": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "bind": {
+                        "$ref": "#/components/schemas/BindOptions"
+                    },
+                    "volume": {
+                        "$ref": "#/components/schemas/VolumeOptions"
+                    },
+                    "tmpfs": {
+                        "$ref": "#/components/schemas/TmpfsOptions"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "VolumeOptions": {
+                "type": "object",
+                "properties": {
+                    "nocopy": {
+                        "type": "boolean",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "VolumeType": {
+                "enum": [
+                    "Bind",
+                    "Volume",
+                    "Tmpfs",
+                    "Npipe"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "VolumeType",
+                    "modelAsString": true
+                }
+            },
+            "WeekDay": {
+                "enum": [
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                    "Sunday"
+                ],
+                "type": "string",
+                "x-ms-enum": {
+                    "name": "WeekDay",
+                    "modelAsString": true
+                }
+            }
+        },
+        "parameters": {
+            "underlyingResourceActionParameter": {
+                "name": "underlyingResourceAction",
+                "in": "path",
+                "description": "Delete the underlying compute if 'Delete', or detach the underlying compute from workspace if 'Detach'.",
+                "required": true,
+                "type": "string",
+                "x-ms-parameter-location": "method",
+                "enum": [
+                    "delete",
+                    "detach"
+                ],
+                "x-ms-enum": {
+                    "name": "underlyingResourceAction",
+                    "modelAsString": true
+                }
+            },
+            "computeIdParameter": {
+                "name": "computeId",
+                "in": "path",
+                "description": "Name of the Azure Machine Learning compute.",
+                "required": true,
+                "type": "string",
+                "x-ms-parameter-location": "method"
+            },
+            "workspaceNameParameter": {
+                "name": "workspaceName",
+                "in": "path",
+                "description": "The name of the workspace.",
+                "required": true,
+                "type": "string",
+                "x-ms-parameter-location": "method"
+            },
+            "$skipTokenParameter": {
+                "name": "$skipToken",
+                "in": "path",
+                "description": "Continuation token for pagination.",
+                "type": "string",
+                "x-ms-parameter-location": "method"
+            }
+        },
+        "securitySchemes": {
+            "azure_auth": {
+                "type": "oauth2",
+                "flows": {
+                    "implicit": {
+                        "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+                        "scopes": {
+                            "user_impersonation": "impersonate your user account"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "security": [
+        {
+            "azure_auth": [
+                "user_impersonation"
+            ]
+        }
+    ]
+}
