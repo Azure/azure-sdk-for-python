@@ -406,6 +406,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         """Build current parameterized schedule instance to a schedule object before submission.
 
         :return: Rest schedule.
+        :rtype: RestSchedule
         """
         if isinstance(self.create_job, BaseNode):
             self.create_job = self.create_job._to_job()

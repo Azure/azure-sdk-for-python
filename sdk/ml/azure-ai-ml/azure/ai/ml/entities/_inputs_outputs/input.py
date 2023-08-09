@@ -321,6 +321,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :param val: The input value
         :type val: T
         :return: The parsed value.
+        :rtype: Union[int, float, bool, str, T]
         """
         if self.type == "integer":
             return int(float(val))  # backend returns 10.0，for integer， parse it to float before int
@@ -348,6 +349,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :param val: The input string value from the command line.
         :type val: T
         :return: The parsed value, an exception will be raised if the value is invalid.
+        :rtype: Union[int, float, bool, str, T]
         """
         if self._is_primitive_type:
             val = self._parse(val) if isinstance(val, str) else val

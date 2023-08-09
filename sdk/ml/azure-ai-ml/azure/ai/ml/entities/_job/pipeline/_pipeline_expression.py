@@ -264,7 +264,11 @@ class PipelineExpression(PipelineExpressionMixin):
 
     @property
     def expression(self) -> str:
-        """Infix expression string, wrapped with parentheses."""
+        """Infix expression string, wrapped with parentheses.
+
+        :return: The infix expression
+        :rtype: str
+        """
         return self._to_infix()
 
     def __str__(self) -> str:
@@ -439,7 +443,11 @@ class PipelineExpression(PipelineExpressionMixin):
 
     @property
     def _string_concatenation(self) -> bool:
-        """If all operands are string and operations are addition, it is a string concatenation expression."""
+        """If all operands are string and operations are addition, it is a string concatenation expression.
+
+        :return: Whether this represents string concatenation
+        :rtype: bool
+        """
         for token in self._postfix:
             # operator can only be "+" for string concatenation
             if token in _SUPPORTED_OPERATORS:
@@ -496,7 +504,8 @@ class PipelineExpression(PipelineExpressionMixin):
 
         :param data_binding: Data binding expression
         :type data_binding: str
-        :returns List of PipelineInput's name from given data binding expression
+        :return: List of PipelineInput's name from given data binding expression
+        :rtype: List[str]
         """
         pipeline_input_names = []
         for single_data_binding in get_all_data_binding_expressions(

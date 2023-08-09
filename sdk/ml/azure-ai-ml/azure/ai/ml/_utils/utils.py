@@ -749,6 +749,7 @@ def is_data_binding_expression(
     :param is_singular: should the value be a singular data-binding expression, like "${{parent.jobs.xxx}}".
     :type is_singular: bool
     :return: True if the value is a data-binding expression, False otherwise.
+    :rtype: bool
     """
     return len(get_all_data_binding_expressions(value, binding_prefix, is_singular)) > 0
 
@@ -766,6 +767,7 @@ def get_all_data_binding_expressions(
     :param is_singular: should the value be a singular data-binding expression, like "${{parent.jobs.xxx}}".
     :type is_singular: bool
     :return: list of data-binding expressions.
+    :rtype: List[str]
     """
     if isinstance(binding_prefix, str):
         binding_prefix = [binding_prefix]
@@ -1026,6 +1028,7 @@ def get_valid_dot_keys_with_wildcard(
     If None, no validation will be performed.
     :type validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]]
     :return: List of valid dot keys.
+    :rtype: List[str]
     """
     left_reversed_parts = dot_key_wildcard.split(".")[::-1]
     return _get_valid_dot_keys_with_wildcard_impl(left_reversed_parts, root, validate_func=validate_func)

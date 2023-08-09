@@ -141,8 +141,12 @@ class PipelineComponentBuilder:
         self.source_path = source_path
 
     @property
-    def name(self):
-        """Name of pipeline builder, it's name will be same as the pipeline definition it builds."""
+    def name(self) -> str:
+        """Name of pipeline builder, it's name will be same as the pipeline definition it builds.
+
+        :return: Pipeline builder name
+        :rtype: str
+        """
         return self._name
 
     def add_node(self, node: Union[BaseNode, AutoMLJob]):

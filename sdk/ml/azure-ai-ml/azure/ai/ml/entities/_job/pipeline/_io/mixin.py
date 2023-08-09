@@ -97,6 +97,7 @@ class NodeIOMixin:
         :keyword input_definition_dict: Static input definition dict. If not provided, will build inputs without meta.
         :type input_definition_dict: dict, optional
         :return: Built dynamic input attribute dict.
+        :rtype: InputsAttrDict
         """
         if input_definition_dict is not None:
             # TODO: validate inputs.keys() in input_definitions.keys()
@@ -417,6 +418,7 @@ class NodeWithGroupInputMixin(NodeIOMixin):
         :keyword input_definition_dict: Input definition dict from component entity.
         :type input_definition_dict: dict, optional
         :return: Built input attribute dict.
+        :rtype: InputsAttrDict
         """
 
         # TODO: should we support group input when there is no local input definition?
@@ -459,6 +461,7 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         :type inputs: Dict[str, Union[Input, str, bool, int, float]]
         :keyword input_definition_dict: Input definition dict from component entity.
         :return: Built input attribute dict.
+        :rtype: InputsAttrDict
         """
         input_dict = super()._build_inputs_dict(inputs, input_definition_dict=input_definition_dict)
         # TODO: should we do this when input_definition_dict is not None?
@@ -474,6 +477,7 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         :param data: Output data.
         :type data: Optional[Union[Output, NodeOutput]]
         :return: Built output object.
+        :rtype: PipelineOutput
         """
         # pylint: disable=protected-access
         if data is None:
@@ -502,6 +506,7 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         :param outputs: Node output dict or pipeline component's outputs.
         :type outputs: Dict[str, Union[Output, NodeOutput]]
         :return: Built dynamic output attribute dict.
+        :rtype: OutputsAttrDict
         """
         output_dict = {}
         for key, val in outputs.items():

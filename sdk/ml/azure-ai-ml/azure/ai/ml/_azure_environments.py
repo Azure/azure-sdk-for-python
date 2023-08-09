@@ -126,6 +126,7 @@ def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: 
     :param is_local_mfe: Whether is local Management Front End. Defaults to False.
     :type is_local_mfe: bool, optional
     :return: base url for a cloud
+    :rtype: str
     """
     base_url = None
     if is_local_mfe:
@@ -190,6 +191,7 @@ def _get_cloud_information_from_metadata(cloud_name: Optional[str] = None, **kwa
     :param cloud_name: cloud name
     :type cloud_name: str, optional
     :return: A dictionary of additional configuration parameters required for passing in cloud information.
+    :rtype: Dict
     """
     cloud_details = _get_cloud_details(cloud_name)
     credential_scopes = _resource_to_scopes(cloud_details.get(EndpointURLS.RESOURCE_MANAGER_ENDPOINT).strip("/"))
@@ -223,6 +225,7 @@ def _resource_to_scopes(resource: str) -> List[str]:
     :param resource: The resource ID
     :type resource: str
     :return: A list of scopes
+    :rtype: List[str]
     """
     scope = resource + "/.default"
     return [scope]
@@ -237,6 +240,7 @@ def _get_registry_discovery_url(cloud: dict, cloud_suffix: str = "") -> str:
         must be generated
     :type cloud_suffix: str
     :return: string of discovery url
+    :rtype: str
     """
     cloud_name = cloud["name"]
     if cloud_name in _environments:

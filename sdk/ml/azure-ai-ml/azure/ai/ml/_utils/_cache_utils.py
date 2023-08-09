@@ -219,7 +219,11 @@ class CachedNodeResolver(object):
 
     @property
     def _on_disk_cache_dir(self) -> Path:
-        """Get the base path for on disk cache."""
+        """Get the base path for on disk cache.
+
+        :return: The base path for the on disk cache
+        :rtype: Path
+        """
         return get_versioned_base_directory_for_cache().joinpath(
             "components",
             self._client_hash,

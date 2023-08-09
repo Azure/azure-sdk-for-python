@@ -457,7 +457,11 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         return []
 
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
-        """Convert self to a rest object for remote call."""
+        """Convert self to a rest object for remote call.
+
+        :return: The rest object
+        :rtype: dict
+        """
         base_dict, rest_obj = self._to_dict(), {}
         for key in self._picked_fields_from_dict_to_rest_object():
             if key in base_dict:

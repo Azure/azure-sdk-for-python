@@ -99,6 +99,7 @@ def from_dict_to_rest_io(
     :param io_binding_regex_list: A list of regexes for io bindings
     :type io_binding_regex_list: List[str]
     :return: Map from IO name to IO bindings and Map from IO name to IO objects.
+    :rtype: Tuple[Dict[str, str], Dict[str, Union[RestJobInput, RestJobOutput]]]
     """
     io_bindings = {}
     rest_io_objects = {}

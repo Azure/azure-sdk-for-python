@@ -58,7 +58,11 @@ class ControlFlowNode(YamlTranslatableMixin, SchemaValidatableMixin, ABC):
         return self._dump_for_validation()
 
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
-        """Convert self to a rest object for remote call."""
+        """Convert self to a rest object for remote call.
+
+        :return: The rest object
+        :rtype: dict
+        """
         rest_obj = self._to_dict()
         rest_obj["_source"] = self._source
         return convert_ordered_dict_to_dict(rest_obj)

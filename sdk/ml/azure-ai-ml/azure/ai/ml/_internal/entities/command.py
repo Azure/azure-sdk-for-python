@@ -35,7 +35,11 @@ class Command(InternalBaseNode):
 
     @property
     def compute(self) -> str:
-        """Get the compute definition for the command."""
+        """Get the compute definition for the command.
+
+        :return: The compute definition
+        :rtype: str
+        """
         return self._compute
 
     @compute.setter
@@ -49,7 +53,11 @@ class Command(InternalBaseNode):
 
     @property
     def environment(self) -> str:
-        """Get the environment definition for the command."""
+        """Get the environment definition for the command.
+
+        :return: The environment definition
+        :rtype: str
+        """
         return self._environment
 
     @environment.setter
@@ -63,7 +71,11 @@ class Command(InternalBaseNode):
 
     @property
     def environment_variables(self) -> Dict[str, str]:
-        """Get the environment variables for the command."""
+        """Get the environment variables for the command.
+
+        :return: The environment variables
+        :rtype: Dict[str, str]
+        """
         return self._environment_variables
 
     @environment_variables.setter
@@ -85,7 +97,11 @@ class Command(InternalBaseNode):
 
     @property
     def resources(self) -> JobResourceConfiguration:
-        """Compute Resource configuration for the component."""
+        """Compute Resource configuration for the component.
+
+        :return: The resource configuration
+        :rtype: JobResourceConfiguration
+        """
         return self._resources
 
     @resources.setter
@@ -149,7 +165,11 @@ class Distributed(Command):
     def distribution(
         self,
     ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]:
-        """The distribution config of component, e.g. distribution={'type': 'mpi'}."""
+        """The distribution config of component, e.g. distribution={'type': 'mpi'}.
+
+        :return: The distribution config
+        :rtype: Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
+        """
         return self._distribution
 
     @distribution.setter

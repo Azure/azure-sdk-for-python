@@ -354,6 +354,7 @@ class ComponentTranslatableMixin:
         :param inputs: mapping from input name to input object.
         :type inputs: Dict[str, Union[Input, str, bool, int, float]]
         :return: mapping from input name to translated component input.
+        :rtype: Dict[str, Input]
         """
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
         translated_component_inputs = {}
@@ -367,6 +368,7 @@ class ComponentTranslatableMixin:
         :param outputs: mapping from output name to output object.
         :type outputs: Dict[str, Output]
         :return: mapping from output name to translated component output.
+        :rtype: Dict[str, Output]
         """
         # Translate outputs to Outputs.
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
@@ -381,6 +383,7 @@ class ComponentTranslatableMixin:
         :param context: The context
         :type context: Optional[context], optional
         :return: Translated Component.
+        :rtype: Component
         """
         # Note: Source of translated component should be same with Job
         # And should be set after called _to_component/_to_node as job has no _source now.
@@ -393,6 +396,7 @@ class ComponentTranslatableMixin:
         :type context: Optional[context], optional
         :keyword kwargs:
         :return: Translated node.
+        :rtype: BaseNode
         """
         # Note: Source of translated component should be same with Job
         # And should be set after called _to_component/_to_node as job has no _source now.

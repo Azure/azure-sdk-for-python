@@ -74,8 +74,12 @@ class ArtifactCache:
         self._download_locks = defaultdict(Lock)
 
     @property
-    def cache_directory(self):
-        """Cache directory path."""
+    def cache_directory(self) -> Path:
+        """Cache directory path.
+
+        :return: The cache directory
+        :rtype: Path
+        """
         return self._cache_directory
 
     @staticmethod

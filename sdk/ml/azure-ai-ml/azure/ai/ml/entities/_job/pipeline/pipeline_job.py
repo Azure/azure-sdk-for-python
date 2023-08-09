@@ -484,6 +484,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         """Build current parameterized pipeline instance to a pipeline job object before submission.
 
         :return: Rest pipeline job.
+        :rtype: JobBase
         """
         # Check if there are private preview features in it
         self._check_private_preview_features()
@@ -549,6 +550,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
         :param obj: The REST Pipeline Object
         :type obj: JobBase
         :return: pipeline job.
+        :rtype: PipelineJob
         """
         properties: RestPipelineJob = obj.properties
         # Workaround for BatchEndpoint as these fields are not filled in

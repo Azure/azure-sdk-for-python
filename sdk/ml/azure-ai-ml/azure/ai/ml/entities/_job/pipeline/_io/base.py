@@ -130,7 +130,11 @@ class InputOutputBase(ABC):
 
     @property
     def type(self) -> str:
-        """Type of input/output."""
+        """Type of input/output.
+
+        :return: The type
+        :rtype: str
+        """
         return self._type
 
     @type.setter
@@ -497,7 +501,11 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 
     @property
     def port_name(self) -> str:
-        """The output port name, eg: node.outputs.port_name."""
+        """The output port name, eg: node.outputs.port_name.
+
+        :return: The port name
+        :rtype: str
+        """
         return self._port_name
 
     @property
@@ -526,7 +534,11 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 
     @property
     def version(self) -> str:
-        """Used in registering output data."""
+        """Used in registering output data.
+
+        :return: The output data
+        :rtype: str
+        """
         return self._version
 
     @version.setter

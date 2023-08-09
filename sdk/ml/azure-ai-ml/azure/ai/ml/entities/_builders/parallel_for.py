@@ -117,7 +117,11 @@ class ParallelFor(LoopNode, NodeIOMixin):
 
     @classmethod
     def _to_rest_item(cls, item: dict) -> dict:
-        """Convert item to rest object."""
+        """Convert item to rest object.
+
+        :return: The rest object
+        :rtype: dict
+        """
         primitive_inputs, asset_inputs = {}, {}
         # validate item
         for key, val in item.items():
@@ -158,7 +162,11 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return rest_items
 
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
-        """Convert self to a rest object for remote call."""
+        """Convert self to a rest object for remote call.
+
+        :return: The rest object
+        :rtype: dict
+        """
         rest_node = super(ParallelFor, self)._to_rest_object(**kwargs)
         # convert items to rest object
         rest_items = self._to_rest_items(items=self.items)
