@@ -36,15 +36,22 @@ module_logger = logging.getLogger(__name__)
 
 
 def _get_sorted_filtered_logs(
-    logs_dict: dict, job_type: str, processed_logs: Optional[dict] = None, only_streamable=True
+    logs_iterable: Iterable[str],
+    job_type: str,
+    processed_logs: Optional[Dict[str, int]] = None,
+    only_streamable: bool = True,
 ) -> List[str]:
     """Filters log file names, sorts, and returns list starting with where we left off last iteration.
 
-    :param processed_logs: dictionary tracking the state of how many lines of each file have been written out
-    :type processed_logs: dict[str, int]
+    :param logs_iterable: An iterable of log paths.
+    :type logs_iterable: Iterable[str]
     :param job_type: the job type to filter log files
     :type job_type: str
-    :return:
+    :param processed_logs: dictionary tracking the state of how many lines of each file have been written out
+    :type processed_logs: dict[str, int]
+    :param only_streamable: Whether to only get streamable logs
+    :type only_streamable: bool
+    :return: List of logs to continue from
     :rtype: list[str]
     """
     processed_logs = processed_logs if processed_logs else {}
@@ -54,10 +61,11 @@ def _get_sorted_filtered_logs(
         if only_streamable
         else JobLogPattern.COMMON_RUNTIME_ALL_USER_LOG_PATTERN
     )
-    logs = [x for x in logs_dict if re.match(output_logs_pattern, x)]
+    logs = list(logs_iterable)
+    filtered_logs = [x for x in logs if re.match(output_logs_pattern, x)]
 
     # fall back to legacy log format
-    if logs is None or len(logs) == 0:
+    if filtered_logs is None or len(filtered_logs) == 0:
         job_type = job_type.lower()
         if job_type in JobType.COMMAND:
             output_logs_pattern = JobLogPattern.COMMAND_JOB_LOG_PATTERN
@@ -66,16 +74,16 @@ def _get_sorted_filtered_logs(
         elif job_type in JobType.SWEEP:
             output_logs_pattern = JobLogPattern.SWEEP_JOB_LOG_PATTERN
 
-    logs = [x for x in logs_dict if re.match(output_logs_pattern, x)]
-    logs.sort()
+    filtered_logs = [x for x in logs if re.match(output_logs_pattern, x)]
+    filtered_logs.sort()
     previously_printed_index = 0
-    for i, v in enumerate(logs):
+    for i, v in enumerate(filtered_logs):
         if processed_logs.get(v):
             previously_printed_index = i
         else:
             break
     # Slice inclusive from the last printed log (can be updated before printing new files)
-    return logs[previously_printed_index:]
+    return filtered_logs[previously_printed_index:]
 
 
 def _incremental_print(log: str, processed_logs: Dict[str, int], current_log_name: str, fileout) -> None:
