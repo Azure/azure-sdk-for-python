@@ -29,9 +29,6 @@ from .CondaConfiguration import CondaConfiguration, CheckoutConfiguration
 # from package disutils
 from distutils.dir_util import copy_tree
 
-# from package pyyaml
-import yaml
-
 VERSION_REGEX = re.compile(r"\s*AZURESDK_CONDA_VERSION\s*:\s*[\'](.*)[\']\s*")
 
 SUMMARY_TEMPLATE = " - Generated from {}."
@@ -387,7 +384,7 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
 
         summary = get_summary(conda_build)
 
-        meta_yml_content = re.sub(r"^\s*version\:.*", f"  version: \"{version}\"", meta_yml_content, flags=re.MULTILINE)
+        meta_yml_content = meta_yml_content.replace("{{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}", version)
         meta_yml_content = re.sub(r"^\s*url\:.*", f"  url: \"{conda_build.created_sdist_path}\"", meta_yml_content, flags=re.MULTILINE)
         meta_yml_content = re.sub(r"\{\{\senviron\.get\(\'.*_SUMMARY\'\,\s\'\'\)\s*\}\}", f"{summary}", meta_yml_content, flags=re.MULTILINE)
 
