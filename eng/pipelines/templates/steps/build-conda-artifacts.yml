@@ -10,6 +10,7 @@ steps:
       versionSpec: $(PythonVersion)
 
   - pwsh: |
+      pip install tools/azure-sdk-tools[build]
       pip install disutils
     displayName: Install build script requirements
 
