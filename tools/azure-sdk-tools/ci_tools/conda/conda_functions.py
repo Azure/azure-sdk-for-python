@@ -395,6 +395,22 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
 def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_root: str):
     """Conda builds each individually assembled conda package folder."""
     pass
+    # this is the equivalent build yaml to what this function needs to do for each built artifact
+
+    #   - bash: |
+    #       echo "##vso[task.prependpath]$CONDA/bin"
+    #     displayName: 'Prepend PATH with Conda and INIT'
+
+    #   - bash: |
+    #       conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/conda_env.yml
+    #       conda install --yes --quiet --name ${{ artifact.name }} conda-build conda-verify typing-extensions
+    #     displayName: 'Prepare Conda Environment for building ${{ artifact.name }}'
+
+    #   - bash: |
+    #       source activate ${{ artifact.name }}
+    #       conda-build . --output-folder "$(Agent.BuildDirectory)/conda/output/${{ artifact.name }}" -c $(AzureSDKCondaChannel)
+    #     displayName: 'Activate Conda Environment and Build ${{ artifact.name }}'
+    #     workingDirectory: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/conda-recipe
 
 
 def entrypoint():
