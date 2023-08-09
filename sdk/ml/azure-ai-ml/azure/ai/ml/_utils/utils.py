@@ -666,7 +666,7 @@ def map_single_brackets_and_warn(command: str):
     return command
 
 
-def transform_dict_keys(data: Dict[str, Any], casing_transform: Callable[[str], str], exclude_keys=None) -> Dict[str, Any]:
+def transform_dict_keys(data: Dict[str, Any], casing_transform: Callable[[str], str]) -> Dict[str, Any]:
     """Convert all keys of a nested dictionary according to the passed casing_transform function.
 
     :param data: The data to transform
@@ -676,15 +676,9 @@ def transform_dict_keys(data: Dict[str, Any], casing_transform: Callable[[str], 
     :return: A dictionary with transformed keys
     :rtype: dict
     """
-    transformed_dict = {}
-    for key in data.keys():
-        # Modify the environment_variables separately: don't transform values in environment_variables.
-        # Todo: Pass in json to the overrides field
-        if (exclude_keys and key in exclude_keys) or (not isinstance(data[key], dict)):
-            transformed_dict[casing_transform(key)] = data[key]
-        else:
-            transformed_dict[casing_transform(key)] = transform_dict_keys(data[key], casing_transform)
-    return transformed_dict
+    return {
+        key: transform_dict_keys(val, casing_transform) if isinstance(val, dict) else val for key, val in data.items()
+    }
 
 
 def merge_dict(origin, delta, dep=0):
