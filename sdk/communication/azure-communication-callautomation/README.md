@@ -43,21 +43,17 @@ client = CallAutomationClient.from_connection_string(endpoint_url)
 ```Python
 from azure.communication.callautomation import (
     CallAutomationClient,
-    CallInvite,
     CommunicationUserIdentifier
 )
 
 # target endpoint for ACS User
 user = CommunicationUserIdentifier("8:acs:...")
 
-# make invitation
-call_invite = CallInvite(target=user)
-
 # callback url to receive callback events
 callback_url = "https://<MY-EVENT-HANDLER-URL>/events"
 
 # send out the invitation, creating call
-result = client.create_call(call_invite, callback_url)
+result = client.create_call(user, callback_url)
 
 # this id can be used to do further actions in the call
 call_connection_id = result.call_connection_id
@@ -70,7 +66,7 @@ call_connection = client.get_call_connection(call_connection_id)
 
 # from callconnection of result above, play media to all participants
 my_file = FileSource(url="https://<FILE-SOURCE>/<SOME-FILE>.wav")
-call_connection.play_to_all(my_file)
+call_connection.play_media(my_file)
 ```
 
 ## Troubleshooting
