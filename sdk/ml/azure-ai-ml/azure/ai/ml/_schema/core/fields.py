@@ -27,7 +27,6 @@ from ...constants._common import (
     AZUREML_RESOURCE_PROVIDER,
     BASE_PATH_CONTEXT_KEY,
     CONDA_FILE,
-    DefaultOpenEncoding,
     DOCKER_FILE_NAME,
     EXPERIMENTAL_FIELD_MESSAGE,
     EXPERIMENTAL_LINK_MESSAGE,
@@ -38,6 +37,7 @@ from ...constants._common import (
     REGISTRY_URI_FORMAT,
     RESOURCE_ID_FORMAT,
     AzureMLResourceType,
+    DefaultOpenEncoding,
 )
 from ...entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
 from ...exceptions import ValidationException
@@ -672,6 +672,22 @@ def CodeField(**kwargs):
             ArmVersionedStr(azureml_type=AzureMLResourceType.CODE),
         ],
         metadata={"description": "A local path or http:, https:, azureml: url pointing to a remote location."},
+        **kwargs,
+    )
+
+
+def EnvironmentField(*, extra_fields: List[Field] = None, **kwargs):
+    extra_fields = extra_fields or []
+    # local import to avoid circular dependency
+    from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema
+
+    return UnionField(
+        [
+            NestedField(AnonymousEnvironmentSchema),
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
+        ]
+        + extra_fields,
         **kwargs,
     )
 
