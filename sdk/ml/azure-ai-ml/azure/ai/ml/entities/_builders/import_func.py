@@ -30,23 +30,23 @@ def import_job(
     """Create an Import object which can be used inside dsl.pipeline as a function
     and can also be created as a standalone import job.
 
-    :param name: Name of the import job or component created.
+    :keyword name: Name of the import job or component created.
     :type name: str, optional
-    :param description: A friendly description of the import.
+    :keyword description: A friendly description of the import.
     :type description: str, optional
-    :param tags: Tags to be attached to this import.
+    :keyword tags: Tags to be attached to this import.
     :type tags: Dict, optional
-    :param display_name: A friendly name.
+    :keyword display_name: A friendly name.
     :type display_name: str, optional
-    :param experiment_name: Name of the experiment the job will be created under.
+    :keyword experiment_name: Name of the experiment the job will be created under.
         If None is provided, the default will be set to the current directory name.
         Will be ignored as a pipeline step.
     :type experiment_name: str, optional
-    :param source: Input source parameters used by this import.
+    :keyword source: Input source parameters used by this import.
     :type source: ~azure.ai.ml.entities._job.import_job.ImportSource, optional
-    :param output: The output of this import.
+    :keyword output: The output of this import.
     :type output: ~azure.ai.ml.entities.Output, optional
-    :param is_deterministic: Specify whether the command will return the same output given the same input.
+    :keyword is_deterministic: Specify whether the command will return the same output given the same input.
         If a command (component) is deterministic, when used as a node/step in a pipeline,
         it will reuse results from a previously submitted job in the current workspace
         which has the same inputs and settings.

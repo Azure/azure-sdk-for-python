@@ -76,7 +76,7 @@ def get_datastore_info(
     :type operations: DatastoreOperations
     :param name: Name of the datastore. If not provided, the default datastore will be used.
     :type name: str
-    :param credential: Local credential to use for authentication. If not provided, will try to get
+    :keyword credential: Local credential to use for authentication. If not provided, will try to get
         credentials from the datastore, which requires authorization to perform action
         'Microsoft.MachineLearningServices/workspaces/datastores/listSecrets/action' over target datastore.
     :type credential: str

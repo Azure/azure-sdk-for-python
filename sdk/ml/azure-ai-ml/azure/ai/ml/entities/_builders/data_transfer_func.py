@@ -209,14 +209,14 @@ def import_data(
     :type tags: dict[str, str]
     :keyword display_name: Display name of the job.
     :type display_name: str
-    :param experiment_name: Name of the experiment the job will be created under.
+    :keyword experiment_name: Name of the experiment the job will be created under.
     :type experiment_name: str
     :keyword compute: The compute resource the job runs on.
     :type compute: str
-    :param source: The data source of file system or database.
+    :keyword source: The data source of file system or database.
     :type source: Union[Dict, ~azure.ai.ml.entities._inputs_outputs.external_data.Database,
         ~azure.ai.ml.entities._inputs_outputs.external_data.FileSystem]
-    :param outputs: Mapping of outputs data bindings used in the job.
+    :keyword outputs: Mapping of outputs data bindings used in the job.
         The default will be an output port with the key "sink" and type "mltable".
     :type outputs: dict
     :return: A DataTransferImport object.
@@ -278,16 +278,16 @@ def export_data(
     :type tags: dict[str, str]
     :keyword display_name: Display name of the job.
     :type display_name: str
-    :param experiment_name: Name of the experiment the job will be created under.
+    :keyword experiment_name: Name of the experiment the job will be created under.
     :type experiment_name: str
     :keyword compute: The compute resource the job runs on.
     :type compute: str
-    :param sink: The sink of external data and databases.
+    :keyword sink: The sink of external data and databases.
     :type sink: Union[
         Dict,
         ~azure.ai.ml.entities._inputs_outputs.external_data.Database,
         ~azure.ai.ml.entities._inputs_outputs.external_data.FileSystem]
-    :param inputs: Mapping of inputs data bindings used in the job.
+    :keyword inputs: Mapping of inputs data bindings used in the job.
     :type inputs: dict
     :return: A DataTransferExport object.
     :rtype: ~azure.ai.ml.entities._job.pipeline._component_translatable.DataTransferExport

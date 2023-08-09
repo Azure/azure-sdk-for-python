@@ -289,7 +289,7 @@ class ForecastingJob(AutoMLTabular):
             example, if `n_step` = 3 for daily data, the origin time for each fold will be
             three days apart.
         :type cv_step_size: Optional[int], optional
-        :param features_unknown_at_forecast_time:
+        :keyword features_unknown_at_forecast_time:
             The column of features/regressors that are available at training time but unknown at forecast time.
         :type features_unknown_at_forecast_time: Optional[Union[str, List[str]]], optional
         """
@@ -366,22 +366,22 @@ class ForecastingJob(AutoMLTabular):
         """
         The method to configure forecast training related settings.
 
-        :param enable_onnx_compatible_models:
+        :keyword enable_onnx_compatible_models:
             Whether to enable or disable enforcing the ONNX-compatible models.
             The default is False. For more information about Open Neural Network Exchange (ONNX) and Azure Machine
             Learning, see this `article <https://docs.microsoft.com/azure/machine-learning/concept-onnx>`__.
         :type enable_onnx_compatible: Optional[bool], optional
-        :param enable_dnn_training:
+        :keyword enable_dnn_training:
             Whether to include DNN based models during model selection.
             However, the default is True for DNN NLP tasks, and it's False for all other AutoML tasks.
         :type enable_dnn_training: Optional[bool], optional
-        :param enable_model_explainability:
+        :keyword enable_model_explainability:
             Whether to enable explaining the best AutoML model at the end of all AutoML training iterations.
             For more information, see `Interpretability: model explanations in automated machine learning
             <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
             , defaults to None
         :type enable_model_explainability: Optional[bool], optional
-        :param enable_stack_ensemble:
+        :keyword enable_stack_ensemble:
             Whether to enable/disable StackEnsemble iteration.
             If `enable_onnx_compatible_models` flag is being set, then StackEnsemble iteration will be disabled.
             Similarly, for Timeseries tasks, StackEnsemble iteration will be disabled by default, to avoid risks of
@@ -390,29 +390,29 @@ class ForecastingJob(AutoMLTabular):
             <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
             , defaults to None
         :type enable_stack_ensemble: Optional[bool], optional
-        :param enable_vote_ensemble:
+        :keyword enable_vote_ensemble:
             Whether to enable/disable VotingEnsemble iteration.
             For more information about ensembles, see `Ensemble configuration
             <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
             , defaults to None
         :type enable_vote_ensemble: Optional[bool], optional
-        :param stack_ensemble_settings:
+        :keyword stack_ensemble_settings:
             Settings for StackEnsemble iteration, defaults to None
         :type stack_ensemble_settings: Optional[StackEnsembleSettings], optional
-        :param ensemble_model_download_timeout:
+        :keyword ensemble_model_download_timeout:
             During VotingEnsemble and StackEnsemble model generation,
             multiple fitted models from the previous child runs are downloaded. Configure this parameter with a
             higher value than 300 secs, if more time is needed, defaults to None
         :type ensemble_model_download_timeout: Optional[int]
-        :param allowed_training_algorithms:
+        :keyword allowed_training_algorithms:
             A list of model names to search for an experiment. If not specified,
             then all models supported for the task are used minus any specified in ``blocked_training_algorithms``
             or deprecated TensorFlow models, defaults to None
         :type allowed_training_algorithms: Optional[List[str]], optional
-        :param blocked_training_algorithms:
+        :keyword blocked_training_algorithms:
             A list of algorithms to ignore for an experiment, defaults to None
         :type blocked_training_algorithms: Optional[List[str]], optional
-        :param training_mode:
+        :keyword training_mode:
             [Experimental] The training mode to use.
             The possible values are-
 

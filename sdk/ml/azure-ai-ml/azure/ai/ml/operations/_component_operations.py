@@ -285,7 +285,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :param Union[PathLike, str] download_path: Local path as download destination,
             defaults to current working directory of the current user. Will be created if not exists.
         :type download_path: str
-        :param version: Version of the component.
+        :keyword version: Version of the component.
         :type version: Optional[str]
         :raises ~OSError: Raised if download_path is pointing to an existing directory that is not empty.
             identified and retrieved. Details will be provided in the error message.
@@ -422,7 +422,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :type component: Union[Component, types.FunctionType]
         :param version: The component version to override.
         :type version: str
-        :param skip_validation: whether to skip validation before creating/updating the component, defaults to False
+        :keyword skip_validation: whether to skip validation before creating/updating the component, defaults to False
         :type skip_validation: bool
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
             Details will be provided in the error message.

@@ -277,15 +277,15 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
     ):
         """Set the resources for the parallel job.
 
-        :param instance_type: The instance type or a list of instance types used as supported by the compute target.
+        :keyword instance_type: The instance type or a list of instance types used as supported by the compute target.
         :type instance_type: str or list[str], optional
-        :param instance_count: The number of instances or nodes used by the compute target.
+        :keyword instance_count: The number of instances or nodes used by the compute target.
         :type instance_count: int, optional
-        :param properties: The property dictionary for the resources.
+        :keyword properties: The property dictionary for the resources.
         :type properties: dict, optional
-        :param docker_args: Extra arguments to pass to the Docker run command.
+        :keyword docker_args: Extra arguments to pass to the Docker run command.
         :type docker_args: str, optional
-        :param shm_size: Size of the Docker container's shared memory block.
+        :keyword shm_size: Size of the Docker container's shared memory block.
         :type shm_size: str, optional
         :param kwargs: Additional keyword arguments.
         :type kwargs: dict

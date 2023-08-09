@@ -160,11 +160,11 @@ def group(_cls: Type[T]) -> Type[T]:
         :type args: List[str]
         :param body: The source code of the body of the new function
         :type body: List[str]
-        :param globals: The global variables to make available to the new function.
+        :keyword globals: The global variables to make available to the new function.
         :type globals: Dict[str, Any], optional
-        :param locals: The local variables to make available to the new function
+        :keyword locals: The local variables to make available to the new function
         :type locals: Dict[str, Any], optional
-        :param return_type: The return type of the new function
+        :keyword return_type: The return type of the new function
         :type return_type: Type[T2]
         :return: The created function
         :rtype: Callable[..., T2]

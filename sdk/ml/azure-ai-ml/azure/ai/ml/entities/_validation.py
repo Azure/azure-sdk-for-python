@@ -557,7 +557,7 @@ class _ValidationResultBuilder:
 
         :param error: ValidationError raised by marshmallow.Schema.load.
         :type error: ValidationError
-        :param error_on_unknown_field: whether to raise error if there are unknown field diagnostics.
+        :keyword error_on_unknown_field: whether to raise error if there are unknown field diagnostics.
         :type error_on_unknown_field: bool
         :return: The validation result
         :rtype: MutableValidationResult
@@ -579,7 +579,7 @@ class _ValidationResultBuilder:
         :type errors: dict
         :param data: serialized data to validate
         :type data: dict
-        :param error_on_unknown_field: whether to raise error if there are unknown field diagnostics.
+        :keyword error_on_unknown_field: whether to raise error if there are unknown field diagnostics.
         :type error_on_unknown_field: bool
         :return: The validation result
         :rtype: MutableValidationResult
