@@ -31,12 +31,15 @@ def mock_workspace_operation_base(
     mock_aml_services_2023_06_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
+    mock_aml_services_workspace_dataplane: Mock,
 ) -> WorkspaceOperationsBase:
     yield WorkspaceOperationsBase(
         operation_scope=mock_workspace_scope,
         service_client=mock_aml_services_2023_06_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
+        dataplane_client=mock_aml_services_workspace_dataplane,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
