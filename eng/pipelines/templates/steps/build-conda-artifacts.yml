@@ -15,11 +15,14 @@ steps:
     displayName: Install build script requirements
 
   - pwsh: |
+      mkdir -p $(Build.SourcesDirectory)/conda/output
+      mkdir -p $(Build.SourcesDirectory)/conda/assembled
+      mkdir -p $(Build.ArtifactStagingDirectory/manifest
       $argument = @'
       ${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}
       '@
 
-      sdk_build_conda -c "$argument" -w "$(Build.SourcesDirectory)/conda/conda-recipes"
+      sdk_build_conda -c '$argument' -w "$(Build.SourcesDirectory)/conda/conda-recipes"
     displayName: Assemble Conda Packages
   
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
@@ -29,7 +32,7 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
-      ArtifactPath: '$(Build.SourcesDirectory)/conda/assembled'
+      ArtifactPath: '$(Build.SourcesDirectory)/conda/output'
       ArtifactName: 'conda'
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
