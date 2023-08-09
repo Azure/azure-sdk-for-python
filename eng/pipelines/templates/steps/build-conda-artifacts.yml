@@ -17,7 +17,7 @@ steps:
   - pwsh: |
       mkdir -p $(Build.SourcesDirectory)/conda/output
       mkdir -p $(Build.SourcesDirectory)/conda/assembled
-      mkdir -p $(Build.ArtifactStagingDirectory/manifest
+      mkdir -p $(Build.ArtifactStagingDirectory)/manifest
       $argument = @'
       ${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}
       '@
