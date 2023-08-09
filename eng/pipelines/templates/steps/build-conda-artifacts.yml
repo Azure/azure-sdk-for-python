@@ -36,6 +36,27 @@ steps:
       ArtifactPath: '$(Build.SourcesDirectory)/conda/output'
       ArtifactName: 'conda'
 
+  - pwsh: |
+      conda --version
+    displayName: Install build script requirements
+    continueOnError: true
+
+  - pwsh: |
+      conda --version
+    displayName: Install build script requirements
+    continueOnError: true
+
+  - bash: |
+      echo $CONDA
+      echo "##vso[task.prependpath]$CONDA/bin"
+    displayName: 'Prepend PATH with Conda and INIT'
+    continueOnError: true
+
+  - pwsh: |
+      conda --version
+    displayName: Install build script requirements
+    continueOnError: true
+
   # - ${{if eq(variables['System.TeamProject'], 'internal') }}:
   #   - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
   #     displayName: 'Upload Conda SBOM'

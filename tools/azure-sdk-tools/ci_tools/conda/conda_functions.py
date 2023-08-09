@@ -413,6 +413,14 @@ def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_ro
     #     workingDirectory: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/conda-recipe
 
 
+def check_conda_config():
+    try:
+        invoke_command("conda --version")
+    except CalledProcessError as err:
+        print("Before invoking sdk_build_conda, a user must ensure that conda is available on the PATH for the current machine.")
+        exit(1)
+
+
 def entrypoint():
     parser = argparse.ArgumentParser(description="Build a set of conda packages based on a json configuration bundle.")
 
@@ -436,6 +444,8 @@ def entrypoint():
 
     args = parser.parse_args()
     json_configs = json.loads(args.config)
+
+    check_conda_config()
 
     run_configurations = []
     excluded_configurations = []
