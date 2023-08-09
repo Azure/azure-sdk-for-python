@@ -562,6 +562,29 @@ class MiscConfigurationOptions(object):
         ml_client.data.share("data-asset-name", "2.0")
         # [END data_operations_share]
 
+        # [START datastore_operations_list]
+        ml_client.datastores.list()
+        # [END datastore_operations_list]
+
+        # [START datastore_operations_delete]
+        ml_client.datastores.delete("datastore-name")
+        # [END datastore_operations_delete]
+
+        # [START datastore_operations_get]
+        ml_client.datastores.get("datastore-name")
+        # [END datastore_operations_get]
+
+        # [START datastore_operations_get_default]
+        ml_client.datastores.get_default()
+        # [END datastore_operations_get_default]
+
+        # [START datastore_operations_create_or_update]
+        from azure.ai.ml.entities._datastore.datastore import Datastore
+
+        datastore_example = Datastore("credentials-example")
+        ml_client.datastores.create_or_update(datastore_example)
+        # [END datastore_operations_create_or_update]
+
         # [START validation_result]
         """For example, if repr(self) is:
         ```python

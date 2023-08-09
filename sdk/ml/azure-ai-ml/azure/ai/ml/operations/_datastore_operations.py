@@ -10,13 +10,9 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient2022_10_01
-from azure.ai.ml._restclient.v2022_10_01.models import (
-    Datastore as DatastoreData,
-    DatastoreSecrets,
-    NoneDatastoreCredentials,
-)
+from azure.ai.ml._restclient.v2022_10_01.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.v2022_10_01.models import DatastoreSecrets, NoneDatastoreCredentials
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._datastore.datastore import Datastore
@@ -31,6 +27,13 @@ class DatastoreOperations(_ScopeDependentOperations):
 
     You should not instantiate this class directly. Instead, you should create MLClient and use this client via the
     property MLClient.datastores
+
+    :param operation_scope: Scope variables for the operations classes of an MLClient object.
+    :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
+    :param operation_config: Common configuration for operations classes of an MLClient object.
+    :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
+    :param serviceclient_2022_10_01: Service client to allow end users to operate on Azure Machine Learning Workspace resources.
+    :type serviceclient_2022_10_01: ~azure.ai.ml._restclient.v2022_10_01._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
     """
 
     def __init__(
@@ -54,6 +57,15 @@ class DatastoreOperations(_ScopeDependentOperations):
         :type include_secrets: bool, optional
         :return: An iterator like instance of Datastore objects
         :rtype: ~azure.core.paging.ItemPaged[Datastore]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START datastore_operations_list]
+                :end-before: [END datastore_operations_list]
+                :language: python
+                :dedent: 8
+                :caption: List datastore example.
         """
 
         def _list_helper(datastore_resource, include_secrets: bool):
@@ -84,6 +96,15 @@ class DatastoreOperations(_ScopeDependentOperations):
 
         :param name: Name of the datastore
         :type name: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START datastore_operations_delete]
+                :end-before: [END datastore_operations_delete]
+                :language: python
+                :dedent: 8
+                :caption: Delete datastore example.
         """
 
         return self._operation.delete(
@@ -103,6 +124,15 @@ class DatastoreOperations(_ScopeDependentOperations):
         :type include_secrets: bool, optional
         :return: Datastore with the specified name.
         :rtype: Datastore
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START datastore_operations_get]
+                :end-before: [END datastore_operations_get]
+                :language: python
+                :dedent: 8
+                :caption: Get datastore example.
         """
         try:
             datastore_resource = self._operation.get(
@@ -132,6 +162,15 @@ class DatastoreOperations(_ScopeDependentOperations):
         :type include_secrets: bool, optional
         :return: The default datastore.
         :rtype: Datastore
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START datastore_operations_get_default]
+                :end-before: [END datastore_operations_get_default]
+                :language: python
+                :dedent: 8
+                :caption: Get default datastore example.
         """
         try:
             datastore_resource = self._operation.list(
@@ -154,6 +193,15 @@ class DatastoreOperations(_ScopeDependentOperations):
         :type datastore: Datastore
         :return: The attached datastore.
         :rtype: Datastore
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+                :start-after: [START datastore_operations_create_or_update]
+                :end-before: [END datastore_operations_create_or_update]
+                :language: python
+                :dedent: 8
+                :caption: Create datastore example.
         """
         try:
             ds_request = datastore._to_rest_object()
