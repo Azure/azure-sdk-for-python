@@ -23,7 +23,7 @@ steps:
       ${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}
       '@
 
-      sdk_build_conda -c '$argument' -w "$(Build.SourcesDirectory)/conda/conda-recipes"
+      sdk_build_conda -c "$argument" -w "$(Build.SourcesDirectory)/conda/conda-recipes"
     displayName: Assemble Conda Packages
   
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
