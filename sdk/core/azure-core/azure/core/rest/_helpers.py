@@ -41,7 +41,7 @@ from typing import (
     AsyncIterable,
     cast,
     Dict,
-    TYPE_CHECKING
+    TYPE_CHECKING,
 )
 import xml.etree.ElementTree as ET
 from urllib.parse import urlparse
@@ -53,6 +53,7 @@ from ..utils._pipeline_transport_rest_shared import (
     _serialize_request,
     _format_data_helper,
 )
+
 if TYPE_CHECKING:
     # This avoid a circular import
     from ._rest_py3 import HttpRequest

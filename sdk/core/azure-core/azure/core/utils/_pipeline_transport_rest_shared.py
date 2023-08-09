@@ -259,7 +259,7 @@ def _decode_parts_helper(
     return responses
 
 
-def _get_raw_parts_helper(response, http_response_type):
+def _get_raw_parts_helper(response, http_response_type: Type):
     """Helper for _get_raw_parts
 
     Assuming this body is multipart, return the iterator or parts.
