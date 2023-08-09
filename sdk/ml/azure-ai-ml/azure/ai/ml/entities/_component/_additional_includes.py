@@ -91,7 +91,7 @@ class AdditionalIncludes:
         return len(self.origin_configs) != 0
 
     @classmethod
-    def _get_artifacts_by_config(cls, artifact_config):
+    def _get_artifacts_by_config(cls, artifact_config: Dict[str, str]) -> Optional[Path]:
         # config key existence has been validated in _validate_additional_include_config
         return ArtifactCache().get(
             organization=artifact_config.get("organization", None),
@@ -487,7 +487,7 @@ class AdditionalIncludesMixin(ComponentCodeMixin):
             return False
         return is_reliable
 
-    def _generate_additional_includes_obj(self):
+    def _generate_additional_includes_obj(self) -> AdditionalIncludes:
         return AdditionalIncludes(
             base_path=self._get_base_path_for_code(),
             configs=self._get_all_additional_includes_configs(),

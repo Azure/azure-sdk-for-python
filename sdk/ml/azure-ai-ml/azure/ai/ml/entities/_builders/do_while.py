@@ -127,7 +127,9 @@ class DoWhile(LoopNode):
 
         # pylint: disable=protected-access
 
-        def get_port_obj(body, port_name, is_input=True, validate_port=True):
+        def get_port_obj(
+            body: BaseNode, port_name: str, is_input: bool = True, validate_port: bool = True
+        ) -> Union[str, NodeInput, NodeOutput]:
             if is_input:
                 port = body.inputs.get(port_name, None)
             else:

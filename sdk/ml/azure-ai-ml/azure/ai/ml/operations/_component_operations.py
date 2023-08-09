@@ -838,7 +838,9 @@ class ComponentOperations(_ScopeDependentOperations):
                 node.compute_name = resolver(node.compute_name, azureml_type=AzureMLResourceType.COMPUTE)
 
     @classmethod
-    def _divide_nodes_to_resolve_into_layers(cls, component: PipelineComponent, extra_operations: List[Callable]):
+    def _divide_nodes_to_resolve_into_layers(
+        cls, component: PipelineComponent, extra_operations: List[Callable[[BaseNode, str], Any]]
+    ):
         """Traverse the pipeline component and divide nodes to resolve into layers. Note that all leaf nodes will be
         put in the last layer.
         For example, for below pipeline component, assuming that all nodes need to be resolved:
@@ -859,7 +861,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :param component: The pipeline component to resolve.
         :type component: PipelineComponent
         :param extra_operations: Extra operations to apply on nodes during the traversing.
-        :type extra_operations: List[Callable]
+        :type extra_operations: List[Callable[Callable[[BaseNode, str], Any]]]
         :return: A list of layers of nodes to resolve.
         :rtype: List[List[Tuple[str, BaseNode]]]
         """

@@ -282,7 +282,7 @@ def group(_cls: Type[T]) -> Type[T]:
 
         return _recursive_repr(fn)
 
-    def _process_class(cls: Type[T], all_fields: List[str]) -> Type[T]:
+    def _process_class(cls: Type[T], all_fields: Dict[str, Union[Annotation, Input, Output]]) -> Type[T]:
         setattr(cls, "__init__", _create_init_fn(cls, all_fields))
         setattr(cls, "__repr__", _create_repr_fn(all_fields))
         return cls

@@ -348,7 +348,7 @@ class NodeInput(InputOutputBase):
             )
         return data
 
-    def _to_job_input(self):
+    def _to_job_input(self) -> Optional[Input]:
         """convert the input to Input, this logic will change if backend contract changes."""
         if self._data is None:
             # None data means this input is not configured.

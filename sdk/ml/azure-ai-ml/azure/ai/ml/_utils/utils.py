@@ -967,7 +967,7 @@ def write_to_shared_file(file_path: Union[str, PathLike], content: str):
 
 def _get_valid_dot_keys_with_wildcard_impl(
     left_reversed_parts, root, *, validate_func=None, cur_node=None, processed_parts=None
-):
+) -> List[str]:
     if len(left_reversed_parts) == 0:
         if validate_func is None or validate_func(root, processed_parts):
             return [".".join(processed_parts)]
@@ -1017,7 +1017,7 @@ def get_valid_dot_keys_with_wildcard(
     dot_key_wildcard: str,
     *,
     validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]] = None,
-):
+) -> List[str]:
     """Get all valid dot keys with wildcard. Only "x.*.x" and "x.*" is supported for now.
 
     A valid dot key should satisfy the following conditions:

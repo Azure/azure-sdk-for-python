@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import json
 import os
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml import Input, Output
 from azure.ai.ml._schema import PathAwareSchema
@@ -54,9 +54,9 @@ class ParallelFor(LoopNode, NodeIOMixin):
     def __init__(
         self,
         *,
-        body,
-        items,
-        max_concurrency=None,
+        body: "Pipeline",
+        items: Union[list, dict, str, PipelineInput, NodeOutput],
+        max_concurrency: Optional[int] = None,
         **kwargs,
     ) -> None:
         # validate init params are valid type

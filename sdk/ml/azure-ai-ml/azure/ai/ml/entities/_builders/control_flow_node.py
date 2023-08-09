@@ -123,7 +123,7 @@ class LoopNode(ControlFlowNode, ABC):
         }
 
     @classmethod
-    def _get_body_from_pipeline_jobs(cls, pipeline_jobs: dict, body_name: str):
+    def _get_body_from_pipeline_jobs(cls, pipeline_jobs: Dict[str, BaseNode], body_name: str) -> BaseNode:
         # Get body object from pipeline job list.
         if body_name not in pipeline_jobs:
             raise ValidationError(
@@ -147,7 +147,7 @@ class LoopNode(ControlFlowNode, ABC):
         return "${{parent.jobs.%s}}" % self.body.name
 
     @staticmethod
-    def _get_data_binding_expression_value(expression, regex):
+    def _get_data_binding_expression_value(expression: str, regex: str) -> str:
         try:
             if is_data_binding_expression(expression):
                 return re.findall(regex, expression)[0]

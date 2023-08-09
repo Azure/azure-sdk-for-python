@@ -81,7 +81,7 @@ class AssetNotChangedError(Exception):
 
 
 class IgnoreFile(object):
-    def __init__(self, file_path: Optional[Union[str, Path]] = None):
+    def __init__(self, file_path: Optional[Union[str, os.PathLike]] = None):
         """Base class for handling .gitignore and .amlignore files.
 
         :param file_path: Relative path, or absolute path to the ignore file.
@@ -234,14 +234,14 @@ def _parse_name_version(
     return ":".join(name), version
 
 
-def _get_file_hash(filename: Union[str, Path], _hash: hash_type) -> hash_type:
+def _get_file_hash(filename: Union[str, os.PathLike], _hash: hash_type) -> hash_type:
     with open(str(filename), "rb") as f:
         for chunk in iter(lambda: f.read(CHUNK_SIZE), b""):
             _hash.update(chunk)
     return _hash
 
 
-def _get_dir_hash(directory: Union[str, Path], _hash: hash_type, ignore_file: IgnoreFile) -> hash_type:
+def _get_dir_hash(directory: Union[str, os.PathLike], _hash: hash_type, ignore_file: IgnoreFile) -> hash_type:
     dir_contents = Path(directory).iterdir()
     sorted_contents = sorted(dir_contents, key=lambda path: str(path).lower())
     for path in sorted_contents:
@@ -286,7 +286,7 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
     return metadata_dict
 
 
-def get_object_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> str:
+def get_object_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = IgnoreFile()) -> str:
     _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version")  # nosec
     if Path(path).is_dir():
         object_hash = _get_dir_hash(directory=path, _hash=_hash, ignore_file=ignore_file)
@@ -301,7 +301,7 @@ def get_content_hash_version():
     return 202208
 
 
-def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> Optional[str]:
+def get_content_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = IgnoreFile()) -> Optional[str]:
     """Generating sha256 hash for file/folder,
 
     e.g. Code snapshot fingerprints to prevent tampering.
@@ -343,7 +343,7 @@ def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFil
 
 
 def get_upload_files_from_folder(
-    path: Union[str, Path], *, prefix: str = "", ignore_file: IgnoreFile = IgnoreFile()
+    path: Union[str, os.PathLike], *, prefix: str = "", ignore_file: IgnoreFile = IgnoreFile()
 ) -> List[str]:
     path = Path(path)
     upload_paths = []
@@ -447,14 +447,16 @@ def generate_asset_id(asset_hash: str, include_directory=True) -> str:
     return asset_id
 
 
-def get_directory_size(root: os.PathLike, ignore_file: IgnoreFile = IgnoreFile(None)) -> Tuple[int, Dict[str, int]]:
+def get_directory_size(
+    root: Union[str, os.PathLike], ignore_file: IgnoreFile = IgnoreFile(None)
+) -> Tuple[int, Dict[str, int]]:
     """Returns total size of a directory and a dictionary itemizing each sub- path and its size.
 
     If an optional ignore_file argument is provided, then files specified in the ignore file are not included in the
     directory size calculation.
 
     :param root: The directory to calculate the size of
-    :type root: os.PathLike
+    :type root: Union[str, os.PathLike]
     :param ignore_file: An ignore file that specifies files to ignore when computing the size
     :type ignore_file: IgnoreFile, optional
     :return: The computed size of the directory, and the sizes of the child paths
@@ -576,7 +578,7 @@ def upload_file(
 
 def upload_directory(
     storage_client: Union["BlobStorageClient", "Gen2StorageClient"],
-    source: str,
+    source: Union[str, os.PathLike],
     dest: str,
     msg: str,
     show_progress: bool,
@@ -589,7 +591,7 @@ def upload_directory(
         azure.ai.ml._artifacts._blob_storage_helper.BlobStorageClient,
         azure.ai.ml._artifacts._gen2_storage_helper.Gen2StorageClient]
     :param source: Local path to project directory
-    :type source: str
+    :type source: Union[str, os.PathLike]
     :param dest: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
     :type dest: str
     :param msg: Message to be shown with progress bar (e.g. "Uploading <source>")

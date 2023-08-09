@@ -485,20 +485,20 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         return convert_ordered_dict_to_dict(rest_obj)
 
     @property
-    def inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
+    def inputs(self) -> Dict[str, NodeInput]:
         """Get the inputs for the object.
 
         :return: A dictionary containing the inputs for the object.
-        :rtype: Dict[str, Union[~azure.ai.ml.entities.Input, str, bool, int, float]]
+        :rtype: Dict[str, NodeInput]
         """
         return self._inputs
 
     @property
-    def outputs(self) -> Dict[str, Union[str, Output]]:
+    def outputs(self) -> Dict[str, NodeOutput]:
         """Get the outputs of the object.
 
         :return: A dictionary containing the outputs for the object.
-        :rtype: Dict[str, Union[str, ~azure.ai.ml.entities.Output]]
+        :rtype: Dict[str, Union[str, NodeOutput]
         """
         return self._outputs
 

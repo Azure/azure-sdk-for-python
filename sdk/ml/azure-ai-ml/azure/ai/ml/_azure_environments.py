@@ -65,7 +65,7 @@ _environments = {
 }
 
 
-def _get_cloud(cloud: str):
+def _get_cloud(cloud: str) -> Dict[str, str]:
     if cloud in _environments:
         return _environments[cloud]
     arm_url = os.environ.get(ArmConstants.METADATA_URL_ENV_NAME, ArmConstants.DEFAULT_URL)
@@ -118,11 +118,13 @@ def _set_cloud(cloud: str = AzureEnvironments.ENV_DEFAULT):
     os.environ[AZUREML_CLOUD_ENV_NAME] = cloud
 
 
-def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: bool = False):
+def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: bool = False) -> str:
     """Retrieve the base url for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
-    :type cloud_name: str, optional
+    :type cloud_name: Optional[str], optional
+    :param is_local_mfe: Whether is local Management Front End. Defaults to False.
+    :type is_local_mfe: bool, optional
     :return: base url for a cloud
     """
     base_url = None
@@ -284,7 +286,7 @@ def _get_clouds_by_metadata_url(metadata_url: str) -> Dict[str, Dict[str, str]]:
         return {}
 
 
-def _convert_arm_to_cli(arm_cloud_metadata):
+def _convert_arm_to_cli(arm_cloud_metadata) -> Dict[str, Dict[str, str]]:
     cli_cloud_metadata_dict = {}
     if isinstance(arm_cloud_metadata, dict):
         arm_cloud_metadata = [arm_cloud_metadata]

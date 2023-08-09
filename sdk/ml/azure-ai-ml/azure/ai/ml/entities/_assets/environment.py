@@ -421,7 +421,7 @@ def _deserialize(
 
 def _resolve_path(
     base_path: Union[str, os.PathLike], input: Union[str, os.PathLike, Dict]
-):  # pylint: disable=redefined-builtin
+) -> Path:  # pylint: disable=redefined-builtin
     """Deserialize user input files for conda and docker.
 
     :param base_path: The base path for all files supplied by user.

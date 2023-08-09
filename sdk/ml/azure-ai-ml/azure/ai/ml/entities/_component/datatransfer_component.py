@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, NoReturn
 
 from marshmallow import Schema
 
@@ -258,7 +258,7 @@ class DataTransferImportComponent(DataTransferComponent):
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferImportComponentSchema(context=context)
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> NoReturn:
         """Call ComponentVersion as a function and get a Component object."""
 
         msg = "DataTransfer component is not callable for import task."
@@ -303,7 +303,7 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferExportComponentSchema(context=context)
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> NoReturn:
         """Call ComponentVersion as a function and get a Component object."""
 
         msg = "DataTransfer component is not callable for export task."

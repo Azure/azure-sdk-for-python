@@ -415,7 +415,9 @@ class PipelineExpression(PipelineExpressionMixin):
         return postfix, expression_inputs
 
     @staticmethod
-    def _from_operation(operand1, operand2, operator: str) -> "PipelineExpression":
+    def _from_operation(
+        operand1: "PipelineExpression", operand2: "PipelineExpression", operator: str
+    ) -> "PipelineExpression":
         if operator not in _SUPPORTED_OPERATORS:
             error_message = (
                 f"Operator '{operator}' is not supported operator, "
@@ -428,7 +430,8 @@ class PipelineExpression(PipelineExpressionMixin):
         from azure.ai.ml.dsl._pipeline_component_builder import _definition_builder_stack
 
         pipeline_inputs = _definition_builder_stack.top().inputs
-        postfix, inputs = [], {}
+        postfix: List[str] = []
+        inputs: Dict[str, ExpressionInput] = {}
         postfix, inputs = PipelineExpression._handle_operand(operand1, postfix, inputs, pipeline_inputs)
         postfix, inputs = PipelineExpression._handle_operand(operand2, postfix, inputs, pipeline_inputs)
         postfix.append(operator)
