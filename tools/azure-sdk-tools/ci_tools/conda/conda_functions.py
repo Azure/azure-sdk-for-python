@@ -101,7 +101,7 @@ def create_package(pkg_directory, output_directory):
         ],
         cwd=pkg_directory,
         stdout=subprocess.DEVNULL,
-        stderr=subprocess.STDOUT
+        stderr=subprocess.STDOUT,
     )
 
 
@@ -117,7 +117,7 @@ def get_pkgs_from_build_directory(build_directory: str, artifact_name: str):
 def error_handler_git_access(func, path, exc):
     """
     This function exists because the git idx file is written with strange permissions that prevent it from being
-    deleted. Due to this, we need to register an error handler that attempts to fix the file permissions before 
+    deleted. Due to this, we need to register an error handler that attempts to fix the file permissions before
     re-attempting the delete operations.
     """
 
@@ -260,7 +260,7 @@ def create_combined_sdist(
     targeted_folder_for_assembly = os.path.join(config_assembly_folder, conda_build.name)
 
     create_package(targeted_folder_for_assembly, config_assembled_folder)
-    
+
     return os.path.join(config_assembled_folder, os.listdir(config_assembled_folder)[0])
 
 
@@ -296,7 +296,12 @@ def prep_directory(path: str) -> str:
 
 def invoke_command(command: str, working_directory: str) -> None:
     try:
-        check_call(shlex.split(command), cwd=working_directory, stdout=subprocess.STDOUT, stderr=subprocess.STDOUT)
+        command = shlex.split(command)
+        wd = working_directory.replace("\\", "/")
+        print(command)
+        print(f"in working directory {wd}")
+
+        check_call(command, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT, cwd=wd)
     except CalledProcessError as e:
         raise
 
@@ -392,47 +397,59 @@ def assemble_source(conda_configurations: List[CondaConfiguration], repo_root: s
         print(f"Generated Sdist for artifact {conda_build.name} is present at {conda_build.created_sdist_path}")
 
         # generate a meta.yml for each one!
-        with open(meta_yml, 'r', encoding='utf-8') as f:
+        with open(meta_yml, "r", encoding="utf-8") as f:
             meta_yml_content = f.read()
 
         summary = get_summary(conda_build)
 
         meta_yml_content = meta_yml_content.replace("{{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}", version)
-        meta_yml_content = re.sub(r"^\s*url\:.*", f"  url: \"{conda_build.created_sdist_path}\"", meta_yml_content, flags=re.MULTILINE)
-        meta_yml_content = re.sub(r"\{\{\senviron\.get\(\'.*_SUMMARY\'\,\s\'\'\)\s*\}\}", f"{summary}", meta_yml_content, flags=re.MULTILINE)
+        meta_yml_content = re.sub(
+            r"^\s*url\:.*", f'  url: "{conda_build.created_sdist_path}"', meta_yml_content, flags=re.MULTILINE
+        )
+        meta_yml_content = re.sub(
+            r"\{\{\senviron\.get\(\'.*_SUMMARY\'\,\s\'\'\)\s*\}\}", f"{summary}", meta_yml_content, flags=re.MULTILINE
+        )
 
-        with open(generated_yml, 'w', encoding='utf-8') as f:
+        with open(generated_yml, "w", encoding="utf-8") as f:
             f.write(meta_yml_content)
 
 
 def prep_and_create_environment(environment_dir: str) -> None:
     prep_directory(environment_dir)
-    
-    with open(os.path.join(environment_dir, 'environment.yml'), 'w', encoding='utf-8') as f:
+
+    with open(os.path.join(environment_dir, "environment.yml"), "w", encoding="utf-8") as f:
         f.write(CONDA_ENV_FILE)
 
-    invoke_command(f"conda env create --prefix \"{environment_dir}\"", environment_dir)
-    invoke_command(f"conda install --yes --quiet --prefix \"{environment_dir}\" conda-build conda-verify typing-extensions", environment_dir)
+    invoke_command(f'conda env create --prefix "{environment_dir}"', environment_dir)
+    invoke_command(
+        f'conda install --yes --quiet --prefix "{environment_dir}" conda-build conda-verify typing-extensions',
+        environment_dir,
+    )
 
 
 def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_root: str):
     """Conda builds each individually assembled conda package folder."""
-    conda_output_dir = prep_directory(os.path.join(repo_root, "conda", "output"))
-    conda_sdist_dir = prep_directory(os.path.join(repo_root, "conda", "assembled"))
-    conda_env_dir = prep_directory(os.path.join(repo_root, "conda", "conda-env"))
+    conda_output_dir = prep_directory(os.path.join(repo_root, "conda", "output")).replace("\\", "/")
+    conda_sdist_dir = prep_directory(os.path.join(repo_root, "conda", "assembled")).replace("\\", "/")
+    conda_env_dir = prep_directory(os.path.join(repo_root, "conda", "conda-env")).replace("\\", "/")
 
     prep_and_create_environment(conda_env_dir)
 
     for conda_build in conda_configurations:
-        conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name)
-        invoke_command(f'conda run --prefix="{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}"', conda_build_folder)
+        conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name).replace("\\", "/")
+        invoke_command(
+            f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}"',
+            conda_build_folder,
+        )
 
 
 def check_conda_config():
     try:
         invoke_command("conda --version", discover_repo_root())
     except CalledProcessError as err:
-        print("Before invoking sdk_build_conda, a user must ensure that conda is available on the PATH for the current machine.")
+        print(
+            "Before invoking sdk_build_conda, a user must ensure that conda is available on the PATH for the current machine."
+        )
         exit(1)
 
 
