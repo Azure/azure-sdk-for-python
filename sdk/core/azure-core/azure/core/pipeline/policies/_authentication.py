@@ -191,8 +191,8 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     :raises: ValueError or TypeError
     """
 
-    def __init__(
-        self,  # pylint: disable=unused-argument
+    def __init__(  # pylint: disable=unused-argument
+        self,
         credential: "AzureKeyCredential",
         name: str,
         *,
