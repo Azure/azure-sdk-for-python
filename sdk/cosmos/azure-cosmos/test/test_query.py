@@ -736,7 +736,7 @@ class QueryTest(unittest.TestCase):
             container.create_item(body=dict(pk='123', id=str(i), some_value=str(i % 3)))
         query = "Select * from c where c.some_value='2'"
         response_query = container.query_items(query, partition_key='123', max_item_count=100,
-                                               response_continuation_token_limit_in_kb=1)
+                                               continuation_token_limit=1)
         pager = response_query.by_page()
         pager.next()
         token = pager.continuation_token

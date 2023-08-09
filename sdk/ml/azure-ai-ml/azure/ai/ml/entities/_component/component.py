@@ -29,7 +29,7 @@ from ...constants._common import (
 from ...constants._component import ComponentSource, IOConstants, NodeType
 from ...entities._assets.asset import Asset
 from ...entities._inputs_outputs import Input, Output
-from ...entities._mixins import TelemetryMixin, YamlTranslatableMixin
+from ...entities._mixins import LocalizableMixin, TelemetryMixin, YamlTranslatableMixin
 from ...entities._system_data import SystemData
 from ...entities._util import find_type_in_override
 from ...entities._validation import MutableValidationResult, RemoteValidatableMixin, SchemaValidatableMixin
@@ -49,6 +49,7 @@ class Component(
     TelemetryMixin,
     YamlTranslatableMixin,
     SchemaValidatableMixin,
+    LocalizableMixin,
 ):
     """Base class for component version, used to define a component. Can't be instantiated directly.
 
@@ -530,6 +531,16 @@ class Component(
 
         # TODO: handle other_parameters and remove override from subclass
         return component_schema_dict
+
+    def _localize(self, base_path: str):
+        """Called on an asset got from service to clean up remote attributes like id, creation_context, etc. and update
+        base_path.
+        """
+        if not getattr(self, "id", None):
+            raise ValueError("Only remote asset can be localize but got a {} without id.".format(type(self)))
+        self._id = None
+        self._creation_context = None
+        self._base_path = base_path
 
     def _get_telemetry_values(self, *args, **kwargs):  # pylint: disable=unused-argument
         # Note: the is_anonymous is not reliable here, create_or_update will log is_anonymous from parameter.

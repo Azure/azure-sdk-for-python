@@ -50,6 +50,7 @@ from ._credentials import (
     UserIdentityConfiguration,
     UsernamePasswordConfiguration,
     AccessKeyConfiguration,
+    ApiKeyConfiguration
 )
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
@@ -397,6 +398,7 @@ __all__ = [
     "Route",
     "AccessKeyConfiguration",
     "AlertNotification",
+    "ApiKeyConfiguration",
     "MonitorDefinition",
     "MonitorInputData",
     "MonitorSchedule",

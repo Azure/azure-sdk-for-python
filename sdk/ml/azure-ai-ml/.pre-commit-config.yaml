@@ -17,7 +17,7 @@ repos:
   rev: v6.31.0
   hooks:
   - id: cspell
-    args: ['--config', '.vscode/cspell.json']
+    args: ['--config', '.vscode/cspell.json', "--no-must-find-files"]
 - repo: https://github.com/pre-commit/mirrors-isort
   rev: v5.8.0
   hooks:
