@@ -24,19 +24,14 @@
 #
 # --------------------------------------------------------------------------
 import sys
-from typing import (
-    Any,
-    Optional,
-    AsyncIterator as AsyncIteratorType,
-    TYPE_CHECKING,
-    overload,
-)
+from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload, cast, Union
 from collections.abc import AsyncIterator
 
 import logging
 import asyncio
 import codecs
 import aiohttp
+import aiohttp.client_exceptions
 from multidict import CIMultiDict
 
 from azure.core.configuration import ConnectionConfiguration
@@ -169,7 +164,7 @@ class AioHttpTransport(AsyncHttpTransport):
         return request.data
 
     @overload
-    async def send(self, request: HttpRequest, **config: Any) -> Optional[AsyncHttpResponse]:
+    async def send(self, request: HttpRequest, **config: Any) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -187,7 +182,7 @@ class AioHttpTransport(AsyncHttpTransport):
         """
 
     @overload
-    async def send(self, request: "RestHttpRequest", **config: Any) -> Optional["RestAsyncHttpResponse"]:
+    async def send(self, request: "RestHttpRequest", **config: Any) -> "RestAsyncHttpResponse":
         """Send the `azure.core.rest` request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -204,7 +199,9 @@ class AioHttpTransport(AsyncHttpTransport):
         :keyword str proxy: will define the proxy to use all the time
         """
 
-    async def send(self, request, **config):
+    async def send(
+        self, request: Union[HttpRequest, "RestHttpRequest"], **config
+    ) -> Union[AsyncHttpResponse, "RestAsyncHttpResponse"]:
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -237,7 +234,7 @@ class AioHttpTransport(AsyncHttpTransport):
                     config["proxy"] = proxies[protocol]
                     break
 
-        response: Optional["HTTPResponseType"] = None
+        response: Optional[Union[AsyncHttpResponse, "RestAsyncHttpResponse"]] = None
         config["ssl"] = self._build_ssl_config(
             cert=config.pop("connection_cert", self.connection_config.cert),
             verify=config.pop("connection_verify", self.connection_config.verify),
@@ -273,6 +270,9 @@ class AioHttpTransport(AsyncHttpTransport):
                 if not stream_response:
                     await _handle_no_stream_rest_response(response)
             else:
+                # Given the associated "if", this else is legacy implementation
+                # but mypy do not know it, so using a cast
+                request = cast(HttpRequest, request)
                 response = AioHttpTransportResponse(
                     request,
                     result,
@@ -433,7 +433,9 @@ class AioHttpTransportResponse(AsyncHttpResponse):
                         import chardet  # type: ignore
                     except ImportError:  # pragma: no cover
                         import charset_normalizer as chardet  # type: ignore[no-redef]
-                encoding = chardet.detect(body)["encoding"]
+                # While "detect" can return a dict of float, in this context this won't happen
+                # The cast is for pyright to be happy
+                encoding = cast(Optional[str], chardet.detect(body)["encoding"])
         if encoding == "utf-8" or encoding is None:
             encoding = "utf-8-sig"
 

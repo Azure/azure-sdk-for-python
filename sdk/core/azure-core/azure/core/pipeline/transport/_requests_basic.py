@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 import logging
 from typing import Iterator, Optional, Union, TypeVar, overload, TYPE_CHECKING
-import urllib3
 from urllib3.util.retry import Retry
 from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
@@ -310,7 +309,7 @@ class RequestsTransport(HttpTransport):
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    def send(self, request, **kwargs):
+    def send(self, request: Union[HttpRequest, "RestHttpRequest"], **kwargs) -> Union[HttpResponse, "RestHttpResponse"]:
         """Send request object according to configuration.
 
         :param request: The request object to be sent.
@@ -379,7 +378,7 @@ class RequestsTransport(HttpTransport):
         if _is_rest(request):
             from azure.core.rest._requests_basic import RestRequestsTransportResponse
 
-            retval = RestRequestsTransportResponse(
+            retval: RestHttpResponse = RestRequestsTransportResponse(
                 request=request,
                 internal_response=response,
                 block_size=self.connection_config.data_block_size,

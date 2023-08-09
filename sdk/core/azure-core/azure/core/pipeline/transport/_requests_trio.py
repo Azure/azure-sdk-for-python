@@ -33,8 +33,13 @@ from typing import (
     TYPE_CHECKING,
     overload,
 )
+from urllib3.exceptions import (
+    ProtocolError,
+    NewConnectionError,
+    ConnectTimeoutError,
+)
+
 import trio
-import urllib3
 
 import requests
 
@@ -260,12 +265,15 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
                 )
             response.raw.enforce_content_length = True
 
-        except urllib3.exceptions.NewConnectionError as err:
+        except (
+            NewConnectionError,
+            ConnectTimeoutError,
+        ) as err:
             error = ServiceRequestError(err, error=err)
         except requests.exceptions.ReadTimeout as err:
             error = ServiceResponseError(err, error=err)
         except requests.exceptions.ConnectionError as err:
-            if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
+            if err.args and isinstance(err.args[0], ProtocolError):
                 error = ServiceResponseError(err, error=err)
             else:
                 error = ServiceRequestError(err, error=err)

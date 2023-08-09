@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import asyncio
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Iterator
 from typing import TYPE_CHECKING, Any, List
 from ..pipeline import PipelineContext, PipelineRequest, PipelineResponse
 from ..pipeline._tools_async import await_result as _await_result
@@ -28,7 +28,7 @@ class _PartGenerator(AsyncIterator):
         self._parts = None
         self._default_http_response_type = default_http_response_type
 
-    async def _parse_response(self):
+    async def _parse_response(self) -> Iterator:
         responses = self._response._get_raw_parts(  # pylint: disable=protected-access
             http_response_type=self._default_http_response_type
         )

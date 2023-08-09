@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from __future__ import annotations
 import copy
 import codecs
 import email.message
@@ -40,6 +41,7 @@ from typing import (
     AsyncIterable,
     cast,
     Dict,
+    TYPE_CHECKING
 )
 import xml.etree.ElementTree as ET
 from urllib.parse import urlparse
@@ -51,6 +53,9 @@ from ..utils._pipeline_transport_rest_shared import (
     _serialize_request,
     _format_data_helper,
 )
+if TYPE_CHECKING:
+    # This avoid a circular import
+    from ._rest_py3 import HttpRequest
 
 ################################### TYPES SECTION #########################
 
@@ -362,14 +367,14 @@ class HttpRequestBackcompatMixin:
         self.headers.update(headers)
         self._files = None
 
-    def _set_multipart_mixed(self, *requests, **kwargs):
+    def _set_multipart_mixed(self, *requests: HttpRequest, **kwargs: Any) -> None:
         """DEPRECATED: Set the multipart mixed info.
         This is deprecated and will be removed in a later release.
 
         :param requests: Requests to be sent in the multipart request
         :type requests: list[HttpRequest]
         """
-        self.multipart_mixed_info: Tuple[Sequence[Any], Sequence[Any], str, Dict[str, Any]] = (
+        self.multipart_mixed_info: Tuple[Sequence[HttpRequest], Sequence[Any], str, Dict[str, Any]] = (
             requests,
             kwargs.pop("policies", []),
             kwargs.pop("boundary", None),

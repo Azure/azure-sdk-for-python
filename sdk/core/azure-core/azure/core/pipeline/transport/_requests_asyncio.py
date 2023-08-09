@@ -31,10 +31,16 @@ from typing import (
     Any,
     Optional,
     AsyncIterator as AsyncIteratorType,
+    Union,
     TYPE_CHECKING,
     overload,
 )
-import urllib3
+from urllib3.exceptions import (
+    ProtocolError,
+    NewConnectionError,
+    ConnectTimeoutError,
+)
+
 
 import requests
 
@@ -131,7 +137,9 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    async def send(self, request, **kwargs):  # pylint:disable=invalid-overridden-method
+    async def send(
+        self, request: Union[HttpRequest, "RestHttpRequest"], **kwargs
+    ) -> Union[AsyncHttpResponse, "RestAsyncHttpResponse"]:  # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest
@@ -167,12 +175,15 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
             )
             response.raw.enforce_content_length = True
 
-        except urllib3.exceptions.NewConnectionError as err:
+        except (
+            NewConnectionError,
+            ConnectTimeoutError,
+        ) as err:
             error = ServiceRequestError(err, error=err)
         except requests.exceptions.ReadTimeout as err:
             error = ServiceResponseError(err, error=err)
         except requests.exceptions.ConnectionError as err:
-            if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
+            if err.args and isinstance(err.args[0], ProtocolError):
                 error = ServiceResponseError(err, error=err)
             else:
                 error = ServiceRequestError(err, error=err)
