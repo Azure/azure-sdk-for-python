@@ -376,10 +376,9 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         *,
         decompress: bool = True
     ) -> None:
-        super(AioHttpTransportResponse, self).__init__(
-            request, aiohttp_response, aiohttp_response.status, block_size=block_size
-        )
+        super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
+        self.status_code = aiohttp_response.status
         self.headers = CIMultiDict(aiohttp_response.headers)
         self.reason = aiohttp_response.reason
         self.content_type = aiohttp_response.headers.get("content-type")

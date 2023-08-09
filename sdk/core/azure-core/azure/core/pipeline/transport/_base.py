@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import abc
-from contextlib import AbstractContextManager
 from email.message import Message
 import json
 import logging
@@ -48,6 +47,7 @@ from typing import (
     List,
     Sequence,
     MutableMapping,
+    ContextManager,
 )
 
 from http.client import HTTPResponse as _HTTPResponse
@@ -129,7 +129,7 @@ def _urljoin(base_url: str, stub_url: str) -> str:
     return parsed_base_url.geturl()
 
 
-class HttpTransport(AbstractContextManager["HttpTransport"], abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
+class HttpTransport(ContextManager["HttpTransport"], abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An http sender ABC."""
 
     @abc.abstractmethod
@@ -399,7 +399,6 @@ class _HttpResponseBase:
     :type request: ~azure.core.pipeline.transport.HttpRequest
     :param internal_response: The object returned from the HTTP library.
     :type internal_response: any
-    :param int status_code: The status code of the response.
     :param int block_size: Defaults to 4096 bytes.
     """
 
@@ -407,12 +406,15 @@ class _HttpResponseBase:
         self,
         request: HttpRequest,
         internal_response: Any,
-        status_code: int,
         block_size: Optional[int] = None,
     ) -> None:
         self.request: HttpRequest = request
         self.internal_response = internal_response
-        self.status_code: int = status_code
+        # This is actually never None, and set by all implementations after the call to
+        # __init__ of this class. This class is also a legacy impl, so it's risky to change it
+        # for low benefits The new "rest" implementation does define correctly status_code
+        # as non-optional.
+        self.status_code: int = None  # type: ignore
         self.headers: MutableMapping[str, str] = {}
         self.reason: Optional[str] = None
         self.content_type: Optional[str] = None
@@ -520,7 +522,8 @@ class _HttpClientTransportResponse(_HttpResponseBase):
     """
 
     def __init__(self, request, httpclient_response):
-        super(_HttpClientTransportResponse, self).__init__(request, httpclient_response, httpclient_response.status)
+        super(_HttpClientTransportResponse, self).__init__(request, httpclient_response)
+        self.status_code = httpclient_response.status
         self.headers = case_insensitive_dict(httpclient_response.getheaders())
         self.reason = httpclient_response.reason
         self.content_type = self.headers.get("Content-Type")
