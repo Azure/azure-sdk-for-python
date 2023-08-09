@@ -348,9 +348,11 @@ def get_git_properties() -> Dict[str, str]:
             return None
         return str(value).strip() or None
 
-    def _run_git_cmd(args) -> Optional[str]:
+    def _run_git_cmd(args: Iterable[str]) -> Optional[str]:
         """Runs git with the provided arguments
 
+        :param args: A iterable of arguments for a git command. Should not include leading "git"
+        :type args: Iterable[str]
         :return: The output of running git with arguments, or None if it fails.
         :rtype: Optional[str]
         """

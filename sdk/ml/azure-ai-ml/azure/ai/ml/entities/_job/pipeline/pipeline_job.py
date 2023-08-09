@@ -360,12 +360,22 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
             return issubclass(type(_validate_job), ControlFlowNode)
 
         def _is_isolated_job(_validate_job_name: str) -> bool:
-            def _try_get_data_bindings(_name: str, _input_output_data) -> Union[List[str], None]:
-                """Try to get data bindings from input/output data, return None if not found."""
+            def _try_get_data_bindings(
+                _name: str, _input_output_data: Union["_GroupAttrDict", str, "InputOutputBase"]
+            ) -> Optional[List[str]]:
+                """Try to get data bindings from input/output data, return None if not found.
+
+                :param _name: The name to use when flattening GroupAttrDict
+                :type _name: str
+                :param _input_output_data: The input/output data
+                :type _input_output_data: Union[_GroupAttrDict, str, InputOutputBase]
+                :return: A list of data bindings, or None if not found
+                :rtype: Optional[List[str]]
+                """
                 # handle group input
                 if GroupInput._is_group_attr_dict(_input_output_data):
                     # flatten to avoid nested cases
-                    flattened_values = list(_input_output_data.flatten(_name).values())
+                    flattened_values: List[Input] = list(_input_output_data.flatten(_name).values())
                     # handle invalid empty group
                     if len(flattened_values) == 0:
                         return None

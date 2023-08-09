@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+import typing
 
 import strictyaml
 
@@ -37,7 +37,7 @@ class _SafeLoaderWithBaseLoader(strictyaml.ruamel.SafeLoader):
         self._version_implicit_resolver.setdefault(version, {})
 
 
-def yaml_safe_load_with_base_resolver(stream):
+def yaml_safe_load_with_base_resolver(stream: typing.IO):
     """Load yaml string with base resolver instead of version default resolver.
 
     For example:
@@ -50,6 +50,8 @@ def yaml_safe_load_with_base_resolver(stream):
 
     Please refer to strictyaml.ruamel.resolver.implicit_resolvers for more details.
 
+    :param stream: A readable stream
+    :type stream: typing.IO
     :return: The return value of strictyaml.ruamel.load
     :rtype: Any
     """

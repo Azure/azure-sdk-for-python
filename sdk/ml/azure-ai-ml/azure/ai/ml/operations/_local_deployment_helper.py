@@ -6,9 +6,10 @@
 
 import json
 import logging
+import os
 import shutil
 from pathlib import Path
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -326,13 +327,15 @@ def _convert_container_to_deployment(container: "docker.models.containers.Contai
     )
 
 
-def _write_conda_file(conda_contents: str, directory_path: str, conda_file_name: str):
+def _write_conda_file(conda_contents: str, directory_path: Union[str, os.PathLike], conda_file_name: str):
     """Writes out conda file to provided directory.
 
     :param conda_contents: contents of conda yaml file provided by user
     :type conda_contents: str
     :param directory_path: directory on user's local system to write conda file
     :type directory_path: str
+    :param conda_file_name: The filename to write to
+    :type conda_file_name: str
     """
     conda_file_path = f"{directory_path}/{conda_file_name}"
     p = Path(conda_file_path)

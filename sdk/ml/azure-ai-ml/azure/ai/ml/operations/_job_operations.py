@@ -29,6 +29,7 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
+from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
@@ -291,9 +292,11 @@ class JobOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _handle_rest_errors(self, job_object) -> Optional[Job]:
+    def _handle_rest_errors(self, job_object: Union[JobBase, Run]) -> Optional[Job]:
         """Handle errors while resolving azureml_id's during list operation.
 
+        :param job_object: The REST object to turn into a Job
+        :type job_object: Union[JobBase, Run]
         :return: The resolved job
         :rtype: Optional[Job]
         """

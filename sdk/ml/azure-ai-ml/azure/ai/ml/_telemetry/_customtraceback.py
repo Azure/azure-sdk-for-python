@@ -9,7 +9,8 @@
 import os
 import sys
 import traceback
-from typing import Iterable, List
+import types
+from typing import Iterable, List, Optional, Type
 
 
 class _CustomStackSummary(traceback.StackSummary):
@@ -138,20 +139,40 @@ class _CustomTracebackException(traceback.TracebackException):
         yield "{}: {}\n".format(stype, msg)
 
 
-def format_exc(limit=None, chain=True) -> str:
+def format_exc(limit: Optional[int] = None, chain: bool = True) -> str:
     """Like print_exc() but return a string.
 
+    :param limit: None to include all frames or the number of frames to include.
+    :type limit: Optional[int], optional
+    :param chain: Whether to format __cause__ and __context__. Defaults to True
+    :type chain: bool, optional
     :return: The formatted exception string
     :rtype: str
     """
     return "".join(format_exception(*sys.exc_info(), limit=limit, chain=chain))
 
 
-def format_exception(etype, value, tb, limit=None, chain=True) -> List[str]:  # pylint: disable=unused-argument
+def format_exception(  # pylint: disable=unused-argument
+    etype: Type[BaseException],
+    value: BaseException,
+    tb: types.TracebackType,
+    limit: Optional[int] = None,
+    chain: bool = True,
+) -> List[str]:
     """Format a stack trace and the exception information.
 
     The arguments have the same meaning as the corresponding arguments to print_exception().
 
+    :param etype: The type of the exception
+    :type etype: Type[BaseException]
+    :param value: The exception
+    :type value: BaseException
+    :param tb: The exception traceback
+    :type tb: types.TracebackType
+    :param limit: None to include all frames or the number of frames to include.
+    :type limit: Optional[int], optional
+    :param chain: Whether to format __cause__ and __context__. Defaults to True
+    :type chain: bool, optional
     :return: A list of strings, each ending in a newline and some containing internal newlines.
       When these lines are concatenated and printed, exactly the same text is printed as does print_exception().
     :rtype: List[str]

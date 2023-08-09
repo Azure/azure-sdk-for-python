@@ -200,10 +200,30 @@ def upload_artifact(
     asset_name: Optional[str] = None,
     asset_version: Optional[str] = None,
     ignore_file: IgnoreFile = IgnoreFile(None),
-    sas_uri=None,
+    sas_uri: Optional[str] = None,
 ) -> ArtifactStorageInfo:
     """Upload local file or directory to datastore.
 
+    :param local_path: The local file or directory to upload
+    :type local_path: str
+    :param datastore_operation: The datastore operation
+    :type datastore_operation: DatastoreOperations
+    :param operation_scope: The operation scope
+    :type operation_scope: OperationScope
+    :param datastore_name: The datastore name
+    :type datastore_name: Optional[str]
+    :param asset_hash: The asset hash
+    :type asset_hash: Optional[str], optional
+    :param show_progress: Whether to show progress on the console. Defaults to True.
+    :type show_progress: bool, optional
+    :param asset_name: The asset name
+    :type asset_name: Optional[str], optional
+    :param asset_version: The asset version
+    :type asset_version: Optional[str], optional
+    :param ignore_file: The IgnoreFile determining which, if any, files to ignore when uploading
+    :type ignore_file: IgnoreFile, optional
+    :param sas_uri: The sas uri to use for uploading
+    :type sas_uri: Optional[str], optional
     :return: The artifact storage info
     :rtype: ArtifactStorageInfo
     """

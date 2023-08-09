@@ -4,6 +4,7 @@
 # pylint: disable=protected-access
 
 import logging
+import os
 import uuid
 from abc import abstractmethod
 from enum import Enum
@@ -20,7 +21,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import build_input_output
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
-from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
+from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeWithGroupInputMixin
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
@@ -268,18 +269,24 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         # TODO: replace this hack
         return self._init
 
-    def _set_base_path(self, base_path):
+    def _set_base_path(self, base_path: Union[str, os.PathLike]):
         """Set the base path for the node.
 
         Will be used for schema validation. If not set, will use Path.cwd() as the base path
         (default logic defined in SchemaValidatableMixin._base_path_for_validation).
+
+        :param base_path: The new base path
+        :type base_path: Union[str, os.PathLike]
         """
         self._base_path = base_path
 
-    def _set_referenced_control_flow_node_instance_id(self, instance_id):
+    def _set_referenced_control_flow_node_instance_id(self, instance_id: str) -> None:
         """Set the referenced control flow node instance id.
 
         If this node is referenced to a control flow node, the instance_id will not be modified.
+
+        :param instance_id: The new instance id
+        :type instance_id: str
         """
         if not self._referenced_control_flow_node_instance_id:
             self._referenced_control_flow_node_instance_id = instance_id
@@ -543,9 +550,17 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         return input_name in built_inputs and built_inputs[input_name] is not None
 
     @classmethod
-    def _refine_optional_inputs_with_no_value(cls, node, kwargs):
+    def _refine_optional_inputs_with_no_value(cls, node: "BaseNode", kwargs):
         """Refine optional inputs that have no default value and no value is provided when calling command/parallel
-        function This is to align with behavior of calling component to generate a pipeline node."""
+        function.
+
+        This is to align with behavior of calling component to generate a pipeline node.
+
+        :param node: The node
+        :type node: BaseNode
+        :param kwargs: The kwargs
+        :type kwargs: dict
+        """
         for key, value in node.inputs.items():
             meta = value._data
             if (

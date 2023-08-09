@@ -250,10 +250,13 @@ def _get_registry_discovery_url(cloud: dict, cloud_suffix: str = "") -> str:
     return os.environ.get(ArmConstants.REGISTRY_ENV_URL, registry_discovery_region_default)
 
 
-def _get_clouds_by_metadata_url(metadata_url):
+def _get_clouds_by_metadata_url(metadata_url: str) -> Dict[str, Dict[str, str]]:
     """Get all the clouds by the specified metadata url.
 
-    :return: list of the clouds
+    :param metadata_url: The metadata url
+    :type metadata_url: str
+    :return: A dictionary of cloud name to various relevant endpoints/uris
+    :rtype: Dict[str, Dict[str, str]]
     """
     try:
         module_logger.debug("Start : Loading cloud metadata from the url specified by %s", metadata_url)

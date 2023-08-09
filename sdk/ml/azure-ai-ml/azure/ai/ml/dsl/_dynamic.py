@@ -4,7 +4,7 @@
 import logging
 import types
 from inspect import Parameter, Signature
-from typing import Callable, Sequence
+from typing import Callable, Dict, Sequence
 
 from azure.ai.ml.entities import Component
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UnexpectedKeywordError, ValidationException
@@ -109,8 +109,16 @@ def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
         kwargs[lower2original_parameter_names[key.lower()]] = kwargs.pop(key)
 
 
-def _update_dct_if_not_exist(dst, src):
-    """Update the dst dict with the source dict if the key is not in the dst dict."""
+def _update_dct_if_not_exist(dst: Dict, src: Dict):
+    """Computes the union of `src` and `dst`, in-place within `dst`
+
+    If a key exists in `dst` and `src` the value in `dst` is preserved
+
+    :param dst: The destination to compute the union within
+    :type dst: Dict
+    :param src: A dictionary to include in the union
+    :type src: Dict
+    """
     for k, v in src.items():
         if k not in dst:
             dst[k] = v

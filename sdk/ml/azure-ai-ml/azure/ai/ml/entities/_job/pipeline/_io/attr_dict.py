@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from enum import Enum
-from typing import Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output

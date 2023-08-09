@@ -80,9 +80,11 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         self.stored_procedure = stored_procedure
         self.stored_procedure_params = stored_procedure_params
 
-    def _to_dict(self, remove_name=True) -> Dict:
+    def _to_dict(self, remove_name: bool = True) -> Dict:
         """Convert the Source object to a dict.
 
+        :param remove_name: Whether to remove the `name` key from the  dict representation. Defaults to True.
+        :type remove_name: bool, optional
         :return: The dictionary representation of the class
         :rtype: Dict
         """
@@ -174,9 +176,11 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
         else:
             self.path = path
 
-    def _to_dict(self, remove_name=True):
+    def _to_dict(self, remove_name: bool = True):
         """Convert the Source object to a dict.
 
+        :param remove_name: Whether to remove the `name` key from the  dict representation. Defaults to True.
+        :type remove_name: bool, optional
         :return: The dictionary representation of the object
         :rtype: Dict
         """

@@ -391,9 +391,11 @@ class PipelineComponent(Component):
         return ["jobs"]
 
     @classmethod
-    def _check_ignored_keys(cls, obj) -> List[str]:
+    def _check_ignored_keys(cls, obj: object) -> List[str]:
         """Return ignored keys in obj as a pipeline component when its value be set.
 
+        :param obj: The object to examine
+        :type obj: object
         :return: List of keys to ignore
         :rtype: List[str]
         """

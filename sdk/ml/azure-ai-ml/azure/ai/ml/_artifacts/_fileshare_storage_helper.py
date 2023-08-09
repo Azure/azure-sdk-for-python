@@ -9,7 +9,7 @@ import os
 import sys
 import time
 from pathlib import Path, PurePosixPath
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Callable, Dict, Optional, Tuple, Union
 from typing_extensions import Literal
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.fileshare import ShareDirectoryClient, ShareFileClient
@@ -121,16 +121,33 @@ class FileStorageClient:
 
     def upload_file(
         self,
-        source: str,
+        source: Union[str, os.PathLike],
         dest: str,
-        show_progress: Optional[bool] = None,
+        show_progress: bool = False,
         msg: Optional[str] = None,
         in_directory: bool = False,
         subdirectory_client: Optional[ShareDirectoryClient] = None,
-        callback: Optional[Any] = None,
+        callback: Optional[Callable[[Dict], None]] = None,
     ) -> None:
-        """ " Upload a single file to a path inside the file system
-        directory."""
+        """Upload a single file to a path inside the file system directory.
+
+        :param source: The file to upload
+        :type source: Union[str, os.PathLike]
+        :param dest: The destination in the fileshare to upload to
+        :type dest: str
+        :param show_progress: Whether to show progress on the console. Defaults to False.
+        :type show_progress: bool, optional
+        :param msg: Message to display on progress bar. Defaults to None.
+        :type msg: Optional[str], optional
+        :param in_directory: Whether this function is being called by :attr:`FileStorageClient.upload_dir`. Defaults
+            to False.
+        :type in_directory: bool, optional
+        :param subdirectory_client: The subdirectory client.
+        :type subdirectory_client: Optional[ShareDirectoryClient], optional
+        :param callback: A callback that receives the raw requests returned by the service during the upload process.
+            Only used if `in_directory` and `show_progress` are True.
+        :type callback: Optional[Callable[[Dict], None]], optional
+        """
         validate_content = os.stat(source).st_size > 0  # don't do checksum for empty files
 
         with open(source, "rb") as data:
@@ -164,13 +181,25 @@ class FileStorageClient:
 
     def upload_dir(
         self,
-        source: str,
+        source: Union[str, os.PathLike],
         dest: str,
         msg: str,
         show_progress: bool,
         ignore_file: IgnoreFile,
     ) -> None:
-        """Upload a directory to a path inside the fileshare directory."""
+        """Upload a directory to a path inside the fileshare directory.
+
+        :param source: The directory to upload
+        :type source: Union[str, os.PathLike]
+        :param dest: The destination in the fileshare to upload to
+        :type dest: str
+        :param msg: Message to display on progress bar
+        :type msg: str
+        :param show_progress: Whether to show progress on the console.
+        :type show_progress: bool
+        :param ignore_file: The IgnoreFile that specifies which files, if any, to ignore when uploading files
+        :type ignore_file: IgnoreFile
+        """
         subdir = self.directory_client.create_subdirectory(dest)
         source_path = Path(source).resolve()
         prefix = "" if dest == "" else dest + "/"
@@ -245,10 +274,18 @@ class FileStorageClient:
     def download(
         self,
         starts_with: str = "",
-        destination: str = Path.home(),
+        destination: str = str(Path.home()),
         max_concurrency: int = 4,
     ) -> None:
-        """Downloads all contents inside a specified fileshare directory."""
+        """Downloads all contents inside a specified fileshare directory.
+
+        :param starts_with: The prefix used to filter files to download
+        :type starts_with: str, optional
+        :param destination: The destination to download to. Default to user's home directory.
+        :type destination: str, optional
+        :param max_concurrency: The maximum number of concurrent downloads. Defaults to 4.
+        :type max_concurrency: int, optional
+        """
         recursive_download(
             client=self.directory_client,
             starts_with=starts_with,

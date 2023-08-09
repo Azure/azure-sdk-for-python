@@ -725,8 +725,12 @@ class ComponentOperations(_ScopeDependentOperations):
                 self._job_operations._resolve_automl_job_inputs(job_instance)
 
     @classmethod
-    def _resolve_binding_on_supported_fields_for_node(cls, node):
-        """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
+    def _resolve_binding_on_supported_fields_for_node(cls, node: BaseNode):
+        """Resolve all PipelineInput(binding from sdk) on supported fields to string.
+
+        :param node: The node
+        :type node: BaseNode
+        """
         from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
         from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
@@ -991,9 +995,12 @@ def _refine_component(component_func: types.FunctionType) -> Component:
     :rtype: Component
     """
 
-    def check_parameter_type(f):
-        """Check all parameter is annotated or has a default value with
-        clear type(not None)."""
+    def check_parameter_type(f: types.FunctionType):
+        """Check all parameter is annotated or has a default value with clear type(not None).
+
+        :param f: The component function
+        :type f: types.FunctionType
+        """
         annotations = getattr(f, "__annotations__", {})
         func_parameters = signature(f).parameters
         defaults_dict = {key: val.default for key, val in func_parameters.items()}
@@ -1020,8 +1027,12 @@ def _refine_component(component_func: types.FunctionType) -> Component:
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-    def check_non_pipeline_inputs(f):
-        """Check whether non_pipeline_inputs exist in pipeline builder."""
+    def check_non_pipeline_inputs(f: types.FunctionType):
+        """Check whether non_pipeline_inputs exist in pipeline builder.
+
+        :param f: The component function
+        :type f: types.FunctionType
+        """
         if f._pipeline_builder.non_pipeline_parameter_names:
             msg = "Cannot register pipeline component {!r} with non_pipeline_inputs."
             raise ValidationException(

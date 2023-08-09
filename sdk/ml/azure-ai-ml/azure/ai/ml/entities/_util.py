@@ -6,7 +6,7 @@ import hashlib
 import json
 import os
 import shutil
-from typing import Any, Dict, Iterable, List, Optional, Type, TypeVar, Union
+from typing import Any, Dict, Iterable, List, Optional, Type, TypeVar, Union, overload
 from unittest import mock
 
 import msrest
@@ -14,6 +14,8 @@ from marshmallow.exceptions import ValidationError
 
 from .._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
 from .._restclient.v2023_04_01_preview.models import JobInputType as JobInputType10
+from .._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
+from .._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
 from .._schema._datastore import AzureBlobSchema, AzureDataLakeGen1Schema, AzureDataLakeGen2Schema, AzureFileSchema
 from .._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from .._schema._deployment.online.online_deployment import (
@@ -203,11 +205,15 @@ def is_empty_target(obj: Optional[Dict]) -> bool:
     )
 
 
-def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=True) -> Union[Dict, List]:
+def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty: bool = True) -> Union[Dict, List]:
     """Convert ordered dict to dict. Remove keys with None value.
     This is a workaround for rest request must be in dict instead of
     ordered dict.
 
+    :param target_object: The object to convert
+    :type target_object: Union[Dict, List]
+    :param remove_empty: Whether to omit values that are None or empty dictionaries. Defaults to True.
+    :type remove_empty: bool, optional
     :return: Converted ordered dict with removed None values
     :rtype: Union[Dict, List]
     """
@@ -229,12 +235,18 @@ def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=
     return target_object
 
 
-def _general_copy(src, dst, make_dirs=True):
-    """Wrapped `shutil.copy2` function for possible "Function not implemented"
-    exception raised by it.
+def _general_copy(src: Union[str, os.PathLike], dst: Union[str, os.PathLike], make_dirs: bool = True):
+    """Wrapped `shutil.copy2` function for possible "Function not implemented" exception raised by it.
 
     Background: `shutil.copy2` will throw OSError when dealing with Azure File.
     See https://stackoverflow.com/questions/51616058 for more information.
+
+    :param src: The source path to copy from
+    :type src: Union[str, os.PathLike]
+    :param dst: The destination path to copy to
+    :type dst: Union[str, os.PathLike]
+    :param make_dirs: Whether to ensure the destination path exists. Defaults to True.
+    :type make_dirs: bool, optional
     """
     if make_dirs:
         os.makedirs(os.path.dirname(dst), exist_ok=True)
@@ -257,9 +269,19 @@ def _dump_data_binding_expression_in_fields(obj):
     return obj
 
 
-def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
+T = TypeVar("T")
+
+
+def get_rest_dict_for_node_attrs(target_obj: T, clear_empty_value: bool = False) -> Union[T, Dict]:
     """Convert object to dict and convert OrderedDict to dict.
     Allow data binding expression as value, disregarding of the type defined in rest object.
+
+    :param target_obj: The object to convert
+    :type target_obj: T
+    :param clear_empty_value: Whether to clear empty values. Defaults to False.
+    :type clear_empty_value: bool, optional
+    :return: The translated dict, or the the original object
+    :rtype: Union[T, Dict]
     """
     # pylint: disable=too-many-return-statements
     from azure.ai.ml.entities._job.pipeline._io import PipelineInput
@@ -351,11 +373,34 @@ def extract_label(input_str: str):
     return input_str, None
 
 
-def resolve_pipeline_parameters(pipeline_parameters: dict, remove_empty=False):
+@overload
+def resolve_pipeline_parameters(pipeline_parameters: None, remove_empty: bool = False) -> None:
+    ...
+
+
+@overload
+def resolve_pipeline_parameters(
+    pipeline_parameters: Dict[str, T], remove_empty: bool = False
+) -> Dict[str, Union[T, str, "NodeOutput"]]:
+    ...
+
+
+def resolve_pipeline_parameters(
+    pipeline_parameters: Optional[Dict[str, T]], remove_empty: bool = False
+) -> Optional[Dict[str, Union[T, str, "NodeOutput"]]]:
     """Resolve pipeline parameters.
 
     1. Resolve BaseNode and OutputsAttrDict type to NodeOutput.
     2. Remove empty value (optional).
+
+    :param pipeline_parameters: The pipeline parameters
+    :type pipeline_parameters: Optional[Dict[str, T]]
+    :param remove_empty: Whether to remove None values. Defaults to False.
+    :type remove_empty: bool, optional
+    :return:
+        * None if pipeline_parameters is None
+        * The resolved dict of pipeline parameters
+    :rtype: Optional[Dict[str, Union[T, str, "NodeOutput"]]]
     """
 
     if pipeline_parameters is None:
@@ -375,9 +420,6 @@ def resolve_pipeline_parameters(pipeline_parameters: dict, remove_empty=False):
         updated_parameters[k] = v
     pipeline_parameters = updated_parameters
     return pipeline_parameters
-
-
-T = TypeVar("T")
 
 
 def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
@@ -408,11 +450,19 @@ def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
     return data
 
 
-def normalize_job_input_output_type(input_output_value):
-    """
-    We have changed the api starting v2022_06_01_preview version and there are some api interface changes, which will
-    result in pipeline submitted by v2022_02_01_preview can't be parsed correctly. And this will block
-    az ml job list/show. So we convert the input/output type of camel to snake to be compatible with the Jun/Oct api.
+def normalize_job_input_output_type(input_output_value: Union[RestJobOutput, RestJobInput, Dict]):
+    """Normalizes the `job_input_type`, `job_output_type`, and `type` keys for REST job output and input objects.
+
+    :param input_output_value: Either a REST input or REST output of a job
+    :type input_output_value: Union[RestJobOutput, RestJobInput, Dict]
+
+    .. note::
+
+        We have changed the api starting v2022_06_01_preview version and there are some api interface changes,
+        which will result in pipeline submitted by v2022_02_01_preview can't be parsed correctly. And this will block
+        az ml job list/show. So we convert the input/output type of camel to snake to be compatible with the Jun/Oct
+        api.
+
     """
 
     FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING = {

@@ -36,10 +36,12 @@ def _find_deepest_dictionary(data: dict) -> dict:
     return data
 
 
-def get_entity_type(error: Union[SchemaValidationError, ValidationException]) -> Tuple[str, str]:
+def get_entity_type(error: Union[str, SchemaValidationError, ValidationException]) -> Tuple[str, str]:
     """Get entity name from schema type referenced in the error.
 
-    :return: The entities type and additional details
+    :param error: The validation error
+    :type error: Union[str, SchemaValidationError, ValidationException]
+    :return: The entity type and additional details
     :rtype: Tuple[str, str]
     """
     details = ""
@@ -78,11 +80,16 @@ def get_entity_type(error: Union[SchemaValidationError, ValidationException]) ->
 
 
 def format_details_section(
-    error: Union[SchemaValidationError, ValidationException], details: str, entity_type: str
+    error: Union[str, SchemaValidationError, ValidationException], details: str, entity_type: str
 ) -> Tuple[Dict[str, bool], str]:
     """Builds strings for details of the error message template's Details section.
 
-
+    :param error: The validation error
+    :type error: Union[str, SchemaValidationError, ValidationException]
+    :param details: The details
+    :type details: str
+    :param entity_type: The entity type
+    :type entity_type: str
     :return: Error type map and formatted message
     :rtype: Tuple[Dict[str, bool], str]
     """

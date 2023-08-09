@@ -28,6 +28,7 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._component.code import ComponentCodeMixin
+from azure.ai.ml.operations._operation_orchestrator import _AssetResolver
 
 logger = logging.getLogger(__name__)
 
@@ -262,8 +263,14 @@ class CachedNodeResolver(object):
                 on_disk_cache_path.as_posix(),
             )
 
-    def _resolve_cache_contents(self, cache_contents_to_resolve: List[_CacheContent], resolver):
-        """Resolve all components to resolve and save the results in cache."""
+    def _resolve_cache_contents(self, cache_contents_to_resolve: List[_CacheContent], resolver: _AssetResolver):
+        """Resolve all components to resolve and save the results in cache.
+
+        :param cache_contents_to_resolve: The cache contents to resolve
+        :type cache_contents_to_resolve: List[_CacheContent]
+        :param resolver: The resolver function
+        :type resolver: _AssetResolver
+        """
 
         def _map_func(_cache_content: _CacheContent):
             _cache_content.arm_id = resolver(_cache_content.component_ref, azureml_type=AzureMLResourceType.COMPONENT)

@@ -7,7 +7,7 @@
 
 import math
 from inspect import Parameter
-from typing import Dict, Optional, TypeVar, Union, overload
+from typing import Any, Dict, Optional, TypeVar, Union, overload
 
 from typing_extensions import Literal
 
@@ -357,8 +357,12 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def _update_name(self, name):
         self._port_name = name
 
-    def _update_default(self, default_value):
-        """Update provided default values."""
+    def _update_default(self, default_value: Any):
+        """Update provided default values.
+
+        :param default_value: The default value of the Input
+        :type default_value: Any
+        """
         name = "" if not self._port_name else f"{self._port_name!r} "
         msg_prefix = f"Default value of Input {name}"
 
@@ -392,10 +396,13 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
                     raise UserErrorException(msg) from e
         self.default = default_value
 
-    def _validate_or_throw(self, value):
+    def _validate_or_throw(self, value: Any):
         """Validate input parameter value, throw exception if not as expected.
 
         It will throw exception if validate failed, otherwise do nothing.
+
+        :param value: A value to validate
+        :type value: Any
         """
         if not self.optional and value is None:
             msg = "Parameter {} cannot be None since it is not optional."

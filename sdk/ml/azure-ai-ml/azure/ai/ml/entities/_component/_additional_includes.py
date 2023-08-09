@@ -129,12 +129,16 @@ class AdditionalIncludes:
         return validation_result
 
     @classmethod
-    def _resolve_artifact_additional_include_config(cls, artifact_additional_include_config) -> List[Tuple[str, str]]:
+    def _resolve_artifact_additional_include_config(
+        cls, artifact_additional_include_config: Dict[str, str]
+    ) -> List[Tuple[str, str]]:
         """Resolve an artifact additional include config into a list of (local_path, config_info) tuples.
 
         Configured artifact will be downloaded to local path first; the config_info will be in below format:
         %name%:%version% in %feed%
 
+        :param artifact_additional_include_config: Additional include config for an artifact
+        :type artifact_additional_include_config: Dict[str, str]
         :return: A list of 2-tuples of local_path and config_info
         :rtype: List[Tuple[str, str]]
         """
@@ -287,13 +291,17 @@ class AdditionalIncludes:
         return additional_include_configs_in_local_path
 
     def _validate_local_additional_include_config(
-        self, local_path: str, config_info: str = None
+        self, local_path: str, config_info: Optional[str] = None
     ) -> MutableValidationResult:
         """Validate local additional include config.
 
         Note that we will check the file conflicts between each local additional includes and origin code, but
         won't check the file conflicts among local additional includes fo now.
 
+        :param local_path: The local path
+        :type local_path: str
+        :param config_info: The config info
+        :type config_info: Optional[str], optional
         :return: The validation result.
         :rtype: ~azure.ai.ml.entities._validation.MutableValidationResult
         """
@@ -345,9 +353,11 @@ class AdditionalIncludes:
             validation_result.merge_with(self._validate_additional_include_config(additional_include_config))
         return validation_result
 
-    def _copy_origin_code(self, target_path) -> ComponentIgnoreFile:
+    def _copy_origin_code(self, target_path: Path) -> ComponentIgnoreFile:
         """Copy origin code to target path.
 
+        :param target_path: The destination to copy to
+        :type target_path: Path
         :return: The component ignore file for the origin path
         :rtype: ComponentIgnoreFile
         """

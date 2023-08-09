@@ -48,9 +48,11 @@ def _add_class_docstring(cls: Type[T]) -> Type[T]:
 
     P2 = ParamSpec("P2")
 
-    def _add_class_warning(func: Callable[P2, None] = None) -> Callable[P2, None]:
+    def _add_class_warning(func: Callable[P2, None]) -> Callable[P2, None]:
         """Add warning message for class __init__.
 
+        :param func: The original __init__ function
+        :type func: Callable[P2, None]
         :return: Updated __init__
         :rtype: Callable[P2, None]
         """

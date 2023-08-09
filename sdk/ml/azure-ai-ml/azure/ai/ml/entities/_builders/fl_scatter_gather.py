@@ -13,6 +13,8 @@ from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._do_while import do_while
 from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
+from azure.ai.ml.entities._builders.pipeline import Pipeline
+from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -355,17 +357,17 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
     @classmethod
     def _anchor_step(
         cls,
-        pipeline_step,
-        compute,
-        internal_datastore,
-        orchestrator_datastore,
+        pipeline_step: Union[Pipeline, CommandComponent],
+        compute: str,
+        internal_datastore: str,
+        orchestrator_datastore: str,
         iteration: Optional[int] = 0,
         _path="root",
     ) -> MutableValidationResult:
         """Take a pipeline step and recursively enforces the right compute/datastore config.
 
         :param pipeline_step: a step to anchor
-        :type pipeline_step: Union[PipelineStep, CommandComponent]
+        :type pipeline_step: Union[Pipeline, CommandComponent]
         :param compute: name of the compute target
         :type compute: str
         :param internal_datastore: The name of the datastore that should be used for internal output anchoring.
@@ -373,6 +375,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         :param orchestrator_datastore: The name of the orchestrator/aggregation datastore that should be used for
             'real' output anchoring.
         :type orchestrator_datastore: str
+        :param iteration: The current iteration number in the scatter gather loop. Defaults to 0.
+        :type iteration: Optional[int], optional
         :param _path: for recursive anchoring, codes the "path" inside the pipeline for messaging
         :type _path: str
         :return: A validation result containing any issues that were uncovered during anchoring. This function adds
@@ -730,9 +734,11 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
         return data_path
 
-    def _get_aggregator_input_name(self, silo_output_name) -> Optional[str]:
+    def _get_aggregator_input_name(self, silo_output_name: str) -> Optional[str]:
         """Retrieves the aggregator input name
 
+        :param silo_output_name: The silo output name
+        :type silo_output_name: str
         :return:
             * Returns aggregator input name that maps to silo_output.
             * Returns None if silo_output_name not in silo_to_aggregation_argument_map
@@ -743,10 +749,10 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
     @classmethod
     def _try_create_default_mappings(
         cls,
-        silo_comp: Component,
-        agg_comp: Component,
-        silo_agg_map: Dict,
-        agg_silo_map: Dict,
+        silo_comp: Optional[Component],
+        agg_comp: Optional[Component],
+        silo_agg_map: Optional[Dict],
+        agg_silo_map: Optional[Dict],
     ) -> Tuple[Optional[Dict], Optional[Dict]]:
         """
         This function tries to produce dictionaries that link the silo and aggregation
@@ -770,6 +776,14 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         Example returns:
             {"silo_output1" : "silo_output1"}, {}
 
+        :param silo_comp: The silo component
+        :type silo_comp: Optional[Component]
+        :param agg_comp: The aggregation component
+        :type agg_comp: Optional[Component]
+        :param silo_agg_map: Mapping of silo to aggregation arguments.
+        :type silo_agg_map: Optional[Dict]
+        :param agg_silo_map: Mapping of aggregation to silo arguments.
+        :type agg_silo_map: Optional[Dict]
         :return: Returns a tuple of the potentially modified silo to aggregation mapping, followed by the aggregation
             to silo mapping.
         :rtype: Tuple[Optional[Dict], Optional[Dict]]

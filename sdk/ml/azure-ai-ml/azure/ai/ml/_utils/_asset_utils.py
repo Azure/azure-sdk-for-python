@@ -17,9 +17,9 @@ from pathlib import Path
 from platform import system
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Union, cast
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from colorama import Fore
 from tqdm import TqdmWarning, tqdm
+from typing_extensions import Literal
 
 from azure.ai.ml._artifacts._constants import (
     AML_IGNORE_FILE_NAME,
@@ -66,6 +66,7 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 if TYPE_CHECKING:
     from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
@@ -124,9 +125,11 @@ class IgnoreFile(object):
         """
         return [GitWildMatchPattern(ignore) for ignore in self._get_ignore_list()]
 
-    def _get_rel_path(self, file_path: Union[str, Path]) -> Optional[str]:
+    def _get_rel_path(self, file_path: Union[str, os.PathLike]) -> Optional[str]:
         """Get relative path of given file_path.
 
+        :param file_path: A file path
+        :type file_path: Union[str, os.PathLike]
         :return: file_path relative to base_path, if computable. None otherwise
         :rtype: Optional[str]
         """
@@ -138,11 +141,11 @@ class IgnoreFile(object):
             # 2 paths are on different drives
             return None
 
-    def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
+    def is_file_excluded(self, file_path: Union[str, os.PathLike]) -> bool:
         """Checks if given file_path is excluded.
 
         :param file_path: File path to be checked against ignore file specifications
-        :type file_path: Union[str, Path]
+        :type file_path: Union[str, os.PathLike]
         :return: Whether the file is excluded by ignore file
         :rtype: bool
         """
@@ -785,13 +788,25 @@ def _get_latest(
     resource_group_name: str,
     workspace_name: Optional[str] = None,
     registry_name: Optional[str] = None,
-    order_by: str = OrderString.CREATED_AT_DESC,
+    order_by: Literal[OrderString.CREATED_AT, OrderString.CREATED_AT_DESC] = OrderString.CREATED_AT_DESC,
     **kwargs,
 ) -> Union[ModelVersionData, DataVersionBaseData]:
     """Retrieve the latest version of the asset with the given name.
 
     Latest is defined as the most recently created, not the most recently updated.
 
+    :param asset_name: The asset name
+    :type asset_name: str
+    :param version_operation: Any
+    :type version_operation: Any
+    :param resource_group_name: The resource group name
+    :type resource_group_name: str
+    :param workspace_name: The workspace name
+    :type workspace_name: Optional[str], optional
+    :param registry_name: The registry name
+    :type registry_name: Optional[str], optional
+    :param order_by: Specifies how to order the results. Defaults to :attr:`OrderString.CREATED_AT_DESC`
+    :type order_by: Literal[OrderString.CREATED_AT, OrderString.CREATED_AT_DESC], optional
     :return: The latest version of the requested asset
     :rtype: Union[ModelVersionData, DataVersionBaseData]
     """

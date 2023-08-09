@@ -64,8 +64,13 @@ class PersistentLocalsFunctionBuilder(abc.ABC):
 class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
     @staticmethod
     @contextmanager
-    def _replace_sys_profiler(profiler) -> Iterable[None]:
-        """A context manager which replaces sys profiler to given profiler."""
+    def _replace_sys_profiler(profiler: Callable[[FrameType, str, Any], None]) -> Iterable[None]:
+        """A context manager which replaces sys profiler to given profiler.
+
+        :param profiler: The profile function.
+            See https://docs.python.org/3/library/sys.html#sys.setprofile for more information
+        :type profiler: Callable[[FrameType, str, Any], None]
+        """
         original_profiler = sys.getprofile()
         sys.setprofile(profiler)
         try:
@@ -306,28 +311,44 @@ try:
         @classmethod
         def _split_instructions_based_on_template(
             cls,
-            instructions,
+            instructions: List[Instr],
             *,
             remove_mock_body: bool = False,
         ) -> List[List[Instr]]:
             """Split instructions into several pieces by separators.
             For example, in Python 3.11, the template source instructions will be:
-            [
-                Instr('RESUME', 0),  # initial instruction shared by all functions
-                Instr('LOAD_FAST', 'mock_arg'),  # the body execution instruction
-                Instr('RETURN_VALUE'),  # the return instruction shared by all functions
-            ]
+
+            .. code-block:: python
+
+                [
+                    Instr('RESUME', 0),  # initial instruction shared by all functions
+                    Instr('LOAD_FAST', 'mock_arg'),  # the body execution instruction
+                    Instr('RETURN_VALUE'),  # the return instruction shared by all functions
+                ]
+
             Then the separators before body will be:
-            [
-                Instr('RESUME', 0),
-            ]
+
+            .. code-block:: python
+
+                [
+                    Instr('RESUME', 0),
+                ]
+
             And the separators after body will be:
-            [
-                Instr('RETURN_VALUE'),
-            ]
+
+            .. code-block:: python
+
+                [
+                    Instr('RETURN_VALUE'),
+                ]
+
             For passed in instructions, we will split them with separators from beginning (the first RESUME) and
             with reversed_separators from end (the last RETURN_VALUE).
 
+            :param instructions: The instructions to split
+            :type instructions: List[instr]
+            :keyword remove_mock_body: Whether to remove the mock body. Defaults to False
+            :type remove_mock_body: bool, optional
             :return: The split instructions
             :rtype: List[List[Instr]]
             """

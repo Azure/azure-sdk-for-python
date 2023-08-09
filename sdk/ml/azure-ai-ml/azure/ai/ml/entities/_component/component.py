@@ -5,7 +5,7 @@ import re
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import AnyStr, Dict, Callable, IO, Optional, TYPE_CHECKING, Tuple, Union
+from typing import AnyStr, Dict, Callable, IO, Iterable, Optional, TYPE_CHECKING, Tuple, Union
 from typing_extensions import Literal
 from marshmallow import INCLUDE
 
@@ -180,8 +180,12 @@ class Component(
         return self._display_name
 
     @display_name.setter
-    def display_name(self, custom_display_name):
-        """Set display_name of the component."""
+    def display_name(self, custom_display_name: str):
+        """Set display_name of the component.
+
+        :param custom_display_name: The new display name
+        :type custom_display_name: str
+        """
         self._display_name = custom_display_name
 
     @property
@@ -256,10 +260,12 @@ class Component(
 
     @staticmethod
     def _resolve_component_source_from_id(
-        id,
+        id: Optional[str],
     ) -> Literal[ComponentSource.CLASS, ComponentSource.REMOTE_REGISTRY, ComponentSource.REMOTE_WORKSPACE_COMPONENT]:
         """Resolve the component source from id.
 
+        :param id: The component ID
+        :type id: Optional[str]
         :return: The component source
         :rtype: Literal[
                 ComponentSource.CLASS,
@@ -462,9 +468,11 @@ class Component(
         # omit name since name doesn't impact component's uniqueness
         return self._get_component_hash(keys_to_omit=["name", "id", "version"])
 
-    def _get_component_hash(self, keys_to_omit=None) -> str:
+    def _get_component_hash(self, keys_to_omit: Optional[Iterable[str]] = None) -> str:
         """Return the hash of component.
 
+        :param keys_to_omit: An iterable of keys to omit when computing the component hash
+        :type keys_to_omit: Optional[Iterable[str]], optional
         :return: The component hash
         :rtype: str
         """

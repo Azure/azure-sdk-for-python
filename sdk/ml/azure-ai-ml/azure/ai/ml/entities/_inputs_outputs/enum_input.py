@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from enum import EnumMeta
-from typing import Iterable, Optional, Sequence, Union
+from typing import Iterable, Optional, Sequence, Type, Union
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -52,9 +52,11 @@ class EnumInput(Input):
         )
 
     @classmethod
-    def _assert_enum_valid(cls, enum):
+    def _assert_enum_valid(cls, enum: Type):
         """Check whether the enum is valid and return the values of the enum.
 
+        :param enum: The enum to validate
+        :type enum: Type
         :return: The enum values
         :rtype: List[Any]
         """

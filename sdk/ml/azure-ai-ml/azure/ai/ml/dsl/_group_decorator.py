@@ -7,11 +7,12 @@
 # Attribute on customized group class to mark a value type as a group of inputs/outputs.
 import _thread
 import functools
-from typing import Any, Callable, Dict, List, Type, TypeVar
+from typing import Any, Callable, Dict, List, Type, TypeVar, Union
 
 from azure.ai.ml import Input, Output
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.entities._inputs_outputs import GroupInput, _get_param_with_standard_annotation
+from azure.ai.ml.entities._inputs_outputs.utils import Annotation
 
 T = TypeVar("T")
 
@@ -134,9 +135,13 @@ def group(_cls: Type[T]) -> Type[T]:
         * When use group as a pipeline input, user **MUST** write the type annotation
           or give it a non-None default value to infer the group class.
 
+    :param _cls: The class to decorate
+    :type _cls: Type[T]
     :return: The decorated class
     :rtype: Type[T]
     """
+
+    T2 = TypeVar("T2")
 
     def _create_fn(
         name: str,
@@ -145,12 +150,24 @@ def group(_cls: Type[T]) -> Type[T]:
         *,
         globals: Dict[str, Any] = None,
         locals: Dict[str, Any] = None,
-        return_type: Type[T],
-    ) -> Callable[..., T]:
+        return_type: Type[T2],
+    ) -> Callable[..., T2]:
         """To generate function in class.
 
+        :param name: The name of the new function
+        :type name: str
+        :param args: The parameter names of the new function
+        :type args: List[str]
+        :param body: The source code of the body of the new function
+        :type body: List[str]
+        :param globals: The global variables to make available to the new function.
+        :type globals: Dict[str, Any], optional
+        :param locals: The local variables to make available to the new function
+        :type locals: Dict[str, Any], optional
+        :param return_type: The return type of the new function
+        :type return_type: Type[T2]
         :return: The created function
-        :rtype: Callable[..., T]
+        :rtype: Callable[..., T2]
         """
         # Reference: Source code of dataclasses.dataclass
         # Doc link: https://docs.python.org/3/library/dataclasses.html
@@ -175,9 +192,15 @@ def group(_cls: Type[T]) -> Type[T]:
         exec(txt, globals, ns)  # pylint: disable=exec-used # nosec
         return ns["__create_fn__"](**locals)
 
-    def _create_init_fn(cls, fields) -> Callable[..., None]:  # pylint: disable=unused-argument
+    def _create_init_fn(  # pylint: disable=unused-argument
+        cls: Type[T], fields: Dict[str, Union[Annotation, Input, Output]]
+    ) -> Callable[..., None]:
         """Generate the __init__ function for user-defined class.
 
+        :param cls: The class to update
+        :type cls: Type[T]
+        :param fields: The fields
+        :type fields: Dict[str, Union[Annotation, Input, Output]]
         :return: The __init__ function
         :rtype: Callable[..., None]
         """
@@ -219,9 +242,11 @@ def group(_cls: Type[T]) -> Type[T]:
             body_lines = ["pass"]
         return _create_fn("__init__", _init_param, body_lines, locals=locals, return_type=None)
 
-    def _create_repr_fn(fields) -> Callable[..., str]:
+    def _create_repr_fn(fields: Dict[str, Union[Annotation, Input, Output]]) -> Callable[..., str]:
         """Generate the __repr__ function for user-defined class.
 
+        :param fields: The fields
+        :type fields: Dict[str, Union[Annotation, Input, Output]]
         :return: The __repr__ function
         :rtype: Callable[..., str]
         """

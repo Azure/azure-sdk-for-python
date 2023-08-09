@@ -9,7 +9,7 @@ import logging
 import typing
 from collections import OrderedDict
 from inspect import Parameter, signature
-from typing import Callable, Dict, Union
+from typing import Any, Callable, Dict, Union
 
 from azure.ai.ml._utils._func_utils import get_outputs_and_locals
 from azure.ai.ml._utils.utils import (
@@ -413,8 +413,12 @@ class PipelineComponentBuilder:
             self._validate_keyword_in_node_io(node)
         return result
 
-    def _update_inputs(self, pipeline_inputs):
-        """Update the pipeline inputs by the dict."""
+    def _update_inputs(self, pipeline_inputs: Dict[str, Union[PipelineInput, Input, NodeOutput, Any]]):
+        """Update the pipeline inputs by the dict.
+
+        :param pipeline_inputs: The pipeline inputs
+        :type pipeline_inputs: Dict[str, Union[PipelineInput, Input, NodeOutput, Any]]
+        """
         for input_name, value in pipeline_inputs.items():
             if input_name not in self.inputs:
                 if isinstance(value, PipelineInput):
@@ -430,9 +434,11 @@ class PipelineComponentBuilder:
                 self.inputs[input_name] = anno
 
     @classmethod
-    def _get_output_annotation(cls, func) -> Dict[str, Dict]:
+    def _get_output_annotation(cls, func: Callable) -> Dict[str, Dict]:
         """Get the output annotation of the function, validate & refine it.
 
+        :param func: The function to retrieve output annotations from
+        :type func: Callable
         :return: A dict of output annotations
         :rtype: Dict[str, Dict]
         """

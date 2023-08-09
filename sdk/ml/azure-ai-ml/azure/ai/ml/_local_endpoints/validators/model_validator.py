@@ -5,6 +5,7 @@
 # pylint: disable=protected-access
 
 from pathlib import Path
+from typing import Tuple
 
 from azure.ai.ml._artifacts._artifact_utilities import download_artifact
 from azure.ai.ml._utils._arm_id_utils import parse_prefixed_name_version
@@ -20,15 +21,19 @@ def get_model_artifacts(
     deployment: OnlineDeployment,
     model_operations: ModelOperations,
     download_path: str,
-) -> str:
+) -> Tuple[str, str, Path]:
     """Validates and returns model artifacts from deployment specification.
 
     :param endpoint_name: name of endpoint which this deployment is linked to
     :type endpoint_name: str
     :param deployment: deployment to validate
-    :type deployment: OnlineDeployment entity
+    :type deployment: OnlineDeployment
+    :param model_operations: The model operations
+    :type model_operations: ModelOperations
+    :param download_path: The path to download to
+    :type download_path: str
     :return: (model name, model version, the local directory of the model artifact)
-    :type return: (str, str, str)
+    :rtype: Tuple[str, str, Path]
     :raises: azure.ai.ml._local_endpoints.errors.RequiredLocalArtifactsNotFoundError
     :raises: azure.ai.ml._local_endpoints.errors.CloudArtifactsNotSupportedError
     """

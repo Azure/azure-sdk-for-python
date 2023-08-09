@@ -135,8 +135,11 @@ def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retr
     return requests_pipeline.with_policies(retry_policy=get_retry_policy(num_retry=retries))
 
 
-def get_retry_policy(num_retry=3) -> RetryPolicy:
-    """
+def get_retry_policy(num_retry: int = 3) -> RetryPolicy:
+    """Retrieves a retry policy to use in an azure.core.pipeline.Pipeline
+
+    :param num_retry: The number of retries
+    :type num_retry: int
     :return: Returns the msrest or requests REST client retry policy.
     :rtype: RetryPolicy
     """
@@ -594,9 +597,13 @@ def from_iso_duration_format_min_sec(duration: Optional[str]) -> str:
     return duration.split(".")[0].replace("PT", "").replace("M", "m ") + "s"
 
 
-def hash_dict(items: dict, keys_to_omit=None):
+def hash_dict(items: Dict[str, Any], keys_to_omit: Optional[Iterable[str]] = None) -> str:
     """Return hash GUID of a dictionary except keys_to_omit.
 
+    :param items: The dict to hash
+    :type items: Dict[str, Any]
+    :param keys_to_omit: Keys to omit before hashing
+    :type keys_to_omit: Optional[Iterable[str]]
     :return: The hash GUID of the dictionary
     :rtype: str
     """
@@ -657,9 +664,13 @@ def map_single_brackets_and_warn(command: str):
     return command
 
 
-def transform_dict_keys(data: Dict, casing_transform: Callable[[str], str], exclude_keys=None) -> Dict:
+def transform_dict_keys(data: Dict[str, Any], casing_transform: Callable[[str], str], exclude_keys=None) -> Dict[str, Any]:
     """Convert all keys of a nested dictionary according to the passed casing_transform function.
 
+    :param data: The data to transform
+    :type data: Dict[str, Any]
+    :param casing_transform: A callable applied to all keys in data
+    :type casing_transform: Callable[[str], str]
     :return: A dictionary with transformed keys
     :rtype: dict
     """

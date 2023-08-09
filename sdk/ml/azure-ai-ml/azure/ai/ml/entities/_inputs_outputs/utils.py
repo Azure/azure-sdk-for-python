@@ -12,7 +12,7 @@ from enum import EnumMeta
 from inspect import Parameter, getmro, signature
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union
 
-from typing_extensions import Annotated, TypeAlias
+from typing_extensions import Annotated, Literal, TypeAlias
 
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import UserErrorException
@@ -76,10 +76,16 @@ def _get_annotation_cls_by_type(
 
 # pylint: disable=too-many-statements
 def _get_param_with_standard_annotation(
-    cls_or_func: Union[Callable, Type], is_func: bool = False, skip_params: List[str] = None
+    cls_or_func: Union[Callable, Type], is_func: bool = False, skip_params: Optional[List[str]] = None
 ) -> Dict[str, Union[Annotation, "Input", "Output"]]:
     """Standardize function parameters or class fields with dsl.types annotation.
 
+    :param cls_or_func: Either a class or a function
+    :type cls_or_func: Union[Callable, Type]
+    :param is_func: Whether `cls_or_func` is a function. Defaults to False.
+    :type is_func: bool, optional
+    :param skip_params:
+    :type skip_params: Optional[List[str]], optional
     :return: A dictionary of field annotations
     :rtype: Dict[str, Union[Annotation, "Input", "Output"]]
     """
@@ -340,8 +346,13 @@ def _update_io_from_mldesigner(annotations: Dict[str, Annotation]) -> Dict[str, 
         """
         return any(io.__module__.startswith(mldesigner_pkg) and item.__name__ == param_name for item in getmro(io))
 
-    def _is_input_or_output_type(io: type, type_str: str):
-        """
+    def _is_input_or_output_type(io: type, type_str: Literal["Input", "Output", "Meta"]):
+        """Checks whether a type is an Input or Output type
+
+        :param io: A type
+        :type io: type
+        :param type_str: The kind of type to check for
+        :type type_str: Literal["Input", "Output", "Meta"]
         :return: Return true if type name contains type_str
         :rtype: bool
         """

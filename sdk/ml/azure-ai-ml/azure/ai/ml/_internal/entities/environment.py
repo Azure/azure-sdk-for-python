@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
 
@@ -87,11 +88,15 @@ class InternalEnvironment:
             )
         return validation_result
 
-    def validate(self, base_path: str, skip_path_validation: bool = False) -> MutableValidationResult:
+    def validate(self, base_path: Union[str, PathLike], skip_path_validation: bool = False) -> MutableValidationResult:
         """Validate the environment section.
 
         This is a public method but won't be exposed to user given InternalEnvironment is an internal class.
 
+        :param base_path: The base path
+        :type base_path: Union[str, PathLike]
+        :param skip_path_validation: Whether to skip path validation. Defaults to False
+        :type skip_path_validation: bool
         :return: The validation result
         :rtype: MutableValidationResult
         """

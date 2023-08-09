@@ -9,7 +9,7 @@ import logging
 import os
 from enum import Enum
 from os import PathLike
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, overload
 
 from marshmallow import INCLUDE, Schema
 
@@ -891,10 +891,34 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         )
 
 
+@overload
+def _resolve_job_services(services: None) -> None:
+    ...
+
+
+@overload
 def _resolve_job_services(
-    services: dict,
+    services: Dict[str, Union[JobServiceBase, Dict]],
 ) -> Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]:
-    """Resolve normal dict to dict[str, JobService]"""
+    ...
+
+
+def _resolve_job_services(
+    services: Optional[Dict[str, Union[JobServiceBase, Dict]]],
+) -> Optional[
+    Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+]:
+    """Resolve normal dict to dict[str, JobService]
+
+    :param services: A dict that maps service names to either a JobServiceBase object, or a Dict used to build one
+    :type services: Optional[Dict[str, Union[JobServiceBase, Dict]]]
+    :return:
+        * None if `services` is None
+        * A map of job service names to job services
+    :rtype: Optional[
+            Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+        ]
+    """
     if services is None:
         return None
 

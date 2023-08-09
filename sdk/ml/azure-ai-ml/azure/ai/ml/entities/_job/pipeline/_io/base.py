@@ -7,7 +7,7 @@
 import copy
 import re
 from abc import ABC, abstractmethod
-from typing import List, Optional, TypeVar, Union
+from typing import List, Optional, TypeVar, Union, overload
 
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
@@ -216,7 +216,7 @@ class InputOutputBase(ABC):
         return id(self)
 
     @classmethod
-    def _get_mode(cls, original_data, data, kwargs):
+    def _get_mode(cls, original_data, data, kwargs: dict) -> Optional[str]:
         """Get mode of this input/output builder.
 
         :param original_data: Original value of input/output.
@@ -228,6 +228,10 @@ class InputOutputBase(ABC):
         :type data: Union[None, int, bool, float, str
                           azure.ai.ml.Input,
                           azure.ai.ml.Output]
+        :param kwargs: The kwargs
+        :type kwargs: Dict
+        :return: The mode
+        :rtype: Optional[str]
         """
         # pipeline level inputs won't pass mode to bound node level inputs
         if isinstance(original_data, PipelineInput):
@@ -676,9 +680,19 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
     def __str__(self) -> str:
         return self._data_binding()
 
-    def _build_data(self, data: T) -> Union[Input, T]:
+    @overload
+    def _build_data(self, data: Union[Model, Data]) -> Input:
+        ...
+
+    @overload
+    def _build_data(self, data: T) -> T:
+        ...
+
+    def _build_data(self, data: Union[Model, Data, T]) -> Union[Input, T]:
         """Build data according to input type.
 
+        :param data: The data
+        :type data: Union[Model, Data, T]
         :return:
             * Input if data is a Model or Data
             * data otherwise

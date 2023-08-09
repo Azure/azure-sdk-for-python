@@ -8,6 +8,7 @@ import inspect
 import os
 import re
 import sys
+import types
 from pathlib import Path
 from typing import Iterable, Optional, Union
 
@@ -71,9 +72,13 @@ def _resolve_source_file() -> Optional[Path]:
     return None
 
 
-def _assert_frame_package_name(pattern, frame) -> bool:
+def _assert_frame_package_name(pattern: str, frame: types.FrameType) -> bool:
     """Check the package name of frame is match pattern.
 
+    :param pattern: The pattern to match the package name of `frame` against.
+    :type pattern: str
+    :param frame: The stack frame
+    :type frame: types.FrameType
     :return: True if the package name of the frame matches pattern, False otherwise
     :rtype: bool
     """
@@ -85,12 +90,20 @@ def _assert_frame_package_name(pattern, frame) -> bool:
     return bool(package_name and re.match(pattern, package_name))
 
 
-def _relative_to(path, basedir, raises_if_impossible=False) -> Optional[Path]:
+def _relative_to(
+    path: Union[str, os.PathLike], basedir: Union[str, os.PathLike], raises_if_impossible: bool = False
+) -> Optional[Path]:
     """Compute the relative path under basedir.
 
     This is a wrapper function of Path.relative_to, by default Path.relative_to raises if path is not under basedir, In
     this function, it returns None if raises_if_impossible=False, otherwise raises.
 
+    :param path: A path
+    :type path: Union[str, os.PathLike]
+    :param basedir: The base path to compute `path` relative to
+    :type basedir: Union[str, os.PathLike]
+    :param raises_if_impossible: Whether to raise if :attr:`pathlib.Path.relative_to` throws. Defaults to False.
+    :type raises_if_impossible: bool, optional
     :return:
         * None if raises_if_impossible is False and basedir is not a parent of path
         * path.relative_to(basedir) otherwise
@@ -128,8 +141,14 @@ def _force_reload_module(module):
 
 
 @contextlib.contextmanager
-def _change_working_dir(path, mkdir=True) -> Iterable[None]:
-    """Context manager for changing the current working directory."""
+def _change_working_dir(path: Union[str, os.PathLike], mkdir: bool = True) -> Iterable[None]:
+    """Context manager for changing the current working directory.
+
+    :param path: The path to change to
+    :type path: Union[str, os.PathLike]
+    :param mkdir: Whether to ensure `path` exists, creating it if it doesn't exists. Defaults to True.
+    :type mkdir: bool, optional
+    """
 
     saved_path = os.getcwd()
     if mkdir:

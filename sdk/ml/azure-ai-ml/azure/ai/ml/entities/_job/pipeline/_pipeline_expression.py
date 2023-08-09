@@ -286,13 +286,21 @@ class PipelineExpression(PipelineExpressionMixin):
     # pylint: disable=too-many-statements
     @staticmethod
     def _handle_operand(
-        operand,
+        operand: "PipelineExpression",
         postfix: List[str],
         expression_inputs: Dict[str, ExpressionInput],
         pipeline_inputs: dict,
     ) -> Tuple[List[str], Dict[str, ExpressionInput]]:
         """Handle operand in expression, update postfix expression and expression inputs.
 
+        :param operand: The operand
+        :type operand: "PipelineExpression"
+        :param postfix:
+        :type postfix: List[str]
+        :param expression_inputs: The expression inputs
+        :type expression_inputs: Dict[str, ExpressionInput]
+        :param pipeline_inputs: The pipeline inputs
+        :type pipeline_inputs: dict
         :return: A 2-tuple of the updated postfix expression and expression inputs
         :rtype: Tuple[List[str], Dict[str, ExpressionInput]]
         """

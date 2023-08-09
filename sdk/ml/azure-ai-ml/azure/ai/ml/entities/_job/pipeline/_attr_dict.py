@@ -6,7 +6,7 @@
 
 import logging
 from abc import ABC
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar, Optional
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -143,11 +143,15 @@ def has_attr_safe(obj, attr):
     return has_attr
 
 
-def try_get_non_arbitrary_attr(obj, attr):
+def try_get_non_arbitrary_attr(obj: Any, attr: str) -> Optional[Any]:
     """Try to get non-arbitrary attribute for potential attribute dict.
 
     Will not create target attribute if it is an arbitrary attribute in _AttrDict.
 
+    :param obj: The obj
+    :type obj: Any
+    :param attr: The attribute name
+    :type attr: str
     :return: obj.attr
     :rtype: Any
     """

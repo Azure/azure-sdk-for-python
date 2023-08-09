@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import copy
-from typing import Dict, Optional, Type, Union
+from typing import Dict, List, Optional, Type, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
@@ -271,9 +271,11 @@ class NodeIOMixin:
         return rest_data_outputs
 
     @classmethod
-    def _from_rest_inputs(cls, inputs) -> Dict[str, Union[Input, str, bool, int, float]]:
+    def _from_rest_inputs(cls, inputs: Dict[str, Union[str, dict]]) -> Dict[str, Union[Input, str, bool, int, float]]:
         """Load inputs from rest inputs.
 
+        :param inputs: The REST inputs
+        :type inputs: Dict[str, Union[str, dict]]
         :return: Input dict
         :rtype: Dict[str, Union[Input, str, bool, int, float]]
         """
@@ -287,9 +289,11 @@ class NodeIOMixin:
         return {**dataset_literal_inputs, **input_bindings}
 
     @classmethod
-    def _from_rest_outputs(cls, outputs) -> Dict[str, Output]:
+    def _from_rest_outputs(cls, outputs: Dict[str, Union[str, dict]]) -> Dict[str, Output]:
         """Load outputs from rest outputs.
 
+        :param outputs: The REST outputs
+        :type outputs: Dict[str, Union[str, dict]]
         :return: Output dict
         :rtype: Dict[str, Output]
         """
@@ -304,8 +308,12 @@ class NodeIOMixin:
 
         return {**data_outputs, **output_bindings}
 
-    def _update_output_types(self, rest_data_outputs):
-        """Update output types in rest_data_outputs according to meta level output."""
+    def _update_output_types(self, rest_data_outputs: dict):
+        """Update output types in rest_data_outputs according to meta level output.
+
+        :param rest_data_outputs: The REST data outputs
+        :type rest_data_outputs: Dict
+        """
 
         for name, rest_output in rest_data_outputs.items():
             original_output = self.outputs[name]
@@ -326,9 +334,17 @@ def _flatten_dict(dictionary, parent_key="", separator="."):
     return dict(items)
 
 
-def flatten_dict(dct: Dict, _type: Type, *, allow_dict_fields=None) -> Dict:
+def flatten_dict(
+    dct: Dict, _type: Union[Type["_GroupAttrDict"], Type[GroupInput]], *, allow_dict_fields: Optional[List[str]] = None
+) -> Dict:
     """Flatten inputs/input_definitions dict for inputs dict build.
 
+    :param dct: The dictionary to flatten
+    :type dct: Dict
+    :param _type: Either _GroupAttrDict or GroupInput (both have the method `flatten`)
+    :type _type: Union[Type["_GroupAttrDict"], Type[GroupInput]]
+    :keyword allow_dict_fields: A list of keys for dictionary values that will be included in flattened output
+    :type allow_dict_fields: Optional[List[str]], optional
     :return: The flattened dict
     :rtype: Dict
     """
@@ -512,8 +528,12 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
             return copy.deepcopy(val.default)
         return val.default
 
-    def _update_output_types(self, rest_data_outputs):
-        """Won't clear output type for pipeline level outputs since it's required in rest object."""
+    def _update_output_types(self, rest_data_outputs: Dict):
+        """Won't clear output type for pipeline level outputs since it's required in rest object.
+
+        :param rest_data_outputs: The REST data outputs
+        :type rest_data_outputs: Dict
+        """
 
 
 class AutoMLNodeIOMixin(NodeIOMixin):

@@ -10,7 +10,7 @@ import sys
 import time
 import uuid
 from pathlib import Path, PurePosixPath
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 from typing_extensions import Literal
 from colorama import Fore
 
@@ -171,9 +171,15 @@ class Gen2StorageClient:
     def _set_confirmation_metadata(self, name: str, version: str) -> None:
         self.directory_client.set_metadata(_build_metadata_dict(name, version))
 
-    def download(self, starts_with: str, destination: str = Path.home()) -> None:
-        """Downloads all items inside a specified filesystem directory with the
-        prefix `starts_with` to the destination folder."""
+    def download(self, starts_with: str, destination: Union[str, os.PathLike] = Path.home()) -> None:
+        """Downloads all items inside a specified filesystem directory with the prefix `starts_with` to the destination
+        folder.
+
+        :param starts_with: The prefix used to filter items to download
+        :type starts_with: str
+        :param destination: The path to download items to
+        :type destination: Union[str, os.PathLike]
+        """
         try:
             mylist = self.file_system_client.get_paths(path=starts_with)
             download_size_in_mb = 0

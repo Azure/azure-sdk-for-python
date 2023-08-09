@@ -14,7 +14,7 @@ from collections import defaultdict
 from io import BytesIO
 from pathlib import Path
 from threading import Lock
-from typing import Optional
+from typing import Iterable, List, Optional, Union
 
 from typing_extensions import Literal
 from azure.ai.ml.constants._common import DefaultOpenEncoding
@@ -79,9 +79,11 @@ class ArtifactCache:
         return self._cache_directory
 
     @staticmethod
-    def hash_files_content(file_list) -> str:
+    def hash_files_content(file_list: List[Union[str, os.PathLike]]) -> str:
         """Hash the file content in the file list.
 
+        :param file_list: The list of files to hash
+        :type file_list: List[Union[str, os.PathLike]]
         :return: Hashed file contents
         :rtype: str
         """
@@ -151,9 +153,14 @@ class ArtifactCache:
         artifact_path = Path(path)
         return artifact_path.parent / f"{artifact_path.name}_{cls.POSTFIX_CHECKSUM}"
 
-    def _redirect_artifacts_tool_path(self, organization):
-        """To avoid the transient issue when download artifacts, download the artifacts tool and redirect az artifact
-        command to it."""
+    def _redirect_artifacts_tool_path(self, organization: Optional[str]):
+        """Downloads the artifacts tool and redirects `az artifact` command to it.
+
+        Done to avoid the transient issue when download artifacts
+
+        :param organization:  The organization url. If None, is determined by local git repo
+        :type organization: Optional[str]
+        """
         from azure.identity import DefaultAzureCredential
 
         if not organization:
@@ -198,8 +205,30 @@ class ArtifactCache:
             else:
                 _logger.warning("Download artifact tool failed: %s", response.text)
 
-    def _download_artifacts(self, download_cmd, organization, name, version, feed, max_retries=3):
-        """Download artifacts with retry."""
+    def _download_artifacts(
+        self,
+        download_cmd: Iterable[str],
+        organization: Optional[str],
+        name: str,
+        version: str,
+        feed: str,
+        max_retries: int = 3,
+    ):
+        """Download artifacts with retry.
+
+        :param download_cmd: The command used to download the artifact
+        :type download_cmd: Iterable[str]
+        :param organization: The artifact organization
+        :type organization: Optional[str]
+        :param name: The package name
+        :type name: str
+        :param version: The package version
+        :type version: str
+        :param feed: The download feed
+        :type feed: str
+        :param max_retries: The number of times to retry the download. Defaults to 3
+        :type max_retries: int, optional
+        """
         retries = 0
         while retries <= max_retries:
             try:
@@ -227,9 +256,11 @@ class ArtifactCache:
             else:
                 return
 
-    def _check_artifacts(self, artifact_package_path) -> bool:
+    def _check_artifacts(self, artifact_package_path: Union[str, os.PathLike]) -> bool:
         """Check the artifact folder is legal.
 
+        :param artifact_package_path: The artifact package path
+        :type artifact_package_path: Union[str, os.PathLike]
         :return:
           * If the artifact folder or checksum file does not exist, return false.
           * If the checksum file exists and does not equal to the hash of artifact folder, return False.
