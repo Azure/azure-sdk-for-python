@@ -3,9 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, Iterable
+from typing import List, Union, Optional, TYPE_CHECKING, Iterable, overload
 from urllib.parse import urlparse
+import warnings
+
 from azure.core.tracing.decorator import distributed_trace
+
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 from ._call_connection_client import CallConnectionClient
@@ -23,19 +26,21 @@ from ._generated.models import (
 )
 from ._models import (
     CallConnectionProperties,
-    RecordingProperties
+    RecordingProperties,
+    ChannelAffinity,
+    CallInvite
 )
 from ._content_downloader import ContentDownloader
 from ._utils import (
     get_repeatability_guid,
-    get_repeatability_timestamp,
     serialize_phone_identifier,
     serialize_identifier,
-    serialize_communication_user_identifier
+    serialize_communication_user_identifier,
+    build_call_locator,
+    process_repeatability_first_sent
 )
 if TYPE_CHECKING:
     from ._models  import (
-        CallInvite,
         ServerCallLocator,
         GroupCallLocator
     )
@@ -54,9 +59,9 @@ if TYPE_CHECKING:
         RecordingChannel,
         RecordingFormat
     )
-    from azure.core.exceptions import HttpResponseError
 
-class CallAutomationClient(object):
+
+class CallAutomationClient:
     """A client to interact with the AzureCommunicationService CallAutomation service.
     Call Automation provides developers the ability to build server-based,
     intelligent call workflows, and call recording for voice and PSTN channels.
@@ -121,7 +126,6 @@ class CallAutomationClient(object):
         :rtype: ~azure.communication.callautomation.CallAutomationClient
         """
         endpoint, access_key = parse_connection_str(conn_str)
-
         return cls(endpoint, access_key, **kwargs)
 
     def get_call_connection(
@@ -143,14 +147,17 @@ class CallAutomationClient(object):
         return CallConnectionClient._from_callautomation_client( #pylint:disable=protected-access
             callautomation_client=self._client,
             call_connection_id=call_connection_id,
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace
     def create_call(
         self,
-        target_participant: 'CallInvite',
+        target_participant: Union['CommunicationIdentifier', List['CommunicationIdentifier']],
         callback_url: str,
         *,
+        source_caller_id_number: Optional['PhoneNumberIdentifier'] = None,
+        source_display_name: Optional[str] = None,
         operation_context: Optional[str] = None,
         cognitive_services_endpoint: Optional[str] = None,
         **kwargs
@@ -158,38 +165,52 @@ class CallAutomationClient(object):
         """Create a call connection request to a target identity.
 
         :param target_participant: Call invitee's information.
-        :type target_participant: ~azure.communication.callautomation.CallInvite
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+         or list[~azure.communication.callautomation.CommunicationIdentifier]
         :param callback_url: The call back url where callback events are sent.
         :type callback_url: str
         :keyword operation_context: Value that can be used to track the call and its associated events.
-        :paramtype operation_context: str
+        :paramtype operation_context: str or None
+        :keyword source_caller_id_number: The source caller Id, a phone number,
+         that's shown to the PSTN participant being invited.
+         Required only when calling a PSTN callee.
+        :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier or None
+        :keyword source_display_name: Display name of the caller.
+        :paramtype source_display_name: str or None
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
-        :paramtype cognitive_services_endpoint: str
+        :paramtype cognitive_services_endpoint: str or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        # Backwards compatibility with old API signature
+        if isinstance(target_participant, CallInvite):
+            source_caller_id_number = source_caller_id_number or target_participant.source_caller_id_number
+            source_display_name = source_display_name or target_participant.source_display_name
+            target_participant = target_participant.target
+
+        try:
+            targets = [serialize_identifier(p) for p in target_participant]
+        except TypeError:
+            targets = [serialize_identifier(target_participant)]
         create_call_request = CreateCallRequest(
-            targets=[serialize_identifier(target_participant.target)],
+            targets=targets,
             callback_uri=callback_url,
-            source_caller_id_number=serialize_phone_identifier(
-                target_participant.source_caller_id_number) if target_participant.source_caller_id_number else None,
-            source_display_name=target_participant.source_display_name,
-            source=serialize_communication_user_identifier(
-                self.source) if self.source else None,
+            source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
+            source_display_name=source_display_name,
+            source=serialize_communication_user_identifier(self.source),
             operation_context=operation_context,
             cognitive_services_endpoint=cognitive_services_endpoint
         )
 
+        process_repeatability_first_sent(kwargs)
         result = self._client.create_call(
             create_call_request=create_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
-            **kwargs)
-
-        return CallConnectionProperties._from_generated(# pylint:disable=protected-access
-            result)
+            **kwargs
+        )
+        return CallConnectionProperties._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace
     def create_group_call(
@@ -225,27 +246,20 @@ class CallAutomationClient(object):
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        create_call_request = CreateCallRequest(
-            targets=[serialize_identifier(identifier)
-                     for identifier in target_participants],
-            callback_uri=callback_url,
-            source_caller_id_number=serialize_phone_identifier(
-                source_caller_id_number) if source_caller_id_number else None,
-            source_display_name=source_display_name,
-            source=serialize_identifier(
-                self.source) if self.source else None,
-            operation_context=operation_context,
-            cognitive_services_endpoint=cognitive_services_endpoint
+        warnings.warn(
+            "The method 'create_group_call' is deprecated. Please use 'create_call' instead.",
+            DeprecationWarning
         )
 
-        result = self._client.create_call(
-            create_call_request=create_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid(),
-            **kwargs)
-
-        return CallConnectionProperties._from_generated(# pylint:disable=protected-access
-            result)
+        return self.create_call(
+            target_participant=target_participants,
+            callback_url=callback_url,
+            source_caller_id_number=source_caller_id_number,
+            source_display_name=source_display_name,
+            operation_context=operation_context,
+            cognitive_services_endpoint=cognitive_services_endpoint,
+            **kwargs
+        )
 
     @distributed_trace
     def answer_call(
@@ -283,20 +297,19 @@ class CallAutomationClient(object):
             operation_context=operation_context
         )
 
+        process_repeatability_first_sent(kwargs)
         result = self._client.answer_call(
             answer_call_request=answer_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
-            **kwargs)
-
-        return CallConnectionProperties._from_generated(# pylint:disable=protected-access
-            result)
+            **kwargs
+        )
+        return CallConnectionProperties._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace
     def redirect_call(
         self,
         incoming_call_context: str,
-        target_participant: 'CallInvite',
+        target_participant: 'CommunicationIdentifier',
         **kwargs
     ) -> None:
         """Redirect incoming call to a specific target.
@@ -305,21 +318,25 @@ class CallAutomationClient(object):
          Use this value to redirect incoming call.
         :type incoming_call_context: str
         :param target_participant: The target identity to redirect the call to.
-        :type target_participant: ~azure.communication.callautomation.CallInvite
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        # Backwards compatibility with old API signature
+        if isinstance(target_participant, CallInvite):
+            target_participant = target_participant.target
+
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,
-            target=serialize_identifier(target_participant.target),
+            target=serialize_identifier(target_participant),
         )
-
+        process_repeatability_first_sent(kwargs)
         self._client.redirect_call(
             redirect_call_request=redirect_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
-            **kwargs)
+            **kwargs
+        )
 
     @distributed_trace
     def reject_call(
@@ -345,17 +362,18 @@ class CallAutomationClient(object):
             call_reject_reason=call_reject_reason
         )
 
+        process_repeatability_first_sent(kwargs)
         self._client.reject_call(
             reject_call_request=reject_call_request,
-            repeatability_first_sent=get_repeatability_timestamp(),
             repeatability_request_id=get_repeatability_guid(),
-            **kwargs)
+            **kwargs
+        )
 
-    @distributed_trace
+    @overload
     def start_recording(
         self,
-        call_locator: Union['ServerCallLocator', 'GroupCallLocator'],
         *,
+        server_call_id: str,
         recording_state_callback_url: Optional[str] = None,
         recording_content_type: Optional[Union[str, 'RecordingContent']] = None,
         recording_channel_type: Optional[Union[str, 'RecordingChannel']] = None,
@@ -366,58 +384,107 @@ class CallAutomationClient(object):
     ) -> RecordingProperties:
         """Start recording for a ongoing call. Locate the call with call locator.
 
-        :param call_locator: The call locator to locate ongoing call.
-        :type call_locator: ~azure.communication.callautomation.ServerCallLocator
-         or ~azure.communication.callautomation.GroupCallLocator
+        :keyword str server_call_id: The server call ID to locate ongoing call.
         :keyword recording_state_callback_url: The url to send notifications to.
-        :paramtype recording_state_callback_url: str
+        :paramtype recording_state_callback_url: str or None
         :keyword recording_content_type: The content type of call recording.
-        :paramtype recording_content_type: str or ~azure.communication.callautomation.RecordingContent
+        :paramtype recording_content_type: str or ~azure.communication.callautomation.RecordingContent or None
         :keyword recording_channel_type: The channel type of call recording.
-        :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel
+        :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel or None
         :keyword recording_format_type: The format type of call recording.
-        :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat
+        :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat or None
         :keyword audio_channel_participant_ordering:
          The sequential order in which audio channels are assigned to participants in the unmixed recording.
          When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not specified,
          the audio channel to participant mapping will be automatically assigned based on the order in
          which participant first audio was detected.
          Channel to participant mapping details can be found in the metadata of the recording.
-        :paramtype audio_channel_participant_ordering: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :paramtype audio_channel_participant_ordering:
+         list[~azure.communication.callautomation.CommunicationIdentifier] or None
         :keyword channel_affinity: The channel affinity of call recording
          When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
-        :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity]
+        :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
         :return: RecordingProperties
         :rtype: ~azure.communication.callautomation.RecordingProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        channel_affinity_internal = []
 
-        if channel_affinity:
-            for channel in channel_affinity:
-                channel_affinity_internal.append(channel._to_generated(# pylint:disable=protected-access
-                    ))
+    @overload
+    def start_recording(
+        self,
+        *,
+        group_call_id: str,
+        recording_state_callback_url: Optional[str] = None,
+        recording_content_type: Optional[Union[str, 'RecordingContent']] = None,
+        recording_channel_type: Optional[Union[str, 'RecordingChannel']] = None,
+        recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
+        audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
+        channel_affinity: Optional[List['ChannelAffinity']] = None,
+        **kwargs
+    ) -> RecordingProperties:
+        """Start recording for a ongoing call. Locate the call with call locator.
 
+        :keyword str group_call_id: The group call ID to locate ongoing call.
+        :keyword recording_state_callback_url: The url to send notifications to.
+        :paramtype recording_state_callback_url: str or None
+        :keyword recording_content_type: The content type of call recording.
+        :paramtype recording_content_type: str or ~azure.communication.callautomation.RecordingContent or None
+        :keyword recording_channel_type: The channel type of call recording.
+        :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel or None
+        :keyword recording_format_type: The format type of call recording.
+        :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat or None
+        :keyword audio_channel_participant_ordering:
+         The sequential order in which audio channels are assigned to participants in the unmixed recording.
+         When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not specified,
+         the audio channel to participant mapping will be automatically assigned based on the order in
+         which participant first audio was detected.
+         Channel to participant mapping details can be found in the metadata of the recording.
+        :paramtype audio_channel_participant_ordering:
+         list[~azure.communication.callautomation.CommunicationIdentifier] or None
+        :keyword channel_affinity: The channel affinity of call recording
+         When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
+         'channel' will be automatically assigned.
+         Channel-Participant mapping details can be found in the metadata of the recording.
+        :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
+        :return: RecordingProperties
+        :rtype: ~azure.communication.callautomation.RecordingProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def start_recording(
+        self,
+        *args: Union['ServerCallLocator', 'GroupCallLocator'],
+        **kwargs
+    ) -> RecordingProperties:
+        # pylint:disable=protected-access
+        channel_affinity: List[ChannelAffinity] = kwargs.pop("channel_affinity", None) or []
+        channel_affinity_internal = [c._to_generated() for c in channel_affinity]
+        call_locator = build_call_locator(
+            args,
+            kwargs.pop("call_locator", None),
+            kwargs.pop("server_call_id", None),
+            kwargs.pop("group_call_id", None)
+        )
         start_recording_request = StartCallRecordingRequest(
-            call_locator=call_locator._to_generated(# pylint:disable=protected-access
-            ),
-            recording_state_callback_uri = recording_state_callback_url,
-            recording_content_type = recording_content_type,
-            recording_channel_type = recording_channel_type,
-            recording_format_type = recording_format_type,
-            audio_channel_participant_ordering = audio_channel_participant_ordering,
-            channel_affinity = channel_affinity_internal,
-            repeatability_first_sent=get_repeatability_timestamp(),
-            repeatability_request_id=get_repeatability_guid()
+            call_locator=call_locator,
+            recording_state_callback_uri=kwargs.pop("recording_state_callback_url", None),
+            recording_content_type=kwargs.pop("recording_content_type", None),
+            recording_channel_type=kwargs.pop("recording_channel_type", None),
+            recording_format_type=kwargs.pop("recording_format_type", None),
+            audio_channel_participant_ordering=kwargs.pop("audio_channel_participant_ordering", None),
+            channel_affinity=channel_affinity_internal
         )
 
+        process_repeatability_first_sent(kwargs)
         recording_state_result = self._call_recording_client.start_recording(
-        start_call_recording = start_recording_request, **kwargs)
-
-        return RecordingProperties._from_generated(# pylint:disable=protected-access
-            recording_state_result)
+            start_call_recording=start_recording_request,
+            repeatability_request_id=get_repeatability_guid(),
+            **kwargs
+        )
+        return RecordingProperties._from_generated(recording_state_result)
 
     @distributed_trace
     def stop_recording(
@@ -433,7 +500,7 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_recording_client.stop_recording(recording_id = recording_id, **kwargs)
+        self._call_recording_client.stop_recording(recording_id=recording_id, **kwargs)
 
     @distributed_trace
     def pause_recording(
@@ -449,7 +516,7 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_recording_client.pause_recording(recording_id = recording_id, **kwargs)
+        self._call_recording_client.pause_recording(recording_id=recording_id, **kwargs)
 
     @distributed_trace
     def resume_recording(
@@ -465,7 +532,7 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_recording_client.resume_recording(recording_id = recording_id, **kwargs)
+        self._call_recording_client.resume_recording(recording_id=recording_id, **kwargs)
 
     @distributed_trace
     def get_recording_properties(
@@ -482,9 +549,10 @@ class CallAutomationClient(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         recording_state_result = self._call_recording_client.get_recording_properties(
-            recording_id = recording_id, **kwargs)
-        return RecordingProperties._from_generated(# pylint:disable=protected-access
-            recording_state_result)
+            recording_id=recording_id,
+            **kwargs
+        )
+        return RecordingProperties._from_generated(recording_state_result)  # pylint:disable=protected-access
 
     @distributed_trace
     def download_recording(
@@ -510,9 +578,9 @@ class CallAutomationClient(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         stream = self._downloader.download_streaming(
-            source_location = recording_url,
-            offset = offset,
-            length = length,
+            source_location=recording_url,
+            offset=offset,
+            length=length,
             **kwargs
         )
         return stream
@@ -531,4 +599,14 @@ class CallAutomationClient(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._downloader.delete_recording(recording_location = recording_url, **kwargs)
+        self._downloader.delete_recording(recording_location=recording_url, **kwargs)
+
+    def __enter__(self) -> "CallAutomationClient":
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args) -> None:
+        self.close()
+
+    def close(self) -> None:
+        self._client.__exit__()

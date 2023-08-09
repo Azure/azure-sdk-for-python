@@ -43,7 +43,8 @@ if TYPE_CHECKING:
         SendDtmfTonesResult as SendDtmfTonesResultRest,
     )
 
-class CallInvite(object):
+
+class CallInvite:
     """Details of call invitation for outgoing call.
 
     :param target: Target's identity.
@@ -54,7 +55,6 @@ class CallInvite(object):
     :keyword source_display_name: Set display name for caller
     :paramtype source_display_name: str
     """
-
     target: CommunicationIdentifier
     """Target's identity."""
     source_caller_id_number: Optional[PhoneNumberIdentifier]
@@ -62,7 +62,7 @@ class CallInvite(object):
     source_display_name: Optional[str]
     """Display name for caller"""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         target: CommunicationIdentifier,
         *,
@@ -70,62 +70,58 @@ class CallInvite(object):
         source_display_name: Optional[str] = None,
         **kwargs
     ):
-        super().__init__(**kwargs)
         self.target = target
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
 
-class ServerCallLocator(object):
+
+class ServerCallLocator:
     """The locator to locate ongoing call, using server call id.
 
     :param server_call_id: The server call id of ongoing call.
     :type server_call_id: str
     """
-
     server_call_id: str
     """The server call id of ongoing call."""
     kind: str = "serverCallLocator"
     """This is for locating the call with server call id."""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         server_call_id: str,
         **kwargs
     ):
-        super().__init__(**kwargs)
         self.server_call_id = server_call_id
         self.kind = "serverCallLocator"
 
     def _to_generated(self):
-        return CallLocator(kind=self.kind,
-                           server_call_id=self.server_call_id)
+        return CallLocator(kind=self.kind, server_call_id=self.server_call_id)
 
-class GroupCallLocator(object):
+
+class GroupCallLocator:
     """The locator to locate ongoing call, using group call id.
 
     :param group_call_id: The group call id of ongoing call.
     :type group_call_id: str
     """
-
     group_call_id: str
     """The group call id of ongoing call."""
     kind: str = "groupCallLocator"
     """This is for locating the call with group call id."""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         group_call_id: str,
         **kwargs
     ):
-        super().__init__(**kwargs)
         self.group_call_id = group_call_id
         self.kind = "groupCallLocator"
 
     def _to_generated(self):
-        return CallLocator(kind=self.kind,
-                           group_call_id=self.group_call_id)
+        return CallLocator(kind=self.kind, group_call_id=self.group_call_id)
 
-class ChannelAffinity(object):
+
+class ChannelAffinity:
     """Channel affinity for a participant.
 
     All required parameters must be populated in order to send to Azure.
@@ -143,20 +139,19 @@ class ChannelAffinity(object):
     channel: int
     """ Channel number to which bitstream from a particular participant will be written."""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         target_participant: CommunicationIdentifier,
         channel: int,
         **kwargs
     ):
-        super().__init__(**kwargs)
         self.target_participant = target_participant
         self.channel = channel
 
     def _to_generated(self):
-        return ChannelAffinityInternal(participant= serialize_identifier(self.target_participant), channel=self.channel)
+        return ChannelAffinityInternal(participant=serialize_identifier(self.target_participant), channel=self.channel)
 
-class FileSource(object):
+class FileSource:
     """Media file source of URL to be played in action such as Play media.
 
     :param url: Url for the audio file to be played.
@@ -170,14 +165,13 @@ class FileSource(object):
     play_source_cache_id: Optional[str]
     """Cached source id of the play media, if it exists."""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         url: str,
         *,
         play_source_cache_id: Optional[str] = None,
         **kwargs
     ):
-        super().__init__(**kwargs)
         self.url = url
         self.play_source_cache_id = play_source_cache_id
 
@@ -188,7 +182,8 @@ class FileSource(object):
             play_source_cache_id=self.play_source_cache_id
         )
 
-class TextSource(object):
+
+class TextSource:
     """TextSource to be played in actions such as Play media.
 
     :param text: Text for the cognitive service to be played.
@@ -230,10 +225,8 @@ class TextSource(object):
             voice_kind: Optional[Union[str, 'VoiceKind']] = None,
             voice_name: Optional[str] = None,
             play_source_cache_id: Optional[str] = None,
-            custom_voice_endpoint_id: Optional[str] = None,
-            **kwargs
+            custom_voice_endpoint_id: Optional[str] = None
     ):
-        super().__init__(**kwargs)
         self.text = text
         self.source_locale = source_locale
         self.voice_kind = voice_kind
@@ -253,7 +246,7 @@ class TextSource(object):
             play_source_cache_id=self.play_source_cache_id
         )
 
-class SsmlSource(object):
+class SsmlSource:
     """SsmlSource to be played in actions such as Play media.
 
     :param ssml_text: Ssml string for the cognitive service to be played.
@@ -272,14 +265,12 @@ class SsmlSource(object):
     """Endpoint where the custom voice model was deployed."""
 
     def __init__(
-            self,
-            ssml_text: str,
-            *,
-            play_source_cache_id: Optional[str] = None,
-            custom_voice_endpoint_id: Optional[str] = None,
-            **kwargs
+        self,
+        ssml_text: str,
+        *,
+        play_source_cache_id: Optional[str] = None,
+        custom_voice_endpoint_id: Optional[str] = None
     ):
-        super().__init__(**kwargs)
         self.ssml_text = ssml_text
         self.play_source_cache_id = play_source_cache_id
         self.custom_voice_endpoint_id = custom_voice_endpoint_id
@@ -294,7 +285,8 @@ class SsmlSource(object):
         )
 
 
-class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-instance-attributes
+
+class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """ Detailed properties of the call.
 
     :keyword call_connection_id: The call connection id of this call leg.
@@ -351,17 +343,14 @@ class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-inst
         call_connection_id: Optional[str] = None,
         server_call_id: Optional[str] = None,
         targets: Optional[List[CommunicationIdentifier]] = None,
-        call_connection_state:
-        Optional[Union[str, 'CallConnectionState']] = None,
+        call_connection_state: Optional[Union[str, 'CallConnectionState']] = None,
         callback_url: Optional[str] = None,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
         source: Optional[CommunicationIdentifier] = None,
         correlation_id: Optional[str] = None,
-        answered_by: Optional[CommunicationUserIdentifier] = None,
-        **kwargs
+        answered_by: Optional[CommunicationUserIdentifier] = None
     ):
-        super().__init__(**kwargs)
         self.call_connection_id = call_connection_id
         self.server_call_id = server_call_id
         self.targets = targets
@@ -398,9 +387,10 @@ class CallConnectionProperties(): # type: ignore # pylint: disable=too-many-inst
                 call_connection_properties_generated.answered_by)
             if call_connection_properties_generated.answered_by
             else None
-            )
+        )
 
-class RecordingProperties(object):
+
+class RecordingProperties:
     """Detailed recording properties of the call.
 
     :keyword recording_id: Id of this recording operation.
@@ -418,10 +408,8 @@ class RecordingProperties(object):
         self,
         *,
         recording_id: Optional[str] = None,
-        recording_state: Optional[Union[str,'RecordingState']] = None,
-        **kwargs
+        recording_state: Optional[Union[str,'RecordingState']] = None
     ):
-        super().__init__(**kwargs)
         self.recording_id = recording_id
         self.recording_state = recording_state
 
@@ -429,9 +417,11 @@ class RecordingProperties(object):
     def _from_generated(cls, recording_state_result: 'RecordingStateResultRest'):
         return cls(
             recording_id=recording_state_result.recording_id,
-            recording_state=recording_state_result.recording_state)
+            recording_state=recording_state_result.recording_state
+        )
 
-class CallParticipant(object):
+
+class CallParticipant:
     """Details of an Azure Communication Service call participant.
 
     :keyword identifier: Communication identifier of the participant.
@@ -449,10 +439,8 @@ class CallParticipant(object):
         self,
         *,
         identifier: Optional[CommunicationIdentifier] = None,
-        is_muted: bool = False,
-        **kwargs
+        is_muted: bool = False
     ):
-        super().__init__(**kwargs)
         self.identifier = identifier
         self.is_muted = is_muted
 
@@ -460,9 +448,11 @@ class CallParticipant(object):
     def _from_generated(cls, call_participant_generated: 'CallParticipantRest'):
         return cls(
             identifier=deserialize_identifier(call_participant_generated.identifier),
-            is_muted=call_participant_generated.is_muted)
+            is_muted=call_participant_generated.is_muted
+        )
 
-class AddParticipantResult(object):
+
+class AddParticipantResult:
     """ The result payload for adding participants to the call.
 
     :keyword participant: Participant that was added with this request.
@@ -480,20 +470,22 @@ class AddParticipantResult(object):
         self,
         *,
         participant: Optional[CallParticipant] = None,
-        operation_context: Optional[str] = None,
-        **kwargs
+        operation_context: Optional[str] = None
     ):
-        super().__init__(**kwargs)
         self.participant = participant
         self.operation_context = operation_context
 
     @classmethod
     def _from_generated(cls, add_participant_result_generated: 'AddParticipantResultRest'):
-        return cls(participant=CallParticipant._from_generated(# pylint:disable=protected-access
-            add_participant_result_generated.participant),
-            operation_context=add_participant_result_generated.operation_context)
+        return cls(
+            participant=CallParticipant._from_generated(  # pylint:disable=protected-access
+                add_participant_result_generated.participant
+            ),
+            operation_context=add_participant_result_generated.operation_context
+        )
 
-class RemoveParticipantResult(object):
+
+class RemoveParticipantResult:
     """The response payload for removing participants of the call.
 
     :keyword operation_context: The operation context provided by client.
@@ -506,17 +498,16 @@ class RemoveParticipantResult(object):
     def __init__(
         self,
         *,
-        operation_context: Optional[str] = None,
-        **kwargs
+        operation_context: Optional[str] = None
     ) -> None:
-        super().__init__(**kwargs)
         self.operation_context = operation_context
 
     @classmethod
     def _from_generated(cls, remove_participant_result_generated: 'RemoveParticipantResultRest'):
         return cls(operation_context=remove_participant_result_generated.operation_context)
 
-class TransferCallResult(object):
+
+class TransferCallResult:
     """The response payload for transferring the call.
 
     :keyword operation_context: The operation context provided by client.
@@ -529,17 +520,15 @@ class TransferCallResult(object):
     def __init__(
         self,
         *,
-        operation_context: Optional[str] = None,
-        **kwargs
+        operation_context: Optional[str] = None
     ) -> None:
-        super().__init__(**kwargs)
         self.operation_context = operation_context
 
     @classmethod
     def _from_generated(cls, transfer_result_generated: 'TransferParticipantResultRest'):
         return cls(operation_context=transfer_result_generated.operation_context)
 
-class RecognitionChoice(object):
+class RecognitionChoice:
     """
     An IVR choice for the recognize operation.
 
@@ -565,10 +554,8 @@ class RecognitionChoice(object):
             label: str,
             phrases: List[str],
             *,
-            tone: Optional[Union[str, 'DtmfTone']] = None,
-            **kwargs
+            tone: Optional[Union[str, 'DtmfTone']] = None
     ):
-        super().__init__(**kwargs)
         self.label = label
         self.phrases = phrases
         self.tone = tone
@@ -576,7 +563,7 @@ class RecognitionChoice(object):
     def _to_generated(self):
         return ChoiceInternal(label=self.label, phrases=self.phrases, tone=self.tone)
 
-class MuteParticipantResult(object):
+class MuteParticipantResult:
     """The result payload for muting participant from the call.
 
     :keyword operation_context: The operation context provided by client.
@@ -589,17 +576,15 @@ class MuteParticipantResult(object):
     def __init__(
         self,
         *,
-        operation_context: Optional[str] = None,
-        **kwargs
+        operation_context: Optional[str] = None
     ) -> None:
-        super().__init__(**kwargs)
         self.operation_context = operation_context
 
     @classmethod
     def _from_generated(cls, mute_participant_result_generated: 'MuteParticipantsResultRest'):
         return cls(operation_context=mute_participant_result_generated.operation_context)
 
-class SendDtmfTonesResult(object):
+class SendDtmfTonesResult:
     """The result payload for send Dtmf tones.
     :keyword operation_context: The operation context provided by client.
     :paramtype operation_context: str
@@ -611,10 +596,8 @@ class SendDtmfTonesResult(object):
     def __init__(
         self,
         *,
-        operation_context: Optional[str] = None,
-        **kwargs
+        operation_context: Optional[str] = None
     ) -> None:
-        super().__init__(**kwargs)
         self.operation_context = operation_context
 
     @classmethod
