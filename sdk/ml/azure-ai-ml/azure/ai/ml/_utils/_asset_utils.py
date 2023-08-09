@@ -263,6 +263,10 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
     Metadata includes an upload confirmation field, and for code uploads only, the name and version of the code asset
     being created for that data.
 
+    :param name: The name of the uploaded data
+    :type name: str
+    :param version: The version of the uploaded data
+    :type version: str
     :return: Metadata dict
     :rtype: Dict[str, str]
     """
@@ -320,6 +324,10 @@ def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFil
         ]
     4. Hash the content and convert to hex digest string.
 
+    :param path: The directory to calculate the size of
+    :type path: Union[str, os.PathLike]
+    :param ignore_file: An ignore file that specifies files to ignore when computing the size
+    :type ignore_file: IgnoreFile, optional
     :return: The content hash if the content is a link, directory, or file. None otherwise
     :rtype: Optional[str]
     """
@@ -445,6 +453,10 @@ def get_directory_size(root: os.PathLike, ignore_file: IgnoreFile = IgnoreFile(N
     If an optional ignore_file argument is provided, then files specified in the ignore file are not included in the
     directory size calculation.
 
+    :param root: The directory to calculate the size of
+    :type root: os.PathLike
+    :param ignore_file: An ignore file that specifies files to ignore when computing the size
+    :type ignore_file: IgnoreFile, optional
     :return: The computed size of the directory, and the sizes of the child paths
     :rtype: Tuple[int, Dict[str, int]]
     """
@@ -969,6 +981,12 @@ def _resolve_label_to_asset(
 
     Throws if label does not refer to a version of the named asset
 
+    :param assetOperations: The operations class used to retrieve the asset
+    :type assetOperations: Union["DataOperations", "ComponentOperations", "EnvironmentOperations", "ModelOperations"]
+    :param name: The name of the asset
+    :type name: str
+    :param label: The label to resolve
+    :type label: str
     :return: The requested asset
     :rtype: Asset
     """
@@ -1063,6 +1081,8 @@ def get_storage_info_for_non_registry_asset(
     SAS uri and blob uri for the same asset. It will return a new SAS uri and blob uri every time it is called.
     :param service_client: Service client
     :type service_client: AzureMachineLearningWorkspaces
+    :param workspace_name: The workspace name
+    :type workspace_name: str
     :param name: Asset name
     :type name: str
     :param version: Asset version

@@ -134,6 +134,16 @@ def get_storage_client(
 ) -> Union[BlobStorageClient, FileStorageClient, Gen2StorageClient]:
     """Return a storage client class instance based on the storage account type.
 
+    :param credential: The credential
+    :type credential: str
+    :param storage_account: The storage_account name
+    :type storage_account: str
+    :param storage_type: The storage type
+    :type storage_type: Union[DatastoreType, str], optional
+    :param account_url: The account url
+    :type account_url: Optional[str], optional
+    :param container_name: The container name
+    :type container_name: Optional[str], optional
     :return: The storage client
     :rtype: Union[BlobStorageClient, FileStorageClient, Gen2StorageClient]
     """

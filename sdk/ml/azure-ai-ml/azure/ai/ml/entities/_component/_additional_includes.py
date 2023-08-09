@@ -216,7 +216,15 @@ class AdditionalIncludes:
         return stem_path.is_dir()
 
     def _resolve_folder_to_compress(self, include: str, dst_path: Path, ignore_file: IgnoreFile) -> None:
-        """resolve the zip additional include, need to compress corresponding folder."""
+        """resolve the zip additional include, need to compress corresponding folder.
+
+        :param include: The path, relative to :attr:`AdditionalIncludes.base_path`, to zip
+        :type include: str
+        :param dst_path: The path to write the zipfile to
+        :type dst_path: Path
+        :param ignore_file: The ignore file to use to filter files
+        :type ignore_file: IgnoreFile
+        """
         zip_additional_include = (self.base_path / include).resolve()
         folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
         zip_file = dst_path / zip_additional_include.name

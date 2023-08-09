@@ -800,6 +800,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
     def _get_merge_component(output_type: str):
         """Gets the merge component to be used based on type of output
 
+        :param output_type: The output type
+        :type output_type: str
         :return: The merge component
         """
         return MERGE_COMPONENT_MAPPING[output_type]

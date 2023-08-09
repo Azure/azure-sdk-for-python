@@ -97,6 +97,8 @@ class PipelineComponent(Component):
     def _process_jobs(self, jobs: Dict[str, BaseNode]) -> Dict[str, BaseNode]:
         """Process and validate jobs.
 
+        :param jobs: A map of node name to node
+        :type jobs: Dict[str, BaseNode]
         :return: The processed jobs
         :rtype: Dict[str, BaseNode]
         """
@@ -202,6 +204,8 @@ class PipelineComponent(Component):
     def _get_input_binding_dict(self, node: BaseNode) -> Tuple[dict, dict]:
         """Return the input binding dict for each node.
 
+        :param node: The node
+        :type node: BaseNode
         :return: A 2-tuple of (binding_dict, optional_binding_in_expression_dict)
         :rtype: Tuple[dict, dict]
         """
@@ -246,6 +250,8 @@ class PipelineComponent(Component):
         Mark input as optional if all binding is optional and optional not set. Raise error if pipeline input is
         optional but link to required inputs.
 
+        :param node: The node to validate
+        :type node: BaseNode
         :return: The validation result
         :rtype: MutableValidationResult
         """

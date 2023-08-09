@@ -269,20 +269,35 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         Load job schedule from rest object dict.
 
         This function is added because the user-faced schema is different from the rest one.
-        For example:
-        user yaml create_job is a file reference with updates(not a job definition):
-        create_job:
-            job: ./job.yaml
-            inputs:
-                input: 10
-        while what we get from rest will be a complete job definition:
-        create_job:
-            name: xx
-            jobs:
-                node1: ...
-            inputs:
-                input: ..
 
+        For example:
+
+        user yaml create_job is a file reference with updates(not a job definition):
+
+        .. code-block:: yaml
+
+            create_job:
+                job: ./job.yaml
+                inputs:
+                    input: 10
+
+        while what we get from rest will be a complete job definition:
+
+        .. code-block:: yaml
+
+            create_job:
+                name: xx
+                jobs:
+                    node1: ...
+                inputs:
+                    input: ..
+
+        :param data: The REST object to convert
+        :type data: Optional[Dict], optional
+        :param yaml_path: The yaml path
+        :type yaml_path: Optional[Union[PathLike str]], optional
+        :param params_override: A list of parameter overrides
+        :type params_override: Optional[list], optional
         :return: The job schedule
         :rtype: JobSchedule
         """

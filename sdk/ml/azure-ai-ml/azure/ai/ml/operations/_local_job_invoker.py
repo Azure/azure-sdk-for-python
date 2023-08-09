@@ -133,8 +133,10 @@ def get_execution_service_response(
 
     :param job_definition: Job definition data
     :type job_definition: JobBaseData
-    :param token:
+    :param token: The bearer token to use when retrieving information from Execution Service
     :type token: str
+    :param requests_pipeline: The HttpPipeline to use when sending network requests
+    :type requests_pipeline: HttpPipeline
     :return: Execution service response and snapshot ID
     :rtype: Tuple[Dict[str, str], str]
     """
@@ -394,6 +396,8 @@ def start_run_if_local(
     :type credential: TokenCredential
     :param ws_base_url: Base url to workspace
     :type ws_base_url: str
+    :param requests_pipeline: The HttpPipeline to use when sending network requests
+    :type requests_pipeline: HttpPipeline
     :return: snapshot ID
     :rtype: str
     """

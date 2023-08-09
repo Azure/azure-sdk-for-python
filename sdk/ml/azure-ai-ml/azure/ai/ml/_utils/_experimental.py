@@ -29,6 +29,8 @@ T = TypeVar("T")
 def experimental(wrapped: TExperimental) -> TExperimental:
     """Add experimental tag to a class or a method.
 
+    :param wrapped: Either a Class or Function to mark as experimental
+    :type wrapped: TExperimental
     :return: The wrapped class or method
     :rtype: TExperimental
     """
@@ -78,6 +80,8 @@ def _add_class_docstring(cls: Type[T]) -> Type[T]:
 def _add_method_docstring(func: Callable[P, T] = None) -> Callable[P, T]:
     """Add experimental tag to the method doc string.
 
+    :param func: The function to update
+    :type func: Callable[P, T]
     :return: A wrapped method marked as experimental
     :rtype: Callable[P,T]
     """
@@ -101,6 +105,10 @@ def _add_method_docstring(func: Callable[P, T] = None) -> Callable[P, T]:
 def _add_note_to_docstring(doc_string: str, note: str) -> str:
     """Adds experimental note to docstring at the top and correctly indents original docstring.
 
+    :param doc_string: The docstring
+    :type doc_string: str
+    :param note: The note to add to the docstring
+    :type note: str
     :return: Updated docstring
     :rtype: str
     """
@@ -112,6 +120,8 @@ def _add_note_to_docstring(doc_string: str, note: str) -> str:
 def _get_indentation_size(doc_string: str) -> int:
     """Finds the minimum indentation of all non-blank lines after the first line.
 
+    :param doc_string: The docstring
+    :type doc_string: str
     :return: Minimum number of indentation of the docstring
     :rtype: int
     """

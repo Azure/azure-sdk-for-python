@@ -368,6 +368,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
         Latest is defined as the most recently created, not the most
         recently updated.
 
+        :param name: The asset name
+        :type name: str
         :return: The latest version of the named environment
         :rtype: Environment
         """

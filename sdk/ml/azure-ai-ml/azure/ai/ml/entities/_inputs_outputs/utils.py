@@ -107,6 +107,8 @@ def _get_param_with_standard_annotation(
     ) -> Dict[str, Union[Annotation, Input, Output]]:
         """Return field names to annotations mapping in class.
 
+        :param annotations: The annotations
+        :type annotations: Dict[str, Union[Annotation, Input, Output]]
         :return: The field dict
         :rtype: Dict[str, Union[Annotation, Input, Output]]
         """
@@ -138,6 +140,10 @@ def _get_param_with_standard_annotation(
     ) -> List[str]:
         """Merge field keys from annotations and cls dict to get all fields in class.
 
+        :param annotation_fields: The field annotations
+        :type annotation_fields: Dict[str, Union[Annotation, Input, Output]]
+        :param defaults_dict: The map of variable name to default value
+        :type defaults_dict: Dict[str, Any]
         :return: A list of field keys
         :rtype: List[str]
         """
@@ -152,6 +158,12 @@ def _get_param_with_standard_annotation(
     ) -> Union[Annotation, Input, Output]:
         """Create annotation if is type class and update the default.
 
+        :param anno: The annotation
+        :type anno: Union[Annotation, Input, Output]
+        :param name: The port name
+        :type name: str
+        :param default: The default value
+        :type default: Any
         :return: The updated annotation
         :rtype: Union[Annotation, Input, Output]
         """
@@ -184,6 +196,10 @@ def _get_param_with_standard_annotation(
     ) -> Dict[str, Union[Annotation, Input, Output]]:
         """Use public values in class dict to update annotations.
 
+        :param annotation_fields: The field annotations
+        :type annotation_fields: Dict[str, Union[Annotation, Input, Output]]
+        :param defaults_dict: A map of variable name to default value
+        :type defaults_dict: Dict[str, Any]
         :return: List of field names
         :rtype: List[str]
         """
@@ -230,6 +246,10 @@ def _get_param_with_standard_annotation(
         {inherited_no_default_fields} + {cls_no_default_fields} + {inherited_default_fields} + {cls_default_fields}.
 
 
+        :param inherited_fields: The inherited fields
+        :type inherited_fields: Dict[str, Union[Annotation, Input, Output]]
+        :param cls_fields: The class fields
+        :type cls_fields: Dict[str, Union[Annotation, Input, Output]]
         :return: The merged fields
         :rtype: Dict[str, Union[Annotation, Input, Output]]
 
@@ -259,6 +279,8 @@ def _get_param_with_standard_annotation(
         ) -> Tuple[Dict[str, Union[Annotation, Input, Output]], Dict[str, Union[Annotation, Input, Output]]]:
             """Split fields to two parts from the first default field.
 
+            :param _fields: The fields
+            :type _fields: Dict[str, Union[Annotation, Input, Output]]
             :return: A 2-tuple of (fields with no defaults, fields with defaults)
             :rtype: Tuple[Dict[str, Union[Annotation, Input, Output]], Dict[str, Union[Annotation, Input, Output]]]
             """
@@ -326,6 +348,8 @@ def _update_io_from_mldesigner(annotations: Dict[str, Annotation]) -> Dict[str, 
     * class names of `mldesigner._input_output` to translate Input/Output class annotations
       to IO entities.
 
+    :param annotations: A map of variable names to annotations
+    :type annotations: Dict[str, Annotation]
     :return: Dict with mldesigner IO types converted to azure-ai-ml Input/Output
     :rtype: Dict[str, Union[Annotation, Input, Output]]
     """
@@ -340,7 +364,10 @@ def _update_io_from_mldesigner(annotations: Dict[str, Annotation]) -> Dict[str, 
     return_annotation_key = "return"
 
     def _is_primitive_type(io: type) -> bool:
-        """
+        """Checks whether type is a primitive type
+
+        :param io: A type
+        :type io: type
         :return: Return true if type is subclass of mldesigner._input_output._Param
         :rtype: bool
         """

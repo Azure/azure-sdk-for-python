@@ -29,6 +29,8 @@ class PersistentLocalsFunctionBuilder(abc.ABC):
     def make_error(cls, error_name: str, **kwargs) -> str:
         """Make error message with error_name and kwargs.
 
+        :param error_name: A key from :attr:`~PersistentLocalsFunctionBuilder.errors`
+        :type error_name: str
         :return: Formatted error message
         :rtype: str
         """
@@ -252,6 +254,11 @@ try:
 
             Will keep information of the function, such as name, globals, etc., but skip all instructions.
 
+            :param instructions: The list of instructions. Used to replace the instructions in base_func
+            :type instructions: List[Instr]
+            :param base_func: A function that provides base metadata (name, globals, etc...). Instructions will not
+                be kept
+            :type base_func: Union[FunctionType, MethodType]
             :return: Generated code
             :rtype: CodeType
             """
@@ -276,6 +283,10 @@ try:
             separators: [I1, I2]
             result: [[I3], [I3, I1, I3], [I3]]
 
+            :param instructions: The list of instructions to split
+            :type instructions: List[instr]
+            :param separators: The sequence of Instr to use as a delimiter
+            :type separators: List[Instr]
             :return: A sublists of instructions that were delimited by separators
             :rtype: List[List[Instr]]
             """
@@ -388,6 +399,9 @@ try:
             statement around code to persistent the locals in the function.
 
             It will change the func bytecode in this way:
+
+            .. code-block:: python
+
                 def func(__self, *func_args):
                     try:
                        the func code...
@@ -395,6 +409,9 @@ try:
                        __self.locals = locals().copy()
 
             You can get the locals in func by this code:
+
+            .. code-block:: python
+
                 builder = PersistentLocalsFunctionBuilder()
                 persistent_locals_func = builder.build(your_func)
                 # Execute your func
@@ -402,6 +419,8 @@ try:
                 # Get the locals in the func.
                 func_locals = persistent_locals_func.locals
 
+            :param func: The function to modify
+            :type func: Union[FunctionType, MethodType]
             :return: The built persistent locals function
             :rtype: PersistentLocalsFunction
             """

@@ -173,6 +173,8 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         2. If it is a text file, each line is a path to include. Note that artifact config is not supported
         in this format.
 
+        :param yaml_path: The yaml path
+        :type yaml_path: Path
         :return: The list of additional includes
         :rtype: List[str]
         """

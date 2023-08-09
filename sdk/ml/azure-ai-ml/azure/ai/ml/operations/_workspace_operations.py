@@ -168,6 +168,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         :param workspace: Workspace definition.
         :type workspace: Workspace
+        :param update_dependent_resources: Whether to update dependent resources
         :type update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a Workspace.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]

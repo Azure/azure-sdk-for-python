@@ -35,6 +35,10 @@ class KwParameter(Parameter):
 def _replace_function_name(func: types.FunctionType, new_name: str) -> types.FunctionType:
     """Replaces the name of a function with a new name
 
+    :param func: The function to update
+    :type func: types.FunctionType
+    :param new_name: The new function name
+    :type new_name: str
     :return: The function with a replaced name, but otherwise unchanged body
     :rtype: types.FunctionType
     """

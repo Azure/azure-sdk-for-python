@@ -569,6 +569,8 @@ class DataOperations(_ScopeDependentOperations):
         """Returns the latest version of the asset with the given name. Latest is defined as the most recently created,
          not the most recently updated.
 
+        :param name: The asset name
+        :type name: str
         :return: The latest asset
         :rtype: Data
         """

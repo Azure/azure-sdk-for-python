@@ -508,6 +508,8 @@ class _ValidationResultBuilder:
         """Create a validation result from a rest object. Note that the created validation result does not have
         target_obj so should only be used for merging.
 
+        :param rest_obj: The Deployment Validate REST obj
+        :type rest_obj: DeploymentValidateResult
         :return: The validation result created from rest_obj
         :rtype: MutableValidationResult
         """
@@ -791,6 +793,8 @@ class RemoteValidatableMixin(RestTranslatableMixin):
 
         :param location: The location of the resource.
         :type location: str
+        :param workspace_name: The workspace name
+        :type workspace_name: str
         :return: The preflight resource
         :rtype: PreflightResource
         """

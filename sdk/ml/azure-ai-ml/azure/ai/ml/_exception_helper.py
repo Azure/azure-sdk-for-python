@@ -21,10 +21,12 @@ module_logger = logging.getLogger(__name__)
 
 
 def _find_deepest_dictionary(data: dict) -> dict:
-    """
-    Find deepest dictionary in nested dictionary.
+    """Find deepest dictionary in nested dictionary.
+
     Used here to get nested error message. Can't be in utils.py due to circular import.
 
+    :param data: The dictionary
+    :type data: dict
     :return: The deepest dictionary
     :rtype: dict
     """
@@ -168,6 +170,12 @@ def format_errors_and_resolutions_sections(
 ) -> Tuple[str, str]:
     """Builds strings for details of the error message template's Errors and Resolutions sections.
 
+    :param entity_type: The entity type
+    :type entity_type: str
+    :param error_types: A dict that specifies which errors were encountered
+    :type error_types: Dict[str, bool]
+    :param cli: Whether this was invoked from Azure CLI AzureML extension.
+    :type cli: bool
     :return: Error and Resolution messages
     :rtype: Tuple[str, str]
     """
@@ -225,9 +233,16 @@ def format_create_validation_error(
     cli: bool = False,
     raw_error: Optional[str] = None,
 ) -> str:
-    """
-    Formats a detailed error message for validation errors.
+    """Formats a detailed error message for validation errors.
 
+    :param error: The validation error
+    :type error: Union[SchemaValidationError, ValidationException]
+    :param yaml_operation: Whether the exception was caused by yaml validation.
+    :type yaml_operation: bool
+    :param cli: Whether is invoked from Azure CLI AzureML Extension. Defaults to False
+    :type cli: bool, optional
+    :param raw_error: The raw exception message
+    :type raw_error: Optional[str], optional
     :return: Formatted error message
     :rtype: str
     """

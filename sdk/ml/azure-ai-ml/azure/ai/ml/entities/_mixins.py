@@ -47,6 +47,8 @@ class DictMixin(object):
         # type: (Any) -> bool
         """Compare objects by comparing all attributes.
 
+        :param other: The other object
+        :type other: Any
         :return: True if both object are the same class and have matching __dict__, False otherwise
         :rtype: bool
         """
@@ -58,6 +60,8 @@ class DictMixin(object):
         # type: (Any) -> bool
         """Compare objects by comparing all attributes.
 
+        :param other: The other object
+        :type other: Any
         :return: not self.__eq__(other)
         :rtype: bool
         """
@@ -165,5 +169,8 @@ class YamlTranslatableMixin:
 
 class LocalizableMixin:
     def _localize(self, base_path: str):
-        """Called on an asset got from service to clean up remote attributes like id, creation_context, etc."""
-        pass
+        """Called on an asset got from service to clean up remote attributes like id, creation_context, etc.
+
+        :param base_path: The base path
+        :type base_path: str
+        """

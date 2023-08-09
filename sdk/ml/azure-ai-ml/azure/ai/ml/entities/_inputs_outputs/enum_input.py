@@ -99,6 +99,8 @@ class EnumInput(Input):
     def _parse(self, val: str):
         """Parse the enum value from a string value or the enum value.
 
+        :param val: The string to parse
+        :type val: str
         :return: The enum value
         :rtype: Any
         """
@@ -120,7 +122,11 @@ class EnumInput(Input):
         return self._str2enum[val]
 
     def _update_default(self, default_value):
-        """Enum parameter support updating values with a string value."""
+        """Enum parameter support updating values with a string value.
+
+        :param default_value: The default value for the input
+        :type default_value: Any
+        """
         enum_val = self._parse(default_value)
         if self._enum_class and isinstance(enum_val, self._enum_class):
             enum_val = enum_val.value

@@ -500,6 +500,10 @@ class JobOperations(_ScopeDependentOperations):
         create_or_update(), which will impact telemetry statistics &
         bring experimental warning in create_or_update().
 
+        :param job: The job to validate
+        :type job: Job
+        :keyword raise_on_failure: Whether to raise on validation failure
+        :type raise_on_failure: bool
         :return: The validation result
         :rtype: ValidationResult
         """
@@ -1088,7 +1092,13 @@ class JobOperations(_ScopeDependentOperations):
             return resolver(target, azureml_type=AzureMLResourceType.COMPUTE)
 
     def _resolve_job_inputs(self, entries: Iterable[Union[Input, str, bool, int, float]], base_path: str):
-        """resolve job inputs as ARM id or remote url."""
+        """resolve job inputs as ARM id or remote url.
+
+        :param entries: An iterable of job inputs
+        :type entries: Iterable[Union[Input, str, bool, int, float]]
+        :param base_path: The base path
+        :type base_path: str
+        """
         for entry in entries:
             self._resolve_job_input(entry, base_path)
 
@@ -1099,6 +1109,8 @@ class JobOperations(_ScopeDependentOperations):
     ) -> List[Union[Input, str, bool, int, float]]:
         """Get flatten values from an InputDict.
 
+        :param inputs: The input dict
+        :type inputs: Dict[str, Union[Input, str, bool, int, float]]
         :return: A list of values from the Input Dict
         :rtype: List[Union[Input, str, bool, int, float]]
         """
@@ -1115,7 +1127,13 @@ class JobOperations(_ScopeDependentOperations):
         return input_values
 
     def _resolve_job_input(self, entry: Union[Input, str, bool, int, float], base_path: str) -> None:
-        """resolve job input as ARM id or remote url."""
+        """resolve job input as ARM id or remote url.
+
+        :param entry: The job input
+        :type entry: Union[Input, str, bool, int, float]
+        :param base_path: The base path
+        :type base_path: str
+        """
 
         # path can be empty if the job was created from builder functions
         if isinstance(entry, Input) and not entry.path:
@@ -1413,8 +1431,13 @@ class JobOperations(_ScopeDependentOperations):
         return pipeline_job
 
     def _append_tid_to_studio_url(self, job: Job) -> None:
-        """Appends the user's tenant ID to the end of the studio URL so the UI
-        knows against which tenant to authenticate."""
+        """Appends the user's tenant ID to the end of the studio URL.
+
+        Allows the UI to authenticate against the correct tenant.
+
+        :param job: The job
+        :type job: Job
+        """
         try:
             studio_endpoint = job.services.get("Studio", None)
             studio_url = studio_endpoint.endpoint

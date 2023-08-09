@@ -355,6 +355,9 @@ class Environment(Asset, LocalizableMixin):
     def _localize(self, base_path: str):
         """Called on an asset got from service to clean up remote attributes like id, creation_context, etc. and update
         base_path.
+
+        :param base_path: The base path
+        :type base_path: str
         """
         if not getattr(self, "id", None):
             raise ValueError("Only remote asset can be localize but got a {} without id.".format(type(self)))

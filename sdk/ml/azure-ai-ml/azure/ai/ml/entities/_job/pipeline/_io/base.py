@@ -26,6 +26,8 @@ T = TypeVar("T")
 def _build_data_binding(data: Union[str, "PipelineInput", "Output"]) -> str:
     """Build input builders to data bindings.
 
+    :param data: The data to build a data binding from
+    :type data: Union[str, PipelineInput, Output]
     :return: A data binding string if data isn't a str, otherwise data
     :rtype: str
     """
@@ -43,6 +45,8 @@ def _resolve_builders_2_data_bindings(
 ) -> Union[list, dict, str]:
     """Traverse data and build input builders inside it to data bindings.
 
+    :param data: The bindings to resolve
+    :type data: Union[list, dict, str, "PipelineInput", "Output"]
     :return:
        * A dict if data was a dict
        * A list if data was a list
@@ -67,6 +71,8 @@ def _resolve_builders_2_data_bindings(
 def _data_to_input(data: Data) -> Input:
     """Convert a Data object to an Input object.
 
+    :param data: The data to convert
+    :type data: Data
     :return: The Input object
     :rtype: Input
     """
@@ -112,6 +118,8 @@ class InputOutputBase(ABC):
     def _build_data(self, data: T) -> Union[T, str, Input, "InputOutputBase"]:
         """Validate if data matches type and translate it to Input/Output acceptable type.
 
+        :param data: The data
+        :type data: T
         :return: The built data
         :rtype: Union[T, str, Input, InputOutputBase]
         """
@@ -295,6 +303,8 @@ class NodeInput(InputOutputBase):
 
         eg: node.inputs.key = data
 
+        :param data: The data
+        :type data: T
         :return: The built data
         :rtype: Union[T, str, Input, "PipelineInput", "NodeOutput"]
         """
@@ -496,8 +506,12 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         return self._name
 
     @name.setter
-    def name(self, name):
-        """Receive input name, assign the name to NodeOutput/PipelineOutput and build data according to the name."""
+    def name(self, name: str):
+        """Assigns the name to NodeOutput/PipelineOutput and builds data according to the name.
+
+        :param name: The new name
+        :type name: str
+        """
         self._build_default_data()
         self._name = name
         if isinstance(self._data, (Input, Output)):
@@ -516,9 +530,12 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         return self._version
 
     @version.setter
-    def version(self, version):
-        """Receive input version, assign the version to NodeOutput/PipelineOutput and build data according to the
-        version."""
+    def version(self, version: str):
+        """Assigns the version to NodeOutput/PipelineOutput and builds data according to the version.
+
+        :param version: The new version
+        :type version: str
+        """
         self._build_default_data()
         self._version = version
         if isinstance(self._data, (Input, Output)):
@@ -573,6 +590,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
     def _build_data(self, data: T) -> T:
         """Build output data according to assigned input, eg: node.outputs.key = data
 
+        :param data: The data
+        :type data: T
         :return: `data`
         :rtype: T
         """

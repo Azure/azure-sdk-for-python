@@ -195,6 +195,8 @@ def validate_attribute_type(attrs_to_check: Dict[str, Any], attr_type_map: Dict[
 def is_empty_target(obj: Optional[Dict]) -> bool:
     """Determines if it's empty target
 
+    :param obj: The object to check
+    :type obj: Optional[Dict]
     :return: True if obj is None or an empty Dict
     :rtype: bool
     """
@@ -357,6 +359,8 @@ def from_rest_dict_to_dummy_rest_object(rest_dict: Optional[Dict]) -> _DummyRest
         assert regenerated_rest_object.a == 1
         assert regenerated_rest_object.b is None
 
+    :param rest_dict: The rest dict
+    :type rest_dict: Optional[Dict]
     :return: A dummy rest object
     :rtype: _DummyRestModelFromDict
     """
@@ -499,9 +503,17 @@ def normalize_job_input_output_type(input_output_value: Union[RestJobOutput, Res
 
 def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     """Get the type of the node or component from the yaml spec.
+
     Yaml spec must have a key named "type" and exception will be raised if it's not once of valid_keys.
 
     If internal components are enabled, related factory and schema will be updated.
+
+    :param data: The data
+    :type data: dict
+    :keyword valid_keys: An iterable of valid types
+    :type valid_keys: Iterable[str]
+    :return: The type of the node or component
+    :rtype: str
     """
     _type, _ = extract_label(data.get(CommonYamlFields.TYPE, None))
     schema = data.get(CommonYamlFields.SCHEMA, None)
@@ -535,7 +547,14 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
 
 def copy_output_setting(source: Union["Output", "NodeOutput"], target: "NodeOutput"):
     """Copy node output setting from source to target.
-    Currently only path, name, version will be copied."""
+
+    Currently only path, name, version will be copied.
+
+    :param source: The Output to copy from
+    :type source: Union[Output, NodeOutput]
+    :param target: The Output to copy to
+    :type target: NodeOutput
+    """
     # pylint: disable=protected-access
     from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 

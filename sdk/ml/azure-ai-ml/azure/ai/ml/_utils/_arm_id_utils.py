@@ -404,6 +404,8 @@ def get_resource_name_from_arm_id(resource_id: str) -> str:
 def get_resource_name_from_arm_id_safe(resource_id: str) -> str:
     """Get the resource name from an ARM id.
 
+    :param resource_id: The resource's ARM ID
+    :type resource_id: str
     :return:
       * Resource Name if input string is ARM id
       * Original input otherwise

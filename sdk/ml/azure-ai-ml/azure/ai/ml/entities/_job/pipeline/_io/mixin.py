@@ -370,7 +370,13 @@ class NodeWithGroupInputMixin(NodeIOMixin):
         input_definition_dict: dict,
         inputs: Dict[str, Union[Input, str, bool, int, float]],
     ):
-        """Raise error when group input receive a value not group type."""
+        """Raise error when group input receive a value not group type.
+
+        :param input_definition_dict: The input definition dict
+        :type input_definition_dict: dict
+        :param inputs: The inputs
+        :type inputs: Dict[str, Union[Input, str, bool, int, float]]
+        """
         # Note: We put and extra validation here instead of doing it in pipeline._validate()
         # due to group input will be discarded silently if assign it to a non-group parameter.
         group_msg = "'%s' is defined as a parameter group but got input '%s' with type '%s'."

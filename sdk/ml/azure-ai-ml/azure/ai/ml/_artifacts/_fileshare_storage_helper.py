@@ -73,6 +73,18 @@ class FileStorageClient:
     ) -> Dict[Literal["remote path", "name", "version"], str]:
         """Upload a file or directory to a path inside the file system.
 
+        :param source: The path to either a file or directory to upload
+        :type source: str
+        :param name: The asset name
+        :type name: str
+        :param version: The asset version
+        :type version: str
+        :param ignore_file: The IgnoreFile that specifies which files, if any, to ignore when uploading files
+        :type ignore_file: IgnoreFile, optional
+        :param asset_hash: The asset hash
+        :type asset_hash: Optional[str], optional
+        :param show_progress: Whether to show progress on the console. Defaults to True.
+        :type show_progress: bool, optional
         :return: A dictionary containing info of the uploaded artifact
         :rtype: Dict[Literal["remote path", "name", "version"], str]
         """
@@ -240,6 +252,8 @@ class FileStorageClient:
     def exists(self, asset_id: str) -> bool:
         """Check if file or directory already exists in fileshare directory.
 
+        :param asset_id: The file or directory
+        :type asset_id: str
         :return: True if the file or directory exists, False otherwise
         :rtype: bool
         """
@@ -343,6 +357,9 @@ def delete(root_client: Union[ShareDirectoryClient, ShareFileClient]) -> None:
     Azure File Share SDK does not allow overwriting, so if an upload is
     interrupted before it can finish, the files from that upload must be
     deleted before the upload can be re-attempted.
+
+    :param root_client: The client used to delete the file or directory
+    :type root_client: Union[ShareDirectoryClient, ShareFileClient]
     """
     if isinstance(root_client, ShareFileClient):
         root_client.delete_file()
@@ -369,6 +386,15 @@ def recursive_download(
     """Helper function for `download`.
 
     Recursively downloads remote fileshare directory locally
+
+    :param client: The share directory client
+    :type client: ShareDirectoryClient
+    :param destination: The destination path to download to
+    :type destination: str
+    :param max_concurrency: The maximum number of concurrent downloads
+    :type max_concurrency: int
+    :param starts_with: The prefix used to filter files to download. Defaults to ""
+    :type starts_with: str, optional
     """
     try:
         items = list(client.list_directories_and_files(name_starts_with=starts_with))

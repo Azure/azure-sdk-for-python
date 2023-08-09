@@ -149,6 +149,8 @@ class CachedNodeResolver(object):
         This function assumes that there is no change in code folder among hash calculations, which is true during
         resolution of 1 root pipeline component/job.
 
+        :param component: The component
+        :type component: Component
         :return: The hash of the component
         :rtype: str
         """
@@ -178,6 +180,10 @@ class CachedNodeResolver(object):
         This function will calculate the hash based on the component's code folder if the component has code, so it's
         unique even if code folder is changed.
 
+        :param component: The component to hash
+        :type component: Component
+        :param in_memory_hash: :attr:`_CacheNodeResolver.in_memory_hash`
+        :type in_memory_hash: str
         :return: The hash of the component
         :rtype: str
         """
@@ -222,6 +228,8 @@ class CachedNodeResolver(object):
     def _get_on_disk_cache_path(self, on_disk_hash: str) -> Path:
         """Get the on disk cache path for a component.
 
+        :param on_disk_hash: The hash of the component
+        :type on_disk_hash: str
         :return: The path to the disk cache
         :rtype: Path
         """
@@ -230,6 +238,8 @@ class CachedNodeResolver(object):
     def _load_from_on_disk_cache(self, on_disk_hash: str) -> Optional[str]:
         """Load component arm id from on disk cache.
 
+        :param on_disk_hash: The hash of the component
+        :type on_disk_hash: str
         :return: The cached component arm id if reading was successful, None otherwise
         :rtype: Optional[str]
         """
@@ -248,7 +258,13 @@ class CachedNodeResolver(object):
         return None
 
     def _save_to_on_disk_cache(self, on_disk_hash: str, arm_id: str) -> None:
-        """Save component arm id to on disk cache."""
+        """Save component arm id to on disk cache.
+
+        :param on_disk_hash: The on disk hash of the component
+        :type on_disk_hash: str
+        :param arm_id: The component ARM ID
+        :type arm_id: str
+        """
         # this shouldn't happen in real case, but in case of current mock tests and potential future changes
         if not isinstance(arm_id, str):
             return
@@ -318,6 +334,8 @@ class CachedNodeResolver(object):
         """Check on-disk cache to resolve cache contents in cache_contents_to_resolve and return unresolved cache
         contents.
 
+        :param cache_contents_to_resolve: The cache contents to resolve
+        :type cache_contents_to_resolve: List[_CacheContent]
         :return: Unresolved cache contents
         :rtype: List[_CacheContent]
         """
@@ -348,7 +366,11 @@ class CachedNodeResolver(object):
         return left_cache_contents_to_resolve
 
     def _fill_back_component_to_nodes(self, dict_of_nodes_to_resolve: Dict[str, List[BaseNode]]):
-        """Fill back resolved component to nodes."""
+        """Fill back resolved component to nodes.
+
+        :param dict_of_nodes_to_resolve: The nodes to resolve
+        :type dict_of_nodes_to_resolve: Dict[str, List[BaseNode]]
+        """
         for component_hash, nodes in dict_of_nodes_to_resolve.items():
             cache_content = self._cache[component_hash]
             for node in nodes:
@@ -369,7 +391,11 @@ class CachedNodeResolver(object):
         self._fill_back_component_to_nodes(dict_of_nodes_to_resolve)
 
     def register_node_for_lazy_resolution(self, node: BaseNode):
-        """Register a node with its component to resolve."""
+        """Register a node with its component to resolve.
+
+        :param node: The node
+        :type node: BaseNode
+        """
         component = node._component  # pylint: disable=protected-access
 
         # directly resolve node and skip registration if the resolution involves no remote call

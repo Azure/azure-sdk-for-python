@@ -36,6 +36,8 @@ module_logger = logging.getLogger(__name__)
 def parse_inputs_outputs(data: dict) -> dict:
     """Parse inputs and outputs from data. If data is a list, parse each item in the list.
 
+    :param data: A dict that may contain "inputs" or "outputs" keys
+    :type data: dict
     :return: Dict with parsed "inputs" and "outputs" keys
     :rtype: Dict
     """
@@ -413,6 +415,8 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         Will be used in _from_rest_object. Please override this method instead of _from_rest_object to make the logic
         reusable.
 
+        :param obj: The REST object
+        :type obj: dict
         :return: The init params
         :rtype: Dict
         """

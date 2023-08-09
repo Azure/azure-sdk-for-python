@@ -136,6 +136,10 @@ def list_logs_in_datastore(
     """Returns a dictionary of file name to blob or data lake uri with SAS token, matching the structure of
     RunDetails.logFiles.
 
+    :param ds_info: The datastore info
+    :type ds_info: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]
+    :param prefix: A prefix used to filter logs by path
+    :type prefix: str
     :param legacy_log_folder_name: the name of the folder in the datastore that contains the logs
         * /azureml-logs/*.txt is the legacy log structure for commandJob and sweepJob
         * /logs/azureml/*.txt is the legacy log structure for pipeline parent Job
@@ -292,6 +296,14 @@ def download_artifact_from_storage_url(
 ) -> str:
     """Download datastore blob URL to local file or directory.
 
+    :param blob_url: The blob url to download
+    :type blob_url: str
+    :param destination: Path that the artifact will be written to
+    :type destination: str
+    :param datastore_operation: The datastore operations
+    :type datastore_operation: DatastoreOperations
+    :param datastore_name: The datastore name
+    :type datastore_name: Optional[str]
     :return: Path that files were written to
     :rtype: str
     """
@@ -445,10 +457,15 @@ def _check_and_upload_path(
     :param asset_operations: The asset operations to use for uploading
     :type asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations"]
     :param artifact_type: The artifact type
+    :type artifact_type: str
     :param datastore_name: the name of the datastore to upload to
-    :type datastore_name: str
+    :type datastore_name: Optional[str], optional
     :param sas_uri: the sas uri to use for uploading
-    :type sas_uri: str
+    :type sas_uri: Optional[str], optional
+    :param show_progress: Whether to show progress on the console. Defaults to True.
+    :type show_progress: bool, optional
+    :param blob_uri: The storage account uri
+    :type blob_uri: Optional[str], optional
     :return: A 2-tuple of the uploaded artifact, and the indicator file.
     :rtype: Tuple[T, Optional[str]]
     """

@@ -74,6 +74,18 @@ class BlobStorageClient:
     ) -> Dict[Literal["remote path", "name", "version", "indicator file"], str]:
         """Upload a file or directory to a path inside the container.
 
+        :param source: The path to either a file or directory to upload
+        :type source: str
+        :param name: The asset name
+        :type name: str
+        :param version: The asset version
+        :type version: str
+        :param ignore_file: The IgnoreFile that specifies which files, if any, to ignore when uploading files
+        :type ignore_file: IgnoreFile, optional
+        :param asset_hash: The asset hash
+        :type asset_hash: Optional[str], optional
+        :param show_progress: Whether to show progress on the console. Defaults to True.
+        :type show_progress: bool, optional
         :return: A dictionary containing info of the uploaded artifact
         :rtype: Dict[Literal["remote path", "name", "version", "indicator file"], str]
         """

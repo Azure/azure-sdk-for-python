@@ -370,6 +370,12 @@ class ComponentOperations(_ScopeDependentOperations):
         """Implementation of validate. Add this function to avoid calling validate() directly in create_or_update(),
         which will impact telemetry statistics & bring experimental warning in create_or_update().
 
+        :param component: The component
+        :type component: Union[Component, types.FunctionType]
+        :param raise_on_failure: Whether to raise on failure.
+        :type raise_on_failure: bool
+        :param skip_remote_validation: Whether to skip remote validation.
+        :type skip_remote_validation: bool
         :return: The validation result
         :rtype: ValidationResult
         """
@@ -602,6 +608,8 @@ class ComponentOperations(_ScopeDependentOperations):
         Latest is defined as the most recently created, not the most
         recently updated.
 
+        :param component_name: The component name
+        :type component_name: str
         :return: A latest version of the named Component
         :rtype: Component
         """
@@ -760,6 +768,13 @@ class ComponentOperations(_ScopeDependentOperations):
         consistent across os and python versions.
 
         The ideal solution should be done after PRS team decides how to handle parallel.task.code
+
+        :param node: The node
+        :type node: BaseNode
+        :param _: The component name
+        :type _: str
+        :param resolver: The resolver function
+        :type resolver: _AssetResolver
         """
         from azure.ai.ml.entities import Parallel, ParallelComponent
 
@@ -784,6 +799,11 @@ class ComponentOperations(_ScopeDependentOperations):
     def _set_default_display_name_for_anonymous_component_in_node(cls, node: BaseNode, default_name: str):
         """Set default display name for anonymous component in a node.
         If node._component is an anonymous component and without display name, set the default display name.
+
+        :param node: The node
+        :type node: BaseNode
+        :param default_name: The default name to set
+        :type default_name: str
         """
         if not isinstance(node, BaseNode):
             return

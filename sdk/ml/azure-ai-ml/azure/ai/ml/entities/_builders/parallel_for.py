@@ -207,6 +207,8 @@ class ParallelFor(LoopNode, NodeIOMixin):
     def _convert_output_meta(self, outputs: Dict[str, Union[NodeOutput, Output]]) -> Dict[str, Output]:
         """Convert output meta to aggregate types.
 
+        :param outputs: Output meta
+        :type outputs: Dict[str, Union[NodeOutput, Output]]
         :return: Dictionary of aggregate types
         :rtype: Dict[str, Output]
         """

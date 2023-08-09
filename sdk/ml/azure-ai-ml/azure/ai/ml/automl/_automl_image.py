@@ -34,6 +34,18 @@ def _create_image_job(
 ) -> TImageJob:
     """Helper function to create objects for AutoML Image jobs.
 
+    :param job_cls: The job class
+    :type job_cls: TImageJob
+    :param training_data: The training input data
+    :type training_data: Input
+    :param target_column_name: The target column name
+    :type target_column_name: str
+    :param primary_metric: The primary metric
+    :type primary_metric: Optional[Union[str, ClassificationPrimaryMetrics]], optional
+    :param validation_data: The validation data
+    :type validation_data: Optional[Input], optional
+    :param validation_data_size: The validation data size
+    :type validation_data_size: Optional[float], optional
     :return: An AutoML Image Job
     :rtype: TImageJob
     """

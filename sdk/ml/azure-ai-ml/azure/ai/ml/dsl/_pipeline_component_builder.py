@@ -268,6 +268,8 @@ class PipelineComponentBuilder:
             def _map_internal_output_type(_meta: Output) -> str:
                 """Map component output type to valid pipeline output type.
 
+                :param _meta: The output
+                :type _meta: Output
                 :return: Output type
                 :rtype: str
                 """
@@ -338,6 +340,8 @@ class PipelineComponentBuilder:
                  my_node = module_func()     # final node name is "my_node"
                  module_func_1()             # final node name is its component name
 
+        :param func_variables: The function variables
+        :type func_variables: dict
         :return: Map of variable name to component object
         :rtype: Dict[str, Union[BaseNode, AutoMLJob]]
         """
@@ -468,7 +472,13 @@ class PipelineComponentBuilder:
         return output_annotations
 
     def _validate_inferred_outputs(self, output_meta_dict: dict, output_dict: Dict[str, PipelineOutput]):
-        """Validate inferred output dict against annotation."""
+        """Validate inferred output dict against annotation.
+
+        :param output_meta_dict: The output meta dict
+        :type output_meta_dict: dict
+        :param output_dict: The output dict
+        :type output_dict: Dict[str, PipelineOutput]
+        """
         if not self.output_annotation:
             return
         error_prefix = "Unmatched outputs between actual pipeline output and output in annotation"

@@ -32,6 +32,8 @@ def _sanitize_python_variable_name(name: str):
 def is_valid_name(name: str) -> bool:
     """Indicate whether the name is a valid component name.
 
+    :param name: The component name
+    :type name: str
     :return: True if name is a valid name for a component, False otherwise
     :rtype: bool
     """

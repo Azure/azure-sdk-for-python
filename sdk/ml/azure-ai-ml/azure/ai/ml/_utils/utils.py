@@ -99,6 +99,8 @@ def camel_to_snake(text: str) -> Optional[str]:
 def snake_to_camel(text: Optional[str]) -> Optional[str]:
     """Convert snake name to camel.
 
+    :param text: String to convert
+    :type text: Optional[str]
     :return:
        * None if text is None
        * Converted text from snake_case to camelCase
@@ -813,6 +815,8 @@ def try_enable_internal_components(*, force=False):
 def is_valid_node_name(name: str) -> bool:
     """Check if `name` is a valid node name
 
+    :param name: A node name
+    :type name: str
     :return: Return True if the string is a valid Python identifier in lower ASCII range, False otherwise.
     :rtype: bool
     """
@@ -847,6 +851,8 @@ def parse_args_description_from_docstring(docstring: str) -> Dict[str, str]:
                 'job_in_int': 'a int parameter'
             }
 
+    :param docstring: A Google-style docstring
+    :type docstring: str
     :return: A map of parameter names to parameter descriptions
     :rtype: Dict[str, str]
     """
@@ -891,6 +897,8 @@ def _str_to_bool(s: str) -> bool:
 
     Can be used as a type for argument in argparse, return argument's boolean value according to it's literal value.
 
+    :param s: The string to convert
+    :type s: str
     :return: True if s is "true" (case-insensitive), otherwise returns False.
     :rtype: bool
     """
@@ -902,6 +910,8 @@ def _str_to_bool(s: str) -> bool:
 def _is_user_error_from_exception_type(e: Optional[Exception]) -> bool:
     """Determine whether if an exception is user error from it's exception type.
 
+    :param e: An exception
+    :type e: Optional[Exception]
     :return: True if exception is a user error
     :rtype: bool
     """
@@ -925,6 +935,8 @@ class DockerProxy:
 def get_all_enum_values_iter(enum_type: type) -> Iterable[Any]:
     """Get all values of an enum type.
 
+    :param enum_type: An "enum" (not necessary enum.Enum)
+    :type enum_type: Type
     :return: An iterable of all of the attributes of `enum_type`
     :rtype: Iterable[Any]
     """

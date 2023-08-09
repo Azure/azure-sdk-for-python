@@ -422,8 +422,20 @@ def get_job_output_uris_from_dataplane(
 
     If no output names are given, the output paths for all outputs will be returned.
     URIs obtained from the service will be in the long-form azureml:// format.
+
     For example:
     azureml://subscriptions/<sub>/resource[gG]roups/<rg_name>/workspaces/<ws_name>/datastores/<ds_name>/paths/<ds_path>
+
+    :param job_name: The job name
+    :type job_name: str
+    :param run_operations: The RunOperations used to fetch run data for the job
+    :type run_operations: RunOperations
+    :param dataset_dataplane_operations: The DatasetDataplaneOperations used to fetch dataset uris
+    :type dataset_dataplane_operations: DatasetDataplaneOperations
+    :param model_dataplane_operations:  The ModelDataplaneOperations used to fetch dataset uris
+    :type model_dataplane_operations: ModelDataplaneOperations
+    :param output_names: The output name(s) to fetch. If not specified, retrieves all.
+    :type output_names: Optional[Union[Iterable[str] str]], optional
     :return: Dictionary mapping user-defined output name to output uri
     :rtype: Dict[str, str]
     """

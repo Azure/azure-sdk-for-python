@@ -316,6 +316,12 @@ class PipelineExpression(PipelineExpressionMixin):
         ) -> str:
             """Get or create expression input name as current operand may have appeared in expression.
 
+            :param _original_name: The original name
+            :type _original_name: str
+            :param _operand: The expression operand
+            :type _operand: Union[PipelineInput, NodeOutput]
+            :param _expression_inputs: The expression inputs
+            :type _expression_inputs: Dict[str, ExpressionInput]
             :return: The input name
             :rtype: str
             """

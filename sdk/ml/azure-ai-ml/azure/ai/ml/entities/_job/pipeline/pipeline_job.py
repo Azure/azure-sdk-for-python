@@ -546,6 +546,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, SchemaValidata
     def _load_from_rest(cls, obj: JobBase) -> "PipelineJob":
         """Build a pipeline instance from rest pipeline object.
 
+        :param obj: The REST Pipeline Object
+        :type obj: JobBase
         :return: pipeline job.
         """
         properties: RestPipelineJob = obj.properties

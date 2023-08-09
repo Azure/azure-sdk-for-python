@@ -29,9 +29,11 @@ def process_sdk_component_job_io(
 
     :param io: Input or output dictionary of an SDK ComponentJob
     :type io:  Dict[str, Union[str, float, bool, Input]]
-    :return: A tuple of dictionaries: \
-            One mapping inputs to REST formatted ComponentJobInput/ComponentJobOutput for data binding io.
-            The other dictionary contains any IO that is not a databinding that is yet to be turned into REST form
+    :param io_binding_regex_list: A list of regexes for io bindings
+    :type io_binding_regex_list: List[str]
+    :return: A tuple of dictionaries:
+      * One mapping inputs to REST formatted ComponentJobInput/ComponentJobOutput for data binding io.
+      * The other dictionary contains any IO that is not a databinding that is yet to be turned into REST form
     :rtype: Tuple[Dict[str, str], Dict[str, Union[str, float, bool, Input]]]
     """
     io_bindings = {}
@@ -94,6 +96,8 @@ def from_dict_to_rest_io(
     :type io: Dict[str, Union[str, dict]]
     :param rest_object_class: RestJobInput or RestJobOutput
     :type rest_object_class: Union[Type[RestJobInput], Type[RestJobOutput]]
+    :param io_binding_regex_list: A list of regexes for io bindings
+    :type io_binding_regex_list: List[str]
     :return: Map from IO name to IO bindings and Map from IO name to IO objects.
     """
     io_bindings = {}

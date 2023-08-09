@@ -26,6 +26,8 @@ def get_wsl_path(path: str) -> str:
     Input /home/username/ for example.
     Output /mnt/c/users/username
 
+    :param path: The UNIX path
+    :type path: str
     :return: A Windows Path
     :rtype: str
     """

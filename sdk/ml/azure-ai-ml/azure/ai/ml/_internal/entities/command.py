@@ -40,7 +40,11 @@ class Command(InternalBaseNode):
 
     @compute.setter
     def compute(self, value: str):
-        """Set the compute definition for the command."""
+        """Set the compute definition for the command.
+
+        :param value: The new compute definition
+        :type value: str
+        """
         self._compute = value
 
     @property
@@ -50,7 +54,11 @@ class Command(InternalBaseNode):
 
     @environment.setter
     def environment(self, value: str):
-        """Set the environment definition for the command."""
+        """Set the environment definition for the command.
+
+        :param value: The new environment definition
+        :type value: str
+        """
         self._environment = value
 
     @property
@@ -60,7 +68,11 @@ class Command(InternalBaseNode):
 
     @environment_variables.setter
     def environment_variables(self, value: Dict[str, str]):
-        """Set the environment variables for the command."""
+        """Set the environment variables for the command.
+
+        :param value: The new environment variables
+        :type value: Dict[str, str]
+        """
         self._environment_variables = value
 
     @property

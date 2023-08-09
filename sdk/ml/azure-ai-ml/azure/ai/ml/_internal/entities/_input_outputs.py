@@ -132,6 +132,8 @@ class InternalInput(Input):
 def _map_v1_io_type(output_type: str) -> str:
     """Map v1 IO type to v2.
 
+    :param output_type: The v1 IO type
+    :type output_type: str
     :return: The v2 IO type name
     :rtype: str
     """
@@ -140,6 +142,8 @@ def _map_v1_io_type(output_type: str) -> str:
     def _map_primitive_type(_type: str) -> str:
         """Convert double and float to number type.
 
+        :param _type: A primitive v1 IO type
+        :type _type: str
         :return:
           * InputTypes.NUMBER if _type is "double" or "float"
           * The provided type otherwise

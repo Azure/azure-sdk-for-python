@@ -46,6 +46,8 @@ class ImportSource(ABC):
     def _from_job_inputs(cls, job_inputs: Dict[str, str]) -> "ImportSource":
         """Translate job inputs to import source.
 
+        :param job_inputs: The job inputs
+        :type job_inputs: Dict[str, str]
         :return: The import source
         :rtype: ImportSource
         """
