@@ -1,5 +1,15 @@
 # Release History
 
+## 3.3.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 3.3.0 (2023-08-08)
 
 This version of the client library defaults to the service API version `2023-07-31`.
@@ -24,6 +34,7 @@ This version of the client library defaults to the service API version `2023-07-
 ### Other Changes
 - Corrected typing for the `polygon` property on `DocumentWord`, `DocumentSelectionMark`, `DocumentLine`.
 - Corrected typing for `words`, `lines`, and `selection_marks` properties on `DocumentPage`.
+- Renamed the samples directory to `v3.2_and_later/` for samples that support 3.2 and later.
 
 ## 3.3.0b1 (2023-04-13)
 

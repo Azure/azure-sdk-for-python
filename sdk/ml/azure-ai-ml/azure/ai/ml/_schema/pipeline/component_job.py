@@ -8,7 +8,6 @@ import logging
 
 from marshmallow import INCLUDE, ValidationError, fields, post_dump, post_load, pre_dump, validates
 
-from ..._schema.assets.environment import AnonymousEnvironmentSchema
 from ..._schema.component import (
     AnonymousCommandComponentSchema,
     AnonymousDataTransferCopyComponentSchema,
@@ -32,6 +31,7 @@ from .._utils.data_binding_expression import support_data_binding_expression_for
 from ..core.fields import (
     ArmVersionedStr,
     ComputeField,
+    EnvironmentField,
     NestedField,
     RegistryStr,
     StringTransformedEnum,
@@ -163,13 +163,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         },
         load_only=True,
     )
-    environment = UnionField(
-        [
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            NestedField(AnonymousEnvironmentSchema),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-    )
+    environment = EnvironmentField()
     services = fields.Dict(
         keys=fields.Str(),
         values=UnionField(
