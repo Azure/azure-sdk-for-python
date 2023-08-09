@@ -27,7 +27,6 @@ from ...constants._common import (
     AZUREML_RESOURCE_PROVIDER,
     BASE_PATH_CONTEXT_KEY,
     CONDA_FILE,
-    DefaultOpenEncoding,
     DOCKER_FILE_NAME,
     EXPERIMENTAL_FIELD_MESSAGE,
     EXPERIMENTAL_LINK_MESSAGE,
@@ -38,8 +37,9 @@ from ...constants._common import (
     REGISTRY_URI_FORMAT,
     RESOURCE_ID_FORMAT,
     AzureMLResourceType,
+    DefaultOpenEncoding,
 )
-from ...entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+from ...entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
 from ...exceptions import ValidationException
 from ..core.schema import PathAwareSchema
 
@@ -572,7 +572,7 @@ class TypeSensitiveUnionField(UnionField):
          * First Matched Error message if value has type and type matches atleast one field
         :rtype: Exception
         """
-        value_type = try_get_non_arbitrary_attr_for_potential_attr_dict(value, self.type_field_name)
+        value_type = try_get_non_arbitrary_attr(value, self.type_field_name)
         if value_type is None:
             # if value has no type field, raise original error
             return e
@@ -596,7 +596,7 @@ class TypeSensitiveUnionField(UnionField):
 
     def _serialize(self, value, attr, obj, **kwargs):
         union_fields = self._union_fields[:]
-        value_type = try_get_non_arbitrary_attr_for_potential_attr_dict(value, self.type_field_name)
+        value_type = try_get_non_arbitrary_attr(value, self.type_field_name)
         if value_type is not None and value_type in self.allowed_types:
             target_fields = self._type_sensitive_fields_dict[value_type]
             if len(target_fields) == 1:
@@ -672,6 +672,22 @@ def CodeField(**kwargs):
             ArmVersionedStr(azureml_type=AzureMLResourceType.CODE),
         ],
         metadata={"description": "A local path or http:, https:, azureml: url pointing to a remote location."},
+        **kwargs,
+    )
+
+
+def EnvironmentField(*, extra_fields: List[Field] = None, **kwargs):
+    extra_fields = extra_fields or []
+    # local import to avoid circular dependency
+    from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema
+
+    return UnionField(
+        [
+            NestedField(AnonymousEnvironmentSchema),
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
+        ]
+        + extra_fields,
         **kwargs,
     )
 

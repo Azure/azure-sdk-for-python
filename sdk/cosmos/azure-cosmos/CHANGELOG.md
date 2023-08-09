@@ -1,16 +1,16 @@
 ## Release History
 
-### 4.4.1b2 (Unreleased)
+### 4.5.0 (2023-08-09)
 
 #### Features Added
 * Added support for continuation tokens for streamable cross partition queries. See [PR 31189](https://github.com/Azure/azure-sdk-for-python/pull/31189).
 * Added **preview** Bulk API for executing several operations at once. See [PR 31314](https://github.com/Azure/azure-sdk-for-python/pull/31459).
 
-#### Breaking Changes
-
 #### Bugs Fixed
+* Fixed bug with async `create_database_if_not_exists` method not working when passing `offer_throughput` as an option. See [PR 31478](https://github.com/Azure/azure-sdk-for-python/pull/31478).
 
 #### Other Changes
+* Renamed `response_continuation_token_limit_in_kb` to `continuation_token_limit` for GA. See [PR 31532](https://github.com/Azure/azure-sdk-for-python/pull/31532).
 
 ### 4.4.1b1 (2023-07-25)
 

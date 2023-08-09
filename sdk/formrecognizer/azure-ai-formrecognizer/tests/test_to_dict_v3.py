@@ -2187,6 +2187,56 @@ class TestToDict(FormRecognizerTest):
 
         assert d == final
 
+    def test_document_classifier_details_to_dict(self):
+        model = _models.DocumentClassifierDetails(
+            classifier_id="custom-classifier",
+            description="my description",
+            created_on="1994-11-05T13:15:30Z",
+            expires_on="2024-11-05T13:15:30Z",
+            api_version="2023-07-31",
+            doc_types={
+                "form-A": _models.ClassifierDocumentTypeDetails(
+                    source=_models.BlobSource(
+                        container_url="https://myaccount.blob.core.windows.net/blob-sas-url"
+                    )
+                ),
+                "form-B": _models.ClassifierDocumentTypeDetails(
+                    source=_models.BlobFileListSource(
+                        container_url="https://myaccount.blob.core.windows.net/blob-sas-url",
+                        file_list="filelist.jsonl"
+                    )
+                ),
+            },
+        )
+
+        d = model.to_dict()
+
+        final = {
+            "classifier_id": "custom-classifier",
+            "description": "my description",
+            "created_on": "1994-11-05T13:15:30Z",
+            "expires_on": "2024-11-05T13:15:30Z",
+            "api_version": "2023-07-31",
+            "doc_types": {
+                "form-A": {
+                    "source_kind": "azureBlob",
+                    "source": {
+                        "container_url": "https://myaccount.blob.core.windows.net/blob-sas-url",
+                        "prefix": None,
+                    },
+                },
+                "form-B": {
+                    "source_kind": "azureBlobFileList",
+                    "source": {
+                        "container_url": "https://myaccount.blob.core.windows.net/blob-sas-url",
+                        "file_list": "filelist.jsonl",
+                    },
+                },
+            },
+        }
+
+        assert d == final
+
     def test_document_model_info_to_dict(self):
         model = _models.DocumentModelSummary(
             description="my description",
@@ -2213,7 +2263,7 @@ class TestToDict(FormRecognizerTest):
     def test_resource_details_to_dict(self):
         model = _models.ResourceDetails(
             custom_document_models=_models.CustomDocumentModelsDetails(limit=5000, count=10),
-            custom_neural_document_model_builds=_models.QuotaDetails(
+            neural_document_model_quota=_models.QuotaDetails(
                 used=0,
                 quota=20,
                 quota_resets_on="1994-11-05T13:15:30Z"
@@ -2222,7 +2272,7 @@ class TestToDict(FormRecognizerTest):
 
         d = model.to_dict()
 
-        final = {'custom_document_models': {'count': 10, 'limit': 5000}, 'custom_neural_document_model_builds': {'used': 0, 'quota': 20, 'quota_resets_on': '1994-11-05T13:15:30Z'}}
+        final = {'custom_document_models': {'count': 10, 'limit': 5000}, 'neural_document_model_quota': {'used': 0, 'quota': 20, 'quota_resets_on': '1994-11-05T13:15:30Z'}}
         assert d == final
 
     def test_document_analysis_inner_error_to_dict(self):

@@ -420,7 +420,7 @@ class TestComponent:
         component: InternalComponent = load_component(source=yaml_path)
         _try_resolve_code_for_component(
             component=component,
-            get_arm_id_and_fill_back=mock_get_arm_id_and_fill_back,
+            resolver=mock_get_arm_id_and_fill_back,
         )
         assert component.code.path.name != COMPONENT_PLACEHOLDER
 

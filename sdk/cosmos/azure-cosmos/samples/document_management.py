@@ -269,11 +269,11 @@ def query_items_with_continuation_token_size_limit(container, doc_id):
     sales_order = get_sales_order(doc_id)
     container.create_item(body=sales_order)
 
-    # set response_continuation_token_limit_in_kb to 8 to limit size to 8KB
+    # set continuation_token_limit to 8 to limit size to 8KB
     items = list(container.query_items(
         query="SELECT * FROM r",
         partition_key=doc_id,
-        response_continuation_token_limit_in_kb=size_limit_in_kb
+        continuation_token_limit=size_limit_in_kb
     ))
 
     print('Continuation Token size has been limited to {}KB.'.format(size_limit_in_kb))
