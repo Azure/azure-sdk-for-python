@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Not pass `enabled_cae` unless it is explicitly enabled.
+
 ### Other Changes
 
 ## 1.29.0 (2023-08-03)
