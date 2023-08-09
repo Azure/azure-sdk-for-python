@@ -15,7 +15,9 @@ steps:
     displayName: Install build script requirements
 
   - pwsh: |
-      sdk_build_conda -c "${{ replace(replace(convertToJson(parameters.CondaArtifacts), '"', '\"'), '\n', '') }}" `
+      $argument = @'${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}'
+
+      sdk_build_conda -c "$argument"
         -w "$(Build.SourcesDirectory)/conda/conda-recipes"
     displayName: Assemble Conda Packages
   
