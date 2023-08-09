@@ -23,23 +23,17 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._version import VERSION
+from ._version import VERSION   # pylint: disable=import-error
 
 __version__ = VERSION
 
-from ._schema_registry_client import SchemaRegistryClient
-from ._common._constants import SchemaFormat, ApiVersion
-from ._common._schema import Schema, SchemaProperties
-from ._encoder_protocols import SchemaContentValidate, MessageContent, MessageType, SchemaEncoder
+from ._schema_registry_json_encoder import JsonSchemaEncoder  # pylint: disable=import-error
+from ._exceptions import InvalidContentError    # pylint: disable=import-error
+from ._constants import JsonSchemaDraftIdentifier
+
 
 __all__ = [
-    "ApiVersion",
-    "SchemaRegistryClient",
-    "SchemaFormat",
-    "Schema",
-    "SchemaProperties",
-    "SchemaContentValidate",
-    "MessageContent",
-    "MessageType",
-    "SchemaEncoder"
+    "JsonSchemaEncoder",
+    "InvalidContentError",
+    "JsonSchemaDraftIdentifier"
 ]
