@@ -39,6 +39,16 @@ input-file:
 output-folder: $(python-sdks-folder)/dataset_dataplane
 ```
 
+### Tag: content-service
+
+These settings apply only when `--tag=content-service` is specified on the command line.
+
+```yaml $(tag) == 'content-service'
+input-file:
+  - Microsoft.MachineLearningServices/stable/content-service/swagger.json
+output-folder: $(python-sdks-folder)/content_service
+```
+
 ### Tag: v2022-05-01
 
 These settings apply only when `--tag=v2022-05-01` is specified on the command line.
@@ -197,6 +207,7 @@ These settings apply only when `--multiapi` is specified on the command line.
 ```yaml $(multiapi)
 clear-output-folder: true
 batch:
+  - tag: content-service
   - tag: model-dataplane
   - tag: dataset-dataplane
   - tag: v2022-05-01
