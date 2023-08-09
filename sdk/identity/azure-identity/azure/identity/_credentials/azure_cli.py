@@ -187,6 +187,7 @@ def _run_command(command: str, timeout: int) -> str:
 
         kwargs: Dict[str, Any] = {
             "stderr": subprocess.PIPE,
+            "stdin": subprocess.DEVNULL,
             "cwd": working_directory,
             "universal_newlines": True,
             "timeout": timeout,
