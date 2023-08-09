@@ -296,7 +296,7 @@ def prep_directory(path: str) -> str:
 
 def invoke_command(command: str, working_directory: str) -> None:
     try:
-        check_call(shlex.split(command), cwd=working_directory, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+        check_call(shlex.split(command), cwd=working_directory, stdout=subprocess.STDOUT, stderr=subprocess.STDOUT)
     except CalledProcessError as e:
         raise
 
@@ -411,27 +411,21 @@ def prep_and_create_environment(environment_dir: str) -> None:
     with open(os.path.join(environment_dir, 'environment.yml'), 'w', encoding='utf-8') as f:
         f.write(CONDA_ENV_FILE)
 
-    invoke_command(f"conda env create --prefix \"{environment_dir}\" python=3.10", environment_dir)
+    invoke_command(f"conda env create --prefix \"{environment_dir}\"", environment_dir)
     invoke_command(f"conda install --yes --quiet --prefix \"{environment_dir}\" conda-build conda-verify typing-extensions", environment_dir)
 
 
 def build_conda_packages(conda_configurations: List[CondaConfiguration], repo_root: str):
     """Conda builds each individually assembled conda package folder."""
     conda_output_dir = prep_directory(os.path.join(repo_root, "conda", "output"))
+    conda_sdist_dir = prep_directory(os.path.join(repo_root, "conda", "assembled"))
     conda_env_dir = prep_directory(os.path.join(repo_root, "conda", "conda-env"))
 
     prep_and_create_environment(conda_env_dir)
 
-    #   - bash: |
-    #       conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/conda_env.yml
-    #       conda install --yes --quiet --name ${{ artifact.name }} conda-build conda-verify typing-extensions
-    #     displayName: 'Prepare Conda Environment for building ${{ artifact.name }}'
-
-    #   - bash: |
-    #       source activate ${{ artifact.name }}
-    #       conda-build . --output-folder "$(Agent.BuildDirectory)/conda/output/${{ artifact.name }}" -c "file:<path-to-output-dir>"
-    #     displayName: 'Activate Conda Environment and Build ${{ artifact.name }}'
-    #     workingDirectory: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/conda-recipe
+    for conda_build in conda_configurations:
+        conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name)
+        invoke_command(f'conda run --prefix="{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}"', conda_build_folder)
 
 
 def check_conda_config():
